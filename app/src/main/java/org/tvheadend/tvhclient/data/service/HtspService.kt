@@ -330,6 +330,15 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
 
         getAdditionalServerData()
 
+        Timber.d("Checking if background worker should be started to load more epg data")
+        if (System.currentTimeMillis() / 1000L - connection.lastUpdate > (12 * 60 * 60)) {
+            Timber.d("Last background worker started 12 hours ago, starting one in 15s to load more epg data")
+            val updateEpgWorker = OneTimeWorkRequest.Builder(EpgDataUpdateWorker::class.java)
+                    .setInitialDelay(15, TimeUnit.SECONDS)
+                    .build()
+            WorkManager.getInstance().enqueueUniqueWork("UpdateEpg", ExistingWorkPolicy.REPLACE, updateEpgWorker)
+        }
+
         Timber.d("Updating connection status with full sync completed and last update time")
         connection.isSyncRequired = false
         connection.lastUpdate = System.currentTimeMillis() / 1000L
@@ -345,14 +354,6 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
         Timber.d("Deleting events in the database that are older than one day from now")
         val pastTime = System.currentTimeMillis() - 24 * 60 * 60 * 1000
         appRepository.programData.removeItemsByTime(pastTime)
-
-        if (syncRequired) {
-            Timber.d("Starting background worker to load more epg data")
-            val updateEpgWorker = OneTimeWorkRequest.Builder(EpgDataUpdateWorker::class.java)
-                    .setInitialDelay(5, TimeUnit.SECONDS)
-                    .build()
-            WorkManager.getInstance().enqueueUniqueWork("UpdateEpg", ExistingWorkPolicy.REPLACE, updateEpgWorker)
-        }
 
         syncRequired = false
         syncEventsRequired = false
