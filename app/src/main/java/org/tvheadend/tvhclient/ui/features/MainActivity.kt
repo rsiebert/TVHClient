@@ -1,5 +1,6 @@
 package org.tvheadend.tvhclient.ui.features
 
+import android.app.NotificationManager
 import android.app.SearchManager
 import android.content.Context
 import android.content.Intent
@@ -7,6 +8,7 @@ import android.content.IntentFilter
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.database.Cursor
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.view.KeyEvent
@@ -16,6 +18,7 @@ import android.view.View
 import android.widget.ProgressBar
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
+import androidx.core.app.NotificationManagerCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
@@ -38,6 +41,7 @@ import org.tvheadend.tvhclient.ui.features.epg.ProgramGuideFragment
 import org.tvheadend.tvhclient.ui.features.information.StatusViewModel
 import org.tvheadend.tvhclient.ui.features.navigation.NavigationDrawer
 import org.tvheadend.tvhclient.ui.features.navigation.NavigationViewModel
+import org.tvheadend.tvhclient.ui.features.notification.getNotificationBuilder
 import org.tvheadend.tvhclient.ui.features.playback.external.CastSessionManagerListener
 import org.tvheadend.tvhclient.ui.features.programs.ProgramDetailsFragment
 import org.tvheadend.tvhclient.ui.features.programs.ProgramListFragment
@@ -85,6 +89,7 @@ class MainActivity : BaseActivity(), SearchView.OnQueryTextListener, SearchView.
         super.onCreate(savedInstanceState)
         setContentView(R.layout.main_activity)
 
+        Timber.d("Initializing")
         MainApplication.getComponent().inject(this)
 
         navigationViewModel = ViewModelProviders.of(this).get(NavigationViewModel::class.java)
@@ -163,6 +168,33 @@ class MainActivity : BaseActivity(), SearchView.OnQueryTextListener, SearchView.
             Timber.d("Selected navigation id changed to $id")
             handleDrawerItemSelected(id)
         })
+
+        Timber.d("Observing running recording count")
+        if (sharedPreferences.getBoolean("notifications_enabled", resources.getBoolean(R.bool.pref_default_notifications_enabled))
+                && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+
+            statusViewModel.runningRecordingCount.observe(this, Observer { count ->
+                Timber.d("Currently running recording count changed to $count")
+                if (count > 0) {
+                    (getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager).activeNotifications.forEach { notification ->
+                        if (notification.id == 1) {
+                            Timber.d("Notification exists already, skipping")
+                            return@Observer
+                        }
+                    }
+
+                    val builder = getNotificationBuilder(this)
+                    builder.setContentTitle(getString(R.string.currently_recording))
+                            .setContentText("$count recording are running")
+                            .setSmallIcon(R.drawable.ic_menu_record_dark)
+                            .setOngoing(true)
+                    NotificationManagerCompat.from(this).notify(1, builder.build())
+                } else {
+                    (getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager).cancel(1)
+                }
+            })
+        }
+        Timber.d("Done initializing")
     }
 
     override fun onSaveInstanceState(outState: Bundle) {

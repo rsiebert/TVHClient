@@ -1,5 +1,7 @@
 package org.tvheadend.tvhclient.ui.features.settings
 
+import android.app.NotificationManager
+import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.net.Uri
@@ -70,7 +72,7 @@ class SettingsAdvancedFragment : BasePreferenceFragment(), Preference.OnPreferen
             "clear_database" -> handlePreferenceClearDatabaseSelected()
             "clear_search_history" -> handlePreferenceClearSearchHistorySelected()
             "clear_icon_cache" -> handlePreferenceClearIconCacheSelected()
-            "notifications" -> handlePreferenceNotificationsSelected()
+            "notifications_enabled" -> handlePreferenceNotificationsSelected()
         }
         return true
     }
@@ -195,6 +197,7 @@ class SettingsAdvancedFragment : BasePreferenceFragment(), Preference.OnPreferen
                 } catch (ex: NumberFormatException) {
                     prefs.edit().putString(key, resources.getString(R.string.pref_default_connection_timeout)).apply()
                 }
+            "notifications_enabled" -> (activity?.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager).cancel(1)
         }
     }
 

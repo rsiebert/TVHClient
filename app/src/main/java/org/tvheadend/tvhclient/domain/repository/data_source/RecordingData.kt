@@ -84,6 +84,7 @@ class RecordingData(private val db: AppRoomDatabase) : DataSourceInterface<Recor
         return when (type) {
             "completed" -> db.recordingDao.completedRecordingCount
             "scheduled" -> db.recordingDao.scheduledRecordingCount
+            "running" -> db.recordingDao.runningRecordingCount
             "failed" -> db.recordingDao.failedRecordingCount
             "removed" -> db.recordingDao.removedRecordingCount
             else -> MutableLiveData()

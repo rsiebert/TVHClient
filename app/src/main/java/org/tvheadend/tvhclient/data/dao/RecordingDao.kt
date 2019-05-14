@@ -18,6 +18,11 @@ abstract class RecordingDao {
     abstract val scheduledRecordingCount: LiveData<Int>
 
     @get:Query("SELECT COUNT (*) FROM recordings AS rec " +
+            "WHERE (rec.error IS NULL AND (rec.state = 'recording')) " +
+            "AND rec.connection_id IN (SELECT id FROM connections WHERE active = 1)")
+    abstract val runningRecordingCount: LiveData<Int>
+
+    @get:Query("SELECT COUNT (*) FROM recordings AS rec " +
             "WHERE ((rec.error IS NOT NULL AND (rec.state='missed'  OR rec.state='invalid')) " +
             " OR (rec.error IS NULL  AND rec.state='missed') " +
             " OR (rec.error='Aborted by user' AND rec.state='completed')) " +

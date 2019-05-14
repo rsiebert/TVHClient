@@ -30,6 +30,7 @@ class StatusViewModel : ViewModel() {
     val seriesRecordingCount: LiveData<Int>
     val completedRecordingCount: LiveData<Int>
     val scheduledRecordingCount: LiveData<Int>
+    val runningRecordingCount: LiveData<Int>
     val failedRecordingCount: LiveData<Int>
     val removedRecordingCount: LiveData<Int>
 
@@ -48,6 +49,7 @@ class StatusViewModel : ViewModel() {
         seriesRecordingCount = appRepository.seriesRecordingData.getLiveDataItemCount()
         completedRecordingCount = appRepository.recordingData.getLiveDataCountByType("completed")
         scheduledRecordingCount = appRepository.recordingData.getLiveDataCountByType("scheduled")
+        runningRecordingCount = appRepository.recordingData.getLiveDataCountByType("running")
         failedRecordingCount = appRepository.recordingData.getLiveDataCountByType("failed")
         removedRecordingCount = appRepository.recordingData.getLiveDataCountByType("removed")
 
