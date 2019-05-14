@@ -41,6 +41,8 @@ import org.tvheadend.tvhclient.ui.features.epg.ProgramGuideFragment
 import org.tvheadend.tvhclient.ui.features.information.StatusViewModel
 import org.tvheadend.tvhclient.ui.features.navigation.NavigationDrawer
 import org.tvheadend.tvhclient.ui.features.navigation.NavigationViewModel
+import org.tvheadend.tvhclient.ui.features.notification.addNotification
+import org.tvheadend.tvhclient.ui.features.notification.addPermanentNotification
 import org.tvheadend.tvhclient.ui.features.notification.getNotificationBuilder
 import org.tvheadend.tvhclient.ui.features.playback.external.CastSessionManagerListener
 import org.tvheadend.tvhclient.ui.features.programs.ProgramDetailsFragment
@@ -176,24 +178,13 @@ class MainActivity : BaseActivity(), SearchView.OnQueryTextListener, SearchView.
             statusViewModel.runningRecordingCount.observe(this, Observer { count ->
                 Timber.d("Currently running recording count changed to $count")
                 if (count > 0) {
-                    (getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager).activeNotifications.forEach { notification ->
-                        if (notification.id == 1) {
-                            Timber.d("Notification exists already, skipping")
-                            return@Observer
-                        }
-                    }
-
-                    val builder = getNotificationBuilder(this)
-                    builder.setContentTitle(getString(R.string.currently_recording))
-                            .setContentText("$count recording are running")
-                            .setSmallIcon(R.drawable.ic_menu_record_dark)
-                            .setOngoing(true)
-                    NotificationManagerCompat.from(this).notify(1, builder.build())
+                    addPermanentNotification(this, count)
                 } else {
                     (getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager).cancel(1)
                 }
             })
         }
+
         Timber.d("Done initializing")
     }
 
