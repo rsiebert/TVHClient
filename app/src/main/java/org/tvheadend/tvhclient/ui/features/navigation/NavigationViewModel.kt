@@ -38,6 +38,8 @@ class NavigationViewModel : ViewModel() {
         val connection = appRepository.connectionData.getItemById(id)
         return if (connection != null) {
             connection.isActive = true
+            connection.isSyncRequired = true
+            connection.lastUpdate = 0
             appRepository.connectionData.updateItem(connection)
             true
         } else {
