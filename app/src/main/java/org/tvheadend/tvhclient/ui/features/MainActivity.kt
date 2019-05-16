@@ -8,7 +8,6 @@ import android.content.IntentFilter
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.database.Cursor
-import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.view.KeyEvent
@@ -18,7 +17,6 @@ import android.view.View
 import android.widget.ProgressBar
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
-import androidx.core.app.NotificationManagerCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
@@ -41,9 +39,8 @@ import org.tvheadend.tvhclient.ui.features.epg.ProgramGuideFragment
 import org.tvheadend.tvhclient.ui.features.information.StatusViewModel
 import org.tvheadend.tvhclient.ui.features.navigation.NavigationDrawer
 import org.tvheadend.tvhclient.ui.features.navigation.NavigationViewModel
-import org.tvheadend.tvhclient.ui.features.notification.addNotification
-import org.tvheadend.tvhclient.ui.features.notification.addPermanentNotification
-import org.tvheadend.tvhclient.ui.features.notification.getNotificationBuilder
+import org.tvheadend.tvhclient.ui.features.notification.addDiskSpaceLowNotification
+import org.tvheadend.tvhclient.ui.features.notification.addRunningRecordingNotification
 import org.tvheadend.tvhclient.ui.features.playback.external.CastSessionManagerListener
 import org.tvheadend.tvhclient.ui.features.programs.ProgramDetailsFragment
 import org.tvheadend.tvhclient.ui.features.programs.ProgramListFragment
@@ -51,7 +48,7 @@ import org.tvheadend.tvhclient.ui.features.search.SearchRequestInterface
 import org.tvheadend.tvhclient.util.getThemeId
 import timber.log.Timber
 
-// TODO what happens when no connection to the server is active and the user presses an action in a notification?
+// TODO make the notification ids a constant in the not...utils file
 
 class MainActivity : BaseActivity(), SearchView.OnQueryTextListener, SearchView.OnSuggestionListener, SyncStateReceiver.Listener, NetworkStatusListener {
 
@@ -154,36 +151,41 @@ class MainActivity : BaseActivity(), SearchView.OnQueryTextListener, SearchView.
             Timber.d("Casting is not available, casting will no be enabled")
         }
 
+        // Calls the method in the fragments that will initiate the actual search
+        // Disable search as you type in the epg because the results
+        // will be shown in a separate fragment program list.
         queryTextSubmitTask = Runnable {
             val fragment = supportFragmentManager.findFragmentById(R.id.main)
             if (fragment is SearchRequestInterface
                     && fragment.isVisible
-                    // Disable search as you type in the epg because when doing a search in the
-                    // program guide, the search results will be shown in a separate fragment program list.
                     && fragment !is ProgramGuideFragment) {
                 fragment.onSearchRequested(searchQuery)
             }
         }
 
-        Timber.d("Observing navigation menu id")
         navigationViewModel.navigationMenuId.observe(this, Observer { id ->
             Timber.d("Selected navigation id changed to $id")
             handleDrawerItemSelected(id)
         })
 
-        Timber.d("Observing running recording count")
-        if (sharedPreferences.getBoolean("notifications_enabled", resources.getBoolean(R.bool.pref_default_notifications_enabled))
-                && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        statusViewModel.showRunningRecordingCount.observe(this, Observer { show ->
+            Timber.d("Notification of running recording count of ${statusViewModel.runningRecordingCount} shall be shown $show")
+            if (show) {
+                addRunningRecordingNotification(this, statusViewModel.runningRecordingCount)
+            } else {
+                (getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager).cancel(1)
+            }
+        })
 
-            statusViewModel.runningRecordingCount.observe(this, Observer { count ->
-                Timber.d("Currently running recording count changed to $count")
-                if (count > 0) {
-                    addPermanentNotification(this, count)
-                } else {
-                    (getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager).cancel(1)
-                }
-            })
-        }
+        // TODO translate and optimize the pref strings
+        statusViewModel.showLowStorageSpace.observe(this, Observer { show ->
+            Timber.d("Currently free disk space changed to ${statusViewModel.availableStorageSpace} GB")
+            if (show) {
+                addDiskSpaceLowNotification(this, statusViewModel.availableStorageSpace)
+            } else {
+                (getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager).cancel(2)
+            }
+        })
 
         Timber.d("Done initializing")
     }
