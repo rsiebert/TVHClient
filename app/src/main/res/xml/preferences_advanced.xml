@@ -58,6 +58,25 @@
             android:key="notification_lead_time"
             android:summary="@string/pref_show_notification_offset_sum"
             android:title="@string/pref_show_notification_offset" />
+
+        <CheckBoxPreference
+            android:defaultValue="@bool/pref_default_notify_running_recording_count_enabled"
+            android:key="notify_running_recording_count_enabled"
+            android:title="Notify about running recordings" />
+
+        <CheckBoxPreference
+            android:defaultValue="@bool/pref_default_notify_low_storage_space_enabled"
+            android:key="notify_low_storage_space_enabled"
+            android:title="Notify when server storage space runs low" />
+
+        <EditTextPreference
+            android:name=""
+            android:defaultValue="@string/pref_default_low_storage_space_threshold"
+            android:dependency="notify_low_storage_space_enabled"
+            android:key="low_storage_space_threshold"
+            android:numeric="integer"
+            android:summary="Define the storage space threshold in gigabytes. If the the available server storage space is below the threshold a notification will be shown"
+            android:title="Server storage space threshold" />
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/pref_navigation">

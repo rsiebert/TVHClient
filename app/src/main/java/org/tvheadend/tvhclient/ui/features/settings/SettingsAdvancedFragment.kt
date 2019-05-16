@@ -33,6 +33,8 @@ import java.util.*
 class SettingsAdvancedFragment : BasePreferenceFragment(), Preference.OnPreferenceClickListener, SharedPreferences.OnSharedPreferenceChangeListener, DatabaseClearedCallback {
 
     private var notificationsEnabledPreference: CheckBoxPreference? = null
+    private var notifyRunningRecordingCountEnabledPreference: CheckBoxPreference? = null
+    private var notifyLowStorageSpaceEnabledPreference: CheckBoxPreference? = null
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
@@ -45,7 +47,20 @@ class SettingsAdvancedFragment : BasePreferenceFragment(), Preference.OnPreferen
         findPreference<Preference>("clear_search_history")?.onPreferenceClickListener = this
         findPreference<Preference>("clear_icon_cache")?.onPreferenceClickListener = this
 
-        findPreference<CheckBoxPreference>("notifications_enabled")?.also {
+        notificationsEnabledPreference = findPreference("notifications_enabled")
+        notificationsEnabledPreference?.also {
+            it.onPreferenceClickListener = this
+            it.isEnabled = isUnlocked
+        }
+
+        notifyRunningRecordingCountEnabledPreference = findPreference("notify_running_recording_count_enabled")
+        notifyRunningRecordingCountEnabledPreference?.also {
+            it.onPreferenceClickListener = this
+            it.isEnabled = isUnlocked
+        }
+
+        notifyLowStorageSpaceEnabledPreference = findPreference("notify_low_storage_space_enabled")
+        notifyLowStorageSpaceEnabledPreference?.also {
             it.onPreferenceClickListener = this
             it.isEnabled = isUnlocked
         }
@@ -73,6 +88,8 @@ class SettingsAdvancedFragment : BasePreferenceFragment(), Preference.OnPreferen
             "clear_search_history" -> handlePreferenceClearSearchHistorySelected()
             "clear_icon_cache" -> handlePreferenceClearIconCacheSelected()
             "notifications_enabled" -> handlePreferenceNotificationsSelected()
+            "notify_running_recording_count_enabled" -> handlePreferenceNotifyRunningRecordingEnabledSelected()
+            "notify_low_storage_space_enabled" -> handlePreferenceNotifyLowStorageSpaceSelected()
         }
         return true
     }
@@ -81,6 +98,20 @@ class SettingsAdvancedFragment : BasePreferenceFragment(), Preference.OnPreferen
         if (!isUnlocked) {
             context?.sendSnackbarMessage(R.string.feature_not_available_in_free_version)
             notificationsEnabledPreference?.isChecked = false
+        }
+    }
+
+    private fun handlePreferenceNotifyRunningRecordingEnabledSelected() {
+        if (!isUnlocked) {
+            context?.sendSnackbarMessage(R.string.feature_not_available_in_free_version)
+            notifyRunningRecordingCountEnabledPreference?.isChecked = false
+        }
+    }
+
+    private fun handlePreferenceNotifyLowStorageSpaceSelected() {
+        if (!isUnlocked) {
+            context?.sendSnackbarMessage(R.string.feature_not_available_in_free_version)
+            notifyRunningRecordingCountEnabledPreference?.isChecked = false
         }
     }
 
@@ -197,7 +228,16 @@ class SettingsAdvancedFragment : BasePreferenceFragment(), Preference.OnPreferen
                 } catch (ex: NumberFormatException) {
                     prefs.edit().putString(key, resources.getString(R.string.pref_default_connection_timeout)).apply()
                 }
-            "notifications_enabled" -> (activity?.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager).cancel(1)
+            "notify_running_recording_count_enabled" -> {
+                if (!prefs.getBoolean(key, resources.getBoolean(R.bool.pref_default_notify_running_recording_count_enabled))) {
+                    (activity?.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager).cancel(1)
+                }
+            }
+            "notify_low_storage_space_enabled" -> {
+                if (!prefs.getBoolean(key, resources.getBoolean(R.bool.pref_default_notify_low_storage_space_enabled))) {
+                    (activity?.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager).cancel(2)
+                }
+            }
         }
     }
 
