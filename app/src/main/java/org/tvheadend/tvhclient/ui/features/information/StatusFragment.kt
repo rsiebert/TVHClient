@@ -1,14 +1,12 @@
 package org.tvheadend.tvhclient.ui.features.information
 
-import android.content.Intent
 import android.os.Bundle
-import android.os.Handler
 import android.view.*
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import kotlinx.android.synthetic.main.status_fragment.*
 import org.tvheadend.tvhclient.R
-import org.tvheadend.tvhclient.data.service.HtspService
+import org.tvheadend.tvhclient.domain.entity.ServerStatus
 import org.tvheadend.tvhclient.ui.base.BaseFragment
 import org.tvheadend.tvhclient.ui.common.tasks.WakeOnLanTask
 import org.tvheadend.tvhclient.ui.features.dvr.recordings.RecordingViewModel
@@ -17,8 +15,6 @@ import timber.log.Timber
 class StatusFragment : BaseFragment() {
 
     private lateinit var statusViewModel: StatusViewModel
-    private lateinit var statusUpdateTask: Runnable
-    private val statusUpdateHandler = Handler()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.status_fragment, container, false)
@@ -34,27 +30,7 @@ class StatusFragment : BaseFragment() {
         toolbarInterface.setSubtitle("")
 
         showStatus()
-        showServerInformation()
         showSubscriptionAndInputStatus()
-
-        statusUpdateTask = Runnable {
-            val intent = Intent(activity, HtspService::class.java)
-            intent.action = "getSubscriptions"
-            activity?.startService(intent)
-            intent.action = "getInputs"
-            activity?.startService(intent)
-            statusUpdateHandler.postDelayed(statusUpdateTask, 5000)
-        }
-    }
-
-    override fun onPause() {
-        super.onPause()
-        statusUpdateHandler.removeCallbacks(statusUpdateTask)
-    }
-
-    override fun onResume() {
-        super.onResume()
-        statusUpdateHandler.post(statusUpdateTask)
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -126,6 +102,9 @@ class StatusFragment : BaseFragment() {
             removed_recordings_view.text = resources.getQuantityString(R.plurals.removed_recordings, count
                     ?: 0, count)
         })
+        statusViewModel.serverStatus.observe(viewLifecycleOwner, Observer { serverStatus ->
+            showServerInformation(serverStatus)
+        })
 
         // Get the programs that are currently being recorded
         val recordingViewModel = ViewModelProviders.of(this).get(RecordingViewModel::class.java)
@@ -152,9 +131,9 @@ class StatusFragment : BaseFragment() {
      * space either in MB or GB to avoid showing large numbers.
      * This depends on the size of the value.
      */
-    private fun showServerInformation() {
+    private fun showServerInformation(serverStatus: ServerStatus) {
 
-        val version = (htspVersion.toString()
+        val version = (serverStatus.htspVersion.toString()
                 + "   (" + getString(R.string.server) + ": "
                 + serverStatus.serverName + " "
                 + serverStatus.serverVersion + ")")
