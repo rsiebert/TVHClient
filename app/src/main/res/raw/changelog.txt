@@ -1,7 +1,17 @@
 $ 2.2.11
   % VERSION 2.2.11
-  _ 17.04.2019
-    * Small improvements under the hood
+  _ 20.05.2019
+    * Hide the progress bar in the channel list if no program is currently shown
+    * Do not pause the internal player when PIP mode is entered on devices running Android P
+    * Searching from the channel list will now search through all programs as in the epg screen, not only for channels and the current program
+    * Improved the search speed a little
+    * Show the timer recording name below the title if available
+    * Fixed showing the snackbar on devices running Android P
+    * Fixed showing the correct elapsed and remaining times in the internal player
+    * Fixed the channel number overlapping the icon in the channel list
+    * Added an option in the advanced settings to show a notification when a recording is currently being recorded(Only available in the unlocked version and on Android 6 or higher)
+    * Added an option in the advanced settings to show a notification when the free storage space is below a user defined threshold (Only available in the unlocked version and on Android 6 or higher)
+    * Some improvements under the hood
 $ 2.2.10
   % VERSION 2.2.10
   _ 15.04.2019
