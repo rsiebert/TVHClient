@@ -175,6 +175,10 @@
         <!-- Fast scrollbar styles -->
         <item name="fast_scroll_track">@drawable/fast_scroll_track_dark</item>
         <item name="fast_scroll_thumb">@drawable/fast_scroll_thumb_dark</item>
+
+        <item name="md_color_title">@android:color/primary_text_dark</item>
+        <item name="md_color_content">@android:color/secondary_text_dark</item>
+        <item name="md_color_button_text">@android:color/secondary_text_dark</item>
     </style>
 
     <!-- Styles that will be used for the light holo theme -->
@@ -257,6 +261,10 @@
         <!-- Fast scrollbar styles -->
         <item name="fast_scroll_track">@drawable/fast_scroll_track_light</item>
         <item name="fast_scroll_thumb">@drawable/fast_scroll_thumb_light</item>
+
+        <item name="md_color_title">@android:color/primary_text_light</item>
+        <item name="md_color_content">@android:color/secondary_text_light</item>
+        <item name="md_color_button_text">@android:color/secondary_text_light</item>
     </style>
 
     <style name="SplashTheme" parent="Theme.AppCompat.NoActionBar">
