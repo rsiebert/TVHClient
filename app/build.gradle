@@ -29,8 +29,8 @@ android {
         minSdkVersion 16
         targetSdkVersion 28
 
-        versionCode 168
-        versionName "2.2.11"
+        versionCode 169
+        versionName "2.2.12"
 
         // Define the apk naming convention
         applicationId "org.tvheadend.tvhclient"
@@ -102,6 +102,10 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
+    packagingOptions {
+        exclude 'META-INF/library-core_release.kotlin_module'
+    }
 }
 
 dependencies {
@@ -109,32 +113,37 @@ dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
 
     // Support library basics
-    implementation 'androidx.appcompat:appcompat:1.0.2'
-    implementation 'androidx.recyclerview:recyclerview:1.0.0'
-    implementation 'androidx.annotation:annotation:1.0.2'
+    implementation 'androidx.appcompat:appcompat:1.1.0-alpha05'
+    implementation 'androidx.recyclerview:recyclerview:1.1.0-alpha05'
+    implementation 'androidx.annotation:annotation:1.1.0-rc01'
     implementation 'androidx.preference:preference:1.1.0-alpha05'
-    implementation 'com.google.android.material:material:1.0.0'
-    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
+    implementation 'com.google.android.material:material:1.1.0-alpha06'
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.0-beta1'
 
     // Kotlin
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.2.1'
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.2.1"
-    implementation 'androidx.core:core-ktx:1.0.2'
+    implementation 'androidx.core:core-ktx:1.2.0-alpha01'
 
     // Casting
     implementation 'com.google.android.gms:play-services-cast-framework:16.2.0'
-    implementation 'androidx.mediarouter:mediarouter:1.0.0'
+    implementation 'androidx.mediarouter:mediarouter:1.1.0-beta01'
 
     // Billing
     implementation 'com.android.billingclient:billing:1.2'
 
     // Material navigation drawer and dialogs
-    implementation 'com.afollestad.material-dialogs:commons:0.9.6.0'
-    implementation 'com.mikepenz:materialdrawer:6.1.2'
+    def dialog_version = '3.0.0-beta2'
+    implementation "com.afollestad.material-dialogs:core:$dialog_version"
+    implementation "com.afollestad.material-dialogs:input:$dialog_version"
+    implementation "com.afollestad.material-dialogs:files:$dialog_version"
+    implementation "com.afollestad.material-dialogs:datetime:$dialog_version"
+    implementation "com.afollestad.material-dialogs:lifecycle:$dialog_version"
+    implementation 'com.mikepenz:materialdrawer:7.0.0-beta01'
 
     // Memory leaks and crash analytics
-    def leakcanary_version = "1.6.3"
+    def leakcanary_version = '1.6.3'
     debugImplementation "com.squareup.leakcanary:leakcanary-android:$leakcanary_version"
     releaseImplementation "com.squareup.leakcanary:leakcanary-android-no-op:$leakcanary_version"
     debugImplementation "com.squareup.leakcanary:leakcanary-support-fragment:$leakcanary_version"
