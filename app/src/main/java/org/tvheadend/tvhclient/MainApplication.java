@@ -48,10 +48,12 @@ import timber.log.Timber;
 import static org.tvheadend.tvhclient.util.billing.BillingManager.UNLOCKER;
 
 // TODO move diffutils to background thread
+// TODO use coroutines for certain stuff
 // TODO Use paged loading
-// TODO hide features menu when unlocker gets available later
 // TODO Move the variable programIdToBeEditedWhenBeingRecorded into the viewmodels
 // TODO use a base viewmodel with generics
+// TODO consolidate the dialog strings
+// TODO make the 12 hour check to start the epg background worker a setting
 
 public class MainApplication extends MultiDexApplication implements OptionsProvider, LifecycleObserver, BillingUpdatesListener {
 
