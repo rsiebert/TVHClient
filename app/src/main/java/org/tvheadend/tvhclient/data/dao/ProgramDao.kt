@@ -51,6 +51,20 @@ interface ProgramDao {
     fun loadProgramsFromChannelBetweenTimeSync(channelId: Int, startTime: Long, endTime: Long): List<EpgProgram>
 
     @Transaction
+    @Query(EPG_PROGRAM_BASE_QUERY +
+            " WHERE " + CONNECTION_IS_ACTIVE +
+            " AND channel_id = :channelId " +
+            // Program is within time slot
+            " AND ((start >= :startTime AND stop <= :endTime) " +
+            // Program is at the beginning of time slot
+            "  OR (start <= :startTime AND stop > :startTime) " +
+            // Program is at the end of the time slot
+            "  OR (start < :endTime AND stop >= :endTime)) " +
+            "GROUP BY p.id " +
+            "ORDER BY start ASC")
+    suspend fun loadProgramsFromChannelBetweenTimeSyncSuspendable(channelId: Int, startTime: Long, endTime: Long): List<EpgProgram>
+
+    @Transaction
     @Query(PROGRAM_BASE_QUERY +
             "WHERE " + CONNECTION_IS_ACTIVE +
             "GROUP BY p.id " +

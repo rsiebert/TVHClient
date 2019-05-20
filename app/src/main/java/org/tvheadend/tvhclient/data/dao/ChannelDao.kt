@@ -75,13 +75,16 @@ interface ChannelDao {
     @Query("DELETE FROM channels")
     fun deleteAll()
 
-    @Transaction
     @Query(EPG_CHANNEL_BASE_QUERY +
             "WHERE " + CONNECTION_IS_ACTIVE +
             ORDER_BY)
     fun loadAllEpgChannels(sortOrder: Int): LiveData<List<EpgChannel>>
 
-    @Transaction
+    @Query(EPG_CHANNEL_BASE_QUERY +
+            "WHERE " + CONNECTION_IS_ACTIVE +
+            ORDER_BY)
+    suspend fun loadAllEpgChannelsSync(sortOrder: Int): List<EpgChannel>
+
     @Query(EPG_CHANNEL_BASE_QUERY +
             "WHERE " + CONNECTION_IS_ACTIVE +
             " AND c.id IN (SELECT channel_id FROM tags_and_channels WHERE tag_id IN (:tagIds)) " +
