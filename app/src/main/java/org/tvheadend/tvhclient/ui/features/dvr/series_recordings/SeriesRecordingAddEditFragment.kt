@@ -44,9 +44,8 @@ class SeriesRecordingAddEditFragment : BaseFragment(), BackPressedInterface, Rec
             if (viewModel.isTimeEnabled) {
                 Timber.d("Intent Recording start time is ${viewModel.recording.start}")
                 Timber.d("Intent Recording startWindow time is ${viewModel.recording.startWindow}")
-                // TODO why do we need to add 15 minutes here?
-                intent.putExtra("start", viewModel.recording.start + 15L)
-                intent.putExtra("startWindow", viewModel.recording.startWindow + 15L)
+                intent.putExtra("start", viewModel.recording.start)
+                intent.putExtra("startWindow", viewModel.recording.startWindow)
             } else {
                 intent.putExtra("start", (-1).toLong())
                 intent.putExtra("startWindow", (-1).toLong())
@@ -155,8 +154,8 @@ class SeriesRecordingAddEditFragment : BaseFragment(), BackPressedInterface, Rec
             handleDayOfWeekSelection(ctx, viewModel.recording.daysOfWeek, this@SeriesRecordingAddEditFragment)
         }
 
-        minimum_duration.setText(if (viewModel.recording.minDuration > 0) viewModel.recording.minDuration.toString() else getString(R.string.duration_sum))
-        maximum_duration.setText(if (viewModel.recording.maxDuration > 0) viewModel.recording.maxDuration.toString() else getString(R.string.duration_sum))
+        minimum_duration.setText(if (viewModel.recording.minDuration > 0) (viewModel.recording.minDuration/60).toString() else getString(R.string.duration_sum))
+        maximum_duration.setText(if (viewModel.recording.maxDuration > 0) (viewModel.recording.maxDuration/60).toString() else getString(R.string.duration_sum))
 
         time_enabled.isChecked = viewModel.isTimeEnabled
         handleTimeEnabledClick(time_enabled.isChecked)
