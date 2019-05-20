@@ -2,10 +2,8 @@ package org.tvheadend.tvhclient.ui.features.epg
 
 import android.content.SharedPreferences
 import androidx.core.util.Pair
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MediatorLiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Transformations
+import androidx.lifecycle.*
+import kotlinx.coroutines.launch
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.domain.entity.EpgChannel
 import org.tvheadend.tvhclient.domain.entity.EpgProgram
@@ -17,9 +15,14 @@ import java.util.*
 class EpgViewModel : BaseChannelViewModel(), SharedPreferences.OnSharedPreferenceChangeListener {
 
     val epgChannels: LiveData<List<EpgChannel>>
+    var reloadEpgData: LiveData<Boolean> = MutableLiveData()
+    var epgData = MutableLiveData<HashMap<Int, List<EpgProgram>>>()
+
     var showChannelNumber: MutableLiveData<Boolean> = MutableLiveData()
     var showProgramSubtitle: MutableLiveData<Boolean> = MutableLiveData()
     var showGenreColor: MutableLiveData<Boolean> = MutableLiveData()
+    private var hoursOfEpgDataPerScreen: MutableLiveData<Int> = MutableLiveData()
+    private var daysOfEpgData: MutableLiveData<Int> = MutableLiveData()
 
     var pixelsPerMinute: Float = 0f
     var verticalScrollOffset = 0
@@ -27,18 +30,30 @@ class EpgViewModel : BaseChannelViewModel(), SharedPreferences.OnSharedPreferenc
     var selectedTimeOffset = 0
     var searchQuery = ""
 
-    val hoursToShow: Int
+    var hoursToShow: Int
     val daysToShow: Int
     val fragmentCount: Int
-    val startTimes = ArrayList<Long>()
-    val endTimes = ArrayList<Long>()
+
+    private val startTimes = ArrayList<Long>()
+    private val endTimes = ArrayList<Long>()
 
     init {
         Timber.d("Initializing")
-        val trigger = EpgChannelLiveData(channelSortOrder, selectedChannelTagIds)
-        epgChannels = Transformations.switchMap(trigger) { value ->
-            Timber.d("Loading epg channels because one of the two triggers have changed")
 
+        daysToShow = Integer.parseInt(sharedPreferences.getString("days_of_epg_data", appContext.resources.getString(R.string.pref_default_days_of_epg_data))!!)
+        hoursToShow = Integer.parseInt(sharedPreferences.getString("hours_of_epg_data_per_screen", appContext.resources.getString(R.string.pref_default_hours_of_epg_data_per_screen))!!)
+
+        // The defined value should not be zero due to checking the value
+        // in the settings. Check it anyway to prevent a divide by zero.
+        hoursToShow = if (hoursToShow == 0) 1 else hoursToShow
+
+        // Calculates the number of fragments in the view pager. This depends on how many days
+        // shall be shown of the program guide and how many hours shall be visible per fragment.
+        fragmentCount = daysToShow * (24 / hoursToShow)
+        calculateViewPagerFragmentStartAndEndTimes()
+
+        epgChannels = Transformations.switchMap(EpgChannelLiveData(channelSortOrder, selectedChannelTagIds)) { value ->
+            Timber.d("Loading epg channels because one of the two triggers have changed")
             val first = value.first
             val second = value.second
 
@@ -50,27 +65,45 @@ class EpgViewModel : BaseChannelViewModel(), SharedPreferences.OnSharedPreferenc
                 Timber.d("Skipping loading of epg channels because selected channel tag ids are not set")
                 return@switchMap null
             }
-
             return@switchMap appRepository.channelData.getAllEpgChannels(first, second)
         }
 
-        daysToShow = Integer.parseInt(sharedPreferences.getString("days_of_epg_data", appContext.resources.getString(R.string.pref_default_days_of_epg_data))!!)
-        val hours = Integer.parseInt(sharedPreferences.getString("hours_of_epg_data_per_screen", appContext.resources.getString(R.string.pref_default_hours_of_epg_data_per_screen))!!)
-        // The defined value should not be zero due to checking the value
-        // in the settings. Check it anyway to prevent a divide by zero.
-        hoursToShow = if (hours == 0) 1 else hours
-
-        // Calculates the number of fragments in the view pager. This depends on how many days
-        // shall be shown of the program guide and how many hours shall be visible per fragment.
-        fragmentCount = daysToShow * (24 / hoursToShow)
-        calculateViewPagerFragmentStartAndEndTimes()
+        reloadEpgData = Transformations.switchMap(EpgProgramDataLiveData(epgChannels, hoursOfEpgDataPerScreen, daysOfEpgData)) { value ->
+            val reload = MutableLiveData<Boolean>()
+            if (value.first != null && value.second != null && value.third != null) {
+                Timber.d("Either the epg channels, hours or days have changed, epg data shall be reloaded")
+                reload.value = true
+            } else {
+                Timber.d("Either the epg channels, hours or days are null, not reloading epg data")
+                reload.value = false
+            }
+            return@switchMap reload
+        }
 
         onSharedPreferenceChanged(sharedPreferences, "channel_number_enabled")
         onSharedPreferenceChanged(sharedPreferences, "program_subtitle_enabled")
         onSharedPreferenceChanged(sharedPreferences, "genre_colors_for_program_guide_enabled")
+        onSharedPreferenceChanged(sharedPreferences, "hours_of_epg_data_per_screen")
+        onSharedPreferenceChanged(sharedPreferences, "days_of_epg_data")
 
         Timber.d("Registering shared preference change listener")
         sharedPreferences.registerOnSharedPreferenceChangeListener(this)
+
+        Timber.d("Initializing done")
+    }
+
+    fun loadEpgData() {
+        Timber.d("Loading epg data via a coroutine")
+        viewModelScope.launch {
+            val defaultChannelSortOrder = appContext.resources.getString(R.string.pref_default_channel_sort_order)
+            val order = Integer.valueOf(sharedPreferences.getString("channel_sort_order", defaultChannelSortOrder) ?: defaultChannelSortOrder)
+            val hours = Integer.parseInt(sharedPreferences.getString("hours_of_epg_data_per_screen", appContext.resources.getString(R.string.pref_default_hours_of_epg_data_per_screen))!!)
+            val days = Integer.parseInt(sharedPreferences.getString("days_of_epg_data", appContext.resources.getString(R.string.pref_default_days_of_epg_data))!!)
+
+            Timber.d("Loading epg data from database with channel order $order, $hours hours per screen and for $days days")
+            epgData.value = appRepository.programData.getEpgItemsBetweenTime(order, hours, days)
+            Timber.d("Done loading epg data")
+        }
     }
 
     override fun onCleared() {
@@ -86,6 +119,8 @@ class EpgViewModel : BaseChannelViewModel(), SharedPreferences.OnSharedPreferenc
             "channel_number_enabled" -> showChannelNumber.value = sharedPreferences.getBoolean(key, appContext.resources.getBoolean(R.bool.pref_default_channel_number_enabled))
             "program_subtitle_enabled" -> showProgramSubtitle.value = sharedPreferences.getBoolean(key, appContext.resources.getBoolean(R.bool.pref_default_program_subtitle_enabled))
             "genre_colors_for_program_guide_enabled" -> showGenreColor.value = sharedPreferences.getBoolean(key, appContext.resources.getBoolean(R.bool.pref_default_genre_colors_for_program_guide_enabled))
+            "hours_of_epg_data_per_screen" -> hoursOfEpgDataPerScreen.value = Integer.parseInt(sharedPreferences.getString(key, appContext.resources.getString(R.string.pref_default_hours_of_epg_data_per_screen))!!)
+            "days_of_epg_data" -> daysOfEpgData.value = Integer.parseInt(sharedPreferences.getString(key, appContext.resources.getString(R.string.pref_default_days_of_epg_data))!!)
         }
     }
 
@@ -95,6 +130,24 @@ class EpgViewModel : BaseChannelViewModel(), SharedPreferences.OnSharedPreferenc
 
     fun getProgramsByChannelAndBetweenTimeSync(channelId: Int, fragmentId: Int): List<EpgProgram> {
         return appRepository.programData.getItemByChannelIdAndBetweenTime(channelId, startTimes[fragmentId], endTimes[fragmentId])
+    }
+
+    internal inner class EpgProgramDataLiveData(
+            channelList: LiveData<List<EpgChannel>>,
+            hoursOfEpgDataPerScreen: LiveData<Int>,
+            daysOfEpgData: LiveData<Int>) : MediatorLiveData<Triple<List<EpgChannel>?, Int?, Int?>>() {
+
+        init {
+            addSource(channelList) { channels ->
+                value = Triple(channels, hoursOfEpgDataPerScreen.value, daysOfEpgData.value)
+            }
+            addSource(hoursOfEpgDataPerScreen) { hours ->
+                value = Triple(channelList.value, hours, daysOfEpgData.value)
+            }
+            addSource(daysOfEpgData) { days ->
+                value = Triple(channelList.value, hoursOfEpgDataPerScreen.value, days)
+            }
+        }
     }
 
     internal inner class EpgChannelLiveData(selectedChannelSortOrder: LiveData<Int>,
@@ -140,5 +193,17 @@ class EpgViewModel : BaseChannelViewModel(), SharedPreferences.OnSharedPreferenc
             endTimes.add(startTime + offsetTime - 1)
             startTime += offsetTime
         }
+    }
+
+    fun calcPixelsPerMinute(displayWidth: Int) {
+        pixelsPerMinute = (displayWidth - 221).toFloat() / (60.0f * hoursToShow.toFloat())
+    }
+
+    fun getStartTime(fragmentId: Int): Long {
+        return startTimes[fragmentId]
+    }
+
+    fun getEndTime(fragmentId: Int): Long {
+        return endTimes[fragmentId]
     }
 }

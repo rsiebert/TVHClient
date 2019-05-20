@@ -122,6 +122,21 @@ class ProgramGuideFragment : BaseFragment(), EpgScrollInterface, RecyclerViewCli
             }
         })
 
+        Timber.d("Observing trigger to reload epg data")
+        epgViewModel.reloadEpgData.observe(viewLifecycleOwner, Observer { reload ->
+            Timber.d("Trigger to reload epg data has changed to $reload")
+            if (reload) {
+                epgViewModel.loadEpgData()
+            }
+        })
+
+        Timber.d("Observing epg data")
+        epgViewModel.epgData.observe(viewLifecycleOwner, Observer { data ->
+            data?.forEach {
+                Timber.d("Loaded ${it.value.size} programs for channel ${it.key}")
+            }
+        })
+
         // Observe all recordings here in case a recording shall be edited right after it was added.
         // This needs to be done in this fragment because the popup menu handling is also done here.
         Timber.d("Observing recordings")
