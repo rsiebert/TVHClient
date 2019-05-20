@@ -45,9 +45,8 @@ class SeriesRecordingAddEditFragment : BaseFragment(), BackPressedInterface, Rec
             if (seriesRecordingViewModel.isTimeEnabled) {
                 Timber.d("Intent Recording start time is ${seriesRecordingViewModel.recording.start}")
                 Timber.d("Intent Recording startWindow time is ${seriesRecordingViewModel.recording.startWindow}")
-                // TODO why do we need to add 15 minutes here?
-                intent.putExtra("start", seriesRecordingViewModel.recording.start + 15L)
-                intent.putExtra("startWindow", seriesRecordingViewModel.recording.startWindow + 15L)
+                intent.putExtra("start", seriesRecordingViewModel.recording.start)
+                intent.putExtra("startWindow", seriesRecordingViewModel.recording.startWindow)
             } else {
                 intent.putExtra("start", (-1).toLong())
                 intent.putExtra("startWindow", (-1).toLong())
@@ -152,8 +151,8 @@ class SeriesRecordingAddEditFragment : BaseFragment(), BackPressedInterface, Rec
             handleDayOfWeekSelection(ctx, seriesRecordingViewModel.recording.daysOfWeek, this@SeriesRecordingAddEditFragment)
         }
 
-        minimum_duration.setText(if (seriesRecordingViewModel.recording.minDuration > 0) seriesRecordingViewModel.recording.minDuration.toString() else getString(R.string.duration_sum))
-        maximum_duration.setText(if (seriesRecordingViewModel.recording.maxDuration > 0) seriesRecordingViewModel.recording.maxDuration.toString() else getString(R.string.duration_sum))
+        minimum_duration.setText(if (seriesRecordingViewModel.recording.minDuration > 0) (seriesRecordingViewModel.recording.minDuration / 60).toString() else getString(R.string.duration_sum))
+        maximum_duration.setText(if (seriesRecordingViewModel.recording.maxDuration > 0) (seriesRecordingViewModel.recording.maxDuration / 60).toString() else getString(R.string.duration_sum))
 
         time_enabled.isChecked = seriesRecordingViewModel.isTimeEnabled
         handleTimeEnabledClick(time_enabled.isChecked)
