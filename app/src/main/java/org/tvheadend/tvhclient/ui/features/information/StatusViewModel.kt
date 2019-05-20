@@ -76,12 +76,14 @@ class StatusViewModel : ViewModel(), SharedPreferences.OnSharedPreferenceChangeL
         // Listen to changes of the server status especially the free storage space.
         // If the free space is above the threshold or the setting to show
         // notifications is disabled, set the value to false to remove any notification
-        showLowStorageSpace.addSource(serverStatus) { item ->
-            Timber.d("Server status free space has changed, checking if notification shall be shown")
-            availableStorageSpace = (item.freeDiskSpace / 1000000000).toInt()
-            val enabled = sharedPreferences.getBoolean("notify_low_storage_space_enabled", appContext.resources.getBoolean(R.bool.pref_default_notify_low_storage_space_enabled))
-            val threshold = Integer.valueOf(sharedPreferences.getString("low_storage_space_threshold", "1")!!)
-            showLowStorageSpace.value = enabled && availableStorageSpace > threshold
+        showLowStorageSpace.addSource(serverStatus) { serverStatus ->
+            if (serverStatus != null) {
+                Timber.d("Server status free space has changed, checking if notification shall be shown")
+                availableStorageSpace = (serverStatus.freeDiskSpace / 1000000000).toInt()
+                val enabled = sharedPreferences.getBoolean("notify_low_storage_space_enabled", appContext.resources.getBoolean(R.bool.pref_default_notify_low_storage_space_enabled))
+                val threshold = Integer.valueOf(sharedPreferences.getString("low_storage_space_threshold", "1")!!)
+                showLowStorageSpace.value = enabled && availableStorageSpace > threshold
+            }
         }
 
         statusUpdateTask = Runnable {
