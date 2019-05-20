@@ -37,8 +37,8 @@ internal class EpgProgramListRecyclerViewAdapter(private val viewModel: EpgViewM
         if (programList.size > position) {
             val program = programList[position]
 
-            val startTime = if (program.start < viewModel.startTimes[fragmentId]) viewModel.startTimes[fragmentId] else program.start
-            val stopTime = if (program.stop > viewModel.endTimes[fragmentId]) viewModel.endTimes[fragmentId] else program.stop
+            val startTime = if (program.start < viewModel.getStartTime(fragmentId)) viewModel.getStartTime(fragmentId) else program.start
+            val stopTime = if (program.stop > viewModel.getEndTime(fragmentId)) viewModel.getEndTime(fragmentId) else program.stop
             val layoutWidth = ((stopTime - startTime) / 1000 / 60 * viewModel.pixelsPerMinute).toInt()
 
             holder.bind(program, position, layoutWidth)

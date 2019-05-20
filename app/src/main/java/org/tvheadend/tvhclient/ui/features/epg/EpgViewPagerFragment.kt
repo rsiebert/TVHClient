@@ -62,8 +62,8 @@ class EpgViewPagerFragment : Fragment(), EpgScrollInterface {
         fragmentId = arguments?.getInt("fragmentId") ?: 0
         showTimeIndication = fragmentId == 0
 
-        itemBinding.startTime = epgViewModel.startTimes[fragmentId]
-        itemBinding.endTime = epgViewModel.endTimes[fragmentId]
+        itemBinding.startTime = epgViewModel.getStartTime(fragmentId)
+        itemBinding.endTime = epgViewModel.getEndTime(fragmentId)
 
         // Calculates the available display width of one minute in pixels. This depends
         // how wide the screen is and how many hours shall be shown in one screen.
@@ -71,7 +71,7 @@ class EpgViewPagerFragment : Fragment(), EpgScrollInterface {
         requireActivity().windowManager.defaultDisplay.getMetrics(displayMetrics)
         val displayWidth = displayMetrics.widthPixels
 
-        epgViewModel.pixelsPerMinute = (displayWidth - 221).toFloat() / (60.0f * epgViewModel.hoursToShow.toFloat())
+        epgViewModel.calcPixelsPerMinute(displayWidth)
 
         recyclerViewAdapter = EpgViewPagerRecyclerViewAdapter(requireActivity(), epgViewModel, fragmentId)
         recyclerViewLinearLayoutManager = LinearLayoutManager(activity, RecyclerView.VERTICAL, false)
@@ -162,7 +162,7 @@ class EpgViewPagerFragment : Fragment(), EpgScrollInterface {
         // for the time indication. If channel icons are shown then we need to add a
         // the icon width to the offset.
         val currentTime = System.currentTimeMillis()
-        val durationTime = (currentTime - epgViewModel.startTimes[fragmentId]) / 1000 / 60
+        val durationTime = (currentTime - epgViewModel.getStartTime(fragmentId)) / 1000 / 60
         val offset = (durationTime * pixelsPerMinute).toInt()
 
         // Set the left constraint of the time indication so it shows the actual time
