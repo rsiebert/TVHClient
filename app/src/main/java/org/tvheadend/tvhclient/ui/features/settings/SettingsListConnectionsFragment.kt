@@ -125,13 +125,15 @@ class SettingsListConnectionsFragment : ListFragment(), BackPressedInterface, Ac
 
             R.id.menu_delete -> {
                 context?.let {
-                    MaterialDialog.Builder(it)
-                            .content(getString(R.string.delete_connection, connection.name))
-                            .positiveText(getString(R.string.delete))
-                            .negativeText(getString(R.string.cancel))
-                            .onPositive { _, _ -> settingsViewModel.removeConnection(connection) }
-                            .onNegative { dialog, _ -> dialog.cancel() }
-                            .show()
+                    MaterialDialog(it).show {
+                        message(text = getString(R.string.delete_connection, connection.name))
+                        positiveButton(R.string.delete) {
+                            settingsViewModel.removeConnection(connection)
+                        }
+                        negativeButton(R.string.cancel) {
+                            cancel()
+                        }
+                    }
                 }
                 mode.finish()
                 return true
@@ -171,20 +173,20 @@ class SettingsListConnectionsFragment : ListFragment(), BackPressedInterface, Ac
     override fun onBackPressed() {
         when {
             settingsViewModel.activeConnectionId < 0 -> context?.let {
-                MaterialDialog.Builder(it)
-                        .title(R.string.dialog_title_disconnect_from_server)
-                        .content(R.string.dialog_content_disconnect_from_server)
-                        .positiveText(R.string.disconnect)
-                        .onPositive { _, _ -> reconnect() }
-                        .show()
+                MaterialDialog(it).show {
+                    title(R.string.dialog_title_disconnect_from_server)
+                    message(R.string.dialog_content_disconnect_from_server)
+                    positiveButton(R.string.disconnect) {
+                        reconnect()
+                    }
+                }
             }
             settingsViewModel.connectionHasChanged -> context?.let {
-                MaterialDialog.Builder(it)
-                        .title(R.string.dialog_title_connection_changed)
-                        .content(R.string.dialog_content_connection_changed)
-                        .positiveText(R.string.connect)
-                        .onPositive { _, _ -> reconnect() }
-                        .show()
+                MaterialDialog(it).show {
+                    title(R.string.dialog_title_connection_changed)
+                    message(R.string.dialog_content_connection_changed)
+                    positiveButton(R.string.connect) { reconnect() }
+                }
             }
             else -> {
                 settingsViewModel.connectionHasChanged = false

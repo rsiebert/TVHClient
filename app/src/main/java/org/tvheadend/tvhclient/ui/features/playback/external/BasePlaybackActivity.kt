@@ -68,25 +68,23 @@ abstract class BasePlaybackActivity : AppCompatActivity() {
                 status.setText(R.string.no_media_player)
 
                 // Show a confirmation dialog before deleting the recording
-                MaterialDialog.Builder(this@BasePlaybackActivity)
-                        .title(R.string.no_media_player)
-                        .content(R.string.show_play_store)
-                        .positiveText(getString(android.R.string.yes))
-                        .negativeText(getString(android.R.string.no))
-                        .onPositive { _, _ ->
-                            try {
-                                Timber.d("Opening play store to download external players")
-                                val installIntent = Intent(Intent.ACTION_VIEW)
-                                installIntent.data = Uri.parse("market://search?q=free%20video%20player&c=apps")
-                                startActivity(installIntent)
-                            } catch (t2: Throwable) {
-                                Timber.d("Could not startPlayback google play store")
-                            } finally {
-                                finish()
-                            }
+                MaterialDialog(this@BasePlaybackActivity).show {
+                    title(R.string.no_media_player)
+                    message(R.string.show_play_store)
+                    positiveButton(android.R.string.yes) {
+                        try {
+                            Timber.d("Opening play store to download external players")
+                            val installIntent = Intent(Intent.ACTION_VIEW)
+                            installIntent.data = Uri.parse("market://search?q=free%20video%20player&c=apps")
+                            startActivity(installIntent)
+                        } catch (t2: Throwable) {
+                            Timber.d("Could not startPlayback google play store")
+                        } finally {
+                            finish()
                         }
-                        .onNegative { _, _ -> finish() }
-                        .show()
+                    }
+                    negativeButton(android.R.string.no) { finish() }
+                }
             }
         }
     }

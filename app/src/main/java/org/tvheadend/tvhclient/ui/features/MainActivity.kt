@@ -110,7 +110,7 @@ class MainActivity : BaseActivity(), SearchView.OnQueryTextListener, SearchView.
             actionBar.setHomeButtonEnabled(true)
         }
 
-        navigationDrawer = NavigationDrawer(this, savedInstanceState, toolbar, navigationViewModel, statusViewModel, isUnlocked)
+        navigationDrawer = NavigationDrawer(this, toolbar, navigationViewModel, statusViewModel, isUnlocked)
 
         // When the activity is created it got called by the main activity. Get the initial
         // navigation menu position and show the associated fragment with it. When the device
@@ -191,13 +191,10 @@ class MainActivity : BaseActivity(), SearchView.OnQueryTextListener, SearchView.
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
-        var out = outState
-        // add the values which need to be saved from the drawer and header to the bundle
-        out = navigationDrawer.saveInstanceState(out)
-        out.putInt("navigationMenuId", selectedNavigationMenuId)
-        out.putBoolean("isNetworkAvailable", isNetworkAvailable)
-        out.putString(SearchManager.QUERY, searchQuery)
-        super.onSaveInstanceState(out)
+        outState.putInt("navigationMenuId", selectedNavigationMenuId)
+        outState.putBoolean("isNetworkAvailable", isNetworkAvailable)
+        outState.putString(SearchManager.QUERY, searchQuery)
+        super.onSaveInstanceState(outState)
     }
 
     public override fun onStart() {

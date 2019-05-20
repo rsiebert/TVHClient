@@ -41,13 +41,10 @@ import org.tvheadend.tvhclient.ui.features.unlocker.UnlockerFragment
 import org.tvheadend.tvhclient.util.getThemeId
 import java.util.*
 
-// TODO savedstate required?
-
 class NavigationDrawer(private val activity: AppCompatActivity,
-                       private val savedInstanceState: Bundle?,
                        private val toolbar: Toolbar,
                        private val navigationViewModel: NavigationViewModel,
-                       private val statusViewModel: StatusViewModel,
+                       statusViewModel: StatusViewModel,
                        private val isUnlocked: Boolean) : AccountHeader.OnAccountHeaderListener, Drawer.OnDrawerItemClickListener {
 
     private lateinit var headerResult: AccountHeader
@@ -76,7 +73,6 @@ class NavigationDrawer(private val activity: AppCompatActivity,
                 .withProfileImagesVisible(false)
                 .withHeaderBackground(if (getThemeId(activity) == R.style.CustomTheme_Light) R.drawable.header_light else R.drawable.header_dark)
                 .withOnAccountHeaderListener(this)
-                .withSavedInstance(savedInstanceState)
                 .build()
     }
 
@@ -134,7 +130,6 @@ class NavigationDrawer(private val activity: AppCompatActivity,
                 .withAccountHeader(headerResult)
                 .withToolbar(toolbar)
                 .withOnDrawerItemClickListener(this)
-                .withSavedInstance(savedInstanceState)
 
         drawerBuilder.addDrawerItems(
                 channelItem,
@@ -169,8 +164,8 @@ class NavigationDrawer(private val activity: AppCompatActivity,
     private fun showConnectionsInDrawerHeader(connections: List<Connection>) {
         // Remove old profiles from the header
         val profileIdList = ArrayList<Long>()
-        for (profile in headerResult.profiles) {
-            profileIdList.add(profile.identifier)
+        headerResult.profiles?.forEach {
+            profileIdList.add(it.identifier)
         }
         for (id in profileIdList) {
             headerResult.removeProfileByIdentifier(id)
@@ -179,7 +174,7 @@ class NavigationDrawer(private val activity: AppCompatActivity,
         if (connections.isNotEmpty()) {
             for ((id, name, hostname) in connections) {
                 headerResult.addProfiles(
-                        CustomProfileDrawerItem()
+                        ProfileDrawerItem()
                                 .withIdentifier(id.toLong())
                                 .withName(name)
                                 .withEmail(hostname))
@@ -191,29 +186,26 @@ class NavigationDrawer(private val activity: AppCompatActivity,
         headerResult.setActiveProfile(navigationViewModel.connection.id.toLong())
     }
 
-    override fun onProfileChanged(view: View, profile: IProfile<*>, isSameProfile: Boolean): Boolean {
+    override fun onProfileChanged(view: View?, profile: IProfile<*>, current: Boolean): Boolean {
         result.closeDrawer()
 
         // Do nothing if the same profile has been selected
-        if (isSameProfile) {
+        if (current) {
             return true
         }
 
-        MaterialDialog.Builder(activity)
-                .title(R.string.dialog_title_connect_to_server)
-                .negativeText(R.string.cancel)
-                .positiveText(R.string.dialog_button_connect)
-                .onPositive { _, _ ->
-                    headerResult.setActiveProfile(profile.identifier)
-                    handleNewServerSelected(profile.identifier.toInt())
-                }
-                .onNegative { _, _ ->
-                    headerResult.setActiveProfile(navigationViewModel.connection.id.toLong())
-                }
-                .cancelable(false)
-                .canceledOnTouchOutside(false)
-                .show()
-
+        MaterialDialog(activity).show {
+            title(R.string.dialog_title_connect_to_server)
+            negativeButton(R.string.cancel) {
+                headerResult.setActiveProfile(navigationViewModel.connection.id.toLong())
+            }
+            positiveButton(R.string.dialog_button_connect) {
+                headerResult.setActiveProfile(profile.identifier)
+                handleNewServerSelected(profile.identifier.toInt())
+            }
+            cancelable(false)
+            cancelOnTouchOutside(false)
+        }
         return false
     }
 
@@ -233,17 +225,10 @@ class NavigationDrawer(private val activity: AppCompatActivity,
         }
     }
 
-    override fun onItemClick(view: View, position: Int, drawerItem: IDrawerItem<*, *>): Boolean {
+    override fun onItemClick(view: View?, position: Int, drawerItem: IDrawerItem<*>): Boolean {
         result.closeDrawer()
         navigationViewModel.setSelectedNavigationMenuId(drawerItem.identifier.toInt())
         return true
-    }
-
-    fun saveInstanceState(outState: Bundle): Bundle {
-        var out = outState
-        out = result.saveInstanceState(out)
-        out = headerResult.saveInstanceState(out)
-        return out
     }
 
     fun handleMenuSelection(fragment: Fragment?) {

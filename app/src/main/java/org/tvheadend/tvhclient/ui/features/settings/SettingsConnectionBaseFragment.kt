@@ -151,14 +151,12 @@ abstract class SettingsConnectionBaseFragment : PreferenceFragmentCompat(), Back
             activity?.finish()
         } else {
             // Show confirmation dialog to cancel
-            activity?.let {
-                MaterialDialog.Builder(it)
-                        .content(R.string.confirm_discard_connection)
-                        .positiveText(getString(R.string.discard))
-                        .negativeText(getString(R.string.cancel))
-                        .onPositive { _, _ -> it.finish() }
-                        .onNegative { dialog, _ -> dialog.dismiss() }
-                        .show()
+            activity?.let { activity ->
+                MaterialDialog(activity).show {
+                    message(R.string.confirm_discard_connection)
+                    positiveButton(R.string.discard) { activity.finish() }
+                    negativeButton(R.string.cancel) { dismiss() }
+                }
             }
         }
     }

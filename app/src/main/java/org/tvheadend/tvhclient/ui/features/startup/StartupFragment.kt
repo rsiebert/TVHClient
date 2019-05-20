@@ -88,23 +88,22 @@ class StartupFragment : Fragment() {
                 true
             }
             R.id.menu_refresh -> {
-                activity?.let {
-                    MaterialDialog.Builder(it)
-                            .title(R.string.dialog_title_reconnect_to_server)
-                            .content(R.string.dialog_content_reconnect_to_server)
-                            .negativeText(R.string.cancel)
-                            .positiveText(R.string.reconnect)
-                            .onPositive { _, _ ->
-                                Timber.d("Reconnect requested, stopping service and updating active connection to require a full sync")
-                                it.stopService(Intent(activity, HtspService::class.java))
+                activity?.let { activity ->
+                    MaterialDialog(activity).show {
+                        title(R.string.dialog_title_reconnect_to_server)
+                        message(R.string.dialog_content_reconnect_to_server)
+                        positiveButton(R.string.reconnect) {
+                            Timber.d("Reconnect requested, stopping service and updating active connection to require a full sync")
+                            activity.stopService(Intent(activity, HtspService::class.java))
 
-                                mainViewModel.setConnectionSyncRequired()
-                                // Finally restart the application to show the startup fragment
-                                val intent = Intent(activity, SplashActivity::class.java)
-                                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                                it.startActivity(intent)
-                            }
-                            .show()
+                            mainViewModel.setConnectionSyncRequired()
+                            // Finally restart the application to show the startup fragment
+                            val intent = Intent(activity, SplashActivity::class.java)
+                            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                            activity.startActivity(intent)
+                        }
+                        negativeButton(R.string.cancel)
+                    }
                 }
                 true
             }

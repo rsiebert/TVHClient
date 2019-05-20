@@ -5,6 +5,7 @@ import android.app.Activity
 import android.content.Intent
 import android.content.SharedPreferences
 import com.afollestad.materialdialogs.MaterialDialog
+import com.afollestad.materialdialogs.list.listItemsSingleChoice
 import com.crashlytics.android.Crashlytics
 import io.fabric.sdk.android.Fabric
 import org.tvheadend.tvhclient.MainApplication
@@ -56,8 +57,8 @@ class MenuUtils(activity: Activity) {
         val startDateFormat = SimpleDateFormat("dd.MM.yyyy - HH.00", Locale.US)
         val endDateFormat = SimpleDateFormat("HH.00", Locale.US)
 
-        val times = arrayOfNulls<String>(maxIntervalsToShow)
-        times[0] = activity.getString(R.string.current_time)
+        val times = ArrayList<String>()
+        times.add(activity.getString(R.string.current_time))
 
         // Set the time that shall be shown next in the dialog. This is the
         // current time plus the value of the intervalInHours in milliseconds
@@ -72,15 +73,10 @@ class MenuUtils(activity: Activity) {
             times[i] = "$startTime - $endTime"
         }
 
-        MaterialDialog.Builder(activity)
-                .title(R.string.select_time)
-                .items(*times)
-                .itemsCallbackSingleChoice(currentSelection) { _, _, which, _ ->
-                    callback?.onTimeSelected(which)
-                    true
-                }
-                .build()
-                .show()
+        MaterialDialog(activity).show {
+            title(R.string.select_time)
+            listItemsSingleChoice(items = times, initialSelection = currentSelection) { _, index, _ -> callback?.onTimeSelected(index) }
+        }
         return true
     }
 
@@ -92,21 +88,16 @@ class MenuUtils(activity: Activity) {
         }
 
         val channelSortOrder = Integer.valueOf(sharedPreferences.getString("channel_sort_order", activity.resources.getString(R.string.pref_default_channel_sort_order))!!)
-        MaterialDialog.Builder(activity)
-                .title(R.string.select_dvr_config)
-                .items(*activity.resources.getStringArray(R.array.pref_sort_channels_names))
-                .itemsIds(activity.resources.getIntArray(R.array.pref_sort_channels_ids))
-                .itemsCallbackSingleChoice(channelSortOrder) { _, _, which, _ ->
-
-                    Timber.d("New selected channel sort order changed from $channelSortOrder to $which")
-                    val editor = sharedPreferences.edit()
-                    editor.putString("channel_sort_order", which.toString())
-                    editor.apply()
-
-                    callback.onChannelSortOrderSelected(which)
-                    true
-                }
-                .show()
+        MaterialDialog(activity).show {
+            title(R.string.select_dvr_config)
+            listItemsSingleChoice(R.array.pref_sort_channels_names, initialSelection = channelSortOrder) { _, index, _ ->
+                Timber.d("New selected channel sort order changed from $channelSortOrder to $index")
+                val editor = sharedPreferences.edit()
+                editor.putString("channel_sort_order", index.toString())
+                editor.apply()
+                callback.onChannelSortOrderSelected(index)
+            }
+        }
         return false
     }
 
@@ -155,19 +146,18 @@ class MenuUtils(activity: Activity) {
         }
         Timber.d("Stopping recording ${recording.title}")
         // Show a confirmation dialog before stopping the recording
-        MaterialDialog.Builder(activity)
-                .title(R.string.record_stop)
-                .content(activity.getString(R.string.stop_recording, recording.title))
-                .negativeText(R.string.cancel)
-                .positiveText(R.string.stop)
-                .onPositive { _, _ ->
-                    val intent = Intent(activity, HtspService::class.java)
-                    intent.action = "stopDvrEntry"
-                    intent.putExtra("id", recording.id)
-                    activity.startService(intent)
-                    callback?.onRecordingRemoved()
-                }
-                .show()
+        MaterialDialog(activity).show {
+            title(R.string.record_stop)
+            message(text = activity.getString(R.string.stop_recording, recording.title))
+            negativeButton(R.string.cancel)
+            positiveButton(R.string.stop) {
+                val intent = Intent(activity, HtspService::class.java)
+                intent.action = "stopDvrEntry"
+                intent.putExtra("id", recording.id)
+                activity.startService(intent)
+                callback?.onRecordingRemoved()
+            }
+        }
         return true
     }
 
@@ -179,19 +169,18 @@ class MenuUtils(activity: Activity) {
         }
         Timber.d("Removing recording ${recording.title}")
         // Show a confirmation dialog before removing the recording
-        MaterialDialog.Builder(activity)
-                .title(R.string.record_remove)
-                .content(activity.getString(R.string.remove_recording, recording.title))
-                .negativeText(R.string.cancel)
-                .positiveText(R.string.remove)
-                .onPositive { _, _ ->
-                    val intent = Intent(activity, HtspService::class.java)
-                    intent.action = "deleteDvrEntry"
-                    intent.putExtra("id", recording.id)
-                    activity.startService(intent)
-                    callback?.onRecordingRemoved()
-                }
-                .show()
+        MaterialDialog(activity).show {
+            title(R.string.record_remove)
+            message(text = activity.getString(R.string.remove_recording, recording.title))
+            negativeButton(R.string.cancel)
+            positiveButton(R.string.remove) {
+                val intent = Intent(activity, HtspService::class.java)
+                intent.action = "deleteDvrEntry"
+                intent.putExtra("id", recording.id)
+                activity.startService(intent)
+                callback?.onRecordingRemoved()
+            }
+        }
         return true
     }
 
@@ -203,19 +192,18 @@ class MenuUtils(activity: Activity) {
         }
         Timber.d("Cancelling recording ${recording.title}")
         // Show a confirmation dialog before cancelling the recording
-        MaterialDialog.Builder(activity)
-                .title(R.string.record_remove)
-                .content(activity.getString(R.string.cancel_recording, recording.title))
-                .negativeText(R.string.cancel)
-                .positiveText(R.string.remove)
-                .onPositive { _, _ ->
-                    val intent = Intent(activity, HtspService::class.java)
-                    intent.action = "cancelDvrEntry"
-                    intent.putExtra("id", recording.id)
-                    activity.startService(intent)
-                    callback?.onRecordingRemoved()
-                }
-                .show()
+        MaterialDialog(activity).show {
+            title(R.string.record_remove)
+            message(text = activity.getString(R.string.cancel_recording, recording.title))
+            negativeButton(R.string.cancel)
+            positiveButton(R.string.remove) {
+                val intent = Intent(activity, HtspService::class.java)
+                intent.action = "cancelDvrEntry"
+                intent.putExtra("id", recording.id)
+                activity.startService(intent)
+                callback?.onRecordingRemoved()
+            }
+        }
         return true
     }
 
@@ -227,19 +215,18 @@ class MenuUtils(activity: Activity) {
         }
         Timber.d("Removing series recording ${recording.title}")
         // Show a confirmation dialog before removing the recording
-        MaterialDialog.Builder(activity)
-                .title(R.string.record_remove)
-                .content(activity.getString(R.string.remove_series_recording, recording.title))
-                .negativeText(R.string.cancel)
-                .positiveText(R.string.remove)
-                .onPositive { _, _ ->
-                    val intent = Intent(activity, HtspService::class.java)
-                    intent.action = "deleteAutorecEntry"
-                    intent.putExtra("id", recording.id)
-                    activity.startService(intent)
-                    callback?.onRecordingRemoved()
-                }
-                .show()
+        MaterialDialog(activity).show {
+            title(R.string.record_remove)
+            message(text = activity.getString(R.string.remove_series_recording, recording.title))
+            negativeButton(R.string.cancel)
+            positiveButton(R.string.remove) {
+                val intent = Intent(activity, HtspService::class.java)
+                intent.action = "deleteAutorecEntry"
+                intent.putExtra("id", recording.id)
+                activity.startService(intent)
+                callback?.onRecordingRemoved()
+            }
+        }
         return true
     }
 
@@ -256,19 +243,18 @@ class MenuUtils(activity: Activity) {
         Timber.d("Removing timer recording $displayTitle")
 
         // Show a confirmation dialog before removing the recording
-        MaterialDialog.Builder(activity)
-                .title(R.string.record_remove)
-                .content(activity.getString(R.string.remove_timer_recording, displayTitle))
-                .negativeText(R.string.cancel)
-                .positiveText(R.string.remove)
-                .onPositive { _, _ ->
-                    val intent = Intent(activity, HtspService::class.java)
-                    intent.action = "deleteTimerecEntry"
-                    intent.putExtra("id", recording.id)
-                    activity.startService(intent)
-                    callback?.onRecordingRemoved()
-                }
-                .show()
+        MaterialDialog(activity).show {
+            title(R.string.record_remove)
+            message(text = activity.getString(R.string.remove_timer_recording, displayTitle))
+            negativeButton(R.string.cancel)
+            positiveButton(R.string.remove) {
+                val intent = Intent(activity, HtspService::class.java)
+                intent.action = "deleteTimerecEntry"
+                intent.putExtra("id", recording.id)
+                activity.startService(intent)
+                callback?.onRecordingRemoved()
+            }
+        }
         return true
     }
 
@@ -278,33 +264,33 @@ class MenuUtils(activity: Activity) {
             Timber.d("Weak reference to activity is null")
             return false
         }
-        MaterialDialog.Builder(activity)
-                .title(R.string.record_remove_all)
-                .content(R.string.confirm_remove_all)
-                .positiveText(activity.getString(R.string.remove))
-                .negativeText(activity.getString(R.string.cancel))
-                .onPositive { _, _ ->
-                    object : Thread() {
-                        override fun run() {
-                            for (item in items) {
-                                val intent = Intent(activity, HtspService::class.java)
-                                intent.putExtra("id", item.id)
-                                if (item.isRecording || item.isScheduled) {
-                                    intent.action = "cancelDvrEntry"
-                                } else {
-                                    intent.action = "deleteDvrEntry"
-                                }
-                                activity.startService(intent)
-                                try {
-                                    sleep(500)
-                                } catch (e: InterruptedException) {
-                                    // NOP
-                                }
-
+        MaterialDialog(activity).show {
+            title(R.string.record_remove_all)
+            message(R.string.confirm_remove_all)
+            negativeButton(R.string.cancel)
+            positiveButton(R.string.remove) {
+                object : Thread() {
+                    override fun run() {
+                        for (item in items) {
+                            val intent = Intent(activity, HtspService::class.java)
+                            intent.putExtra("id", item.id)
+                            if (item.isRecording || item.isScheduled) {
+                                intent.action = "cancelDvrEntry"
+                            } else {
+                                intent.action = "deleteDvrEntry"
                             }
+                            activity.startService(intent)
+                            try {
+                                sleep(500)
+                            } catch (e: InterruptedException) {
+                                // NOP
+                            }
+
                         }
-                    }.start()
-                }.show()
+                    }
+                }.start()
+            }
+        }
         return true
     }
 
@@ -314,29 +300,29 @@ class MenuUtils(activity: Activity) {
             Timber.d("Weak reference to activity is null")
             return false
         }
-        MaterialDialog.Builder(activity)
-                .title(R.string.record_remove_all)
-                .content(R.string.remove_all_recordings)
-                .positiveText(activity.getString(R.string.remove))
-                .negativeText(activity.getString(R.string.cancel))
-                .onPositive { _, _ ->
-                    object : Thread() {
-                        override fun run() {
-                            for ((id) in items) {
-                                val intent = Intent(activity, HtspService::class.java)
-                                intent.action = "deleteAutorecEntry"
-                                intent.putExtra("id", id)
-                                activity.startService(intent)
-                                try {
-                                    sleep(500)
-                                } catch (e: InterruptedException) {
-                                    // NOP
-                                }
-
+        MaterialDialog(activity).show {
+            title(R.string.record_remove_all)
+            message(R.string.remove_all_recordings)
+            negativeButton(R.string.cancel)
+            positiveButton(R.string.remove) {
+                object : Thread() {
+                    override fun run() {
+                        for ((id) in items) {
+                            val intent = Intent(activity, HtspService::class.java)
+                            intent.action = "deleteAutorecEntry"
+                            intent.putExtra("id", id)
+                            activity.startService(intent)
+                            try {
+                                sleep(500)
+                            } catch (e: InterruptedException) {
+                                // NOP
                             }
+
                         }
-                    }.start()
-                }.show()
+                    }
+                }.start()
+            }
+        }
         return true
     }
 
@@ -346,29 +332,30 @@ class MenuUtils(activity: Activity) {
             Timber.d("Weak reference to activity is null")
             return false
         }
-        MaterialDialog.Builder(activity)
-                .title(R.string.record_remove_all)
-                .content(R.string.remove_all_recordings)
-                .positiveText(activity.getString(R.string.remove))
-                .negativeText(activity.getString(R.string.cancel))
-                .onPositive { _, _ ->
-                    object : Thread() {
-                        override fun run() {
-                            for ((id) in items) {
-                                val intent = Intent(activity, HtspService::class.java)
-                                intent.action = "deleteTimerecEntry"
-                                intent.putExtra("id", id)
-                                activity.startService(intent)
-                                try {
-                                    sleep(500)
-                                } catch (e: InterruptedException) {
-                                    // NOP
-                                }
 
+        MaterialDialog(activity).show {
+            title(R.string.record_remove_all)
+            message(R.string.remove_all_recordings)
+            negativeButton(R.string.cancel)
+            positiveButton(R.string.remove) {
+                object : Thread() {
+                    override fun run() {
+                        for ((id) in items) {
+                            val intent = Intent(activity, HtspService::class.java)
+                            intent.action = "deleteTimerecEntry"
+                            intent.putExtra("id", id)
+                            activity.startService(intent)
+                            try {
+                                sleep(500)
+                            } catch (e: InterruptedException) {
+                                // NOP
                             }
+
                         }
-                    }.start()
-                }.show()
+                    }
+                }.start()
+            }
+        }
         return true
     }
 
@@ -395,20 +382,17 @@ class MenuUtils(activity: Activity) {
             }
         }
         // Create the dialog to show the available profiles
-        MaterialDialog.Builder(activity)
-                .title(R.string.select_dvr_config)
-                .items(*dvrConfigList)
-                .itemsCallbackSingleChoice(dvrConfigNameValue) { _, _, which, _ ->
-                    // Pass over the
-                    val intent = Intent(activity, HtspService::class.java)
-                    intent.action = "addDvrEntry"
-                    intent.putExtra("eventId", eventId)
-                    intent.putExtra("channelId", channelId)
-                    intent.putExtra("configName", dvrConfigList[which])
-                    activity.startService(intent)
-                    true
-                }
-                .show()
+        MaterialDialog(activity).show {
+            title(R.string.select_dvr_config)
+            listItemsSingleChoice(items = dvrConfigList.toList(), initialSelection = dvrConfigNameValue) { _, index, _ ->
+                val intent = Intent(activity, HtspService::class.java)
+                intent.action = "addDvrEntry"
+                intent.putExtra("eventId", eventId)
+                intent.putExtra("channelId", channelId)
+                intent.putExtra("configName", dvrConfigList[index])
+                activity.startService(intent)
+            }
+        }
         return true
     }
 
@@ -419,33 +403,32 @@ class MenuUtils(activity: Activity) {
             return false
         }
 
-        MaterialDialog.Builder(activity)
-                .title(R.string.dialog_title_reconnect_to_server)
-                .content(R.string.dialog_content_reconnect_to_server)
-                .negativeText(R.string.cancel)
-                .positiveText(R.string.reconnect)
-                .onPositive { _, _ ->
-                    Timber.d("Reconnect requested, stopping service and updating active connection to require a full sync")
-                    activity.stopService(Intent(activity, HtspService::class.java))
+        MaterialDialog(activity).show {
+            title(R.string.dialog_title_reconnect_to_server)
+            message(R.string.dialog_content_reconnect_to_server)
+            negativeButton(R.string.cancel)
+            positiveButton(R.string.reconnect) {
+                Timber.d("Reconnect requested, stopping service and updating active connection to require a full sync")
+                activity.stopService(Intent(activity, HtspService::class.java))
 
-                    if (connection != null) {
-                        Timber.d("Updating active connection to request a full sync")
-                        connection.isSyncRequired = true
-                        connection.lastUpdate = 0
-                        appRepository.connectionData.updateItem(connection)
-                    } else {
-                        val msg = "Reconnect requested, trying to get active connection from database returned no entry"
-                        Timber.e(msg)
-                        if (Fabric.isInitialized()) {
-                            Crashlytics.logException(Exception(msg))
-                        }
+                if (connection != null) {
+                    Timber.d("Updating active connection to request a full sync")
+                    connection.isSyncRequired = true
+                    connection.lastUpdate = 0
+                    appRepository.connectionData.updateItem(connection)
+                } else {
+                    val msg = "Reconnect requested, trying to get active connection from database returned no entry"
+                    Timber.e(msg)
+                    if (Fabric.isInitialized()) {
+                        Crashlytics.logException(Exception(msg))
                     }
-                    // Finally restart the application to show the startup fragment
-                    val intent = Intent(activity, SplashActivity::class.java)
-                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                    activity.startActivity(intent)
                 }
-                .show()
+                // Finally restart the application to show the startup fragment
+                val intent = Intent(activity, SplashActivity::class.java)
+                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                activity.startActivity(intent)
+            }
+        }
         return true
     }
 

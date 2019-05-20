@@ -210,13 +210,11 @@ class TimerRecordingAddEditFragment : BaseFragment(), BackPressedInterface, Reco
     private fun cancel() {
         // Show confirmation dialog to cancel
         context?.let {
-            MaterialDialog.Builder(it)
-                    .content(R.string.cancel_add_recording)
-                    .positiveText(getString(R.string.discard))
-                    .negativeText(getString(R.string.cancel))
-                    .onPositive { _, _ -> activity?.finish() }
-                    .onNegative { dialog, _ -> dialog.cancel() }
-                    .show()
+            MaterialDialog(it).show {
+                message(R.string.cancel_add_recording)
+                positiveButton(R.string.discard) { activity?.finish() }
+                negativeButton(R.string.cancel) { cancel() }
+            }
         }
     }
 

@@ -66,44 +66,43 @@ class UnlockerFragment : WebViewFragment(), HtmlFileLoaderTask.Listener, Billing
     private fun showPurchaseNotSuccessfulDialog() {
         Timber.d("Unlocker purchase not successful")
         context?.let {
-            MaterialDialog.Builder(it)
-                    .title(R.string.dialog_title_purchase_not_successful)
-                    .content(R.string.dialog_content_purchase_not_successful)
-                    .canceledOnTouchOutside(false)
-                    .positiveText(android.R.string.ok)
-                    .onPositive { dialog, _ -> dialog.dismiss() }
-                    .show()
+            MaterialDialog(it).show {
+                title(R.string.dialog_title_purchase_not_successful)
+                message(R.string.dialog_content_purchase_not_successful)
+                cancelOnTouchOutside(false)
+                positiveButton(android.R.string.ok) { dismiss() }
+            }
         }
     }
 
     private fun showPurchaseSuccessfulDialog() {
         Timber.d("Unlocker purchase successful")
         context?.let {
-            MaterialDialog.Builder(it)
-                    .title(R.string.dialog_title_purchase_successful)
-                    .content(R.string.dialog_content_purchase_successful)
-                    .canceledOnTouchOutside(false)
-                    .positiveText(R.string.dialog_button_restart)
-                    .onPositive { _, _ ->
-                        // Restart the app so that the unlocker will be activated
-                        val intent = Intent(activity, SplashActivity::class.java)
-                        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                        activity?.startActivity(intent)
-                    }
-                    .show()
+            MaterialDialog(it).show {
+                title(R.string.dialog_title_purchase_successful)
+                message(R.string.dialog_content_purchase_successful)
+                cancelOnTouchOutside(false)
+                positiveButton(R.string.dialog_button_restart) {
+                    // Restart the app so that the unlocker will be activated
+                    val intent = Intent(activity, SplashActivity::class.java)
+                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                    activity?.startActivity(intent)
+                }
+            }
         }
     }
 
     private fun showPurchasedAlreadyMadeDialog() {
         Timber.d("Unlocker already purchased")
         context?.let {
-            MaterialDialog.Builder(it)
-                    .title(R.string.dialog_title_purchase_already_made)
-                    .content(R.string.dialog_content_purchase_already_made)
-                    .canceledOnTouchOutside(false)
-                    .positiveText(android.R.string.ok)
-                    .onPositive { dialog, _ -> dialog.dismiss() }
-                    .show()
+            MaterialDialog(it).show {
+                title(R.string.dialog_title_purchase_already_made)
+                message(R.string.dialog_content_purchase_already_made)
+                cancelOnTouchOutside(false)
+                positiveButton(android.R.string.ok) {
+                    dismiss()
+                }
+            }
         }
     }
 

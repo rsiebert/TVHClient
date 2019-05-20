@@ -5,16 +5,14 @@ import android.content.IntentFilter
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import com.afollestad.materialdialogs.folderselector.FolderChooserDialog
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.ui.base.BaseActivity
-import org.tvheadend.tvhclient.ui.common.callbacks.BackPressedInterface
 import org.tvheadend.tvhclient.ui.common.SnackbarMessageReceiver
+import org.tvheadend.tvhclient.ui.common.callbacks.BackPressedInterface
 import org.tvheadend.tvhclient.util.getThemeId
 import timber.log.Timber
-import java.io.File
 
-class SettingsActivity : BaseActivity(), FolderChooserDialog.FolderCallback {
+class SettingsActivity : BaseActivity() {
 
     private val snackbarMessageReceiver: SnackbarMessageReceiver = SnackbarMessageReceiver(this)
 
@@ -83,16 +81,5 @@ class SettingsActivity : BaseActivity(), FolderChooserDialog.FolderCallback {
             Timber.d("Calling back press of super")
             super.onBackPressed()
         }
-    }
-
-    override fun onFolderSelection(dialog: FolderChooserDialog, folder: File) {
-        val fragment = supportFragmentManager.findFragmentById(R.id.main)
-        if (fragment is FolderChooserDialogCallback && fragment.isAdded) {
-            fragment.onFolderSelected(folder)
-        }
-    }
-
-    override fun onFolderChooserDismissed(dialog: FolderChooserDialog) {
-        // NOP
     }
 }

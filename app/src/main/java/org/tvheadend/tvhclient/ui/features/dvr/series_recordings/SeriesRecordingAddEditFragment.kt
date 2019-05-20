@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.*
 import androidx.lifecycle.ViewModelProviders
 import com.afollestad.materialdialogs.MaterialDialog
+import com.afollestad.materialdialogs.list.listItemsSingleChoice
 import kotlinx.android.synthetic.main.series_recording_add_edit_fragment.*
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.data.service.HtspService
@@ -111,7 +112,8 @@ class SeriesRecordingAddEditFragment : BaseFragment(), BackPressedInterface, Rec
         directory.visibleOrGone(htspVersion >= 19)
         directory.setText(seriesRecordingViewModel.recording.directory)
 
-        channel_name.text = seriesRecordingViewModel.recording.channelName ?: getString(R.string.all_channels)
+        channel_name.text = seriesRecordingViewModel.recording.channelName
+                ?: getString(R.string.all_channels)
         channel_name.setOnClickListener {
             // Determine if the server supports recording on all channels
             val allowRecordingOnAllChannels = htspVersion >= 21
@@ -277,13 +279,11 @@ class SeriesRecordingAddEditFragment : BaseFragment(), BackPressedInterface, Rec
      */
     private fun cancel() {
         context?.let {
-            MaterialDialog.Builder(it)
-                    .content(R.string.cancel_add_recording)
-                    .positiveText(getString(R.string.discard))
-                    .negativeText(getString(R.string.cancel))
-                    .onPositive { _, _ -> activity?.finish() }
-                    .onNegative { dialog, _ -> dialog.cancel() }
-                    .show()
+            MaterialDialog(it).show {
+                message(R.string.cancel_add_recording)
+                positiveButton(R.string.discard) { activity?.finish() }
+                negativeButton(R.string.cancel) { cancel() }
+            }
         }
     }
 
@@ -341,14 +341,12 @@ class SeriesRecordingAddEditFragment : BaseFragment(), BackPressedInterface, Rec
 
     private fun handleDuplicateDetectionSelection(duplicateDetectionList: Array<String>, duplicateDetectionId: Int) {
         context?.let {
-            MaterialDialog.Builder(it)
-                    .title(R.string.select_duplicate_detection)
-                    .items(*duplicateDetectionList)
-                    .itemsCallbackSingleChoice(duplicateDetectionId) { _, _, which, _ ->
-                        onDuplicateDetectionValueSelected(which)
-                        true
-                    }
-                    .show()
+            MaterialDialog(it).show() {
+                title(R.string.select_duplicate_detection)
+                listItemsSingleChoice(items = duplicateDetectionList.toList(), initialSelection = duplicateDetectionId) { _, index, _ ->
+                    onDuplicateDetectionValueSelected(index)
+                }
+            }
         }
     }
 

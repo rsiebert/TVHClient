@@ -15,6 +15,7 @@ import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequest
 import androidx.work.WorkManager
 import com.afollestad.materialdialogs.MaterialDialog
+import com.afollestad.materialdialogs.list.listItemsSingleChoice
 import com.squareup.picasso.Picasso
 import org.tvheadend.tvhclient.BuildConfig
 import org.tvheadend.tvhclient.R
@@ -117,19 +118,17 @@ class SettingsAdvancedFragment : BasePreferenceFragment(), Preference.OnPreferen
 
     private fun handlePreferenceClearDatabaseSelected() {
         context?.let {
-            MaterialDialog.Builder(it)
-                    .title(R.string.dialog_title_clear_database)
-                    .content(R.string.dialog_content_reconnect_to_server)
-                    .positiveText(R.string.clear)
-                    .negativeText(R.string.cancel)
-                    .onPositive { dialog, _ ->
-                        Timber.d("Clear database requested")
-                        settingsViewModel.setSyncRequiredForActiveConnection()
-                        settingsViewModel.clearDatabase(this@SettingsAdvancedFragment)
-                        dialog.dismiss()
-                    }
-                    .onNegative { dialog, _ -> dialog.dismiss() }
-                    .show()
+            MaterialDialog(it).show {
+                title(R.string.dialog_title_clear_database)
+                message(R.string.dialog_content_reconnect_to_server)
+                positiveButton(R.string.clear) {
+                    Timber.d("Clear database requested")
+                    settingsViewModel.setSyncRequiredForActiveConnection()
+                    settingsViewModel.clearDatabase(this@SettingsAdvancedFragment)
+                    dismiss()
+                }
+                negativeButton(R.string.cancel) { dismiss() }
+            }
         }
     }
 
@@ -157,26 +156,23 @@ class SettingsAdvancedFragment : BasePreferenceFragment(), Preference.OnPreferen
             val logPath = File(it.cacheDir, "logs")
             val files = logPath.listFiles()
             if (files == null) {
-
-                MaterialDialog.Builder(it)
-                        .title(R.string.select_log_file)
-                        .onPositive { dialog, _ -> dialog.dismiss() }
-                        .show()
+                MaterialDialog(it).show {
+                    title(R.string.select_log_file)
+                    positiveButton(android.R.string.ok) { dismiss() }
+                }
             } else {
                 // Fill the items for the dialog
-                val logfileList = arrayOfNulls<String>(files.size)
+                val logfileList = ArrayList<String>()
                 for (i in files.indices) {
-                    logfileList[i] = files[i].name
+                    logfileList.add(files[i].name)
                 }
                 // Show the dialog with the list of log files
-                MaterialDialog.Builder(it)
-                        .title(R.string.select_log_file)
-                        .items(*logfileList)
-                        .itemsCallbackSingleChoice(-1) { _, _, which, _ ->
-                            mailLogfile(logfileList[which])
-                            true
-                        }
-                        .show()
+                MaterialDialog(it).show {
+                    title(R.string.select_log_file)
+                    listItemsSingleChoice(items = logfileList, initialSelection = -1) { _, index, _ ->
+                        mailLogfile(logfileList[index])
+                    }
+                }
             }
         }
     }
@@ -254,50 +250,51 @@ class SettingsAdvancedFragment : BasePreferenceFragment(), Preference.OnPreferen
 
     private fun handlePreferenceClearSearchHistorySelected() {
         context?.let {
-            MaterialDialog.Builder(it)
-                    .title(R.string.clear_search_history)
-                    .content(R.string.clear_search_history_sum)
-                    .positiveText(getString(R.string.delete))
-                    .negativeText(getString(R.string.cancel))
-                    .onPositive { _, _ ->
-                        val suggestions = SearchRecentSuggestions(activity, SuggestionProvider.AUTHORITY, SuggestionProvider.MODE)
-                        suggestions.clearHistory()
-                        context?.sendSnackbarMessage(R.string.clear_search_history_done)
-                    }.show()
+            MaterialDialog(it).show {
+                title(R.string.clear_search_history)
+                message(R.string.clear_search_history_sum)
+                positiveButton(R.string.delete) {
+                    val suggestions = SearchRecentSuggestions(activity, SuggestionProvider.AUTHORITY, SuggestionProvider.MODE)
+                    suggestions.clearHistory()
+                    context.sendSnackbarMessage(R.string.clear_search_history_done)
+                }
+                negativeButton(R.string.cancel)
+
+            }
         }
     }
 
     private fun handlePreferenceClearIconCacheSelected() {
         context?.let {
-            MaterialDialog.Builder(it)
-                    .title(R.string.clear_icon_cache)
-                    .content(R.string.clear_icon_cache_sum)
-                    .positiveText(getString(R.string.delete))
-                    .negativeText(getString(R.string.cancel))
-                    .onPositive { _, _ ->
-                        // Delete all channel icon files that were downloaded for the active
-                        // connection. Additionally remove the icons from the Picasso cache
-                        Timber.d("Deleting channel icons and invalidating cache")
-                        for (channel in settingsViewModel.getChannelList()) {
-                            if (channel.icon.isNullOrEmpty()) {
-                                continue
-                            }
-                            val url = getIconUrl(it, channel.icon)
-                            val file = File(url)
-                            if (file.exists()) {
-                                if (!file.delete()) {
-                                    Timber.d("Could not delete channel icon ${file.name}")
-                                }
-                            }
-                            Picasso.get().invalidate(file)
+            MaterialDialog(it).show {
+                title(R.string.clear_icon_cache)
+                        .message(R.string.clear_icon_cache_sum)
+                positiveButton(R.string.delete) { _ ->
+                    // Delete all channel icon files that were downloaded for the active
+                    // connection. Additionally remove the icons from the Picasso cache
+                    Timber.d("Deleting channel icons and invalidating cache")
+                    for (channel in settingsViewModel.getChannelList()) {
+                        if (channel.icon.isNullOrEmpty()) {
+                            continue
                         }
-                        context?.sendSnackbarMessage(R.string.clear_icon_cache_done)
+                        val url = getIconUrl(it, channel.icon)
+                        val file = File(url)
+                        if (file.exists()) {
+                            if (!file.delete()) {
+                                Timber.d("Could not delete channel icon ${file.name}")
+                            }
+                        }
+                        Picasso.get().invalidate(file)
+                    }
+                    context.sendSnackbarMessage(R.string.clear_icon_cache_done)
 
-                        Timber.d("Starting background worker to reload channel icons")
-                        val loadChannelIcons = OneTimeWorkRequest.Builder(LoadChannelIconWorker::class.java).build()
-                        WorkManager.getInstance().enqueueUniqueWork("LoadChannelIcons", ExistingWorkPolicy.REPLACE, loadChannelIcons)
+                    Timber.d("Starting background worker to reload channel icons")
+                    val loadChannelIcons = OneTimeWorkRequest.Builder(LoadChannelIconWorker::class.java).build()
+                    WorkManager.getInstance().enqueueUniqueWork("LoadChannelIcons", ExistingWorkPolicy.REPLACE, loadChannelIcons)
 
-                    }.show()
+                }
+                negativeButton(R.string.cancel)
+            }
         }
     }
 }

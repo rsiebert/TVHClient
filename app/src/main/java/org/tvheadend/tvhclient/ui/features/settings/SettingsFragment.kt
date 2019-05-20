@@ -13,16 +13,18 @@ import androidx.core.app.TaskStackBuilder
 import androidx.fragment.app.FragmentActivity
 import androidx.preference.Preference
 import androidx.preference.PreferenceManager
-import com.afollestad.materialdialogs.folderselector.FolderChooserDialog
+import com.afollestad.materialdialogs.MaterialDialog
+import com.afollestad.materialdialogs.files.folderChooser
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.ui.common.sendSnackbarMessage
 import org.tvheadend.tvhclient.ui.features.MainActivity
 import org.tvheadend.tvhclient.ui.features.changelog.ChangeLogActivity
 import org.tvheadend.tvhclient.ui.features.information.WebViewActivity
 import org.tvheadend.tvhclient.ui.features.unlocker.UnlockerActivity
+import timber.log.Timber
 import java.io.File
 
-class SettingsFragment : BasePreferenceFragment(), Preference.OnPreferenceClickListener, SharedPreferences.OnSharedPreferenceChangeListener, ActivityCompat.OnRequestPermissionsResultCallback, FolderChooserDialogCallback {
+class SettingsFragment : BasePreferenceFragment(), Preference.OnPreferenceClickListener, SharedPreferences.OnSharedPreferenceChangeListener, ActivityCompat.OnRequestPermissionsResultCallback {
 
     private var downloadDirectoryPreference: Preference? = null
 
@@ -78,7 +80,11 @@ class SettingsFragment : BasePreferenceFragment(), Preference.OnPreferenceClickL
                 // Get the parent activity that implements the callback
                 activity?.let {
                     // Show the folder chooser dialog which defaults to the external storage dir
-                    FolderChooserDialog.Builder(it).show(it)
+                    MaterialDialog(it).show {
+                        folderChooser { _, file ->
+                            onFolderSelected(file)
+                        }
+                    }
                 }
             }, 200)
         }
@@ -176,14 +182,19 @@ class SettingsFragment : BasePreferenceFragment(), Preference.OnPreferenceClickL
             activity?.let {
                 if (isReadPermissionGranted(it)) {
                     // Get the parent activity that implements the callback
-                    FolderChooserDialog.Builder(it).show(it)
+                    MaterialDialog(it).show {
+                        folderChooser { _, file ->
+                            onFolderSelected(file)
+                        }
+                    }
                 }
             }
         }
     }
 
-    override fun onFolderSelected(folder: File) {
-        val strippedPath = folder.absolutePath.replace(Environment.getExternalStorageDirectory().absolutePath, "")
+    private fun onFolderSelected(file: File) {
+        Timber.d("Folder ${file.name} was selected")
+        val strippedPath = file.absolutePath.replace(Environment.getExternalStorageDirectory().absolutePath, "")
         val prefs = PreferenceManager.getDefaultSharedPreferences(activity)
         prefs.edit().putString("download_directory", strippedPath).apply()
 

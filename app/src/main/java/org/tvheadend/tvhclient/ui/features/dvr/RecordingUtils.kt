@@ -7,6 +7,9 @@ import android.os.Bundle
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import com.afollestad.materialdialogs.MaterialDialog
+import com.afollestad.materialdialogs.list.customListAdapter
+import com.afollestad.materialdialogs.list.listItemsMultiChoice
+import com.afollestad.materialdialogs.list.listItemsSingleChoice
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.domain.entity.Channel
 import org.tvheadend.tvhclient.domain.entity.ServerProfile
@@ -62,19 +65,17 @@ fun handleDayOfWeekSelection(context: Context, daysOfWeek: Int, callback: Record
     for (i in selectedIndices.indices) {
         selectedIndices[i] = list[i]
     }
-    MaterialDialog.Builder(context)
-            .title(R.string.days_of_week)
-            .items(R.array.day_long_names)
-            .itemsCallbackMultiChoice(selectedIndices) { _, which, _ ->
-                var selectedDays = 0
-                for (i in which) {
-                    selectedDays += 1 shl i!!
-                }
-                callback?.onDaysSelected(selectedDays)
-                true
+    MaterialDialog(context).show {
+        title(R.string.days_of_week)
+        positiveButton(R.string.select)
+        listItemsMultiChoice(R.array.day_long_names) { _, index, _ ->
+            var selectedDays = 0
+            for (i in index) {
+                selectedDays += 1 shl i
             }
-            .positiveText(R.string.select)
-            .show()
+            callback?.onDaysSelected(selectedDays)
+        }
+    }
 }
 
 fun handleChannelListSelection(context: Context, channelList: List<Channel>, showAllChannelsListEntry: Boolean, callback: RecordingConfigSelectedListener?) {
@@ -93,48 +94,39 @@ fun handleChannelListSelection(context: Context, channelList: List<Channel>, sho
     val channelListSelectionAdapter = ChannelListSelectionAdapter(context, channels)
     // Show the dialog that shows all available channel tags. When the
     // user has selected a tag, restart the loader to loadRecordingById the updated channel list
-    val dialog = MaterialDialog.Builder(context)
-            .title(R.string.tags)
-            .adapter(channelListSelectionAdapter, null)
-            .build()
+    val dialog: MaterialDialog = MaterialDialog(context).show {
+        title(R.string.tags)
+        customListAdapter(channelListSelectionAdapter)
+    }
 
     // Set the callback to handle clicks. This needs to be done after the
     // dialog creation so that the inner method has access to the dialog variable
     channelListSelectionAdapter.setCallback(object : ChannelListSelectionAdapter.Callback {
         override fun onItemClicked(channel: Channel) {
             callback?.onChannelSelected(channel)
-            dialog?.dismiss()
+            dialog.dismiss()
         }
     })
-
-    dialog!!.show()
 }
 
 fun handlePrioritySelection(context: Context, selectedPriority: Int, callback: RecordingConfigSelectedListener?) {
     Timber.d("Selected priority is ${if (selectedPriority == 6) 5 else selectedPriority}")
-    val priorityNames = context.resources.getStringArray(R.array.dvr_priority_names)
-    MaterialDialog.Builder(context)
-            .title(R.string.select_priority)
-            .items(*priorityNames)
-            .itemsCallbackSingleChoice(if (selectedPriority == 6) 5 else selectedPriority) { _, _, which, _ ->
-                if (callback != null) {
-                    Timber.d("New selected priority is ${if (which == 5) 6 else which}")
-                    callback.onPrioritySelected(if (which == 5) 6 else which)
-                }
-                true
-            }
-            .show()
+    MaterialDialog(context).show {
+        title(R.string.select_priority)
+        listItemsSingleChoice(R.array.dvr_priority_names, initialSelection = if (selectedPriority == 6) 5 else selectedPriority) { _, index, _ ->
+            Timber.d("New selected priority is ${if (index == 5) 6 else index}")
+            callback?.onPrioritySelected(if (index == 5) 6 else index)
+        }
+    }
 }
 
 fun handleRecordingProfileSelection(context: Context, recordingProfilesList: Array<String>, selectedProfile: Int, callback: RecordingConfigSelectedListener?) {
-    MaterialDialog.Builder(context)
-            .title(R.string.select_dvr_config)
-            .items(*recordingProfilesList)
-            .itemsCallbackSingleChoice(selectedProfile) { _, _, which, _ ->
-                callback?.onProfileSelected(which)
-                true
-            }
-            .show()
+    MaterialDialog(context).show {
+        title(R.string.select_dvr_config)
+        listItemsSingleChoice(items = recordingProfilesList.toList(), initialSelection = selectedProfile) { _, index, _ ->
+            callback?.onProfileSelected(index)
+        }
+    }
 }
 
 fun getSelectedProfileId(profile: ServerProfile?, recordingProfilesList: Array<String>): Int {

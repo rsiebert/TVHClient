@@ -20,6 +20,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.preference.PreferenceManager
 import com.afollestad.materialdialogs.MaterialDialog
+import com.afollestad.materialdialogs.list.listItemsSingleChoice
 import com.google.android.exoplayer2.C
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.ui.PlayerControlView
@@ -226,6 +227,7 @@ class PlaybackActivity : AppCompatActivity(), PlayerControlView.VisibilityListen
     }
 
     override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
         Timber.d("New intent")
         setIntent(intent)
 
@@ -373,15 +375,13 @@ class PlaybackActivity : AppCompatActivity(), PlayerControlView.VisibilityListen
 
     private fun onChangeAspectRatioSelected() {
         Timber.d("Change aspect ratio button selected")
-        MaterialDialog.Builder(this)
-                .title("Select the video aspect ratio")
-                .items(videoAspectRatioNameList)
-                .itemsCallbackSingleChoice(-1) { _, _, which, _ ->
+        MaterialDialog(this).show {
+            title(text = "Select the video aspect ratio")
+                listItemsSingleChoice(items = videoAspectRatioNameList.toList(), initialSelection = -1) { _, which, _ ->
                     Timber.d("Selected aspect ratio index is $which")
                     viewModel.setVideoAspectRatio(videoAspectRatioList[which])
-                    true
                 }
-                .show()
+        }
     }
 
     private fun onMenuFullscreenSelected() {

@@ -4,6 +4,8 @@ import android.content.Context
 import androidx.preference.PreferenceManager
 
 import com.afollestad.materialdialogs.MaterialDialog
+import com.afollestad.materialdialogs.callbacks.onDismiss
+import com.afollestad.materialdialogs.list.customListAdapter
 
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.domain.entity.ChannelTag
@@ -35,19 +37,17 @@ fun showChannelTagSelectionDialog(context: Context, channelTags: MutableList<Cha
 
     // Show the dialog that shows all available channel tags. When the
     // user has selected a tag, restart the loader to loadRecordingById the updated channel list
-    val builder = MaterialDialog.Builder(context)
+    val dialog: MaterialDialog = MaterialDialog(context)
             .title(R.string.tags)
-            .adapter(adapter, null)
+            .customListAdapter(adapter)
 
     if (isMultipleChoice) {
-        builder.content("Select one or more channel tags for a subset of channels. Otherwise all channels will be displayed.")
-                .positiveText(R.string.save)
-                .onPositive { _, _ -> callback.onChannelTagIdsSelected(adapter.selectedTagIds) }
+        dialog.message(text = "Select one or more channel tags for a subset of channels. Otherwise all channels will be displayed.")
+                .positiveButton(R.string.save) { callback.onChannelTagIdsSelected(adapter.selectedTagIds) }
     } else {
-        builder.dismissListener { callback.onChannelTagIdsSelected(adapter.selectedTagIds) }
+        dialog.onDismiss { callback.onChannelTagIdsSelected(adapter.selectedTagIds) }
     }
 
-    val dialog = builder.build()
     adapter.setCallback(dialog)
     dialog.show()
     return true
