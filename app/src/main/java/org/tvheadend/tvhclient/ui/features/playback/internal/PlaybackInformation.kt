@@ -2,8 +2,6 @@ package org.tvheadend.tvhclient.ui.features.playback.internal
 
 import org.tvheadend.tvhclient.domain.entity.Channel
 import org.tvheadend.tvhclient.domain.entity.Recording
-import java.text.SimpleDateFormat
-import java.util.*
 
 class PlaybackInformation {
 
@@ -36,13 +34,28 @@ class PlaybackInformation {
 
     val remainingTime: String
         get() {
-            val sdf = SimpleDateFormat("mm:ss", Locale.US)
-            return sdf.format(stopTime - System.currentTimeMillis())
+            val millis = (stopTime - System.currentTimeMillis())
+            return getTimeString(millis)
         }
 
     val elapsedTime: String
         get() {
-            val sdf = SimpleDateFormat("mm:ss", Locale.US)
-            return sdf.format(System.currentTimeMillis() - startTime)
+            val millis = (System.currentTimeMillis() - startTime)
+            return getTimeString(millis)
         }
+
+    private fun getTimeString(millis: Long): String {
+        val hours = millis / 1000 / 60 / 60
+        val minutes = millis / 1000 / 60 % 60
+        val seconds = millis / 1000 % 60
+
+        val minutesPrefix = if (minutes < 10) "0" else ""
+        val secondsPrefix = if (seconds < 10) "0" else ""
+
+        return if (hours > 0) {
+            "$hours:$minutesPrefix$minutes:$secondsPrefix$seconds"
+        } else {
+            "$minutesPrefix$minutes:$secondsPrefix$seconds"
+        }
+    }
 }
