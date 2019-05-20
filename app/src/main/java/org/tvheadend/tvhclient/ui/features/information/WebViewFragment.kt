@@ -29,8 +29,9 @@ open class WebViewFragment : BaseFragment(), HtmlFileLoaderTask.Listener {
         super.onActivityCreated(savedInstanceState)
         forceSingleScreenLayout()
 
-        // Make the background transparent to remove flickering. This avoids
-        // seeing the default theme                                                                background color before the stylesheets are loaded.
+        // Make the background transparent to remove flickering.
+        // This avoids seeing the default theme background color
+        // before the stylesheets are loaded.
         webview.setBackgroundColor(Color.argb(0, 0, 0, 0))
         webview.gone()
 
