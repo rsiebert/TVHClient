@@ -8,4 +8,10 @@
         android:id="@+id/menu_record_remove"
         android:icon="?attr/ic_menu_record_remove"
         android:title="@string/remove" />
+    <item
+        android:id="@+id/menu_enable"
+        android:title="@string/enable" />
+    <item
+        android:id="@+id/menu_disable"
+        android:title="@string/disable" />
 </menu>
