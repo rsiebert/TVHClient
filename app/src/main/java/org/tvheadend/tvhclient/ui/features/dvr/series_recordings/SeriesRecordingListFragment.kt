@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.recyclerview_fragment.*
 import org.tvheadend.tvhclient.R
+import org.tvheadend.tvhclient.domain.entity.SeriesRecording
 import org.tvheadend.tvhclient.ui.base.BaseFragment
 import org.tvheadend.tvhclient.ui.common.callbacks.RecyclerViewClickCallback
 import org.tvheadend.tvhclient.ui.common.gone
@@ -167,6 +168,8 @@ class SeriesRecordingListFragment : BaseFragment(), RecyclerViewClickCallback, S
 
         prepareSearchMenu(popupMenu.menu, seriesRecording.title, isNetworkAvailable)
         popupMenu.menu.findItem(R.id.menu_edit)?.isVisible = isUnlocked
+        popupMenu.menu.findItem(R.id.menu_disable)?.isVisible = htspVersion >= 19 && isUnlocked && seriesRecording.isEnabled
+        popupMenu.menu.findItem(R.id.menu_enable)?.isVisible = htspVersion >= 19 && isUnlocked && !seriesRecording.isEnabled
 
         popupMenu.setOnMenuItemClickListener { item ->
             if (onMenuSelected(ctx, item.itemId, seriesRecording.title)) {
@@ -183,10 +186,26 @@ class SeriesRecordingListFragment : BaseFragment(), RecyclerViewClickCallback, S
                 R.id.menu_record_remove -> {
                     return@setOnMenuItemClickListener menuUtils.handleMenuRemoveSeriesRecordingSelection(seriesRecording, null)
                 }
+                R.id.menu_disable -> {
+                    enableSeriesRecording(seriesRecording, false)
+                    return@setOnMenuItemClickListener true
+                }
+                R.id.menu_enable -> {
+                    enableSeriesRecording(seriesRecording, true)
+                    return@setOnMenuItemClickListener true
+                }
                 else -> return@setOnMenuItemClickListener false
             }
         }
         popupMenu.show()
+    }
+
+    private fun enableSeriesRecording(seriesRecording: SeriesRecording, enabled: Boolean) {
+        val intent = seriesRecordingViewModel.getIntentData(seriesRecording)
+        intent.action = "updateAutorecEntry"
+        intent.putExtra("id", seriesRecording.id)
+        intent.putExtra("enabled", if (enabled) 1 else 0)
+        activity?.startService(intent)
     }
 
     override fun onClick(view: View, position: Int) {

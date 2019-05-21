@@ -1,6 +1,5 @@
 package org.tvheadend.tvhclient.ui.features.dvr.series_recordings
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.*
 import androidx.lifecycle.ViewModelProviders
@@ -8,7 +7,6 @@ import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.list.listItemsSingleChoice
 import kotlinx.android.synthetic.main.series_recording_add_edit_fragment.*
 import org.tvheadend.tvhclient.R
-import org.tvheadend.tvhclient.data.service.HtspService
 import org.tvheadend.tvhclient.domain.entity.Channel
 import org.tvheadend.tvhclient.domain.entity.ServerProfile
 import org.tvheadend.tvhclient.ui.base.BaseFragment
@@ -28,49 +26,6 @@ class SeriesRecordingAddEditFragment : BaseFragment(), BackPressedInterface, Rec
     private lateinit var recordingProfilesList: Array<String>
     private lateinit var duplicateDetectionList: Array<String>
     private var profile: ServerProfile? = null
-
-    /**
-     * Returns an intent with the recording data
-     */
-    private val intentData: Intent
-        get() {
-            // TODO get this from the viewmodel
-            val intent = Intent(context, HtspService::class.java)
-            intent.putExtra("title", seriesRecordingViewModel.recording.title)
-            intent.putExtra("name", seriesRecordingViewModel.recording.name)
-            intent.putExtra("directory", seriesRecordingViewModel.recording.directory)
-            intent.putExtra("minDuration", seriesRecordingViewModel.recording.minDuration * 60)
-            intent.putExtra("maxDuration", seriesRecordingViewModel.recording.maxDuration * 60)
-
-            // Assume no start time is specified if 0:00 is selected
-            if (seriesRecordingViewModel.isTimeEnabled) {
-                Timber.d("Intent Recording start time is ${seriesRecordingViewModel.recording.start}")
-                Timber.d("Intent Recording startWindow time is ${seriesRecordingViewModel.recording.startWindow}")
-                intent.putExtra("start", seriesRecordingViewModel.recording.start)
-                intent.putExtra("startWindow", seriesRecordingViewModel.recording.startWindow)
-            } else {
-                intent.putExtra("start", (-1).toLong())
-                intent.putExtra("startWindow", (-1).toLong())
-            }
-            intent.putExtra("startExtra", seriesRecordingViewModel.recording.startExtra)
-            intent.putExtra("stopExtra", seriesRecordingViewModel.recording.stopExtra)
-            intent.putExtra("dupDetect", seriesRecordingViewModel.recording.dupDetect)
-            intent.putExtra("daysOfWeek", seriesRecordingViewModel.recording.daysOfWeek)
-            intent.putExtra("priority", seriesRecordingViewModel.recording.priority)
-            intent.putExtra("enabled", if (seriesRecordingViewModel.recording.isEnabled) 1 else 0)
-
-            if (seriesRecordingViewModel.recording.channelId > 0) {
-                intent.putExtra("channelId", seriesRecordingViewModel.recording.channelId)
-            }
-
-            // Add the recording profile if available and enabled
-            if (isServerProfileEnabled(profile, htspVersion) && dvr_config.text.isNotEmpty()) {
-                // Use the selected profile. If no change was done in the
-                // selection then the default one from the connection setting will be used
-                intent.putExtra("configName", dvr_config.text.toString())
-            }
-            return intent
-        }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.series_recording_add_edit_fragment, container, false)
@@ -261,7 +216,15 @@ class SeriesRecordingAddEditFragment : BaseFragment(), BackPressedInterface, Rec
             seriesRecordingViewModel.recording.maxDuration = seriesRecordingViewModel.recording.minDuration
         }
 
-        val intent = intentData
+        val intent = seriesRecordingViewModel.getIntentData(seriesRecordingViewModel.recording)
+
+        // Add the recording profile if available and enabled
+        if (isServerProfileEnabled(profile, htspVersion) && dvr_config.text.isNotEmpty()) {
+            intent.putExtra("configName", dvr_config.text.toString())
+        }
+
+        // Update the recording in case the id is not empty, otherwise add a new one.
+        // When adding a new recording, the id is an empty string as a default.
         if (seriesRecordingViewModel.recording.id.isNotEmpty()) {
             intent.action = "updateAutorecEntry"
             intent.putExtra("id", seriesRecordingViewModel.recording.id)
@@ -341,7 +304,7 @@ class SeriesRecordingAddEditFragment : BaseFragment(), BackPressedInterface, Rec
 
     private fun handleDuplicateDetectionSelection(duplicateDetectionList: Array<String>, duplicateDetectionId: Int) {
         context?.let {
-            MaterialDialog(it).show() {
+            MaterialDialog(it).show {
                 title(R.string.select_duplicate_detection)
                 listItemsSingleChoice(items = duplicateDetectionList.toList(), initialSelection = duplicateDetectionId) { _, index, _ ->
                     onDuplicateDetectionValueSelected(index)
