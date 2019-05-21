@@ -394,4 +394,6 @@
     <string name="minus" translatable="false">-</string>
     <string name="any">Any</string>
     <string name="authentication_failed">Authentication failed</string>
+    <string name="enable">Enable</string>
+    <string name="disable">Disable</string>
 </resources>

@@ -391,4 +391,6 @@
     <string name="subtitle">Podtitul</string>
     <string name="success_removing_recording">Nahrávání bylo odstraněno.</string>
     <string name="success_adding_recording">Byl přidán záznam.</string>
+    <string name="disable">Deaktivace</string>
+    <string name="enable">Aktivovat</string>
 </resources>

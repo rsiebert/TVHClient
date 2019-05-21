@@ -394,4 +394,6 @@
     <string name="enable_random_adaptation">Zufällige Anpassung aktivieren</string>
     <string name="player_is_loading_more_data">Bitte warten Sie, der Player lädt mehr Daten…</string>
     <string name="receiving_data">Empfange Daten</string>
+    <string name="enable">Aktivieren</string>
+    <string name="disable">Deaktivieren</string>
 </resources>

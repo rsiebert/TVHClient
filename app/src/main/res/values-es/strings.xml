@@ -391,4 +391,6 @@
     <string name="cast_error_no_media_client_available">No se pudo obtener el cliente de medios remoto de la sesión de conversión.</string>
     <string name="audio_settings">Configuraciones de audio</string>
     <string name="any">Alguna</string>
+    <string name="enable">Activar</string>
+    <string name="disable">Desactivar</string>
 </resources>

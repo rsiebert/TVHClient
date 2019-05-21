@@ -394,4 +394,6 @@
     <string name="audio_settings">Ustawienia dźwięku</string>
     <string name="any">Każdy</string>
     <string name="deleting_database_contents">Usuwanie zawartości bazy danych…</string>
+    <string name="enable">Aktywować</string>
+    <string name="disable">Dezaktywować</string>
 </resources>

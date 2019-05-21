@@ -394,4 +394,6 @@
     <string name="cast_error_no_media_client_available">Nem sikerült a távoli média kliens a leadott munkamenetből.</string>
     <string name="audio_settings">Hangbeállítások</string>
     <string name="any">Bármilyen</string>
+    <string name="enable">Aktiválja</string>
+    <string name="disable">Kikapcsolása</string>
 </resources>

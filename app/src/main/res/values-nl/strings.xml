@@ -391,4 +391,6 @@
     <string name="cast_error_no_media_client_available">Kon de externe mediaclient niet van de cast-sessie halen.</string>
     <string name="audio_settings">Geluidsinstellingen</string>
     <string name="any">Ieder</string>
+    <string name="enable">Activeren</string>
+    <string name="disable">Deactiveren</string>
 </resources>

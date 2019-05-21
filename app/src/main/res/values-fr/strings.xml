@@ -394,4 +394,6 @@
     <string name="cast_error_no_media_client_available">Impossible d\'obtenir le client multimédia à distance de la session de distribution.</string>
     <string name="audio_settings">Les paramètres audio</string>
     <string name="any">Toute</string>
+    <string name="enable">Activer</string>
+    <string name="disable">Désactiver</string>
 </resources>

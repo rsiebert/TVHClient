@@ -394,4 +394,6 @@
     <string name="failed_during_connection_attempt">Chyba počas pokusu o pripojenie na server</string>
     <string name="failed_opening_socket">Nepodarilo sa otvoriť soket na server</string>
     <string name="failed_to_resolve_address">Nepodarilo sa vyriešiť adresu servera</string>
+    <string name="enable">Aktivovať</string>
+    <string name="disable">Deaktivácia</string>
 </resources>

@@ -395,4 +395,6 @@ L'indirizzo deve essere nella forma '01:24:67:9a:cd:ef' e può contenere solo ci
     <string name="audio_settings">Impostazioni audio</string>
     <string name="any">Qualunque</string>
     <string name="deleting_database_contents">Eliminazione del contenuto del database…</string>
+    <string name="enable">Attivare</string>
+    <string name="disable">Disattivare</string>
 </resources>
