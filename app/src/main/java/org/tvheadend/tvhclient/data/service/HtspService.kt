@@ -1133,7 +1133,10 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
             updatedServerStatus.connectionName = connection.name
             Timber.d("Received initial response from server ${updatedServerStatus.serverName}, api version: ${updatedServerStatus.htspVersion}")
 
+            // Update the database with the new server status data and the local variables too
             appRepository.serverStatusData.updateItem(updatedServerStatus)
+            serverStatus = updatedServerStatus
+            htspVersion = updatedServerStatus.htspVersion
         }
     }
 
