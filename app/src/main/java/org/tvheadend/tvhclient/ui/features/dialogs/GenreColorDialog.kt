@@ -15,7 +15,7 @@ import org.tvheadend.tvhclient.R
 fun showGenreColorDialog(context: Context): Boolean {
     // Fill the list for the adapter
     val adapter = GenreColorListAdapter(context.resources.getStringArray(R.array.pr_content_type0))
-    MaterialDialog(context).show() {
+    MaterialDialog(context).show {
         title(R.string.genre_color_list)
         customListAdapter(adapter)
     }

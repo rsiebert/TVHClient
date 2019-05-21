@@ -63,6 +63,7 @@ class SearchActivity : BaseActivity(), StartSearchInterface, NetworkStatusListen
     }
 
     override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
         setIntent(intent)
         handleIntent(intent)
     }

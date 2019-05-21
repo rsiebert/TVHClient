@@ -15,7 +15,7 @@ import org.tvheadend.tvhclient.domain.entity.ServerProfile
 import timber.log.Timber
 import javax.inject.Inject
 
-class ProgramViewModel() : ViewModel(), SharedPreferences.OnSharedPreferenceChangeListener {
+class ProgramViewModel : ViewModel(), SharedPreferences.OnSharedPreferenceChangeListener {
 
     @Inject
     lateinit var appContext: Context

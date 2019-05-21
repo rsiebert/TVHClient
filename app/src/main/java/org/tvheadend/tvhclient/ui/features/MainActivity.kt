@@ -52,8 +52,8 @@ import timber.log.Timber
 
 class MainActivity : BaseActivity(), SearchView.OnQueryTextListener, SearchView.OnSuggestionListener, SyncStateReceiver.Listener, NetworkStatusListener {
 
-    lateinit var navigationViewModel: NavigationViewModel
-    lateinit var statusViewModel: StatusViewModel
+    private lateinit var navigationViewModel: NavigationViewModel
+    private lateinit var statusViewModel: StatusViewModel
 
     private lateinit var syncProgress: ProgressBar
     private lateinit var sharedPreferences: SharedPreferences

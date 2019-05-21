@@ -34,7 +34,7 @@ import timber.log.Timber
 class ProgramListFragment : BaseFragment(), RecyclerViewClickCallback, LastProgramVisibleListener, SearchRequestInterface, Filter.FilterListener {
 
     lateinit var recyclerViewAdapter: ProgramRecyclerViewAdapter
-    lateinit var programViewModel: ProgramViewModel
+    private lateinit var programViewModel: ProgramViewModel
 
     private var selectedTime: Long = 0
     private var selectedListPosition: Int = 0

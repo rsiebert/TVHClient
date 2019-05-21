@@ -16,7 +16,7 @@ import org.tvheadend.tvhclient.ui.common.visible
 import timber.log.Timber
 import java.util.concurrent.Executors
 
-class EpgViewPagerViewHolder(override val containerView: View, private val activity: FragmentActivity, private val epgViewModel: EpgViewModel, private val fragmentId: Int, viewPool: RecyclerView.RecycledViewPool) : RecyclerView.ViewHolder(containerView), LayoutContainer {
+class EpgViewPagerViewHolder(override val containerView: View, private val activity: FragmentActivity, private val fragmentId: Int, viewPool: RecyclerView.RecycledViewPool) : RecyclerView.ViewHolder(containerView), LayoutContainer {
 
     private val recyclerViewAdapter: EpgProgramListRecyclerViewAdapter
     private val viewModel: EpgViewModel = ViewModelProviders.of(activity).get(EpgViewModel::class.java)

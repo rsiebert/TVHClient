@@ -23,12 +23,6 @@ class ConnectionData(private val db: AppRoomDatabase) : DataSourceInterface<Conn
             return Connection().also { it.id = -1 }
         }
 
-    val activeItemId: Int
-        get() {
-            val connection = activeItem
-            return connection.id
-        }
-
     override fun addItem(item: Connection) {
         AsyncTask.execute {
             if (item.isActive) {

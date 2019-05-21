@@ -13,7 +13,7 @@ import timber.log.Timber
 import java.util.*
 import javax.inject.Inject
 
-open class BaseChannelViewModel() : ViewModel() {
+open class BaseChannelViewModel : ViewModel() {
 
     @Inject
     lateinit var appContext: Context

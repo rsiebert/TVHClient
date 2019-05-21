@@ -29,7 +29,7 @@ class RecordingViewModel : ViewModel(), SharedPreferences.OnSharedPreferenceChan
     var recording = Recording()
     var recordingProfileNameId: Int = 0
 
-    var hideDuplicateScheduledRecordings: MutableLiveData<Boolean> = MutableLiveData()
+    private var hideDuplicateScheduledRecordings: MutableLiveData<Boolean> = MutableLiveData()
 
     init {
         MainApplication.getComponent().inject(this)

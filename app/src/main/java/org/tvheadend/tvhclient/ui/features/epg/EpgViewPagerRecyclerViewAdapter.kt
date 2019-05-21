@@ -19,7 +19,7 @@ internal class EpgViewPagerRecyclerViewAdapter(private val activity: FragmentAct
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): EpgViewPagerViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(viewType, parent, false)
-        return EpgViewPagerViewHolder(view, activity, epgViewModel, fragmentId, viewPool)
+        return EpgViewPagerViewHolder(view, activity, fragmentId, viewPool)
     }
 
     override fun onBindViewHolder(holder: EpgViewPagerViewHolder, position: Int) {
