@@ -2,12 +2,14 @@ package org.tvheadend.tvhclient.ui.features.dvr.timer_recordings
 
 import android.app.Application
 import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import org.tvheadend.tvhclient.MainApplication
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.data.repository.AppRepository
+import org.tvheadend.tvhclient.data.service.HtspService
 import org.tvheadend.tvhclient.domain.entity.Channel
 import org.tvheadend.tvhclient.domain.entity.ServerProfile
 import org.tvheadend.tvhclient.domain.entity.TimerRecording
@@ -27,6 +29,33 @@ class TimerRecordingViewModel(application: Application) : AndroidViewModel(appli
     var recording = TimerRecording()
     val recordings: LiveData<List<TimerRecording>>
     var recordingProfileNameId: Int = 0
+
+    /**
+     * Returns an intent with the recording data
+     */
+    fun getIntentData(recording: TimerRecording): Intent {
+        val intent = Intent(appContext, HtspService::class.java)
+        intent.putExtra("directory", recording.directory)
+        intent.putExtra("title", recording.title)
+        intent.putExtra("name", recording.name)
+
+        // Assume no start time is specified if 0:00 is selected
+        if (isTimeEnabled) {
+            intent.putExtra("start", recording.start)
+            intent.putExtra("stop", recording.stop)
+        } else {
+            intent.putExtra("start", (-1).toLong())
+            intent.putExtra("stop", (-1).toLong())
+        }
+        intent.putExtra("daysOfWeek", recording.daysOfWeek)
+        intent.putExtra("priority", recording.priority)
+        intent.putExtra("enabled", if (recording.isEnabled) 1 else 0)
+
+        if (recording.channelId > 0) {
+            intent.putExtra("channelId", recording.channelId)
+        }
+        return intent
+    }
 
     var isTimeEnabled: Boolean = false
         set(value) {

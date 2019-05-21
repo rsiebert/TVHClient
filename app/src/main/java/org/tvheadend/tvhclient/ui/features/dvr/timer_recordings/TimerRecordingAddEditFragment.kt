@@ -1,13 +1,11 @@
 package org.tvheadend.tvhclient.ui.features.dvr.timer_recordings
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.*
 import androidx.lifecycle.ViewModelProviders
 import com.afollestad.materialdialogs.MaterialDialog
 import kotlinx.android.synthetic.main.timer_recording_add_edit_fragment.*
 import org.tvheadend.tvhclient.R
-import org.tvheadend.tvhclient.data.service.HtspService
 import org.tvheadend.tvhclient.domain.entity.Channel
 import org.tvheadend.tvhclient.domain.entity.ServerProfile
 import org.tvheadend.tvhclient.ui.base.BaseFragment
@@ -27,41 +25,6 @@ class TimerRecordingAddEditFragment : BaseFragment(), BackPressedInterface, Reco
     private lateinit var recordingProfilesList: Array<String>
 
     private var profile: ServerProfile? = null
-
-    /**
-     * Returns an intent with the recording data
-     */
-    private val intentData: Intent
-        get() {
-            // TODO get this from the viewmodel
-            val intent = Intent(context, HtspService::class.java)
-            intent.putExtra("directory", timerRecordingViewModel.recording.directory)
-            intent.putExtra("title", timerRecordingViewModel.recording.title)
-            intent.putExtra("name", timerRecordingViewModel.recording.name)
-
-            // Assume no start time is specified if 0:00 is selected
-            if (timerRecordingViewModel.isTimeEnabled) {
-                intent.putExtra("start", timerRecordingViewModel.recording.start)
-                intent.putExtra("stop", timerRecordingViewModel.recording.stop)
-            } else {
-                intent.putExtra("start", -1)
-                intent.putExtra("stop", -1)
-            }
-            intent.putExtra("daysOfWeek", timerRecordingViewModel.recording.daysOfWeek)
-            intent.putExtra("priority", timerRecordingViewModel.recording.priority)
-            intent.putExtra("enabled", if (timerRecordingViewModel.recording.isEnabled) 1 else 0)
-
-            if (timerRecordingViewModel.recording.channelId > 0) {
-                intent.putExtra("channelId", timerRecordingViewModel.recording.channelId)
-            }
-            // Add the recording profile if available and enabled
-            if (isServerProfileEnabled(profile, htspVersion) && dvr_config.text.isNotEmpty()) {
-                // Use the selected profile. If no change was done in the
-                // selection then the default one from the connection setting will be used
-                intent.putExtra("configName", dvr_config.text.toString())
-            }
-            return intent
-        }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.timer_recording_add_edit_fragment, container, false)
@@ -196,7 +159,15 @@ class TimerRecordingAddEditFragment : BaseFragment(), BackPressedInterface, Reco
             return
         }
 
-        val intent = intentData
+        val intent = timerRecordingViewModel.getIntentData(timerRecordingViewModel.recording)
+
+        // Add the recording profile if available and enabled
+        if (isServerProfileEnabled(profile, htspVersion) && dvr_config.text.isNotEmpty()) {
+            intent.putExtra("configName", dvr_config.text.toString())
+        }
+
+        // Update the recording in case the id is not empty, otherwise add a new one.
+        // When adding a new recording, the id is an empty string as a default.
         if (timerRecordingViewModel.recording.id.isNotEmpty()) {
             intent.action = "updateTimerecEntry"
             intent.putExtra("id", timerRecordingViewModel.recording.id)

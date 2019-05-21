@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.recyclerview_fragment.*
 import org.tvheadend.tvhclient.R
+import org.tvheadend.tvhclient.domain.entity.TimerRecording
 import org.tvheadend.tvhclient.ui.base.BaseFragment
 import org.tvheadend.tvhclient.ui.common.callbacks.RecyclerViewClickCallback
 import org.tvheadend.tvhclient.ui.common.gone
@@ -165,6 +166,8 @@ class TimerRecordingListFragment : BaseFragment(), RecyclerViewClickCallback, Se
         popupMenu.menuInflater.inflate(R.menu.timer_recordings_popup_menu, popupMenu.menu)
         popupMenu.menuInflater.inflate(R.menu.external_search_options_menu, popupMenu.menu)
         prepareSearchMenu(popupMenu.menu, timerRecording.title, isNetworkAvailable)
+        popupMenu.menu.findItem(R.id.menu_disable)?.isVisible = htspVersion >= 19 && timerRecording.isEnabled
+        popupMenu.menu.findItem(R.id.menu_enable)?.isVisible = htspVersion >= 19 && !timerRecording.isEnabled
 
         popupMenu.setOnMenuItemClickListener { item ->
             if (onMenuSelected(ctx, item.itemId, timerRecording.title)) {
@@ -181,10 +184,26 @@ class TimerRecordingListFragment : BaseFragment(), RecyclerViewClickCallback, Se
                 R.id.menu_record_remove -> {
                     return@setOnMenuItemClickListener menuUtils.handleMenuRemoveTimerRecordingSelection(timerRecording, null)
                 }
+                R.id.menu_disable -> {
+                    enableTimerRecording(timerRecording, false)
+                    return@setOnMenuItemClickListener true
+                }
+                R.id.menu_enable -> {
+                    enableTimerRecording(timerRecording, true)
+                    return@setOnMenuItemClickListener true
+                }
                 else -> return@setOnMenuItemClickListener false
             }
         }
         popupMenu.show()
+    }
+
+    private fun enableTimerRecording(timerRecording: TimerRecording, enabled: Boolean) {
+        val intent = timerRecordingViewModel.getIntentData(timerRecording)
+        intent.action = "updateTimerecEntry"
+        intent.putExtra("id", timerRecording.id)
+        intent.putExtra("enabled", if (enabled) 1 else 0)
+        activity?.startService(intent)
     }
 
     override fun onClick(view: View, position: Int) {
