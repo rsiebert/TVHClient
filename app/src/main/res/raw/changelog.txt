@@ -1,3 +1,9 @@
+$ 2.2.12
+  % VERSION 2.2.12
+  _ 22.05.2019
+    * Added popup menu to directly enable or disable series or timer recordings (Only available in the unlocked version)
+    * Replaced image loading library Picasso with Glide
+    * Small bug fixes
 $ 2.2.11
   % VERSION 2.2.11
   _ 20.05.2019
