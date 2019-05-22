@@ -70,7 +70,7 @@ class MenuUtils(activity: Activity) {
             val startTime = startDateFormat.format(timeInMillis)
             timeInMillis += (1000 * 60 * 60 * intervalInHours).toLong()
             val endTime = endDateFormat.format(timeInMillis)
-            times[i] = "$startTime - $endTime"
+            times.add("$startTime - $endTime")
         }
 
         MaterialDialog(activity).show {
