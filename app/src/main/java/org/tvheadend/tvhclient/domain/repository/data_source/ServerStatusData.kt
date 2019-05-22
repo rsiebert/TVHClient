@@ -15,17 +15,25 @@ class ServerStatusData(private val db: AppRoomDatabase) : DataSourceInterface<Se
 
     val activeItem: ServerStatus
         get() {
+            var serverStatus: ServerStatus? = null
             try {
-                return ActiveServerStatusTask(db).execute().get()
+                serverStatus = ActiveServerStatusTask(db).execute().get()
             } catch (e: InterruptedException) {
                 Timber.d(e, "Loading active server status task got interrupted")
             } catch (e: ExecutionException) {
                 Timber.d(e, "Loading active server status task aborted")
             }
             // Create a new server status object with the connection id
-            val serverStatus = ServerStatus()
-            serverStatus.connectionId = db.connectionDao.loadActiveConnectionSync().id
-            addItem(serverStatus)
+            if (serverStatus == null) {
+                Timber.d("Active server status is null, adding new one with default values")
+                serverStatus = ServerStatus()
+                val connection = db.connectionDao.loadActiveConnectionSync()
+                serverStatus.connectionId = connection.id
+                serverStatus.connectionName = connection.name
+                serverStatus.serverName = "Unknown"
+                serverStatus.serverVersion = "Unknown"
+                addItem(serverStatus)
+            }
             return serverStatus
         }
 
@@ -75,9 +83,9 @@ class ServerStatusData(private val db: AppRoomDatabase) : DataSourceInterface<Se
         }
     }
 
-    private class ActiveServerStatusTask internal constructor(private val db: AppRoomDatabase) : AsyncTask<Void, Void, ServerStatus>() {
+    private class ActiveServerStatusTask internal constructor(private val db: AppRoomDatabase) : AsyncTask<Void, Void, ServerStatus?>() {
 
-        override fun doInBackground(vararg voids: Void): ServerStatus {
+        override fun doInBackground(vararg voids: Void): ServerStatus? {
             return db.serverStatusDao.loadActiveServerStatusSync()
         }
     }
