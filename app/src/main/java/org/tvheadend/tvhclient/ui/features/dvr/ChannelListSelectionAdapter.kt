@@ -8,7 +8,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.squareup.picasso.Picasso
+import com.bumptech.glide.Glide
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.domain.entity.Channel
 import org.tvheadend.tvhclient.util.getIconUrl
@@ -39,7 +39,7 @@ class ChannelListSelectionAdapter internal constructor(context: Context, private
         holder.itemView.tag = channel
         val context = this.context.get()
         if (context != null && holder.iconImageView != null && !TextUtils.isEmpty(channel.icon)) {
-            Picasso.get()
+            Glide.with(context)
                     .load(getIconUrl(context, channel.icon))
                     .into(holder.iconImageView)
         }

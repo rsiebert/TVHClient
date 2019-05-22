@@ -16,7 +16,7 @@ import androidx.work.OneTimeWorkRequest
 import androidx.work.WorkManager
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.list.listItemsSingleChoice
-import com.squareup.picasso.Picasso
+import com.bumptech.glide.Glide
 import org.tvheadend.tvhclient.BuildConfig
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.data.service.HtspService
@@ -271,7 +271,7 @@ class SettingsAdvancedFragment : BasePreferenceFragment(), Preference.OnPreferen
                         .message(R.string.clear_icon_cache_sum)
                 positiveButton(R.string.delete) { _ ->
                     // Delete all channel icon files that were downloaded for the active
-                    // connection. Additionally remove the icons from the Picasso cache
+                    // connection. Additionally remove the icons from the Glide cache
                     Timber.d("Deleting channel icons and invalidating cache")
                     for (channel in settingsViewModel.getChannelList()) {
                         if (channel.icon.isNullOrEmpty()) {
@@ -284,7 +284,7 @@ class SettingsAdvancedFragment : BasePreferenceFragment(), Preference.OnPreferen
                                 Timber.d("Could not delete channel icon ${file.name}")
                             }
                         }
-                        Picasso.get().invalidate(file)
+                        Thread(Runnable { Glide.get(it).clearDiskCache() }).start()
                     }
                     context.sendSnackbarMessage(R.string.clear_icon_cache_done)
 

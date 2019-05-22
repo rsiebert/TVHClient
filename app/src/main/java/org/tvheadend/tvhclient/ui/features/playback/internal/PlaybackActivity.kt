@@ -6,6 +6,7 @@ import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.content.res.Configuration
 import android.graphics.Point
+import android.graphics.drawable.Drawable
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
@@ -21,11 +22,14 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.preference.PreferenceManager
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.list.listItemsSingleChoice
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.target.Target
 import com.google.android.exoplayer2.C
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.ui.PlayerControlView
-import com.squareup.picasso.Callback
-import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.exo_player_control_view.*
 import kotlinx.android.synthetic.main.exo_player_view.*
 import kotlinx.android.synthetic.main.player_overlay_view.*
@@ -179,19 +183,26 @@ class PlaybackActivity : AppCompatActivity(), PlayerControlView.VisibilityListen
         Timber.d("Observing playback information")
         viewModel.channelIcon.observe(this, Observer { icon ->
             Timber.d("Received channel icon $icon")
-            Picasso.get()
+            Glide.with(this)
                     .load(getIconUrl(this, icon))
-                    .into(channel_icon, object : Callback {
-                        override fun onSuccess() {
-                            channel_name?.gone()
-                            channel_icon?.visible()
+                    .listener(object : RequestListener<Drawable> {
+                        override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
+                            this@PlaybackActivity.runOnUiThread {
+                                channel_name?.visible()
+                                channel_icon?.gone()
+                            }
+                            return false
                         }
 
-                        override fun onError(e: Exception) {
-                            channel_name?.visible()
-                            channel_icon?.gone()
+                        override fun onResourceReady(resource: Drawable?, model: Any?, target: Target<Drawable>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
+                            this@PlaybackActivity.runOnUiThread {
+                                channel_name?.gone()
+                                channel_icon?.visible()
+                            }
+                            return false
                         }
                     })
+                    .into(channel_icon)
         })
 
         viewModel.channelName.observe(this, Observer { channelName ->
@@ -377,10 +388,10 @@ class PlaybackActivity : AppCompatActivity(), PlayerControlView.VisibilityListen
         Timber.d("Change aspect ratio button selected")
         MaterialDialog(this).show {
             title(text = "Select the video aspect ratio")
-                listItemsSingleChoice(items = videoAspectRatioNameList.toList(), initialSelection = -1) { _, which, _ ->
-                    Timber.d("Selected aspect ratio index is $which")
-                    viewModel.setVideoAspectRatio(videoAspectRatioList[which])
-                }
+            listItemsSingleChoice(items = videoAspectRatioNameList.toList(), initialSelection = -1) { _, which, _ ->
+                Timber.d("Selected aspect ratio index is $which")
+                viewModel.setVideoAspectRatio(videoAspectRatioList[which])
+            }
         }
     }
 

@@ -4,7 +4,8 @@ import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.os.Build
-import androidx.preference.PreferenceManager
+import android.os.Handler
+import android.os.Looper
 import android.text.format.DateUtils
 import android.util.SparseArray
 import android.view.View
@@ -13,15 +14,22 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.databinding.BindingAdapter
+import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.RecyclerView
-import com.squareup.picasso.Callback
-import com.squareup.picasso.Picasso
-import com.squareup.picasso.Transformation
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool
+import com.bumptech.glide.load.resource.bitmap.BitmapTransformation
+import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.target.Target
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.domain.entity.ProgramInterface
 import org.tvheadend.tvhclient.domain.entity.Recording
 import org.tvheadend.tvhclient.util.getIconUrl
 import timber.log.Timber
+import java.nio.charset.Charset
+import java.security.MessageDigest
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -329,7 +337,7 @@ fun setChannelIcon(view: ImageView, iconUrl: String?, visible: Boolean) {
 }
 
 /**
- * Loads the given program image via Picasso into the image view
+ * Loads the given program image via Glide into the image view
  *
  * @param view The view where the icon and visibility shall be applied to
  * @param url  The url of the channel icon
@@ -340,48 +348,51 @@ fun setProgramImage(view: ImageView, url: String?, visible: Boolean) {
         view.gone()
     } else {
 
-        val transformation = object : Transformation {
-
-            override fun transform(source: Bitmap): Bitmap {
+        val transformation = object : BitmapTransformation() {
+            override fun transform(pool: BitmapPool, toTransform: Bitmap, outWidth: Int, outHeight: Int): Bitmap {
                 val targetWidth = view.width
-                if (targetWidth == 0 || source.height == 0 || source.width == 0) {
-                    Timber.d("Returning source image, target width is $targetWidth, source height is ${source.height}, source width is ${source.width}")
-                    return source
+                if (targetWidth == 0 || toTransform.height == 0 || toTransform.width == 0) {
+                    Timber.d("Returning source image, target width is $targetWidth, source height is ${toTransform.height}, source width is ${toTransform.width}")
+                    return toTransform
                 }
-                val aspectRatio = source.height.toDouble() / source.width.toDouble()
+                val aspectRatio = toTransform.height.toDouble() / toTransform.width.toDouble()
                 val targetHeight = (targetWidth * aspectRatio).toInt()
-                val result = Bitmap.createScaledBitmap(source, targetWidth, targetHeight, false)
-                if (result != source) {
+                val result = Bitmap.createScaledBitmap(toTransform, targetWidth, targetHeight, false)
+                if (result != toTransform) {
                     // Same bitmap is returned if sizes are the same
-                    source.recycle()
+                    toTransform.recycle()
                 }
                 Timber.d("Returning transformed image")
                 return result
             }
 
-            override fun key(): String {
-                return "transformation" + " desiredWidth"
+            override fun updateDiskCacheKey(messageDigest: MessageDigest) {
+                val id = "transformation" + " desiredWidth"
+                messageDigest.update(id.toByteArray(Charset.forName("UTF-8")))
             }
         }
 
-        Picasso.get()
+        Glide.with(view.context)
                 .load(url)
                 .transform(transformation)
-                .into(view, object : Callback {
-                    override fun onSuccess() {
-                        view.visible()
+                .listener(object : RequestListener<Drawable> {
+                    override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
+                        Timber.d("Could not load image $url")
+                        Handler(Looper.getMainLooper()).post { view.gone() }
+                        return false
                     }
 
-                    override fun onError(e: Exception) {
-                        Timber.d("Could not load image $url")
-                        view.gone()
+                    override fun onResourceReady(resource: Drawable?, model: Any?, target: Target<Drawable>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
+                        Handler(Looper.getMainLooper()).post { view.visible() }
+                        return false
                     }
                 })
+                .into(view)
     }
 }
 
 /**
- * Loads the given channel icon via Picasso into the image view
+ * Loads the given channel icon via Glide into the image view
  *
  * @param view    The view where the icon and visibility shall be applied to
  * @param iconUrl The url of the channel icon
@@ -394,20 +405,23 @@ fun setChannelIcon(view: ImageView, iconUrl: String?) {
     } else {
         val url = getIconUrl(view.context, iconUrl)
         Timber.d("Channel icon '$iconUrl' is not empty, loading icon from url '$url'")
-        Picasso.get().cancelRequest(view)
-        Picasso.get()
+
+        Glide.with(view.context)
                 .load(url)
-                .into(view, object : Callback {
-                    override fun onSuccess() {
-                        Timber.d("Successfully loaded channel icon from url '$url'")
-                        view.visible()
+                .listener(object : RequestListener<Drawable> {
+                    override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
+                        Timber.d("Error loading channel icon from url '$url'")
+                        Handler(Looper.getMainLooper()).post { view.gone() }
+                        return false
                     }
 
-                    override fun onError(e: Exception) {
-                        Timber.d("Error loading channel icon from url '$url'")
-                        view.gone()
+                    override fun onResourceReady(resource: Drawable?, model: Any?, target: Target<Drawable>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
+                        Timber.d("Successfully loaded channel icon from url '$url'")
+                        Handler(Looper.getMainLooper()).post { view.visible() }
+                        return false
                     }
                 })
+                .into(view)
     }
 }
 
@@ -435,16 +449,19 @@ fun setChannelName(view: TextView, name: String?, iconUrl: String?) {
         view.visible()
     } else {
         val url = getIconUrl(view.context, iconUrl)
-        Picasso.get()
-                .load(url).fetch(object : Callback {
-                    override fun onSuccess() {
-                        view.gone()
+        Glide.with(view.context)
+                .load(url)
+                .listener(object : RequestListener<Drawable> {
+                    override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
+                        Handler(Looper.getMainLooper()).post { view.visible() }
+                        return false
                     }
-
-                    override fun onError(e: Exception) {
-                        view.visible()
+                    override fun onResourceReady(resource: Drawable?, model: Any?, target: Target<Drawable>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
+                        Handler(Looper.getMainLooper()).post { view.gone() }
+                        return false
                     }
                 })
+                .submit()
     }
 }
 
