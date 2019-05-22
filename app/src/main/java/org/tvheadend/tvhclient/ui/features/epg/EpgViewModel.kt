@@ -97,7 +97,8 @@ class EpgViewModel : BaseChannelViewModel(), SharedPreferences.OnSharedPreferenc
         viewModelScope.launch {
             val defaultChannelSortOrder = appContext.resources.getString(R.string.pref_default_channel_sort_order)
             val order = Integer.valueOf(sharedPreferences.getString("channel_sort_order", defaultChannelSortOrder) ?: defaultChannelSortOrder)
-            val hours = Integer.parseInt(sharedPreferences.getString("hours_of_epg_data_per_screen", appContext.resources.getString(R.string.pref_default_hours_of_epg_data_per_screen))!!)
+            var hours = Integer.parseInt(sharedPreferences.getString("hours_of_epg_data_per_screen", appContext.resources.getString(R.string.pref_default_hours_of_epg_data_per_screen))!!)
+            hours = if (hours == 0) 1 else hours
             val days = Integer.parseInt(sharedPreferences.getString("days_of_epg_data", appContext.resources.getString(R.string.pref_default_days_of_epg_data))!!)
 
             Timber.d("Loading epg data from database with channel order $order, $hours hours per screen and for $days days")
