@@ -28,8 +28,8 @@ class UnlockerFragment : WebViewFragment(), HtmlFileLoaderTask.Listener, Billing
         super.onActivityCreated(savedInstanceState)
         toolbarInterface.setTitle(getString(R.string.pref_unlocker))
         toolbarInterface.setSubtitle("")
-        billingManager = MainApplication.getInstance().billingManager
-        billingHandler = MainApplication.getInstance().billingHandler
+        billingManager = MainApplication.instance.billingManager
+        billingHandler = MainApplication.instance.billingHandler
     }
 
     override fun onResume() {

@@ -74,7 +74,7 @@ class SeriesRecordingViewModel(application: Application) : AndroidViewModel(appl
         }
 
     init {
-        MainApplication.getComponent().inject(this)
+        MainApplication.component.inject(this)
         recordings = appRepository.seriesRecordingData.getLiveDataItems()
     }
 

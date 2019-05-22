@@ -16,8 +16,6 @@
 
 package org.tvheadend.tvhclient.ui.features.playback.internal.reader;
 
-import android.content.Context;
-
 import androidx.annotation.NonNull;
 
 import com.google.android.exoplayer2.C;
@@ -34,12 +32,10 @@ import org.tvheadend.tvhclient.MainApplication;
  */
 abstract class PlainStreamReader implements StreamReader {
 
-    private final Context mContext;
     private final int mTrackType;
     private TrackOutput mTrackOutput;
 
-    PlainStreamReader(Context context, int trackType) {
-        mContext = context;
+    PlainStreamReader(int trackType) {
         mTrackType = trackType;
     }
 
@@ -82,7 +78,7 @@ abstract class PlainStreamReader implements StreamReader {
     @Override
     public void release() {
         // Watch for memory leaks
-        MainApplication.getRefWatcher(mContext).watch(this);
+        MainApplication.refWatcher.watch(this);
     }
 
     @NonNull

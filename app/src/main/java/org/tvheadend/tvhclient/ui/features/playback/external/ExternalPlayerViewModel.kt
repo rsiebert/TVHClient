@@ -47,7 +47,7 @@ class ExternalPlayerViewModel(application: Application) : AndroidViewModel(appli
 
     init {
         Timber.d("Initializing view model")
-        MainApplication.getComponent().inject(this)
+        MainApplication.component.inject(this)
 
         connection = appRepository.connectionData.activeItem
         serverStatus = appRepository.serverStatusData.activeItem

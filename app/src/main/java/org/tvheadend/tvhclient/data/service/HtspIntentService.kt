@@ -43,7 +43,7 @@ class HtspIntentService : JobIntentService(), HtspConnectionStateListener {
     private val responseLock = Object()
 
     init {
-        MainApplication.getComponent().inject(this)
+        MainApplication.component.inject(this)
         execService = Executors.newScheduledThreadPool(10)
         connection = appRepository.connectionData.activeItem
         serverStatus = appRepository.serverStatusData.activeItem

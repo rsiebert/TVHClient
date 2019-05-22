@@ -89,7 +89,7 @@ class MainActivity : BaseActivity(), SearchView.OnQueryTextListener, SearchView.
         setContentView(R.layout.main_activity)
 
         Timber.d("Initializing")
-        MainApplication.getComponent().inject(this)
+        MainApplication.component.inject(this)
 
         navigationViewModel = ViewModelProviders.of(this).get(NavigationViewModel::class.java)
         statusViewModel = ViewModelProviders.of(this).get(StatusViewModel::class.java)
@@ -99,7 +99,7 @@ class MainActivity : BaseActivity(), SearchView.OnQueryTextListener, SearchView.
         networkStatusReceiver = NetworkStatusReceiver(this)
         snackbarMessageReceiver = SnackbarMessageReceiver(this)
         syncStateReceiver = SyncStateReceiver(this)
-        isUnlocked = MainApplication.getInstance().isUnlocked
+        isUnlocked = MainApplication.instance.isUnlocked
         isDualPane = findViewById<View>(R.id.details) != null
 
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
@@ -456,13 +456,13 @@ class MainActivity : BaseActivity(), SearchView.OnQueryTextListener, SearchView.
         if (isAvailable) {
             if (!isNetworkAvailable) {
                 Timber.d("Network changed from offline to online, starting service")
-                if (MainApplication.isActivityVisible()) {
+                if (MainApplication.isActivityVisible) {
                     intent.action = "connect"
                     startService(intent)
                 }
             } else {
                 Timber.d("Network still active, pinging server")
-                if (MainApplication.isActivityVisible()) {
+                if (MainApplication.isActivityVisible) {
                     intent.action = "reconnect"
                     startService(intent)
                 }

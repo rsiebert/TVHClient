@@ -29,7 +29,7 @@ class SyncStateReceiver(callback: Listener) : BroadcastReceiver() {
      * via the "details" extra.
      */
     override fun onReceive(context: Context, intent: Intent) {
-        if (callback.get() != null && MainApplication.isActivityVisible()) {
+        if (callback.get() != null && MainApplication.isActivityVisible) {
             (callback.get() as Listener).onSyncStateChanged(
                     intent.getSerializableExtra(STATE) as State,
                     intent.getStringExtra(MESSAGE) ?: "",

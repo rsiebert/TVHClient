@@ -16,7 +16,6 @@
 
 package org.tvheadend.tvhclient.ui.features.playback.internal;
 
-import android.content.Context;
 import android.util.SparseArray;
 
 import androidx.annotation.NonNull;
@@ -60,16 +59,10 @@ class HtspSubscriptionExtractor implements Extractor {
 
     }
 
-    private final Context mContext;
     private ExtractorOutput mOutput;
     private final SparseArray<StreamReader> mStreamReaders = new SparseArray<>();
 
     private final byte[] mRawBytes = new byte[1024 * 1024];
-
-    public HtspSubscriptionExtractor(Context context) {
-        mContext = context;
-        Timber.d("New HtspExtractor instantiated");
-    }
 
     // Extractor Methods
     @Override
@@ -150,7 +143,7 @@ class HtspSubscriptionExtractor implements Extractor {
     private void handleSubscriptionStart(@NonNull final HtspMessage message) {
         Timber.i( "Handling Subscription Start");
 
-        StreamReadersFactory streamReadersFactory = new StreamReadersFactory(mContext);
+        StreamReadersFactory streamReadersFactory = new StreamReadersFactory();
 
         for (Object obj : message.getList("streams")) {
             HtspMessage stream = (HtspMessage) obj;

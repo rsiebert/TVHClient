@@ -317,7 +317,7 @@ class ProgramListFragment : BaseFragment(), RecyclerViewClickCallback, LastProgr
             intent.putExtra("numFollowing", 25)
             intent.putExtra("showMessage", true)
 
-            if (MainApplication.isActivityVisible()) {
+            if (MainApplication.isActivityVisible) {
                 activity?.startService(intent)
             }
         }

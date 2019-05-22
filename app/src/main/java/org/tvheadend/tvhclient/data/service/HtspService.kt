@@ -62,7 +62,7 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
 
     override fun onCreate() {
         Timber.d("Starting service")
-        MainApplication.getComponent().inject(this)
+        MainApplication.component.inject(this)
 
         serverStatus = appRepository.serverStatusData.activeItem
         connectionTimeout = Integer.valueOf(sharedPreferences.getString("connection_timeout", resources.getString(R.string.pref_default_connection_timeout))!!) * 1000

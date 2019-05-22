@@ -6,6 +6,7 @@ import android.content.Context
 import androidx.preference.PreferenceManager
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.domain.entity.ServerProfile
+import timber.log.Timber
 import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
 
@@ -33,7 +34,11 @@ fun convertUrlToHashString(url: String?): String {
 }
 
 fun getIconUrl(context: Context, url: String?): String {
-    return "file://" + context.cacheDir + "/" + convertUrlToHashString(url) + ".png"
+    // Replace all occurrences of + with the utf-8 value
+    val urlEncoded = url?.replace("\\+", "%2b") ?: ""
+    val iconUrl = "file://" + context.cacheDir + "/" + convertUrlToHashString(urlEncoded) + ".png"
+    Timber.d("Loaded icon url '$iconUrl' from original url '$url', encoded url is '$urlEncoded'")
+    return iconUrl
 }
 
 /**

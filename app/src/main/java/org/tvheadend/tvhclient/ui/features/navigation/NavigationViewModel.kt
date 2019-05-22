@@ -24,7 +24,7 @@ class NavigationViewModel : ViewModel() {
     val navigationMenuId: MutableLiveData<Int> = MutableLiveData()
 
     init {
-        MainApplication.getComponent().inject(this)
+        MainApplication.component.inject(this)
         connection = appRepository.connectionData.activeItem
         connections = appRepository.connectionData.getLiveDataItems()
         navigationMenuId.value = NavigationDrawer.MENU_CHANNELS

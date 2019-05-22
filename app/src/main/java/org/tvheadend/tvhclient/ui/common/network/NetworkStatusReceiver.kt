@@ -14,7 +14,7 @@ class NetworkStatusReceiver(callback: NetworkStatusListener) : BroadcastReceiver
     private val callback: WeakReference<NetworkStatusListener> = WeakReference(callback)
 
     override fun onReceive(context: Context, intent: Intent) {
-        if (MainApplication.isActivityVisible()) {
+        if (MainApplication.isActivityVisible) {
             (callback.get() as NetworkStatusListener).onNetworkStatusChanged(isConnectionAvailable(context))
         }
     }

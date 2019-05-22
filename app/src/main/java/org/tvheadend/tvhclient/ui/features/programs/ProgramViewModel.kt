@@ -32,7 +32,7 @@ class ProgramViewModel : ViewModel(), SharedPreferences.OnSharedPreferenceChange
 
     init {
         Timber.d("Initializing")
-        MainApplication.getComponent().inject(this)
+        MainApplication.component.inject(this)
 
         recordings = appRepository.recordingData.getLiveDataItems()
 

@@ -16,7 +16,7 @@
 
 package org.tvheadend.tvhclient.ui.features.playback.internal.reader;
 
-import android.content.Context;
+import androidx.annotation.NonNull;
 
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.Format;
@@ -27,14 +27,12 @@ import org.tvheadend.htsp.HtspMessage;
 import java.util.Collections;
 import java.util.List;
 
-import androidx.annotation.NonNull;
-
 import static com.google.android.exoplayer2.C.SELECTION_FLAG_DEFAULT;
 
 class DvbsubStreamReader extends PlainStreamReader {
 
-    DvbsubStreamReader(Context context) {
-        super(context, C.TRACK_TYPE_TEXT);
+    DvbsubStreamReader() {
+        super(C.TRACK_TYPE_TEXT);
     }
 
     @NonNull

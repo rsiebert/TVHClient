@@ -37,7 +37,7 @@ class SettingsViewModel : ViewModel() {
         set(change) = sharedPreferences.edit().putBoolean("connection_value_changed", change).apply()
 
     init {
-        MainApplication.getComponent().inject(this)
+        MainApplication.component.inject(this)
         allConnections = appRepository.connectionData.getLiveDataItems()
         serverStatus = appRepository.serverStatusData.activeItem
         connection = appRepository.connectionData.activeItem

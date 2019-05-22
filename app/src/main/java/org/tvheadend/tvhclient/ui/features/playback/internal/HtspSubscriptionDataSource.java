@@ -289,7 +289,7 @@ public class HtspSubscriptionDataSource implements DataSource, Closeable, HtspMe
         htspConnection.removeMessageListener(this);
 
         // Watch for memory leaks
-        MainApplication.getRefWatcher(context).watch(this);
+        MainApplication.refWatcher.watch(this);
     }
 
     public void pause() {

@@ -88,6 +88,9 @@ class SettingsListConnectionsFragment : ListFragment(), BackPressedInterface, Ac
 
     override fun onActionItemClicked(mode: ActionMode, item: MenuItem): Boolean {
         val position = listView.checkedItemPosition
+        // Return in case the position is larger then the contents in the adapter
+        if (connectionListAdapter.count <= position) return false
+        // Get the connection, if its null (unlikely) return
         val connection = connectionListAdapter.getItem(position) ?: return false
         val intent: Intent
         when (item.itemId) {

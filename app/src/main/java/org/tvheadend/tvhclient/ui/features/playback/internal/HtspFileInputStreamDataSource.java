@@ -233,7 +233,7 @@ public class HtspFileInputStreamDataSource implements DataSource, Closeable, Hts
         htspConnection.removeMessageListener(this);
 
         // Watch for memory leaks
-        MainApplication.getRefWatcher(context).watch(this);
+        MainApplication.refWatcher.watch(this);
     }
 
     private void sendFileRead(long offset) {

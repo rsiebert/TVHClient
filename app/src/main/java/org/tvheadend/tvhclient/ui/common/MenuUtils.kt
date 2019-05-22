@@ -42,10 +42,10 @@ class MenuUtils(activity: Activity) {
     private var htspVersion: Int = 13
 
     init {
-        MainApplication.getComponent().inject(this)
+        MainApplication.component.inject(this)
 
         activityReference = WeakReference(activity)
-        isUnlocked = MainApplication.getInstance().isUnlocked
+        isUnlocked = MainApplication.instance.isUnlocked
         connection = appRepository.connectionData.activeItem
         serverStatus = appRepository.serverStatusData.activeItem
         htspVersion = serverStatus.htspVersion

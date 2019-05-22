@@ -20,7 +20,7 @@ class MainViewModel : ViewModel() {
     val connectionCount: LiveData<Int>
 
     init {
-        MainApplication.getComponent().inject(this)
+        MainApplication.component.inject(this)
         connections = appRepository.connectionData.getLiveDataItems()
         connectionCount = appRepository.connectionData.getLiveDataItemCount()
         connection = appRepository.connectionData.activeItem

@@ -32,7 +32,7 @@ class RecordingViewModel : ViewModel(), SharedPreferences.OnSharedPreferenceChan
     private var hideDuplicateScheduledRecordings: MutableLiveData<Boolean> = MutableLiveData()
 
     init {
-        MainApplication.getComponent().inject(this)
+        MainApplication.component.inject(this)
 
         onSharedPreferenceChanged(sharedPreferences, "hide_duplicate_scheduled_recordings_enabled")
 

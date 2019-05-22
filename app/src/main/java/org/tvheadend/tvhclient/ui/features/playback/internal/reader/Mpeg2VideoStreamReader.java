@@ -16,7 +16,7 @@
 
 package org.tvheadend.tvhclient.ui.features.playback.internal.reader;
 
-import android.content.Context;
+import androidx.annotation.NonNull;
 
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.Format;
@@ -24,12 +24,10 @@ import com.google.android.exoplayer2.util.MimeTypes;
 
 import org.tvheadend.htsp.HtspMessage;
 
-import androidx.annotation.NonNull;
-
 class Mpeg2VideoStreamReader extends PlainStreamReader {
 
-    Mpeg2VideoStreamReader(Context context) {
-        super(context, C.TRACK_TYPE_VIDEO);
+    Mpeg2VideoStreamReader() {
+        super(C.TRACK_TYPE_VIDEO);
     }
 
     @NonNull

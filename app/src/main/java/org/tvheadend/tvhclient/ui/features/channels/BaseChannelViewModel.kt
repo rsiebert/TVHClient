@@ -32,7 +32,7 @@ open class BaseChannelViewModel : ViewModel() {
 
     init {
         // TODO
-        MainApplication.getComponent().inject(this)
+        MainApplication.component.inject(this)
 
         serverStatus = appRepository.serverStatusData.liveDataActiveItem
         channelTags = appRepository.channelTagData.getLiveDataItems()

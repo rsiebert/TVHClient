@@ -16,8 +16,6 @@
 
 package org.tvheadend.tvhclient.ui.features.playback.internal;
 
-import android.content.Context;
-
 import com.google.android.exoplayer2.extractor.Extractor;
 import com.google.android.exoplayer2.extractor.ExtractorsFactory;
 import com.google.android.exoplayer2.extractor.flv.FlvExtractor;
@@ -34,17 +32,11 @@ import com.google.android.exoplayer2.extractor.wav.WavExtractor;
 
 class TvheadendExtractorsFactory implements ExtractorsFactory {
 
-    private final Context mContext;
-
-    TvheadendExtractorsFactory(Context context) {
-        mContext = context;
-    }
-
     @Override
     public Extractor[] createExtractors() {
         Extractor[] extractors = new Extractor[12];
 
-        extractors[0] = new HtspSubscriptionExtractor(mContext);
+        extractors[0] = new HtspSubscriptionExtractor();
         extractors[1] = new MatroskaExtractor(0);
         extractors[2] = new FragmentedMp4Extractor(0);
         extractors[3] = new Mp4Extractor();

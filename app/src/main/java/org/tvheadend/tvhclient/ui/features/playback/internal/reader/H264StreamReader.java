@@ -16,8 +16,6 @@
 
 package org.tvheadend.tvhclient.ui.features.playback.internal.reader;
 
-import android.content.Context;
-
 import androidx.annotation.NonNull;
 
 import com.google.android.exoplayer2.C;
@@ -35,8 +33,8 @@ import timber.log.Timber;
 
 class H264StreamReader extends PlainStreamReader {
 
-    H264StreamReader(Context context) {
-        super(context, C.TRACK_TYPE_VIDEO);
+    H264StreamReader() {
+        super(C.TRACK_TYPE_VIDEO);
     }
 
     @NonNull

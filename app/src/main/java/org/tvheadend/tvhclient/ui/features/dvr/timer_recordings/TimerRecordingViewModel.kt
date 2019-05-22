@@ -67,7 +67,7 @@ class TimerRecordingViewModel(application: Application) : AndroidViewModel(appli
         }
 
     init {
-        MainApplication.getComponent().inject(this)
+        MainApplication.component.inject(this)
         recordings = appRepository.timerRecordingData.getLiveDataItems()
     }
 

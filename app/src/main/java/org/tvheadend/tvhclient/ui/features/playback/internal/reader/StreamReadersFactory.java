@@ -16,40 +16,33 @@
 
 package org.tvheadend.tvhclient.ui.features.playback.internal.reader;
 
-import android.content.Context;
-
 public class StreamReadersFactory {
-    private final Context mContext;
-
-    public StreamReadersFactory(Context context) {
-        mContext = context;
-    }
 
     public StreamReader createStreamReader(String streamType) {
         switch (streamType) {
             // Video Stream Types
             case "H264":
-                return new H264StreamReader(mContext);
+                return new H264StreamReader();
             case "HEVC":
-                return new H265StreamReader(mContext);
+                return new H265StreamReader();
             case "MPEG2VIDEO":
-                return new Mpeg2VideoStreamReader(mContext);
+                return new Mpeg2VideoStreamReader();
             // Audio Stream Types
             case "AAC":
-                return new AacStreamReader(mContext);
+                return new AacStreamReader();
             case "AC3":
-                return new Ac3StreamReader(mContext);
+                return new Ac3StreamReader();
             case "EAC3":
-                return new Eac3StreamReader(mContext);
+                return new Eac3StreamReader();
             case "MPEG2AUDIO":
-                return new Mpeg2AudioStreamReader(mContext);
+                return new Mpeg2AudioStreamReader();
             case "VORBIS":
-                return new VorbisStreamReader(mContext);
+                return new VorbisStreamReader();
             // Text Stream Types
             case "TEXTSUB":
-                return new TextsubStreamReader(mContext);
+                return new TextsubStreamReader();
             case "DVBSUB":
-                return new DvbsubStreamReader(mContext);
+                return new DvbsubStreamReader();
             default:
                 return null;
         }

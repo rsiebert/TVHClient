@@ -25,7 +25,7 @@ class MigrateUtils {
     lateinit var sharedPreferences: SharedPreferences
 
     fun doMigrate() {
-        MainApplication.getComponent().inject(this)
+        MainApplication.component.inject(this)
 
         // Lookup the current version and the last migrated version
         val currentApplicationVersion = BuildConfig.BUILD_VERSION

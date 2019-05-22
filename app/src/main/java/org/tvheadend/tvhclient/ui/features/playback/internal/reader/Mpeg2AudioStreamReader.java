@@ -16,7 +16,7 @@
 
 package org.tvheadend.tvhclient.ui.features.playback.internal.reader;
 
-import android.content.Context;
+import androidx.annotation.NonNull;
 
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.Format;
@@ -25,12 +25,10 @@ import com.google.android.exoplayer2.util.MimeTypes;
 import org.tvheadend.htsp.HtspMessage;
 import org.tvheadend.tvhclient.ui.features.playback.internal.utils.TvhMappings;
 
-import androidx.annotation.NonNull;
-
 class Mpeg2AudioStreamReader extends PlainStreamReader {
 
-    Mpeg2AudioStreamReader(Context context) {
-        super(context, C.TRACK_TYPE_AUDIO);
+    Mpeg2AudioStreamReader() {
+        super(C.TRACK_TYPE_AUDIO);
     }
 
     @NonNull

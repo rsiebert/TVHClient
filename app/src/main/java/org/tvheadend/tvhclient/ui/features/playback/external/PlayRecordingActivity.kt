@@ -24,7 +24,7 @@ class PlayRecordingActivity : BasePlaybackActivity() {
                 .getString("download_directory", Environment.DIRECTORY_DOWNLOADS)
         val file = File(downloadDirectory, "$title.mkv")
 
-        if (file.exists() && MainApplication.getInstance().isUnlocked) {
+        if (file.exists() && MainApplication.instance.isUnlocked) {
             Timber.d("Playing recording from local file ${file.absolutePath}")
             intent.setDataAndType(Uri.parse(file.absolutePath), "video/*")
         } else {

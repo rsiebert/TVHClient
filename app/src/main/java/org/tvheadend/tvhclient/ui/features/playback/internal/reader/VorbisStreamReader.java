@@ -17,7 +17,7 @@
 
 package org.tvheadend.tvhclient.ui.features.playback.internal.reader;
 
-import android.content.Context;
+import androidx.annotation.NonNull;
 
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.Format;
@@ -30,13 +30,12 @@ import org.tvheadend.tvhclient.ui.features.playback.internal.utils.TvhMappings;
 import java.util.ArrayList;
 import java.util.List;
 
-import androidx.annotation.NonNull;
 import timber.log.Timber;
 
 class VorbisStreamReader extends PlainStreamReader {
 
-    VorbisStreamReader(Context context) {
-        super(context, C.TRACK_TYPE_AUDIO);
+    VorbisStreamReader() {
+        super(C.TRACK_TYPE_AUDIO);
     }
 
     @NonNull

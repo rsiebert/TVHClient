@@ -77,7 +77,7 @@ class PlayerViewModel(application: Application) : AndroidViewModel(application),
 
     init {
         Timber.d("Initializing view model")
-        MainApplication.getComponent().inject(this)
+        MainApplication.component.inject(this)
 
         isConnected.postValue(false)
         playerIsPlaying.postValue(false)
@@ -158,7 +158,7 @@ class PlayerViewModel(application: Application) : AndroidViewModel(application),
 
             Timber.d("Preparing player with media source")
             player.prepare(ExtractorMediaSource.Factory(htspSubscriptionDataSourceFactory)
-                    .setExtractorsFactory(TvheadendExtractorsFactory(context))
+                    .setExtractorsFactory(TvheadendExtractorsFactory())
                     .createMediaSource(Uri.parse("htsp://channel/$channelId")))
             player.playWhenReady = true
         }
@@ -176,7 +176,7 @@ class PlayerViewModel(application: Application) : AndroidViewModel(application),
 
             Timber.d("Preparing player with media source")
             player.prepare(ExtractorMediaSource.Factory(htspFileInputStreamDataSourceFactory)
-                    .setExtractorsFactory(TvheadendExtractorsFactory(context))
+                    .setExtractorsFactory(TvheadendExtractorsFactory())
                     .createMediaSource(Uri.parse("htsp://dvrfile/$recordingId")))
             player.playWhenReady = true
         }

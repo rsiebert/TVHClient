@@ -56,7 +56,7 @@ abstract class BaseFragment : Fragment(), NetworkStatusListener {
         connection = mainViewModel.connection
         serverStatus = mainViewModel.serverStatus
         htspVersion = serverStatus.htspVersion
-        isUnlocked = MainApplication.getInstance().isUnlocked
+        isUnlocked = MainApplication.instance.isUnlocked
 
         // Check if we have a frame in which to embed the details fragment.
         // Make the frame layout visible and set the weights again in case

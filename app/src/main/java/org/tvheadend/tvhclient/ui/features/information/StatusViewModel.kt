@@ -48,7 +48,7 @@ class StatusViewModel : ViewModel(), SharedPreferences.OnSharedPreferenceChangeL
 
     init {
         Timber.d("Initializing")
-        MainApplication.getComponent().inject(this)
+        MainApplication.component.inject(this)
 
         serverStatus = appRepository.serverStatusData.liveDataActiveItem
         connection = appRepository.connectionData.activeItem
@@ -87,7 +87,7 @@ class StatusViewModel : ViewModel(), SharedPreferences.OnSharedPreferenceChangeL
         }
 
         statusUpdateTask = Runnable {
-            if (!MainApplication.isActivityVisible()) {
+            if (!MainApplication.isActivityVisible) {
                 Timber.d("App is in the background, not starting service to get updated subscriptions, inputs and disk space ")
                 return@Runnable
             }

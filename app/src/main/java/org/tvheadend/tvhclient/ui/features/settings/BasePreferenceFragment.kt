@@ -32,6 +32,6 @@ abstract class BasePreferenceFragment : PreferenceFragmentCompat() {
 
         serverStatus = settingsViewModel.serverStatus
         htspVersion = serverStatus.htspVersion
-        isUnlocked = MainApplication.getInstance().isUnlocked
+        isUnlocked = MainApplication.instance.isUnlocked
     }
 }

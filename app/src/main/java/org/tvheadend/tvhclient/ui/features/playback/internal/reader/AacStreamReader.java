@@ -16,7 +16,7 @@
 
 package org.tvheadend.tvhclient.ui.features.playback.internal.reader;
 
-import android.content.Context;
+import androidx.annotation.NonNull;
 
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.Format;
@@ -32,8 +32,6 @@ import org.tvheadend.tvhclient.ui.features.playback.internal.utils.TvhMappings;
 import java.util.Collections;
 import java.util.List;
 
-import androidx.annotation.NonNull;
-
 // See https://wiki.multimedia.cx/index.php?title=ADTS
 
 class AacStreamReader implements StreamReader {
@@ -42,9 +40,6 @@ class AacStreamReader implements StreamReader {
     private static final int ADTS_CRC_SIZE = 2;
 
     private TrackOutput mTrackOutput;
-
-    AacStreamReader(Context context) {
-    }
 
     @Override
     public void createTracks(HtspMessage stream, ExtractorOutput output) {

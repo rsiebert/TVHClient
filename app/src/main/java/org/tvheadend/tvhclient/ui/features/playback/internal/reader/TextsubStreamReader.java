@@ -17,7 +17,7 @@
 
 package org.tvheadend.tvhclient.ui.features.playback.internal.reader;
 
-import android.content.Context;
+import androidx.annotation.NonNull;
 
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.Format;
@@ -27,14 +27,12 @@ import com.google.android.exoplayer2.util.MimeTypes;
 import com.google.android.exoplayer2.util.ParsableByteArray;
 import com.google.android.exoplayer2.util.Util;
 
-import org.tvheadend.tvhclient.MainApplication;
 import org.tvheadend.htsp.HtspMessage;
+import org.tvheadend.tvhclient.MainApplication;
 
 import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.Locale;
-
-import androidx.annotation.NonNull;
 
 class TextsubStreamReader implements StreamReader {
 
@@ -67,12 +65,7 @@ class TextsubStreamReader implements StreamReader {
     // UTF-8 is the default on Android
     private static final Charset UTF_8 = Charset.defaultCharset();
 
-    private final Context mContext;
     private TrackOutput mTrackOutput;
-
-    TextsubStreamReader(Context context) {
-        mContext = context;
-    }
 
     @Override
     public final void createTracks(@NonNull HtspMessage stream, @NonNull ExtractorOutput output) {
@@ -103,7 +96,7 @@ class TextsubStreamReader implements StreamReader {
     @Override
     public void release() {
         // Watch for memory leaks
-        MainApplication.getRefWatcher(mContext).watch(this);
+        MainApplication.refWatcher.watch(this);
     }
 
     @NonNull
