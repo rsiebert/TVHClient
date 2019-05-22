@@ -31,7 +31,9 @@ class NavigationViewModel : ViewModel() {
     }
 
     fun setSelectedNavigationMenuId(id: Int) {
-        navigationMenuId.value = id
+        if (navigationMenuId.value != id) {
+            navigationMenuId.value = id
+        }
     }
 
     fun setNewActiveConnection(id: Int): Boolean {

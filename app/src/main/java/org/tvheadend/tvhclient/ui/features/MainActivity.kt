@@ -123,7 +123,6 @@ class MainActivity : BaseActivity(), SearchView.OnQueryTextListener, SearchView.
         } else {
             isSavedInstanceStateNull = false
             isNetworkAvailable = savedInstanceState.getBoolean("isNetworkAvailable", false)
-            selectedNavigationMenuId = savedInstanceState.getInt("navigationMenuId", NavigationDrawer.MENU_CHANNELS)
             searchQuery = savedInstanceState.getString(SearchManager.QUERY) ?: ""
         }
 
@@ -165,6 +164,7 @@ class MainActivity : BaseActivity(), SearchView.OnQueryTextListener, SearchView.
 
         navigationViewModel.navigationMenuId.observe(this, Observer { id ->
             Timber.d("Selected navigation id changed to $id")
+            selectedNavigationMenuId = id
             handleDrawerItemSelected(id)
         })
 
@@ -179,9 +179,9 @@ class MainActivity : BaseActivity(), SearchView.OnQueryTextListener, SearchView.
 
         // TODO translate and optimize the pref strings
         statusViewModel.showLowStorageSpace.observe(this, Observer { show ->
-            Timber.d("Currently free disk space changed to ${statusViewModel.availableStorageSpace} GB")
+            Timber.d("Currently free disk space changed to ${statusViewModel.availableStorageSpace / 1000} MB")
             if (show) {
-                addDiskSpaceLowNotification(this, statusViewModel.availableStorageSpace)
+                addDiskSpaceLowNotification(this, statusViewModel.availableStorageSpace / 1000)
             } else {
                 (getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager).cancel(2)
             }
@@ -313,7 +313,7 @@ class MainActivity : BaseActivity(), SearchView.OnQueryTextListener, SearchView.
         // Get the already created fragment when the device orientation changes. In this
         // case the saved instance is not null. This avoids recreating fragments after
         // every orientation change which would reset any saved states in these fragments.
-        if (isSavedInstanceStateNull || selectedNavigationMenuId != position) {
+        if (isSavedInstanceStateNull) {
             Timber.d("Saved instance is null or selected id has changed, creating new fragment")
             fragment = navigationDrawer.getFragmentFromSelection(position)
         } else {
@@ -328,7 +328,6 @@ class MainActivity : BaseActivity(), SearchView.OnQueryTextListener, SearchView.
         // Finally show the new main fragment and add it to the back stack
         // only if it is a new fragment and not an existing one.
         if (fragment != null) {
-            selectedNavigationMenuId = position
             if (isDualPane) {
                 val detailsFragment = supportFragmentManager.findFragmentById(R.id.details)
                 if (detailsFragment != null) {
