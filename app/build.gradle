@@ -173,7 +173,8 @@ dependencies {
     implementation 'com.jakewharton.timber:timber:4.7.1'
 
     // Image loading library
-    implementation 'com.squareup.picasso:picasso:2.71828'
+    implementation 'com.github.bumptech.glide:glide:4.9.0'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.9.0'
 
     // App data access via browser
     implementation 'com.facebook.stetho:stetho:1.5.1'
