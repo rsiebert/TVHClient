@@ -399,6 +399,7 @@
     <string name="pref_notify_about_running_recordings">Notify about running recordings</string>
     <string name="pref_notify_low_server_storage_space">Notify when server storage space runs low</string>
     <string name="pref_notify_low_server_storage_space_threshold">Server storage space threshold in GB</string>
-    <string name="pref_notify_low_server_storage_space_threshold_sum">Define the storage space threshold in gigabytes. If the the available server storage space is below the threshold a notification will be shown</string>
+    <string name="pref_notify_low_server_storage_space_threshold_sum">Define the storage space threshold in gigabytes. If the available server storage space is below the threshold a notification will be shown</string>
+    <string name="disc_space_low">Disk space is running low, \'%d\' GB remaining</string>
     >
 </resources>
