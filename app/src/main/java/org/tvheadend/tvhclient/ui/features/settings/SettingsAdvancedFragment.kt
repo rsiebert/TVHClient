@@ -16,14 +16,13 @@ import androidx.work.OneTimeWorkRequest
 import androidx.work.WorkManager
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.list.listItemsSingleChoice
-import com.bumptech.glide.Glide
+import com.squareup.picasso.Picasso
 import org.tvheadend.tvhclient.BuildConfig
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.data.service.HtspService
 import org.tvheadend.tvhclient.data.worker.LoadChannelIconWorker
 import org.tvheadend.tvhclient.ui.common.sendSnackbarMessage
 import org.tvheadend.tvhclient.ui.features.search.SuggestionProvider
-import org.tvheadend.tvhclient.ui.features.startup.SplashActivity
 import org.tvheadend.tvhclient.util.getIconUrl
 import org.tvheadend.tvhclient.util.logging.FileLoggingTree
 import timber.log.Timber
@@ -240,11 +239,12 @@ class SettingsAdvancedFragment : BasePreferenceFragment(), Preference.OnPreferen
     override fun onDatabaseCleared() {
         Timber.d("Database has been cleared, stopping service and restarting application")
         activity?.let {
-            it.stopService(Intent(it, HtspService::class.java))
-            val intent = Intent(it, SplashActivity::class.java)
-            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-            it.startActivity(intent)
-            it.finish()
+            it.sendSnackbarMessage("Database contents cleared, reconnecting to server")
+            it.stopService(Intent(activity, HtspService::class.java))
+            settingsViewModel.setSyncRequiredForActiveConnection()
+            val intent = Intent(activity, HtspService::class.java)
+            intent.action = "connect"
+            it.startService(intent)
         }
     }
 
@@ -284,7 +284,7 @@ class SettingsAdvancedFragment : BasePreferenceFragment(), Preference.OnPreferen
                                 Timber.d("Could not delete channel icon ${file.name}")
                             }
                         }
-                        Thread(Runnable { Glide.get(it).clearDiskCache() }).start()
+                        Picasso.get().invalidate(file)
                     }
                     context.sendSnackbarMessage(R.string.clear_icon_cache_done)
 

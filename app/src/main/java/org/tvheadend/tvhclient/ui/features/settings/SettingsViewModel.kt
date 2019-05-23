@@ -68,7 +68,7 @@ class SettingsViewModel : ViewModel() {
      * is triggered which will restart the application
      */
     fun clearDatabase(callback: DatabaseClearedCallback) {
-        appRepository.miscData.clearDatabase(appContext, callback)
+        appRepository.miscData.clearDatabase(callback)
     }
 
     fun updateServerStatus(serverStatus: ServerStatus) {
