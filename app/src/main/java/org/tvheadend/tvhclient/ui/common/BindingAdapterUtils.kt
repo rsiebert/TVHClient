@@ -4,8 +4,6 @@ import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.os.Build
-import android.os.Handler
-import android.os.Looper
 import android.text.format.DateUtils
 import android.util.SparseArray
 import android.view.View
@@ -16,20 +14,14 @@ import androidx.core.content.ContextCompat
 import androidx.databinding.BindingAdapter
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.DataSource
-import com.bumptech.glide.load.engine.GlideException
-import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool
-import com.bumptech.glide.load.resource.bitmap.BitmapTransformation
-import com.bumptech.glide.request.RequestListener
-import com.bumptech.glide.request.target.Target
+import com.squareup.picasso.Callback
+import com.squareup.picasso.Picasso
+import com.squareup.picasso.Transformation
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.domain.entity.ProgramInterface
 import org.tvheadend.tvhclient.domain.entity.Recording
 import org.tvheadend.tvhclient.util.getIconUrl
 import timber.log.Timber
-import java.nio.charset.Charset
-import java.security.MessageDigest
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -348,46 +340,43 @@ fun setProgramImage(view: ImageView, url: String?, visible: Boolean) {
         view.gone()
     } else {
 
-        val transformation = object : BitmapTransformation() {
-            override fun transform(pool: BitmapPool, toTransform: Bitmap, outWidth: Int, outHeight: Int): Bitmap {
+        val transformation = object : Transformation {
+
+            override fun transform(source: Bitmap): Bitmap {
                 val targetWidth = view.width
-                if (targetWidth == 0 || toTransform.height == 0 || toTransform.width == 0) {
-                    Timber.d("Returning source image, target width is $targetWidth, source height is ${toTransform.height}, source width is ${toTransform.width}")
-                    return toTransform
+                if (targetWidth == 0 || source.height == 0 || source.width == 0) {
+                    Timber.d("Returning source image, target width is $targetWidth, source height is ${source.height}, source width is ${source.width}")
+                    return source
                 }
-                val aspectRatio = toTransform.height.toDouble() / toTransform.width.toDouble()
+                val aspectRatio = source.height.toDouble() / source.width.toDouble()
                 val targetHeight = (targetWidth * aspectRatio).toInt()
-                val result = Bitmap.createScaledBitmap(toTransform, targetWidth, targetHeight, false)
-                if (result != toTransform) {
+                val result = Bitmap.createScaledBitmap(source, targetWidth, targetHeight, false)
+                if (result != source) {
                     // Same bitmap is returned if sizes are the same
-                    toTransform.recycle()
+                    source.recycle()
                 }
                 Timber.d("Returning transformed image")
                 return result
             }
 
-            override fun updateDiskCacheKey(messageDigest: MessageDigest) {
-                val id = "transformation" + " desiredWidth"
-                messageDigest.update(id.toByteArray(Charset.forName("UTF-8")))
+            override fun key(): String {
+                return "transformation" + " desiredWidth"
             }
         }
 
-        Glide.with(view.context)
+        Picasso.get()
                 .load(url)
                 .transform(transformation)
-                .listener(object : RequestListener<Drawable> {
-                    override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
-                        Timber.d("Could not load image $url")
-                        Handler(Looper.getMainLooper()).post { view.gone() }
-                        return false
+                .into(view, object : Callback {
+                    override fun onSuccess() {
+                        view.visible()
                     }
 
-                    override fun onResourceReady(resource: Drawable?, model: Any?, target: Target<Drawable>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
-                        Handler(Looper.getMainLooper()).post { view.visible() }
-                        return false
+                    override fun onError(e: Exception) {
+                        Timber.d("Could not load image $url")
+                        view.gone()
                     }
                 })
-                .into(view)
     }
 }
 
@@ -406,22 +395,20 @@ fun setChannelIcon(view: ImageView, iconUrl: String?) {
         val url = getIconUrl(view.context, iconUrl)
         Timber.d("Channel icon '$iconUrl' is not empty, loading icon from url '$url'")
 
-        Glide.with(view.context)
+        Picasso.get().cancelRequest(view)
+        Picasso.get()
                 .load(url)
-                .listener(object : RequestListener<Drawable> {
-                    override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
-                        Timber.d("Error loading channel icon from url '$url'")
-                        Handler(Looper.getMainLooper()).post { view.gone() }
-                        return false
+                .into(view, object : Callback {
+                    override fun onSuccess() {
+                        Timber.d("Successfully loaded channel icon from url '$url'")
+                        view.visible()
                     }
 
-                    override fun onResourceReady(resource: Drawable?, model: Any?, target: Target<Drawable>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
-                        Timber.d("Successfully loaded channel icon from url '$url'")
-                        Handler(Looper.getMainLooper()).post { view.visible() }
-                        return false
+                    override fun onError(e: Exception) {
+                        Timber.d("Error loading channel icon from url '$url'")
+                        view.gone()
                     }
                 })
-                .into(view)
     }
 }
 
@@ -449,19 +436,16 @@ fun setChannelName(view: TextView, name: String?, iconUrl: String?) {
         view.visible()
     } else {
         val url = getIconUrl(view.context, iconUrl)
-        Glide.with(view.context)
-                .load(url)
-                .listener(object : RequestListener<Drawable> {
-                    override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
-                        Handler(Looper.getMainLooper()).post { view.visible() }
-                        return false
+        Picasso.get()
+                .load(url).fetch(object : Callback {
+                    override fun onSuccess() {
+                        view.gone()
                     }
-                    override fun onResourceReady(resource: Drawable?, model: Any?, target: Target<Drawable>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
-                        Handler(Looper.getMainLooper()).post { view.gone() }
-                        return false
+
+                    override fun onError(e: Exception) {
+                        view.visible()
                     }
                 })
-                .submit()
     }
 }
 
