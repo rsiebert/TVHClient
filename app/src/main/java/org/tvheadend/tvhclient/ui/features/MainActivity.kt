@@ -177,11 +177,10 @@ class MainActivity : BaseActivity(), SearchView.OnQueryTextListener, SearchView.
             }
         })
 
-        // TODO translate and optimize the pref strings
         statusViewModel.showLowStorageSpace.observe(this, Observer { show ->
-            Timber.d("Currently free disk space changed to ${statusViewModel.availableStorageSpace / 1000} MB")
+            Timber.d("Currently free disk space changed to ${statusViewModel.availableStorageSpace} gigabytes")
             if (show) {
-                addDiskSpaceLowNotification(this, statusViewModel.availableStorageSpace / 1000)
+                addDiskSpaceLowNotification(this, statusViewModel.availableStorageSpace)
             } else {
                 (getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager).cancel(2)
             }

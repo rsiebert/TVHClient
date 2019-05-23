@@ -78,11 +78,11 @@ class StatusViewModel : ViewModel(), SharedPreferences.OnSharedPreferenceChangeL
         // notifications is disabled, set the value to false to remove any notification
         showLowStorageSpace.addSource(serverStatus) { serverStatus ->
             if (serverStatus != null) {
-                Timber.d("Server status free space has changed, checking if notification shall be shown")
-                availableStorageSpace = (serverStatus.freeDiskSpace / 1000000000).toInt()
+                availableStorageSpace = (serverStatus.freeDiskSpace / 1000000000000).toInt()
                 val enabled = sharedPreferences.getBoolean("notify_low_storage_space_enabled", appContext.resources.getBoolean(R.bool.pref_default_notify_low_storage_space_enabled))
-                val threshold = Integer.valueOf(sharedPreferences.getString("low_storage_space_threshold", "1")!!)
-                showLowStorageSpace.value = enabled && availableStorageSpace > threshold
+                val threshold = Integer.valueOf(sharedPreferences.getString("low_storage_space_threshold", appContext.resources.getString(R.string.pref_default_low_storage_space_threshold))!!)
+                Timber.d("Server status free space has changed to $availableStorageSpace, threshold is $threshold, checking if notification shall be shown")
+                showLowStorageSpace.value = enabled && availableStorageSpace <= threshold
             }
         }
 
@@ -132,10 +132,10 @@ class StatusViewModel : ViewModel(), SharedPreferences.OnSharedPreferenceChangeL
                 showRunningRecordingCount.value = enabled && runningRecordingCount > 0
             }
             "notify_low_storage_space_enabled" -> {
-                Timber.d("Setting has changed, checking if low storage space notification shall be shown")
                 val enabled = sharedPreferences.getBoolean(key, appContext.resources.getBoolean(R.bool.pref_default_notify_low_storage_space_enabled))
-                val threshold = Integer.valueOf(sharedPreferences.getString("low_storage_space_threshold", "1")!!)
-                showLowStorageSpace.value = enabled && availableStorageSpace > threshold
+                val threshold = Integer.valueOf(sharedPreferences.getString("low_storage_space_threshold", appContext.resources.getString(R.string.pref_default_low_storage_space_threshold))!!)
+                Timber.d("Server status free space has changed to $availableStorageSpace, threshold is $threshold, checking if notification shall be shown")
+                showLowStorageSpace.value = enabled && availableStorageSpace <= threshold
             }
         }
     }
