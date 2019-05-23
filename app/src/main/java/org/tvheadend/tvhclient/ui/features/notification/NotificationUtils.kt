@@ -168,7 +168,7 @@ fun addDiskSpaceLowNotification(context: Context, gigabytes: Int) {
 
         val builder = getNotificationBuilder(context)
         builder.setContentTitle(context.getString(R.string.disc_space))
-                .setContentText("Disk space is running low, $gigabytes remaining")
+                .setContentText(context.getString(R.string.disc_space_low, gigabytes))
                 .setSmallIcon(R.drawable.ic_menu_info_dark)
         NotificationManagerCompat.from(context).notify(2, builder.build())
     }
