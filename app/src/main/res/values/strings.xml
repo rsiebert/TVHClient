@@ -396,4 +396,9 @@
     <string name="authentication_failed">Authentication failed</string>
     <string name="enable">Enable</string>
     <string name="disable">Disable</string>
+    <string name="pref_notify_about_running_recordings">Notify about running recordings</string>
+    <string name="pref_notify_low_server_storage_space">Notify when server storage space runs low</string>
+    <string name="pref_notify_low_server_storage_space_threshold">Server storage space threshold in GB</string>
+    <string name="pref_notify_low_server_storage_space_threshold_sum">Define the storage space threshold in gigabytes. If the the available server storage space is below the threshold a notification will be shown</string>
+    >
 </resources>

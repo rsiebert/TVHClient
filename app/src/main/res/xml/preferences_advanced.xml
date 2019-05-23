@@ -62,12 +62,12 @@
         <CheckBoxPreference
             android:defaultValue="@bool/pref_default_notify_running_recording_count_enabled"
             android:key="notify_running_recording_count_enabled"
-            android:title="Notify about running recordings" />
+            android:title="@string/pref_notify_about_running_recordings" />
 
         <CheckBoxPreference
             android:defaultValue="@bool/pref_default_notify_low_storage_space_enabled"
             android:key="notify_low_storage_space_enabled"
-            android:title="Notify when server storage space runs low" />
+            android:title="@string/pref_notify_low_server_storage_space" />
 
         <EditTextPreference
             android:name=""
@@ -75,8 +75,8 @@
             android:dependency="notify_low_storage_space_enabled"
             android:key="low_storage_space_threshold"
             android:numeric="integer"
-            android:summary="Define the storage space threshold in gigabytes. If the the available server storage space is below the threshold a notification will be shown"
-            android:title="Server storage space threshold" />
+            android:summary="@string/pref_notify_low_server_storage_space_threshold_sum"
+            android:title="@string/pref_notify_low_server_storage_space_threshold" />
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/pref_navigation">
