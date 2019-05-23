@@ -1,3 +1,12 @@
+$ 2.2.13
+  % VERSION 2.2.13
+  _ 23.05.2019
+    * Prevent reloading a screen when the same menu item was selected from the navigation menu
+    * Changed the default low server storage space notification threshold from 5GB to 1GB
+    * Replaced image loading library Glide with Picasso again
+    * Fixed crash when opening the time selection dialog in the epg or channel list screen
+    * Fixed crash when clearing the database from the advanced settings
+    * Fixed crash during startup when no server status entry was found in the database
 $ 2.2.12
   % VERSION 2.2.12
   _ 22.05.2019
