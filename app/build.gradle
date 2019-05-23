@@ -29,8 +29,8 @@ android {
         minSdkVersion 16
         targetSdkVersion 28
 
-        versionCode 171
-        versionName "2.2.12"
+        versionCode 172
+        versionName "2.2.13"
 
         // Define the apk naming convention
         applicationId "org.tvheadend.tvhclient"
@@ -173,8 +173,7 @@ dependencies {
     implementation 'com.jakewharton.timber:timber:4.7.1'
 
     // Image loading library
-    implementation 'com.github.bumptech.glide:glide:4.9.0'
-    annotationProcessor 'com.github.bumptech.glide:compiler:4.9.0'
+    implementation 'com.squareup.picasso:picasso:2.71828'
 
     // App data access via browser
     implementation 'com.facebook.stetho:stetho:1.5.1'
