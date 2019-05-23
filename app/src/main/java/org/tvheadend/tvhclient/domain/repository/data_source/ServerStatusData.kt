@@ -3,6 +3,7 @@ package org.tvheadend.tvhclient.domain.repository.data_source
 import android.os.AsyncTask
 import androidx.lifecycle.LiveData
 import org.tvheadend.tvhclient.data.db.AppRoomDatabase
+import org.tvheadend.tvhclient.domain.entity.Connection
 import org.tvheadend.tvhclient.domain.entity.ServerStatus
 import timber.log.Timber
 import java.util.*
@@ -23,16 +24,27 @@ class ServerStatusData(private val db: AppRoomDatabase) : DataSourceInterface<Se
             } catch (e: ExecutionException) {
                 Timber.d(e, "Loading active server status task aborted")
             }
+
             // Create a new server status object with the connection id
             if (serverStatus == null) {
-                Timber.d("Active server status is null, adding new one with default values")
+                Timber.d("Active server status is null, trying to add new one with default values")
                 serverStatus = ServerStatus()
-                val connection = db.connectionDao.loadActiveConnectionSync()
-                serverStatus.connectionId = connection.id
-                serverStatus.connectionName = connection.name
                 serverStatus.serverName = "Unknown"
                 serverStatus.serverVersion = "Unknown"
-                addItem(serverStatus)
+
+                try {
+                    val connection = ActiveConnectionTask(db).execute().get()
+                    if (connection != null) {
+                        Timber.d("Loaded active connection, adding server status to database")
+                        serverStatus.connectionId = connection.id
+                        serverStatus.connectionName = connection.name
+                        addItem(serverStatus)
+                    }
+                } catch (e: InterruptedException) {
+                    Timber.d(e, "Loading active connection task got interrupted")
+                } catch (e: ExecutionException) {
+                    Timber.d(e, "Loading active connection task aborted")
+                }
             }
             return serverStatus
         }
@@ -87,6 +99,13 @@ class ServerStatusData(private val db: AppRoomDatabase) : DataSourceInterface<Se
 
         override fun doInBackground(vararg voids: Void): ServerStatus? {
             return db.serverStatusDao.loadActiveServerStatusSync()
+        }
+    }
+
+    private class ActiveConnectionTask internal constructor(private val db: AppRoomDatabase) : AsyncTask<Void, Void, Connection>() {
+
+        override fun doInBackground(vararg voids: Void): Connection {
+            return db.connectionDao.loadActiveConnectionSync()
         }
     }
 }
