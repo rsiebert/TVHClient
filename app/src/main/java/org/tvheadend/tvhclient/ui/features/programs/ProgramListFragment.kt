@@ -40,8 +40,8 @@ class ProgramListFragment : BaseFragment(), RecyclerViewClickCallback, LastProgr
     private var selectedListPosition: Int = 0
     var shownChannelId: Int = 0
 
-    lateinit var channelName: String
-    lateinit var searchQuery: String
+    var channelName: String = ""
+    var searchQuery: String = ""
 
     private var loadingMoreProgramAllowed: Boolean = false
     private var loadingProgramsAllowedTask: Runnable? = null
