@@ -1,3 +1,9 @@
+$ 2.2.14
+  % VERSION 2.2.14
+  _ 26.05.2019
+    * Fixed issue where the start screen would always be the channel screen
+    * Fixed navigation not working after device was rotated
+    * Small bug fixes
 $ 2.2.13
   % VERSION 2.2.13
   _ 23.05.2019
