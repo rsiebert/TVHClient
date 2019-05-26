@@ -32,8 +32,8 @@ class EpgViewPagerFragment : Fragment(), EpgScrollInterface {
     private lateinit var updateTimeIndicationHandler: Handler
     private lateinit var updateTimeIndicationTask: Runnable
     private lateinit var constraintSet: ConstraintSet
-    private lateinit var recyclerViewLinearLayoutManager: LinearLayoutManager
     private lateinit var itemBinding: EpgViewpagerFragmentBinding
+    private var recyclerViewLinearLayoutManager: LinearLayoutManager? = null
     private var enableScrolling: Boolean = false
     private var fragmentId = 0
 
@@ -100,11 +100,11 @@ class EpgViewPagerFragment : Fragment(), EpgScrollInterface {
                 super.onScrolled(recyclerView, dx, dy)
                 if (enableScrolling) {
                     activity?.let {
-                        val position = recyclerViewLinearLayoutManager.findFirstVisibleItemPosition()
-                        val view = recyclerViewLinearLayoutManager.getChildAt(0)
+                        val position = recyclerViewLinearLayoutManager?.findFirstVisibleItemPosition() ?: -1
+                        val view = recyclerViewLinearLayoutManager?.getChildAt(0)
                         val offset = if (view == null) 0 else view.top - recyclerView.paddingTop
                         val fragment = it.supportFragmentManager.findFragmentById(R.id.main)
-                        if (fragment is EpgScrollInterface) {
+                        if (fragment is EpgScrollInterface && position >= 0) {
                             (fragment as EpgScrollInterface).onScroll(position, offset)
                         }
                     }
@@ -149,7 +149,9 @@ class EpgViewPagerFragment : Fragment(), EpgScrollInterface {
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState.putParcelable("layout", recyclerViewLinearLayoutManager.onSaveInstanceState())
+        recyclerViewLinearLayoutManager?.let {
+            outState.putParcelable("layout", it.onSaveInstanceState())
+        }
     }
 
     /**
@@ -174,7 +176,7 @@ class EpgViewPagerFragment : Fragment(), EpgScrollInterface {
     }
 
     override fun onScroll(position: Int, offset: Int) {
-        recyclerViewLinearLayoutManager.scrollToPositionWithOffset(position, offset)
+        recyclerViewLinearLayoutManager?.scrollToPositionWithOffset(position, offset)
     }
 
     override fun onScrollStateChanged() {
