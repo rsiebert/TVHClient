@@ -103,7 +103,9 @@ class StatusFragment : BaseFragment() {
                     ?: 0, count)
         })
         statusViewModel.serverStatus.observe(viewLifecycleOwner, Observer { serverStatus ->
-            showServerInformation(serverStatus)
+            if (serverStatus != null) {
+                showServerInformation(serverStatus)
+            }
         })
 
         // Get the programs that are currently being recorded
