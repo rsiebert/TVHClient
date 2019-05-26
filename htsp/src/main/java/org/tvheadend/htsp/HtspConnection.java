@@ -29,8 +29,6 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import timber.log.Timber;
 
-// TODO provide an interface to access the connection from outside this package
-
 public class HtspConnection extends Thread implements HtspConnectionInterface {
 
     private final String username;
@@ -266,6 +264,14 @@ public class HtspConnection extends Thread implements HtspConnectionInterface {
     public void sendMessage(@NonNull HtspMessage message, @Nullable HtspResponseListener listener) {
         if (isNotConnected()) {
             Timber.d("Not sending message, not connected to server");
+
+            HtspMessage msg = new HtspMessage();
+            msg.put("success", 0);
+            msg.put("error", "Could not send message, not connected to server");
+            if (listener != null) {
+                listener.handleResponse(msg);
+            }
+
             return;
         }
         lock.lock();
