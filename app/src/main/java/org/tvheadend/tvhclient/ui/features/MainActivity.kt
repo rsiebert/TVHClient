@@ -73,7 +73,6 @@ class MainActivity : BaseActivity(), SearchView.OnQueryTextListener, SearchView.
     private lateinit var networkStatusReceiver: NetworkStatusReceiver
 
     private var isNetworkAvailable: Boolean = false
-    private var selectedNavigationMenuId: Int = 0
     private var isUnlocked: Boolean = false
     private var isDualPane: Boolean = false
 
@@ -110,7 +109,7 @@ class MainActivity : BaseActivity(), SearchView.OnQueryTextListener, SearchView.
             actionBar.setHomeButtonEnabled(true)
         }
 
-        navigationDrawer = NavigationDrawer(this, toolbar, navigationViewModel, statusViewModel, isUnlocked)
+        navigationDrawer = NavigationDrawer(this, savedInstanceState, toolbar, navigationViewModel, statusViewModel, isUnlocked)
 
         // When the activity is created it got called by the main activity. Get the initial
         // navigation menu position and show the associated fragment with it. When the device
@@ -118,7 +117,6 @@ class MainActivity : BaseActivity(), SearchView.OnQueryTextListener, SearchView.
         if (savedInstanceState == null) {
             isSavedInstanceStateNull = true
             isNetworkAvailable = false
-            selectedNavigationMenuId = Integer.parseInt(sharedPreferences.getString("start_screen", resources.getString(R.string.pref_default_start_screen))!!)
             searchQuery = ""
         } else {
             isSavedInstanceStateNull = false
@@ -163,8 +161,6 @@ class MainActivity : BaseActivity(), SearchView.OnQueryTextListener, SearchView.
         }
 
         navigationViewModel.navigationMenuId.observe(this, Observer { id ->
-            Timber.d("Selected navigation id changed to $id")
-            selectedNavigationMenuId = id
             handleDrawerItemSelected(id)
         })
 
@@ -190,10 +186,12 @@ class MainActivity : BaseActivity(), SearchView.OnQueryTextListener, SearchView.
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
-        outState.putInt("navigationMenuId", selectedNavigationMenuId)
-        outState.putBoolean("isNetworkAvailable", isNetworkAvailable)
-        outState.putString(SearchManager.QUERY, searchQuery)
-        super.onSaveInstanceState(outState)
+        var out = outState
+        // add the values which need to be saved from the drawer and header to the bundle
+        out = navigationDrawer.saveInstanceState(out)
+        out.putBoolean("isNetworkAvailable", isNetworkAvailable)
+        out.putString(SearchManager.QUERY, searchQuery)
+        super.onSaveInstanceState(out)
     }
 
     public override fun onStart() {
@@ -312,7 +310,7 @@ class MainActivity : BaseActivity(), SearchView.OnQueryTextListener, SearchView.
         // Get the already created fragment when the device orientation changes. In this
         // case the saved instance is not null. This avoids recreating fragments after
         // every orientation change which would reset any saved states in these fragments.
-        if (isSavedInstanceStateNull) {
+        if (position != navigationViewModel.previousNavigationMenuId) {
             Timber.d("Saved instance is null or selected id has changed, creating new fragment")
             fragment = navigationDrawer.getFragmentFromSelection(position)
         } else {
@@ -344,7 +342,7 @@ class MainActivity : BaseActivity(), SearchView.OnQueryTextListener, SearchView.
         super.onPrepareOptionsMenu(menu)
 
         // Show certain menus not on all screens
-        when (selectedNavigationMenuId) {
+        when (navigationViewModel.navigationMenuId.value) {
             NavigationDrawer.MENU_STATUS, NavigationDrawer.MENU_UNLOCKER, NavigationDrawer.MENU_HELP -> {
                 mediaRouteMenuItem?.isVisible = false
                 menu.findItem(R.id.menu_search).isVisible = false

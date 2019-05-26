@@ -42,6 +42,7 @@ import org.tvheadend.tvhclient.util.getThemeId
 import java.util.*
 
 class NavigationDrawer(private val activity: AppCompatActivity,
+                       private val savedInstanceState: Bundle?,
                        private val toolbar: Toolbar,
                        private val navigationViewModel: NavigationViewModel,
                        statusViewModel: StatusViewModel,
@@ -73,6 +74,7 @@ class NavigationDrawer(private val activity: AppCompatActivity,
                 .withProfileImagesVisible(false)
                 .withHeaderBackground(if (getThemeId(activity) == R.style.CustomTheme_Light) R.drawable.header_light else R.drawable.header_dark)
                 .withOnAccountHeaderListener(this)
+                .withSavedInstance(savedInstanceState)
                 .build()
     }
 
@@ -130,6 +132,7 @@ class NavigationDrawer(private val activity: AppCompatActivity,
                 .withAccountHeader(headerResult)
                 .withToolbar(toolbar)
                 .withOnDrawerItemClickListener(this)
+                .withSavedInstance(savedInstanceState)
 
         drawerBuilder.addDrawerItems(
                 channelItem,
@@ -227,8 +230,17 @@ class NavigationDrawer(private val activity: AppCompatActivity,
 
     override fun onItemClick(view: View?, position: Int, drawerItem: IDrawerItem<*>): Boolean {
         result.closeDrawer()
-        navigationViewModel.setSelectedNavigationMenuId(drawerItem.identifier.toInt())
+        navigationViewModel.setNavigationMenuId(drawerItem.identifier.toInt())
         return true
+    }
+
+    fun saveInstanceState(outState: Bundle): Bundle {
+        var out = outState
+        val resultBundle = result.saveInstanceState(out)
+        val headerResultBundle = headerResult.saveInstanceState(out)
+        if (resultBundle != null) out = resultBundle
+        if (headerResultBundle != null) out = headerResultBundle
+        return out
     }
 
     fun handleMenuSelection(fragment: Fragment?) {

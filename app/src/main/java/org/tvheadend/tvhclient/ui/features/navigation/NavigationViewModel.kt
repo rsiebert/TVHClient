@@ -6,8 +6,10 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import org.tvheadend.tvhclient.MainApplication
+import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.data.repository.AppRepository
 import org.tvheadend.tvhclient.domain.entity.Connection
+import timber.log.Timber
 import javax.inject.Inject
 
 class NavigationViewModel : ViewModel() {
@@ -22,17 +24,22 @@ class NavigationViewModel : ViewModel() {
     val connection: Connection
     val connections: LiveData<List<Connection>>
     val navigationMenuId: MutableLiveData<Int> = MutableLiveData()
+    var previousNavigationMenuId: Int = -1
 
     init {
+        Timber.d("Initializing")
         MainApplication.component.inject(this)
         connection = appRepository.connectionData.activeItem
         connections = appRepository.connectionData.getLiveDataItems()
-        navigationMenuId.value = NavigationDrawer.MENU_CHANNELS
+        navigationMenuId.value = Integer.parseInt(sharedPreferences.getString("start_screen", appContext.resources.getString(R.string.pref_default_start_screen))!!)
     }
 
-    fun setSelectedNavigationMenuId(id: Int) {
+    fun setNavigationMenuId(id: Int) {
+        Timber.d("Received new navigation id $id")
         if (navigationMenuId.value != id) {
+            Timber.d("Setting navigation id to $id")
             navigationMenuId.value = id
+            previousNavigationMenuId = id
         }
     }
 
