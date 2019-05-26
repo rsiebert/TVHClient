@@ -1,5 +1,6 @@
 package org.tvheadend.tvhclient.ui.features.information
 
+import android.app.ActivityManager
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
@@ -87,19 +88,23 @@ class StatusViewModel : ViewModel(), SharedPreferences.OnSharedPreferenceChangeL
         }
 
         statusUpdateTask = Runnable {
-            if (!MainApplication.isActivityVisible) {
-                Timber.d("App is in the background, not starting service to get updated subscriptions, inputs and disk space ")
-                return@Runnable
+
+            val activityManager = appContext.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+            val runningAppProcessInfo = activityManager.runningAppProcesses?.get(0)
+
+            if (runningAppProcessInfo != null
+                    && runningAppProcessInfo.importance <= ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND) {
+
+                Timber.d("Application is in the foreground, starting service to get updated subscriptions, inputs and disk space ")
+
+                val intent = Intent(appContext, HtspService::class.java)
+                intent.action = "getSubscriptions"
+                appContext.startService(intent)
+                intent.action = "getInputs"
+                appContext.startService(intent)
+                intent.action = "getDiskSpace"
+                appContext.startService(intent)
             }
-
-            val intent = Intent(appContext, HtspService::class.java)
-            intent.action = "getSubscriptions"
-            appContext.startService(intent)
-            intent.action = "getInputs"
-            appContext.startService(intent)
-            intent.action = "getDiskSpace"
-            appContext.startService(intent)
-
             Timber.d("Restarting status update handler in 15s")
             statusUpdateHandler.postDelayed(statusUpdateTask, 15000)
         }

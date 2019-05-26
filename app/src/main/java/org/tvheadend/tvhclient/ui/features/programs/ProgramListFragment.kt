@@ -15,7 +15,6 @@ import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.recyclerview_fragment.*
-import org.tvheadend.tvhclient.MainApplication
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.data.service.HtspService
 import org.tvheadend.tvhclient.domain.entity.Program
@@ -317,9 +316,7 @@ class ProgramListFragment : BaseFragment(), RecyclerViewClickCallback, LastProgr
             intent.putExtra("numFollowing", 25)
             intent.putExtra("showMessage", true)
 
-            if (MainApplication.isActivityVisible) {
-                activity?.startService(intent)
-            }
+            activity?.startService(intent)
         }
     }
 

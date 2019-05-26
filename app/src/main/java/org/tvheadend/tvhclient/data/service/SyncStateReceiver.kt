@@ -3,9 +3,6 @@ package org.tvheadend.tvhclient.data.service
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-
-import org.tvheadend.tvhclient.MainApplication
-
 import java.lang.ref.WeakReference
 
 class SyncStateReceiver(callback: Listener) : BroadcastReceiver() {
@@ -29,7 +26,7 @@ class SyncStateReceiver(callback: Listener) : BroadcastReceiver() {
      * via the "details" extra.
      */
     override fun onReceive(context: Context, intent: Intent) {
-        if (callback.get() != null && MainApplication.isActivityVisible) {
+        if (callback.get() != null) {
             (callback.get() as Listener).onSyncStateChanged(
                     intent.getSerializableExtra(STATE) as State,
                     intent.getStringExtra(MESSAGE) ?: "",

@@ -2,10 +2,6 @@ package org.tvheadend.tvhclient
 
 import android.content.Context
 import android.content.SharedPreferences
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleObserver
-import androidx.lifecycle.OnLifecycleEvent
-import androidx.lifecycle.ProcessLifecycleOwner
 import androidx.multidex.MultiDexApplication
 import com.android.billingclient.api.Purchase
 import com.crashlytics.android.Crashlytics
@@ -45,7 +41,7 @@ import javax.inject.Inject
 // TODO consolidate the dialog strings
 // TODO make the 12 hour check to start the epg background worker a setting
 
-class MainApplication : MultiDexApplication(), OptionsProvider, LifecycleObserver, BillingUpdatesListener {
+class MainApplication : MultiDexApplication(), OptionsProvider, BillingUpdatesListener {
 
     lateinit var billingManager: BillingManager
     lateinit var billingHandler: BillingHandler
@@ -63,8 +59,6 @@ class MainApplication : MultiDexApplication(), OptionsProvider, LifecycleObserve
 
     override fun onCreate() {
         super.onCreate()
-        ProcessLifecycleOwner.get().lifecycle.addObserver(this)
-
         instance = this
         // Create the component upon start of the app. This component
         // is used by all other classes to inject certain fields
@@ -166,16 +160,6 @@ class MainApplication : MultiDexApplication(), OptionsProvider, LifecycleObserve
         return null
     }
 
-    @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
-    fun onAppBackgrounded() {
-        isActivityVisible = false
-    }
-
-    @OnLifecycleEvent(Lifecycle.Event.ON_START)
-    fun onAppForegrounded() {
-        isActivityVisible = true
-    }
-
     override fun onBillingClientSetupFinished() {
         Timber.d("Billing client setup has finished")
         billingManager.queryPurchases()
@@ -213,7 +197,5 @@ class MainApplication : MultiDexApplication(), OptionsProvider, LifecycleObserve
         lateinit var component: MainApplicationComponent
 
         lateinit var refWatcher: RefWatcher
-
-        var isActivityVisible: Boolean = false
     }
 }

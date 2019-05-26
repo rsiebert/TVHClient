@@ -1,5 +1,6 @@
 package org.tvheadend.tvhclient.ui.features
 
+import android.app.ActivityManager
 import android.app.NotificationManager
 import android.app.SearchManager
 import android.content.Context
@@ -449,19 +450,22 @@ class MainActivity : BaseActivity(), SearchView.OnQueryTextListener, SearchView.
     private fun onNetworkAvailabilityChanged(isAvailable: Boolean) {
         val intent = Intent(this, HtspService::class.java)
         Timber.d("Network availability changed, network is available $isAvailable")
-        if (isAvailable) {
+
+        val activityManager = getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+        val runningAppProcessInfo = activityManager.runningAppProcesses?.get(0)
+
+        if (isAvailable
+                && runningAppProcessInfo != null
+                && runningAppProcessInfo.importance <= ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND) {
+
             if (!isNetworkAvailable) {
                 Timber.d("Network changed from offline to online, starting service")
-                if (MainApplication.isActivityVisible) {
-                    intent.action = "connect"
-                    startService(intent)
-                }
+                intent.action = "connect"
+                startService(intent)
             } else {
                 Timber.d("Network still active, pinging server")
-                if (MainApplication.isActivityVisible) {
-                    intent.action = "reconnect"
-                    startService(intent)
-                }
+                intent.action = "reconnect"
+                startService(intent)
             }
         }
         isNetworkAvailable = isAvailable
