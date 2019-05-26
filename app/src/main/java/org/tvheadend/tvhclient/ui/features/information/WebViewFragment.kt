@@ -19,7 +19,7 @@ import java.util.regex.Pattern
 open class WebViewFragment : BaseFragment(), HtmlFileLoaderTask.Listener {
 
     private lateinit var htmlFileLoaderTask: HtmlFileLoaderTask
-    private lateinit var website: String
+    private var website: String = ""
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.webview_fragment, container, false)
