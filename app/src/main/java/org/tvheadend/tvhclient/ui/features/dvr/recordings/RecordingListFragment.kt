@@ -20,6 +20,7 @@ import org.tvheadend.tvhclient.ui.features.download.DownloadPermissionGrantedInt
 import org.tvheadend.tvhclient.ui.features.download.DownloadRecordingManager
 import org.tvheadend.tvhclient.ui.features.dvr.RecordingAddEditActivity
 import org.tvheadend.tvhclient.ui.features.search.SearchRequestInterface
+import timber.log.Timber
 import java.util.concurrent.CopyOnWriteArrayList
 
 abstract class RecordingListFragment : BaseFragment(), RecyclerViewClickCallback, SearchRequestInterface, DownloadPermissionGrantedInterface, Filter.FilterListener {
@@ -50,7 +51,6 @@ abstract class RecordingListFragment : BaseFragment(), RecyclerViewClickCallback
         recycler_view.addItemDecoration(DividerItemDecoration(activity, LinearLayoutManager.VERTICAL))
         recycler_view.itemAnimator = DefaultItemAnimator()
         recycler_view.adapter = recyclerViewAdapter
-
 
         recycler_view.gone()
         progress_bar.visible()
@@ -188,6 +188,7 @@ abstract class RecordingListFragment : BaseFragment(), RecyclerViewClickCallback
     }
 
     override fun onLongClick(view: View, position: Int): Boolean {
+        Timber.d("Long click on item $position")
         showPopupMenu(view, position)
         return true
     }

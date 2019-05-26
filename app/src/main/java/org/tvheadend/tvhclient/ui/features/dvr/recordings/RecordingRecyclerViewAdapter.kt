@@ -4,14 +4,11 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.Filter
 import android.widget.Filterable
-import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.databinding.RecordingListAdapterBinding
 import org.tvheadend.tvhclient.domain.entity.Recording
 import org.tvheadend.tvhclient.ui.common.callbacks.RecyclerViewClickCallback
-import org.tvheadend.tvhclient.ui.features.dvr.recordings.RecordingListDiffCallback.Companion.PAYLOAD_DATA_SIZE
-import timber.log.Timber
 import java.util.*
 import java.util.concurrent.CopyOnWriteArrayList
 
@@ -31,35 +28,17 @@ class RecordingRecyclerViewAdapter internal constructor(private val isDualPane: 
     }
 
     override fun onBindViewHolder(holder: RecordingViewHolder, position: Int) {
-        // NOP
-    }
-
-    override fun onBindViewHolder(holder: RecordingViewHolder, position: Int, payloads: List<Any>) {
         val recording = recordingListFiltered[position]
-
-        if (payloads.isEmpty()) {
-            Timber.d("Recording '${recording.title}' has changed, doing a full update")
-            holder.bind(recording, position, selectedPosition == position, htspVersion, clickCallback)
-        } else {
-            for (payload in payloads) {
-                if (payload == PAYLOAD_DATA_SIZE) {
-                    // Update only the data size and errors
-                    Timber.d("Recording '${recording.title}' has changed, doing a partial update")
-                    holder.bind(recording, position, selectedPosition == position, htspVersion, clickCallback)
-                }
-            }
-        }
+        holder.bind(recording, position, selectedPosition == position, htspVersion, clickCallback)
     }
 
     internal fun addItems(newItems: List<Recording>) {
-        val oldItems = ArrayList(recordingListFiltered)
-        val diffResult = DiffUtil.calculateDiff(RecordingListDiffCallback(oldItems, newItems))
-
         recordingList.clear()
         recordingListFiltered.clear()
         recordingList.addAll(newItems)
         recordingListFiltered.addAll(newItems)
-        diffResult.dispatchUpdatesTo(this)
+
+        notifyDataSetChanged()
 
         if (selectedPosition > recordingListFiltered.size) {
             selectedPosition = 0
