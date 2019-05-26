@@ -16,8 +16,6 @@
 
 package org.tvheadend.tvhclient.ui.features.playback.internal.reader;
 
-import android.content.Context;
-
 import androidx.annotation.NonNull;
 
 import com.google.android.exoplayer2.C;
