@@ -2,11 +2,11 @@ package org.tvheadend.tvhclient.ui.features.settings
 
 import android.content.SharedPreferences
 import android.os.Bundle
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceManager
 import org.tvheadend.tvhclient.MainApplication
-import org.tvheadend.tvhclient.domain.entity.ServerStatus
 import org.tvheadend.tvhclient.ui.base.BaseActivity
 import org.tvheadend.tvhclient.ui.common.callbacks.ToolbarInterface
 
@@ -18,7 +18,6 @@ abstract class BasePreferenceFragment : PreferenceFragmentCompat() {
 
     protected var isUnlocked: Boolean = false
     protected var htspVersion: Int = 13
-    lateinit var serverStatus: ServerStatus
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
@@ -30,8 +29,10 @@ abstract class BasePreferenceFragment : PreferenceFragmentCompat() {
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(activity)
         settingsViewModel = ViewModelProviders.of(activity as BaseActivity).get(SettingsViewModel::class.java)
 
-        serverStatus = settingsViewModel.serverStatus
-        htspVersion = serverStatus.htspVersion
+        settingsViewModel.serverStatusLiveData.observe(viewLifecycleOwner, Observer { serverStatus ->
+            htspVersion = serverStatus.htspVersion
+        })
+
         isUnlocked = MainApplication.instance.isUnlocked
     }
 }

@@ -24,7 +24,6 @@ class SettingsViewModel : ViewModel() {
     lateinit var sharedPreferences: SharedPreferences
 
     val allConnections: LiveData<List<Connection>>
-    val serverStatus: ServerStatus
     val serverStatusLiveData: LiveData<ServerStatus>
     val connection: Connection
 
@@ -40,7 +39,6 @@ class SettingsViewModel : ViewModel() {
     init {
         MainApplication.component.inject(this)
         allConnections = appRepository.connectionData.getLiveDataItems()
-        serverStatus = appRepository.serverStatusData.activeItem
         connection = appRepository.connectionData.activeItem
         serverStatusLiveData = appRepository.serverStatusData.liveDataActiveItem
     }
