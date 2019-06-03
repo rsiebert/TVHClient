@@ -45,8 +45,11 @@ class ServerStatusData(private val db: AppRoomDatabase) : DataSourceInterface<Se
                 } catch (e: ExecutionException) {
                     Timber.d(e, "Loading active connection task aborted")
                 }
+                return serverStatus
+            } else {
+                Timber.d("Active server status is not null")
+                return serverStatus
             }
-            return serverStatus
         }
 
     override fun addItem(item: ServerStatus) {
