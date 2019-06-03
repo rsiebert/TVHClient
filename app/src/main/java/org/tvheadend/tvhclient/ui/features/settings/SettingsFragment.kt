@@ -73,7 +73,10 @@ class SettingsFragment : BasePreferenceFragment(), Preference.OnPreferenceClickL
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
-        if (grantResults[0] == PackageManager.PERMISSION_GRANTED && permissions[0] == "android.permission.READ_EXTERNAL_STORAGE") {
+        if (grantResults.isNotEmpty()
+                && grantResults[0] == PackageManager.PERMISSION_GRANTED
+                && permissions.isNotEmpty()
+                && permissions[0] == "android.permission.READ_EXTERNAL_STORAGE") {
             // The delay is needed, otherwise an illegalStateException would be thrown. This is
             // a known bug in android. Until it is fixed this workaround is required.
             Handler().postDelayed({

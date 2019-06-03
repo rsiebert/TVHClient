@@ -285,7 +285,10 @@ class MainActivity : BaseActivity(), SearchView.OnQueryTextListener, SearchView.
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (grantResults[0] == PackageManager.PERMISSION_GRANTED && permissions[0] == "android.permission.WRITE_EXTERNAL_STORAGE") {
+        if (grantResults.isNotEmpty()
+                && grantResults[0] == PackageManager.PERMISSION_GRANTED
+                && permissions.isNotEmpty()
+                && permissions[0] == "android.permission.WRITE_EXTERNAL_STORAGE") {
             Timber.d("Storage permission granted")
             val fragment = supportFragmentManager.findFragmentById(if (isDualPane) R.id.details else R.id.main)
             if (fragment is DownloadPermissionGrantedInterface) {
