@@ -44,7 +44,6 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
     lateinit var sharedPreferences: SharedPreferences
 
     private lateinit var connection: Connection
-    private lateinit var serverStatus: ServerStatus
     private var htspVersion: Int = 13
     private var htspConnection: HtspConnection? = null
     private val execService: ScheduledExecutorService = Executors.newScheduledThreadPool(10)
@@ -63,8 +62,6 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
     override fun onCreate() {
         Timber.d("Starting service")
         MainApplication.component.inject(this)
-
-        serverStatus = appRepository.serverStatusData.activeItem
         connectionTimeout = Integer.valueOf(sharedPreferences.getString("connection_timeout", resources.getString(R.string.pref_default_connection_timeout))!!) * 1000
     }
 
@@ -513,6 +510,7 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
 
     private fun setDefaultProfileSelection() {
         Timber.d("Setting default profiles in case none are selected yet")
+        val serverStatus = appRepository.serverStatusData.activeItem
         serverStatus.let {
             if (it.htspPlaybackServerProfileId == 0) {
                 for (profile in appRepository.serverProfileData.htspPlaybackProfiles) {
@@ -1127,6 +1125,7 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
     }
 
     private fun onServerStatus(message: HtspMessage) {
+        val serverStatus = appRepository.serverStatusData.activeItem
         serverStatus.let {
             val updatedServerStatus = convertMessageToServerStatusModel(it, message)
             updatedServerStatus.connectionId = connection.id
@@ -1135,12 +1134,12 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
 
             // Update the database with the new server status data and the local variables too
             appRepository.serverStatusData.updateItem(updatedServerStatus)
-            serverStatus = updatedServerStatus
             htspVersion = updatedServerStatus.htspVersion
         }
     }
 
     private fun onSystemTime(message: HtspMessage) {
+        val serverStatus = appRepository.serverStatusData.activeItem
         serverStatus.let {
             val gmtOffsetFromServer = message.getInteger("gmtoffset", 0) * 60 * 1000
             val gmtOffset = gmtOffsetFromServer - daylightSavingOffset
@@ -1155,6 +1154,7 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
     }
 
     private fun onDiskSpace(message: HtspMessage) {
+        val serverStatus = appRepository.serverStatusData.activeItem
         serverStatus.let {
             it.freeDiskSpace = message.getLong("freediskspace", 0)
             it.totalDiskSpace = message.getLong("totaldiskspace", 0)
