@@ -1,3 +1,10 @@
+$ 2.2.15
+  % VERSION 2.2.15
+  _ 03.06.2019
+    * Fixed current time indication in the epg screen
+    * Fixed possible crash when certain epg settings were not an integer
+    * Fixed profiles not being saved in the settings
+    * Fixed selecting the settings menu from the navigation menu
 $ 2.2.14
   % VERSION 2.2.14
   _ 26.05.2019
