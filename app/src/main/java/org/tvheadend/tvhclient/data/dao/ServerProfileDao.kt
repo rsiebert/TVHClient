@@ -7,18 +7,18 @@ import org.tvheadend.tvhclient.domain.entity.ServerProfile
 interface ServerProfileDao {
 
     @Query("SELECT p.* FROM server_profiles AS p " +
-            "LEFT JOIN connections AS c ON c.id = p.connection_id AND c.active = 1 " +
-            "WHERE p.type = 'htsp_playback'")
+            "WHERE $CONNECTION_IS_ACTIVE " +
+            " AND p.type = 'htsp_playback'")
     fun loadHtspPlaybackProfilesSync(): List<ServerProfile>
 
     @Query("SELECT p.* FROM server_profiles AS p " +
-            "LEFT JOIN connections AS c ON c.id = p.connection_id AND c.active = 1 " +
-            "WHERE p.type = 'http_playback'")
+            "WHERE $CONNECTION_IS_ACTIVE " +
+            " AND p.type = 'http_playback'")
     fun loadHttpPlaybackProfilesSync(): List<ServerProfile>
 
     @Query("SELECT p.* FROM server_profiles AS p " +
-            "LEFT JOIN connections AS c ON c.id = p.connection_id AND c.active = 1 " +
-            "WHERE p.type = 'recording'")
+            "WHERE $CONNECTION_IS_ACTIVE " +
+            " AND p.type = 'recording'")
     fun loadAllRecordingProfilesSync(): List<ServerProfile>
 
     @Insert
@@ -34,12 +34,17 @@ interface ServerProfileDao {
     fun deleteAll()
 
     @Query("SELECT p.* FROM server_profiles AS p " +
-            "LEFT JOIN connections AS c ON c.id = p.connection_id AND c.active = 1 " +
-            "WHERE p.id = :id")
+            "WHERE $CONNECTION_IS_ACTIVE " +
+            " AND p.id = :id")
     fun loadProfileByIdSync(id: Int): ServerProfile
 
     @Query("SELECT p.* FROM server_profiles AS p " +
-            "LEFT JOIN connections AS c ON c.id = p.connection_id AND c.active = 1 " +
-            "WHERE p.uuid = :uuid")
+            "WHERE $CONNECTION_IS_ACTIVE " +
+            " AND p.uuid = :uuid")
     fun loadProfileByUuidSync(uuid: String): ServerProfile
+
+    companion object {
+
+        const val CONNECTION_IS_ACTIVE = " p.connection_id IN (SELECT id FROM connections WHERE active = 1) "
+    }
 }
