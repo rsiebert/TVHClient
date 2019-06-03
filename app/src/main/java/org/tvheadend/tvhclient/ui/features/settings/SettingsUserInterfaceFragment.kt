@@ -18,7 +18,6 @@
  */
 package org.tvheadend.tvhclient.ui.features.settings
 
-import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.preference.CheckBoxPreference
 import androidx.preference.EditTextPreference
@@ -27,11 +26,13 @@ import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.ui.common.sendSnackbarMessage
 import timber.log.Timber
 
-class SettingsUserInterfaceFragment : BasePreferenceFragment(), Preference.OnPreferenceClickListener, SharedPreferences.OnSharedPreferenceChangeListener {
+class SettingsUserInterfaceFragment : BasePreferenceFragment(), Preference.OnPreferenceChangeListener, Preference.OnPreferenceClickListener {
 
     private var programArtworkEnabledPreference: CheckBoxPreference? = null
     private var castMiniControllerPreference: CheckBoxPreference? = null
     private var multipleChannelTagsPreference: CheckBoxPreference? = null
+    private var hoursOfEpgData: EditTextPreference? = null
+    private var daysOfEpgData: EditTextPreference? = null
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
@@ -45,20 +46,15 @@ class SettingsUserInterfaceFragment : BasePreferenceFragment(), Preference.OnPre
         castMiniControllerPreference?.onPreferenceClickListener = this
         multipleChannelTagsPreference = findPreference("multiple_channel_tags_enabled")
         multipleChannelTagsPreference?.onPreferenceClickListener = this
+
+        hoursOfEpgData = findPreference("hours_of_epg_data_per_screen")
+        hoursOfEpgData?.onPreferenceChangeListener = this
+        daysOfEpgData = findPreference("days_of_epg_data")
+        daysOfEpgData?.onPreferenceChangeListener = this
     }
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         addPreferencesFromResource(R.xml.preferences_ui)
-    }
-
-    override fun onResume() {
-        super.onResume()
-        sharedPreferences.registerOnSharedPreferenceChangeListener(this)
-    }
-
-    override fun onPause() {
-        super.onPause()
-        sharedPreferences.unregisterOnSharedPreferenceChangeListener(this)
     }
 
     override fun onPreferenceClick(preference: Preference): Boolean {
@@ -94,38 +90,39 @@ class SettingsUserInterfaceFragment : BasePreferenceFragment(), Preference.OnPre
         }
     }
 
-    override fun onSharedPreferenceChanged(prefs: SharedPreferences, key: String) {
-        Timber.d("Preference $key has changed")
-        when (key) {
+    override fun onPreferenceChange(preference: Preference?, newValue: Any?): Boolean {
+        if (preference == null) {
+            return false
+        }
+
+        Timber.d("Preference ${preference.key} changed, checking if it is valid")
+        when (preference.key) {
             "hours_of_epg_data_per_screen" ->
                 try {
-                    val value = Integer.parseInt(prefs.getString(key, resources.getString(R.string.pref_default_hours_of_epg_data_per_screen))!!)
-                    if (value < 1) {
-                        (findPreference<Preference>(key) as EditTextPreference).text = "1"
-                        prefs.edit().putString(key, "1").apply()
+                    val value = Integer.valueOf(newValue as String)
+                    if (value < 1 || value > 24) {
+                        context?.sendSnackbarMessage("The value must be an integer between 1 and 24")
+                        return false
                     }
-                    if (value > 24) {
-                        (findPreference<Preference>(key) as EditTextPreference).text = "24"
-                        prefs.edit().putString(key, "24").apply()
-                    }
+                    return true
                 } catch (ex: NumberFormatException) {
-                    prefs.edit().putString(key, resources.getString(R.string.pref_default_hours_of_epg_data_per_screen)).apply()
+                    context?.sendSnackbarMessage("The value must be an integer between 1 and 24")
+                    return false
                 }
 
             "days_of_epg_data" ->
                 try {
-                    val value = Integer.parseInt(prefs.getString(key, resources.getString(R.string.pref_default_days_of_epg_data))!!)
-                    if (value < 1) {
-                        (findPreference<Preference>(key) as EditTextPreference).text = "1"
-                        prefs.edit().putString(key, "1").apply()
+                    val value = Integer.valueOf(newValue as String)
+                    if (value < 1 || value > 14) {
+                        context?.sendSnackbarMessage("The value must be an integer between 1 and 14")
+                        return false
                     }
-                    if (value > 14) {
-                        (findPreference<Preference>(key) as EditTextPreference).text = "24"
-                        prefs.edit().putString(key, "24").apply()
-                    }
+                    return true
                 } catch (ex: NumberFormatException) {
-                    prefs.edit().putString(key, resources.getString(R.string.pref_default_days_of_epg_data)).apply()
+                    context?.sendSnackbarMessage("The value must be an integer between 1 and 14")
+                    return false
                 }
+            else -> return true
         }
     }
 }
