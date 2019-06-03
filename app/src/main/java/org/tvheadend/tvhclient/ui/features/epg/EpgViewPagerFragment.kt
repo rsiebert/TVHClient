@@ -19,13 +19,15 @@ import androidx.recyclerview.widget.RecyclerView.SCROLL_STATE_IDLE
 import kotlinx.android.synthetic.main.epg_viewpager_fragment.*
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.databinding.EpgViewpagerFragmentBinding
+import org.tvheadend.tvhclient.ui.common.visibleOrGone
+import timber.log.Timber
+import java.util.*
 
 class EpgViewPagerFragment : Fragment(), EpgScrollInterface {
 
     private lateinit var epgViewModel: EpgViewModel
     private lateinit var recyclerViewAdapter: EpgViewPagerRecyclerViewAdapter
     private var showTimeIndication: Boolean = false
-    private var pixelsPerMinute: Float = 0f
 
     private lateinit var updateViewHandler: Handler
     private lateinit var updateViewTask: Runnable
@@ -120,7 +122,7 @@ class EpgViewPagerFragment : Fragment(), EpgScrollInterface {
             })
         }
 
-        current_time?.visibility = if (showTimeIndication) View.VISIBLE else View.GONE
+        current_time?.visibleOrGone(showTimeIndication)
 
         if (showTimeIndication) {
             // Create the handler and the timer task that will update the
@@ -163,14 +165,15 @@ class EpgViewPagerFragment : Fragment(), EpgScrollInterface {
         // from this value in minutes the width in pixels. This will be horizontal offset
         // for the time indication. If channel icons are shown then we need to add a
         // the icon width to the offset.
-        val currentTime = System.currentTimeMillis()
+        val currentTime = Calendar.getInstance().timeInMillis
         val durationTime = (currentTime - epgViewModel.getStartTime(fragmentId)) / 1000 / 60
-        val offset = (durationTime * pixelsPerMinute).toInt()
+        val offset = (durationTime * epgViewModel.pixelsPerMinute).toInt()
+        Timber.d("Fragment id: $fragmentId, current time: $currentTime, start time: ${epgViewModel.getStartTime(fragmentId)}, offset: $offset, durationTime: $durationTime, pixelsPerMinute: ${epgViewModel.pixelsPerMinute}")
 
         // Set the left constraint of the time indication so it shows the actual time
         current_time?.let {
-            constraintSet.connect(it.id, ConstraintSet.LEFT, constraint_layout.id, ConstraintSet.LEFT, offset)
-            constraintSet.connect(it.id, ConstraintSet.START, constraint_layout.id, ConstraintSet.START, offset)
+            constraintSet.connect(it.id, ConstraintSet.LEFT, ConstraintSet.PARENT_ID, ConstraintSet.LEFT, offset)
+            constraintSet.connect(it.id, ConstraintSet.START, ConstraintSet.PARENT_ID, ConstraintSet.START, offset)
             constraintSet.applyTo(constraint_layout)
         }
     }
