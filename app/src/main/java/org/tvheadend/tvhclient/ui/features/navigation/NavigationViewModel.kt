@@ -36,10 +36,9 @@ class NavigationViewModel : ViewModel() {
 
     fun setNavigationMenuId(id: Int) {
         Timber.d("Received new navigation id $id")
-        if (navigationMenuId.value != id) {
+        if (previousNavigationMenuId != id) {
             Timber.d("Setting navigation id to $id")
             navigationMenuId.value = id
-            previousNavigationMenuId = id
         }
     }
 

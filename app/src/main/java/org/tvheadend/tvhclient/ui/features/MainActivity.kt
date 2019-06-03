@@ -77,8 +77,6 @@ class MainActivity : BaseActivity(), SearchView.OnQueryTextListener, SearchView.
     private var isUnlocked: Boolean = false
     private var isDualPane: Boolean = false
 
-    private var isSavedInstanceStateNull: Boolean = false
-
     private var searchQuery: String = ""
     private lateinit var queryTextSubmitTask: Runnable
     private val queryTextSubmitHandler = Handler()
@@ -116,11 +114,9 @@ class MainActivity : BaseActivity(), SearchView.OnQueryTextListener, SearchView.
         // navigation menu position and show the associated fragment with it. When the device
         // was rotated just restore the position from the saved instance.
         if (savedInstanceState == null) {
-            isSavedInstanceStateNull = true
             isNetworkAvailable = false
             searchQuery = ""
         } else {
-            isSavedInstanceStateNull = false
             isNetworkAvailable = savedInstanceState.getBoolean("isNetworkAvailable", false)
             searchQuery = savedInstanceState.getString(SearchManager.QUERY) ?: ""
         }
@@ -307,6 +303,7 @@ class MainActivity : BaseActivity(), SearchView.OnQueryTextListener, SearchView.
      * @param position Selected position within the menu array
      */
     private fun handleDrawerItemSelected(position: Int) {
+        Timber.d("Navigation menu item selected at $position, previous position was ${navigationViewModel.previousNavigationMenuId}")
         val fragment: Fragment?
         var addFragmentToBackStack = sharedPreferences.getBoolean("navigation_history_enabled",
                 resources.getBoolean(R.bool.pref_default_navigation_history_enabled))
@@ -315,10 +312,10 @@ class MainActivity : BaseActivity(), SearchView.OnQueryTextListener, SearchView.
         // case the saved instance is not null. This avoids recreating fragments after
         // every orientation change which would reset any saved states in these fragments.
         if (position != navigationViewModel.previousNavigationMenuId) {
-            Timber.d("Saved instance is null or selected id has changed, creating new fragment")
+            Timber.d("New navigation menu $position was selected, getting new fragment")
             fragment = navigationDrawer.getFragmentFromSelection(position)
         } else {
-            Timber.d("Saved instance is not null, trying to retrieve existing fragment")
+            Timber.d("Same navigation menu was selected, trying to get existing fragment")
             fragment = supportFragmentManager.findFragmentById(R.id.main)
             addFragmentToBackStack = false
         }
@@ -329,6 +326,7 @@ class MainActivity : BaseActivity(), SearchView.OnQueryTextListener, SearchView.
         // Finally show the new main fragment and add it to the back stack
         // only if it is a new fragment and not an existing one.
         if (fragment != null) {
+            navigationViewModel.previousNavigationMenuId = position
             if (isDualPane) {
                 val detailsFragment = supportFragmentManager.findFragmentById(R.id.details)
                 if (detailsFragment != null) {
