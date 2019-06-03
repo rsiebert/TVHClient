@@ -25,6 +25,7 @@ class SettingsViewModel : ViewModel() {
 
     val allConnections: LiveData<List<Connection>>
     val serverStatus: ServerStatus
+    val serverStatusLiveData: LiveData<ServerStatus>
     val connection: Connection
 
     val activeConnectionId: Int
@@ -41,6 +42,7 @@ class SettingsViewModel : ViewModel() {
         allConnections = appRepository.connectionData.getLiveDataItems()
         serverStatus = appRepository.serverStatusData.activeItem
         connection = appRepository.connectionData.activeItem
+        serverStatusLiveData = appRepository.serverStatusData.liveDataActiveItem
     }
 
     fun getChannelList(): List<Channel> {
