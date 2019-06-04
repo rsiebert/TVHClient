@@ -20,14 +20,14 @@ class ServerStatusData(private val db: AppRoomDatabase) : DataSourceInterface<Se
             try {
                 serverStatus = ActiveServerStatusTask(db).execute().get()
             } catch (e: InterruptedException) {
-                Timber.d(e, "Loading active server status task got interrupted")
+                Timber.e(e, "Loading active server status task got interrupted")
             } catch (e: ExecutionException) {
-                Timber.d(e, "Loading active server status task aborted")
+                Timber.e(e, "Loading active server status task aborted")
             }
 
             // Create a new server status object with the connection id
             if (serverStatus == null) {
-                Timber.d("Active server status is null, trying to add new one with default values")
+                Timber.e("Active server status is null, trying to add new one with default values")
                 serverStatus = ServerStatus()
                 serverStatus.serverName = "Unknown"
                 serverStatus.serverVersion = "Unknown"
@@ -35,15 +35,15 @@ class ServerStatusData(private val db: AppRoomDatabase) : DataSourceInterface<Se
                 try {
                     val connection = ActiveConnectionTask(db).execute().get()
                     if (connection != null) {
-                        Timber.d("Loaded active connection, adding server status to database")
+                        Timber.e("Loaded active connection, adding server status to database")
                         serverStatus.connectionId = connection.id
                         serverStatus.connectionName = connection.name
                         addItem(serverStatus)
                     }
                 } catch (e: InterruptedException) {
-                    Timber.d(e, "Loading active connection task got interrupted")
+                    Timber.e(e, "Loading active connection task got interrupted")
                 } catch (e: ExecutionException) {
-                    Timber.d(e, "Loading active connection task aborted")
+                    Timber.e(e, "Loading active connection task aborted")
                 }
                 return serverStatus
             } else {
@@ -80,9 +80,9 @@ class ServerStatusData(private val db: AppRoomDatabase) : DataSourceInterface<Se
         try {
             return ServerStatusByIdTask(db, id as Int).execute().get()
         } catch (e: InterruptedException) {
-            Timber.d(e, "Loading server status by id task got interrupted")
+            Timber.e(e, "Loading server status by id task got interrupted")
         } catch (e: ExecutionException) {
-            Timber.d(e, "Loading server status by id task aborted")
+            Timber.e(e, "Loading server status by id task aborted")
         }
         return null
     }

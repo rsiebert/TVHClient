@@ -16,9 +16,9 @@ class RecordingData(private val db: AppRoomDatabase) : DataSourceInterface<Recor
             try {
                 return RecordingCountTask(db).execute().get()
             } catch (e: InterruptedException) {
-                Timber.d(e, "Loading recording count task got interrupted")
+                Timber.e(e, "Loading recording count task got interrupted")
             } catch (e: ExecutionException) {
-                Timber.d(e, "Loading recording count task aborted")
+                Timber.e(e, "Loading recording count task aborted")
             }
 
             return 0
@@ -97,9 +97,9 @@ class RecordingData(private val db: AppRoomDatabase) : DataSourceInterface<Recor
                 val recording = RecordingByIdTask(db, id, LOAD_BY_ID).execute().get()
                 return recording ?: Recording()
             } catch (e: InterruptedException) {
-                Timber.d(e, "Loading recording by id task got interrupted")
+                Timber.e(e, "Loading recording by id task got interrupted")
             } catch (e: ExecutionException) {
-                Timber.d(e, "Loading recording by id task aborted")
+                Timber.e(e, "Loading recording by id task aborted")
             }
         }
         return Recording()
@@ -113,9 +113,9 @@ class RecordingData(private val db: AppRoomDatabase) : DataSourceInterface<Recor
         try {
             return RecordingByIdTask(db, id, LOAD_BY_EVENT_ID).execute().get()
         } catch (e: InterruptedException) {
-            Timber.d(e, "Loading recording by event id task got interrupted")
+            Timber.e(e, "Loading recording by event id task got interrupted")
         } catch (e: ExecutionException) {
-            Timber.d(e, "Loading recording by event id task aborted")
+            Timber.e(e, "Loading recording by event id task aborted")
         }
 
         return null

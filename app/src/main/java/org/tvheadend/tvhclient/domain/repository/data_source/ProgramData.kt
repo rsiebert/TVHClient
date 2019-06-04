@@ -18,9 +18,9 @@ class ProgramData(private val db: AppRoomDatabase) : DataSourceInterface<Program
             try {
                 return ProgramCountTask(db).execute().get()
             } catch (e: InterruptedException) {
-                Timber.d(e, "Loading program count task got interrupted")
+                Timber.e(e, "Loading program count task got interrupted")
             } catch (e: ExecutionException) {
-                Timber.d(e, "Loading program count task aborted")
+                Timber.e(e, "Loading program count task aborted")
             }
 
             return 0
@@ -66,9 +66,9 @@ class ProgramData(private val db: AppRoomDatabase) : DataSourceInterface<Program
         try {
             return ProgramByIdTask(db, id as Int, LOAD_BY_ID).execute().get()
         } catch (e: InterruptedException) {
-            Timber.d(e, "Loading program by id task got interrupted")
+            Timber.e(e, "Loading program by id task got interrupted")
         } catch (e: ExecutionException) {
-            Timber.d(e, "Loading program by id task aborted")
+            Timber.e(e, "Loading program by id task aborted")
         }
 
         return null
@@ -79,9 +79,9 @@ class ProgramData(private val db: AppRoomDatabase) : DataSourceInterface<Program
         try {
             programs.addAll(ProgramListTask(db).execute().get())
         } catch (e: InterruptedException) {
-            Timber.d(e, "Loading all programs task got interrupted")
+            Timber.e(e, "Loading all programs task got interrupted")
         } catch (e: ExecutionException) {
-            Timber.d(e, "Loading all programs task aborted")
+            Timber.e(e, "Loading all programs task aborted")
         }
 
         return programs
@@ -100,9 +100,9 @@ class ProgramData(private val db: AppRoomDatabase) : DataSourceInterface<Program
         try {
             programs.addAll(EpgProgramByChannelAndTimeTask(db, channelId, startTime, endTime).execute().get())
         } catch (e: InterruptedException) {
-            Timber.d(e, "Loading programs by channel and time task got interrupted")
+            Timber.e(e, "Loading programs by channel and time task got interrupted")
         } catch (e: ExecutionException) {
-            Timber.d(e, "Loading programs by channel and time task aborted")
+            Timber.e(e, "Loading programs by channel and time task aborted")
         }
 
         return programs
@@ -112,9 +112,9 @@ class ProgramData(private val db: AppRoomDatabase) : DataSourceInterface<Program
         try {
             return ProgramByIdTask(db, channelId, LOAD_LAST_IN_CHANNEL).execute().get()
         } catch (e: InterruptedException) {
-            Timber.d(e, "Loading last programs in channel task got interrupted")
+            Timber.e(e, "Loading last programs in channel task got interrupted")
         } catch (e: ExecutionException) {
-            Timber.d(e, "Loading last program in channel task aborted")
+            Timber.e(e, "Loading last program in channel task aborted")
         }
 
         return null

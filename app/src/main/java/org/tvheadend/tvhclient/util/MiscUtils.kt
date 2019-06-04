@@ -28,7 +28,7 @@ fun convertUrlToHashString(url: String?): String {
         }
         return hexString.toString()
     } catch (e: NoSuchAlgorithmException) {
-        // NOP
+        Timber.e(e, "No algorithm was found to handle MD5")
     }
     return ""
 }

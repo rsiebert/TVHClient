@@ -987,7 +987,7 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
                     }
                 }
             } catch (e: JSONException) {
-                Timber.d(e, "Error parsing JSON data")
+                Timber.e(e, "Error parsing JSON data")
             }
         } else {
             Timber.d("No http playback profile data available")
@@ -1038,7 +1038,7 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
                     }
                 }
             } catch (e: JSONException) {
-                Timber.d(e, "Error parsing JSON data")
+                Timber.e(e, "Error parsing JSON data")
             }
         } else {
             Timber.d("No subscription status data available")
@@ -1089,7 +1089,7 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
                     }
                 }
             } catch (e: JSONException) {
-                Timber.d(e, "Error parsing JSON data")
+                Timber.e(e, "Error parsing JSON data")
             }
         } else {
             Timber.d("No input status data available")
@@ -1246,7 +1246,7 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
                     Timber.d("Downloading channel icon for channel ${channel.name}")
                     downloadIconFromFileUrl(channel.icon)
                 } catch (e: Exception) {
-                    Timber.d("Could not load channel icon for channel '${channel.icon}'")
+                    Timber.d(e, "Could not load channel icon for channel '${channel.icon}'")
                 }
             }
         }
@@ -1256,7 +1256,7 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
                     Timber.d("Downloading channel icon for channel tag ${tag.tagName}")
                     downloadIconFromFileUrl(tag.tagIcon)
                 } catch (e: Exception) {
-                    Timber.d("Could not load channel tag icon '${tag.tagIcon}'")
+                    Timber.d(e, "Could not load channel tag icon '${tag.tagIcon}'")
                 }
             }
         }
@@ -1355,9 +1355,8 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
                     try {
                         downloadIconFromFileUrl(icon)
                     } catch (e: Exception) {
-                        Timber.d("Could not load icon '$icon'")
+                        Timber.d(e, "Could not load icon '$icon'")
                     }
-
                 }
             }
         })

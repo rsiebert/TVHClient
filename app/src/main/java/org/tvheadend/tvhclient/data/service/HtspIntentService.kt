@@ -74,9 +74,8 @@ class HtspIntentService : JobIntentService(), HtspConnectionStateListener {
             try {
                 authenticationLock.wait(5000)
             } catch (e: InterruptedException) {
-                Timber.d("Timeout waiting while connecting to server")
+                Timber.e(e, "Timeout waiting while connecting to server")
             }
-
         }
 
         if (htspConnection.isNotConnected || !htspConnection.isAuthenticated) {
@@ -195,7 +194,7 @@ class HtspIntentService : JobIntentService(), HtspConnectionStateListener {
                         }
                     }
                 } catch (e: Exception) {
-                    Timber.d("Could not load icon $it")
+                    Timber.d(e, "Could not load icon $it")
                 }
             }
 
@@ -206,9 +205,8 @@ class HtspIntentService : JobIntentService(), HtspConnectionStateListener {
                         Timber.d("Loaded icons, waiting for response")
                         responseLock.wait(5000)
                     } catch (e: InterruptedException) {
-                        e.printStackTrace()
+                        Timber.e(e, "Timeout while waiting for last icon to load")
                     }
-
                 }
             }
         }
@@ -342,9 +340,8 @@ class HtspIntentService : JobIntentService(), HtspConnectionStateListener {
                         Timber.d("Loaded more events for last channel, waiting for response")
                         responseLock.wait(5000)
                     } catch (e: InterruptedException) {
-                        e.printStackTrace()
+                        Timber.e(e, "Timeout while loading events for last channel")
                     }
-
                 }
             }
         }

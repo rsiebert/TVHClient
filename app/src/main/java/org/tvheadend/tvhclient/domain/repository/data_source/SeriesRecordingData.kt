@@ -40,9 +40,9 @@ class SeriesRecordingData(private val db: AppRoomDatabase) : DataSourceInterface
                 val recording = SeriesRecordingByIdTask(db, id).execute().get()
                 return recording ?: SeriesRecording()
             } catch (e: InterruptedException) {
-                Timber.d(e, "Loading series recording by id task got interrupted")
+                Timber.e(e, "Loading series recording by id task got interrupted")
             } catch (e: ExecutionException) {
-                Timber.d(e, "Loading series recording by id task aborted")
+                Timber.e(e, "Loading series recording by id task aborted")
             }
         }
         return SeriesRecording()

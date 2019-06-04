@@ -17,9 +17,9 @@ class ChannelData(private val db: AppRoomDatabase) : DataSourceInterface<Channel
             try {
                 return ChannelCountTask(db).execute().get()
             } catch (e: InterruptedException) {
-                Timber.d(e, "Loading channel count task got interrupted")
+                Timber.e(e, "Loading channel count task got interrupted")
             } catch (e: ExecutionException) {
-                Timber.d(e, "Loading channel count task aborted")
+                Timber.e(e, "Loading channel count task aborted")
             }
 
             return 0
@@ -61,9 +61,9 @@ class ChannelData(private val db: AppRoomDatabase) : DataSourceInterface<Channel
         try {
             return ChannelByIdTask(db, id as Int).execute().get()
         } catch (e: InterruptedException) {
-            Timber.d(e, "Loading channel by id task got interrupted")
+            Timber.e(e, "Loading channel by id task got interrupted")
         } catch (e: ExecutionException) {
-            Timber.d(e, "Loading channel by id task aborted")
+            Timber.e(e, "Loading channel by id task aborted")
         }
 
         return null
@@ -74,9 +74,9 @@ class ChannelData(private val db: AppRoomDatabase) : DataSourceInterface<Channel
         try {
             channels.addAll(ChannelListTask(db, sortOrder).execute().get())
         } catch (e: InterruptedException) {
-            Timber.d(e, "Loading all channels task got interrupted")
+            Timber.e(e, "Loading all channels task got interrupted")
         } catch (e: ExecutionException) {
-            Timber.d(e, "Loading all channels task aborted")
+            Timber.e(e, "Loading all channels task aborted")
         }
 
         return channels
@@ -90,9 +90,9 @@ class ChannelData(private val db: AppRoomDatabase) : DataSourceInterface<Channel
         try {
             return ChannelByIdTask(db, id, selectedTime).execute().get()
         } catch (e: InterruptedException) {
-            Timber.d(e, "Loading channel by id task got interrupted")
+            Timber.e(e, "Loading channel by id task got interrupted")
         } catch (e: ExecutionException) {
-            Timber.d(e, "Loading channel by id task aborted")
+            Timber.e(e, "Loading channel by id task aborted")
         }
 
         return null

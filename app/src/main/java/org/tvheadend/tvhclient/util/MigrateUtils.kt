@@ -170,7 +170,7 @@ class MigrateUtils {
             }
             cursor?.close()
         } catch (e: SQLiteException) {
-            Timber.d(e, "Error getting connection information from cursor")
+            Timber.e(e, "Error getting connection information from cursor")
         }
 
         db?.close()
@@ -189,7 +189,6 @@ class MigrateUtils {
         // migrate preferences from old names to new
         // names to have a consistent naming scheme afterwards
         try {
-
             var value = Integer.valueOf(sharedPreferences.getString("defaultMenuPositionPref", "0")!!)
             when {
                 // If the value is anything above the status screen

@@ -63,7 +63,7 @@ class FileLoggingTree(context: Context) : BaseDebugTree() {
                 stream.close()
             }
         } catch (e: IOException) {
-            // NOP
+            Timber.e(e, "Could not open logfile ${file?.name} for writing")
         }
 
     }
@@ -79,8 +79,7 @@ class FileLoggingTree(context: Context) : BaseDebugTree() {
             stream.write((message + "\n").toByteArray())
             stream.close()
         } catch (e: IOException) {
-            // NOP
+            Timber.e(e, "Could not open logfile ${file?.name} for writing")
         }
-
     }
 }

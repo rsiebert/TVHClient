@@ -26,9 +26,9 @@ class ServerProfileData(private val db: AppRoomDatabase) : DataSourceInterface<S
             try {
                 serverProfiles.addAll(ServerProfileTask(db, RECORDINGS).execute().get())
             } catch (e: InterruptedException) {
-                Timber.d(e, "Loading recording server profile task got interrupted")
+                Timber.e(e, "Loading recording server profile task got interrupted")
             } catch (e: ExecutionException) {
-                Timber.d(e, "Loading recording server profile task aborted")
+                Timber.e(e, "Loading recording server profile task aborted")
             }
 
             return serverProfiles
@@ -40,9 +40,9 @@ class ServerProfileData(private val db: AppRoomDatabase) : DataSourceInterface<S
             try {
                 serverProfiles.addAll(ServerProfileTask(db, HTSP_PLAYBACK).execute().get())
             } catch (e: InterruptedException) {
-                Timber.d(e, "Loading htsp playback server profile task got interrupted")
+                Timber.e(e, "Loading htsp playback server profile task got interrupted")
             } catch (e: ExecutionException) {
-                Timber.d(e, "Loading htsp playback server profile task aborted")
+                Timber.e(e, "Loading htsp playback server profile task aborted")
             }
 
             return serverProfiles
@@ -54,9 +54,9 @@ class ServerProfileData(private val db: AppRoomDatabase) : DataSourceInterface<S
             try {
                 serverProfiles.addAll(ServerProfileTask(db, HTTP_PLAYBACK).execute().get())
             } catch (e: InterruptedException) {
-                Timber.d(e, "Loading http playback server profile task got interrupted")
+                Timber.e(e, "Loading http playback server profile task got interrupted")
             } catch (e: ExecutionException) {
-                Timber.d(e, "Loading http playback server profile task aborted")
+                Timber.e(e, "Loading http playback server profile task aborted")
             }
 
             return serverProfiles
@@ -94,9 +94,9 @@ class ServerProfileData(private val db: AppRoomDatabase) : DataSourceInterface<S
         try {
             return ServerProfileByIdTask(db, id).execute().get()
         } catch (e: InterruptedException) {
-            Timber.d(e, "Loading server profile by id task got interrupted")
+            Timber.e(e, "Loading server profile by id task got interrupted")
         } catch (e: ExecutionException) {
-            Timber.d(e, "Loading server profile by id task aborted")
+            Timber.e(e, "Loading server profile by id task aborted")
         }
 
         return null
