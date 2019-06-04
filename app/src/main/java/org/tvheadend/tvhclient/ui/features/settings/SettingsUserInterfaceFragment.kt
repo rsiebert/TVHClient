@@ -91,9 +91,7 @@ class SettingsUserInterfaceFragment : BasePreferenceFragment(), Preference.OnPre
     }
 
     override fun onPreferenceChange(preference: Preference?, newValue: Any?): Boolean {
-        if (preference == null) {
-            return false
-        }
+        if (preference == null) return false
 
         Timber.d("Preference ${preference.key} changed, checking if it is valid")
         when (preference.key) {
