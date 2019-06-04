@@ -28,8 +28,8 @@
             android:name="com.google.android.gms.cast.framework.OPTIONS_PROVIDER_CLASS_NAME"
             android:value="org.tvheadend.tvhclient.MainApplication" />
         <meta-data
-            android:name="io.fabric.ApiKey"
-            android:value="8ea21b9d2155f0843c3c57f71a18568c71ef17f9" />
+            android:name="firebase_crashlytics_collection_enabled"
+            android:value="false" />
 
         <provider
             android:name="androidx.core.content.FileProvider"
