@@ -38,16 +38,12 @@ interface ServerStatusDao {
     @Query("$SERVER_STATUS_BASE_QUERY WHERE s.connection_id = :id")
     fun loadServerStatusById(id: Int): LiveData<ServerStatus>
 
-    @get:Query("SELECT COUNT (*) FROM server_status AS s " +
-            "WHERE " + CONNECTION_IS_ACTIVE)
+    @get:Query("SELECT COUNT (*) FROM server_status AS s WHERE $CONNECTION_IS_ACTIVE")
     val serverStatusCount: LiveData<Int>
 
     companion object {
 
-        const val SERVER_STATUS_BASE_QUERY = "SELECT DISTINCT s.*, " +
-                "c.name AS connection_name " +
-                "FROM server_status AS s " +
-                "LEFT JOIN connections AS c ON c.id = s.connection_id "
+        const val SERVER_STATUS_BASE_QUERY = "SELECT DISTINCT s.* FROM server_status AS s "
 
         const val CONNECTION_IS_ACTIVE = " s.connection_id IN (SELECT id FROM connections WHERE active = 1) "
     }
