@@ -13,8 +13,8 @@ class SettingsUserInterfaceFragment : BasePreferenceFragment(), Preference.OnPre
     private var programArtworkEnabledPreference: CheckBoxPreference? = null
     private var castMiniControllerPreference: CheckBoxPreference? = null
     private var multipleChannelTagsPreference: CheckBoxPreference? = null
-    private var hoursOfEpgData: EditTextPreference? = null
-    private var daysOfEpgData: EditTextPreference? = null
+    private var hoursOfEpgDataPreference: EditTextPreference? = null
+    private var daysOfEpgDataPreference: EditTextPreference? = null
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
@@ -29,10 +29,10 @@ class SettingsUserInterfaceFragment : BasePreferenceFragment(), Preference.OnPre
         multipleChannelTagsPreference = findPreference("multiple_channel_tags_enabled")
         multipleChannelTagsPreference?.onPreferenceClickListener = this
 
-        hoursOfEpgData = findPreference("hours_of_epg_data_per_screen")
-        hoursOfEpgData?.onPreferenceChangeListener = this
-        daysOfEpgData = findPreference("days_of_epg_data")
-        daysOfEpgData?.onPreferenceChangeListener = this
+        hoursOfEpgDataPreference = findPreference("hours_of_epg_data_per_screen")
+        hoursOfEpgDataPreference?.onPreferenceChangeListener = this
+        daysOfEpgDataPreference = findPreference("days_of_epg_data")
+        daysOfEpgDataPreference?.onPreferenceChangeListener = this
     }
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
