@@ -107,15 +107,15 @@ class EpgChannelListRecyclerViewAdapter(private val viewModel: EpgViewModel, pri
         private val lifecycleRegistry = LifecycleRegistry(this)
 
         init {
-            lifecycleRegistry.markState(Lifecycle.State.INITIALIZED)
+            lifecycleRegistry.currentState = Lifecycle.State.INITIALIZED
         }
 
         fun markAttach() {
-            lifecycleRegistry.markState(Lifecycle.State.STARTED)
+            lifecycleRegistry.currentState = Lifecycle.State.STARTED
         }
 
         fun markDetach() {
-            lifecycleRegistry.markState(Lifecycle.State.DESTROYED)
+            lifecycleRegistry.currentState = Lifecycle.State.DESTROYED
         }
 
         override fun getLifecycle(): Lifecycle {
