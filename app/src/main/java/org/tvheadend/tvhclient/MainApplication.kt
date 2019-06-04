@@ -5,13 +5,13 @@ import android.content.SharedPreferences
 import androidx.multidex.MultiDexApplication
 import com.android.billingclient.api.Purchase
 import com.crashlytics.android.Crashlytics
-import com.crashlytics.android.core.CrashlyticsCore
 import com.facebook.stetho.Stetho
 import com.google.android.gms.cast.framework.CastOptions
 import com.google.android.gms.cast.framework.OptionsProvider
 import com.google.android.gms.cast.framework.SessionProvider
 import com.google.android.gms.cast.framework.media.CastMediaOptions
 import com.google.android.gms.cast.framework.media.NotificationOptions
+import com.google.firebase.analytics.FirebaseAnalytics
 import com.squareup.leakcanary.LeakCanary
 import com.squareup.leakcanary.RefWatcher
 import io.fabric.sdk.android.Fabric
@@ -45,6 +45,7 @@ class MainApplication : MultiDexApplication(), OptionsProvider, BillingUpdatesLi
 
     lateinit var billingManager: BillingManager
     lateinit var billingHandler: BillingHandler
+    private lateinit var firebaseAnalytics: FirebaseAnalytics
 
     @Inject
     lateinit var sharedPreferences: SharedPreferences
@@ -82,6 +83,8 @@ class MainApplication : MultiDexApplication(), OptionsProvider, BillingUpdatesLi
                     .enableWebKitInspector(Stetho.defaultInspectorModulesProvider(this))
                     .build())
         }
+
+        firebaseAnalytics = FirebaseAnalytics.getInstance(this)
 
         initCrashlytics()
         initTimber()
@@ -125,14 +128,9 @@ class MainApplication : MultiDexApplication(), OptionsProvider, BillingUpdatesLi
     }
 
     private fun initCrashlytics() {
-        if (sharedPreferences.getBoolean("crash_reports_enabled", resources.getBoolean(R.bool.pref_default_crash_reports_enabled))) {
-            // Set up Crashlytics, disabled for debug builds
-            val crashlyticsKit = Crashlytics.Builder()
-                    .core(CrashlyticsCore.Builder().disabled(BuildConfig.DEBUG).build())
-                    .build()
-
-            // Initialize Fabric with the debug-disabled crashlytics.
-            Fabric.with(this, crashlyticsKit, Crashlytics())
+        // Initialize Fabric with the debug-disabled crashlytics.
+        if (!BuildConfig.DEBUG && sharedPreferences.getBoolean("crash_reports_enabled", resources.getBoolean(R.bool.pref_default_crash_reports_enabled))) {
+            Fabric.with(this, Crashlytics())
         }
     }
 
