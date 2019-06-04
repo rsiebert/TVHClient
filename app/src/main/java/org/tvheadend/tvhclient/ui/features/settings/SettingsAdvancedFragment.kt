@@ -30,11 +30,12 @@ import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
 
-class SettingsAdvancedFragment : BasePreferenceFragment(), Preference.OnPreferenceClickListener, SharedPreferences.OnSharedPreferenceChangeListener, DatabaseClearedCallback {
+class SettingsAdvancedFragment : BasePreferenceFragment(), Preference.OnPreferenceChangeListener, Preference.OnPreferenceClickListener, SharedPreferences.OnSharedPreferenceChangeListener, DatabaseClearedCallback {
 
     private var notificationsEnabledPreference: CheckBoxPreference? = null
     private var notifyRunningRecordingCountEnabledPreference: CheckBoxPreference? = null
     private var notifyLowStorageSpaceEnabledPreference: CheckBoxPreference? = null
+    private var connectionTimeoutPreference: EditTextPreference? = null
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
@@ -64,6 +65,9 @@ class SettingsAdvancedFragment : BasePreferenceFragment(), Preference.OnPreferen
             it.onPreferenceClickListener = this
             it.isEnabled = isUnlocked
         }
+
+        connectionTimeoutPreference = findPreference("connection_timeout")
+        connectionTimeoutPreference?.onPreferenceChangeListener = this
     }
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
@@ -188,7 +192,7 @@ class SettingsAdvancedFragment : BasePreferenceFragment(), Preference.OnPreferen
                 fileUri = FileProvider.getUriForFile(it, "org.tvheadend.tvhclient.fileprovider", logFile)
             }
         } catch (e: IllegalArgumentException) {
-            // NOP
+            Timber.e(e, "Could not load logfile")
         }
 
         if (fileUri != null) {
@@ -206,23 +210,30 @@ class SettingsAdvancedFragment : BasePreferenceFragment(), Preference.OnPreferen
         }
     }
 
+    override fun onPreferenceChange(preference: Preference?, newValue: Any?): Boolean {
+        if (preference == null) return false
+
+        Timber.d("Preference ${preference.key} changed, checking if it is valid")
+        when (preference.key) {
+            "connection_timeout" ->
+                try {
+                    val value = Integer.valueOf(newValue as String)
+                    if (value < 1 || value > 60) {
+                        context?.sendSnackbarMessage("The value must be an integer between 1 and 60")
+                        return false
+                    }
+                    return true
+                } catch (ex: NumberFormatException) {
+                    context?.sendSnackbarMessage("The value must be an integer between 1 and 24")
+                    return false
+                }
+            else -> return true
+        }
+    }
+
     override fun onSharedPreferenceChanged(prefs: SharedPreferences, key: String) {
         Timber.d("Preference $key has changed")
         when (key) {
-            "connection_timeout" ->
-                try {
-                    val value = Integer.parseInt(prefs.getString(key, resources.getString(R.string.pref_default_connection_timeout))!!)
-                    if (value < 1) {
-                        (findPreference<Preference>(key) as EditTextPreference).text = "1"
-                        prefs.edit().putString(key, "1").apply()
-                    }
-                    if (value > 60) {
-                        (findPreference<Preference>(key) as EditTextPreference).text = "60"
-                        prefs.edit().putString(key, "60").apply()
-                    }
-                } catch (ex: NumberFormatException) {
-                    prefs.edit().putString(key, resources.getString(R.string.pref_default_connection_timeout)).apply()
-                }
             "notify_running_recording_count_enabled" -> {
                 if (!prefs.getBoolean(key, resources.getBoolean(R.bool.pref_default_notify_running_recording_count_enabled))) {
                     (activity?.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager).cancel(1)
