@@ -8,7 +8,7 @@ import org.tvheadend.tvhclient.BuildConfig
 class CrashlyticsTree : BaseDebugTree() {
 
     override fun log(priority: Int, tag: String?, message: String, t: Throwable?) {
-        if (priority == Log.VERBOSE || priority == Log.INFO) {
+        if (priority == Log.VERBOSE || priority == Log.INFO || priority == Log.DEBUG) {
             return
         }
         if (Fabric.isInitialized()) {
