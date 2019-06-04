@@ -140,15 +140,15 @@ public class HtspConnection extends Thread implements HtspConnectionInterface {
             start();
 
         } catch (ClosedByInterruptException e) {
-            Timber.e(e, "Failed to open HTSP connection, interrupted");
+            Timber.d(e, "Failed to open HTSP connection, interrupted");
             connectionListener.onConnectionStateChange(ConnectionState.FAILED_INTERRUPTED);
 
         } catch (UnresolvedAddressException e) {
-            Timber.e(e, "Failed to resolve HTSP server address");
+            Timber.d(e, "Failed to resolve HTSP server address");
             connectionListener.onConnectionStateChange(ConnectionState.FAILED_UNRESOLVED_ADDRESS);
 
         } catch (IOException e) {
-            Timber.e(e, "Caught IOException while opening SocketChannel");
+            Timber.d(e, "Caught IOException while opening SocketChannel");
             connectionListener.onConnectionStateChange(ConnectionState.FAILED_EXCEPTION_OPENING_SOCKET);
 
         } finally {
@@ -330,11 +330,11 @@ public class HtspConnection extends Thread implements HtspConnectionInterface {
             try {
                 selector.select(5000);
             } catch (IOException e) {
-                Timber.e(e, "Failed to select from socket channel, I/O error occurred");
+                Timber.d(e, "Failed to select from socket channel, I/O error occurred");
                 connectionListener.onConnectionStateChange(ConnectionState.FAILED);
                 isRunning = false;
             } catch (ClosedSelectorException e) {
-                Timber.e(e, "Failed to select from socket channel, selector is already closed");
+                Timber.d(e, "Failed to select from socket channel, selector is already closed");
                 connectionListener.onConnectionStateChange(ConnectionState.FAILED);
                 isRunning = false;
             }
@@ -362,19 +362,19 @@ public class HtspConnection extends Thread implements HtspConnectionInterface {
                 Timber.d(e, "Failed to register selector with socket channel, illegal selector");
                 isRunning = false;
             } catch (ClosedChannelException e) {
-                Timber.e(e, "Failed to register selector with socket channel, channel is already closed");
+                Timber.d(e, "Failed to register selector with socket channel, channel is already closed");
                 isRunning = false;
             } catch (ClosedSelectorException e) {
-                Timber.e(e, "Failed to register selector with socket channel, selector is already closed");
+                Timber.d(e, "Failed to register selector with socket channel, selector is already closed");
                 isRunning = false;
             } catch (CancelledKeyException e) {
-                Timber.e(e, "Invalid selection key was used while processing tcp selection key");
+                Timber.d(e, "Invalid selection key was used while processing tcp selection key");
                 isRunning = false;
             } catch (NotYetConnectedException e) {
-                Timber.e(e, "Not yet connected while while processing tcp selection key");
+                Timber.d(e, "Not yet connected while while processing tcp selection key");
                 isRunning = false;
             } catch (IOException e) {
-                Timber.e(e, "Exception while processing tcp selection key");
+                Timber.d(e, "Exception while processing tcp selection key");
                 isRunning = false;
             } finally {
                 lock.unlock();
@@ -402,7 +402,7 @@ public class HtspConnection extends Thread implements HtspConnectionInterface {
             int len = sChannel.read(inputByteBuffer);
             if (len < 0) {
                 connectionListener.onConnectionStateChange(ConnectionState.FAILED);
-                Timber.e("Could not read data from server");
+                Timber.d("Could not read data from server");
                 throw new IOException();
             }
 
