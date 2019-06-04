@@ -11,7 +11,6 @@ import kotlinx.android.synthetic.main.startup_fragment.*
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.data.service.HtspService
 import org.tvheadend.tvhclient.ui.common.callbacks.ToolbarInterface
-import org.tvheadend.tvhclient.ui.common.invisible
 import org.tvheadend.tvhclient.ui.common.visible
 import org.tvheadend.tvhclient.ui.features.MainActivity
 import org.tvheadend.tvhclient.ui.features.MainViewModel
@@ -41,20 +40,17 @@ class StartupFragment : Fragment() {
         startup_status.text = savedInstanceState?.getString("stateText", "")
                 ?: getString(R.string.initializing)
         startup_status.visible()
-        progress_bar.visible()
 
         mainViewModel.connectionCount.observe(viewLifecycleOwner, Observer { count ->
             if (count == 0) {
                 Timber.d("No connection available, showing settings button")
                 startup_status.text = getString(R.string.no_connection_available)
-                progress_bar.invisible()
                 add_connection_button.visible()
                 add_connection_button.setOnClickListener { showSettingsAddNewConnection() }
             } else {
                 if (mainViewModel.connection.id == -1) {
                     Timber.d("No active connection available, showing settings button")
                     startup_status.text = getString(R.string.no_connection_active_advice)
-                    progress_bar.invisible()
                     settings_button.visible()
                     settings_button.setOnClickListener { showConnectionListSettings() }
                 } else {
