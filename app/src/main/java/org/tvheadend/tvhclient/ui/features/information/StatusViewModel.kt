@@ -44,8 +44,8 @@ class StatusViewModel : ViewModel(), SharedPreferences.OnSharedPreferenceChangeL
     val subscriptions: LiveData<List<Subscription>>
     val inputs: LiveData<List<Input>>
 
-    private lateinit var statusUpdateTask: Runnable
-    private val statusUpdateHandler = Handler()
+    private lateinit var discSpaceUpdateTask: Runnable
+    private val diskSpaceUpdateHandler = Handler()
 
     init {
         Timber.d("Initializing")
@@ -87,30 +87,24 @@ class StatusViewModel : ViewModel(), SharedPreferences.OnSharedPreferenceChangeL
             }
         }
 
-        statusUpdateTask = Runnable {
-
+        discSpaceUpdateTask = Runnable {
             val activityManager = appContext.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
             val runningAppProcessInfo = activityManager.runningAppProcesses?.get(0)
 
             if (runningAppProcessInfo != null
                     && runningAppProcessInfo.importance <= ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND) {
 
-                Timber.d("Application is in the foreground, starting service to get updated subscriptions, inputs and disk space ")
-
+                Timber.d("Application is in the foreground, starting service to get disk space ")
                 val intent = Intent(appContext, HtspService::class.java)
-                intent.action = "getSubscriptions"
-                appContext.startService(intent)
-                intent.action = "getInputs"
-                appContext.startService(intent)
                 intent.action = "getDiskSpace"
                 appContext.startService(intent)
             }
-            Timber.d("Restarting status update handler in 15s")
-            statusUpdateHandler.postDelayed(statusUpdateTask, 15000)
+            Timber.d("Restarting disc space update handler in 60s")
+            diskSpaceUpdateHandler.postDelayed(discSpaceUpdateTask, 60000)
         }
 
-        Timber.d("Starting status update handler")
-        statusUpdateHandler.post(statusUpdateTask)
+        Timber.d("Starting disk space update handler")
+        diskSpaceUpdateHandler.post(discSpaceUpdateTask)
 
         onSharedPreferenceChanged(sharedPreferences, "notify_running_recording_count_enabled")
         onSharedPreferenceChanged(sharedPreferences, "notify_low_storage_space_enabled")
@@ -122,8 +116,8 @@ class StatusViewModel : ViewModel(), SharedPreferences.OnSharedPreferenceChangeL
     override fun onCleared() {
         Timber.d("Unregistering shared preference change listener")
         sharedPreferences.unregisterOnSharedPreferenceChangeListener(this)
-        Timber.d("Removing status update handler")
-        statusUpdateHandler.removeCallbacks(statusUpdateTask)
+        Timber.d("Stopping disk space update handler")
+        diskSpaceUpdateHandler.removeCallbacks(discSpaceUpdateTask)
         super.onCleared()
     }
 

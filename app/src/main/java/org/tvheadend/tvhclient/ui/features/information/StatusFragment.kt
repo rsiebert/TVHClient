@@ -1,11 +1,16 @@
 package org.tvheadend.tvhclient.ui.features.information
 
+import android.app.ActivityManager
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
 import android.view.*
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import kotlinx.android.synthetic.main.status_fragment.*
 import org.tvheadend.tvhclient.R
+import org.tvheadend.tvhclient.data.service.HtspService
 import org.tvheadend.tvhclient.domain.entity.ServerStatus
 import org.tvheadend.tvhclient.ui.base.BaseFragment
 import org.tvheadend.tvhclient.ui.common.tasks.WakeOnLanTask
@@ -15,6 +20,8 @@ import timber.log.Timber
 class StatusFragment : BaseFragment() {
 
     private lateinit var statusViewModel: StatusViewModel
+    private lateinit var loadDataTask: Runnable
+    private val loadDataHandler = Handler()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.status_fragment, container, false)
@@ -31,6 +38,24 @@ class StatusFragment : BaseFragment() {
 
         showStatus()
         showSubscriptionAndInputStatus()
+
+        loadDataTask = Runnable {
+            val activityManager = activity!!.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+            val runningAppProcessInfo = activityManager.runningAppProcesses?.get(0)
+
+            if (runningAppProcessInfo != null
+                    && runningAppProcessInfo.importance <= ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND) {
+
+                Timber.d("Application is in the foreground, starting service to get updated subscriptions and input information")
+                val intent = Intent(activity, HtspService::class.java)
+                intent.action = "getSubscriptions"
+                activity?.startService(intent)
+                intent.action = "getInputs"
+                activity?.startService(intent)
+            }
+            Timber.d("Restarting additional information update handler in 60s")
+            loadDataHandler.postDelayed(loadDataTask, 60000)
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -182,5 +207,15 @@ class StatusFragment : BaseFragment() {
                 Timber.d("Received input status")
             }
         })
+    }
+
+    override fun onResume() {
+        super.onResume()
+        loadDataHandler.post(loadDataTask)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        loadDataHandler.removeCallbacks(loadDataTask)
     }
 }
