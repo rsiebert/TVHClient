@@ -114,7 +114,6 @@
     <string name="minutes">%d Min</string>
     <string name="monday">Montag</string>
     <string name="name">Name</string>
-    <string name="next_program">Danach: %s</string>
     <string name="no_cast_session">Keine Cast-Session verfügbar</string>
     <string name="no_connection_active_advice">Mindestens eine Verbindung existiert, ist aber nicht aktiviert.</string>
     <!-- Connection related -->
@@ -133,7 +132,6 @@
     <string name="pref_casting_sum">Einstellungen für die Casting Funktionalität. Bitte beachte, dass Casting eine TVHeadend Version erfordert, die transkodieren kann. Außerdem muss der Server leistungsstark genug sein, um die Videodaten in Echtzeit konvertieren zu können. Andernfalls wird Casting nicht funktionieren!</string>
     <string name="pref_changelog">Änderungshistorie</string>
     <string name="pref_changelog_sum">Zeigt eine Liste aller Änderungen und Eigenschaften zwischen den Versionen.</string>
-    <string name="pref_channels">Sender</string>
     <string name="pref_clear_database">Lösche Datenbankinhalte</string>
     <string name="pref_clear_database_sum">Entfernt alle Informationen aus der Datenbank. Dies umfasst alle Sender, Sender-Tags, Programme und Aufzeichnungen.</string>
     <string name="pref_clear_icon_cache">Lösche Senderlogos</string>
@@ -210,7 +208,6 @@
     <string name="pref_profiles_sum">Auswahl eines verfügbaren Serverprofils, mit denen Programme aufgenommen oder Aufnahmen abgespielt werden.</string>
     <string name="pref_program_guide">Programmübersicht</string>
     <string name="pref_program_guide_sum">Konfiguriert das Aussehen und weitere Parameter der Programmübersicht.</string>
-    <string name="pref_programs">Programme</string>
     <string name="pref_recording_profiles">Aufnahmeprofile</string>
     <string name="pref_recording_profiles_sum">Bestimmt das Profil, dass der Server für das Aufnehmen von geplanten Programmen verwenden soll.</string>
     <string name="pref_selected">Standardverbindung</string>
@@ -366,7 +363,6 @@
     <string name="search_series_recordings">Suche Serienaufnahmen</string>
     <string name="search_timer_recordings">Suche manuelle Aufnahmen</string>
     <string name="search_programs">Suche Programme</string>
-    <string name="search_channels">Suche Sender</string>
     <string name="search_program_guide">Suche in der Programübersicht</string>
     <string name="pref_playback">Wiedergabe</string>
     <string name="pref_playback_sum">Wählen Sie, wie Live-TV-Programme oder -Aufzeichnungen abgespielt werden.</string>
@@ -380,7 +376,6 @@
     <string name="pref_internal_player_audio_tunneling_enabled">Audio-Tunneling aktivieren</string>
     <string name="pref_internal_player_audio_tunneling_enabled_sum">Unterstützung für DSP-Audio-Tunneling aktivieren</string>
     <string name="pref_internal_player_timeshift_enabled">Timeshift-Unterstützung aktivieren</string>
-    <string name="deleting_database_contents">Lösche Datenbankinhalte…</string>
     <string name="selection_disabled">Deaktiviert</string>
     <string name="selection_default">Aktiviert</string>
     <string name="pref_copy_playback_url_to_clipboard_enabled_sum">Bei Problemen mit der Wiedergabe kann die URL zum Testen der Wiedergabe in einem Browser verwendet werden.</string>

@@ -115,7 +115,6 @@
     <string name="minutes">%d min</string>
     <string name="monday">Monday</string>
     <string name="name">Name</string>
-    <string name="next_program">Next: %s</string>
     <string name="no_cast_session">No cast session available</string>
     <string name="no_connection_active_advice">At least one connection is defined, but not activated.</string>
     <!-- Connection related -->
@@ -134,7 +133,6 @@
     <string name="pref_casting_sum">Configure casting of programs or recordings to your TV. The server must have transcoding enabled.</string>
     <string name="pref_changelog">Changelog</string>
     <string name="pref_changelog_sum">Show a list of features and changes of the different application versions.</string>
-    <string name="pref_channels">Channels</string>
     <string name="pref_clear_database">Clear database</string>
     <string name="pref_clear_database_sum">Removes all information from the database. This includes all channels, channel tags, programs and recordings.</string>
     <string name="pref_clear_icon_cache">Clear channel icon cache</string>
@@ -212,7 +210,6 @@
     <string name="pref_profiles_sum">Define the profiles how content should be recorded or played.</string>
     <string name="pref_program_guide">Program guide</string>
     <string name="pref_program_guide_sum">Configure the program guide screen and how the data shall be displayed.</string>
-    <string name="pref_programs">Programs</string>
     <string name="pref_recording_profiles">Recording profiles</string>
     <string name="pref_recording_profiles_sum">Select a profile that the server shall use to record a scheduled program.</string>
     <string name="pref_selected">Default connection</string>
@@ -361,7 +358,6 @@
     <string name="search_series_recordings">Search series recordings</string>
     <string name="search_timer_recordings">Search timer recordings</string>
     <string name="search_programs">Search programs</string>
-    <string name="search_channels">Search channels</string>
     <string name="search_program_guide">Search program guide</string>
     <string name="multiple_channel_tags">Multiple channel tags</string>
     <string name="pref_multiple_channel_tags_enabled">Select multiple channel tags</string>
@@ -378,7 +374,6 @@
     <string name="pref_internal_player_audio_tunneling_enabled">Enable Audio Tunneling</string>
     <string name="pref_internal_player_audio_tunneling_enabled_sum">Enable support for DSP audio tunneling</string>
     <string name="pref_internal_player_timeshift_enabled">Enable timeshift support</string>
-    <string name="deleting_database_contents">Deleting database contents…</string>
     <string name="pref_copy_playback_url_to_clipboard_enabled">Copy playback Url to clipboard</string>
     <string name="pref_copy_playback_url_to_clipboard_enabled_sum">In case of playback issues the copied Url can be used to test playback in a browser.</string>
     <string name="selection_disabled">Disabled</string>

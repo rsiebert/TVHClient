@@ -81,7 +81,6 @@
     <string name="minutes">%d min</string>
     <string name="monday">Pondelok</string>
     <string name="name">Meno</string>
-    <string name="next_program">Ďalší: %s</string>
     <string name="no_connection_active_advice">Ani jedno dostupné pripojenie nie je aktivované.</string>
     <string name="no_connection_available">K dispozícii nie je žiadne pripojenie.</string>
     <!-- Connection related -->
@@ -98,7 +97,6 @@
     <string name="pref_casting_sum">Nastavenia pre casting kanálov alebo nahrávok do vášho televízora. Váš Tvheadend server musí podporovať transkódovanie v reálnom čase.</string>
     <string name="pref_changelog">Zoznam zmien</string>
     <string name="pref_changelog_sum">Zobraziť zoznam funkcií a zmien v jednotlivých verzií aplikácie.</string>
-    <string name="pref_channels">Kanály</string>
     <string name="pref_clear_icon_cache">Vymazať cache s logami kanálov</string>
     <string name="pref_clear_search_history">Vymazať históriu vyhľadávania</string>
     <string name="pref_connection_timeout">Timeout pripojenia</string>
@@ -159,7 +157,6 @@
     <string name="pref_profiles_sum">Nadefinovanie parametrov alebo profilov (ak sú podporované) pre prehrávanie alebo nahrávanie.</string>
     <string name="pref_program_guide">Programový sprievodca</string>
     <string name="pref_program_guide_sum">Konfigurácia obrazovky programového sprievodcu a spôsobu, ako majú byť zobrazené údaje.</string>
-    <string name="pref_programs">Programy</string>
     <string name="pref_recording_profiles">Profily pre nahrávanie</string>
     <string name="pref_recording_profiles_sum">Nadefinovanie profilu pre nahrávanie naplánovaného programu.</string>
     <string name="pref_selected">Predvolené pripojenie</string>
@@ -345,7 +342,6 @@
     <string name="search_program_guide">Vyhľadať sprievodcu programom</string>
     <string name="search_failed_recordings">Vyhľadávanie zlyhalo</string>
     <string name="search_completed_recordings">Vyhľadávanie dokončených nahrávok</string>
-    <string name="search_channels">Vyhľadať kanály</string>
     <string name="saving_data">Ukladanie prijatých údajov…</string>
     <string name="requesting_playback_information">Vyžiadanie informácií o prehrávaní zo servera</string>
     <string name="record_once_and_edit">Záznam a úprava</string>
@@ -370,7 +366,6 @@
     <string name="add_reminder">Pridať pripomienku</string>
     <string name="authentication_failed">Overenie zlyhalo</string>
     <string name="bad_username_or_password">Chybné uživateľské meno alebo heslo</string>
-    <string name="deleting_database_contents">Vymazanie obsahu databázy…</string>
     <string name="dialog_button_connect">Pripojiť</string>
     <string name="dialog_button_restart">Reštart</string>
     <string name="connected_to_server">Pripojené k serveru</string>

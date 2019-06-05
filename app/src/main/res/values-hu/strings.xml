@@ -116,7 +116,6 @@
     <string name="minutes">%d perc</string>
     <string name="monday">Hétfő</string>
     <string name="name">Név</string>
-    <string name="next_program">Következő: %s</string>
     <string name="no_cast_session">Nincs elérhető cast szekció</string>
     <string name="no_connection_active_advice">Legalább egy kapcsolat van definiálva, de nincs aktiválva.</string>
     <!-- Connection related -->
@@ -135,7 +134,6 @@
     <string name="pref_casting_sum">Konfigurálja a programok vagy felvételek lejátszását a TV-készülékre. A kiszolgálónak bekapcsolt átkódolással kell rendelkeznie.</string>
     <string name="pref_changelog">Változáslista</string>
     <string name="pref_changelog_sum">Show a list of features and changes of the different application versions.</string>
-    <string name="pref_channels">Csatornák</string>
     <string name="pref_clear_database">Adatbázis törlése</string>
     <string name="pref_clear_database_sum">Eltávolít minden információt az adatbázisból. Ez magában foglalja az összes csatornát, csatorna címkét, programot és felvételt.</string>
     <string name="pref_clear_icon_cache">Csatorna ikon gyorsítótár törlése</string>
@@ -212,7 +210,6 @@
     <string name="pref_profiles_sum">Adja meg a lejátszási és felvételi profilokat.</string>
     <string name="pref_program_guide">Műsorújság</string>
     <string name="pref_program_guide_sum">Konfigurálja a műsorfüzet képernyőjét és az adatok megjelenítésének módját.</string>
-    <string name="pref_programs">Programok</string>
     <string name="pref_recording_profiles">Felvételi profilok</string>
     <string name="pref_recording_profiles_sum">Válasszon ki egy profilt, amelyet a szerver egy ütemezett program rögzítésére használ.</string>
     <string name="pref_selected">Alapértelmezett kapcsolat</string>
@@ -360,7 +357,6 @@
     <string name="search_series_recordings">Keresés a sorozat felvételekben</string>
     <string name="search_timer_recordings">Keresés az időzített felvételekben</string>
     <string name="search_programs">Keresés a programokban</string>
-    <string name="search_channels">Keresés a csatornákban</string>
     <string name="search_program_guide">Keresés a műsorújságban</string>
     <string name="multiple_channel_tags">Többszörös Csatorna cimkék</string>
     <string name="pref_multiple_channel_tags_enabled">Többszörös Csatorna cimkék kijelölése</string>
@@ -377,7 +373,6 @@
     <string name="pref_internal_player_timeshift_enabled">Engedélyezze az időeltolás (timeshift) támogatását</string>
     <string name="pref_internal_player_for_channels_enabled">Játssz élő TV-t a belső lejátszóval</string>
     <string name="pref_internal_player_for_recordings_enabled">Lejátszások lejátszása a belső lejátszóval</string>
-    <string name="deleting_database_contents">Adatbázis-tartalom törlése…</string>
     <string name="selection_disabled">Mozgássérült</string>
     <string name="pref_copy_playback_url_to_clipboard_enabled">Másolja a lejátszási URL-t a vágólapra</string>
     <string name="pref_copy_playback_url_to_clipboard_enabled_sum">Lejátszási problémák esetén a másolás használható a lejátszás tesztelésére a böngészőben.</string>

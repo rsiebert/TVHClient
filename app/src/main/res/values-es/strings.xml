@@ -117,7 +117,6 @@
     <string name="monday">Lunes</string>
     <string name="multiple_channel_tags">múltiples etiquetas de canal</string>
     <string name="name">Nombre</string>
-    <string name="next_program">Sigue: %s</string>
     <string name="no_cast_session">No hay sesión de emisión disponible</string>
     <string name="no_connection_active_advice">Al menos una conexión está definida, pero no está activada.</string>
     <string name="no_connection_available">No hay conexión disponible</string>
@@ -135,7 +134,6 @@
     <string name="pref_casting_sum">Configuraciones para habilitar y configurar la transmisión de TV en vivo o grabaciones a su TV. Tenga en cuenta que esto requiere tvheadend con transcodificación habilitada y un servidor que sea lo suficientemente potente como para transcodificar los datos en tiempo real.</string>
     <string name="pref_changelog">Registro de cambios</string>
     <string name="pref_changelog_sum">Mostrar una lista de características y cambios de las diferentes versiones de la aplicación.</string>
-    <string name="pref_channels">Canales</string>
     <string name="pref_clear_database">Limpiar base de datos</string>
     <string name="pref_clear_database_sum">Eliminar toda la información de la base de datos. Esto incluye todos los canales, etiquetas de canal, programas y grabaciones..</string>
     <string name="pref_clear_icon_cache">Borrar caché de iconos de canal</string>
@@ -223,7 +221,6 @@
     <string name="pref_profiles_sum">Defina los parámetros o los perfiles (si se admite) cómo se grabarán los programas o cómo se reproducirán las grabaciones.</string>
     <string name="pref_program_guide">Guía de programas</string>
     <string name="pref_program_guide_sum">Configure la pantalla de la guía de programas y cómo se mostrarán los datos.</string>
-    <string name="pref_programs">Programas</string>
     <string name="pref_recording_profiles">Perfiles de grabación</string>
     <string name="pref_recording_profiles_sum">Seleccione un perfil que el servidor usará para grabar un programa programado.</string>
     <string name="pref_selected">Conexión predeterminada</string>
@@ -305,7 +302,6 @@
     <string name="saving_data">Guardando los datos recibidos…</string>
     <string name="scheduled_recordings">Grabaciones programadas</string>
     <string name="search">Buscar</string>
-    <string name="search_channels">Buscar canales</string>
     <string name="search_completed_recordings">Buscar grabaciones finalizadas</string>
     <string name="search_epg">Buscar EPG</string>
     <string name="search_failed_recordings">Buscar grabaciones fallidas</string>
@@ -371,7 +367,6 @@
     <string name="wol_send">"Envió exitosamente del paquete de activación de LAN a '%s'"</string>
     <string name="wol_send_broadcast">"Envió exitosamente el paquete de activación de LAN como una transmisión a '%s'"</string>
     <string name="yesterday">Ayer</string>
-    <string name="deleting_database_contents">Eliminando los contenidos de la base de datos…</string>
     <string name="pref_playback">Reproducción</string>
     <string name="pref_playback_sum">Elija cómo se reproducen los programas de TV en vivo o las grabaciones.</string>
     <string name="pref_internal_player_for_channels_enabled">Juega tv en vivo con el reproductor interno.</string>

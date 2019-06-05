@@ -85,7 +85,6 @@ Verifica che siano soddsifatti i requisiti descritti nelle impostazioni trasmiss
     <string name="minutes">%d minuti</string>
     <string name="monday">Lunedì</string>
     <string name="name">Nome</string>
-    <string name="next_program">Successivo: %s</string>
     <string name="no_connection_active_advice">Almeno una connessione definita, ma non attivata.</string>
     <string name="no_connection_available">Nessuna connessione disponibile.</string>
     <string name="no_data">Dati programmazione non disponibili</string>
@@ -101,7 +100,6 @@ Verifica che siano soddsifatti i requisiti descritti nelle impostazioni trasmiss
     <string name="pref_casting_sum">Impostazioni da abilitare e configurare per la trasmissione TV Live o registrazioni nel TV. Richiede tvheadend con trascodifica abilitata ed un server abbastanza potente da trascodificare i dati in tempo reale.</string>
     <string name="pref_changelog">Elenco modifiche</string>
     <string name="pref_changelog_sum">"Visualizza l'elenco delle funzionalità e i cambiamenti delle diverse versioni dell'applicazione."</string>
-    <string name="pref_channels">Canali</string>
     <string name="pref_clear_icon_cache">Azzera cache icone canali</string>
     <string name="pref_clear_search_history">Azzera cronologia ricerche</string>
     <string name="pref_connection_timeout">Timeout connessione</string>
@@ -156,7 +154,6 @@ Verifica che siano soddsifatti i requisiti descritti nelle impostazioni trasmiss
     <string name="pref_profiles_sum">Definisci i parametri o i profili (se supportati) di come i programmi devono essere registrati o le registrazioni riprodotte.</string>
     <string name="pref_program_guide">Guida programmi</string>
     <string name="pref_program_guide_sum">Configura la schermata della guida programmi e come i dati verranno visualizzati.</string>
-    <string name="pref_programs">Programmi</string>
     <string name="pref_recording_profiles">Profili registrazione</string>
     <string name="pref_recording_profiles_sum">Scegli il profilo che il server userà per le registrazioni programmate.</string>
     <string name="pref_selected">Connessione predefinita</string>
@@ -370,7 +367,6 @@ L'indirizzo deve essere nella forma '01:24:67:9a:cd:ef' e può contenere solo ci
     <string name="search_program_guide">Cerca guida ai programmi</string>
     <string name="search_failed_recordings">Cerca registrazioni fallite</string>
     <string name="search_completed_recordings">Cerca le registrazioni completate</string>
-    <string name="search_channels">Cerca canali</string>
     <string name="receiving_data">Ricevendo dati</string>
     <string name="pref_show_channel_number_sum">Mostra il numero del canale sotto l\'icona del canale.</string>
     <string name="pref_show_channel_number">Mostra il numero del canale</string>
@@ -394,7 +390,6 @@ L'indirizzo deve essere nella forma '01:24:67:9a:cd:ef' e può contenere solo ci
     <string name="cast_error_no_media_client_available">Impossibile ottenere il client multimediale remoto dalla sessione di trasmissione.</string>
     <string name="audio_settings">Impostazioni audio</string>
     <string name="any">Qualunque</string>
-    <string name="deleting_database_contents">Eliminazione del contenuto del database…</string>
     <string name="enable">Attivare</string>
     <string name="disable">Disattivare</string>
 </resources>

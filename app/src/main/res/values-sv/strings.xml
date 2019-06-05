@@ -55,7 +55,6 @@
     <string name="minutes">%d min</string>
     <string name="monday">Måndag</string>
     <string name="name">Namn</string>
-    <string name="next_program">Nästa program: %s</string>
     <string name="no_connection_available">Fortfarande ingen anslutning definierad. Du måste lägga till minst en anslutning från inställningsmenyn.</string>
     <string name="no_data">Programinformation ej tillgänglig</string>
     <string name="no_media_player">Ingen mediaspelare hittad</string>
@@ -109,7 +108,6 @@
     <string name="pref_profiles_sum">Definera parametrar eller profiler (om det stöds) för hur program ska spelas in eller hur inspelningar ska spelas upp.</string>
     <string name="pref_program_guide">Programguide</string>
     <string name="pref_program_guide_sum">Konfigurera hur informationen i programguiden skall visas.</string>
-    <string name="pref_programs">Program</string>
     <string name="pref_recording_profiles">Inspelningsprofiler</string>
     <string name="pref_recording_profiles_sum">Välj en profil som servern ska använda för att spela in ett schemalagt program.</string>
     <string name="pref_selected">Standardanslutning</string>
@@ -228,7 +226,6 @@
     <string name="current_time">Aktuell tid</string>
     <string name="data_errors">Datafel: %1$s</string>
     <string name="data_size">Filstorlek: %1$d %2$s</string>
-    <string name="deleting_database_contents">Radering av databasinnehåll…</string>
     <string name="dialog_button_connect">Ansluta</string>
     <string name="dialog_button_restart">Omstart</string>
     <string name="dialog_content_connection_changed">Anslutningsinställningarna har ändrats. Applikationen startas om och en ny inledande synkronisering utförs.</string>
@@ -278,7 +275,6 @@
     <string name="search_program_guide">Sök programguiden</string>
     <string name="search_failed_recordings">Sök misslyckade inspelningar</string>
     <string name="search_completed_recordings">Sök färdiga inspelningar</string>
-    <string name="search_channels">Sök kanaler</string>
     <string name="saving_data">Sparar mottagna data…</string>
     <string name="requesting_playback_information">Begär avspelningsinformation från servern</string>
     <string name="record_once_custom_profile">Spela in med olika profiler</string>
@@ -383,7 +379,6 @@
     <string name="pref_connection_timeout">Anslutningstidsavbrott</string>
     <string name="pref_clear_database_sum">Tar bort all information från databasen. Detta inkluderar alla kanaler, kanalkoder, program och inspelningar.</string>
     <string name="pref_clear_database">Tydlig databas</string>
-    <string name="pref_channels">Kanaler</string>
     <string name="pref_casting_sum">Konfigurera gjutning av program eller inspelningar till din TV. Servern måste ha aktiverat transkodning.</string>
     <string name="pref_casting">Casting</string>
     <string name="pref_cast_profiles_sum">Välj en profil som ska användas för att kasta en kanal eller ett inspelat program till en chromecast eller liknande enhet.</string>

@@ -107,7 +107,6 @@
     <string name="minutes">%d min</string>
     <string name="monday">Maandag</string>
     <string name="name">Benaming</string>
-    <string name="next_program">Volgende: %s</string>
     <string name="no_connection_active_advice">Er is minstens één verbinding gedefinieerd, maar niet geactiveerd.</string>
     <string name="no_connection_available">Nog steeds geen connectie gedefinieerd. Je moet minimaal één connectie toevoegen via het instellingen menu.</string>
     <string name="no_data">Geen programma data beschikbaar</string>
@@ -124,7 +123,6 @@
     <string name="pref_casting_sum">Configureer het gieten van programma\'s of opnames naar uw TV. De transcodering van de server moet ingeschakeld zijn.</string>
     <string name="pref_changelog">Wijzigingen</string>
     <string name="pref_changelog_sum">Toon een lijst van functies en wijzigingen in de verschillende applicatie versies.</string>
-    <string name="pref_channels">Kanalen</string>
     <string name="pref_clear_database">Duidelijke database</string>
     <string name="pref_clear_database_sum">Verwijdert alle informatie uit de database. Dit omvat alle kanalen, kanaaltags, programma\'s en opnames.</string>
     <string name="pref_clear_icon_cache">Kanaalpictogram cache wissen</string>
@@ -173,7 +171,6 @@
     <string name="pref_profiles">Profielen</string>
     <string name="pref_program_guide">Programmagids</string>
     <string name="pref_program_guide_sum">Configureer het programmagids scherm en hoe de data getoond moet worden.</string>
-    <string name="pref_programs">Programma\'s</string>
     <string name="pref_selected">Standaard connectie</string>
     <string name="pref_selected_sum">Selecteer om deze connectie de standaard connectie te maken en gebruik het nadat de applicatie opnieuw is gestart.</string>
     <string name="pref_show_recording_file_status">Opnamebestandstatus weergeven</string>
@@ -360,7 +357,6 @@
     <string name="search_series_recordings">Zoek seriële opnames</string>
     <string name="search_timer_recordings">Zoek timeropnamen</string>
     <string name="search_programs">Zoek programma\'s</string>
-    <string name="search_channels">Zoek kanalen</string>
     <string name="search_program_guide">Zoek programmagids</string>
     <string name="pref_internal_player_timeshift_enabled">Schakel timeshift ondersteuning in</string>
     <string name="pref_internal_player_audio_tunneling_enabled_sum">Ondersteuning voor DSP-audiotunneling inschakelen</string>
@@ -374,7 +370,6 @@
     <string name="pref_playback">Afspelen</string>
     <string name="pref_internal_player_for_channels_enabled">Speel live tv met de interne speler</string>
     <string name="pref_internal_player_for_recordings_enabled">Speel opnamen met de interne speler</string>
-    <string name="deleting_database_contents">Database-inhoud verwijderen…</string>
     <string name="pref_copy_playback_url_to_clipboard_enabled_sum">In het geval van afspeelproblemen kan de gekopieerde URL worden gebruikt om het afspelen in een browser te testen.</string>
     <string name="pref_copy_playback_url_to_clipboard_enabled">Kopieer weergave-URL naar klembord</string>
     <string name="selection_disabled">Invalide</string>

@@ -115,7 +115,6 @@
     <string name="minutes">%d min</string>
     <string name="monday">Poniedziałek</string>
     <string name="name">Nazwa</string>
-    <string name="next_program">Następny program: %s</string>
     <string name="no_cast_session">No cast session available</string>
     <string name="no_connection_active_advice">Co najmniej jedno połączenie jest zdefioniowane, ale nie jest aktywowane.</string>
     <!-- Connection related -->
@@ -134,7 +133,6 @@
     <string name="pref_casting_sum">Ustawienia, aby włączyć i skonfigurować rzucanie telewizji na żywo lub nagrań na TV. Należy pamiętać, że wymaga to tvheadend z włączonym transkodowania i serwera, który jest wystarczająco silny, aby przekodować dane w czasie rzeczywistym.</string>
     <string name="pref_changelog">Historia zmian</string>
     <string name="pref_changelog_sum">Pokaż listę funkcji i zmian dla poszczególnych wersji aplikacji.</string>
-    <string name="pref_channels">Kanały</string>
     <string name="pref_clear_database">Wyczyść bazę danych</string>
     <string name="pref_clear_database_sum">Usuwa wszystkie informacje z bazy danych. Obejmuje to wszystkie kanały, znaczniki kanałów, programy i nagrania.</string>
     <string name="pref_clear_icon_cache">Wyczyść cache ikon kanałów</string>
@@ -207,7 +205,6 @@
     <string name="pref_profiles_sum">Określ parametry lub profil (jeśli jest obsługiwany), jak programy będą nagrywane lub jak nagrania będą odtwarzane.</string>
     <string name="pref_program_guide">Przewodnik programów</string>
     <string name="pref_program_guide_sum">Konfiguracja wyświetlania przewodnika programów i danych jakie mają być wyświetlane.</string>
-    <string name="pref_programs">Programy</string>
     <string name="pref_recording_profiles">Profile nagrywania</string>
     <string name="pref_recording_profiles_sum">Wybierz profil, który serwer będzie wykorzystywać do nagrywania zaplanowanego programu.</string>
     <string name="pref_selected">Domyślne połączenie</string>
@@ -364,7 +361,6 @@
     <string name="search_program_guide">Przewodnik po programach wyszukiwania</string>
     <string name="search_failed_recordings">Wyszukaj nieudane nagrania</string>
     <string name="search_completed_recordings">Wyszukaj zakończone nagrania</string>
-    <string name="search_channels">Szukaj kanałów</string>
     <string name="receiving_data">Odbieranie danych</string>
     <string name="pref_show_channel_number_sum">Wyświetl numer kanału poniżej ikony kanału.</string>
     <string name="pref_show_channel_number">Pokaż numer kanału</string>
@@ -393,7 +389,6 @@
     <string name="cast_error_no_media_client_available">Nie można uzyskać zdalnego klienta mediów z sesji rzutowania.</string>
     <string name="audio_settings">Ustawienia dźwięku</string>
     <string name="any">Każdy</string>
-    <string name="deleting_database_contents">Usuwanie zawartości bazy danych…</string>
     <string name="enable">Aktywować</string>
     <string name="disable">Dezaktywować</string>
 </resources>
