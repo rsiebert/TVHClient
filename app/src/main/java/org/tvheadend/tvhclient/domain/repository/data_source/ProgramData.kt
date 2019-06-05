@@ -1,53 +1,53 @@
 package org.tvheadend.tvhclient.domain.repository.data_source
 
-import android.os.AsyncTask
 import androidx.lifecycle.LiveData
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import org.tvheadend.tvhclient.data.db.AppRoomDatabase
 import org.tvheadend.tvhclient.domain.entity.EpgProgram
 import org.tvheadend.tvhclient.domain.entity.Program
 import org.tvheadend.tvhclient.domain.entity.SearchResultProgram
 import timber.log.Timber
 import java.util.*
-import java.util.concurrent.ExecutionException
 import kotlin.collections.HashMap
 
 class ProgramData(private val db: AppRoomDatabase) : DataSourceInterface<Program> {
 
+    private val ioScope = CoroutineScope(Dispatchers.IO)
+
     val itemCount: Int
         get() {
-            try {
-                return ProgramCountTask(db).execute().get()
-            } catch (e: InterruptedException) {
-                Timber.e(e, "Loading program count task got interrupted")
-            } catch (e: ExecutionException) {
-                Timber.e(e, "Loading program count task aborted")
+            var count = 0
+            runBlocking(Dispatchers.IO) {
+                count = db.programDao.itemCountSync
             }
-
-            return 0
+            return count
         }
 
     override fun addItem(item: Program) {
-        AsyncTask.execute { db.programDao.insert(item) }
+        ioScope.launch { db.programDao.insert(item) }
     }
 
     fun addItems(items: List<Program>) {
-        AsyncTask.execute { db.programDao.insert(ArrayList(items)) }
+        ioScope.launch { db.programDao.insert(ArrayList(items)) }
     }
 
     override fun updateItem(item: Program) {
-        AsyncTask.execute { db.programDao.update(item) }
+        ioScope.launch { db.programDao.update(item) }
     }
 
     override fun removeItem(item: Program) {
-        AsyncTask.execute { db.programDao.delete(item) }
+        ioScope.launch { db.programDao.delete(item) }
     }
 
     fun removeItemsByTime(time: Long) {
-        AsyncTask.execute { db.programDao.deleteProgramsByTime(time) }
+        ioScope.launch { db.programDao.deleteProgramsByTime(time) }
     }
 
     fun removeItemById(id: Int) {
-        AsyncTask.execute { db.programDao.deleteById(id) }
+        ioScope.launch { db.programDao.deleteById(id) }
     }
 
     override fun getLiveDataItemCount(): LiveData<Int> {
@@ -63,27 +63,18 @@ class ProgramData(private val db: AppRoomDatabase) : DataSourceInterface<Program
     }
 
     override fun getItemById(id: Any): Program? {
-        try {
-            return ProgramByIdTask(db, id as Int, LOAD_BY_ID).execute().get()
-        } catch (e: InterruptedException) {
-            Timber.e(e, "Loading program by id task got interrupted")
-        } catch (e: ExecutionException) {
-            Timber.e(e, "Loading program by id task aborted")
+        var program: Program? = null
+        runBlocking(Dispatchers.IO) {
+            program = db.programDao.loadProgramByIdSync(id as Int)
         }
-
-        return null
+        return program
     }
 
     override fun getItems(): List<Program> {
         val programs = ArrayList<Program>()
-        try {
-            programs.addAll(ProgramListTask(db).execute().get())
-        } catch (e: InterruptedException) {
-            Timber.e(e, "Loading all programs task got interrupted")
-        } catch (e: ExecutionException) {
-            Timber.e(e, "Loading all programs task aborted")
+        runBlocking(Dispatchers.IO) {
+            programs.addAll(db.programDao.loadProgramsSync())
         }
-
         return programs
     }
 
@@ -97,27 +88,18 @@ class ProgramData(private val db: AppRoomDatabase) : DataSourceInterface<Program
 
     fun getItemByChannelIdAndBetweenTime(channelId: Int, startTime: Long, endTime: Long): List<EpgProgram> {
         val programs = ArrayList<EpgProgram>()
-        try {
-            programs.addAll(EpgProgramByChannelAndTimeTask(db, channelId, startTime, endTime).execute().get())
-        } catch (e: InterruptedException) {
-            Timber.e(e, "Loading programs by channel and time task got interrupted")
-        } catch (e: ExecutionException) {
-            Timber.e(e, "Loading programs by channel and time task aborted")
+        runBlocking(Dispatchers.IO) {
+            programs.addAll(db.programDao.loadProgramsFromChannelBetweenTimeSync(channelId, startTime, endTime))
         }
-
         return programs
     }
 
     fun getLastItemByChannelId(channelId: Int): Program? {
-        try {
-            return ProgramByIdTask(db, channelId, LOAD_LAST_IN_CHANNEL).execute().get()
-        } catch (e: InterruptedException) {
-            Timber.e(e, "Loading last programs in channel task got interrupted")
-        } catch (e: ExecutionException) {
-            Timber.e(e, "Loading last program in channel task aborted")
+        var program: Program? = null
+        runBlocking(Dispatchers.IO) {
+            program = db.programDao.loadLastProgramFromChannelSync(channelId)
         }
-
-        return null
+        return program
     }
 
     suspend fun getEpgItemsBetweenTime(order: Int, hours: Int, days: Int): HashMap<Int, List<EpgProgram>> {
@@ -144,43 +126,5 @@ class ProgramData(private val db: AppRoomDatabase) : DataSourceInterface<Program
             epgData[channels[i].id] = programs
         }
         return epgData
-    }
-
-    private class ProgramByIdTask internal constructor(private val db: AppRoomDatabase, private val id: Int, private val type: Int) : AsyncTask<Void, Void, Program>() {
-
-        override fun doInBackground(vararg voids: Void): Program? {
-            when (type) {
-                LOAD_LAST_IN_CHANNEL -> return db.programDao.loadLastProgramFromChannelSync(id)
-                LOAD_BY_ID -> return db.programDao.loadProgramByIdSync(id)
-            }
-            return null
-        }
-    }
-
-    private class EpgProgramByChannelAndTimeTask internal constructor(private val db: AppRoomDatabase, private val channelId: Int, private val startTime: Long, private val endTime: Long) : AsyncTask<Void, Void, List<EpgProgram>>() {
-
-        override fun doInBackground(vararg voids: Void): List<EpgProgram> {
-            return db.programDao.loadProgramsFromChannelBetweenTimeSync(channelId, startTime, endTime)
-        }
-    }
-
-    private class ProgramListTask internal constructor(private val db: AppRoomDatabase) : AsyncTask<Void, Void, List<Program>>() {
-
-        override fun doInBackground(vararg voids: Void): List<Program> {
-            return db.programDao.loadProgramsSync()
-        }
-    }
-
-    private class ProgramCountTask internal constructor(private val db: AppRoomDatabase) : AsyncTask<Void, Void, Int>() {
-
-        override fun doInBackground(vararg voids: Void): Int? {
-            return db.programDao.itemCountSync
-        }
-    }
-
-    companion object {
-
-        private const val LOAD_LAST_IN_CHANNEL = 1
-        private const val LOAD_BY_ID = 2
     }
 }

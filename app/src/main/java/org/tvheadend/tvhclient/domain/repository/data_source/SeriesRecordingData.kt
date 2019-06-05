@@ -1,25 +1,28 @@
 package org.tvheadend.tvhclient.domain.repository.data_source
 
-import android.os.AsyncTask
 import androidx.lifecycle.LiveData
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import org.tvheadend.tvhclient.data.db.AppRoomDatabase
 import org.tvheadend.tvhclient.domain.entity.SeriesRecording
-import timber.log.Timber
 import java.util.*
-import java.util.concurrent.ExecutionException
 
 class SeriesRecordingData(private val db: AppRoomDatabase) : DataSourceInterface<SeriesRecording> {
 
+    private val ioScope = CoroutineScope(Dispatchers.IO)
+
     override fun addItem(item: SeriesRecording) {
-        AsyncTask.execute { db.seriesRecordingDao.insert(item) }
+        ioScope.launch { db.seriesRecordingDao.insert(item) }
     }
 
     override fun updateItem(item: SeriesRecording) {
-        AsyncTask.execute { db.seriesRecordingDao.update(item) }
+        ioScope.launch { db.seriesRecordingDao.update(item) }
     }
 
     override fun removeItem(item: SeriesRecording) {
-        AsyncTask.execute { db.seriesRecordingDao.delete(item) }
+        ioScope.launch { db.seriesRecordingDao.delete(item) }
     }
 
     override fun getLiveDataItemCount(): LiveData<Int> {
@@ -35,27 +38,16 @@ class SeriesRecordingData(private val db: AppRoomDatabase) : DataSourceInterface
     }
 
     override fun getItemById(id: Any): SeriesRecording {
+        var seriesRecording = SeriesRecording()
         if ((id as String).isNotEmpty()) {
-            try {
-                val recording = SeriesRecordingByIdTask(db, id).execute().get()
-                return recording ?: SeriesRecording()
-            } catch (e: InterruptedException) {
-                Timber.e(e, "Loading series recording by id task got interrupted")
-            } catch (e: ExecutionException) {
-                Timber.e(e, "Loading series recording by id task aborted")
+            runBlocking(Dispatchers.IO) {
+                seriesRecording = db.seriesRecordingDao.loadRecordingByIdSync(id)
             }
         }
-        return SeriesRecording()
+        return seriesRecording
     }
 
     override fun getItems(): List<SeriesRecording> {
         return ArrayList()
-    }
-
-    private class SeriesRecordingByIdTask internal constructor(private val db: AppRoomDatabase, private val id: String) : AsyncTask<Void, Void, SeriesRecording>() {
-
-        override fun doInBackground(vararg voids: Void): SeriesRecording {
-            return db.seriesRecordingDao.loadRecordingByIdSync(id)
-        }
     }
 }

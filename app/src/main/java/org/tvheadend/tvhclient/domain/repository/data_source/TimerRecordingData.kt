@@ -1,25 +1,28 @@
 package org.tvheadend.tvhclient.domain.repository.data_source
 
-import android.os.AsyncTask
 import androidx.lifecycle.LiveData
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import org.tvheadend.tvhclient.data.db.AppRoomDatabase
 import org.tvheadend.tvhclient.domain.entity.TimerRecording
-import timber.log.Timber
 import java.util.*
-import java.util.concurrent.ExecutionException
 
 class TimerRecordingData(private val db: AppRoomDatabase) : DataSourceInterface<TimerRecording> {
 
+    private val ioScope = CoroutineScope(Dispatchers.IO)
+
     override fun addItem(item: TimerRecording) {
-        AsyncTask.execute { db.timerRecordingDao.insert(item) }
+        ioScope.launch { db.timerRecordingDao.insert(item) }
     }
 
     override fun updateItem(item: TimerRecording) {
-        AsyncTask.execute { db.timerRecordingDao.update(item) }
+        ioScope.launch { db.timerRecordingDao.update(item) }
     }
 
     override fun removeItem(item: TimerRecording) {
-        AsyncTask.execute { db.timerRecordingDao.delete(item) }
+        ioScope.launch { db.timerRecordingDao.delete(item) }
     }
 
     override fun getLiveDataItemCount(): LiveData<Int> {
@@ -35,27 +38,16 @@ class TimerRecordingData(private val db: AppRoomDatabase) : DataSourceInterface<
     }
 
     override fun getItemById(id: Any): TimerRecording {
+        var timerRecording = TimerRecording()
         if ((id as String).isNotEmpty()) {
-            try {
-                val recording = TimerRecordingByIdTask(db, id).execute().get()
-                return recording ?: TimerRecording()
-            } catch (e: InterruptedException) {
-                Timber.e(e, "Loading timer recording by id task got interrupted")
-            } catch (e: ExecutionException) {
-                Timber.e(e, "Loading timer recording by id task aborted")
+            runBlocking(Dispatchers.IO) {
+                timerRecording = db.timerRecordingDao.loadRecordingByIdSync(id)
             }
         }
-        return TimerRecording()
+        return timerRecording
     }
 
     override fun getItems(): List<TimerRecording> {
         return ArrayList()
-    }
-
-    private class TimerRecordingByIdTask internal constructor(private val db: AppRoomDatabase, private val id: String) : AsyncTask<Void, Void, TimerRecording>() {
-
-        override fun doInBackground(vararg voids: Void): TimerRecording {
-            return db.timerRecordingDao.loadRecordingByIdSync(id)
-        }
     }
 }

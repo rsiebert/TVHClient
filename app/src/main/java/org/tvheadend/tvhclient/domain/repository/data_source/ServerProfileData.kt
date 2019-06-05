@@ -1,15 +1,18 @@
 package org.tvheadend.tvhclient.domain.repository.data_source
 
-import android.os.AsyncTask
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import org.tvheadend.tvhclient.data.db.AppRoomDatabase
 import org.tvheadend.tvhclient.domain.entity.ServerProfile
-import timber.log.Timber
 import java.util.*
-import java.util.concurrent.ExecutionException
 
 class ServerProfileData(private val db: AppRoomDatabase) : DataSourceInterface<ServerProfile> {
+
+    private val ioScope = CoroutineScope(Dispatchers.IO)
 
     val recordingProfileNames: Array<String>
         get() = getProfileNames(recordingProfiles)
@@ -23,59 +26,44 @@ class ServerProfileData(private val db: AppRoomDatabase) : DataSourceInterface<S
     val recordingProfiles: List<ServerProfile>
         get() {
             val serverProfiles = ArrayList<ServerProfile>()
-            try {
-                serverProfiles.addAll(ServerProfileTask(db, RECORDINGS).execute().get())
-            } catch (e: InterruptedException) {
-                Timber.e(e, "Loading recording server profile task got interrupted")
-            } catch (e: ExecutionException) {
-                Timber.e(e, "Loading recording server profile task aborted")
+            runBlocking(Dispatchers.IO) {
+                serverProfiles.addAll(db.serverProfileDao.loadAllRecordingProfilesSync())
             }
-
             return serverProfiles
         }
 
     val htspPlaybackProfiles: List<ServerProfile>
         get() {
             val serverProfiles = ArrayList<ServerProfile>()
-            try {
-                serverProfiles.addAll(ServerProfileTask(db, HTSP_PLAYBACK).execute().get())
-            } catch (e: InterruptedException) {
-                Timber.e(e, "Loading htsp playback server profile task got interrupted")
-            } catch (e: ExecutionException) {
-                Timber.e(e, "Loading htsp playback server profile task aborted")
+            runBlocking(Dispatchers.IO) {
+                serverProfiles.addAll(db.serverProfileDao.loadHtspPlaybackProfilesSync())
             }
-
             return serverProfiles
         }
 
     val httpPlaybackProfiles: List<ServerProfile>
         get() {
             val serverProfiles = ArrayList<ServerProfile>()
-            try {
-                serverProfiles.addAll(ServerProfileTask(db, HTTP_PLAYBACK).execute().get())
-            } catch (e: InterruptedException) {
-                Timber.e(e, "Loading http playback server profile task got interrupted")
-            } catch (e: ExecutionException) {
-                Timber.e(e, "Loading http playback server profile task aborted")
+            runBlocking(Dispatchers.IO) {
+                serverProfiles.addAll(db.serverProfileDao.loadHttpPlaybackProfilesSync())
             }
-
             return serverProfiles
         }
 
     override fun addItem(item: ServerProfile) {
-        AsyncTask.execute { db.serverProfileDao.insert(item) }
+        ioScope.launch { db.serverProfileDao.insert(item) }
     }
 
     override fun updateItem(item: ServerProfile) {
-        AsyncTask.execute { db.serverProfileDao.update(item) }
+        ioScope.launch { db.serverProfileDao.update(item) }
     }
 
     override fun removeItem(item: ServerProfile) {
-        AsyncTask.execute { db.serverProfileDao.delete(item) }
+        ioScope.launch { db.serverProfileDao.delete(item) }
     }
 
     fun removeAll() {
-        AsyncTask.execute { db.serverProfileDao.deleteAll() }
+        ioScope.launch { db.serverProfileDao.deleteAll() }
     }
 
     override fun getLiveDataItemCount(): LiveData<Int> {
@@ -91,15 +79,15 @@ class ServerProfileData(private val db: AppRoomDatabase) : DataSourceInterface<S
     }
 
     override fun getItemById(id: Any): ServerProfile? {
-        try {
-            return ServerProfileByIdTask(db, id).execute().get()
-        } catch (e: InterruptedException) {
-            Timber.e(e, "Loading server profile by id task got interrupted")
-        } catch (e: ExecutionException) {
-            Timber.e(e, "Loading server profile by id task aborted")
+        var serverProfile: ServerProfile? = null
+        runBlocking(Dispatchers.IO) {
+            if (id is Int) {
+                serverProfile = db.serverProfileDao.loadProfileByIdSync(id)
+            } else if (id is String) {
+                serverProfile = db.serverProfileDao.loadProfileByUuidSync(id)
+            }
         }
-
-        return null
+        return serverProfile
     }
 
     override fun getItems(): List<ServerProfile> {
@@ -111,36 +99,5 @@ class ServerProfileData(private val db: AppRoomDatabase) : DataSourceInterface<S
             return Array(serverProfiles.size) { i -> serverProfiles[i].name ?: "" }
         }
         return Array(0) { "" }
-    }
-
-    private class ServerProfileByIdTask internal constructor(private val db: AppRoomDatabase, private val id: Any) : AsyncTask<Void, Void, ServerProfile>() {
-
-        override fun doInBackground(vararg voids: Void): ServerProfile? {
-            if (id is Int) {
-                return db.serverProfileDao.loadProfileByIdSync(id)
-            } else if (id is String) {
-                return db.serverProfileDao.loadProfileByUuidSync(id)
-            }
-            return null
-        }
-    }
-
-    private class ServerProfileTask internal constructor(private val db: AppRoomDatabase, private val type: Int) : AsyncTask<Void, Void, List<ServerProfile>>() {
-
-        override fun doInBackground(vararg voids: Void): List<ServerProfile>? {
-            return when (type) {
-                HTSP_PLAYBACK -> db.serverProfileDao.loadHtspPlaybackProfilesSync()
-                HTTP_PLAYBACK -> db.serverProfileDao.loadHttpPlaybackProfilesSync()
-                RECORDINGS -> db.serverProfileDao.loadAllRecordingProfilesSync()
-                else -> null
-            }
-        }
-    }
-
-    companion object {
-
-        private const val RECORDINGS = 1
-        private const val HTSP_PLAYBACK = 2
-        private const val HTTP_PLAYBACK = 3
     }
 }

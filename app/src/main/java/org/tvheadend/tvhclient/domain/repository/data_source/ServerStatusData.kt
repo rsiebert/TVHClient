@@ -1,67 +1,52 @@
 package org.tvheadend.tvhclient.domain.repository.data_source
 
-import android.os.AsyncTask
 import androidx.lifecycle.LiveData
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import org.tvheadend.tvhclient.data.db.AppRoomDatabase
-import org.tvheadend.tvhclient.domain.entity.Connection
 import org.tvheadend.tvhclient.domain.entity.ServerStatus
 import timber.log.Timber
 import java.util.*
-import java.util.concurrent.ExecutionException
 
 class ServerStatusData(private val db: AppRoomDatabase) : DataSourceInterface<ServerStatus> {
+
+    private val ioScope = CoroutineScope(Dispatchers.IO)
 
     val liveDataActiveItem: LiveData<ServerStatus>
         get() = db.serverStatusDao.loadActiveServerStatus()
 
     val activeItem: ServerStatus
         get() {
-            var serverStatus: ServerStatus? = null
-            try {
-                serverStatus = ActiveServerStatusTask(db).execute().get()
-            } catch (e: InterruptedException) {
-                Timber.e(e, "Loading active server status task got interrupted")
-            } catch (e: ExecutionException) {
-                Timber.e(e, "Loading active server status task aborted")
-            }
-
-            // Create a new server status object with the connection id
-            if (serverStatus == null) {
-                Timber.e("Active server status is null, trying to add new one with default values")
-                serverStatus = ServerStatus()
-                serverStatus.serverName = "Unknown"
-                serverStatus.serverVersion = "Unknown"
-
-                try {
-                    val connection = ActiveConnectionTask(db).execute().get()
-                    if (connection != null) {
-                        Timber.e("Loaded active connection, adding server status to database")
-                        serverStatus.connectionId = connection.id
-                        serverStatus.connectionName = connection.name
-                        addItem(serverStatus)
-                    }
-                } catch (e: InterruptedException) {
-                    Timber.e(e, "Loading active connection task got interrupted")
-                } catch (e: ExecutionException) {
-                    Timber.e(e, "Loading active connection task aborted")
+            var serverStatus = ServerStatus()
+            runBlocking(Dispatchers.IO) {
+                val newServerStatus = db.serverStatusDao.loadActiveServerStatusSync()
+                if (newServerStatus == null) {
+                    Timber.e("Active server status is null, trying to add new one with default values")
+                    val connection = db.connectionDao.loadActiveConnectionSync()
+                    serverStatus.serverName = "Unknown"
+                    serverStatus.serverVersion = "Unknown"
+                    serverStatus.connectionId = connection.id
+                    serverStatus.connectionName = connection.name
+                } else {
+                    Timber.e("Active server status is not null")
+                    serverStatus = newServerStatus
                 }
-                return serverStatus
-            } else {
-                Timber.d("Active server status is not null")
-                return serverStatus
             }
+            return serverStatus
         }
 
     override fun addItem(item: ServerStatus) {
-        AsyncTask.execute { db.serverStatusDao.insert(item) }
+        ioScope.launch { db.serverStatusDao.insert(item) }
     }
 
     override fun updateItem(item: ServerStatus) {
-        AsyncTask.execute { db.serverStatusDao.update(item) }
+        ioScope.launch { db.serverStatusDao.update(item) }
     }
 
     override fun removeItem(item: ServerStatus) {
-        AsyncTask.execute { db.serverStatusDao.delete(item) }
+        ioScope.launch { db.serverStatusDao.delete(item) }
     }
 
     override fun getLiveDataItemCount(): LiveData<Int> {
@@ -77,38 +62,14 @@ class ServerStatusData(private val db: AppRoomDatabase) : DataSourceInterface<Se
     }
 
     override fun getItemById(id: Any): ServerStatus? {
-        try {
-            return ServerStatusByIdTask(db, id as Int).execute().get()
-        } catch (e: InterruptedException) {
-            Timber.e(e, "Loading server status by id task got interrupted")
-        } catch (e: ExecutionException) {
-            Timber.e(e, "Loading server status by id task aborted")
+        var serverStatus: ServerStatus? = null
+        runBlocking(Dispatchers.IO) {
+            serverStatus = db.serverStatusDao.loadServerStatusByIdSync(id as Int)
         }
-        return null
+        return serverStatus
     }
 
     override fun getItems(): List<ServerStatus> {
         return ArrayList()
-    }
-
-    private class ServerStatusByIdTask internal constructor(private val db: AppRoomDatabase, private val id: Int) : AsyncTask<Void, Void, ServerStatus>() {
-
-        override fun doInBackground(vararg voids: Void): ServerStatus {
-            return db.serverStatusDao.loadServerStatusByIdSync(id)
-        }
-    }
-
-    private class ActiveServerStatusTask internal constructor(private val db: AppRoomDatabase) : AsyncTask<Void, Void, ServerStatus?>() {
-
-        override fun doInBackground(vararg voids: Void): ServerStatus? {
-            return db.serverStatusDao.loadActiveServerStatusSync()
-        }
-    }
-
-    private class ActiveConnectionTask internal constructor(private val db: AppRoomDatabase) : AsyncTask<Void, Void, Connection>() {
-
-        override fun doInBackground(vararg voids: Void): Connection {
-            return db.connectionDao.loadActiveConnectionSync()
-        }
     }
 }
