@@ -391,4 +391,6 @@
     <string name="any">Toute</string>
     <string name="enable">Activer</string>
     <string name="disable">Désactiver</string>
+    <string name="network_not_available">Le réseau n\'est pas disponible</string>
+    <string name="disc_space_low">L\'espace disque est insuffisant, il ne reste plus que \'%d\' Go</string>
 </resources>

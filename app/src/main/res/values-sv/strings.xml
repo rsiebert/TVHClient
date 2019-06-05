@@ -388,4 +388,6 @@
     <string name="pref_general">Allmän</string>
     <string name="enable">Aktivera</string>
     <string name="disable">Deaktivera</string>
+    <string name="network_not_available">Nätverket är inte tillgängligt</string>
+    <string name="disc_space_low">Diskutrymme är lågt, \"%d\" GB kvar</string>
 </resources>

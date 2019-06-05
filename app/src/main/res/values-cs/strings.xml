@@ -388,4 +388,6 @@
     <string name="success_adding_recording">Byl přidán záznam.</string>
     <string name="disable">Deaktivace</string>
     <string name="enable">Aktivovat</string>
+    <string name="network_not_available">Síť není k dispozici</string>
+    <string name="disc_space_low">Nedostatek místa na disku je zbývající, \'%d\' GB zbývá</string>
 </resources>

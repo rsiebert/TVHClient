@@ -388,4 +388,6 @@
     <string name="any">Ieder</string>
     <string name="enable">Activeren</string>
     <string name="disable">Deactiveren</string>
+    <string name="network_not_available">Netwerk is niet beschikbaar</string>
+    <string name="disc_space_low">Schijfruimte is bijna leeg, \'%d\' GB resterend</string>
 </resources>

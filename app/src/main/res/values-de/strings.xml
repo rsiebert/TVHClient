@@ -391,4 +391,6 @@
     <string name="receiving_data">Empfange Daten</string>
     <string name="enable">Aktivieren</string>
     <string name="disable">Deaktivieren</string>
+    <string name="network_not_available">Netzwerk ist nicht verfügbar</string>
+    <string name="disc_space_low">Der Speicherplatz geht zur Neige, \'%d\' GB verbleiben</string>
 </resources>

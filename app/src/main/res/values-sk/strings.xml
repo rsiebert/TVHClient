@@ -391,4 +391,6 @@
     <string name="failed_to_resolve_address">Nepodarilo sa vyriešiť adresu servera</string>
     <string name="enable">Aktivovať</string>
     <string name="disable">Deaktivácia</string>
+    <string name="network_not_available">Sieť nie je k dispozícii</string>
+    <string name="disc_space_low">Diskový priestor je nízky, \'%d\' GB zostáva</string>
 </resources>

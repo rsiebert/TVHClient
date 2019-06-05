@@ -388,4 +388,6 @@
     <string name="any">Alguna</string>
     <string name="enable">Activar</string>
     <string name="disable">Desactivar</string>
+    <string name="network_not_available">La red no está disponible</string>
+    <string name="disc_space_low">El espacio en disco se está agotando, quedan \'%d\' GB</string>
 </resources>
