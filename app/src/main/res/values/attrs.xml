@@ -26,7 +26,6 @@
     <attr name="ic_menu_wol" format="reference" />
     <attr name="ic_menu_help" format="reference" />
     <attr name="ic_menu_info" format="reference" />
-    <attr name="ic_arrow_drop_down" format="reference" />
     <attr name="ic_arrow_drop_down_like_spinner" format="reference" />
     <attr name="TitleFont" format="reference" />
     <attr name="SubtitleFont" format="reference" />
@@ -53,8 +52,5 @@
     <attr name="fast_scroll_thumb" format="reference" />
 
     <attr name="material_drawer_badge" format="reference" />
-
-    <attr name="minimumValue" format="integer"/>
-    <attr name="maximumValue" format="integer"/>
 
 </resources>
