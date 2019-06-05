@@ -50,15 +50,15 @@ abstract class BaseFragment : Fragment() {
         detailsFrameLayout = activity?.findViewById(R.id.details)
 
         val mainViewModel = ViewModelProviders.of(activity as BaseActivity).get(MainViewModel::class.java)
-        connection = mainViewModel.connection
-        serverStatus = mainViewModel.serverStatus
-        htspVersion = serverStatus.htspVersion
-        isUnlocked = MainApplication.instance.isUnlocked
-
         mainViewModel.isNetworkAvailableLiveData.observe(viewLifecycleOwner, Observer { isAvailable ->
             Timber.d("Network availability changed to $isAvailable")
             isNetworkAvailable = isAvailable
         })
+
+        connection = mainViewModel.connection
+        serverStatus = mainViewModel.serverStatus
+        htspVersion = serverStatus.htspVersion
+        isUnlocked = MainApplication.instance.isUnlocked
 
         // Check if we have a frame in which to embed the details fragment.
         // Make the frame layout visible and set the weights again in case
