@@ -15,7 +15,7 @@ interface ServerStatusDao {
     fun loadAllServerStatus(): LiveData<List<ServerStatus>>
 
     @Query("$SERVER_STATUS_BASE_QUERY WHERE $CONNECTION_IS_ACTIVE")
-    fun loadActiveServerStatusSync(): ServerStatus
+    fun loadActiveServerStatusSync(): ServerStatus?
 
     @Query("$SERVER_STATUS_BASE_QUERY WHERE $CONNECTION_IS_ACTIVE")
     fun loadActiveServerStatus(): LiveData<ServerStatus>
