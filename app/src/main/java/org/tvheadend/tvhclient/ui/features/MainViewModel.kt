@@ -23,20 +23,20 @@ class MainViewModel : ViewModel(), NetworkStatusListener {
 
     val connection: Connection
     val serverStatus: ServerStatus
-    val connections: LiveData<List<Connection>>
-    val connectionCount: LiveData<Int>
-    val isNetworkAvailableLiveData: MutableLiveData<Boolean> = MutableLiveData()
+
+    val connectionCountLiveData: LiveData<Int>
+    val isNetworkAvailableLiveData: MutableLiveData<Boolean> = MutableLiveData(false)
+
     var isNetworkAvailable: Boolean = false
     private var networkStatusReceiver: NetworkStatusReceiver
 
     init {
         Timber.d("Initializing")
         MainApplication.component.inject(this)
-        connections = appRepository.connectionData.getLiveDataItems()
-        connectionCount = appRepository.connectionData.getLiveDataItemCount()
+
+        connectionCountLiveData = appRepository.connectionData.getLiveDataItemCount()
         connection = appRepository.connectionData.activeItem
         serverStatus = appRepository.serverStatusData.activeItem
-        isNetworkAvailableLiveData.value = false
 
         networkStatusReceiver = NetworkStatusReceiver(this)
         appContext.registerReceiver(networkStatusReceiver, IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"))

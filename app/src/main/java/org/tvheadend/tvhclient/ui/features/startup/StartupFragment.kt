@@ -41,7 +41,7 @@ class StartupFragment : Fragment() {
                 ?: getString(R.string.initializing)
         startup_status.visible()
 
-        mainViewModel.connectionCount.observe(viewLifecycleOwner, Observer { count ->
+        mainViewModel.connectionCountLiveData.observe(viewLifecycleOwner, Observer { count ->
             if (count == 0) {
                 Timber.d("No connection available, showing settings button")
                 startup_status.text = getString(R.string.no_connection_available)
