@@ -6,6 +6,7 @@ import android.view.MenuItem
 import android.widget.FrameLayout
 import android.widget.LinearLayout
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.preference.PreferenceManager
 import org.tvheadend.tvhclient.MainApplication
@@ -13,13 +14,13 @@ import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.domain.entity.Connection
 import org.tvheadend.tvhclient.domain.entity.ServerStatus
 import org.tvheadend.tvhclient.ui.common.MenuUtils
-import org.tvheadend.tvhclient.ui.common.callbacks.NetworkStatusListener
 import org.tvheadend.tvhclient.ui.common.callbacks.ToolbarInterface
 import org.tvheadend.tvhclient.ui.common.gone
 import org.tvheadend.tvhclient.ui.common.visible
 import org.tvheadend.tvhclient.ui.features.MainViewModel
+import timber.log.Timber
 
-abstract class BaseFragment : Fragment(), NetworkStatusListener {
+abstract class BaseFragment : Fragment() {
 
     protected lateinit var sharedPreferences: SharedPreferences
     protected lateinit var toolbarInterface: ToolbarInterface
@@ -42,10 +43,6 @@ abstract class BaseFragment : Fragment(), NetworkStatusListener {
             toolbarInterface = activity as ToolbarInterface
         }
 
-        if (activity is NetworkStatusListener) {
-            isNetworkAvailable = (activity as NetworkStatusListener).onNetworkIsAvailable()
-        }
-
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(activity)
 
         menuUtils = MenuUtils(activity!!)
@@ -57,6 +54,11 @@ abstract class BaseFragment : Fragment(), NetworkStatusListener {
         serverStatus = mainViewModel.serverStatus
         htspVersion = serverStatus.htspVersion
         isUnlocked = MainApplication.instance.isUnlocked
+
+        mainViewModel.isNetworkAvailableLiveData.observe(viewLifecycleOwner, Observer { isAvailable ->
+            Timber.d("Network availability changed to $isAvailable")
+            isNetworkAvailable = isAvailable
+        })
 
         // Check if we have a frame in which to embed the details fragment.
         // Make the frame layout visible and set the weights again in case
@@ -85,14 +87,6 @@ abstract class BaseFragment : Fragment(), NetworkStatusListener {
                 return menuUtils.handleMenuReconnectSelection()
         }
         return super.onOptionsItemSelected(item)
-    }
-
-    override fun onNetworkStatusChanged(isAvailable: Boolean) {
-        this.isNetworkAvailable = isAvailable
-    }
-
-    override fun onNetworkIsAvailable(): Boolean {
-        return this.isNetworkAvailable
     }
 
     protected fun forceSingleScreenLayout() {

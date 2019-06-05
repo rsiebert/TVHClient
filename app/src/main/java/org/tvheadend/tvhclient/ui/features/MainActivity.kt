@@ -30,8 +30,6 @@ import org.tvheadend.tvhclient.data.service.HtspService
 import org.tvheadend.tvhclient.data.service.SyncStateReceiver
 import org.tvheadend.tvhclient.ui.base.BaseActivity
 import org.tvheadend.tvhclient.ui.common.*
-import org.tvheadend.tvhclient.ui.common.callbacks.NetworkStatusListener
-import org.tvheadend.tvhclient.ui.common.network.NetworkStatusReceiver
 import org.tvheadend.tvhclient.ui.features.download.DownloadPermissionGrantedInterface
 import org.tvheadend.tvhclient.ui.features.dvr.recordings.RecordingDetailsFragment
 import org.tvheadend.tvhclient.ui.features.dvr.series_recordings.SeriesRecordingDetailsFragment
@@ -51,7 +49,7 @@ import timber.log.Timber
 
 // TODO make the notification ids a constant in the not...utils file
 
-class MainActivity : BaseActivity(), SearchView.OnQueryTextListener, SearchView.OnSuggestionListener, SyncStateReceiver.Listener, NetworkStatusListener {
+class MainActivity : BaseActivity(), SearchView.OnQueryTextListener, SearchView.OnSuggestionListener, SyncStateReceiver.Listener {
 
     private lateinit var navigationViewModel: NavigationViewModel
     private lateinit var statusViewModel: StatusViewModel
@@ -71,9 +69,7 @@ class MainActivity : BaseActivity(), SearchView.OnQueryTextListener, SearchView.
     private lateinit var navigationDrawer: NavigationDrawer
     private lateinit var syncStateReceiver: SyncStateReceiver
     private lateinit var snackbarMessageReceiver: SnackbarMessageReceiver
-    private lateinit var networkStatusReceiver: NetworkStatusReceiver
 
-    private var isNetworkAvailable: Boolean = false
     private var isUnlocked: Boolean = false
     private var isDualPane: Boolean = false
 
@@ -94,7 +90,6 @@ class MainActivity : BaseActivity(), SearchView.OnQueryTextListener, SearchView.
 
         syncProgress = findViewById(R.id.sync_progress)
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
-        networkStatusReceiver = NetworkStatusReceiver(this)
         snackbarMessageReceiver = SnackbarMessageReceiver(this)
         syncStateReceiver = SyncStateReceiver(this)
         isUnlocked = MainApplication.instance.isUnlocked
@@ -113,13 +108,7 @@ class MainActivity : BaseActivity(), SearchView.OnQueryTextListener, SearchView.
         // When the activity is created it got called by the main activity. Get the initial
         // navigation menu position and show the associated fragment with it. When the device
         // was rotated just restore the position from the saved instance.
-        if (savedInstanceState == null) {
-            isNetworkAvailable = false
-            searchQuery = ""
-        } else {
-            isNetworkAvailable = savedInstanceState.getBoolean("isNetworkAvailable", false)
-            searchQuery = savedInstanceState.getString(SearchManager.QUERY) ?: ""
-        }
+        searchQuery = savedInstanceState?.getString(SearchManager.QUERY) ?: ""
 
         val showCastingMiniController = isUnlocked && sharedPreferences.getBoolean("casting_minicontroller_enabled",
                 resources.getBoolean(R.bool.pref_default_casting_minicontroller_enabled))
@@ -157,6 +146,15 @@ class MainActivity : BaseActivity(), SearchView.OnQueryTextListener, SearchView.
             }
         }
 
+        mainViewModel.isNetworkAvailableLiveData.observe(this, Observer { isAvailable ->
+            Timber.d("Network availability changed to $isAvailable")
+            connectOrReconnectToServer(isAvailable)
+
+            if (!isAvailable) sendSnackbarMessage(R.string.network_not_available)
+            mainViewModel.isNetworkAvailable = isAvailable
+            invalidateOptionsMenu()
+        })
+
         navigationViewModel.navigationMenuId.observe(this, Observer { id ->
             handleDrawerItemSelected(id)
         })
@@ -186,7 +184,6 @@ class MainActivity : BaseActivity(), SearchView.OnQueryTextListener, SearchView.
         var out = outState
         // add the values which need to be saved from the drawer and header to the bundle
         out = navigationDrawer.saveInstanceState(out)
-        out.putBoolean("isNetworkAvailable", isNetworkAvailable)
         out.putString(SearchManager.QUERY, searchQuery)
         super.onSaveInstanceState(out)
     }
@@ -195,14 +192,12 @@ class MainActivity : BaseActivity(), SearchView.OnQueryTextListener, SearchView.
         super.onStart()
         LocalBroadcastManager.getInstance(this).registerReceiver(syncStateReceiver, IntentFilter(SyncStateReceiver.ACTION))
         LocalBroadcastManager.getInstance(this).registerReceiver(snackbarMessageReceiver, IntentFilter(SnackbarMessageReceiver.ACTION))
-        registerReceiver(networkStatusReceiver, IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"))
     }
 
     public override fun onStop() {
         super.onStop()
         LocalBroadcastManager.getInstance(this).unregisterReceiver(syncStateReceiver)
         LocalBroadcastManager.getInstance(this).unregisterReceiver(snackbarMessageReceiver)
-        unregisterReceiver(networkStatusReceiver)
     }
 
     override fun dispatchKeyEvent(event: KeyEvent): Boolean {
@@ -349,8 +344,12 @@ class MainActivity : BaseActivity(), SearchView.OnQueryTextListener, SearchView.
                 mediaRouteMenuItem?.isVisible = false
                 menu.findItem(R.id.menu_search).isVisible = false
                 menu.findItem(R.id.menu_refresh).isVisible = false
+                menu.findItem(R.id.menu_wol)?.isVisible = false
             }
-            else -> mediaRouteMenuItem?.isVisible = isUnlocked
+            else -> {
+                mediaRouteMenuItem?.isVisible = isUnlocked
+                menu.findItem(R.id.menu_wol)?.isVisible = isUnlocked && statusViewModel.connection.isWolEnabled
+            }
         }
         return true
     }
@@ -396,7 +395,7 @@ class MainActivity : BaseActivity(), SearchView.OnQueryTextListener, SearchView.
             SyncStateReceiver.State.CLOSED, SyncStateReceiver.State.FAILED -> {
                 Timber.d("Connection failed or closed")
                 sendSnackbarMessage(message)
-                onNetworkAvailabilityChanged(false)
+                mainViewModel.isNetworkAvailableLiveData.postValue(false)
             }
 
             SyncStateReceiver.State.CONNECTING -> {
@@ -425,33 +424,12 @@ class MainActivity : BaseActivity(), SearchView.OnQueryTextListener, SearchView.
                 syncProgress.gone()
                 sendSnackbarMessage(message)
             }
-
             else -> {
             }
         }
     }
 
-    override fun onNetworkStatusChanged(isAvailable: Boolean) {
-        onNetworkAvailabilityChanged(isAvailable)
-        if (!isAvailable) {
-            sendSnackbarMessage("No network available")
-        }
-    }
-
-    /**
-     * Executes certain actions when the connectivity has changed.
-     * A new connection to the server is created if the connectivity changed from
-     * unavailable to available. Otherwise the server will be pinged to check if the connection
-     * is still active. Additionally the connectivity status is propagated to all fragments that
-     * that are currently shown so they can update certain UI elements that depend on the
-     * connectivity status like menus.
-     *
-     * @param isAvailable True if networking is available, otherwise false
-     */
-    private fun onNetworkAvailabilityChanged(isAvailable: Boolean) {
-        val intent = Intent(this, HtspService::class.java)
-        Timber.d("Network availability changed, network is available $isAvailable")
-
+    private fun connectOrReconnectToServer(isAvailable: Boolean) {
         val activityManager = getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
         val runningAppProcessInfo = activityManager.runningAppProcesses?.get(0)
 
@@ -459,33 +437,17 @@ class MainActivity : BaseActivity(), SearchView.OnQueryTextListener, SearchView.
                 && runningAppProcessInfo != null
                 && runningAppProcessInfo.importance <= ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND) {
 
-            if (!isNetworkAvailable) {
-                Timber.d("Network changed from offline to online, starting service")
+            val intent = Intent(this, HtspService::class.java)
+            if (!mainViewModel.isNetworkAvailable) {
+                Timber.d("Starting server because network is available again")
                 intent.action = "connect"
                 startService(intent)
             } else {
-                Timber.d("Network still active, pinging server")
+                Timber.d("Reconnecting to server because network is still available")
                 intent.action = "reconnect"
                 startService(intent)
             }
         }
-        isNetworkAvailable = isAvailable
-
-        var fragment = supportFragmentManager.findFragmentById(R.id.main)
-        if (fragment is NetworkStatusListener) {
-            fragment.onNetworkStatusChanged(isAvailable)
-        }
-
-        fragment = supportFragmentManager.findFragmentById(R.id.details)
-        if (fragment is NetworkStatusListener) {
-            fragment.onNetworkStatusChanged(isAvailable)
-        }
-        Timber.d("Network availability changed, invalidating menu")
-        invalidateOptionsMenu()
-    }
-
-    override fun onNetworkIsAvailable(): Boolean {
-        return isNetworkAvailable
     }
 
     override fun onBackPressed() {
