@@ -17,6 +17,9 @@ interface ConnectionDao {
     fun loadAllConnectionsSync(): List<Connection>
 
     @Query("SELECT * FROM connections WHERE active = 1")
+    fun loadActiveConnection(): LiveData<Connection>
+
+    @Query("SELECT * FROM connections WHERE active = 1")
     fun loadActiveConnectionSync(): Connection
 
     @Query("SELECT * FROM connections WHERE id = :id")

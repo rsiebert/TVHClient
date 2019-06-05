@@ -11,6 +11,9 @@ import java.util.concurrent.ExecutionException
 
 class ConnectionData(private val db: AppRoomDatabase) : DataSourceInterface<Connection> {
 
+    val liveDataActiveItem: LiveData<Connection>
+        get() = db.connectionDao.loadActiveConnection()
+
     val activeItem: Connection
         get() {
             try {
