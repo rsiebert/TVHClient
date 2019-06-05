@@ -1,12 +1,13 @@
 package org.tvheadend.tvhclient.ui.features.settings;
 
 import android.app.Activity;
-import androidx.annotation.NonNull;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
 
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.domain.entity.Connection;
@@ -50,13 +51,13 @@ class ConnectionListAdapter extends ArrayAdapter<Connection> {
             holder.title.setText(c.getName());
             String summary = c.getHostname() + ":" + c.getPort();
             holder.summary.setText(summary);
-            
-           // Set the active / inactive icon depending on the theme and selection status
-           if (MiscUtils.getThemeId(context) == R.style.CustomTheme_Light) {
-               holder.selected.setImageResource(c.isActive() ? R.drawable.item_active_light : R.drawable.item_not_active_light);
-           } else {
-               holder.selected.setImageResource(c.isActive() ? R.drawable.item_active_dark : R.drawable.item_not_active_dark);
-           }
+
+            // Set the active / inactive icon depending on the theme and selection status
+            if (MiscUtils.getThemeId(context) == R.style.CustomTheme_Light) {
+                holder.selected.setImageResource(c.isActive() ? R.drawable.item_active_light : R.drawable.item_not_active_light);
+            } else {
+                holder.selected.setImageResource(c.isActive() ? R.drawable.item_active_dark : R.drawable.item_not_active_dark);
+            }
         }
         return view;
     }
