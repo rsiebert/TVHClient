@@ -150,7 +150,7 @@ class MainActivity : BaseActivity(), SearchView.OnQueryTextListener, SearchView.
             Timber.d("Network availability changed to $isAvailable")
             connectOrReconnectToServer(isAvailable)
 
-            if (!isAvailable) sendSnackbarMessage(R.string.network_not_available)
+            if (mainViewModel.isNetworkAvailable && !isAvailable) sendSnackbarMessage(R.string.network_not_available)
             mainViewModel.isNetworkAvailable = isAvailable
             invalidateOptionsMenu()
         })
