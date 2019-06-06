@@ -8,8 +8,12 @@ import org.tvheadend.tvhclient.domain.entity.TimerRecording
 interface TimerRecordingDao {
 
     @get:Query("SELECT COUNT (*) FROM timer_recordings AS rec " +
-            "WHERE " + CONNECTION_IS_ACTIVE)
+            "WHERE $CONNECTION_IS_ACTIVE")
     val recordingCount: LiveData<Int>
+
+    @get:Query("SELECT COUNT (*) FROM timer_recordings AS rec " +
+            "WHERE $CONNECTION_IS_ACTIVE")
+    val itemCountSync: Int
 
     @Transaction
     @Query(RECORDING_BASE_QUERY +

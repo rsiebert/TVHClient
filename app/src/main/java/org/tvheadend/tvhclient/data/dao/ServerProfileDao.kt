@@ -6,6 +6,10 @@ import org.tvheadend.tvhclient.domain.entity.ServerProfile
 @Dao
 interface ServerProfileDao {
 
+    @get:Query("SELECT COUNT (*) FROM server_profiles AS p " +
+            "WHERE $CONNECTION_IS_ACTIVE")
+    val itemCountSync: Int
+
     @Query("SELECT p.* FROM server_profiles AS p " +
             "WHERE $CONNECTION_IS_ACTIVE " +
             " AND p.type = 'htsp_playback'")
