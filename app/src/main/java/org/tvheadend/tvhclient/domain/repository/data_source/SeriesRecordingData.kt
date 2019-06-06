@@ -37,8 +37,8 @@ class SeriesRecordingData(private val db: AppRoomDatabase) : DataSourceInterface
         return db.seriesRecordingDao.loadRecordingById(id as String)
     }
 
-    override fun getItemById(id: Any): SeriesRecording {
-        var seriesRecording = SeriesRecording()
+    override fun getItemById(id: Any): SeriesRecording? {
+        var seriesRecording: SeriesRecording? = null
         if ((id as String).isNotEmpty()) {
             runBlocking(Dispatchers.IO) {
                 seriesRecording = db.seriesRecordingDao.loadRecordingByIdSync(id)

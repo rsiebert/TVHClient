@@ -37,8 +37,8 @@ class TimerRecordingData(private val db: AppRoomDatabase) : DataSourceInterface<
         return db.timerRecordingDao.loadRecordingById(id as String)
     }
 
-    override fun getItemById(id: Any): TimerRecording {
-        var timerRecording = TimerRecording()
+    override fun getItemById(id: Any): TimerRecording? {
+        var timerRecording: TimerRecording? = null
         if ((id as String).isNotEmpty()) {
             runBlocking(Dispatchers.IO) {
                 timerRecording = db.timerRecordingDao.loadRecordingByIdSync(id)

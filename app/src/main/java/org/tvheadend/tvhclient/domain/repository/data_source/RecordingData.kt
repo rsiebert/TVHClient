@@ -81,8 +81,8 @@ class RecordingData(private val db: AppRoomDatabase) : DataSourceInterface<Recor
         }
     }
 
-    override fun getItemById(id: Any): Recording {
-        var recording = Recording()
+    override fun getItemById(id: Any): Recording? {
+        var recording: Recording? = null
         if ((id as Int) > 0) {
             runBlocking(Dispatchers.IO) {
                 recording = db.recordingDao.loadRecordingByIdSync(id)
