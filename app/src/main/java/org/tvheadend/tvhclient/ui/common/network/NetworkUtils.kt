@@ -1,5 +1,3 @@
-@file:JvmName("NetworkUtils")
-
 package org.tvheadend.tvhclient.ui.common.network
 
 import android.content.Context

@@ -1,5 +1,3 @@
-@file:JvmName("PopupMenuUtil")
-
 package org.tvheadend.tvhclient.ui.common
 
 import android.content.Context

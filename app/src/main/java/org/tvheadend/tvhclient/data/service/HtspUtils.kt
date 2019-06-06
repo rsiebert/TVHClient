@@ -1,5 +1,3 @@
-@file:JvmName("HtspUtils")
-
 package org.tvheadend.tvhclient.data.service
 
 import android.content.Intent

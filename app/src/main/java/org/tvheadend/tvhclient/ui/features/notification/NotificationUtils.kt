@@ -1,5 +1,3 @@
-@file:JvmName("NotificationUtils")
-
 package org.tvheadend.tvhclient.ui.features.notification
 
 import android.app.NotificationChannel

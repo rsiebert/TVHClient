@@ -1,5 +1,3 @@
-@file:JvmName("MiscUtils")
-
 package org.tvheadend.tvhclient.util
 
 import android.content.Context

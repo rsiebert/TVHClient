@@ -1,5 +1,3 @@
-@file:JvmName("SearchMenuUtils")
-
 package org.tvheadend.tvhclient.ui.common
 
 import android.app.SearchManager

@@ -1,5 +1,3 @@
-@file:JvmName("RecordingUtils")
-
 package org.tvheadend.tvhclient.ui.features.dvr
 
 import android.content.Context
