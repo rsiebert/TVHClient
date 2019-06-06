@@ -21,7 +21,7 @@ import org.tvheadend.tvhclient.util.isServerProfileEnabled
 
 class RecordingAddEditFragment : BaseFragment(), BackPressedInterface, RecordingConfigSelectedListener, DatePickerFragment.Listener, TimePickerFragment.Listener {
 
-    private lateinit var viewModel: RecordingViewModel
+    private lateinit var recordingViewModel: RecordingViewModel
     private lateinit var recordingProfilesList: Array<String>
     private var profile: ServerProfile? = null
 
@@ -34,19 +34,19 @@ class RecordingAddEditFragment : BaseFragment(), BackPressedInterface, Recording
         get() {
             // TODO get this from the viewmodel
             val intent = Intent(activity, HtspService::class.java)
-            intent.putExtra("title", viewModel.recording.title)
-            intent.putExtra("subtitle", viewModel.recording.subtitle)
-            intent.putExtra("summary", viewModel.recording.summary)
-            intent.putExtra("description", viewModel.recording.description)
-            intent.putExtra("stop", viewModel.recording.stop / 1000)
-            intent.putExtra("stopExtra", viewModel.recording.stopExtra)
+            intent.putExtra("title", recordingViewModel.recording.title)
+            intent.putExtra("subtitle", recordingViewModel.recording.subtitle)
+            intent.putExtra("summary", recordingViewModel.recording.summary)
+            intent.putExtra("description", recordingViewModel.recording.description)
+            intent.putExtra("stop", recordingViewModel.recording.stop / 1000)
+            intent.putExtra("stopExtra", recordingViewModel.recording.stopExtra)
 
-            if (!viewModel.recording.isRecording) {
-                intent.putExtra("channelId", viewModel.recording.channelId)
-                intent.putExtra("start", viewModel.recording.start / 1000)
-                intent.putExtra("startExtra", viewModel.recording.startExtra)
-                intent.putExtra("priority", viewModel.recording.priority)
-                intent.putExtra("enabled", if (viewModel.recording.isEnabled) 1 else 0)
+            if (!recordingViewModel.recording.isRecording) {
+                intent.putExtra("channelId", recordingViewModel.recording.channelId)
+                intent.putExtra("start", recordingViewModel.recording.start / 1000)
+                intent.putExtra("startExtra", recordingViewModel.recording.startExtra)
+                intent.putExtra("priority", recordingViewModel.recording.priority)
+                intent.putExtra("enabled", if (recordingViewModel.recording.isEnabled) 1 else 0)
             }
             if (isServerProfileEnabled(profile, htspVersion) && dvr_config.text.isNotEmpty()) {
                 intent.putExtra("configName", dvr_config.text.toString())
@@ -61,14 +61,14 @@ class RecordingAddEditFragment : BaseFragment(), BackPressedInterface, Recording
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        viewModel = ViewModelProviders.of(activity!!).get(RecordingViewModel::class.java)
+        recordingViewModel = ViewModelProviders.of(activity!!).get(RecordingViewModel::class.java)
 
-        recordingProfilesList = viewModel.getRecordingProfileNames()
-        profile = viewModel.getRecordingProfile()
-        viewModel.recordingProfileNameId = getSelectedProfileId(profile, recordingProfilesList)
+        recordingProfilesList = recordingViewModel.getRecordingProfileNames()
+        profile = recordingViewModel.getRecordingProfile()
+        recordingViewModel.recordingProfileNameId = getSelectedProfileId(profile, recordingProfilesList)
 
         if (savedInstanceState == null) {
-            viewModel.loadRecordingByIdSync(arguments?.getInt("id", 0) ?: 0)
+            recordingViewModel.loadRecordingByIdSync(arguments?.getInt("id", 0) ?: 0)
         }
 
         setHasOptionsMenu(true)
@@ -85,88 +85,88 @@ class RecordingAddEditFragment : BaseFragment(), BackPressedInterface, Recording
 
         title_label.visibleOrGone(htspVersion >= 21)
         title.visibleOrGone(htspVersion >= 21)
-        title.setText(viewModel.recording.title)
+        title.setText(recordingViewModel.recording.title)
 
         subtitle_label.visibleOrGone(htspVersion >= 21)
         subtitle.visibleOrGone(htspVersion >= 21)
-        subtitle.setText(viewModel.recording.subtitle)
+        subtitle.setText(recordingViewModel.recording.subtitle)
 
         summary_label.visibleOrGone(htspVersion >= 21)
         summary.visibleOrGone(htspVersion >= 21)
-        summary.setText(viewModel.recording.summary)
+        summary.setText(recordingViewModel.recording.summary)
 
         description_label.visibleOrGone(htspVersion >= 21)
         description.visibleOrGone(htspVersion >= 21)
-        description.setText(viewModel.recording.description)
+        description.setText(recordingViewModel.recording.description)
 
-        stop_time.text = getTimeStringFromTimeInMillis(viewModel.recording.stop)
-        stop_time.setOnClickListener { handleTimeSelection(activity, viewModel.recording.stop, this@RecordingAddEditFragment, "stopTime") }
+        stop_time.text = getTimeStringFromTimeInMillis(recordingViewModel.recording.stop)
+        stop_time.setOnClickListener { handleTimeSelection(activity, recordingViewModel.recording.stop, this@RecordingAddEditFragment, "stopTime") }
 
-        stop_date.text = getDateStringFromTimeInMillis(viewModel.recording.stop)
-        stop_date.setOnClickListener { handleDateSelection(activity, viewModel.recording.stop, this@RecordingAddEditFragment, "stopDate") }
+        stop_date.text = getDateStringFromTimeInMillis(recordingViewModel.recording.stop)
+        stop_date.setOnClickListener { handleDateSelection(activity, recordingViewModel.recording.stop, this@RecordingAddEditFragment, "stopDate") }
 
-        stop_extra.setText(viewModel.recording.stopExtra.toString())
+        stop_extra.setText(recordingViewModel.recording.stopExtra.toString())
 
-        channel_name_label.visibleOrGone(!viewModel.recording.isRecording)
-        channel_name.visibleOrGone(!viewModel.recording.isRecording)
+        channel_name_label.visibleOrGone(!recordingViewModel.recording.isRecording)
+        channel_name.visibleOrGone(!recordingViewModel.recording.isRecording)
 
-        if (!viewModel.recording.isRecording) {
-            channel_name.text = viewModel.recording.channelName ?: getString(R.string.all_channels)
+        if (!recordingViewModel.recording.isRecording) {
+            channel_name.text = recordingViewModel.recording.channelName ?: getString(R.string.all_channels)
             channel_name.setOnClickListener {
                 // Determine if the server supports recording on all channels
                 val allowRecordingOnAllChannels = htspVersion >= 21
-                handleChannelListSelection(ctx, viewModel.getChannelList(), allowRecordingOnAllChannels, this@RecordingAddEditFragment)
+                handleChannelListSelection(ctx, recordingViewModel.getChannelList(), allowRecordingOnAllChannels, this@RecordingAddEditFragment)
             }
         }
 
-        is_enabled.visibleOrGone(htspVersion >= 23 && !viewModel.recording.isRecording)
-        is_enabled.isChecked = viewModel.recording.isEnabled
+        is_enabled.visibleOrGone(htspVersion >= 23 && !recordingViewModel.recording.isRecording)
+        is_enabled.isChecked = recordingViewModel.recording.isEnabled
 
-        priority.visibleOrGone(!viewModel.recording.isRecording)
-        priority.text = getPriorityName(ctx, viewModel.recording.priority)
-        priority.setOnClickListener { handlePrioritySelection(ctx, viewModel.recording.priority, this@RecordingAddEditFragment) }
+        priority.visibleOrGone(!recordingViewModel.recording.isRecording)
+        priority.text = getPriorityName(ctx, recordingViewModel.recording.priority)
+        priority.setOnClickListener { handlePrioritySelection(ctx, recordingViewModel.recording.priority, this@RecordingAddEditFragment) }
 
-        dvr_config.visibleOrGone(!(recordingProfilesList.isEmpty() || viewModel.recording.isRecording))
-        dvr_config_label.visibleOrGone(!(recordingProfilesList.isEmpty() || viewModel.recording.isRecording))
+        dvr_config.visibleOrGone(!(recordingProfilesList.isEmpty() || recordingViewModel.recording.isRecording))
+        dvr_config_label.visibleOrGone(!(recordingProfilesList.isEmpty() || recordingViewModel.recording.isRecording))
 
-        if (recordingProfilesList.isNotEmpty() && !viewModel.recording.isRecording) {
-            dvr_config.text = recordingProfilesList[viewModel.recordingProfileNameId]
-            dvr_config.setOnClickListener { handleRecordingProfileSelection(ctx, recordingProfilesList, viewModel.recordingProfileNameId, this@RecordingAddEditFragment) }
+        if (recordingProfilesList.isNotEmpty() && !recordingViewModel.recording.isRecording) {
+            dvr_config.text = recordingProfilesList[recordingViewModel.recordingProfileNameId]
+            dvr_config.setOnClickListener { handleRecordingProfileSelection(ctx, recordingProfilesList, recordingViewModel.recordingProfileNameId, this@RecordingAddEditFragment) }
         }
 
-        if (viewModel.recording.isRecording) {
+        if (recordingViewModel.recording.isRecording) {
             start_time_label.gone()
             start_time.gone()
             start_date.gone()
             start_extra_label.gone()
             start_extra.gone()
         } else {
-            start_time.text = getTimeStringFromTimeInMillis(viewModel.recording.start)
-            start_time.setOnClickListener { handleTimeSelection(activity, viewModel.recording.start, this@RecordingAddEditFragment, "startTime") }
-            start_date.text = getDateStringFromTimeInMillis(viewModel.recording.start)
-            start_date.setOnClickListener { handleDateSelection(activity, viewModel.recording.start, this@RecordingAddEditFragment, "startDate") }
-            start_extra.setText(viewModel.recording.startExtra.toString())
+            start_time.text = getTimeStringFromTimeInMillis(recordingViewModel.recording.start)
+            start_time.setOnClickListener { handleTimeSelection(activity, recordingViewModel.recording.start, this@RecordingAddEditFragment, "startTime") }
+            start_date.text = getDateStringFromTimeInMillis(recordingViewModel.recording.start)
+            start_date.setOnClickListener { handleDateSelection(activity, recordingViewModel.recording.start, this@RecordingAddEditFragment, "startDate") }
+            start_extra.setText(recordingViewModel.recording.startExtra.toString())
         }
 
-        title.afterTextChanged { viewModel.recording.title = it }
-        subtitle.afterTextChanged { viewModel.recording.subtitle = it }
-        description.afterTextChanged { viewModel.recording.description = it }
+        title.afterTextChanged { recordingViewModel.recording.title = it }
+        subtitle.afterTextChanged { recordingViewModel.recording.subtitle = it }
+        description.afterTextChanged { recordingViewModel.recording.description = it }
         start_extra.afterTextChanged {
             try {
-                viewModel.recording.startExtra = java.lang.Long.valueOf(it)
+                recordingViewModel.recording.startExtra = java.lang.Long.valueOf(it)
             } catch (ex: NumberFormatException) {
-                viewModel.recording.startExtra = 2
+                recordingViewModel.recording.startExtra = 2
             }
         }
         stop_extra.afterTextChanged {
             try {
-                viewModel.recording.stopExtra = java.lang.Long.valueOf(it)
+                recordingViewModel.recording.stopExtra = java.lang.Long.valueOf(it)
             } catch (ex: NumberFormatException) {
-                viewModel.recording.stopExtra = 2
+                recordingViewModel.recording.stopExtra = 2
             }
         }
         is_enabled.setOnCheckedChangeListener { _, isChecked ->
-            viewModel.recording.isEnabled = isChecked
+            recordingViewModel.recording.isEnabled = isChecked
         }
     }
 
@@ -196,27 +196,27 @@ class RecordingAddEditFragment : BaseFragment(), BackPressedInterface, Recording
     /**
      * Checks certain given values for plausibility and if everything is fine
      * creates the intent that will be passed to the service to save the newly
-     * created viewModel.recording.
+     * created recordingViewModel.recording.
      */
     private fun save() {
-        if (viewModel.recording.title.isNullOrEmpty() && htspVersion >= 21) {
+        if (recordingViewModel.recording.title.isNullOrEmpty() && htspVersion >= 21) {
             context?.sendSnackbarMessage(R.string.error_empty_title)
             return
         }
-        if (viewModel.recording.channelId == 0 && htspVersion < 21) {
+        if (recordingViewModel.recording.channelId == 0 && htspVersion < 21) {
             context?.sendSnackbarMessage(R.string.error_no_channel_selected)
             return
         }
 
-        if (viewModel.recording.start >= viewModel.recording.stop) {
+        if (recordingViewModel.recording.start >= recordingViewModel.recording.stop) {
             context?.sendSnackbarMessage(R.string.error_start_time_past_stop_time)
             return
         }
 
         val intent = intentData
-        if (viewModel.recording.id > 0) {
+        if (recordingViewModel.recording.id > 0) {
             intent.action = "updateDvrEntry"
-            intent.putExtra("id", viewModel.recording.id)
+            intent.putExtra("id", recordingViewModel.recording.id)
         } else {
             intent.action = "addDvrEntry"
         }
@@ -226,7 +226,7 @@ class RecordingAddEditFragment : BaseFragment(), BackPressedInterface, Recording
 
     /**
      * Asks the user to confirm canceling the current activity. If no is
-     * chosen the user can continue to add or edit the viewModel.recording. Otherwise
+     * chosen the user can continue to add or edit the recordingViewModel.recording. Otherwise
      * the input will be discarded and the activity will be closed.
      */
     private fun cancel() {
@@ -241,26 +241,26 @@ class RecordingAddEditFragment : BaseFragment(), BackPressedInterface, Recording
     }
 
     override fun onChannelSelected(channel: Channel) {
-        viewModel.recording.channelId = channel.id
+        recordingViewModel.recording.channelId = channel.id
         channel_name.text = channel.name
     }
 
     override fun onTimeSelected(milliSeconds: Long, tag: String?) {
         if (tag == "startTime") {
-            viewModel.recording.start = milliSeconds
+            recordingViewModel.recording.start = milliSeconds
             start_time.text = getTimeStringFromTimeInMillis(milliSeconds)
         } else if (tag == "stopTime") {
-            viewModel.recording.stop = milliSeconds
+            recordingViewModel.recording.stop = milliSeconds
             stop_time.text = getTimeStringFromTimeInMillis(milliSeconds)
         }
     }
 
     override fun onDateSelected(milliSeconds: Long, tag: String?) {
         if (tag == "startDate") {
-            viewModel.recording.start = milliSeconds
+            recordingViewModel.recording.start = milliSeconds
             start_date.text = getDateStringFromTimeInMillis(milliSeconds)
         } else if (tag == "stopDate") {
-            viewModel.recording.stop = milliSeconds
+            recordingViewModel.recording.stop = milliSeconds
             stop_date.text = getDateStringFromTimeInMillis(milliSeconds)
         }
     }
@@ -269,7 +269,7 @@ class RecordingAddEditFragment : BaseFragment(), BackPressedInterface, Recording
         context?.let {
             priority.text = getPriorityName(it, which)
         }
-        viewModel.recording.priority = which
+        recordingViewModel.recording.priority = which
     }
 
     override fun onDaysSelected(selectedDays: Int) {
@@ -278,7 +278,7 @@ class RecordingAddEditFragment : BaseFragment(), BackPressedInterface, Recording
 
     override fun onProfileSelected(which: Int) {
         dvr_config.text = recordingProfilesList[which]
-        viewModel.recordingProfileNameId = which
+        recordingViewModel.recordingProfileNameId = which
     }
 
     override fun onBackPressed() {
