@@ -26,7 +26,7 @@ class SeriesRecordingData(private val db: AppRoomDatabase) : DataSourceInterface
     }
 
     override fun getLiveDataItemCount(): LiveData<Int> {
-        return db.seriesRecordingDao.recordingCount
+        return db.seriesRecordingDao.itemCount
     }
 
     override fun getLiveDataItems(): LiveData<List<SeriesRecording>> {

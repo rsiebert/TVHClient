@@ -26,7 +26,7 @@ class TimerRecordingData(private val db: AppRoomDatabase) : DataSourceInterface<
     }
 
     override fun getLiveDataItemCount(): LiveData<Int> {
-        return db.timerRecordingDao.recordingCount
+        return db.timerRecordingDao.itemCount
     }
 
     override fun getLiveDataItems(): LiveData<List<TimerRecording>> {
