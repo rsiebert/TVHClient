@@ -651,11 +651,7 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
             return
         }
 
-        val channel = appRepository.channelData.getItemById(msg.getInteger("channelId"))
-        if (channel == null) {
-            Timber.d("Could not find a channel with id ${msg.getInteger("channelId")} in the database")
-            return
-        }
+        val channel = appRepository.channelData.getItemById(msg.getInteger("channelId")) ?: return
         val updatedChannel = convertMessageToChannelModel(channel, msg)
         appRepository.channelData.updateItem(updatedChannel)
     }
@@ -711,8 +707,7 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
      * @param msg The message with the updated recording data
      */
     private fun onDvrEntryUpdate(msg: HtspMessage) {
-        // Get the existing recording
-        val recording = appRepository.recordingData.getItemById(msg.getInteger("id"))
+        val recording = appRepository.recordingData.getItemById(msg.getInteger("id")) ?: return
         val updatedRecording = convertMessageToRecordingModel(recording, msg)
         appRepository.recordingData.updateItem(updatedRecording)
 
@@ -733,7 +728,7 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
      */
     private fun onDvrEntryDelete(msg: HtspMessage) {
         if (msg.containsKey("id")) {
-            val recording = appRepository.recordingData.getItemById(msg.getInteger("id"))
+            val recording = appRepository.recordingData.getItemById(msg.getInteger("id")) ?: return
             appRepository.recordingData.removeItem(recording)
         }
     }
@@ -762,7 +757,7 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
             Timber.d("Could not find a series recording with id $id in the database")
             return
         }
-        val recording = appRepository.seriesRecordingData.getItemById(msg.getString("id"))
+        val recording = appRepository.seriesRecordingData.getItemById(msg.getString("id")) ?: return
         val updatedRecording = convertMessageToSeriesRecordingModel(recording, msg)
         appRepository.seriesRecordingData.updateItem(updatedRecording)
     }
@@ -776,7 +771,7 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
     private fun onAutorecEntryDelete(msg: HtspMessage) {
         val id = msg.getString("id", "")
         if (id.isNotEmpty()) {
-            val seriesRecording = appRepository.seriesRecordingData.getItemById(msg.getString("id"))
+            val seriesRecording = appRepository.seriesRecordingData.getItemById(msg.getString("id")) ?: return
             appRepository.seriesRecordingData.removeItem(seriesRecording)
         }
     }
@@ -805,7 +800,7 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
             Timber.d("Could not find a timer recording with id $id in the database")
             return
         }
-        val recording = appRepository.timerRecordingData.getItemById(id)
+        val recording = appRepository.timerRecordingData.getItemById(id) ?: return
         val updatedRecording = convertMessageToTimerRecordingModel(recording, msg)
         appRepository.timerRecordingData.updateItem(updatedRecording)
     }
@@ -819,7 +814,7 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
     private fun onTimerRecEntryDelete(msg: HtspMessage) {
         val id = msg.getString("id", "")
         if (id.isNotEmpty()) {
-            val timerRecording = appRepository.timerRecordingData.getItemById(id)
+            val timerRecording = appRepository.timerRecordingData.getItemById(id) ?: return
             appRepository.timerRecordingData.removeItem(timerRecording)
         }
     }
@@ -866,11 +861,7 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
      * @param msg The message with the updated epg event data
      */
     private fun onEventUpdate(msg: HtspMessage) {
-        val program = appRepository.programData.getItemById(msg.getInteger("eventId"))
-        if (program == null) {
-            Timber.d("Could not find a program with id ${msg.getInteger("eventId")} in the database")
-            return
-        }
+        val program = appRepository.programData.getItemById(msg.getInteger("eventId")) ?: return
         val updatedProgram = convertMessageToProgramModel(program, msg)
         Timber.d("Updating event ${updatedProgram.title}")
         appRepository.programData.updateItem(updatedProgram)
