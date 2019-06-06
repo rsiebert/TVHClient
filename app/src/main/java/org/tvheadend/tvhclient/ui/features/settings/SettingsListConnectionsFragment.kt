@@ -35,7 +35,7 @@ class SettingsListConnectionsFragment : ListFragment(), BackPressedInterface, Ac
             toolbarInterface.setTitle(getString(R.string.settings))
         }
 
-        connectionListAdapter = ConnectionListAdapter(activity)
+        connectionListAdapter = ConnectionListAdapter(activity as AppCompatActivity)
         listAdapter = connectionListAdapter
         listView.choiceMode = ListView.CHOICE_MODE_SINGLE
         setHasOptionsMenu(true)
