@@ -23,14 +23,13 @@ class ServerStatusData(private val db: AppRoomDatabase) : DataSourceInterface<Se
             runBlocking(Dispatchers.IO) {
                 val newServerStatus = db.serverStatusDao.loadActiveServerStatusSync()
                 if (newServerStatus == null) {
-                    Timber.e("Active server status is null, trying to add new one with default values")
+                    Timber.d("Active server status is null, trying to add new one with default values")
                     val connection = db.connectionDao.loadActiveConnectionSync()
                     serverStatus.serverName = "Unknown"
                     serverStatus.serverVersion = "Unknown"
                     serverStatus.connectionId = connection.id
                     serverStatus.connectionName = connection.name
                 } else {
-                    Timber.e("Active server status is not null")
                     serverStatus = newServerStatus
                 }
             }
