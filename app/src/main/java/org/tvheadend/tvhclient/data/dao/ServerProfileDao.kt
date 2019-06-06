@@ -7,21 +7,21 @@ import org.tvheadend.tvhclient.domain.entity.ServerProfile
 interface ServerProfileDao {
 
     @get:Query("SELECT COUNT (*) FROM server_profiles AS p " +
-            "WHERE $CONNECTION_IS_ACTIVE")
+            " WHERE $CONNECTION_IS_ACTIVE")
     val itemCountSync: Int
 
     @Query("SELECT p.* FROM server_profiles AS p " +
-            "WHERE $CONNECTION_IS_ACTIVE " +
+            " WHERE $CONNECTION_IS_ACTIVE" +
             " AND p.type = 'htsp_playback'")
     fun loadHtspPlaybackProfilesSync(): List<ServerProfile>
 
     @Query("SELECT p.* FROM server_profiles AS p " +
-            "WHERE $CONNECTION_IS_ACTIVE " +
+            " WHERE $CONNECTION_IS_ACTIVE" +
             " AND p.type = 'http_playback'")
     fun loadHttpPlaybackProfilesSync(): List<ServerProfile>
 
     @Query("SELECT p.* FROM server_profiles AS p " +
-            "WHERE $CONNECTION_IS_ACTIVE " +
+            " WHERE $CONNECTION_IS_ACTIVE" +
             " AND p.type = 'recording'")
     fun loadAllRecordingProfilesSync(): List<ServerProfile>
 
@@ -38,12 +38,12 @@ interface ServerProfileDao {
     fun deleteAll()
 
     @Query("SELECT p.* FROM server_profiles AS p " +
-            "WHERE $CONNECTION_IS_ACTIVE " +
+            " WHERE $CONNECTION_IS_ACTIVE" +
             " AND p.id = :id")
     fun loadProfileByIdSync(id: Int): ServerProfile
 
     @Query("SELECT p.* FROM server_profiles AS p " +
-            "WHERE $CONNECTION_IS_ACTIVE " +
+            " WHERE $CONNECTION_IS_ACTIVE" +
             " AND p.uuid = :uuid")
     fun loadProfileByUuidSync(uuid: String): ServerProfile
 

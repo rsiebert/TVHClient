@@ -8,27 +8,27 @@ import org.tvheadend.tvhclient.domain.entity.TimerRecording
 interface TimerRecordingDao {
 
     @get:Query("SELECT COUNT (*) FROM timer_recordings AS rec " +
-            "WHERE $CONNECTION_IS_ACTIVE")
-    val recordingCount: LiveData<Int>
+            " WHERE $CONNECTION_IS_ACTIVE")
+    val itemCount: LiveData<Int>
 
     @get:Query("SELECT COUNT (*) FROM timer_recordings AS rec " +
-            "WHERE $CONNECTION_IS_ACTIVE")
+            " WHERE $CONNECTION_IS_ACTIVE")
     val itemCountSync: Int
 
     @Transaction
     @Query(RECORDING_BASE_QUERY +
-            "WHERE " + CONNECTION_IS_ACTIVE)
+            " WHERE $CONNECTION_IS_ACTIVE")
     fun loadAllRecordings(): LiveData<List<TimerRecording>>
 
     @Transaction
     @Query(RECORDING_BASE_QUERY +
-            "WHERE " + CONNECTION_IS_ACTIVE +
+            " WHERE $CONNECTION_IS_ACTIVE" +
             " AND rec.id = :id")
     fun loadRecordingById(id: String): LiveData<TimerRecording>
 
     @Transaction
     @Query(RECORDING_BASE_QUERY +
-            "WHERE " + CONNECTION_IS_ACTIVE +
+            " WHERE $CONNECTION_IS_ACTIVE" +
             " AND rec.id = :id")
     fun loadRecordingByIdSync(id: String): TimerRecording
 
@@ -42,7 +42,7 @@ interface TimerRecordingDao {
     fun delete(recording: TimerRecording)
 
     @Query("DELETE FROM timer_recordings " +
-            "WHERE connection_id IN (SELECT id FROM connections WHERE active = 1) " +
+            " WHERE connection_id IN (SELECT id FROM connections WHERE active = 1) " +
             " AND id = :id")
     fun deleteById(id: String)
 

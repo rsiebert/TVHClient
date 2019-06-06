@@ -8,22 +8,22 @@ import org.tvheadend.tvhclient.domain.entity.ChannelTag
 interface ChannelTagDao {
 
     @get:Query("SELECT COUNT (*) FROM channel_tags " +
-            "WHERE " + CONNECTION_IS_ACTIVE)
+            " WHERE $CONNECTION_IS_ACTIVE")
     val itemCountSync: Int
 
     @Query("SELECT DISTINCT * FROM channel_tags " +
-            "WHERE " + CONNECTION_IS_ACTIVE +
-            "ORDER BY tag_name")
+            " WHERE $CONNECTION_IS_ACTIVE" +
+            " ORDER BY tag_name")
     fun loadAllChannelTags(): LiveData<List<ChannelTag>>
 
     @Query("SELECT DISTINCT * FROM channel_tags " +
-            "WHERE " + CONNECTION_IS_ACTIVE +
-            "ORDER BY tag_name")
+            " WHERE $CONNECTION_IS_ACTIVE" +
+            " ORDER BY tag_name")
     fun loadAllChannelTagsSync(): List<ChannelTag>
 
     @Query("SELECT DISTINCT * FROM channel_tags " +
-            "WHERE " + CONNECTION_IS_ACTIVE +
-            "AND id = :id ")
+            " WHERE $CONNECTION_IS_ACTIVE" +
+            " AND id = :id ")
     fun loadChannelTagByIdSync(id: Int): ChannelTag
 
     @Transaction
@@ -47,14 +47,14 @@ interface ChannelTagDao {
     fun deleteAll()
 
     @Query("DELETE FROM channel_tags " +
-            "WHERE " + CONNECTION_IS_ACTIVE +
-            "AND id = :id ")
+            " WHERE $CONNECTION_IS_ACTIVE" +
+            " AND id = :id ")
     fun deleteById(id: Int)
 
     @Query("SELECT id FROM channel_tags " +
-            "WHERE " + CONNECTION_IS_ACTIVE +
-            "AND is_selected = 1 " +
-            "ORDER BY tag_name")
+            " WHERE $CONNECTION_IS_ACTIVE" +
+            " AND is_selected = 1 " +
+            " ORDER BY tag_name")
     fun loadAllSelectedItemIds(): LiveData<List<Int>?>
 
     companion object {

@@ -10,11 +10,11 @@ import org.tvheadend.tvhclient.domain.entity.SearchResultProgram
 interface ProgramDao {
 
     @get:Query("SELECT COUNT (*) FROM programs AS p " +
-            "WHERE " + CONNECTION_IS_ACTIVE)
+            " WHERE $CONNECTION_IS_ACTIVE")
     val itemCount: LiveData<Int>
 
     @get:Query("SELECT COUNT (*) FROM programs AS p " +
-            "WHERE " + CONNECTION_IS_ACTIVE)
+            " WHERE $CONNECTION_IS_ACTIVE")
     val itemCountSync: Int
 
     @Transaction
@@ -22,23 +22,23 @@ interface ProgramDao {
             " WHERE $CONNECTION_IS_ACTIVE" +
             " AND ((p.start >= :time) " +
             "  OR (p.start <= :time AND p.stop >= :time)) " +
-            "GROUP BY p.id " +
-            "ORDER BY p.start, p.channel_name ASC")
+            " GROUP BY p.id " +
+            " ORDER BY p.start, p.channel_name ASC")
     fun loadProgramsFromTime(time: Long): LiveData<List<SearchResultProgram>>
 
     @Transaction
     @Query(PROGRAM_BASE_QUERY +
-            " WHERE " + CONNECTION_IS_ACTIVE +
+            " WHERE $CONNECTION_IS_ACTIVE" +
             " AND p.channel_id = :channelId " +
             " AND ((p.start >= :time) " +
             "  OR (p.start <= :time AND p.stop >= :time)) " +
-            "GROUP BY p.id " +
-            "ORDER BY p.start ASC")
+            " GROUP BY p.id " +
+            " ORDER BY p.start ASC")
     fun loadProgramsFromChannelFromTime(channelId: Int, time: Long): LiveData<List<Program>>
 
     @Transaction
     @Query(EPG_PROGRAM_BASE_QUERY +
-            " WHERE " + CONNECTION_IS_ACTIVE +
+            " WHERE $CONNECTION_IS_ACTIVE" +
             " AND channel_id = :channelId " +
             // Program is within time slot
             " AND ((start >= :startTime AND stop <= :endTime) " +
@@ -46,13 +46,13 @@ interface ProgramDao {
             "  OR (start <= :startTime AND stop > :startTime) " +
             // Program is at the end of the time slot
             "  OR (start < :endTime AND stop >= :endTime)) " +
-            "GROUP BY p.id " +
-            "ORDER BY start ASC")
+            " GROUP BY p.id " +
+            " ORDER BY start ASC")
     fun loadProgramsFromChannelBetweenTimeSync(channelId: Int, startTime: Long, endTime: Long): List<EpgProgram>
 
     @Transaction
     @Query(EPG_PROGRAM_BASE_QUERY +
-            " WHERE " + CONNECTION_IS_ACTIVE +
+            " WHERE $CONNECTION_IS_ACTIVE" +
             " AND channel_id = :channelId " +
             // Program is within time slot
             " AND ((start >= :startTime AND stop <= :endTime) " +
@@ -60,40 +60,40 @@ interface ProgramDao {
             "  OR (start <= :startTime AND stop > :startTime) " +
             // Program is at the end of the time slot
             "  OR (start < :endTime AND stop >= :endTime)) " +
-            "GROUP BY p.id " +
-            "ORDER BY start ASC")
+            " GROUP BY p.id " +
+            " ORDER BY start ASC")
     suspend fun loadProgramsFromChannelBetweenTimeSyncSuspendable(channelId: Int, startTime: Long, endTime: Long): List<EpgProgram>
 
     @Transaction
     @Query(PROGRAM_BASE_QUERY +
-            "WHERE " + CONNECTION_IS_ACTIVE +
-            "GROUP BY p.id " +
-            "ORDER BY p.start, p.channel_name ASC")
+            " WHERE $CONNECTION_IS_ACTIVE" +
+            " GROUP BY p.id " +
+            " ORDER BY p.start, p.channel_name ASC")
     fun loadPrograms(): LiveData<List<Program>>
 
     @Transaction
     @Query(PROGRAM_BASE_QUERY +
-            "WHERE " + CONNECTION_IS_ACTIVE +
-            "GROUP BY p.id " +
-            "ORDER BY p.start, p.channel_name ASC")
+            " WHERE $CONNECTION_IS_ACTIVE" +
+            " GROUP BY p.id " +
+            " ORDER BY p.start, p.channel_name ASC")
     fun loadProgramsSync(): List<Program>
 
     @Transaction
     @Query(PROGRAM_BASE_QUERY +
-            "WHERE " + CONNECTION_IS_ACTIVE +
+            " WHERE $CONNECTION_IS_ACTIVE" +
             " AND p.id = :id")
     fun loadProgramById(id: Int): LiveData<Program>
 
     @Transaction
     @Query(PROGRAM_BASE_QUERY +
-            "WHERE " + CONNECTION_IS_ACTIVE +
+            " WHERE $CONNECTION_IS_ACTIVE" +
             " AND p.id = :id")
     fun loadProgramByIdSync(id: Int): Program
 
     @Query(PROGRAM_BASE_QUERY +
-            "WHERE " + CONNECTION_IS_ACTIVE +
+            " WHERE $CONNECTION_IS_ACTIVE" +
             " AND p.channel_id = :channelId " +
-            "ORDER BY start DESC LIMIT 1")
+            " ORDER BY start DESC LIMIT 1")
     fun loadLastProgramFromChannelSync(channelId: Int): Program
 
     @Query("DELETE FROM programs " + "WHERE stop < :time")

@@ -8,101 +8,101 @@ import org.tvheadend.tvhclient.domain.entity.Recording
 abstract class RecordingDao {
 
     @get:Query("SELECT COUNT (*) FROM recordings AS rec " +
-            "WHERE (rec.error IS NULL AND rec.state = 'completed') " +
-            "AND rec.connection_id IN (SELECT id FROM connections WHERE active = 1)")
+            " WHERE (rec.error IS NULL AND rec.state = 'completed') " +
+            " AND rec.connection_id IN (SELECT id FROM connections WHERE active = 1)")
     abstract val completedRecordingCount: LiveData<Int>
 
     @get:Query("SELECT COUNT (*) FROM recordings AS rec " +
-            "WHERE (rec.error IS NULL AND (rec.state = 'recording' OR rec.state = 'scheduled')) " +
-            "AND rec.connection_id IN (SELECT id FROM connections WHERE active = 1)")
+            " WHERE (rec.error IS NULL AND (rec.state = 'recording' OR rec.state = 'scheduled')) " +
+            " AND rec.connection_id IN (SELECT id FROM connections WHERE active = 1)")
     abstract val scheduledRecordingCount: LiveData<Int>
 
     @get:Query("SELECT COUNT (*) FROM recordings AS rec " +
-            "WHERE (rec.error IS NULL AND (rec.state = 'recording')) " +
-            "AND rec.connection_id IN (SELECT id FROM connections WHERE active = 1)")
+            " WHERE (rec.error IS NULL AND (rec.state = 'recording')) " +
+            " AND rec.connection_id IN (SELECT id FROM connections WHERE active = 1)")
     abstract val runningRecordingCount: LiveData<Int>
 
     @get:Query("SELECT COUNT (*) FROM recordings AS rec " +
-            "WHERE ((rec.error IS NOT NULL AND (rec.state='missed'  OR rec.state='invalid')) " +
+            " WHERE ((rec.error IS NOT NULL AND (rec.state='missed'  OR rec.state='invalid')) " +
             " OR (rec.error IS NULL  AND rec.state='missed') " +
             " OR (rec.error='Aborted by user' AND rec.state='completed')) " +
-            "AND rec.connection_id IN (SELECT id FROM connections WHERE active = 1)")
+            " AND rec.connection_id IN (SELECT id FROM connections WHERE active = 1)")
     abstract val failedRecordingCount: LiveData<Int>
 
     @get:Query("SELECT COUNT (*) FROM recordings AS rec " +
-            "WHERE (rec.error = 'File missing' AND rec.state = 'completed') " +
-            "AND rec.connection_id IN (SELECT id FROM connections WHERE active = 1)")
+            " WHERE (rec.error = 'File missing' AND rec.state = 'completed') " +
+            " AND rec.connection_id IN (SELECT id FROM connections WHERE active = 1)")
     abstract val removedRecordingCount: LiveData<Int>
 
     @get:Query("SELECT COUNT (*) FROM recordings AS rec " +
-            "WHERE " + CONNECTION_IS_ACTIVE)
+            " WHERE $CONNECTION_IS_ACTIVE")
     abstract val itemCountSync: Int
 
     @Transaction
     @Query(RECORDING_BASE_QUERY +
-            "WHERE " + CONNECTION_IS_ACTIVE +
-            "ORDER BY rec.start DESC")
+            " WHERE $CONNECTION_IS_ACTIVE" +
+            " ORDER BY rec.start DESC")
     abstract fun loadRecordings(): LiveData<List<Recording>>
 
     @Transaction
     @Query(RECORDING_BASE_QUERY +
-            "WHERE " + CONNECTION_IS_ACTIVE +
+            " WHERE $CONNECTION_IS_ACTIVE" +
             " AND rec.error IS NULL AND rec.state = 'completed'" +
-            "ORDER BY rec.start DESC")
+            " ORDER BY rec.start DESC")
     abstract fun loadCompletedRecordings(): LiveData<List<Recording>>
 
     @Transaction
     @Query(RECORDING_BASE_QUERY +
-            "WHERE " + CONNECTION_IS_ACTIVE +
+            " WHERE $CONNECTION_IS_ACTIVE" +
             " AND rec.error IS NULL AND (rec.state = 'recording' OR rec.state = 'scheduled')" +
             " AND rec.duplicate = 0 " +
-            "ORDER BY rec.start ASC")
+            " ORDER BY rec.start ASC")
     abstract fun loadUniqueScheduledRecordings(): LiveData<List<Recording>>
 
     @Transaction
     @Query(RECORDING_BASE_QUERY +
-            "WHERE " + CONNECTION_IS_ACTIVE +
+            " WHERE $CONNECTION_IS_ACTIVE" +
             " AND rec.error IS NULL AND (rec.state = 'recording' OR rec.state = 'scheduled')" +
-            "ORDER BY rec.start ASC")
+            " ORDER BY rec.start ASC")
     abstract fun loadScheduledRecordings(): LiveData<List<Recording>>
 
     @Transaction
     @Query(RECORDING_BASE_QUERY +
-            "WHERE " + CONNECTION_IS_ACTIVE +
+            " WHERE $CONNECTION_IS_ACTIVE" +
             " AND (rec.error IS NOT NULL AND (rec.state='missed'  OR rec.state='invalid')) " +
             " OR (rec.error IS NULL  AND rec.state='missed') " +
             " OR (rec.error='Aborted by user' AND rec.state='completed')" +
-            "ORDER BY rec.start DESC")
+            " ORDER BY rec.start DESC")
     abstract fun loadFailedRecordings(): LiveData<List<Recording>>
 
     @Transaction
     @Query(RECORDING_BASE_QUERY +
-            "WHERE " + CONNECTION_IS_ACTIVE +
+            " WHERE $CONNECTION_IS_ACTIVE" +
             " AND rec.error = 'File missing' AND rec.state = 'completed'" +
-            "ORDER BY rec.start DESC")
+            " ORDER BY rec.start DESC")
     abstract fun loadRemovedRecordings(): LiveData<List<Recording>>
 
     @Transaction
     @Query(RECORDING_BASE_QUERY +
-            "WHERE " + CONNECTION_IS_ACTIVE +
+            " WHERE $CONNECTION_IS_ACTIVE" +
             " AND rec.id = :id")
     abstract fun loadRecordingById(id: Int): LiveData<Recording>
 
     @Transaction
     @Query(RECORDING_BASE_QUERY +
-            "WHERE " + CONNECTION_IS_ACTIVE +
+            " WHERE $CONNECTION_IS_ACTIVE" +
             " AND rec.id = :id")
     abstract fun loadRecordingByIdSync(id: Int): Recording
 
     @Transaction
     @Query(RECORDING_BASE_QUERY +
-            "WHERE " + CONNECTION_IS_ACTIVE +
+            " WHERE $CONNECTION_IS_ACTIVE" +
             " AND rec.channel_id = :channelId")
     abstract fun loadRecordingsByChannelId(channelId: Int): LiveData<List<Recording>>
 
     @Transaction
     @Query(RECORDING_BASE_QUERY +
-            "WHERE " + CONNECTION_IS_ACTIVE +
+            " WHERE $CONNECTION_IS_ACTIVE" +
             " AND rec.event_id = :id")
     abstract fun loadRecordingByEventIdSync(id: Int): Recording
 
@@ -124,7 +124,7 @@ abstract class RecordingDao {
     abstract fun delete(recordings: List<Recording>)
 
     @Query("DELETE FROM recordings " +
-            "WHERE connection_id IN (SELECT id FROM connections WHERE active = 1) " +
+            " WHERE connection_id IN (SELECT id FROM connections WHERE active = 1) " +
             " AND id = :id")
     abstract fun deleteById(id: Int)
 

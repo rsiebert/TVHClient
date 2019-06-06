@@ -28,7 +28,7 @@ abstract class TagAndChannelDao {
     }
 
     @Query("DELETE FROM tags_and_channels " +
-            "WHERE connection_id IN (SELECT id FROM connections WHERE active = 1) " +
+            " WHERE connection_id IN (SELECT id FROM connections WHERE active = 1) " +
             " AND tag_id = :id")
     abstract fun deleteByTagId(id: Int)
 

@@ -9,47 +9,48 @@ import org.tvheadend.tvhclient.domain.entity.EpgChannel
 interface ChannelDao {
 
     @get:Query("SELECT COUNT (*) FROM channels AS c " +
-            "WHERE " + CONNECTION_IS_ACTIVE)
+            " WHERE $CONNECTION_IS_ACTIVE")
     val itemCount: LiveData<Int>
 
     @get:Query("SELECT COUNT (*) FROM channels AS c " +
-            "WHERE " + CONNECTION_IS_ACTIVE)
+            " WHERE $CONNECTION_IS_ACTIVE")
     val itemCountSync: Int
 
     @Query("SELECT c.* FROM channels AS c " +
-            "WHERE " + CONNECTION_IS_ACTIVE +
+            " WHERE $CONNECTION_IS_ACTIVE" +
             " AND c.id = :id")
     fun loadChannelByIdSync(id: Int): Channel
 
     @Transaction
     @Query(CHANNEL_BASE_QUERY +
-            "LEFT JOIN programs AS program ON program.start <= :time AND program.stop > :time AND program.channel_id = c.id " +
-            "LEFT JOIN programs AS next_program ON next_program.start = program.stop AND next_program.channel_id = c.id " +
-            "WHERE " + CONNECTION_IS_ACTIVE + " AND c.id = :id")
+            " LEFT JOIN programs AS program ON program.start <= :time AND program.stop > :time AND program.channel_id = c.id " +
+            " LEFT JOIN programs AS next_program ON next_program.start = program.stop AND next_program.channel_id = c.id " +
+            " WHERE $CONNECTION_IS_ACTIVE" +
+            " AND c.id = :id")
     fun loadChannelByIdWithProgramsSync(id: Int, time: Long): Channel
 
     @Query("SELECT c.* FROM channels AS c " +
-            "WHERE " + CONNECTION_IS_ACTIVE +
-            "GROUP BY c.id " +
+            " WHERE $CONNECTION_IS_ACTIVE" +
+            " GROUP BY c.id " +
             ORDER_BY)
     fun loadAllChannelsSync(sortOrder: Int): List<Channel>
 
     @Transaction
     @Query(CHANNEL_BASE_QUERY +
-            "LEFT JOIN programs AS program ON program.start <= :time AND program.stop > :time AND program.channel_id = c.id " +
-            "LEFT JOIN programs AS next_program ON next_program.start = program.stop AND next_program.channel_id = c.id " +
-            "WHERE " + CONNECTION_IS_ACTIVE +
-            "GROUP BY c.id " +
+            " LEFT JOIN programs AS program ON program.start <= :time AND program.stop > :time AND program.channel_id = c.id " +
+            " LEFT JOIN programs AS next_program ON next_program.start = program.stop AND next_program.channel_id = c.id " +
+            " WHERE $CONNECTION_IS_ACTIVE" +
+            " GROUP BY c.id " +
             ORDER_BY)
     fun loadAllChannelsByTime(time: Long, sortOrder: Int): LiveData<List<Channel>>
 
     @Transaction
     @Query(CHANNEL_BASE_QUERY +
-            "LEFT JOIN programs AS program ON program.start <= :time AND program.stop > :time AND program.channel_id = c.id " +
-            "LEFT JOIN programs AS next_program ON next_program.start = program.stop AND next_program.channel_id = c.id " +
-            "WHERE " + CONNECTION_IS_ACTIVE +
+            " LEFT JOIN programs AS program ON program.start <= :time AND program.stop > :time AND program.channel_id = c.id " +
+            " LEFT JOIN programs AS next_program ON next_program.start = program.stop AND next_program.channel_id = c.id " +
+            " WHERE $CONNECTION_IS_ACTIVE" +
             " AND c.id IN (SELECT channel_id FROM tags_and_channels WHERE tag_id IN (:tagIds)) " +
-            "GROUP BY c.id " +
+            " GROUP BY c.id " +
             ORDER_BY)
     fun loadAllChannelsByTimeAndTag(time: Long, sortOrder: Int, tagIds: List<Int>): LiveData<List<Channel>>
 
@@ -68,7 +69,7 @@ interface ChannelDao {
     fun delete(channel: Channel)
 
     @Query("DELETE FROM channels " +
-            "WHERE id = :id " +
+            " WHERE id = :id " +
             " AND connection_id IN (SELECT id FROM connections WHERE active = 1)")
     fun deleteById(id: Int)
 
@@ -76,17 +77,17 @@ interface ChannelDao {
     fun deleteAll()
 
     @Query(EPG_CHANNEL_BASE_QUERY +
-            "WHERE " + CONNECTION_IS_ACTIVE +
+            " WHERE $CONNECTION_IS_ACTIVE" +
             ORDER_BY)
     fun loadAllEpgChannels(sortOrder: Int): LiveData<List<EpgChannel>>
 
     @Query(EPG_CHANNEL_BASE_QUERY +
-            "WHERE " + CONNECTION_IS_ACTIVE +
+            " WHERE $CONNECTION_IS_ACTIVE" +
             ORDER_BY)
     suspend fun loadAllEpgChannelsSync(sortOrder: Int): List<EpgChannel>
 
     @Query(EPG_CHANNEL_BASE_QUERY +
-            "WHERE " + CONNECTION_IS_ACTIVE +
+            " WHERE $CONNECTION_IS_ACTIVE" +
             " AND c.id IN (SELECT channel_id FROM tags_and_channels WHERE tag_id IN (:tagIds)) " +
             ORDER_BY)
     fun loadAllEpgChannelsByTag(sortOrder: Int, tagIds: List<Int>): LiveData<List<EpgChannel>>
