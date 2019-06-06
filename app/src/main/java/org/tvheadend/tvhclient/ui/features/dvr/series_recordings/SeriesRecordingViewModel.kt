@@ -83,7 +83,7 @@ class SeriesRecordingViewModel(application: Application) : AndroidViewModel(appl
     }
 
     fun loadRecordingByIdSync(id: String) {
-        recording = appRepository.seriesRecordingData.getItemById(id)
+        recording = appRepository.seriesRecordingData.getItemById(id) ?: SeriesRecording()
         // In case one of the values is negative the time setting shall be disabled
         isTimeEnabled = recording.start >= 0 && recording.startWindow >= 0
     }

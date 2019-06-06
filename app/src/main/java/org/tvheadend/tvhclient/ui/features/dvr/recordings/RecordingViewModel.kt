@@ -2,7 +2,11 @@ package org.tvheadend.tvhclient.ui.features.dvr.recordings
 
 import android.content.Context
 import android.content.SharedPreferences
-import androidx.lifecycle.*
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MediatorLiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Transformations.switchMap
+import androidx.lifecycle.ViewModel
 import org.tvheadend.tvhclient.MainApplication
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.data.repository.AppRepository
@@ -37,7 +41,7 @@ class RecordingViewModel : ViewModel(), SharedPreferences.OnSharedPreferenceChan
         onSharedPreferenceChanged(sharedPreferences, "hide_duplicate_scheduled_recordings_enabled")
 
         val trigger = ScheduledRecordingLiveData(hideDuplicateScheduledRecordings)
-        scheduledRecordings = Transformations.switchMap(trigger) { value ->
+        scheduledRecordings = switchMap(trigger) { value ->
             Timber.d("Loading scheduled recordings because the duplicate setting has changed")
             if (value == null) {
                 Timber.d("Skipping loading of scheduled recordings because the duplicate setting is not set")
@@ -75,12 +79,13 @@ class RecordingViewModel : ViewModel(), SharedPreferences.OnSharedPreferenceChan
     }
 
     fun loadRecordingByIdSync(id: Int) {
-        recording = appRepository.recordingData.getItemById(id)
+        recording = appRepository.recordingData.getItemById(id) ?: Recording()
     }
 
     fun getChannelList(): List<Channel> {
         val defaultChannelSortOrder = appContext.resources.getString(R.string.pref_default_channel_sort_order)
-        val channelSortOrder = Integer.valueOf(sharedPreferences.getString("channel_sort_order", defaultChannelSortOrder) ?: defaultChannelSortOrder)
+        val channelSortOrder = Integer.valueOf(sharedPreferences.getString("channel_sort_order", defaultChannelSortOrder)
+                ?: defaultChannelSortOrder)
         return appRepository.channelData.getChannels(channelSortOrder)
     }
 

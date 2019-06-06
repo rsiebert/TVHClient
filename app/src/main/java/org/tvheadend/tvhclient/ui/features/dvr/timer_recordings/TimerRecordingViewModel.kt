@@ -76,7 +76,7 @@ class TimerRecordingViewModel(application: Application) : AndroidViewModel(appli
     }
 
     fun loadRecordingByIdSync(id: String) {
-        recording = appRepository.timerRecordingData.getItemById(id)
+        recording = appRepository.timerRecordingData.getItemById(id) ?: TimerRecording()
     }
 
     var startTimeInMillis: Long = 0
