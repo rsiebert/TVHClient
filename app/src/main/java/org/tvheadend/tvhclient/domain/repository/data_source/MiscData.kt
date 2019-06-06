@@ -1,5 +1,6 @@
 package org.tvheadend.tvhclient.domain.repository.data_source
 
+import android.annotation.SuppressLint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -19,8 +20,16 @@ class MiscData(private val db: AppRoomDatabase) {
         }
     }
 
+    @SuppressLint("BinaryOperationInTimber")
     private fun clearDatabase() {
-        Timber.d("Deleting database contents...")
+
+        Timber.d("Deleting from database ${db.channelDao.itemCountSync} channels,\n" +
+                "${db.channelTagDao.itemCountSync} channel tags,\n" +
+                "${db.programDao.itemCountSync} programs,\n" +
+                "${db.recordingDao.itemCountSync} recordings,\n" +
+                "${db.seriesRecordingDao.itemCountSync} series recordings,\n" +
+                "${db.timerRecordingDao.itemCountSync} timer recordings,\n" +
+                "${db.serverProfileDao.itemCountSync} server profiles")
 
         db.channelDao.deleteAll()
         db.channelTagDao.deleteAll()
@@ -45,7 +54,15 @@ class MiscData(private val db: AppRoomDatabase) {
             db.serverStatusDao.update(serverStatus)
         }
 
-        Timber.d("Deleting database contents finished")
+        Timber.d("Deleting of database contents done.\n" +
+                "Database contains ${db.channelDao.itemCountSync} channels,\n" +
+                "${db.channelTagDao.itemCountSync} channel tags,\n" +
+                "${db.programDao.itemCountSync} programs,\n" +
+                "${db.recordingDao.itemCountSync} recordings,\n" +
+                "${db.seriesRecordingDao.itemCountSync} series recordings,\n" +
+                "${db.timerRecordingDao.itemCountSync} timer recordings,\n" +
+                "${db.serverProfileDao.itemCountSync} server profiles")
+
         callback?.get()?.onDatabaseCleared()
     }
 
