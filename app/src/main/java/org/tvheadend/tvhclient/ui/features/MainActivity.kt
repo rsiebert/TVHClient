@@ -26,10 +26,12 @@ import androidx.preference.PreferenceManager
 import com.google.android.gms.cast.framework.*
 import org.tvheadend.tvhclient.MainApplication
 import org.tvheadend.tvhclient.R
+import org.tvheadend.tvhclient.data.repository.AppRepository
 import org.tvheadend.tvhclient.data.service.HtspService
 import org.tvheadend.tvhclient.data.service.SyncStateReceiver
 import org.tvheadend.tvhclient.ui.base.BaseActivity
 import org.tvheadend.tvhclient.ui.common.*
+import org.tvheadend.tvhclient.ui.common.network.NetworkStatusReceiver
 import org.tvheadend.tvhclient.ui.features.download.DownloadPermissionGrantedInterface
 import org.tvheadend.tvhclient.ui.features.dvr.recordings.RecordingDetailsFragment
 import org.tvheadend.tvhclient.ui.features.dvr.series_recordings.SeriesRecordingDetailsFragment
@@ -46,10 +48,14 @@ import org.tvheadend.tvhclient.ui.features.programs.ProgramListFragment
 import org.tvheadend.tvhclient.ui.features.search.SearchRequestInterface
 import org.tvheadend.tvhclient.util.getThemeId
 import timber.log.Timber
+import javax.inject.Inject
 
 // TODO make the notification ids a constant in the not...utils file
 
 class MainActivity : BaseActivity(), SearchView.OnQueryTextListener, SearchView.OnSuggestionListener, SyncStateReceiver.Listener {
+
+    @Inject
+    lateinit var appRepository: AppRepository
 
     private lateinit var navigationViewModel: NavigationViewModel
     private lateinit var statusViewModel: StatusViewModel
@@ -69,6 +75,7 @@ class MainActivity : BaseActivity(), SearchView.OnQueryTextListener, SearchView.
     private lateinit var navigationDrawer: NavigationDrawer
     private lateinit var syncStateReceiver: SyncStateReceiver
     private lateinit var snackbarMessageReceiver: SnackbarMessageReceiver
+    private lateinit var networkStatusReceiver: NetworkStatusReceiver
 
     private var isUnlocked: Boolean = false
     private var isDualPane: Boolean = false
@@ -90,6 +97,7 @@ class MainActivity : BaseActivity(), SearchView.OnQueryTextListener, SearchView.
 
         syncProgress = findViewById(R.id.sync_progress)
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
+        networkStatusReceiver = NetworkStatusReceiver()
         snackbarMessageReceiver = SnackbarMessageReceiver(this)
         syncStateReceiver = SyncStateReceiver(this)
         isUnlocked = MainApplication.instance.isUnlocked
@@ -146,6 +154,10 @@ class MainActivity : BaseActivity(), SearchView.OnQueryTextListener, SearchView.
             }
         }
 
+        // Observe any changes in the network availability. If the app is in the background
+        // and is resumed and the network is still available the lambda function is not
+        // called and nothing will be done.
+        Timber.d("Observing network availability")
         mainViewModel.isNetworkAvailableLiveData.observe(this, Observer { isAvailable ->
             Timber.d("Network availability changed to $isAvailable")
             connectOrReconnectToServer(isAvailable)
@@ -192,12 +204,16 @@ class MainActivity : BaseActivity(), SearchView.OnQueryTextListener, SearchView.
         super.onStart()
         LocalBroadcastManager.getInstance(this).registerReceiver(syncStateReceiver, IntentFilter(SyncStateReceiver.ACTION))
         LocalBroadcastManager.getInstance(this).registerReceiver(snackbarMessageReceiver, IntentFilter(SnackbarMessageReceiver.ACTION))
+        appRepository.addIsNetworkAvailableDataSource(networkStatusReceiver.isNetworkAvailable)
+        registerReceiver(networkStatusReceiver, IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"))
     }
 
     public override fun onStop() {
         super.onStop()
         LocalBroadcastManager.getInstance(this).unregisterReceiver(syncStateReceiver)
         LocalBroadcastManager.getInstance(this).unregisterReceiver(snackbarMessageReceiver)
+        appRepository.removeIsNetworkAvailableDataSource(networkStatusReceiver.isNetworkAvailable)
+        unregisterReceiver(networkStatusReceiver)
     }
 
     override fun dispatchKeyEvent(event: KeyEvent): Boolean {
@@ -430,14 +446,15 @@ class MainActivity : BaseActivity(), SearchView.OnQueryTextListener, SearchView.
     }
 
     private fun connectOrReconnectToServer(isAvailable: Boolean) {
+        Timber.d("Connecting or reconnecting to service, network availability is $isAvailable")
         val activityManager = getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
         val runningAppProcessInfo = activityManager.runningAppProcesses?.get(0)
+        val intent = Intent(this, HtspService::class.java)
 
         if (isAvailable
                 && runningAppProcessInfo != null
                 && runningAppProcessInfo.importance <= ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND) {
 
-            val intent = Intent(this, HtspService::class.java)
             if (!mainViewModel.isNetworkAvailable) {
                 Timber.d("Starting server because network is available again")
                 intent.action = "connect"

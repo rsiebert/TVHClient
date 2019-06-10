@@ -3,14 +3,15 @@ package org.tvheadend.tvhclient.ui.common.network
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import org.tvheadend.tvhclient.ui.common.callbacks.NetworkStatusListener
-import java.lang.ref.WeakReference
+import androidx.lifecycle.MutableLiveData
+import timber.log.Timber
 
-class NetworkStatusReceiver(callback: NetworkStatusListener) : BroadcastReceiver() {
+class NetworkStatusReceiver() : BroadcastReceiver() {
 
-    private val callback: WeakReference<NetworkStatusListener> = WeakReference(callback)
+    val isNetworkAvailable: MutableLiveData<Boolean> = MutableLiveData()
 
     override fun onReceive(context: Context, intent: Intent) {
-        (callback.get() as NetworkStatusListener).onNetworkStatusChanged(isConnectionAvailable(context))
+        Timber.d("Network availability changed to ${isConnectionAvailable(context)}")
+        isNetworkAvailable.postValue(isConnectionAvailable(context))
     }
 }
