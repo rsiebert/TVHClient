@@ -1,13 +1,11 @@
 package org.tvheadend.tvhclient.ui.features.dvr.recordings
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.*
 import androidx.lifecycle.ViewModelProviders
 import com.afollestad.materialdialogs.MaterialDialog
 import kotlinx.android.synthetic.main.recording_add_edit_fragment.*
 import org.tvheadend.tvhclient.R
-import org.tvheadend.tvhclient.data.service.HtspService
 import org.tvheadend.tvhclient.domain.entity.Channel
 import org.tvheadend.tvhclient.domain.entity.ServerProfile
 import org.tvheadend.tvhclient.ui.base.BaseFragment
@@ -24,35 +22,6 @@ class RecordingAddEditFragment : BaseFragment(), BackPressedInterface, Recording
     private lateinit var recordingViewModel: RecordingViewModel
     private lateinit var recordingProfilesList: Array<String>
     private var profile: ServerProfile? = null
-
-    private// Pass on seconds not milliseconds
-    // Pass on seconds not milliseconds
-    // Add the recording profile if available and enabled
-    // Use the selected profile. If no change was done in the
-    // selection then the default one from the connection setting will be used
-    val intentData: Intent
-        get() {
-            // TODO get this from the viewmodel
-            val intent = Intent(activity, HtspService::class.java)
-            intent.putExtra("title", recordingViewModel.recording.title)
-            intent.putExtra("subtitle", recordingViewModel.recording.subtitle)
-            intent.putExtra("summary", recordingViewModel.recording.summary)
-            intent.putExtra("description", recordingViewModel.recording.description)
-            intent.putExtra("stop", recordingViewModel.recording.stop / 1000)
-            intent.putExtra("stopExtra", recordingViewModel.recording.stopExtra)
-
-            if (!recordingViewModel.recording.isRecording) {
-                intent.putExtra("channelId", recordingViewModel.recording.channelId)
-                intent.putExtra("start", recordingViewModel.recording.start / 1000)
-                intent.putExtra("startExtra", recordingViewModel.recording.startExtra)
-                intent.putExtra("priority", recordingViewModel.recording.priority)
-                intent.putExtra("enabled", if (recordingViewModel.recording.isEnabled) 1 else 0)
-            }
-            if (isServerProfileEnabled(profile, htspVersion) && dvr_config.text.isNotEmpty()) {
-                intent.putExtra("configName", dvr_config.text.toString())
-            }
-            return intent
-        }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.recording_add_edit_fragment, container, false)
@@ -213,7 +182,11 @@ class RecordingAddEditFragment : BaseFragment(), BackPressedInterface, Recording
             return
         }
 
-        val intent = intentData
+        val intent = recordingViewModel.getIntentData(recordingViewModel.recording)
+        if (isServerProfileEnabled(profile, htspVersion) && dvr_config.text.isNotEmpty()) {
+            intent.putExtra("configName", dvr_config.text.toString())
+        }
+
         if (recordingViewModel.recording.id > 0) {
             intent.action = "updateDvrEntry"
             intent.putExtra("id", recordingViewModel.recording.id)

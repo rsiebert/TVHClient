@@ -1,8 +1,8 @@
 package org.tvheadend.tvhclient.ui.common
 
 import android.content.Context
-import androidx.preference.PreferenceManager
 import android.view.Menu
+import androidx.preference.PreferenceManager
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.domain.entity.ProgramInterface
 import org.tvheadend.tvhclient.domain.entity.Recording
@@ -43,6 +43,8 @@ fun prepareMenu(context: Context,
             Timber.d("Recording is scheduled")
             menu.findItem(R.id.menu_record_cancel)?.isVisible = true
             menu.findItem(R.id.menu_edit)?.isVisible = isUnlocked
+            menu.findItem(R.id.menu_disable)?.isVisible = htspVersion >= 19 && isUnlocked && recording.isEnabled
+            menu.findItem(R.id.menu_enable)?.isVisible = htspVersion >= 19 && isUnlocked && !recording.isEnabled
 
         } else if (recording.isRecording) {
             Timber.d("Recording is being recorded")

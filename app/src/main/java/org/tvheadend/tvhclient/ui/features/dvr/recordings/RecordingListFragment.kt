@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.recyclerview_fragment.*
 import org.tvheadend.tvhclient.R
+import org.tvheadend.tvhclient.domain.entity.Recording
 import org.tvheadend.tvhclient.ui.base.BaseFragment
 import org.tvheadend.tvhclient.ui.common.*
 import org.tvheadend.tvhclient.ui.common.callbacks.RecyclerViewClickCallback
@@ -168,6 +169,14 @@ abstract class RecordingListFragment : BaseFragment(), RecyclerViewClickCallback
                     activity?.startActivity(intent)
                     return@setOnMenuItemClickListener true
                 }
+                R.id.menu_disable -> {
+                    enableScheduledRecording(recording, false)
+                    return@setOnMenuItemClickListener true
+                }
+                R.id.menu_enable -> {
+                    enableScheduledRecording(recording, true)
+                    return@setOnMenuItemClickListener true
+                }
                 else ->
                     return@setOnMenuItemClickListener false
             }
@@ -241,4 +250,12 @@ abstract class RecordingListFragment : BaseFragment(), RecyclerViewClickCallback
     }
 
     abstract override fun getQueryHint(): String
+
+    private fun enableScheduledRecording(recording: Recording, enabled: Boolean) {
+        val intent = recordingViewModel.getIntentData(recording)
+        intent.action = "updateDvrEntry"
+        intent.putExtra("id", recordingViewModel.recording.id)
+        intent.putExtra("enabled", if (enabled) 1 else 0)
+        activity?.startService(intent)
+    }
 }

@@ -1,6 +1,7 @@
 package org.tvheadend.tvhclient.ui.features.dvr.recordings
 
 import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
@@ -10,6 +11,7 @@ import androidx.lifecycle.ViewModel
 import org.tvheadend.tvhclient.MainApplication
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.data.repository.AppRepository
+import org.tvheadend.tvhclient.data.service.HtspService
 import org.tvheadend.tvhclient.domain.entity.Channel
 import org.tvheadend.tvhclient.domain.entity.Recording
 import org.tvheadend.tvhclient.domain.entity.ServerProfile
@@ -34,6 +36,25 @@ class RecordingViewModel : ViewModel(), SharedPreferences.OnSharedPreferenceChan
     var recordingProfileNameId: Int = 0
 
     private var hideDuplicateScheduledRecordings: MutableLiveData<Boolean> = MutableLiveData()
+
+    fun getIntentData(recording: Recording): Intent {
+        val intent = Intent(appContext, HtspService::class.java)
+        intent.putExtra("title", recording.title)
+        intent.putExtra("subtitle", recording.subtitle)
+        intent.putExtra("summary", recording.summary)
+        intent.putExtra("description", recording.description)
+        intent.putExtra("stop", recording.stop / 1000)
+        intent.putExtra("stopExtra", recording.stopExtra)
+
+        if (!recording.isRecording) {
+            intent.putExtra("channelId", recording.channelId)
+            intent.putExtra("start", recording.start / 1000)
+            intent.putExtra("startExtra", recording.startExtra)
+            intent.putExtra("priority", recording.priority)
+            intent.putExtra("enabled", if (recording.isEnabled) 1 else 0)
+        }
+        return intent
+    }
 
     init {
         MainApplication.component.inject(this)

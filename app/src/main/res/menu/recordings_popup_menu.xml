@@ -31,6 +31,12 @@
         android:title="@string/cancel"
         android:visible="false" />
     <item
+        android:id="@+id/menu_enable"
+        android:title="@string/enable" />
+    <item
+        android:id="@+id/menu_disable"
+        android:title="@string/disable" />
+    <item
         android:id="@+id/menu_download"
         android:icon="?attr/ic_menu_download"
         android:title="@string/download"
