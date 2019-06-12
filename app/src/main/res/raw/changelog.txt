@@ -1,3 +1,9 @@
+$ 2.2.16
+  % VERSION 2.2.16
+  _ 12.06.2019
+    * Fixed some layout issues in the startup screen
+    * Improvements under the hood
+    * Small bug fixes
 $ 2.2.15
   % VERSION 2.2.15
   _ 03.06.2019
