@@ -35,3 +35,26 @@ private fun isWifiApEnabled(context: Context): Boolean {
     return false
 }
 
+fun getNetworkStatus(previousStatus: NetworkStatus?, isAvailable: Boolean): NetworkStatus {
+    Timber.d("Previous network status is $previousStatus")
+    val status = when (previousStatus) {
+        NetworkStatus.NETWORK_IS_DOWN -> {
+            if (isAvailable) NetworkStatus.NETWORK_IS_UP else NetworkStatus.NETWORK_IS_STILL_DOWN
+        }
+        NetworkStatus.NETWORK_IS_UP -> {
+            if (isAvailable) NetworkStatus.NETWORK_IS_STILL_UP else NetworkStatus.NETWORK_IS_DOWN
+        }
+        NetworkStatus.NETWORK_IS_STILL_DOWN -> {
+            if (isAvailable) NetworkStatus.NETWORK_IS_UP else NetworkStatus.NETWORK_IS_STILL_DOWN
+        }
+        NetworkStatus.NETWORK_IS_STILL_UP -> {
+            if (isAvailable) NetworkStatus.NETWORK_IS_STILL_UP else NetworkStatus.NETWORK_IS_DOWN
+        }
+        NetworkStatus.NETWORK_UNKNOWN -> {
+            if (isAvailable) NetworkStatus.NETWORK_IS_UP else NetworkStatus.NETWORK_IS_DOWN
+        }
+        else -> return NetworkStatus.NETWORK_UNKNOWN
+    }
+    Timber.d("Current network status is $status")
+    return status
+}
