@@ -102,4 +102,11 @@ class RecordingData(private val db: AppRoomDatabase) : DataSourceInterface<Recor
         }
         return recording
     }
+
+    fun removeAndAddItems(items: ArrayList<Recording>) {
+        scope.launch {
+            db.recordingDao.deleteAll()
+            db.recordingDao.insert(items)
+        }
+    }
 }

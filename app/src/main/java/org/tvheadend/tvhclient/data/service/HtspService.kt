@@ -1211,10 +1211,7 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
      */
     private fun saveAllReceivedRecordings() {
         Timber.d("Removing previously existing recordings and saving ${pendingRecordingOps.size} new recordings")
-        appRepository.recordingData.removeItems()
-        if (pendingRecordingOps.isNotEmpty()) {
-            appRepository.recordingData.addItems(pendingRecordingOps)
-        }
+        appRepository.recordingData.removeAndAddItems(pendingRecordingOps)
     }
 
     private fun saveAllReceivedEvents() {
