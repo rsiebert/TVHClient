@@ -202,7 +202,7 @@ public class HtspConnection extends Thread implements HtspConnectionInterface {
 
         final HtspResponseListener authHandler = response -> {
             isAuthenticated = response.getInteger("noaccess", 0) != 1;
-            Timber.d("Authentication was successful: " + isAuthenticated);
+            Timber.d("Authentication was successful: %s", isAuthenticated);
             if (!isAuthenticated) {
                 connectionListener.onAuthenticationStateChange(AuthenticationState.FAILED_BAD_CREDENTIALS);
             } else {
