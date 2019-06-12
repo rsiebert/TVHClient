@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.ui.base.BaseActivity
+import org.tvheadend.tvhclient.ui.common.network.NetworkStatus
 import org.tvheadend.tvhclient.ui.common.sendSnackbarMessage
 import org.tvheadend.tvhclient.ui.features.programs.ProgramListFragment
 import org.tvheadend.tvhclient.util.getThemeId
@@ -15,7 +16,7 @@ import timber.log.Timber
 
 class SearchActivity : BaseActivity(), StartSearchInterface {
 
-    public override fun onCreate(savedInstanceState: Bundle?) {
+    override fun onCreate(savedInstanceState: Bundle?) {
         setTheme(getThemeId(this))
         super.onCreate(savedInstanceState)
         setContentView(R.layout.misc_content_activity)
@@ -47,9 +48,9 @@ class SearchActivity : BaseActivity(), StartSearchInterface {
         }
 
 
-        mainViewModel.isNetworkAvailableLiveData.observe(this, Observer { isAvailable ->
-            Timber.d("Network availability changed to $isAvailable")
-            if (!isAvailable) sendSnackbarMessage(R.string.network_not_available)
+        mainViewModel.networkStatus.observe(this, Observer { status ->
+            Timber.d("Network availability changed to $status")
+            if (status == NetworkStatus.NETWORK_IS_DOWN) sendSnackbarMessage(R.string.network_not_available)
             invalidateOptionsMenu()
         })
     }

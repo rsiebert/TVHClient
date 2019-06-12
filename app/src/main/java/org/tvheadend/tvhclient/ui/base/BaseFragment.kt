@@ -16,6 +16,7 @@ import org.tvheadend.tvhclient.domain.entity.ServerStatus
 import org.tvheadend.tvhclient.ui.common.MenuUtils
 import org.tvheadend.tvhclient.ui.common.callbacks.ToolbarInterface
 import org.tvheadend.tvhclient.ui.common.gone
+import org.tvheadend.tvhclient.ui.common.network.NetworkStatus
 import org.tvheadend.tvhclient.ui.common.visible
 import org.tvheadend.tvhclient.ui.features.MainViewModel
 import timber.log.Timber
@@ -50,9 +51,9 @@ abstract class BaseFragment : Fragment() {
         detailsFrameLayout = activity?.findViewById(R.id.details)
 
         val mainViewModel = ViewModelProviders.of(activity as BaseActivity).get(MainViewModel::class.java)
-        mainViewModel.isNetworkAvailableLiveData.observe(viewLifecycleOwner, Observer { isAvailable ->
-            Timber.d("Network availability changed to $isAvailable")
-            isNetworkAvailable = isAvailable
+        mainViewModel.networkStatus.observe(viewLifecycleOwner, Observer { status ->
+            Timber.d("Network availability changed to ${status}")
+            isNetworkAvailable = (status == NetworkStatus.NETWORK_IS_UP || status == NetworkStatus.NETWORK_IS_STILL_UP)
         })
 
         connection = mainViewModel.connection
