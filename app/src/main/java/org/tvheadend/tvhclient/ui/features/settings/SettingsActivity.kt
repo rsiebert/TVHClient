@@ -1,22 +1,17 @@
 package org.tvheadend.tvhclient.ui.features.settings
 
 
-import android.content.IntentFilter
 import android.os.Bundle
 import androidx.fragment.app.Fragment
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.ui.base.BaseActivity
-import org.tvheadend.tvhclient.ui.common.SnackbarMessageReceiver
 import org.tvheadend.tvhclient.ui.common.callbacks.BackPressedInterface
 import org.tvheadend.tvhclient.util.getThemeId
 import timber.log.Timber
 
 class SettingsActivity : BaseActivity() {
 
-    private val snackbarMessageReceiver: SnackbarMessageReceiver = SnackbarMessageReceiver(this)
-
-    public override fun onCreate(savedInstanceState: Bundle?) {
+    override fun onCreate(savedInstanceState: Bundle?) {
         setTheme(getThemeId(this))
         super.onCreate(savedInstanceState)
         setContentView(R.layout.misc_content_activity)
@@ -58,16 +53,6 @@ class SettingsActivity : BaseActivity() {
                 SettingsFragment().also { it.arguments = intent.extras }
             }
         }
-    }
-
-    public override fun onStart() {
-        super.onStart()
-        LocalBroadcastManager.getInstance(this).registerReceiver(snackbarMessageReceiver, IntentFilter(SnackbarMessageReceiver.ACTION))
-    }
-
-    public override fun onStop() {
-        super.onStop()
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(snackbarMessageReceiver)
     }
 
     override fun onBackPressed() {
