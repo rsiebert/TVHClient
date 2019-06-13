@@ -361,7 +361,7 @@ class MainActivity : BaseActivity(), SearchView.OnQueryTextListener, SearchView.
             }
             else -> {
                 mediaRouteMenuItem?.isVisible = isUnlocked
-                menu.findItem(R.id.menu_wol)?.isVisible = isUnlocked && statusViewModel.connection.isWolEnabled
+                menu.findItem(R.id.menu_wol)?.isVisible = isUnlocked && mainViewModel.connection.isWolEnabled
             }
         }
         return true
