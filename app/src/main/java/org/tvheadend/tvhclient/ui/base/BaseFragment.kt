@@ -52,7 +52,7 @@ abstract class BaseFragment : Fragment() {
 
         val mainViewModel = ViewModelProviders.of(activity as BaseActivity).get(MainViewModel::class.java)
         mainViewModel.networkStatus.observe(viewLifecycleOwner, Observer { status ->
-            Timber.d("Network availability changed to ${status}")
+            Timber.d("Network availability changed to $status")
             isNetworkAvailable = (status == NetworkStatus.NETWORK_IS_UP || status == NetworkStatus.NETWORK_IS_STILL_UP)
         })
 
