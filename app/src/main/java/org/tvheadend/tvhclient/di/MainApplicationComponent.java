@@ -10,8 +10,8 @@ import org.tvheadend.tvhclient.data.service.HtspService;
 import org.tvheadend.tvhclient.di.modules.MainApplicationModule;
 import org.tvheadend.tvhclient.di.modules.RepositoryModule;
 import org.tvheadend.tvhclient.di.modules.SharedPreferencesModule;
+import org.tvheadend.tvhclient.ui.base.BaseActivity;
 import org.tvheadend.tvhclient.ui.common.MenuUtils;
-import org.tvheadend.tvhclient.ui.features.MainActivity;
 import org.tvheadend.tvhclient.ui.features.MainViewModel;
 import org.tvheadend.tvhclient.ui.features.channels.BaseChannelViewModel;
 import org.tvheadend.tvhclient.ui.features.dvr.recordings.RecordingViewModel;
@@ -66,7 +66,7 @@ public interface MainApplicationComponent {
 
     void inject(ExternalPlayerViewModel externalPlayerViewModel);
 
-    void inject(MainActivity mainActivity);
+    void inject(BaseActivity baseActivity);
 
     void inject(MenuUtils menuUtils);
 
