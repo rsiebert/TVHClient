@@ -12,7 +12,10 @@ import org.tvheadend.tvhclient.MainApplication
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.data.repository.AppRepository
 import org.tvheadend.tvhclient.data.service.HtspService
-import org.tvheadend.tvhclient.domain.entity.*
+import org.tvheadend.tvhclient.domain.entity.Channel
+import org.tvheadend.tvhclient.domain.entity.Input
+import org.tvheadend.tvhclient.domain.entity.ServerStatus
+import org.tvheadend.tvhclient.domain.entity.Subscription
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -26,7 +29,6 @@ class StatusViewModel : ViewModel(), SharedPreferences.OnSharedPreferenceChangeL
     lateinit var sharedPreferences: SharedPreferences
 
     val serverStatus: LiveData<ServerStatus>
-    val connection: Connection
     val channelCount: LiveData<Int>
     val programCount: LiveData<Int>
     val timerRecordingCount: LiveData<Int>
@@ -52,7 +54,6 @@ class StatusViewModel : ViewModel(), SharedPreferences.OnSharedPreferenceChangeL
         MainApplication.component.inject(this)
 
         serverStatus = appRepository.serverStatusData.liveDataActiveItem
-        connection = appRepository.connectionData.activeItem
         channelCount = appRepository.channelData.getLiveDataItemCount()
         programCount = appRepository.programData.getLiveDataItemCount()
         timerRecordingCount = appRepository.timerRecordingData.getLiveDataItemCount()
