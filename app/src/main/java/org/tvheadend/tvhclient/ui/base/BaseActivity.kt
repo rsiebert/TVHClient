@@ -1,6 +1,5 @@
 package org.tvheadend.tvhclient.ui.base
 
-import android.R
 import android.content.Context
 import android.content.IntentFilter
 import android.content.SharedPreferences
@@ -59,7 +58,7 @@ open class BaseActivity : AppCompatActivity(), ToolbarInterface {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
-            R.id.home -> {
+            android.R.id.home -> {
                 onBackPressed()
                 true
             }
