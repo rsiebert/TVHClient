@@ -105,7 +105,7 @@ dependencies {
     implementation 'androidx.recyclerview:recyclerview:1.1.0-alpha05'
     implementation 'androidx.annotation:annotation:1.1.0-rc01'
     implementation 'androidx.preference:preference:1.1.0-alpha05'
-    implementation 'com.google.android.material:material:1.1.0-alpha06'
+    implementation 'com.google.android.material:material:1.1.0-alpha07'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.0-beta1'
 
     // Kotlin
@@ -151,7 +151,7 @@ dependencies {
     implementation 'android.arch.work:work-runtime:1.0.1'
 
     // Android Room
-    def room_version = "2.1.0-beta01"
+    def room_version = "2.1.0-rc01"
     implementation "androidx.room:room-runtime:$room_version"
     implementation "androidx.room:room-ktx:$room_version"
     kapt "androidx.room:room-compiler:$room_version"
