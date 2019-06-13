@@ -1,6 +1,7 @@
 $ 2.2.16
   % VERSION 2.2.16
-  _ 12.06.2019
+  _ 13.06.2019
+    * Added popup menu to directly enable or disable scheduled recordings (Only available in the unlocked version)
     * Fixed some layout issues in the startup screen
     * Improvements under the hood
     * Small bug fixes
