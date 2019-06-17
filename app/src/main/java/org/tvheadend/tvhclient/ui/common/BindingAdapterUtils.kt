@@ -510,16 +510,8 @@ fun setLocalizedTime(view: TextView, time: Long) {
     if (sharedPreferences.getBoolean("localized_date_time_format_enabled", view.context.resources.getBoolean(R.bool.pref_default_localized_date_time_format_enabled))) {
         // Show the date as defined with the currently active locale.
         // For the date display the short version will be used
-        val locale: Locale? = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            view.context.resources.configuration.locales.get(0)
-        } else {
-            @Suppress("DEPRECATION")
-            view.context.resources.configuration.locale
-        }
-        if (locale != null) {
-            val df = java.text.DateFormat.getTimeInstance(java.text.DateFormat.SHORT, locale)
-            localizedTime = df.format(time)
-        }
+        val df = java.text.DateFormat.getTimeInstance(java.text.DateFormat.SHORT, getLocale(view.context))
+        localizedTime = df.format(time)
     } else {
         // Show the date using the default format like 31.07.2013
         val sdf = SimpleDateFormat("HH:mm", Locale.US)
@@ -574,16 +566,8 @@ fun setLocalizedDate(view: TextView, date: Long) {
             if (prefs.getBoolean("localized_date_time_format_enabled", false)) {
                 // Show the date as defined with the currently active locale.
                 // For the date display the short version will be used
-                val locale: Locale? = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                    context.resources.configuration.locales.get(0)
-                } else {
-                    @Suppress("DEPRECATION")
-                    context.resources.configuration.locale
-                }
-                if (locale != null) {
-                    val df = java.text.DateFormat.getDateInstance(java.text.DateFormat.SHORT, locale)
-                    localizedDate = df.format(date)
-                }
+                val df = java.text.DateFormat.getDateInstance(java.text.DateFormat.SHORT, getLocale(view.context))
+                localizedDate = df.format(date)
             } else {
                 // Show the date using the default format like 31.07.2013
                 val sdf = SimpleDateFormat("dd.MM.yyyy", Locale.US)

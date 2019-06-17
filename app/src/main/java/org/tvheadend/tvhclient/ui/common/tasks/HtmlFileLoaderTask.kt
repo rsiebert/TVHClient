@@ -2,7 +2,9 @@ package org.tvheadend.tvhclient.ui.common.tasks
 
 import android.content.Context
 import android.os.AsyncTask
+import android.os.Build
 import androidx.preference.PreferenceManager
+import org.tvheadend.tvhclient.ui.common.getLocale
 import timber.log.Timber
 import java.io.*
 import java.lang.ref.WeakReference
@@ -14,7 +16,7 @@ class HtmlFileLoaderTask(context: Context, private val file: String, private val
     override fun doInBackground(vararg voids: Void): String? {
         val ctx = context.get()
         return if (ctx != null) {
-            loadHtmlFromFile(ctx, file, defaultLocale)
+            loadHtmlFromFile(ctx, file)
         } else null
     }
 
@@ -22,12 +24,11 @@ class HtmlFileLoaderTask(context: Context, private val file: String, private val
         callback.onFileContentsLoaded(content)
     }
 
-    private fun loadHtmlFromFile(context: Context, filename: String, defaultLocale: String): String {
+    private fun loadHtmlFromFile(context: Context, filename: String): String {
 
         val prefs = PreferenceManager.getDefaultSharedPreferences(context)
-        val current = context.resources.configuration.locale
-        val locale = prefs.getString("language", current.language)!!.substring(0, 2)
-        val htmlFile = "html/" + filename + "_" + locale.substring(0, 2) + ".html"
+        val languageCode = prefs.getString("language", getLocale(context).language)!!.substring(0, 2)
+        val htmlFile = "html/" + filename + "_" + languageCode.substring(0, 2) + ".html"
         val defaultHtmlFile = "html/" + filename + "_" + defaultLocale + ".html"
 
         // Open the HTML file of the defined language. This is determined by
@@ -52,7 +53,7 @@ class HtmlFileLoaderTask(context: Context, private val file: String, private val
         // contains the feature description with the required HTML tags.
         if (inputStream != null) {
             try {
-                val reader: BufferedReader = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
+                val reader: BufferedReader = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
                     BufferedReader(InputStreamReader(inputStream, StandardCharsets.UTF_8))
                 } else {
                     BufferedReader(InputStreamReader(inputStream))
