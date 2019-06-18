@@ -79,4 +79,8 @@ class ProgramViewModel : ViewModel(), SharedPreferences.OnSharedPreferenceChange
     fun getRecordingProfile(): ServerProfile? {
         return appRepository.serverProfileData.getItemById(appRepository.serverStatusData.activeItem.recordingServerProfileId)
     }
+
+    fun getRecordingProfileNames(): Array<String> {
+        return appRepository.serverProfileData.recordingProfileNames
+    }
 }

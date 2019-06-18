@@ -99,6 +99,10 @@ open class BaseChannelViewModel : ViewModel() {
         return appRepository.serverProfileData.getItemById(appRepository.serverStatusData.activeItem.recordingServerProfileId)
     }
 
+    fun getRecordingProfileNames(): Array<String> {
+        return appRepository.serverProfileData.recordingProfileNames
+    }
+
     fun getProgramById(id: Int): Program? {
         return appRepository.programData.getItemById(id)
     }
