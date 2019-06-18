@@ -76,7 +76,7 @@ class SettingsListConnectionsFragment : ListFragment(), BackPressedInterface, Ac
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
-            R.id.menu_add -> {
+            R.id.menu_add_connection -> {
                 val intent = Intent(activity, SettingsActivity::class.java)
                 intent.putExtra("setting_type", "add_connection")
                 startActivity(intent)
@@ -94,7 +94,7 @@ class SettingsListConnectionsFragment : ListFragment(), BackPressedInterface, Ac
         val connection = connectionListAdapter.getItem(position) ?: return false
         val intent: Intent
         when (item.itemId) {
-            R.id.menu_set_active -> {
+            R.id.menu_set_connection_active -> {
                 connection.isActive = true
                 settingsViewModel.updateConnection(connection)
                 settingsViewModel.connectionHasChanged = true
@@ -102,14 +102,14 @@ class SettingsListConnectionsFragment : ListFragment(), BackPressedInterface, Ac
                 return true
             }
 
-            R.id.menu_set_not_active -> {
+            R.id.menu_set_connection_not_active -> {
                 connection.isActive = false
                 settingsViewModel.updateConnection(connection)
                 mode.finish()
                 return true
             }
 
-            R.id.menu_edit -> {
+            R.id.menu_edit_connection -> {
                 intent = Intent(activity, SettingsActivity::class.java)
                 intent.putExtra("setting_type", "edit_connection")
                 intent.putExtra("connection_id", connection.id)
@@ -126,7 +126,7 @@ class SettingsListConnectionsFragment : ListFragment(), BackPressedInterface, Ac
                 return true
             }
 
-            R.id.menu_delete -> {
+            R.id.menu_delete_connection -> {
                 context?.let {
                     MaterialDialog(it).show {
                         message(text = getString(R.string.delete_connection, connection.name))

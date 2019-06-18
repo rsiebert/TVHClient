@@ -11,7 +11,7 @@ import kotlinx.android.synthetic.main.startup_fragment.*
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.data.service.HtspService
 import org.tvheadend.tvhclient.ui.common.callbacks.ToolbarInterface
-import org.tvheadend.tvhclient.ui.common.visible
+import org.tvheadend.tvhclient.util.extensions.visible
 import org.tvheadend.tvhclient.ui.features.MainActivity
 import org.tvheadend.tvhclient.ui.features.MainViewModel
 import org.tvheadend.tvhclient.ui.features.settings.SettingsActivity
@@ -69,7 +69,7 @@ class StartupFragment : Fragment() {
     override fun onPrepareOptionsMenu(menu: Menu) {
         super.onPrepareOptionsMenu(menu)
         // Do not show the reconnect menu in case no connections are available or none is active
-        menu.findItem(R.id.menu_refresh)?.isVisible = (mainViewModel.connection.id > 0)
+        menu.findItem(R.id.menu_reconnect_to_server)?.isVisible = (mainViewModel.connection.id > 0)
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -83,7 +83,7 @@ class StartupFragment : Fragment() {
                 showConnectionListSettings()
                 true
             }
-            R.id.menu_refresh -> {
+            R.id.menu_reconnect_to_server -> {
                 activity?.let { activity ->
                     MaterialDialog(activity).show {
                         title(R.string.dialog_title_reconnect_to_server)

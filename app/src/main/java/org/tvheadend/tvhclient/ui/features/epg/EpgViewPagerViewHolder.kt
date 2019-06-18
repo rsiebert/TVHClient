@@ -11,8 +11,8 @@ import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.epg_program_list_adapter.*
 import org.tvheadend.tvhclient.domain.entity.EpgChannel
-import org.tvheadend.tvhclient.ui.common.gone
-import org.tvheadend.tvhclient.ui.common.visible
+import org.tvheadend.tvhclient.util.extensions.gone
+import org.tvheadend.tvhclient.util.extensions.visible
 import timber.log.Timber
 import java.util.concurrent.Executors
 

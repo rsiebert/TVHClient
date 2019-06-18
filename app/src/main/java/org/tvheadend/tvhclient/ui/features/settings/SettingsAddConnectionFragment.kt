@@ -3,7 +3,7 @@ package org.tvheadend.tvhclient.ui.features.settings
 import android.os.Bundle
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.domain.entity.Connection
-import org.tvheadend.tvhclient.ui.common.sendSnackbarMessage
+import org.tvheadend.tvhclient.util.extensions.sendSnackbarMessage
 import timber.log.Timber
 
 class SettingsAddConnectionFragment : SettingsConnectionBaseFragment() {

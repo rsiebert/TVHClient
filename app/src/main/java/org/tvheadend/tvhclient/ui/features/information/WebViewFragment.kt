@@ -10,9 +10,9 @@ import kotlinx.android.synthetic.main.webview_fragment.*
 import org.tvheadend.tvhclient.BuildConfig
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.ui.base.BaseFragment
-import org.tvheadend.tvhclient.ui.common.gone
+import org.tvheadend.tvhclient.util.extensions.gone
+import org.tvheadend.tvhclient.util.extensions.visible
 import org.tvheadend.tvhclient.ui.common.tasks.HtmlFileLoaderTask
-import org.tvheadend.tvhclient.ui.common.visible
 import org.tvheadend.tvhclient.util.getThemeId
 import java.util.regex.Pattern
 

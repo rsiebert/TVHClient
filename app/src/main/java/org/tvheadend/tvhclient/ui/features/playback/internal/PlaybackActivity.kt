@@ -31,6 +31,7 @@ import kotlinx.android.synthetic.main.exo_player_view.*
 import kotlinx.android.synthetic.main.player_overlay_view.*
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.ui.common.*
+import org.tvheadend.tvhclient.util.extensions.*
 import org.tvheadend.tvhclient.ui.features.MainActivity
 import org.tvheadend.tvhclient.ui.features.playback.internal.utils.Rational
 import org.tvheadend.tvhclient.ui.features.playback.internal.utils.TrackSelectionHelper

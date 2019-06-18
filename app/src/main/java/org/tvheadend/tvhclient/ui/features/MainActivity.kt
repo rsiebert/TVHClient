@@ -30,8 +30,9 @@ import org.tvheadend.tvhclient.data.service.HtspService
 import org.tvheadend.tvhclient.data.service.SyncStateReceiver
 import org.tvheadend.tvhclient.ui.base.BaseActivity
 import org.tvheadend.tvhclient.ui.common.*
-import org.tvheadend.tvhclient.ui.common.network.NetworkStatus
-import org.tvheadend.tvhclient.ui.common.network.NetworkStatusReceiver
+import org.tvheadend.tvhclient.util.extensions.*
+import org.tvheadend.tvhclient.ui.common.NetworkStatus
+import org.tvheadend.tvhclient.ui.common.NetworkStatusReceiver
 import org.tvheadend.tvhclient.ui.features.download.DownloadPermissionGrantedInterface
 import org.tvheadend.tvhclient.ui.features.dvr.recordings.RecordingDetailsFragment
 import org.tvheadend.tvhclient.ui.features.dvr.series_recordings.SeriesRecordingDetailsFragment
@@ -356,12 +357,12 @@ class MainActivity : BaseActivity(), SearchView.OnQueryTextListener, SearchView.
             NavigationDrawer.MENU_STATUS, NavigationDrawer.MENU_UNLOCKER, NavigationDrawer.MENU_HELP -> {
                 mediaRouteMenuItem?.isVisible = false
                 menu.findItem(R.id.menu_search).isVisible = false
-                menu.findItem(R.id.menu_refresh).isVisible = false
-                menu.findItem(R.id.menu_wol)?.isVisible = false
+                menu.findItem(R.id.menu_reconnect_to_server).isVisible = false
+                menu.findItem(R.id.menu_send_wake_on_lan_packet)?.isVisible = false
             }
             else -> {
                 mediaRouteMenuItem?.isVisible = isUnlocked
-                menu.findItem(R.id.menu_wol)?.isVisible = isUnlocked && mainViewModel.connection.isWolEnabled
+                menu.findItem(R.id.menu_send_wake_on_lan_packet)?.isVisible = isUnlocked && mainViewModel.connection.isWolEnabled
             }
         }
         return true

@@ -10,7 +10,7 @@ import com.google.android.gms.common.images.WebImage
 import kotlinx.android.synthetic.main.play_activity.*
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.ui.common.getCastSession
-import org.tvheadend.tvhclient.ui.common.gone
+import org.tvheadend.tvhclient.util.extensions.gone
 import timber.log.Timber
 
 class CastChannelActivity : BasePlaybackActivity() {

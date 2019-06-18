@@ -1,4 +1,4 @@
-package org.tvheadend.tvhclient.ui.common
+package org.tvheadend.tvhclient.util.extensions
 
 import android.content.Context
 import android.os.Build

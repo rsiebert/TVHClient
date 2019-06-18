@@ -16,7 +16,7 @@ import androidx.preference.PreferenceManager
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.files.folderChooser
 import org.tvheadend.tvhclient.R
-import org.tvheadend.tvhclient.ui.common.sendSnackbarMessage
+import org.tvheadend.tvhclient.util.extensions.sendSnackbarMessage
 import org.tvheadend.tvhclient.ui.features.MainActivity
 import org.tvheadend.tvhclient.ui.features.changelog.ChangeLogActivity
 import org.tvheadend.tvhclient.ui.features.information.WebViewActivity

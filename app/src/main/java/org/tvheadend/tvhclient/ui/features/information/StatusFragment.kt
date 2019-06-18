@@ -65,23 +65,15 @@ class StatusFragment : BaseFragment() {
 
     override fun onPrepareOptionsMenu(menu: Menu) {
         super.onPrepareOptionsMenu(menu)
-        menu.findItem(R.id.menu_wol)?.isVisible = isUnlocked && connection.isWolEnabled
+        menu.findItem(R.id.menu_send_wake_on_lan_packet)?.isVisible = isUnlocked && connection.isWolEnabled
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
-            android.R.id.home -> {
-                activity?.finish()
-                true
-            }
-            R.id.menu_wol -> {
+            R.id.menu_send_wake_on_lan_packet -> {
                 context?.let {
                     WakeOnLanTask(it, connection).execute()
                 }
-                true
-            }
-            R.id.menu_refresh -> {
-                menuUtils.handleMenuReconnectSelection()
                 true
             }
             else -> super.onOptionsItemSelected(item)

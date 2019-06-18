@@ -25,7 +25,7 @@ class ScheduledRecordingListFragment : RecordingListFragment() {
 
     override fun onPrepareOptionsMenu(menu: Menu) {
         super.onPrepareOptionsMenu(menu)
-        menu.findItem(R.id.menu_add)?.isVisible = isUnlocked
+        menu.findItem(R.id.menu_add_recording)?.isVisible = isUnlocked
     }
 
     override fun onFilterComplete(i: Int) {

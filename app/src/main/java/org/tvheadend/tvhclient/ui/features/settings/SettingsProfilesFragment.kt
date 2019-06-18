@@ -6,7 +6,7 @@ import androidx.preference.ListPreference
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.domain.entity.ServerProfile
 import org.tvheadend.tvhclient.domain.entity.ServerStatus
-import org.tvheadend.tvhclient.ui.common.sendSnackbarMessage
+import org.tvheadend.tvhclient.util.extensions.sendSnackbarMessage
 
 class SettingsProfilesFragment : BasePreferenceFragment() {
 

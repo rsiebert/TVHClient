@@ -4,7 +4,7 @@ import android.content.Context
 import android.os.AsyncTask
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.domain.entity.Connection
-import org.tvheadend.tvhclient.ui.common.sendSnackbarMessage
+import org.tvheadend.tvhclient.util.extensions.sendSnackbarMessage
 import timber.log.Timber
 import java.lang.ref.WeakReference
 import java.net.DatagramPacket

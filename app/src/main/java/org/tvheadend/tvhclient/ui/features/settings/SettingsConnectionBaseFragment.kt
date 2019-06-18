@@ -15,7 +15,7 @@ import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.domain.entity.Connection
 import org.tvheadend.tvhclient.ui.common.callbacks.BackPressedInterface
 import org.tvheadend.tvhclient.ui.common.callbacks.ToolbarInterface
-import org.tvheadend.tvhclient.ui.common.sendSnackbarMessage
+import org.tvheadend.tvhclient.util.extensions.sendSnackbarMessage
 
 // TODO use view model to store the connection
 

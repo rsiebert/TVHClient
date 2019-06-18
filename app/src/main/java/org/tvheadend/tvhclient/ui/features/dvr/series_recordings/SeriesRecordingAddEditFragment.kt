@@ -10,10 +10,10 @@ import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.domain.entity.Channel
 import org.tvheadend.tvhclient.domain.entity.ServerProfile
 import org.tvheadend.tvhclient.ui.base.BaseFragment
-import org.tvheadend.tvhclient.ui.common.afterTextChanged
 import org.tvheadend.tvhclient.ui.common.callbacks.BackPressedInterface
-import org.tvheadend.tvhclient.ui.common.sendSnackbarMessage
-import org.tvheadend.tvhclient.ui.common.visibleOrGone
+import org.tvheadend.tvhclient.util.extensions.afterTextChanged
+import org.tvheadend.tvhclient.util.extensions.sendSnackbarMessage
+import org.tvheadend.tvhclient.util.extensions.visibleOrGone
 import org.tvheadend.tvhclient.ui.features.dvr.*
 import org.tvheadend.tvhclient.util.isServerProfileEnabled
 import timber.log.Timber

@@ -9,8 +9,8 @@ import org.tvheadend.tvhclient.MainApplication
 import org.tvheadend.tvhclient.data.repository.AppRepository
 import org.tvheadend.tvhclient.domain.entity.Connection
 import org.tvheadend.tvhclient.domain.entity.ServerStatus
-import org.tvheadend.tvhclient.ui.common.network.NetworkStatus
-import org.tvheadend.tvhclient.ui.common.network.getNetworkStatus
+import org.tvheadend.tvhclient.ui.common.NetworkStatus
+import org.tvheadend.tvhclient.ui.common.getNetworkStatus
 import timber.log.Timber
 import javax.inject.Inject
 

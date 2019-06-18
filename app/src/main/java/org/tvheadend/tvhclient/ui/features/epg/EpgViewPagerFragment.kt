@@ -19,7 +19,7 @@ import androidx.recyclerview.widget.RecyclerView.SCROLL_STATE_IDLE
 import kotlinx.android.synthetic.main.epg_viewpager_fragment.*
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.databinding.EpgViewpagerFragmentBinding
-import org.tvheadend.tvhclient.ui.common.visibleOrGone
+import org.tvheadend.tvhclient.util.extensions.visibleOrGone
 import timber.log.Timber
 import java.util.*
 

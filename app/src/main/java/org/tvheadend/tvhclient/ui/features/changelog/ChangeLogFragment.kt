@@ -11,9 +11,9 @@ import org.tvheadend.tvhclient.BuildConfig
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.ui.common.callbacks.BackPressedInterface
 import org.tvheadend.tvhclient.ui.common.callbacks.ToolbarInterface
-import org.tvheadend.tvhclient.ui.common.gone
+import org.tvheadend.tvhclient.util.extensions.gone
+import org.tvheadend.tvhclient.util.extensions.visible
 import org.tvheadend.tvhclient.ui.common.tasks.HtmlFileLoaderTask
-import org.tvheadend.tvhclient.ui.common.visible
 
 class ChangeLogFragment : Fragment(), BackPressedInterface, HtmlFileLoaderTask.Listener {
 
@@ -64,7 +64,7 @@ class ChangeLogFragment : Fragment(), BackPressedInterface, HtmlFileLoaderTask.L
     }
 
     override fun onPrepareOptionsMenu(menu: Menu) {
-        menu.findItem(R.id.menu_full_changelog)?.isVisible = !showFullChangeLog
+        menu.findItem(R.id.menu_show_full_changelog)?.isVisible = !showFullChangeLog
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -74,7 +74,7 @@ class ChangeLogFragment : Fragment(), BackPressedInterface, HtmlFileLoaderTask.L
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.menu_full_changelog -> {
+            R.id.menu_show_full_changelog -> {
                 ChangeLogLoaderTask(context, versionName, this).execute(true)
                 return true
             }
