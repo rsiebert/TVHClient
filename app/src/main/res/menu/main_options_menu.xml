@@ -14,13 +14,13 @@
         app:actionViewClass="androidx.appcompat.widget.SearchView"
         app:showAsAction="collapseActionView|ifRoom" />
     <item
-        android:id="@+id/menu_refresh"
+        android:id="@+id/menu_reconnect_to_server"
         android:icon="?attr/ic_menu_refresh"
         android:orderInCategory="10"
         android:title="@string/reconnect"
         app:showAsAction="collapseActionView" />
     <item
-        android:id="@+id/menu_wol"
+        android:id="@+id/menu_send_wake_on_lan_packet"
         android:icon="?attr/ic_menu_wol"
         android:orderInCategory="11"
         android:title="@string/send_wol"

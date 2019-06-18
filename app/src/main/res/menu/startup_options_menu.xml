@@ -8,7 +8,7 @@
         android:title="@string/settings"
         app:showAsAction="ifRoom" />
     <item
-        android:id="@+id/menu_refresh"
+        android:id="@+id/menu_reconnect_to_server"
         android:icon="?attr/ic_menu_refresh"
         android:title="@string/refresh"
         app:showAsAction="ifRoom" />

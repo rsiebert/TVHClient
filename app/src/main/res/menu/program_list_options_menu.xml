@@ -15,7 +15,7 @@
         app:showAsAction="ifRoom" />
 
     <item
-        android:id="@+id/menu_genre_color_info_programs"
+        android:id="@+id/menu_genre_color_information"
         android:title="@string/genre_color_info" />
 
 </menu>

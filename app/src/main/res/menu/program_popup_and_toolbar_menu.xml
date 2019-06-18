@@ -13,34 +13,34 @@
         android:title="@string/cast"
         app:showAsAction="ifRoom|withText" />
     <item
-        android:id="@+id/menu_record_once"
+        android:id="@+id/menu_record_program"
         android:icon="?attr/ic_menu_record_once"
         android:title="@string/record_once"
         app:showAsAction="ifRoom|withText" />
     <item
-        android:id="@+id/menu_record_once_and_edit"
+        android:id="@+id/menu_record_program_and_edit"
         android:icon="?attr/ic_menu_record_once_and_edit"
         android:title="@string/record_once_and_edit" />
     <item
-        android:id="@+id/menu_record_once_custom_profile"
+        android:id="@+id/menu_record_program_with_custom_profile"
         android:icon="?attr/ic_menu_record_once_custom_profile"
         android:title="@string/record_once_custom_profile" />
     <item
-        android:id="@+id/menu_record_series"
+        android:id="@+id/menu_record_program_as_series_recording"
         android:icon="?attr/ic_menu_record_series"
         android:title="@string/record_series" />
     <item
-        android:id="@+id/menu_record_remove"
+        android:id="@+id/menu_remove_recording"
         android:icon="?attr/ic_menu_record_remove"
         android:title="@string/remove"
         app:showAsAction="ifRoom|withText" />
     <item
-        android:id="@+id/menu_record_stop"
+        android:id="@+id/menu_stop_recording"
         android:icon="?attr/ic_menu_stop"
         android:title="@string/stop"
         app:showAsAction="ifRoom|withText" />
     <item
-        android:id="@+id/menu_record_cancel"
+        android:id="@+id/menu_cancel_recording"
         android:icon="?attr/ic_menu_cancel"
         android:title="@string/cancel"
         app:showAsAction="ifRoom|withText" />
