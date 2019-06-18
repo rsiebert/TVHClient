@@ -1,10 +1,18 @@
-package org.tvheadend.tvhclient.ui.common.network
+package org.tvheadend.tvhclient.ui.common
 
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.wifi.WifiManager
 import timber.log.Timber
 import java.lang.reflect.InvocationTargetException
+
+enum class NetworkStatus {
+    NETWORK_UNKNOWN,
+    NETWORK_IS_DOWN,
+    NETWORK_IS_UP,
+    NETWORK_IS_STILL_DOWN,
+    NETWORK_IS_STILL_UP
+}
 
 fun isConnectionAvailable(context: Context): Boolean {
     return isNetworkAvailable(context) || isWifiApEnabled(context)

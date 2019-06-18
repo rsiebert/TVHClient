@@ -1,8 +1,10 @@
-package org.tvheadend.tvhclient.ui.common.network
+package org.tvheadend.tvhclient.ui.common
 
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import org.tvheadend.tvhclient.ui.common.getNetworkStatus
+import org.tvheadend.tvhclient.ui.common.isConnectionAvailable
 import org.tvheadend.tvhclient.ui.features.MainViewModel
 import timber.log.Timber
 
