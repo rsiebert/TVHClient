@@ -14,8 +14,10 @@ import org.tvheadend.tvhclient.domain.entity.Program
 import org.tvheadend.tvhclient.domain.entity.Recording
 import org.tvheadend.tvhclient.ui.base.BaseFragment
 import org.tvheadend.tvhclient.ui.common.*
+import org.tvheadend.tvhclient.util.extensions.gone
+import org.tvheadend.tvhclient.util.extensions.visible
 import org.tvheadend.tvhclient.ui.features.dvr.RecordingAddEditActivity
-import org.tvheadend.tvhclient.ui.features.notification.addNotification
+import org.tvheadend.tvhclient.ui.features.notification.addNotificationForProgram
 import timber.log.Timber
 
 // TODO put program into the viewmodel
@@ -113,10 +115,9 @@ class ProgramDetailsFragment : BaseFragment() {
 
     override fun onPrepareOptionsMenu(menu: Menu) {
         val ctx = context ?: return
-        // Show or hide search menu items in the main toolbar
-        prepareSearchMenu(menu, program?.title, isNetworkAvailable)
-        // Show or hide menus of the nested toolbar
-        prepareMenu(ctx, nested_toolbar.menu, program, program?.recording, isNetworkAvailable, htspVersion, isUnlocked)
+        preparePopupOrToolbarSearchMenu(menu, program?.title, isNetworkAvailable)
+        preparePopupOrToolbarRecordingMenu(ctx, nested_toolbar.menu, program?.recording, isNetworkAvailable, htspVersion, isUnlocked)
+        preparePopupOrToolbarMiscMenu(ctx, nested_toolbar.menu, program, isNetworkAvailable, isUnlocked)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -133,42 +134,32 @@ class ProgramDetailsFragment : BaseFragment() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        val ctx = context ?: return super.onOptionsItemSelected(item)
         // The program might be null in case the view model
         // has not yet loaded the program for the given id
         val program = this.program ?: return super.onOptionsItemSelected(item)
-
-        if (onMenuSelected(ctx, item.itemId, program.title, program.channelId)) {
-            return true
-        }
+        val ctx = context ?: return super.onOptionsItemSelected(item)
         when (item.itemId) {
-            R.id.menu_record_stop ->
-                return menuUtils.handleMenuStopRecordingSelection(recording, null)
-            R.id.menu_record_cancel ->
-                return menuUtils.handleMenuCancelRecordingSelection(recording, null)
-            R.id.menu_record_remove ->
-                return menuUtils.handleMenuRemoveRecordingSelection(recording, null)
-            R.id.menu_record_once ->
-                return menuUtils.handleMenuRecordSelection(program.eventId)
-            R.id.menu_record_once_and_edit -> {
+            R.id.menu_stop_recording -> return showConfirmationToStopSelectedRecording(ctx, recording, null)
+            R.id.menu_cancel_recording -> return showConfirmationToCancelSelectedRecording(ctx, recording, null)
+            R.id.menu_remove_recording -> return showConfirmationToRemoveSelectedRecording(ctx, recording, null)
+            R.id.menu_record_program -> return recordSelectedProgram(ctx, program.eventId, programViewModel.getRecordingProfile(), htspVersion)
+            R.id.menu_record_program_and_edit -> {
                 programIdToBeEditedWhenBeingRecorded = program.eventId
-                return menuUtils.handleMenuRecordSelection(program.eventId)
+                return recordSelectedProgram(ctx, program.eventId, programViewModel.getRecordingProfile(), htspVersion)
             }
-            R.id.menu_record_once_custom_profile ->
-                return menuUtils.handleMenuCustomRecordSelection(program.eventId, program.channelId)
-            R.id.menu_record_series ->
-                return menuUtils.handleMenuSeriesRecordSelection(program.title)
-            R.id.menu_play ->
-                return menuUtils.handleMenuPlayChannel(program.channelId)
-            R.id.menu_cast ->
-                return menuUtils.handleMenuCast("channelId", program.channelId)
-            R.id.menu_add_notification -> {
-                activity?.let {
-                    addNotification(it, program, programViewModel.getRecordingProfile())
-                }
-                return true
-            }
-            else -> return super.onOptionsItemSelected(item)
+            R.id.menu_record_program_with_custom_profile -> return recordSelectedProgramWithCustomProfile(ctx, program.eventId, channelId, programViewModel.getRecordingProfileNames(), programViewModel.getRecordingProfile())
+            R.id.menu_record_program_as_series_recording -> return recordSelectedProgramAsSeriesRecording(ctx, program.title, programViewModel.getRecordingProfile(), htspVersion)
+            R.id.menu_play -> return playSelectedChannel(ctx, channelId)
+            R.id.menu_cast -> return castSelectedChannel(ctx, channelId)
+
+            R.id.menu_search_imdb -> return searchTitleOnImdbWebsite(ctx, program.title)
+            R.id.menu_search_fileaffinity -> return searchTitleOnFileAffinityWebsite(ctx, program.title)
+            R.id.menu_search_youtube -> return searchTitleOnYoutube(ctx, program.title)
+            R.id.menu_search_google -> return searchTitleOnGoogle(ctx, program.title)
+            R.id.menu_search_epg -> return searchTitleInTheLocalDatabase(ctx, program.title, program.channelId)
+
+            R.id.menu_add_notification -> return addNotificationForProgram(ctx, program, programViewModel.getRecordingProfile())
+            else -> return false
         }
     }
 

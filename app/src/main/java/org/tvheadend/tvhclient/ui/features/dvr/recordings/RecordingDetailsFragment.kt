@@ -1,6 +1,5 @@
 package org.tvheadend.tvhclient.ui.features.dvr.recordings
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.*
 import androidx.databinding.DataBindingUtil
@@ -13,9 +12,10 @@ import org.tvheadend.tvhclient.databinding.RecordingDetailsFragmentBinding
 import org.tvheadend.tvhclient.domain.entity.Recording
 import org.tvheadend.tvhclient.ui.base.BaseFragment
 import org.tvheadend.tvhclient.ui.common.*
+import org.tvheadend.tvhclient.util.extensions.gone
+import org.tvheadend.tvhclient.util.extensions.visible
 import org.tvheadend.tvhclient.ui.features.download.DownloadPermissionGrantedInterface
 import org.tvheadend.tvhclient.ui.features.download.DownloadRecordingManager
-import org.tvheadend.tvhclient.ui.features.dvr.RecordingAddEditActivity
 import org.tvheadend.tvhclient.ui.features.dvr.RecordingRemovedCallback
 
 // TODO put recording into the viewmodel
@@ -67,10 +67,9 @@ class RecordingDetailsFragment : BaseFragment(), RecordingRemovedCallback, Downl
     override fun onPrepareOptionsMenu(menu: Menu) {
         val ctx = context ?: return
         val recording = recording ?: return
-        // Show or hide search menu items in the main toolbar
-        prepareSearchMenu(menu, recording.title, isNetworkAvailable)
-        // Show or hide menus of the nested toolbar
-        prepareMenu(ctx, nested_toolbar.menu, null, recording, isNetworkAvailable, htspVersion, isUnlocked)
+        preparePopupOrToolbarSearchMenu(menu, recording.title, isNetworkAvailable)
+        preparePopupOrToolbarRecordingMenu(ctx, nested_toolbar.menu, recording, isNetworkAvailable, htspVersion, isUnlocked)
+        preparePopupOrToolbarMiscMenu(ctx, nested_toolbar.menu, null, isNetworkAvailable, isUnlocked)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -87,38 +86,26 @@ class RecordingDetailsFragment : BaseFragment(), RecordingRemovedCallback, Downl
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         val ctx = context ?: return super.onOptionsItemSelected(item)
-
-        // The recording might be null in case the viewmodel
-        // has not yet loaded the recording for the given id
         val recording = this.recording ?: return super.onOptionsItemSelected(item)
 
-        if (onMenuSelected(ctx, item.itemId, recording.title)) {
-            return true
-        }
         when (item.itemId) {
-            R.id.menu_play ->
-                return menuUtils.handleMenuPlayRecording(recording.id)
-            R.id.menu_cast ->
-                return menuUtils.handleMenuCast("dvrId", recording.id)
-            R.id.menu_download -> {
-                activity?.let {
-                    DownloadRecordingManager(it, connection, serverStatus, recording)
-                }
+            R.id.menu_stop_recording -> return showConfirmationToStopSelectedRecording(ctx, recording, this)
+            R.id.menu_cancel_recording -> return showConfirmationToCancelSelectedRecording(ctx, recording, this)
+            R.id.menu_remove_recording -> return showConfirmationToRemoveSelectedRecording(ctx, recording, this)
+            R.id.menu_edit_recording -> return editSelectedRecording(ctx, recording.id)
+            R.id.menu_play -> return playSelectedRecording(ctx, recording.id)
+            R.id.menu_cast -> return castSelectedRecording(ctx, recording.id)
+
+            R.id.menu_search_imdb -> return searchTitleOnImdbWebsite(ctx, recording.title)
+            R.id.menu_search_fileaffinity -> return searchTitleOnFileAffinityWebsite(ctx, recording.title)
+            R.id.menu_search_youtube -> return searchTitleOnYoutube(ctx, recording.title)
+            R.id.menu_search_google -> return searchTitleOnGoogle(ctx, recording.title)
+            R.id.menu_search_epg -> return searchTitleInTheLocalDatabase(ctx, recording.title)
+
+            R.id.menu_download_recording -> {
+                DownloadRecordingManager(activity, connection, serverStatus, recording)
                 return true
             }
-            R.id.menu_edit -> {
-                val editIntent = Intent(activity, RecordingAddEditActivity::class.java)
-                editIntent.putExtra("id", recording.id)
-                editIntent.putExtra("type", "recording")
-                activity?.startActivity(editIntent)
-                return true
-            }
-            R.id.menu_record_stop ->
-                return menuUtils.handleMenuStopRecordingSelection(recording, this)
-            R.id.menu_record_cancel ->
-                return menuUtils.handleMenuCancelRecordingSelection(recording, this)
-            R.id.menu_record_remove ->
-                return menuUtils.handleMenuRemoveRecordingSelection(recording, this)
             else -> return super.onOptionsItemSelected(item)
         }
     }
@@ -138,11 +125,7 @@ class RecordingDetailsFragment : BaseFragment(), RecordingRemovedCallback, Downl
     }
 
     override fun downloadRecording() {
-        activity?.let {
-            recording?.let { rec ->
-                DownloadRecordingManager(it, connection, serverStatus, rec)
-            }
-        }
+        DownloadRecordingManager(activity, connection, serverStatus, recording)
     }
 
     companion object {

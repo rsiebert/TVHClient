@@ -1,7 +1,6 @@
 package org.tvheadend.tvhclient.ui.features.dvr.recordings
 
 import android.app.SearchManager
-import android.content.Intent
 import android.os.Bundle
 import android.view.*
 import android.widget.Filter
@@ -17,9 +16,10 @@ import org.tvheadend.tvhclient.domain.entity.Recording
 import org.tvheadend.tvhclient.ui.base.BaseFragment
 import org.tvheadend.tvhclient.ui.common.*
 import org.tvheadend.tvhclient.ui.common.callbacks.RecyclerViewClickCallback
+import org.tvheadend.tvhclient.util.extensions.gone
+import org.tvheadend.tvhclient.util.extensions.visible
 import org.tvheadend.tvhclient.ui.features.download.DownloadPermissionGrantedInterface
 import org.tvheadend.tvhclient.ui.features.download.DownloadRecordingManager
-import org.tvheadend.tvhclient.ui.features.dvr.RecordingAddEditActivity
 import org.tvheadend.tvhclient.ui.features.search.SearchRequestInterface
 import timber.log.Timber
 import java.util.concurrent.CopyOnWriteArrayList
@@ -64,17 +64,10 @@ abstract class RecordingListFragment : BaseFragment(), RecyclerViewClickCallback
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        val ctx = context ?: return super.onOptionsItemSelected(item)
         return when (item.itemId) {
-            R.id.menu_add -> {
-                val intent = Intent(activity, RecordingAddEditActivity::class.java)
-                intent.putExtra("type", "recording")
-                activity?.startActivity(intent)
-                true
-            }
-            R.id.menu_record_remove_all -> {
-                val list = CopyOnWriteArrayList(recyclerViewAdapter.items)
-                menuUtils.handleMenuRemoveAllRecordingsSelection(list)
-            }
+            R.id.menu_add_recording -> addNewRecording(ctx)
+            R.id.menu_remove_all_recordings -> showConfirmationToRemoveAllRecordings(ctx, CopyOnWriteArrayList(recyclerViewAdapter.items))
             else -> super.onOptionsItemSelected(item)
         }
     }
@@ -90,7 +83,7 @@ abstract class RecordingListFragment : BaseFragment(), RecyclerViewClickCallback
         if (sharedPreferences.getBoolean("delete_all_recordings_menu_enabled", resources.getBoolean(R.bool.pref_default_delete_all_recordings_menu_enabled))
                 && recyclerViewAdapter.itemCount > 1
                 && isNetworkAvailable) {
-            menu.findItem(R.id.menu_record_remove_all)?.isVisible = true
+            menu.findItem(R.id.menu_remove_all_recordings)?.isVisible = true
         }
         // Hide the casting icon as a default.
         menu.findItem(R.id.media_route_menu_item)?.isVisible = false
@@ -138,47 +131,33 @@ abstract class RecordingListFragment : BaseFragment(), RecyclerViewClickCallback
         val popupMenu = PopupMenu(ctx, view)
         popupMenu.menuInflater.inflate(R.menu.recordings_popup_menu, popupMenu.menu)
         popupMenu.menuInflater.inflate(R.menu.external_search_options_menu, popupMenu.menu)
-        prepareSearchMenu(popupMenu.menu, recording.title, isNetworkAvailable)
-        prepareMenu(ctx, popupMenu.menu, null, recording, isNetworkAvailable, htspVersion, isUnlocked)
+
+        preparePopupOrToolbarRecordingMenu(ctx, popupMenu.menu, recording, isNetworkAvailable, htspVersion, isUnlocked)
+        preparePopupOrToolbarSearchMenu(popupMenu.menu, recording.title, isNetworkAvailable)
+        preparePopupOrToolbarMiscMenu(ctx, popupMenu.menu, null, isNetworkAvailable, isUnlocked)
 
         popupMenu.setOnMenuItemClickListener { item ->
-            if (onMenuSelected(ctx, item.itemId, recording.title)) {
-                return@setOnMenuItemClickListener true
-            }
             when (item.itemId) {
-                R.id.menu_record_stop ->
-                    return@setOnMenuItemClickListener menuUtils.handleMenuStopRecordingSelection(recording, null)
-                R.id.menu_record_cancel ->
-                    return@setOnMenuItemClickListener menuUtils.handleMenuCancelRecordingSelection(recording, null)
-                R.id.menu_record_remove ->
-                    return@setOnMenuItemClickListener menuUtils.handleMenuRemoveRecordingSelection(recording, null)
-                R.id.menu_play ->
-                    return@setOnMenuItemClickListener menuUtils.handleMenuPlayRecording(recording.id)
-                R.id.menu_cast ->
-                    return@setOnMenuItemClickListener menuUtils.handleMenuCast("dvrId", recording.id)
-                R.id.menu_download -> {
-                    activity?.let {
-                        DownloadRecordingManager(it, connection, serverStatus, recording)
-                    }
+                R.id.menu_stop_recording -> return@setOnMenuItemClickListener showConfirmationToStopSelectedRecording(ctx, recording, null)
+                R.id.menu_cancel_recording -> return@setOnMenuItemClickListener showConfirmationToCancelSelectedRecording(ctx, recording, null)
+                R.id.menu_remove_recording -> return@setOnMenuItemClickListener showConfirmationToRemoveSelectedRecording(ctx, recording, null)
+                R.id.menu_edit_recording -> return@setOnMenuItemClickListener editSelectedRecording(ctx, recording.id)
+                R.id.menu_play -> return@setOnMenuItemClickListener playSelectedRecording(ctx, recording.id)
+                R.id.menu_cast -> return@setOnMenuItemClickListener castSelectedRecording(ctx, recording.id)
+
+                R.id.menu_search_imdb -> return@setOnMenuItemClickListener searchTitleOnImdbWebsite(ctx, recording.title)
+                R.id.menu_search_fileaffinity -> return@setOnMenuItemClickListener searchTitleOnFileAffinityWebsite(ctx, recording.title)
+                R.id.menu_search_youtube -> return@setOnMenuItemClickListener searchTitleOnYoutube(ctx, recording.title)
+                R.id.menu_search_google -> return@setOnMenuItemClickListener searchTitleOnGoogle(ctx, recording.title)
+                R.id.menu_search_epg -> return@setOnMenuItemClickListener searchTitleInTheLocalDatabase(ctx, recording.title)
+
+                R.id.menu_disable_recording -> return@setOnMenuItemClickListener enableScheduledRecording(recording, false)
+                R.id.menu_enable_recording -> return@setOnMenuItemClickListener enableScheduledRecording(recording, true)
+                R.id.menu_download_recording -> {
+                    DownloadRecordingManager(activity, connection, serverStatus, recording)
                     return@setOnMenuItemClickListener true
                 }
-                R.id.menu_edit -> {
-                    val intent = Intent(activity, RecordingAddEditActivity::class.java)
-                    intent.putExtra("id", recording.id)
-                    intent.putExtra("type", "recording")
-                    activity?.startActivity(intent)
-                    return@setOnMenuItemClickListener true
-                }
-                R.id.menu_disable -> {
-                    enableScheduledRecording(recording, false)
-                    return@setOnMenuItemClickListener true
-                }
-                R.id.menu_enable -> {
-                    enableScheduledRecording(recording, true)
-                    return@setOnMenuItemClickListener true
-                }
-                else ->
-                    return@setOnMenuItemClickListener false
+                else -> return@setOnMenuItemClickListener false
             }
         }
         popupMenu.show()
@@ -187,9 +166,8 @@ abstract class RecordingListFragment : BaseFragment(), RecyclerViewClickCallback
     override fun onClick(view: View, position: Int) {
         selectedListPosition = position
         if (view.id == R.id.icon || view.id == R.id.icon_text) {
-            if (recyclerViewAdapter.itemCount > 0) {
-                val recording = recyclerViewAdapter.getItem(position)
-                menuUtils.handleMenuPlayRecordingIcon(recording!!.id)
+            recyclerViewAdapter.getItem(position)?.let {
+                playOrCastRecording(view.context, it.id)
             }
         } else {
             showRecordingDetails(position)
@@ -221,10 +199,7 @@ abstract class RecordingListFragment : BaseFragment(), RecyclerViewClickCallback
     }
 
     override fun downloadRecording() {
-        val rec = recyclerViewAdapter.getItem(selectedListPosition) ?: return
-        activity?.let {
-            DownloadRecordingManager(it, connection, serverStatus, rec)
-        }
+        DownloadRecordingManager(activity, connection, serverStatus, recyclerViewAdapter.getItem(selectedListPosition))
     }
 
     override fun onFilterComplete(i: Int) {
@@ -251,11 +226,12 @@ abstract class RecordingListFragment : BaseFragment(), RecyclerViewClickCallback
 
     abstract override fun getQueryHint(): String
 
-    private fun enableScheduledRecording(recording: Recording, enabled: Boolean) {
+    private fun enableScheduledRecording(recording: Recording, enabled: Boolean): Boolean {
         val intent = recordingViewModel.getIntentData(recording)
         intent.action = "updateDvrEntry"
         intent.putExtra("id", recordingViewModel.recording.id)
         intent.putExtra("enabled", if (enabled) 1 else 0)
         activity?.startService(intent)
+        return true
     }
 }

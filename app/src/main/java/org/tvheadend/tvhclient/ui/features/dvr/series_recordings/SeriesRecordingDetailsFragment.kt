@@ -1,6 +1,5 @@
 package org.tvheadend.tvhclient.ui.features.dvr.series_recordings
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.*
 import androidx.databinding.DataBindingUtil
@@ -12,11 +11,9 @@ import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.databinding.SeriesRecordingDetailsFragmentBinding
 import org.tvheadend.tvhclient.domain.entity.SeriesRecording
 import org.tvheadend.tvhclient.ui.base.BaseFragment
-import org.tvheadend.tvhclient.ui.common.gone
-import org.tvheadend.tvhclient.ui.common.onMenuSelected
-import org.tvheadend.tvhclient.ui.common.prepareSearchMenu
-import org.tvheadend.tvhclient.ui.common.visible
-import org.tvheadend.tvhclient.ui.features.dvr.RecordingAddEditActivity
+import org.tvheadend.tvhclient.ui.common.*
+import org.tvheadend.tvhclient.util.extensions.gone
+import org.tvheadend.tvhclient.util.extensions.visible
 import org.tvheadend.tvhclient.ui.features.dvr.RecordingRemovedCallback
 
 // TODO put recording into the viewmodel
@@ -67,10 +64,10 @@ class SeriesRecordingDetailsFragment : BaseFragment(), RecordingRemovedCallback 
 
     override fun onPrepareOptionsMenu(menu: Menu) {
         val recording = this.recording ?: return
-        prepareSearchMenu(menu, recording.title, isNetworkAvailable)
+        preparePopupOrToolbarSearchMenu(menu, recording.title, isNetworkAvailable)
 
-        nested_toolbar.menu.findItem(R.id.menu_edit)?.isVisible = true
-        nested_toolbar.menu.findItem(R.id.menu_record_remove)?.isVisible = true
+        nested_toolbar.menu.findItem(R.id.menu_edit_recording)?.isVisible = true
+        nested_toolbar.menu.findItem(R.id.menu_remove_recording)?.isVisible = true
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -87,23 +84,17 @@ class SeriesRecordingDetailsFragment : BaseFragment(), RecordingRemovedCallback 
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         val ctx = context ?: return super.onOptionsItemSelected(item)
-        // The recording might be null in case the viewmodel
-        // has not yet loaded the recording for the given id
         val recording = this.recording ?: return super.onOptionsItemSelected(item)
 
-        if (onMenuSelected(ctx, item.itemId, recording.title)) {
-            return true
-        }
         return when (item.itemId) {
-            R.id.menu_edit -> {
-                val intent = Intent(activity, RecordingAddEditActivity::class.java)
-                intent.putExtra("type", "series_recording")
-                intent.putExtra("id", recording.id)
-                activity?.startActivity(intent)
-                true
-            }
-            R.id.menu_record_remove ->
-                menuUtils.handleMenuRemoveSeriesRecordingSelection(recording, this)
+            R.id.menu_edit_recording -> return editSelectedSeriesRecording(ctx, recording.id)
+            R.id.menu_remove_recording -> showConfirmationToRemoveSelectedSeriesRecording(ctx, recording, this)
+
+            R.id.menu_search_imdb -> return searchTitleOnImdbWebsite(ctx, recording.title)
+            R.id.menu_search_fileaffinity -> return searchTitleOnFileAffinityWebsite(ctx, recording.title)
+            R.id.menu_search_youtube -> return searchTitleOnYoutube(ctx, recording.title)
+            R.id.menu_search_google -> return searchTitleOnGoogle(ctx, recording.title)
+            R.id.menu_search_epg -> return searchTitleInTheLocalDatabase(ctx, recording.title)
             else -> super.onOptionsItemSelected(item)
         }
     }

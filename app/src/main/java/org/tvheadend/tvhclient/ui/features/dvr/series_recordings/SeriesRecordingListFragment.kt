@@ -1,7 +1,6 @@
 package org.tvheadend.tvhclient.ui.features.dvr.series_recordings
 
 import android.app.SearchManager
-import android.content.Intent
 import android.os.Bundle
 import android.view.*
 import android.widget.Filter
@@ -16,12 +15,10 @@ import kotlinx.android.synthetic.main.recyclerview_fragment.*
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.domain.entity.SeriesRecording
 import org.tvheadend.tvhclient.ui.base.BaseFragment
+import org.tvheadend.tvhclient.ui.common.*
 import org.tvheadend.tvhclient.ui.common.callbacks.RecyclerViewClickCallback
-import org.tvheadend.tvhclient.ui.common.gone
-import org.tvheadend.tvhclient.ui.common.onMenuSelected
-import org.tvheadend.tvhclient.ui.common.prepareSearchMenu
-import org.tvheadend.tvhclient.ui.common.visible
-import org.tvheadend.tvhclient.ui.features.dvr.RecordingAddEditActivity
+import org.tvheadend.tvhclient.util.extensions.gone
+import org.tvheadend.tvhclient.util.extensions.visible
 import org.tvheadend.tvhclient.ui.features.search.SearchRequestInterface
 import java.util.concurrent.CopyOnWriteArrayList
 
@@ -91,17 +88,10 @@ class SeriesRecordingListFragment : BaseFragment(), RecyclerViewClickCallback, S
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        val ctx = context ?: return super.onOptionsItemSelected(item)
         return when (item.itemId) {
-            R.id.menu_add -> {
-                val intent = Intent(activity, RecordingAddEditActivity::class.java)
-                intent.putExtra("type", "series_recording")
-                activity?.startActivity(intent)
-                true
-            }
-            R.id.menu_record_remove_all -> {
-                val list = CopyOnWriteArrayList(recyclerViewAdapter.items)
-                menuUtils.handleMenuRemoveAllSeriesRecordingSelection(list)
-            }
+            R.id.menu_add_recording -> addNewSeriesRecording(ctx)
+            R.id.menu_remove_all_recordings -> showConfirmationToRemoveAllSeriesRecordings(ctx, CopyOnWriteArrayList(recyclerViewAdapter.items))
             else -> super.onOptionsItemSelected(item)
         }
     }
@@ -117,10 +107,10 @@ class SeriesRecordingListFragment : BaseFragment(), RecyclerViewClickCallback, S
         if (sharedPreferences.getBoolean("delete_all_recordings_menu_enabled", resources.getBoolean(R.bool.pref_default_delete_all_recordings_menu_enabled))
                 && recyclerViewAdapter.itemCount > 1
                 && isNetworkAvailable) {
-            menu.findItem(R.id.menu_record_remove_all)?.isVisible = true
+            menu.findItem(R.id.menu_remove_all_recordings)?.isVisible = true
         }
 
-        menu.findItem(R.id.menu_add)?.isVisible = isUnlocked && isNetworkAvailable
+        menu.findItem(R.id.menu_add_recording)?.isVisible = isUnlocked && isNetworkAvailable
         menu.findItem(R.id.menu_search)?.isVisible = recyclerViewAdapter.itemCount > 0
         menu.findItem(R.id.media_route_menu_item)?.isVisible = false
     }
@@ -166,46 +156,36 @@ class SeriesRecordingListFragment : BaseFragment(), RecyclerViewClickCallback, S
         popupMenu.menuInflater.inflate(R.menu.series_recordings_popup_menu, popupMenu.menu)
         popupMenu.menuInflater.inflate(R.menu.external_search_options_menu, popupMenu.menu)
 
-        prepareSearchMenu(popupMenu.menu, seriesRecording.title, isNetworkAvailable)
-        popupMenu.menu.findItem(R.id.menu_edit)?.isVisible = isUnlocked
-        popupMenu.menu.findItem(R.id.menu_disable)?.isVisible = htspVersion >= 19 && isUnlocked && seriesRecording.isEnabled
-        popupMenu.menu.findItem(R.id.menu_enable)?.isVisible = htspVersion >= 19 && isUnlocked && !seriesRecording.isEnabled
+        preparePopupOrToolbarSearchMenu(popupMenu.menu, seriesRecording.title, isNetworkAvailable)
+        popupMenu.menu.findItem(R.id.menu_edit_recording)?.isVisible = isUnlocked
+        popupMenu.menu.findItem(R.id.menu_disable_recording)?.isVisible = htspVersion >= 19 && isUnlocked && seriesRecording.isEnabled
+        popupMenu.menu.findItem(R.id.menu_enable_recording)?.isVisible = htspVersion >= 19 && isUnlocked && !seriesRecording.isEnabled
 
         popupMenu.setOnMenuItemClickListener { item ->
-            if (onMenuSelected(ctx, item.itemId, seriesRecording.title)) {
-                return@setOnMenuItemClickListener true
-            }
             when (item.itemId) {
-                R.id.menu_edit -> {
-                    val intent = Intent(activity, RecordingAddEditActivity::class.java)
-                    intent.putExtra("id", seriesRecording.id)
-                    intent.putExtra("type", "series_recording")
-                    activity?.startActivity(intent)
-                    return@setOnMenuItemClickListener true
-                }
-                R.id.menu_record_remove -> {
-                    return@setOnMenuItemClickListener menuUtils.handleMenuRemoveSeriesRecordingSelection(seriesRecording, null)
-                }
-                R.id.menu_disable -> {
-                    enableSeriesRecording(seriesRecording, false)
-                    return@setOnMenuItemClickListener true
-                }
-                R.id.menu_enable -> {
-                    enableSeriesRecording(seriesRecording, true)
-                    return@setOnMenuItemClickListener true
-                }
+                R.id.menu_edit_recording -> return@setOnMenuItemClickListener editSelectedSeriesRecording(ctx, seriesRecording.id)
+                R.id.menu_remove_recording -> return@setOnMenuItemClickListener showConfirmationToRemoveSelectedSeriesRecording(ctx, seriesRecording, null)
+                R.id.menu_disable_recording -> return@setOnMenuItemClickListener enableSeriesRecording(seriesRecording, false)
+                R.id.menu_enable_recording -> return@setOnMenuItemClickListener enableSeriesRecording(seriesRecording, true)
+
+                R.id.menu_search_imdb -> return@setOnMenuItemClickListener searchTitleOnImdbWebsite(ctx, seriesRecording.title)
+                R.id.menu_search_fileaffinity -> return@setOnMenuItemClickListener searchTitleOnFileAffinityWebsite(ctx, seriesRecording.title)
+                R.id.menu_search_youtube -> return@setOnMenuItemClickListener searchTitleOnYoutube(ctx, seriesRecording.title)
+                R.id.menu_search_google -> return@setOnMenuItemClickListener searchTitleOnGoogle(ctx, seriesRecording.title)
+                R.id.menu_search_epg -> return@setOnMenuItemClickListener searchTitleInTheLocalDatabase(ctx, seriesRecording.title)
                 else -> return@setOnMenuItemClickListener false
             }
         }
         popupMenu.show()
     }
 
-    private fun enableSeriesRecording(seriesRecording: SeriesRecording, enabled: Boolean) {
+    private fun enableSeriesRecording(seriesRecording: SeriesRecording, enabled: Boolean): Boolean {
         val intent = seriesRecordingViewModel.getIntentData(seriesRecording)
         intent.action = "updateAutorecEntry"
         intent.putExtra("id", seriesRecording.id)
         intent.putExtra("enabled", if (enabled) 1 else 0)
         activity?.startService(intent)
+        return true
     }
 
     override fun onClick(view: View, position: Int) {
