@@ -20,6 +20,9 @@ import com.squareup.picasso.Transformation
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.domain.entity.ProgramInterface
 import org.tvheadend.tvhclient.domain.entity.Recording
+import org.tvheadend.tvhclient.util.extensions.gone
+import org.tvheadend.tvhclient.util.extensions.visible
+import org.tvheadend.tvhclient.util.extensions.visibleOrGone
 import org.tvheadend.tvhclient.util.getIconUrl
 import timber.log.Timber
 import java.text.SimpleDateFormat
@@ -504,18 +507,16 @@ fun setLocalizedTime(view: TextView, time: Long) {
         return
     }
 
-    var localizedTime = ""
-
     val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(view.context)
-    if (sharedPreferences.getBoolean("localized_date_time_format_enabled", view.context.resources.getBoolean(R.bool.pref_default_localized_date_time_format_enabled))) {
+    val localizedTime = if (sharedPreferences.getBoolean("localized_date_time_format_enabled", view.context.resources.getBoolean(R.bool.pref_default_localized_date_time_format_enabled))) {
         // Show the date as defined with the currently active locale.
         // For the date display the short version will be used
         val df = java.text.DateFormat.getTimeInstance(java.text.DateFormat.SHORT, getLocale(view.context))
-        localizedTime = df.format(time)
+        df.format(time)
     } else {
         // Show the date using the default format like 31.07.2013
         val sdf = SimpleDateFormat("HH:mm", Locale.US)
-        localizedTime = sdf.format(time)
+        sdf.format(time)
     }
     view.text = localizedTime
 }
@@ -563,15 +564,15 @@ fun setLocalizedDate(view: TextView, date: Long) {
         "2 days ago" -> localizedDate = context.getString(R.string.two_days_ago)
         else -> {
             val prefs = PreferenceManager.getDefaultSharedPreferences(context)
-            if (prefs.getBoolean("localized_date_time_format_enabled", false)) {
+            localizedDate = if (prefs.getBoolean("localized_date_time_format_enabled", false)) {
                 // Show the date as defined with the currently active locale.
                 // For the date display the short version will be used
                 val df = java.text.DateFormat.getDateInstance(java.text.DateFormat.SHORT, getLocale(view.context))
-                localizedDate = df.format(date)
+                df.format(date)
             } else {
                 // Show the date using the default format like 31.07.2013
                 val sdf = SimpleDateFormat("dd.MM.yyyy", Locale.US)
-                localizedDate = sdf.format(date)
+                sdf.format(date)
             }
         }
     }
