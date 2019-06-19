@@ -27,8 +27,10 @@ class ServerStatusData(private val db: AppRoomDatabase) : DataSourceInterface<Se
                     val connection = db.connectionDao.loadActiveConnectionSync()
                     serverStatus.serverName = "Unknown"
                     serverStatus.serverVersion = "Unknown"
-                    serverStatus.connectionId = connection.id
-                    serverStatus.connectionName = connection.name
+                    if (connection != null) {
+                        serverStatus.connectionId = connection.id
+                        serverStatus.connectionName = connection.name
+                    }
                 } else {
                     serverStatus = newServerStatus
                 }
