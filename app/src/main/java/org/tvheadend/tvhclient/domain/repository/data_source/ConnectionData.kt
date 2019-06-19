@@ -18,7 +18,10 @@ class ConnectionData(private val db: AppRoomDatabase) : DataSourceInterface<Conn
         get() {
             var connection = Connection().also { it.id = -1 }
             runBlocking(Dispatchers.IO) {
-                connection = db.connectionDao.loadActiveConnectionSync()
+                val c = db.connectionDao.loadActiveConnectionSync()
+                if (c != null) {
+                    connection = c
+                }
             }
             return connection
         }

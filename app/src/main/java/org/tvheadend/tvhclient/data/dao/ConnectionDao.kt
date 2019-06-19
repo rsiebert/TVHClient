@@ -20,7 +20,7 @@ interface ConnectionDao {
     fun loadActiveConnection(): LiveData<Connection>
 
     @Query("SELECT * FROM connections WHERE active = 1")
-    fun loadActiveConnectionSync(): Connection
+    fun loadActiveConnectionSync(): Connection?
 
     @Query("SELECT * FROM connections WHERE id = :id")
     fun loadConnectionByIdSync(id: Int): Connection
