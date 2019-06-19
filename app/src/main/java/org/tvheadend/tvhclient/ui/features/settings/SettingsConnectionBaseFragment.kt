@@ -24,7 +24,6 @@ abstract class SettingsConnectionBaseFragment : PreferenceFragmentCompat(), Back
     lateinit var toolbarInterface: ToolbarInterface
     lateinit var connection: Connection
     lateinit var settingsViewModel: SettingsViewModel
-    internal var connectionValuesChanged: Boolean = false
 
     private lateinit var namePreference: EditTextPreference
     private lateinit var hostnamePreference: EditTextPreference
@@ -32,7 +31,7 @@ abstract class SettingsConnectionBaseFragment : PreferenceFragmentCompat(), Back
     private lateinit var streamingPortPreference: EditTextPreference
     private lateinit var usernamePreference: EditTextPreference
     private lateinit var passwordPreference: EditTextPreference
-    private lateinit var activeEnabledPreference: CheckBoxPreference
+    lateinit var activeEnabledPreference: CheckBoxPreference
     private lateinit var wolMacAddressPreference: EditTextPreference
     private lateinit var wolPortPreference: EditTextPreference
     private lateinit var wolEnabledPreference: CheckBoxPreference
@@ -47,6 +46,10 @@ abstract class SettingsConnectionBaseFragment : PreferenceFragmentCompat(), Back
 
         settingsViewModel = ViewModelProviders.of(activity as AppCompatActivity).get(SettingsViewModel::class.java)
         setHasOptionsMenu(true)
+
+        if (savedInstanceState == null) {
+            settingsViewModel.connectionHasChanged = false
+        }
 
         // Get the connectivity preferences for later usage
         namePreference = findPreference("name")!!
@@ -147,7 +150,7 @@ abstract class SettingsConnectionBaseFragment : PreferenceFragmentCompat(), Back
      * the input will be discarded and the activity will be closed.
      */
     private fun cancel() {
-        if (!connectionValuesChanged) {
+        if (!settingsViewModel.connectionHasChanged) {
             activity?.finish()
         } else {
             // Show confirmation dialog to cancel
@@ -168,16 +171,18 @@ abstract class SettingsConnectionBaseFragment : PreferenceFragmentCompat(), Back
     override fun onPreferenceChange(preference: Preference, o: Any): Boolean {
         val value = o.toString()
         when (preference.key) {
-            "name" -> if (connection.isNameValid(value)) {
-                connection.name = value
-                namePreference.text = value
-                namePreference.summary = if (value.isEmpty()) getString(R.string.pref_name_sum) else value
-            } else {
-                namePreference.text = connection.name
-                context?.sendSnackbarMessage(R.string.pref_name_error_invalid)
+            "name" -> {
+                if (connection.isNameValid(value)) {
+                    connection.name = value
+                    namePreference.text = value
+                    namePreference.summary = if (value.isEmpty()) getString(R.string.pref_name_sum) else value
+                } else {
+                    namePreference.text = connection.name
+                    context?.sendSnackbarMessage(R.string.pref_name_error_invalid)
+                }
             }
             "hostname" -> {
-                connectionValuesChanged = true
+                settingsViewModel.connectionHasChanged = true
                 if (connection.isIpAddressValid(value)) {
                     connection.hostname = value
                     hostnamePreference.text = value
@@ -188,7 +193,7 @@ abstract class SettingsConnectionBaseFragment : PreferenceFragmentCompat(), Back
                 }
             }
             "htsp_port" -> {
-                connectionValuesChanged = true
+                settingsViewModel.connectionHasChanged = true
                 try {
                     val port = Integer.parseInt(value)
                     if (connection.isPortValid(port)) {
@@ -202,10 +207,9 @@ abstract class SettingsConnectionBaseFragment : PreferenceFragmentCompat(), Back
                 } catch (nex: NumberFormatException) {
                     // NOP
                 }
-
             }
             "streaming_port" -> {
-                connectionValuesChanged = true
+                settingsViewModel.connectionHasChanged = true
                 try {
                     val port = Integer.parseInt(value)
                     if (connection.isPortValid(port)) {
@@ -219,22 +223,21 @@ abstract class SettingsConnectionBaseFragment : PreferenceFragmentCompat(), Back
                 } catch (e: NumberFormatException) {
                     // NOP
                 }
-
             }
             "username" -> {
-                connectionValuesChanged = true
+                settingsViewModel.connectionHasChanged = true
                 connection.username = value
                 usernamePreference.text = value
                 usernamePreference.summary = if (value.isEmpty()) getString(R.string.pref_user_sum) else value
             }
             "password" -> {
-                connectionValuesChanged = true
+                settingsViewModel.connectionHasChanged = true
                 connection.password = value
                 passwordPreference.text = value
                 passwordPreference.summary = if (value.isEmpty()) getString(R.string.pref_pass_sum) else getString(R.string.pref_pass_set_sum)
             }
             "active_enabled" -> {
-                connectionValuesChanged = true
+                settingsViewModel.connectionHasChanged = true
                 // When the connection was set as the new active
                 // connection, an initial sync is required
                 val isActive = java.lang.Boolean.valueOf(value)
@@ -244,29 +247,34 @@ abstract class SettingsConnectionBaseFragment : PreferenceFragmentCompat(), Back
                 }
                 connection.isActive = java.lang.Boolean.valueOf(value)
             }
-            "wol_enabled" -> connection.isWolEnabled = java.lang.Boolean.valueOf(value)
-            "wol_mac_address" -> if (connection.isWolMacAddressValid(value)) {
-                connection.wolMacAddress = value
-                wolMacAddressPreference.text = value
-                wolMacAddressPreference.summary = if (value.isEmpty()) getString(R.string.pref_wol_address_sum) else value
-            } else {
-                wolMacAddressPreference.text = connection.wolMacAddress
-                context?.sendSnackbarMessage(R.string.pref_wol_address_invalid)
+            "wol_enabled" -> {
+                connection.isWolEnabled = java.lang.Boolean.valueOf(value)
             }
-            "wol_port" -> try {
-                val port = Integer.parseInt(value)
-                if (connection.isPortValid(port)) {
-                    connection.wolPort = port
-                    wolPortPreference.text = value
-                    wolPortPreference.summary = getString(R.string.pref_wol_port_sum, port)
+            "wol_mac_address" -> {
+                if (connection.isWolMacAddressValid(value)) {
+                    connection.wolMacAddress = value
+                    wolMacAddressPreference.text = value
+                    wolMacAddressPreference.summary = if (value.isEmpty()) getString(R.string.pref_wol_address_sum) else value
                 } else {
-                    wolPortPreference.text = connection.wolPort.toString()
-                    context?.sendSnackbarMessage(R.string.pref_port_error_invalid)
+                    wolMacAddressPreference.text = connection.wolMacAddress
+                    context?.sendSnackbarMessage(R.string.pref_wol_address_invalid)
                 }
-            } catch (e: NumberFormatException) {
-                // NOP
             }
-
+            "wol_port" -> {
+                try {
+                    val port = Integer.parseInt(value)
+                    if (connection.isPortValid(port)) {
+                        connection.wolPort = port
+                        wolPortPreference.text = value
+                        wolPortPreference.summary = getString(R.string.pref_wol_port_sum, port)
+                    } else {
+                        wolPortPreference.text = connection.wolPort.toString()
+                        context?.sendSnackbarMessage(R.string.pref_port_error_invalid)
+                    }
+                } catch (e: NumberFormatException) {
+                    // NOP
+                }
+            }
             "wol_broadcast_enabled" -> connection.isWolUseBroadcast = java.lang.Boolean.valueOf(value)
         }
         return true

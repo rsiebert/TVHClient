@@ -22,24 +22,24 @@ class SettingsViewModel : ViewModel() {
     lateinit var appRepository: AppRepository
     @Inject
     lateinit var sharedPreferences: SharedPreferences
-
     val allConnections: LiveData<List<Connection>>
+
     val serverStatusLiveData: LiveData<ServerStatus>
     val connection: Connection
+    var connectionCount: Int
 
     val activeConnectionId: Int
         get() {
             return appRepository.connectionData.activeItem.id
         }
 
-    var connectionHasChanged: Boolean
-        get() = sharedPreferences.getBoolean("connection_value_changed", false)
-        set(change) = sharedPreferences.edit().putBoolean("connection_value_changed", change).apply()
+    var connectionHasChanged: Boolean = false
 
     init {
         MainApplication.component.inject(this)
         allConnections = appRepository.connectionData.getLiveDataItems()
         connection = appRepository.connectionData.activeItem
+        connectionCount = appRepository.connectionData.getItems().size
         serverStatusLiveData = appRepository.serverStatusData.liveDataActiveItem
     }
 
