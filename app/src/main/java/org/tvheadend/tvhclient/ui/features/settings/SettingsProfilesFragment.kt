@@ -29,28 +29,26 @@ class SettingsProfilesFragment : BasePreferenceFragment() {
 
         settingsViewModel.serverStatusLiveData.observe(viewLifecycleOwner, Observer { serverStatus ->
             currentServerStatus = serverStatus
-            showProfileInformation()
+
+            addProfileValuesToListPreference(htspPlaybackProfilesPreference, settingsViewModel.getHtspProfiles(), currentServerStatus.htspPlaybackServerProfileId)
+            addProfileValuesToListPreference(httpPlaybackProfilesPreference, settingsViewModel.getHttpProfiles(), currentServerStatus.httpPlaybackServerProfileId)
+            addProfileValuesToListPreference(recordingProfilesPreference, settingsViewModel.getRecordingProfiles(), currentServerStatus.recordingServerProfileId)
+            addProfileValuesToListPreference(castingProfilesPreference, settingsViewModel.getHttpProfiles(), currentServerStatus.castingServerProfileId)
+
+            setHttpPlaybackPreferenceSummary()
+            setHtspPlaybackPreferenceSummary()
+            setRecordingPreferenceSummary()
+            setCastingPreferenceSummary()
+
             initProfileChangeListeners()
         })
-    }
-
-    private fun showProfileInformation() {
-        addProfiles(htspPlaybackProfilesPreference, settingsViewModel.getHtspProfiles(), currentServerStatus.htspPlaybackServerProfileId)
-        addProfiles(httpPlaybackProfilesPreference, settingsViewModel.getHttpProfiles(), currentServerStatus.httpPlaybackServerProfileId)
-        addProfiles(recordingProfilesPreference, settingsViewModel.getRecordingProfiles(), currentServerStatus.recordingServerProfileId)
-        addProfiles(castingProfilesPreference, settingsViewModel.getHttpProfiles(), currentServerStatus.castingServerProfileId)
-
-        setHttpPlaybackProfileListSummary()
-        setHtspPlaybackProfileListSummary()
-        setRecordingProfileListSummary()
-        setCastingProfileListSummary()
     }
 
     private fun initProfileChangeListeners() {
         htspPlaybackProfilesPreference.setOnPreferenceChangeListener { _, o ->
             currentServerStatus.let {
                 it.htspPlaybackServerProfileId = Integer.valueOf(o as String)
-                setHtspPlaybackProfileListSummary()
+                setHtspPlaybackPreferenceSummary()
                 settingsViewModel.updateServerStatus(it)
             }
             true
@@ -58,7 +56,7 @@ class SettingsProfilesFragment : BasePreferenceFragment() {
         httpPlaybackProfilesPreference.setOnPreferenceChangeListener { _, o ->
             currentServerStatus.let {
                 it.httpPlaybackServerProfileId = Integer.valueOf(o as String)
-                setHttpPlaybackProfileListSummary()
+                setHttpPlaybackPreferenceSummary()
                 settingsViewModel.updateServerStatus(it)
             }
             true
@@ -66,7 +64,7 @@ class SettingsProfilesFragment : BasePreferenceFragment() {
         recordingProfilesPreference.setOnPreferenceChangeListener { _, o ->
             currentServerStatus.let {
                 it.recordingServerProfileId = Integer.valueOf(o as String)
-                setRecordingProfileListSummary()
+                setRecordingPreferenceSummary()
                 settingsViewModel.updateServerStatus(it)
             }
             true
@@ -76,7 +74,7 @@ class SettingsProfilesFragment : BasePreferenceFragment() {
             castingProfilesPreference.setOnPreferenceChangeListener { _, o ->
                 currentServerStatus.let {
                     it.castingServerProfileId = Integer.valueOf(o as String)
-                    setCastingProfileListSummary()
+                    setCastingPreferenceSummary()
                     settingsViewModel.updateServerStatus(it)
                 }
                 true
@@ -93,7 +91,7 @@ class SettingsProfilesFragment : BasePreferenceFragment() {
         setPreferencesFromResource(R.xml.preferences_profiles, rootKey)
     }
 
-    private fun setHtspPlaybackProfileListSummary() {
+    private fun setHtspPlaybackPreferenceSummary() {
         if (currentServerStatus.htspPlaybackServerProfileId == 0) {
             htspPlaybackProfilesPreference.summary = "None"
         } else {
@@ -102,7 +100,7 @@ class SettingsProfilesFragment : BasePreferenceFragment() {
         }
     }
 
-    private fun setHttpPlaybackProfileListSummary() {
+    private fun setHttpPlaybackPreferenceSummary() {
         if (currentServerStatus.httpPlaybackServerProfileId == 0) {
             httpPlaybackProfilesPreference.summary = "None"
         } else {
@@ -111,7 +109,7 @@ class SettingsProfilesFragment : BasePreferenceFragment() {
         }
     }
 
-    private fun setRecordingProfileListSummary() {
+    private fun setRecordingPreferenceSummary() {
         if (currentServerStatus.recordingServerProfileId == 0) {
             recordingProfilesPreference.summary = "None"
         } else {
@@ -120,7 +118,7 @@ class SettingsProfilesFragment : BasePreferenceFragment() {
         }
     }
 
-    private fun setCastingProfileListSummary() {
+    private fun setCastingPreferenceSummary() {
         if (currentServerStatus.castingServerProfileId == 0) {
             castingProfilesPreference.summary = "None"
         } else {
@@ -129,7 +127,7 @@ class SettingsProfilesFragment : BasePreferenceFragment() {
         }
     }
 
-    private fun addProfiles(listPreference: ListPreference?, serverProfileList: List<ServerProfile>, selectedIndex: Int) {
+    private fun addProfileValuesToListPreference(listPreference: ListPreference?, serverProfileList: List<ServerProfile>, selectedIndex: Int) {
         // Initialize the arrays that contain the profile values
         val size = serverProfileList.size + 1
         val entries = arrayOfNulls<CharSequence>(size)
