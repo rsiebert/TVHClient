@@ -68,12 +68,9 @@ class HtspSubscriptionExtractor implements Extractor {
     @Override
     public boolean sniff(ExtractorInput input) throws IOException, InterruptedException {
         ParsableByteArray scratch = new ParsableByteArray(HtspSubscriptionDataSource.HEADER.length);
-
         // Find 8 bytes equal to HEADER at the start of the input.
         input.peekFully(scratch.data, 0, HtspSubscriptionDataSource.HEADER.length);
-
         return Arrays.equals(scratch.data, HtspSubscriptionDataSource.HEADER);
-
     }
 
     @Override
@@ -86,11 +83,9 @@ class HtspSubscriptionExtractor implements Extractor {
     @Override
     public int read(ExtractorInput input, PositionHolder seekPosition) throws IOException, InterruptedException {
         int bytesRead = input.read(mRawBytes, 0, mRawBytes.length);
-
-        Timber.v( "Read " + bytesRead + " bytes");
+        Timber.d( "Read " + bytesRead + " bytes");
 
         ObjectInputStream objectInput = null;
-
         try (
                 // N.B. Don't add the objectInput to this bit, it breaks stuff
                 ByteArrayInputStream inputStream = new ByteArrayInputStream(mRawBytes, 0, bytesRead)
@@ -114,7 +109,6 @@ class HtspSubscriptionExtractor implements Extractor {
                 // Ignore
             }
         }
-
         return RESULT_CONTINUE;
     }
 
@@ -141,7 +135,7 @@ class HtspSubscriptionExtractor implements Extractor {
     }
 
     private void handleSubscriptionStart(@NonNull final HtspMessage message) {
-        Timber.i( "Handling Subscription Start");
+        Timber.d( "Handling Subscription Start");
 
         StreamReadersFactory streamReadersFactory = new StreamReadersFactory();
 

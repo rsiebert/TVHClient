@@ -151,7 +151,7 @@ public class HtspSubscriptionDataSource implements DataSource, Closeable, HtspMe
 
         if (!isSubscribed) {
             String path = dataSpec.uri.getPath();
-            Timber.d("We are not yet subscribed to path " + path);
+            Timber.d("We are not yet subscribed to path %s", path);
             if (path != null && path.length() > 0 ) {
 
                 int channelId = Integer.parseInt(path.substring(1));
@@ -170,7 +170,7 @@ public class HtspSubscriptionDataSource implements DataSource, Closeable, HtspMe
                 htspConnection.sendMessage(request, response -> {
                     Timber.d("Received subscribe response");
                     int availableTimeshiftPeriod = response.getInteger("timeshiftPeriod", 0);
-                    Timber.d("Available timeshift period in seconds: " + availableTimeshiftPeriod);
+                    Timber.d("Available timeshift period in seconds: %s", availableTimeshiftPeriod);
                 });
                 isSubscribed = true;
             }
