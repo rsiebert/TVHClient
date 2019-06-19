@@ -1,6 +1,5 @@
 package org.tvheadend.tvhclient.ui.features.playback.internal;
 
-import android.content.Context;
 import android.net.Uri;
 
 import com.google.android.exoplayer2.upstream.DataSource;
@@ -24,7 +23,6 @@ public class HtspFileInputStreamDataSource implements DataSource, Closeable, Hts
     private static final AtomicInteger dataSourceCount = new AtomicInteger();
     private static final AtomicInteger subscriptionCount = new AtomicInteger();
 
-    private final Context context;
     private final HtspConnection htspConnection;
     private DataSpec dataSpec;
     private final int dataSourceNumber;
@@ -38,20 +36,18 @@ public class HtspFileInputStreamDataSource implements DataSource, Closeable, Hts
 
     public static class Factory implements DataSource.Factory {
 
-        private final Context context;
         private final HtspConnection htspConnection;
         private HtspFileInputStreamDataSource dataSource;
 
-        Factory(Context context, HtspConnection htspConnection) {
+        Factory(HtspConnection htspConnection) {
             Timber.d("Initializing subscription data source factory");
-            this.context = context;
             this.htspConnection = htspConnection;
         }
 
         @Override
         public DataSource createDataSource() {
             Timber.d("Created new data source from factory");
-            dataSource = new HtspFileInputStreamDataSource(context, htspConnection);
+            dataSource = new HtspFileInputStreamDataSource(htspConnection);
             return dataSource;
         }
 
@@ -68,9 +64,8 @@ public class HtspFileInputStreamDataSource implements DataSource, Closeable, Hts
         }
     }
 
-    private HtspFileInputStreamDataSource(Context mContext, HtspConnection htspConnection) {
+    private HtspFileInputStreamDataSource(HtspConnection htspConnection) {
         Timber.d("Initializing file input data source");
-        this.context = mContext;
         this.htspConnection = htspConnection;
         this.htspConnection.addMessageListener(this);
         this.dataSourceNumber = dataSourceCount.incrementAndGet();
@@ -127,7 +122,7 @@ public class HtspFileInputStreamDataSource implements DataSource, Closeable, Hts
         final HtspResponseListener fileReadHandler = response -> {
             if (response.containsKey("error")) {
                 String error = response.getString("error");
-                Timber.d("Error reading file at offset 0: " + error);
+                Timber.d("Error reading file at offset 0: %s", error);
 
             } else {
                 final byte[] data = response.getByteArray("data");
@@ -147,10 +142,10 @@ public class HtspFileInputStreamDataSource implements DataSource, Closeable, Hts
         htspConnection.sendMessage(fileOpenRequest, response -> {
             if (response.containsKey("error")) {
                 String error = response.getString("error");
-                Timber.d("Error opening file: " + error);
+                Timber.d("Error opening file: %s", error);
 
             } else {
-                Timber.d("Opening file: " + fileName);
+                Timber.d("Opening file: %s", fileName);
                 fileId = response.getInteger("id");
                 if (response.containsKey("size")) {
                     fileSize = response.getLong("size");
@@ -158,7 +153,7 @@ public class HtspFileInputStreamDataSource implements DataSource, Closeable, Hts
                 } else {
                     Timber.v("Opened file " + fileName + " successfully");
                 }
-                Timber.d("Sending file read request for file id " + fileId);
+                Timber.d("Sending file read request for file id %s", fileId);
                 fileReadRequest.put("id", fileId);
                 htspConnection.sendMessage(fileReadRequest, fileReadHandler);
             }
@@ -194,7 +189,7 @@ public class HtspFileInputStreamDataSource implements DataSource, Closeable, Hts
 
         } else if (!byteBuffer.hasRemaining()) {
             // If we don't have data here, something went wrong
-            Timber.d("Failed to read data for " + fileName);
+            Timber.d("Failed to read data for %s", fileName);
         }
 
         int startPos = byteBuffer.position();
@@ -237,7 +232,7 @@ public class HtspFileInputStreamDataSource implements DataSource, Closeable, Hts
     }
 
     private void sendFileRead(long offset) {
-        Timber.d("Sending message to read file from offset " + offset);
+        Timber.d("Sending message to read file from offset %s", offset);
         if (byteBuffer != null && byteBuffer.hasRemaining()) {
             Timber.d("Buffer is not null and has elements remaining");
             return;
