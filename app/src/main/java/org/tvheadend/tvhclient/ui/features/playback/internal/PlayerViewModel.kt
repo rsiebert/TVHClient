@@ -32,7 +32,7 @@ import javax.inject.Inject
 class PlayerViewModel(application: Application) : AndroidViewModel(application), HtspConnectionStateListener, VideoListener, Player.EventListener {
 
     @Inject
-    lateinit var context: Context
+    lateinit var appContext: Context
     @Inject
     lateinit var sharedPreferences: SharedPreferences
     @Inject
@@ -100,12 +100,12 @@ class PlayerViewModel(application: Application) : AndroidViewModel(application),
         }
 
         trackSelector = DefaultTrackSelector(AdaptiveTrackSelection.Factory(null))
-        if (sharedPreferences.getBoolean("audio_tunneling_enabled", context.resources.getBoolean(R.bool.pref_default_audio_tunneling_enabled))) {
-            trackSelector.setTunnelingAudioSessionId(C.generateAudioSessionIdV21(context))
+        if (sharedPreferences.getBoolean("audio_tunneling_enabled", appContext.resources.getBoolean(R.bool.pref_default_audio_tunneling_enabled))) {
+            trackSelector.setTunnelingAudioSessionId(C.generateAudioSessionIdV21(appContext))
         }
 
         Timber.d("Creating load control")
-        val bufferTimeText = sharedPreferences.getString("buffer_playback_ms", context.resources.getString(R.string.pref_default_buffer_playback_ms))
+        val bufferTimeText = sharedPreferences.getString("buffer_playback_ms", appContext.resources.getString(R.string.pref_default_buffer_playback_ms))
         val bufferTime = bufferTimeText!!.toInt()
         val loadControl = DefaultLoadControl(
                 DefaultAllocator(true, C.DEFAULT_BUFFER_SEGMENT_SIZE),
@@ -117,7 +117,7 @@ class PlayerViewModel(application: Application) : AndroidViewModel(application),
                 true)
 
         Timber.d("Creating player instance")
-        player = ExoPlayerFactory.newSimpleInstance(TvheadendRenderersFactory(context), trackSelector, loadControl)
+        player = ExoPlayerFactory.newSimpleInstance(TvheadendRenderersFactory(appContext), trackSelector, loadControl)
         player.addVideoListener(this)
         player.addListener(this)
 
@@ -153,7 +153,7 @@ class PlayerViewModel(application: Application) : AndroidViewModel(application),
             Timber.d("Creating data source")
             val serverStatus = appRepository.serverStatusData.activeItem
             val serverProfile = appRepository.serverProfileData.getItemById(serverStatus.htspPlaybackServerProfileId)
-            htspSubscriptionDataSourceFactory = HtspSubscriptionDataSource.Factory(context, htspConnection, serverProfile?.name)
+            htspSubscriptionDataSourceFactory = HtspSubscriptionDataSource.Factory(appContext, htspConnection, serverProfile?.name)
             dataSource = htspSubscriptionDataSourceFactory?.currentDataSource
 
             Timber.d("Preparing player with media source")
@@ -171,7 +171,7 @@ class PlayerViewModel(application: Application) : AndroidViewModel(application),
             playbackInformation = PlaybackInformation(appRepository.recordingData.getItemById(recordingId))
 
             Timber.d("Creating data source")
-            htspFileInputStreamDataSourceFactory = HtspFileInputStreamDataSource.Factory(context, htspConnection)
+            htspFileInputStreamDataSourceFactory = HtspFileInputStreamDataSource.Factory(htspConnection)
             dataSource = htspFileInputStreamDataSourceFactory?.currentDataSource
 
             Timber.d("Preparing player with media source")
