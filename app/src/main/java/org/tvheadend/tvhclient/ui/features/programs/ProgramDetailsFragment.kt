@@ -17,7 +17,7 @@ import org.tvheadend.tvhclient.ui.common.*
 import org.tvheadend.tvhclient.util.extensions.gone
 import org.tvheadend.tvhclient.util.extensions.visible
 import org.tvheadend.tvhclient.ui.features.dvr.RecordingAddEditActivity
-import org.tvheadend.tvhclient.ui.features.notification.addNotificationForProgram
+import org.tvheadend.tvhclient.ui.features.notification.addNotificationProgramIsAboutToStart
 import timber.log.Timber
 
 // TODO put program into the viewmodel
@@ -158,7 +158,7 @@ class ProgramDetailsFragment : BaseFragment() {
             R.id.menu_search_google -> return searchTitleOnGoogle(ctx, program.title)
             R.id.menu_search_epg -> return searchTitleInTheLocalDatabase(ctx, program.title, program.channelId)
 
-            R.id.menu_add_notification -> return addNotificationForProgram(ctx, program, programViewModel.getRecordingProfile())
+            R.id.menu_add_notification -> return addNotificationProgramIsAboutToStart(ctx, program, programViewModel.getRecordingProfile())
             else -> return false
         }
     }

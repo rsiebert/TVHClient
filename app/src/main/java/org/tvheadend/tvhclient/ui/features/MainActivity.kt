@@ -41,8 +41,8 @@ import org.tvheadend.tvhclient.ui.features.epg.ProgramGuideFragment
 import org.tvheadend.tvhclient.ui.features.information.StatusViewModel
 import org.tvheadend.tvhclient.ui.features.navigation.NavigationDrawer
 import org.tvheadend.tvhclient.ui.features.navigation.NavigationViewModel
-import org.tvheadend.tvhclient.ui.features.notification.addDiskSpaceLowNotification
-import org.tvheadend.tvhclient.ui.features.notification.addRunningRecordingNotification
+import org.tvheadend.tvhclient.ui.features.notification.showNotificationDiskSpaceIsLow
+import org.tvheadend.tvhclient.ui.features.notification.showNotificationProgramIsCurrentlyBeingRecorded
 import org.tvheadend.tvhclient.ui.features.playback.external.CastSessionManagerListener
 import org.tvheadend.tvhclient.ui.features.programs.ProgramDetailsFragment
 import org.tvheadend.tvhclient.ui.features.programs.ProgramListFragment
@@ -165,7 +165,7 @@ class MainActivity : BaseActivity(), SearchView.OnQueryTextListener, SearchView.
         statusViewModel.showRunningRecordingCount.observe(this, Observer { show ->
             Timber.d("Notification of running recording count of ${statusViewModel.runningRecordingCount} shall be shown $show")
             if (show) {
-                addRunningRecordingNotification(this, statusViewModel.runningRecordingCount)
+                showNotificationProgramIsCurrentlyBeingRecorded(this, statusViewModel.runningRecordingCount)
             } else {
                 (getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager).cancel(1)
             }
@@ -174,7 +174,7 @@ class MainActivity : BaseActivity(), SearchView.OnQueryTextListener, SearchView.
         statusViewModel.showLowStorageSpace.observe(this, Observer { show ->
             Timber.d("Currently free disk space changed to ${statusViewModel.availableStorageSpace} gigabytes")
             if (show) {
-                addDiskSpaceLowNotification(this, statusViewModel.availableStorageSpace)
+                showNotificationDiskSpaceIsLow(this, statusViewModel.availableStorageSpace)
             } else {
                 (getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager).cancel(2)
             }

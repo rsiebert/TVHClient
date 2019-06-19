@@ -22,7 +22,7 @@ import org.tvheadend.tvhclient.data.repository.AppRepository
 import org.tvheadend.tvhclient.data.worker.EpgDataUpdateWorker
 import org.tvheadend.tvhclient.domain.entity.*
 import org.tvheadend.tvhclient.util.extensions.sendSnackbarMessage
-import org.tvheadend.tvhclient.ui.features.notification.addNotification
+import org.tvheadend.tvhclient.ui.features.notification.addNotificationScheduledRecordingStarts
 import org.tvheadend.tvhclient.ui.features.notification.removeNotificationById
 import org.tvheadend.tvhclient.util.convertUrlToHashString
 import org.tvheadend.tvhclient.util.getIconUrl
@@ -697,7 +697,7 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
             appRepository.recordingData.addItem(recording)
         }
 
-        addNotification(this, recording)
+        addNotificationScheduledRecordingStarts(this, recording)
     }
 
     /**

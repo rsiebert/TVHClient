@@ -68,7 +68,7 @@ fun getNotificationBuilder(context: Context): NotificationCompat.Builder {
  * @param context   Context to access android specific resources
  * @param recording The recording for which the notification shall be created
  */
-fun addNotification(context: Context, recording: Recording) {
+fun addNotificationScheduledRecordingStarts(context: Context, recording: Recording) {
 
     val preferences = PreferenceManager.getDefaultSharedPreferences(context)
     if (preferences.getBoolean("notifications_enabled", context.resources.getBoolean(R.bool.pref_default_notifications_enabled))
@@ -86,7 +86,7 @@ fun addNotification(context: Context, recording: Recording) {
                 .setInitialDelay(getNotificationTime(context, recording.start), TimeUnit.MILLISECONDS)
                 .setInputData(data)
                 .build()
-        val uniqueWorkName = "RecordingNotification_" + recording.id.toString()
+        val uniqueWorkName = "Notification_" + recording.id.toString()
         WorkManager.getInstance().enqueueUniqueWork(uniqueWorkName, ExistingWorkPolicy.REPLACE, workRequest)
     }
 }
@@ -101,22 +101,23 @@ fun removeNotificationById(context: Context, id: Int) {
     if (PreferenceManager.getDefaultSharedPreferences(context).getBoolean("notifications_enabled", context.resources.getBoolean(R.bool.pref_default_notifications_enabled))) {
         Timber.d("Removing notification for id $id")
 
-        val uniqueWorkName = "RecordingNotification_$id"
+        val uniqueWorkName = "Notification_$id"
         WorkManager.getInstance().cancelUniqueWork(uniqueWorkName)
         (context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager).cancel(id)
     }
 }
 
 /**
- * Creates a worker that will create a notification with the program details at
- * the given notification time. In case the a profile is selected it is also
- * added so that the user can record the program with the given profile
+ * Creates a worker that will create a notification that the selected program will
+ * be shown in live tv at the given time. In case the a profile is selected it is
+ * also added so that the user can record the program with the given profile
  *
  * @param context Context to access android specific resources
  * @param program The program for which the notification shall be created
  * @param profile The selected recording profile
  */
-fun addNotification(context: Context, program: ProgramInterface, profile: ServerProfile?) {
+fun addNotificationProgramIsAboutToStart(context: Context, program: ProgramInterface?, profile: ServerProfile?) : Boolean {
+    if (program == null) return false
 
     val preferences = PreferenceManager.getDefaultSharedPreferences(context)
     if (preferences.getBoolean("notifications_enabled", context.resources.getBoolean(R.bool.pref_default_notifications_enabled))) {
@@ -132,12 +133,13 @@ fun addNotification(context: Context, program: ProgramInterface, profile: Server
                 .setInitialDelay(getNotificationTime(context, program.start), TimeUnit.MILLISECONDS)
                 .setInputData(data)
                 .build()
-        val uniqueWorkName = "ProgramNotification_" + program.eventId.toString()
+        val uniqueWorkName = "Notification_" + program.eventId.toString()
         WorkManager.getInstance().enqueueUniqueWork(uniqueWorkName, ExistingWorkPolicy.REPLACE, workRequest)
     }
+    return true
 }
 
-fun addRunningRecordingNotification(context: Context, count: Int) {
+fun showNotificationProgramIsCurrentlyBeingRecorded(context: Context, count: Int) {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
         (context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager).activeNotifications.forEach { notification ->
             if (notification.id == 1) {
@@ -155,7 +157,7 @@ fun addRunningRecordingNotification(context: Context, count: Int) {
     }
 }
 
-fun addDiskSpaceLowNotification(context: Context, gigabytes: Int) {
+fun showNotificationDiskSpaceIsLow(context: Context, gigabytes: Int) {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
         (context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager).activeNotifications.forEach { notification ->
             if (notification.id == 2) {
