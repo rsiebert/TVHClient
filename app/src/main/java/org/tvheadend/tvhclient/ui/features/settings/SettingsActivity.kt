@@ -2,10 +2,15 @@ package org.tvheadend.tvhclient.ui.features.settings
 
 
 import android.os.Bundle
+import android.view.View
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
+import com.google.android.material.snackbar.Snackbar
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.ui.base.BaseActivity
+import org.tvheadend.tvhclient.ui.common.SnackbarMessageReceiver
 import org.tvheadend.tvhclient.ui.common.callbacks.BackPressedInterface
+import org.tvheadend.tvhclient.util.extensions.config
 import org.tvheadend.tvhclient.util.getThemeId
 import timber.log.Timber
 
@@ -32,6 +37,18 @@ class SettingsActivity : BaseActivity() {
             Timber.d("Saved instance is not null, trying to find settings fragment")
             fragment = supportFragmentManager.findFragmentById(R.id.main)
         }
+
+        mainViewModel.showSnackbar.observe(this, Observer { intent ->
+            val msg = intent.getStringExtra(SnackbarMessageReceiver.CONTENT)
+            val duration = intent.getIntExtra(SnackbarMessageReceiver.DURATION, Snackbar.LENGTH_SHORT)
+            val view: View? = findViewById(android.R.id.content)
+            view?.let {
+                Timber.d("Showing snackbar message $msg")
+                val snackbar = Snackbar.make(view, msg, duration)
+                snackbar.config(this)
+                snackbar.show()
+            }
+        })
 
         Timber.d("Replacing fragment")
         if (fragment != null) {
