@@ -1,5 +1,6 @@
 package org.tvheadend.tvhclient.ui.features.channels
 
+import android.app.Application
 import android.content.SharedPreferences
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
@@ -9,16 +10,16 @@ import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.domain.entity.Channel
 import timber.log.Timber
 
-class ChannelViewModel : BaseChannelViewModel(), SharedPreferences.OnSharedPreferenceChangeListener {
+class ChannelViewModel(application: Application) : BaseChannelViewModel(application), SharedPreferences.OnSharedPreferenceChangeListener {
 
     val channels: LiveData<List<Channel>>
-
-    var showGenreColor: MutableLiveData<Boolean> = MutableLiveData()
-    var showNextProgramTitle: MutableLiveData<Boolean> = MutableLiveData()
-    var showProgramSubtitle: MutableLiveData<Boolean> = MutableLiveData()
-    var showProgressBar: MutableLiveData<Boolean> = MutableLiveData()
-    var showChannelNumber: MutableLiveData<Boolean> = MutableLiveData()
-    val showChannelName: MutableLiveData<Boolean> = MutableLiveData()
+    var showGenreColor = MutableLiveData<Boolean>()
+    var showNextProgramTitle = MutableLiveData<Boolean>()
+    var showProgressBar = MutableLiveData<Boolean>()
+    var showProgramSubtitle = MutableLiveData<Boolean>()
+    val showChannelName = MutableLiveData<Boolean>()
+    val showChannelNumber = MutableLiveData<Boolean>()
+    private val channelSortOrder = MutableLiveData<Int>()
 
     init {
         Timber.d("Initializing")
@@ -46,6 +47,7 @@ class ChannelViewModel : BaseChannelViewModel(), SharedPreferences.OnSharedPrefe
             return@switchMap appRepository.channelData.getAllChannelsByTime(first, second, third)
         }
 
+        onSharedPreferenceChanged(sharedPreferences, "channel_sort_order")
         onSharedPreferenceChanged(sharedPreferences, "channel_name_enabled")
         onSharedPreferenceChanged(sharedPreferences, "channel_number_enabled")
         onSharedPreferenceChanged(sharedPreferences, "program_progressbar_enabled")
@@ -67,10 +69,11 @@ class ChannelViewModel : BaseChannelViewModel(), SharedPreferences.OnSharedPrefe
         Timber.d("Shared preference $key has changed")
         if (sharedPreferences == null) return
         when (key) {
+            "channel_sort_order" -> channelSortOrder.value = Integer.valueOf(sharedPreferences.getString("channel_sort_order", appContext.resources.getString(R.string.pref_default_channel_sort_order)) ?: appContext.resources.getString(R.string.pref_default_channel_sort_order))
             "channel_name_enabled" -> showChannelName.value = sharedPreferences.getBoolean(key, appContext.resources.getBoolean(R.bool.pref_default_channel_name_enabled))
             "channel_number_enabled" -> showChannelNumber.value = sharedPreferences.getBoolean(key, appContext.resources.getBoolean(R.bool.pref_default_channel_number_enabled))
-            "program_progressbar_enabled" -> showProgressBar.value = sharedPreferences.getBoolean(key, appContext.resources.getBoolean(R.bool.pref_default_program_progressbar_enabled))
             "program_subtitle_enabled" -> showProgramSubtitle.value = sharedPreferences.getBoolean(key, appContext.resources.getBoolean(R.bool.pref_default_program_subtitle_enabled))
+            "program_progressbar_enabled" -> showProgressBar.value = sharedPreferences.getBoolean(key, appContext.resources.getBoolean(R.bool.pref_default_program_progressbar_enabled))
             "next_program_title_enabled" -> showNextProgramTitle.value = sharedPreferences.getBoolean(key, appContext.resources.getBoolean(R.bool.pref_default_next_program_title_enabled))
             "genre_colors_for_channels_enabled" -> showGenreColor.value = sharedPreferences.getBoolean(key, appContext.resources.getBoolean(R.bool.pref_default_genre_colors_for_channels_enabled))
         }

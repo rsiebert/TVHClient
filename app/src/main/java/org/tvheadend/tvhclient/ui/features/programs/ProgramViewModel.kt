@@ -1,30 +1,20 @@
 package org.tvheadend.tvhclient.ui.features.programs
 
-import android.content.Context
+import android.app.Application
 import android.content.SharedPreferences
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import org.tvheadend.tvhclient.MainApplication
 import org.tvheadend.tvhclient.R
-import org.tvheadend.tvhclient.data.repository.AppRepository
 import org.tvheadend.tvhclient.domain.entity.Program
 import org.tvheadend.tvhclient.domain.entity.Recording
 import org.tvheadend.tvhclient.domain.entity.SearchResultProgram
 import org.tvheadend.tvhclient.domain.entity.ServerProfile
+import org.tvheadend.tvhclient.ui.base.BaseViewModel
 import timber.log.Timber
-import javax.inject.Inject
 
-class ProgramViewModel : ViewModel(), SharedPreferences.OnSharedPreferenceChangeListener {
+class ProgramViewModel(application: Application) : BaseViewModel(application), SharedPreferences.OnSharedPreferenceChangeListener {
 
-    @Inject
-    lateinit var appContext: Context
-    @Inject
-    lateinit var appRepository: AppRepository
-    @Inject
-    lateinit var sharedPreferences: SharedPreferences
-
-    val recordings: LiveData<List<Recording>>?
+    val recordings: LiveData<List<Recording>>? = appRepository.recordingData.getLiveDataItems()
     var showProgramChannelIcon: Boolean = false
     var showGenreColor: MutableLiveData<Boolean> = MutableLiveData()
     var showProgramSubtitles: MutableLiveData<Boolean> = MutableLiveData()
@@ -32,10 +22,6 @@ class ProgramViewModel : ViewModel(), SharedPreferences.OnSharedPreferenceChange
 
     init {
         Timber.d("Initializing")
-        MainApplication.component.inject(this)
-
-        recordings = appRepository.recordingData.getLiveDataItems()
-
         onSharedPreferenceChanged(sharedPreferences, "genre_colors_for_programs_enabled")
         onSharedPreferenceChanged(sharedPreferences, "program_subtitle_enabled")
         onSharedPreferenceChanged(sharedPreferences, "program_artwork_enabled")

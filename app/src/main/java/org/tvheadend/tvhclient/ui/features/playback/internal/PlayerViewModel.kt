@@ -1,12 +1,9 @@
 package org.tvheadend.tvhclient.ui.features.playback.internal
 
 import android.app.Application
-import android.content.Context
-import android.content.SharedPreferences
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import com.google.android.exoplayer2.*
 import com.google.android.exoplayer2.source.ExtractorMediaSource
@@ -19,24 +16,15 @@ import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter
 import com.google.android.exoplayer2.video.VideoListener
 import org.tvheadend.htsp.HtspConnection
 import org.tvheadend.htsp.HtspConnectionStateListener
-import org.tvheadend.tvhclient.MainApplication
 import org.tvheadend.tvhclient.R
-import org.tvheadend.tvhclient.data.repository.AppRepository
+import org.tvheadend.tvhclient.ui.base.BaseViewModel
 import org.tvheadend.tvhclient.ui.features.playback.internal.utils.Rational
 import timber.log.Timber
 import java.util.*
 import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledExecutorService
-import javax.inject.Inject
 
-class PlayerViewModel(application: Application) : AndroidViewModel(application), HtspConnectionStateListener, VideoListener, Player.EventListener {
-
-    @Inject
-    lateinit var appContext: Context
-    @Inject
-    lateinit var sharedPreferences: SharedPreferences
-    @Inject
-    lateinit var appRepository: AppRepository
+class PlayerViewModel(application: Application) : BaseViewModel(application), HtspConnectionStateListener, VideoListener, Player.EventListener {
 
     // Connection related
     private val execService: ScheduledExecutorService = Executors.newScheduledThreadPool(10)
@@ -77,7 +65,6 @@ class PlayerViewModel(application: Application) : AndroidViewModel(application),
 
     init {
         Timber.d("Initializing view model")
-        MainApplication.component.inject(this)
 
         isConnected.postValue(false)
         playerIsPlaying.postValue(false)

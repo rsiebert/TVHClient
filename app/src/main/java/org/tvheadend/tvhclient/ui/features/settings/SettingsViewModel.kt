@@ -1,32 +1,20 @@
 package org.tvheadend.tvhclient.ui.features.settings
 
-import android.content.Context
-import android.content.SharedPreferences
+import android.app.Application
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.ViewModel
-import org.tvheadend.tvhclient.MainApplication
 import org.tvheadend.tvhclient.R
-import org.tvheadend.tvhclient.data.repository.AppRepository
 import org.tvheadend.tvhclient.domain.entity.Channel
 import org.tvheadend.tvhclient.domain.entity.Connection
 import org.tvheadend.tvhclient.domain.entity.ServerProfile
 import org.tvheadend.tvhclient.domain.entity.ServerStatus
+import org.tvheadend.tvhclient.ui.base.BaseViewModel
 import timber.log.Timber
-import javax.inject.Inject
 
-class SettingsViewModel : ViewModel() {
+class SettingsViewModel(application: Application) : BaseViewModel(application) {
 
-    @Inject
-    lateinit var appContext: Context
-    @Inject
-    lateinit var appRepository: AppRepository
-    @Inject
-    lateinit var sharedPreferences: SharedPreferences
-    val allConnections: LiveData<List<Connection>>
-
-    val serverStatusLiveData: LiveData<ServerStatus>
-    val connection: Connection
-    var connectionCount: Int
+    val allConnections: LiveData<List<Connection>> = appRepository.connectionData.getLiveDataItems()
+    val serverStatusLiveData: LiveData<ServerStatus> = appRepository.serverStatusData.liveDataActiveItem
+    var connection: Connection = appRepository.connectionData.activeItem
 
     val activeConnectionId: Int
         get() {
@@ -34,14 +22,6 @@ class SettingsViewModel : ViewModel() {
         }
 
     var connectionHasChanged: Boolean = false
-
-    init {
-        MainApplication.component.inject(this)
-        allConnections = appRepository.connectionData.getLiveDataItems()
-        connection = appRepository.connectionData.activeItem
-        connectionCount = appRepository.connectionData.getItems().size
-        serverStatusLiveData = appRepository.serverStatusData.liveDataActiveItem
-    }
 
     fun getChannelList(): List<Channel> {
         val defaultChannelSortOrder = appContext.resources.getString(R.string.pref_default_channel_sort_order)
@@ -91,15 +71,28 @@ class SettingsViewModel : ViewModel() {
         return appRepository.serverProfileData.recordingProfiles
     }
 
-    fun getConnectionById(id: Int): Connection {
+    fun addConnection() {
+        appRepository.connectionData.addItem(connection)
+        // Save the information in the view model that a new connection is active.
+        // This will then trigger a reconnect when the user leaves the connection list screen
+        if (connection.isActive) {
+            connectionHasChanged = true
+        }
+    }
+
+    fun loadConnectionById(id: Int): Connection {
         return appRepository.connectionData.getItemById(id) ?: Connection()
     }
 
-    fun addConnection(connection: Connection) {
-        appRepository.connectionData.addItem(connection)
+    fun createNewConnection() {
+        connection = Connection()
     }
 
     fun updateConnection(connection: Connection) {
+        appRepository.connectionData.updateItem(connection)
+    }
+
+    fun updateConnection() {
         appRepository.connectionData.updateItem(connection)
     }
 

@@ -1,31 +1,21 @@
 package org.tvheadend.tvhclient.ui.features.dvr.recordings
 
-import android.content.Context
+import android.app.Application
 import android.content.Intent
 import android.content.SharedPreferences
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations.switchMap
-import androidx.lifecycle.ViewModel
-import org.tvheadend.tvhclient.MainApplication
 import org.tvheadend.tvhclient.R
-import org.tvheadend.tvhclient.data.repository.AppRepository
 import org.tvheadend.tvhclient.data.service.HtspService
 import org.tvheadend.tvhclient.domain.entity.Channel
 import org.tvheadend.tvhclient.domain.entity.Recording
 import org.tvheadend.tvhclient.domain.entity.ServerProfile
+import org.tvheadend.tvhclient.ui.base.BaseViewModel
 import timber.log.Timber
-import javax.inject.Inject
 
-class RecordingViewModel : ViewModel(), SharedPreferences.OnSharedPreferenceChangeListener {
-
-    @Inject
-    lateinit var appContext: Context
-    @Inject
-    lateinit var appRepository: AppRepository
-    @Inject
-    lateinit var sharedPreferences: SharedPreferences
+class RecordingViewModel(application: Application) : BaseViewModel(application), SharedPreferences.OnSharedPreferenceChangeListener {
 
     val completedRecordings: LiveData<List<Recording>>
     val scheduledRecordings: LiveData<List<Recording>>
@@ -57,8 +47,6 @@ class RecordingViewModel : ViewModel(), SharedPreferences.OnSharedPreferenceChan
     }
 
     init {
-        MainApplication.component.inject(this)
-
         onSharedPreferenceChanged(sharedPreferences, "hide_duplicate_scheduled_recordings_enabled")
 
         val trigger = ScheduledRecordingLiveData(hideDuplicateScheduledRecordings)

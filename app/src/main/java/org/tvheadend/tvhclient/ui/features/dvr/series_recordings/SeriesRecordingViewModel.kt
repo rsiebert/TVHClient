@@ -1,33 +1,21 @@
 package org.tvheadend.tvhclient.ui.features.dvr.series_recordings
 
 import android.app.Application
-import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
-import org.tvheadend.tvhclient.MainApplication
 import org.tvheadend.tvhclient.R
-import org.tvheadend.tvhclient.data.repository.AppRepository
 import org.tvheadend.tvhclient.data.service.HtspService
 import org.tvheadend.tvhclient.domain.entity.Channel
 import org.tvheadend.tvhclient.domain.entity.SeriesRecording
 import org.tvheadend.tvhclient.domain.entity.ServerProfile
+import org.tvheadend.tvhclient.ui.base.BaseViewModel
 import timber.log.Timber
 import java.util.*
-import javax.inject.Inject
 
-class SeriesRecordingViewModel(application: Application) : AndroidViewModel(application) {
-
-    @Inject
-    lateinit var appContext: Context
-    @Inject
-    lateinit var appRepository: AppRepository
-    @Inject
-    lateinit var sharedPreferences: SharedPreferences
+class SeriesRecordingViewModel(application: Application) : BaseViewModel(application) {
 
     var recording = SeriesRecording()
-    val recordings: LiveData<List<SeriesRecording>>
+    val recordings: LiveData<List<SeriesRecording>> = appRepository.seriesRecordingData.getLiveDataItems()
     var recordingProfileNameId: Int = 0
 
     /**
@@ -72,11 +60,6 @@ class SeriesRecordingViewModel(application: Application) : AndroidViewModel(appl
                 startWindowTimeInMillis = Calendar.getInstance().timeInMillis
             }
         }
-
-    init {
-        MainApplication.component.inject(this)
-        recordings = appRepository.seriesRecordingData.getLiveDataItems()
-    }
 
     fun getRecordingById(id: String): LiveData<SeriesRecording> {
         return appRepository.seriesRecordingData.getLiveDataItemById(id)

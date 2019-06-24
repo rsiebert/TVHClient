@@ -1,5 +1,6 @@
 package org.tvheadend.tvhclient.ui.features.epg
 
+import android.app.Application
 import android.content.SharedPreferences
 import androidx.core.util.Pair
 import androidx.lifecycle.*
@@ -12,17 +13,18 @@ import org.tvheadend.tvhclient.ui.features.channels.BaseChannelViewModel
 import timber.log.Timber
 import java.util.*
 
-class EpgViewModel : BaseChannelViewModel(), SharedPreferences.OnSharedPreferenceChangeListener {
+class EpgViewModel(application: Application) : BaseChannelViewModel(application), SharedPreferences.OnSharedPreferenceChangeListener {
 
     val epgChannels: LiveData<List<EpgChannel>>
     var reloadEpgData: LiveData<Boolean> = MutableLiveData()
     var epgData = MutableLiveData<HashMap<Int, List<EpgProgram>>>()
 
-    var showChannelNumber: MutableLiveData<Boolean> = MutableLiveData()
-    var showProgramSubtitle: MutableLiveData<Boolean> = MutableLiveData()
-    var showGenreColor: MutableLiveData<Boolean> = MutableLiveData()
-    private var hoursOfEpgDataPerScreen: MutableLiveData<Int> = MutableLiveData()
-    private var daysOfEpgData: MutableLiveData<Int> = MutableLiveData()
+    private val channelSortOrder = MutableLiveData<Int>()
+    val showChannelNumber = MutableLiveData<Boolean>()
+    var showGenreColor = MutableLiveData<Boolean>()
+    var showProgramSubtitle = MutableLiveData<Boolean>()
+    private var hoursOfEpgDataPerScreen = MutableLiveData<Int>()
+    private var daysOfEpgData = MutableLiveData<Int>()
 
     var pixelsPerMinute: Float = 0f
     var verticalScrollOffset = 0
@@ -80,6 +82,7 @@ class EpgViewModel : BaseChannelViewModel(), SharedPreferences.OnSharedPreferenc
             return@switchMap reload
         }
 
+        onSharedPreferenceChanged(sharedPreferences, "channel_sort_order")
         onSharedPreferenceChanged(sharedPreferences, "channel_number_enabled")
         onSharedPreferenceChanged(sharedPreferences, "program_subtitle_enabled")
         onSharedPreferenceChanged(sharedPreferences, "genre_colors_for_program_guide_enabled")
@@ -97,9 +100,9 @@ class EpgViewModel : BaseChannelViewModel(), SharedPreferences.OnSharedPreferenc
         viewModelScope.launch {
             val defaultChannelSortOrder = appContext.resources.getString(R.string.pref_default_channel_sort_order)
             val order = Integer.valueOf(sharedPreferences.getString("channel_sort_order", defaultChannelSortOrder) ?: defaultChannelSortOrder)
-            var hours = Integer.parseInt(sharedPreferences.getString("hours_of_epg_data_per_screen", appContext.resources.getString(R.string.pref_default_hours_of_epg_data_per_screen))!!)
+            var hours = hoursOfEpgDataPerScreen.value!!
             hours = if (hours == 0) 1 else hours
-            val days = Integer.parseInt(sharedPreferences.getString("days_of_epg_data", appContext.resources.getString(R.string.pref_default_days_of_epg_data))!!)
+            val days = daysOfEpgData.value!!
 
             Timber.d("Loading epg data from database with channel order $order, $hours hours per screen and for $days days")
             epgData.value = appRepository.programData.getEpgItemsBetweenTime(order, hours, days)
@@ -117,6 +120,7 @@ class EpgViewModel : BaseChannelViewModel(), SharedPreferences.OnSharedPreferenc
         Timber.d("Shared preference $key has changed")
         if (sharedPreferences == null) return
         when (key) {
+            "channel_sort_order" -> channelSortOrder.value = Integer.valueOf(sharedPreferences.getString("channel_sort_order", appContext.resources.getString(R.string.pref_default_channel_sort_order)) ?: appContext.resources.getString(R.string.pref_default_channel_sort_order))
             "channel_number_enabled" -> showChannelNumber.value = sharedPreferences.getBoolean(key, appContext.resources.getBoolean(R.bool.pref_default_channel_number_enabled))
             "program_subtitle_enabled" -> showProgramSubtitle.value = sharedPreferences.getBoolean(key, appContext.resources.getBoolean(R.bool.pref_default_program_subtitle_enabled))
             "genre_colors_for_program_guide_enabled" -> showGenreColor.value = sharedPreferences.getBoolean(key, appContext.resources.getBoolean(R.bool.pref_default_genre_colors_for_program_guide_enabled))

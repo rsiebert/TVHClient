@@ -1,41 +1,32 @@
 package org.tvheadend.tvhclient.ui.features.playback.external
 
 import android.app.Application
-import android.content.SharedPreferences
 import android.os.Bundle
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.preference.PreferenceManager
 import org.tvheadend.htsp.HtspConnection
 import org.tvheadend.htsp.HtspConnectionStateListener
 import org.tvheadend.htsp.HtspMessage
 import org.tvheadend.htsp.HtspResponseListener
-import org.tvheadend.tvhclient.MainApplication
 import org.tvheadend.tvhclient.R
-import org.tvheadend.tvhclient.data.repository.AppRepository
 import org.tvheadend.tvhclient.domain.entity.Channel
 import org.tvheadend.tvhclient.domain.entity.Connection
 import org.tvheadend.tvhclient.domain.entity.Recording
 import org.tvheadend.tvhclient.domain.entity.ServerStatus
+import org.tvheadend.tvhclient.ui.base.BaseViewModel
 import timber.log.Timber
 import java.util.concurrent.ExecutionException
 import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledExecutorService
-import javax.inject.Inject
 
-class ExternalPlayerViewModel(application: Application) : AndroidViewModel(application), HtspConnectionStateListener {
-
-    @Inject
-    lateinit var sharedPreferences: SharedPreferences
-    @Inject
-    lateinit var appRepository: AppRepository
+class ExternalPlayerViewModel(application: Application) : BaseViewModel(application), HtspConnectionStateListener {
 
     // Connection related
     private val execService: ScheduledExecutorService = Executors.newScheduledThreadPool(10)
     private val htspConnection: HtspConnection
 
-    var connection: Connection
-    var serverStatus: ServerStatus? = null
+    var connection: Connection = appRepository.connectionData.activeItem
+    var serverStatus: ServerStatus? = appRepository.serverStatusData.activeItem
     var channel: Channel? = null
     var recording: Recording? = null
     private var path = ""
@@ -46,13 +37,7 @@ class ExternalPlayerViewModel(application: Application) : AndroidViewModel(appli
     var isConnected: MutableLiveData<Boolean> = MutableLiveData()
 
     init {
-        Timber.d("Initializing view model")
-        MainApplication.component.inject(this)
-
-        connection = appRepository.connectionData.activeItem
-        serverStatus = appRepository.serverStatusData.activeItem
-
-        Timber.d("Starting connection")
+        Timber.d("Initializing")
         val connectionTimeout = Integer.valueOf(PreferenceManager.getDefaultSharedPreferences(application).getString("connection_timeout", application.resources.getString(R.string.pref_default_connection_timeout))!!) * 1000
         htspConnection = HtspConnection(
                 connection.username ?: "",

@@ -1,71 +1,47 @@
 package org.tvheadend.tvhclient.ui.features.information
 
 import android.app.ActivityManager
+import android.app.Application
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Handler
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
-import androidx.lifecycle.ViewModel
-import org.tvheadend.tvhclient.MainApplication
 import org.tvheadend.tvhclient.R
-import org.tvheadend.tvhclient.data.repository.AppRepository
 import org.tvheadend.tvhclient.data.service.HtspService
 import org.tvheadend.tvhclient.domain.entity.Channel
 import org.tvheadend.tvhclient.domain.entity.Input
 import org.tvheadend.tvhclient.domain.entity.ServerStatus
 import org.tvheadend.tvhclient.domain.entity.Subscription
+import org.tvheadend.tvhclient.ui.base.BaseViewModel
 import timber.log.Timber
-import javax.inject.Inject
 
-class StatusViewModel : ViewModel(), SharedPreferences.OnSharedPreferenceChangeListener {
+class StatusViewModel(application: Application) : BaseViewModel(application), SharedPreferences.OnSharedPreferenceChangeListener {
 
-    @Inject
-    lateinit var appContext: Context
-    @Inject
-    lateinit var appRepository: AppRepository
-    @Inject
-    lateinit var sharedPreferences: SharedPreferences
-
-    val serverStatus: LiveData<ServerStatus>
-    val channelCount: LiveData<Int>
-    val programCount: LiveData<Int>
-    val timerRecordingCount: LiveData<Int>
-    val seriesRecordingCount: LiveData<Int>
-    val completedRecordingCount: LiveData<Int>
-    val scheduledRecordingCount: LiveData<Int>
-    val failedRecordingCount: LiveData<Int>
-    val removedRecordingCount: LiveData<Int>
+    val serverStatus: LiveData<ServerStatus> = appRepository.serverStatusData.liveDataActiveItem
+    val channelCount: LiveData<Int> = appRepository.channelData.getLiveDataItemCount()
+    val programCount: LiveData<Int> = appRepository.programData.getLiveDataItemCount()
+    val timerRecordingCount: LiveData<Int> = appRepository.timerRecordingData.getLiveDataItemCount()
+    val seriesRecordingCount: LiveData<Int> = appRepository.seriesRecordingData.getLiveDataItemCount()
+    val completedRecordingCount: LiveData<Int> = appRepository.recordingData.getLiveDataCountByType("completed")
+    val scheduledRecordingCount: LiveData<Int> = appRepository.recordingData.getLiveDataCountByType("scheduled")
+    val failedRecordingCount: LiveData<Int> = appRepository.recordingData.getLiveDataCountByType("failed")
+    val removedRecordingCount: LiveData<Int> = appRepository.recordingData.getLiveDataCountByType("removed")
 
     val showRunningRecordingCount = MediatorLiveData<Boolean>()
     val showLowStorageSpace = MediatorLiveData<Boolean>()
     var runningRecordingCount = 0
     var availableStorageSpace = 0
 
-    val subscriptions: LiveData<List<Subscription>>
-    val inputs: LiveData<List<Input>>
+    val subscriptions: LiveData<List<Subscription>> = appRepository.subscriptionData.getLiveDataItems()
+    val inputs: LiveData<List<Input>> = appRepository.inputData.getLiveDataItems()
 
     private lateinit var discSpaceUpdateTask: Runnable
     private val diskSpaceUpdateHandler = Handler()
 
     init {
         Timber.d("Initializing")
-        MainApplication.component.inject(this)
-
-        serverStatus = appRepository.serverStatusData.liveDataActiveItem
-        channelCount = appRepository.channelData.getLiveDataItemCount()
-        programCount = appRepository.programData.getLiveDataItemCount()
-        timerRecordingCount = appRepository.timerRecordingData.getLiveDataItemCount()
-        seriesRecordingCount = appRepository.seriesRecordingData.getLiveDataItemCount()
-        completedRecordingCount = appRepository.recordingData.getLiveDataCountByType("completed")
-        scheduledRecordingCount = appRepository.recordingData.getLiveDataCountByType("scheduled")
-        failedRecordingCount = appRepository.recordingData.getLiveDataCountByType("failed")
-        removedRecordingCount = appRepository.recordingData.getLiveDataCountByType("removed")
-
-        subscriptions = appRepository.subscriptionData.getLiveDataItems()
-        inputs = appRepository.inputData.getLiveDataItems()
-
         // Listen to changes of the recording count. If the count changes to zero or the setting
         // to show notifications is disabled, set the value to false to remove any notification
         showRunningRecordingCount.addSource(appRepository.recordingData.getLiveDataCountByType("running")) { count ->
