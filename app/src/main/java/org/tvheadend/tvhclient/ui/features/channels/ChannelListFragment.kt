@@ -29,7 +29,7 @@ import org.tvheadend.tvhclient.util.extensions.gone
 import org.tvheadend.tvhclient.util.extensions.visible
 import timber.log.Timber
 
-class ChannelListFragment : BaseFragment(), RecyclerViewClickCallback, ChannelDisplayOptionListener, SearchRequestInterface, Filter.FilterListener {
+class ChannelListFragment : BaseFragment(), RecyclerViewClickCallback, ChannelTimeSelectedInterface, ChannelTagIdsSelectedInterface, SearchRequestInterface, Filter.FilterListener {
 
     lateinit var recyclerViewAdapter: ChannelRecyclerViewAdapter
     lateinit var viewModel: ChannelViewModel
@@ -244,10 +244,6 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickCallback, ChannelDi
         recycler_view?.gone()
         progress_bar?.visible()
         viewModel.setSelectedChannelTagIds(ids)
-    }
-
-    override fun onChannelSortOrderSelected(id: Int) {
-        viewModel.setChannelSortOrder(id)
     }
 
     /**

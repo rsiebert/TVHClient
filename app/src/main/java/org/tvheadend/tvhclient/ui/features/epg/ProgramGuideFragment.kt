@@ -25,7 +25,8 @@ import org.tvheadend.tvhclient.domain.entity.EpgProgram
 import org.tvheadend.tvhclient.ui.base.BaseFragment
 import org.tvheadend.tvhclient.ui.common.*
 import org.tvheadend.tvhclient.ui.common.callbacks.RecyclerViewClickCallback
-import org.tvheadend.tvhclient.ui.features.channels.ChannelDisplayOptionListener
+import org.tvheadend.tvhclient.ui.features.channels.ChannelTagIdsSelectedInterface
+import org.tvheadend.tvhclient.ui.features.channels.ChannelTimeSelectedInterface
 import org.tvheadend.tvhclient.ui.features.dvr.RecordingAddEditActivity
 import org.tvheadend.tvhclient.ui.features.notification.addNotificationProgramIsAboutToStart
 import org.tvheadend.tvhclient.ui.features.search.SearchActivity
@@ -34,7 +35,7 @@ import org.tvheadend.tvhclient.util.extensions.gone
 import org.tvheadend.tvhclient.util.extensions.visible
 import timber.log.Timber
 
-class ProgramGuideFragment : BaseFragment(), EpgScrollInterface, RecyclerViewClickCallback, ChannelDisplayOptionListener, Filter.FilterListener, ViewPager.OnPageChangeListener, SearchRequestInterface {
+class ProgramGuideFragment : BaseFragment(), EpgScrollInterface, RecyclerViewClickCallback, ChannelTimeSelectedInterface, ChannelTagIdsSelectedInterface, Filter.FilterListener, ViewPager.OnPageChangeListener, SearchRequestInterface {
 
     private lateinit var epgViewModel: EpgViewModel
     private lateinit var channelListRecyclerViewAdapter: EpgChannelListRecyclerViewAdapter
@@ -208,10 +209,6 @@ class ProgramGuideFragment : BaseFragment(), EpgScrollInterface, RecyclerViewCli
         program_list_viewpager?.gone()
         progress_bar?.visible()
         epgViewModel.setSelectedChannelTagIds(ids)
-    }
-
-    override fun onChannelSortOrderSelected(id: Int) {
-        epgViewModel.setChannelSortOrder(id)
     }
 
     override fun onClick(view: View, position: Int) {

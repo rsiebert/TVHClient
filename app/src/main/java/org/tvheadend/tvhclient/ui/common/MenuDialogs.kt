@@ -16,13 +16,14 @@ import org.tvheadend.tvhclient.BR
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.databinding.GenreColorListAdapterBinding
 import org.tvheadend.tvhclient.domain.entity.ChannelTag
-import org.tvheadend.tvhclient.ui.features.channels.ChannelDisplayOptionListener
+import org.tvheadend.tvhclient.ui.features.channels.ChannelTagIdsSelectedInterface
+import org.tvheadend.tvhclient.ui.features.channels.ChannelTimeSelectedInterface
 import timber.log.Timber
 import java.text.SimpleDateFormat
 import java.util.*
 
 
-fun showChannelTagSelectionDialog(context: Context, channelTags: MutableList<ChannelTag>, channelCount: Int, callback: ChannelDisplayOptionListener): Boolean {
+fun showChannelTagSelectionDialog(context: Context, channelTags: MutableList<ChannelTag>, channelCount: Int, callback: ChannelTagIdsSelectedInterface): Boolean {
     val isMultipleChoice = androidx.preference.PreferenceManager.getDefaultSharedPreferences(context).getBoolean("multiple_channel_tags_enabled",
             context.resources.getBoolean(R.bool.pref_default_multiple_channel_tags_enabled))
 
@@ -185,7 +186,7 @@ class GenreColorListAdapter internal constructor(private val contentInfo: Array<
 }
 
 
-fun showProgramTimeframeSelectionDialog(context: Context, currentSelection: Int, intervalInHours: Int, maxIntervalsToShow: Int, callback: ChannelDisplayOptionListener?): Boolean {
+fun showProgramTimeframeSelectionDialog(context: Context, currentSelection: Int, intervalInHours: Int, maxIntervalsToShow: Int, callback: ChannelTimeSelectedInterface?): Boolean {
 
     val startDateFormat = SimpleDateFormat("dd.MM.yyyy - HH.00", Locale.US)
     val endDateFormat = SimpleDateFormat("HH.00", Locale.US)
@@ -213,7 +214,7 @@ fun showProgramTimeframeSelectionDialog(context: Context, currentSelection: Int,
     return true
 }
 
-fun showChannelSortOrderSelectionDialog(context: Context, callback: ChannelDisplayOptionListener): Boolean {
+fun showChannelSortOrderSelectionDialog(context: Context, callback: ChannelTimeSelectedInterface): Boolean {
 
     val channelSortOrder = Integer.valueOf(androidx.preference.PreferenceManager.getDefaultSharedPreferences(context).getString("channel_sort_order", context.resources.getString(R.string.pref_default_channel_sort_order))!!)
     MaterialDialog(context).show {
@@ -223,7 +224,6 @@ fun showChannelSortOrderSelectionDialog(context: Context, callback: ChannelDispl
             val editor = androidx.preference.PreferenceManager.getDefaultSharedPreferences(context).edit()
             editor.putString("channel_sort_order", index.toString())
             editor.apply()
-            callback.onChannelSortOrderSelected(index)
         }
     }
     return false
