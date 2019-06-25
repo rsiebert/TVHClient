@@ -19,6 +19,8 @@ import javax.inject.Inject
 open class BaseActivity : AppCompatActivity(), ToolbarInterface {
 
     @Inject
+    lateinit var appContext: Context
+    @Inject
     lateinit var appRepository: AppRepository
     @Inject
     lateinit var sharedPreferences: SharedPreferences
