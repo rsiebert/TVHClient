@@ -13,17 +13,17 @@ import org.tvheadend.tvhclient.MainApplication
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.domain.entity.Connection
 import org.tvheadend.tvhclient.domain.entity.ServerStatus
-import org.tvheadend.tvhclient.ui.common.callbacks.ToolbarInterface
-import org.tvheadend.tvhclient.util.extensions.gone
-import org.tvheadend.tvhclient.util.extensions.visible
 import org.tvheadend.tvhclient.ui.common.NetworkStatus
+import org.tvheadend.tvhclient.ui.common.callbacks.ToolbarInterface
 import org.tvheadend.tvhclient.ui.common.showConfirmationToReconnectToServer
 import org.tvheadend.tvhclient.ui.features.MainViewModel
+import org.tvheadend.tvhclient.util.extensions.gone
+import org.tvheadend.tvhclient.util.extensions.visible
 import timber.log.Timber
 
 abstract class BaseFragment : Fragment() {
 
-    protected lateinit var mainViewModel: MainViewModel
+    private lateinit var mainViewModel: MainViewModel
     protected lateinit var sharedPreferences: SharedPreferences
     protected lateinit var toolbarInterface: ToolbarInterface
     protected var isDualPane: Boolean = false
@@ -82,7 +82,7 @@ abstract class BaseFragment : Fragment() {
         return when (item.itemId) {
             android.R.id.home -> {
                 activity?.finish()
-                return true
+                true
             }
             R.id.menu_reconnect_to_server -> showConfirmationToReconnectToServer(ctx, mainViewModel)
             else -> super.onOptionsItemSelected(item)
