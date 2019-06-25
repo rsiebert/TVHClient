@@ -9,6 +9,7 @@ import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.ui.base.BaseActivity
 import org.tvheadend.tvhclient.ui.common.callbacks.BackPressedInterface
 import org.tvheadend.tvhclient.ui.features.changelog.ChangeLogActivity
+import org.tvheadend.tvhclient.util.MigrateUtils
 import org.tvheadend.tvhclient.util.getThemeId
 import timber.log.Timber
 
@@ -20,6 +21,10 @@ class StartupActivity : BaseActivity() {
         setTheme(getThemeId(this))
         super.onCreate(savedInstanceState)
         setContentView(R.layout.misc_content_activity)
+
+        // Migrates existing connections from the old database to the new room database.
+        // Migrates existing preferences or remove old ones before starting the actual application
+        MigrateUtils(appContext, appRepository, sharedPreferences).doMigrate()
 
         // Get the toolbar so that the fragments can set the title
         setSupportActionBar(findViewById(R.id.toolbar))

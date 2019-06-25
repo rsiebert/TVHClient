@@ -5,7 +5,6 @@ import android.content.SharedPreferences
 import android.database.sqlite.SQLiteException
 import android.os.Environment
 import org.tvheadend.tvhclient.BuildConfig
-import org.tvheadend.tvhclient.MainApplication
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.data.db.DatabaseHelperForMigration
 import org.tvheadend.tvhclient.data.repository.AppRepository
@@ -13,26 +12,17 @@ import org.tvheadend.tvhclient.domain.entity.Connection
 import org.tvheadend.tvhclient.domain.entity.ServerStatus
 import timber.log.Timber
 import java.util.*
-import javax.inject.Inject
 
-class MigrateUtils {
-
-    @Inject
-    lateinit var context: Context
-    @Inject
-    lateinit var appRepository: AppRepository
-    @Inject
-    lateinit var sharedPreferences: SharedPreferences
+class MigrateUtils(val context: Context, val appRepository: AppRepository, val sharedPreferences: SharedPreferences) {
 
     fun doMigrate() {
-        MainApplication.component.inject(this)
-
         // Lookup the current version and the last migrated version
         val currentApplicationVersion = BuildConfig.BUILD_VERSION
         val lastInstalledApplicationVersion = sharedPreferences.getInt("build_version_for_migration", 0)
-        Timber.i("Migrating from $lastInstalledApplicationVersion to $currentApplicationVersion")
 
         if (currentApplicationVersion != lastInstalledApplicationVersion) {
+            Timber.i("Migrating from $lastInstalledApplicationVersion to $currentApplicationVersion")
+
             if (lastInstalledApplicationVersion < VERSION_101) {
                 migrateConvertStartScreenPreference()
                 migrateConnectionsFromDatabase()
@@ -68,7 +58,6 @@ class MigrateUtils {
                 // Two new channel sorting options were introduced in this version.
                 // They are now the first to options so all other values need to be moved up by two.
                 val editor = sharedPreferences.edit()
-
                 var channelSortOrder = Integer.valueOf(sharedPreferences.getString("channel_sort_order", context.resources.getString(R.string.pref_default_channel_sort_order))!!)
                 if (channelSortOrder >= 2) {
                     channelSortOrder += 2
