@@ -22,29 +22,26 @@ class ChannelViewModel(application: Application) : BaseChannelViewModel(applicat
     private val channelSortOrder = MutableLiveData<Int>()
 
     init {
-        Timber.d("Initializing")
         val trigger = ChannelLiveData(selectedTime, channelSortOrder, selectedChannelTagIds)
         channels = Transformations.switchMap(trigger) { value ->
-            Timber.d("Loading channels because one of the three triggers have changed")
+            val time = value.first
+            val sortOrder = value.second
+            val tagIds = value.third
 
-            val first = value.first
-            val second = value.second
-            val third = value.third
-
-            if (first == null) {
-                Timber.d("Skipping loading of channels because selected time is not set")
+            if (time == null) {
+                Timber.d("Not loading channels because the selected time is not set")
                 return@switchMap null
             }
-            if (second == null) {
-                Timber.d("Skipping loading of channels because channel sort order is not set")
+            if (sortOrder == null) {
+                Timber.d("Not loading channels because no channel sort order is set")
                 return@switchMap null
             }
-            if (third == null) {
-                Timber.d("Skipping loading of channels because selected channel tag ids are not set")
+            if (tagIds == null) {
+                Timber.d("Not loading channels because no selected channel tag id is set")
                 return@switchMap null
             }
-
-            return@switchMap appRepository.channelData.getAllChannelsByTime(first, second, third)
+            Timber.d("Loading channels because either the selected time, channel sort order or channel tag ids have changed")
+            return@switchMap appRepository.channelData.getAllChannelsByTime(time, sortOrder, tagIds)
         }
 
         onSharedPreferenceChanged(sharedPreferences, "channel_sort_order")
@@ -55,12 +52,10 @@ class ChannelViewModel(application: Application) : BaseChannelViewModel(applicat
         onSharedPreferenceChanged(sharedPreferences, "next_program_title_enabled")
         onSharedPreferenceChanged(sharedPreferences, "genre_colors_for_channels_enabled")
 
-        Timber.d("Registering shared preference change listener")
         sharedPreferences.registerOnSharedPreferenceChangeListener(this)
     }
 
     override fun onCleared() {
-        Timber.d("Unregistering shared preference change listener")
         sharedPreferences.unregisterOnSharedPreferenceChangeListener(this)
         super.onCleared()
     }
@@ -69,7 +64,7 @@ class ChannelViewModel(application: Application) : BaseChannelViewModel(applicat
         Timber.d("Shared preference $key has changed")
         if (sharedPreferences == null) return
         when (key) {
-            "channel_sort_order" -> channelSortOrder.value = Integer.valueOf(sharedPreferences.getString("channel_sort_order", appContext.resources.getString(R.string.pref_default_channel_sort_order)) ?: appContext.resources.getString(R.string.pref_default_channel_sort_order))
+            "channel_sort_order" -> channelSortOrder.value = Integer.valueOf(sharedPreferences.getString("channel_sort_order", defaultChannelSortOrder) ?: defaultChannelSortOrder)
             "channel_name_enabled" -> showChannelName.value = sharedPreferences.getBoolean(key, appContext.resources.getBoolean(R.bool.pref_default_channel_name_enabled))
             "channel_number_enabled" -> showChannelNumber.value = sharedPreferences.getBoolean(key, appContext.resources.getBoolean(R.bool.pref_default_channel_number_enabled))
             "program_subtitle_enabled" -> showProgramSubtitle.value = sharedPreferences.getBoolean(key, appContext.resources.getBoolean(R.bool.pref_default_program_subtitle_enabled))
