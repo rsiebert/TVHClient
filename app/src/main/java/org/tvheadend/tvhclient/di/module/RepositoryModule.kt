@@ -9,7 +9,7 @@ import org.tvheadend.tvhclient.domain.repository.data_source.*
 import javax.inject.Singleton
 
 @Module
-object RepositoryModule {
+class RepositoryModule() {
 
     @Singleton
     @Provides

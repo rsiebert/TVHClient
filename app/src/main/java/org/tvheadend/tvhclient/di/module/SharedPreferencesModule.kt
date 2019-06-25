@@ -8,7 +8,7 @@ import dagger.Provides
 import javax.inject.Singleton
 
 @Module
-object SharedPreferencesModule {
+class SharedPreferencesModule {
 
     @Provides
     @Singleton
