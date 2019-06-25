@@ -23,6 +23,7 @@ class EpgViewModel(application: Application) : BaseChannelViewModel(application)
     val showChannelNumber = MutableLiveData<Boolean>()
     var showGenreColor = MutableLiveData<Boolean>()
     var showProgramSubtitle = MutableLiveData<Boolean>()
+
     private var hoursOfEpgDataPerScreen = MutableLiveData<Int>()
     private var daysOfEpgData = MutableLiveData<Int>()
 
@@ -55,30 +56,24 @@ class EpgViewModel(application: Application) : BaseChannelViewModel(application)
         calculateViewPagerFragmentStartAndEndTimes()
 
         epgChannels = Transformations.switchMap(EpgChannelLiveData(channelSortOrder, selectedChannelTagIds)) { value ->
-            Timber.d("Loading epg channels because one of the two triggers have changed")
-            val first = value.first
-            val second = value.second
+            val sortOrder = value.first
+            val tagIds = value.second
 
-            if (first == null) {
-                Timber.d("Skipping loading of epg channels because channel sort order is not set")
+            if (sortOrder == null) {
+                Timber.d("Not loading epg channels because no channel sort order is set")
                 return@switchMap null
             }
-            if (second == null) {
-                Timber.d("Skipping loading of epg channels because selected channel tag ids are not set")
+            if (tagIds == null) {
+                Timber.d("Not loading epg channels because no channel tag id is set")
                 return@switchMap null
             }
-            return@switchMap appRepository.channelData.getAllEpgChannels(first, second)
+            Timber.d("Loading epg channels because either the channel sort order or channel tag ids have changed")
+            return@switchMap appRepository.channelData.getAllEpgChannels(sortOrder, tagIds)
         }
 
         reloadEpgData = Transformations.switchMap(EpgProgramDataLiveData(epgChannels, hoursOfEpgDataPerScreen, daysOfEpgData)) { value ->
             val reload = MutableLiveData<Boolean>()
-            if (value.first != null && value.second != null && value.third != null) {
-                Timber.d("Either the epg channels, hours or days have changed, epg data shall be reloaded")
-                reload.value = true
-            } else {
-                Timber.d("Either the epg channels, hours or days are null, not reloading epg data")
-                reload.value = false
-            }
+            reload.value = value.first != null && value.second != null && value.third != null
             return@switchMap reload
         }
 
@@ -89,10 +84,7 @@ class EpgViewModel(application: Application) : BaseChannelViewModel(application)
         onSharedPreferenceChanged(sharedPreferences, "hours_of_epg_data_per_screen")
         onSharedPreferenceChanged(sharedPreferences, "days_of_epg_data")
 
-        Timber.d("Registering shared preference change listener")
         sharedPreferences.registerOnSharedPreferenceChangeListener(this)
-
-        Timber.d("Initializing done")
     }
 
     fun loadEpgData() {
@@ -111,7 +103,6 @@ class EpgViewModel(application: Application) : BaseChannelViewModel(application)
     }
 
     override fun onCleared() {
-        Timber.d("Unregistering shared preference change listener")
         sharedPreferences.unregisterOnSharedPreferenceChangeListener(this)
         super.onCleared()
     }
@@ -120,7 +111,7 @@ class EpgViewModel(application: Application) : BaseChannelViewModel(application)
         Timber.d("Shared preference $key has changed")
         if (sharedPreferences == null) return
         when (key) {
-            "channel_sort_order" -> channelSortOrder.value = Integer.valueOf(sharedPreferences.getString("channel_sort_order", appContext.resources.getString(R.string.pref_default_channel_sort_order)) ?: appContext.resources.getString(R.string.pref_default_channel_sort_order))
+            "channel_sort_order" -> channelSortOrder.value = Integer.valueOf(sharedPreferences.getString("channel_sort_order", defaultChannelSortOrder) ?: defaultChannelSortOrder)
             "channel_number_enabled" -> showChannelNumber.value = sharedPreferences.getBoolean(key, appContext.resources.getBoolean(R.bool.pref_default_channel_number_enabled))
             "program_subtitle_enabled" -> showProgramSubtitle.value = sharedPreferences.getBoolean(key, appContext.resources.getBoolean(R.bool.pref_default_program_subtitle_enabled))
             "genre_colors_for_program_guide_enabled" -> showGenreColor.value = sharedPreferences.getBoolean(key, appContext.resources.getBoolean(R.bool.pref_default_genre_colors_for_program_guide_enabled))
@@ -137,10 +128,9 @@ class EpgViewModel(application: Application) : BaseChannelViewModel(application)
         return appRepository.programData.getItemByChannelIdAndBetweenTime(channelId, startTimes[fragmentId], endTimes[fragmentId])
     }
 
-    internal inner class EpgProgramDataLiveData(
-            channelList: LiveData<List<EpgChannel>>,
-            hoursOfEpgDataPerScreen: LiveData<Int>,
-            daysOfEpgData: LiveData<Int>) : MediatorLiveData<Triple<List<EpgChannel>?, Int?, Int?>>() {
+    internal inner class EpgProgramDataLiveData(channelList: LiveData<List<EpgChannel>>,
+                                                hoursOfEpgDataPerScreen: LiveData<Int>,
+                                                daysOfEpgData: LiveData<Int>) : MediatorLiveData<Triple<List<EpgChannel>?, Int?, Int?>>() {
 
         init {
             addSource(channelList) { channels ->
