@@ -13,6 +13,7 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequest
 import androidx.work.WorkManager
+import leakcanary.LeakSentry
 import org.json.JSONException
 import org.json.JSONObject
 import org.tvheadend.htsp.*
@@ -122,6 +123,7 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
         Timber.d("Stopping service")
         execService.shutdown()
         stopHtspConnection()
+        LeakSentry.refWatcher.watch(this)
     }
 
     private fun startHtspConnection() {

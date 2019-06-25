@@ -10,12 +10,12 @@ import org.tvheadend.htsp.HtspConnection;
 import org.tvheadend.htsp.HtspMessage;
 import org.tvheadend.htsp.HtspMessageListener;
 import org.tvheadend.htsp.HtspResponseListener;
-import org.tvheadend.tvhclient.MainApplication;
 
 import java.io.Closeable;
 import java.nio.ByteBuffer;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import leakcanary.LeakSentry;
 import timber.log.Timber;
 
 public class HtspFileInputStreamDataSource implements DataSource, Closeable, HtspMessageListener, HtspDataSourceInterface {
@@ -228,7 +228,7 @@ public class HtspFileInputStreamDataSource implements DataSource, Closeable, Hts
         htspConnection.removeMessageListener(this);
 
         // Watch for memory leaks
-        MainApplication.refWatcher.watch(this);
+        LeakSentry.INSTANCE.getRefWatcher().watch(this);
     }
 
     private void sendFileRead(long offset) {

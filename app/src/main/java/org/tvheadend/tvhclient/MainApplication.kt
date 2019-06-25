@@ -13,8 +13,6 @@ import com.google.android.gms.cast.framework.SessionProvider
 import com.google.android.gms.cast.framework.media.CastMediaOptions
 import com.google.android.gms.cast.framework.media.NotificationOptions
 import com.google.firebase.analytics.FirebaseAnalytics
-import com.squareup.leakcanary.LeakCanary
-import com.squareup.leakcanary.RefWatcher
 import io.fabric.sdk.android.Fabric
 import org.tvheadend.tvhclient.di.component.DaggerMainApplicationComponent
 import org.tvheadend.tvhclient.di.component.MainApplicationComponent
@@ -64,12 +62,6 @@ class MainApplication : MultiDexApplication(), OptionsProvider, BillingUpdatesLi
                 .sharedPreferencesModule(SharedPreferencesModule())
                 .repositoryModule(RepositoryModule())
                 .build()
-
-        // This process is dedicated to LeakCanary for heap analysis.
-        if (LeakCanary.isInAnalyzerProcess(this)) return
-
-        // Create the RefWatcher and start watching activity references
-        refWatcher = LeakCanary.install(this)
 
         // Enable the database debugging bridge in debug mode to access
         // the database contents and other resources via the chrome browser
@@ -177,7 +169,5 @@ class MainApplication : MultiDexApplication(), OptionsProvider, BillingUpdatesLi
         lateinit var instance: MainApplication
 
         lateinit var component: MainApplicationComponent
-
-        lateinit var refWatcher: RefWatcher
     }
 }

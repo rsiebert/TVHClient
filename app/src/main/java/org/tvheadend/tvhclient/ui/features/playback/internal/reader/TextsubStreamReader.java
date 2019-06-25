@@ -96,7 +96,7 @@ class TextsubStreamReader implements StreamReader {
     @Override
     public void release() {
         // Watch for memory leaks
-        MainApplication.refWatcher.watch(this);
+        LeakSentry.refWatcher.watch(this);
     }
 
     @NonNull

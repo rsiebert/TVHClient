@@ -25,7 +25,8 @@ import com.google.android.exoplayer2.extractor.TrackOutput;
 import com.google.android.exoplayer2.util.ParsableByteArray;
 
 import org.tvheadend.htsp.HtspMessage;
-import org.tvheadend.tvhclient.MainApplication;
+
+import leakcanary.LeakSentry;
 
 /**
  * A PlainStreamReader simply copies the raw bytes from muxpkt's over onto the track output
@@ -78,7 +79,7 @@ abstract class PlainStreamReader implements StreamReader {
     @Override
     public void release() {
         // Watch for memory leaks
-        MainApplication.refWatcher.watch(this);
+        LeakSentry.INSTANCE.getRefWatcher().watch(this);
     }
 
     @NonNull
