@@ -80,8 +80,8 @@ class SettingsViewModel(application: Application) : BaseViewModel(application) {
         }
     }
 
-    fun loadConnectionById(id: Int): Connection {
-        return appRepository.connectionData.getItemById(id) ?: Connection()
+    fun loadConnectionById(id: Int) {
+        connection = appRepository.connectionData.getItemById(id) ?: Connection()
     }
 
     fun createNewConnection() {
