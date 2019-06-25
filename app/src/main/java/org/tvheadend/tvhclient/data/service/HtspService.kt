@@ -21,10 +21,10 @@ import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.data.repository.AppRepository
 import org.tvheadend.tvhclient.data.worker.EpgDataUpdateWorker
 import org.tvheadend.tvhclient.domain.entity.*
-import org.tvheadend.tvhclient.util.extensions.sendSnackbarMessage
 import org.tvheadend.tvhclient.ui.features.notification.addNotificationScheduledRecordingStarts
 import org.tvheadend.tvhclient.ui.features.notification.removeNotificationById
 import org.tvheadend.tvhclient.util.convertUrlToHashString
+import org.tvheadend.tvhclient.util.extensions.sendSnackbarMessage
 import org.tvheadend.tvhclient.util.getIconUrl
 import org.tvheadend.tvhclient.util.isEqualTo
 import timber.log.Timber
@@ -125,10 +125,10 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
     }
 
     private fun startHtspConnection() {
-        Timber.d("Starting connection")
         stopHtspConnection()
 
         connection = appRepository.connectionData.activeItem
+        Timber.d("Connecting to ${connection.name}, hostname is ${connection.hostname}")
 
         htspConnection = HtspConnection(
                 connection.username, connection.password,
@@ -143,7 +143,7 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
     }
 
     private fun stopHtspConnection() {
-        Timber.d("Stopping connection")
+        Timber.d("Stopping existing connection")
         htspConnection?.closeConnection()
     }
 
