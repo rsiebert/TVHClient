@@ -86,9 +86,7 @@ class ProgramListFragment : BaseFragment(), RecyclerViewClickCallback, LastProgr
         recycler_view.addItemDecoration(DividerItemDecoration(activity, LinearLayoutManager.VERTICAL))
         recycler_view.itemAnimator = DefaultItemAnimator()
         recycler_view.adapter = recyclerViewAdapter
-
         recycler_view.gone()
-        progress_bar.visible()
 
         if (!isSearchActive) {
             Timber.d("Search is not active, loading programs for channel $channelName from time $selectedTime")
@@ -122,7 +120,6 @@ class ProgramListFragment : BaseFragment(), RecyclerViewClickCallback, LastProgr
             }
         }
         recycler_view?.visible()
-        progress_bar?.gone()
 
         if (!isDualPane) {
             if (!isSearchActive) {

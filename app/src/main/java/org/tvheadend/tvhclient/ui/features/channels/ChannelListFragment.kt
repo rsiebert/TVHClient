@@ -19,7 +19,6 @@ import org.tvheadend.tvhclient.domain.entity.ChannelTag
 import org.tvheadend.tvhclient.ui.base.BaseFragment
 import org.tvheadend.tvhclient.ui.common.*
 import org.tvheadend.tvhclient.ui.common.callbacks.RecyclerViewClickCallback
-import org.tvheadend.tvhclient.ui.common.tasks.WakeOnLanTask
 import org.tvheadend.tvhclient.ui.features.dvr.RecordingAddEditActivity
 import org.tvheadend.tvhclient.ui.features.notification.addNotificationProgramIsAboutToStart
 import org.tvheadend.tvhclient.ui.features.programs.ProgramListFragment
@@ -73,10 +72,7 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickCallback, ChannelTi
         recycler_view.addItemDecoration(DividerItemDecoration(activity, LinearLayoutManager.VERTICAL))
         recycler_view.itemAnimator = DefaultItemAnimator()
         recycler_view.adapter = recyclerViewAdapter
-
         recycler_view.gone()
-        progress_bar.visible()
-
 
         Timber.d("Observing selected time")
         viewModel.selectedTime.observe(viewLifecycleOwner, Observer { time ->
@@ -102,7 +98,6 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickCallback, ChannelTi
             }
 
             recycler_view?.visible()
-            progress_bar?.gone()
 
             showChannelTagOrChannelCount()
 
@@ -219,11 +214,8 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickCallback, ChannelTi
             R.id.menu_channel_tags -> showChannelTagSelectionDialog(ctx, channelTags.toMutableList(), channelCount, this)
             R.id.menu_program_timeframe -> showProgramTimeframeSelectionDialog(ctx, selectedTimeOffset, intervalInHours, 12, this)
             R.id.menu_genre_color_information -> showGenreColorDialog(ctx)
-            R.id.menu_channel_sort_order -> showChannelSortOrderSelectionDialog(ctx, this)
-            R.id.menu_send_wake_on_lan_packet -> {
-                WakeOnLanTask(ctx, connection).execute()
-                true
-            }
+            R.id.menu_channel_sort_order -> showChannelSortOrderSelectionDialog(ctx)
+            R.id.menu_send_wake_on_lan_packet -> sendWakeOnLanPacket(ctx, connection)
             else -> super.onOptionsItemSelected(item)
         }
     }
@@ -231,7 +223,6 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickCallback, ChannelTi
     override fun onTimeSelected(which: Int) {
         selectedTimeOffset = which
         recycler_view?.gone()
-        progress_bar?.visible()
 
         // Add the selected list index as extra hours to the current time.
         // If the first index was selected then use the current time.
@@ -242,7 +233,6 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickCallback, ChannelTi
 
     override fun onChannelTagIdsSelected(ids: Set<Int>) {
         recycler_view?.gone()
-        progress_bar?.visible()
         viewModel.setSelectedChannelTagIds(ids)
     }
 

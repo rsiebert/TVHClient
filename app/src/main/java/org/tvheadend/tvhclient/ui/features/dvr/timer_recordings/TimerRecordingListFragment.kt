@@ -57,7 +57,6 @@ class TimerRecordingListFragment : BaseFragment(), RecyclerViewClickCallback, Se
         recycler_view.adapter = recyclerViewAdapter
 
         recycler_view.gone()
-        progress_bar.visible()
 
         timerRecordingViewModel.recordings.observe(viewLifecycleOwner, Observer { recordings ->
             if (recordings != null) {
@@ -65,7 +64,6 @@ class TimerRecordingListFragment : BaseFragment(), RecyclerViewClickCallback, Se
             }
 
             recycler_view?.visible()
-            progress_bar?.gone()
 
             if (searchQuery.isEmpty()) {
                 toolbarInterface.setSubtitle(resources.getQuantityString(R.plurals.items, recyclerViewAdapter.itemCount, recyclerViewAdapter.itemCount))
