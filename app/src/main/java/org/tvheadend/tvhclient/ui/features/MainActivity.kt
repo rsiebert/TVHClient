@@ -30,16 +30,19 @@ import org.tvheadend.tvhclient.data.service.HtspService
 import org.tvheadend.tvhclient.data.service.SyncStateReceiver
 import org.tvheadend.tvhclient.ui.base.BaseActivity
 import org.tvheadend.tvhclient.ui.common.*
-import org.tvheadend.tvhclient.util.extensions.*
-import org.tvheadend.tvhclient.ui.common.NetworkStatus
-import org.tvheadend.tvhclient.ui.common.NetworkStatusReceiver
+import org.tvheadend.tvhclient.ui.features.channels.ChannelListFragment
 import org.tvheadend.tvhclient.ui.features.download.DownloadPermissionGrantedInterface
-import org.tvheadend.tvhclient.ui.features.dvr.recordings.RecordingDetailsFragment
+import org.tvheadend.tvhclient.ui.features.dvr.recordings.*
 import org.tvheadend.tvhclient.ui.features.dvr.series_recordings.SeriesRecordingDetailsFragment
+import org.tvheadend.tvhclient.ui.features.dvr.series_recordings.SeriesRecordingListFragment
 import org.tvheadend.tvhclient.ui.features.dvr.timer_recordings.TimerRecordingDetailsFragment
+import org.tvheadend.tvhclient.ui.features.dvr.timer_recordings.TimerRecordingListFragment
 import org.tvheadend.tvhclient.ui.features.epg.ProgramGuideFragment
+import org.tvheadend.tvhclient.ui.features.information.StatusFragment
 import org.tvheadend.tvhclient.ui.features.information.StatusViewModel
+import org.tvheadend.tvhclient.ui.features.information.WebViewFragment
 import org.tvheadend.tvhclient.ui.features.navigation.NavigationDrawer
+import org.tvheadend.tvhclient.ui.features.navigation.NavigationDrawer.Companion.MENU_SETTINGS
 import org.tvheadend.tvhclient.ui.features.navigation.NavigationViewModel
 import org.tvheadend.tvhclient.ui.features.notification.showNotificationDiskSpaceIsLow
 import org.tvheadend.tvhclient.ui.features.notification.showNotificationProgramIsCurrentlyBeingRecorded
@@ -47,6 +50,9 @@ import org.tvheadend.tvhclient.ui.features.playback.external.CastSessionManagerL
 import org.tvheadend.tvhclient.ui.features.programs.ProgramDetailsFragment
 import org.tvheadend.tvhclient.ui.features.programs.ProgramListFragment
 import org.tvheadend.tvhclient.ui.features.search.SearchRequestInterface
+import org.tvheadend.tvhclient.ui.features.settings.SettingsActivity
+import org.tvheadend.tvhclient.ui.features.unlocker.UnlockerFragment
+import org.tvheadend.tvhclient.util.extensions.*
 import org.tvheadend.tvhclient.util.getThemeId
 import timber.log.Timber
 
@@ -322,12 +328,14 @@ class MainActivity : BaseActivity(), SearchView.OnQueryTextListener, SearchView.
         // every orientation change which would reset any saved states in these fragments.
         if (position != navigationViewModel.previousNavigationMenuId) {
             Timber.d("New navigation menu $position was selected, getting new fragment")
-            fragment = navigationDrawer.getFragmentFromSelection(position)
+            fragment = getFragmentFromSelection(position)
         } else {
             Timber.d("Same navigation menu was selected, trying to get existing fragment")
             fragment = supportFragmentManager.findFragmentById(R.id.main)
             addFragmentToBackStack = false
         }
+
+        navigationViewModel.previousNavigationMenuId = position
 
         // A new or existing main fragment shall be shown. So save the menu position so we
         // know which one was selected. Additionally remove any old details fragment in case
@@ -335,7 +343,6 @@ class MainActivity : BaseActivity(), SearchView.OnQueryTextListener, SearchView.
         // Finally show the new main fragment and add it to the back stack
         // only if it is a new fragment and not an existing one.
         if (fragment != null) {
-            navigationViewModel.previousNavigationMenuId = position
             if (isDualPane) {
                 val detailsFragment = supportFragmentManager.findFragmentById(R.id.details)
                 if (detailsFragment != null) {
@@ -345,6 +352,10 @@ class MainActivity : BaseActivity(), SearchView.OnQueryTextListener, SearchView.
             supportFragmentManager.beginTransaction().replace(R.id.main, fragment).let {
                 if (addFragmentToBackStack) it.addToBackStack(null)
                 it.commit()
+            }
+        } else {
+            if (position == MENU_SETTINGS) {
+                startActivity(Intent(this, SettingsActivity::class.java))
             }
         }
     }
@@ -507,5 +518,35 @@ class MainActivity : BaseActivity(), SearchView.OnQueryTextListener, SearchView.
         } else {
             super.onBackPressed()
         }
+    }
+
+    /**
+     * Creates and returns a new fragment that is associated with the given menu
+     */
+    private fun getFragmentFromSelection(position: Int): Fragment? {
+        var fragment: Fragment? = null
+        val bundle = Bundle()
+        when (position) {
+            NavigationDrawer.MENU_CHANNELS -> fragment = ChannelListFragment()
+            NavigationDrawer.MENU_PROGRAM_GUIDE -> fragment = ProgramGuideFragment()
+            NavigationDrawer.MENU_COMPLETED_RECORDINGS -> fragment = CompletedRecordingListFragment()
+            NavigationDrawer.MENU_SCHEDULED_RECORDINGS -> fragment = ScheduledRecordingListFragment()
+            NavigationDrawer.MENU_SERIES_RECORDINGS -> fragment = SeriesRecordingListFragment()
+            NavigationDrawer.MENU_TIMER_RECORDINGS -> fragment = TimerRecordingListFragment()
+            NavigationDrawer.MENU_FAILED_RECORDINGS -> fragment = FailedRecordingListFragment()
+            NavigationDrawer.MENU_REMOVED_RECORDINGS -> fragment = RemovedRecordingListFragment()
+            NavigationDrawer.MENU_STATUS -> fragment = StatusFragment()
+            NavigationDrawer.MENU_UNLOCKER -> {
+                fragment = UnlockerFragment()
+                bundle.putString("website", "features")
+                fragment.arguments = bundle
+            }
+            NavigationDrawer.MENU_HELP -> {
+                fragment = WebViewFragment()
+                bundle.putString("website", "help_and_support")
+                fragment.arguments = bundle
+            }
+        }
+        return fragment
     }
 }

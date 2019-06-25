@@ -35,7 +35,6 @@ import org.tvheadend.tvhclient.ui.features.epg.ProgramGuideFragment
 import org.tvheadend.tvhclient.ui.features.information.StatusFragment
 import org.tvheadend.tvhclient.ui.features.information.StatusViewModel
 import org.tvheadend.tvhclient.ui.features.information.WebViewFragment
-import org.tvheadend.tvhclient.ui.features.settings.SettingsActivity
 import org.tvheadend.tvhclient.ui.features.startup.SplashActivity
 import org.tvheadend.tvhclient.ui.features.unlocker.UnlockerFragment
 import org.tvheadend.tvhclient.util.getThemeId
@@ -236,10 +235,8 @@ class NavigationDrawer(private val activity: AppCompatActivity,
 
     fun saveInstanceState(outState: Bundle): Bundle {
         var out = outState
-        val resultBundle = result.saveInstanceState(out)
-        val headerResultBundle = headerResult.saveInstanceState(out)
-        if (resultBundle != null) out = resultBundle
-        if (headerResultBundle != null) out = headerResultBundle
+        out = result.saveInstanceState(out)
+        out = headerResult.saveInstanceState(out)
         return out
     }
 
@@ -259,50 +256,19 @@ class NavigationDrawer(private val activity: AppCompatActivity,
         }
     }
 
-    /**
-     * Creates and returns a new fragment that is associated with the given menu
-     */
-    fun getFragmentFromSelection(position: Int): Fragment? {
-        var fragment: Fragment? = null
-        val bundle = Bundle()
-        when (position) {
-            MENU_CHANNELS -> fragment = ChannelListFragment()
-            MENU_PROGRAM_GUIDE -> fragment = ProgramGuideFragment()
-            MENU_COMPLETED_RECORDINGS -> fragment = CompletedRecordingListFragment()
-            MENU_SCHEDULED_RECORDINGS -> fragment = ScheduledRecordingListFragment()
-            MENU_SERIES_RECORDINGS -> fragment = SeriesRecordingListFragment()
-            MENU_TIMER_RECORDINGS -> fragment = TimerRecordingListFragment()
-            MENU_FAILED_RECORDINGS -> fragment = FailedRecordingListFragment()
-            MENU_REMOVED_RECORDINGS -> fragment = RemovedRecordingListFragment()
-            MENU_STATUS -> fragment = StatusFragment()
-            MENU_SETTINGS -> activity.startActivity(Intent(activity, SettingsActivity::class.java))
-            MENU_UNLOCKER -> {
-                fragment = UnlockerFragment()
-                bundle.putString("website", "features")
-                fragment.arguments = bundle
-            }
-            MENU_HELP -> {
-                fragment = WebViewFragment()
-                bundle.putString("website", "help_and_support")
-                fragment.arguments = bundle
-            }
-        }
-        return fragment
-    }
-
     companion object {
 
         // The index for the navigation drawer menus
         const val MENU_CHANNELS = 0
-        private const val MENU_PROGRAM_GUIDE = 1
-        private const val MENU_COMPLETED_RECORDINGS = 2
-        private const val MENU_SCHEDULED_RECORDINGS = 3
-        private const val MENU_SERIES_RECORDINGS = 4
-        private const val MENU_TIMER_RECORDINGS = 5
-        private const val MENU_FAILED_RECORDINGS = 6
-        private const val MENU_REMOVED_RECORDINGS = 7
+        const val MENU_PROGRAM_GUIDE = 1
+        const val MENU_COMPLETED_RECORDINGS = 2
+        const val MENU_SCHEDULED_RECORDINGS = 3
+        const val MENU_SERIES_RECORDINGS = 4
+        const val MENU_TIMER_RECORDINGS = 5
+        const val MENU_FAILED_RECORDINGS = 6
+        const val MENU_REMOVED_RECORDINGS = 7
         const val MENU_STATUS = 8
-        private const val MENU_SETTINGS = 9
+        const val MENU_SETTINGS = 9
         const val MENU_UNLOCKER = 10
         const val MENU_HELP = 11
     }
