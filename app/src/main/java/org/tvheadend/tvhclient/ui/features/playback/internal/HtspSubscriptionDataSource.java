@@ -31,11 +31,10 @@ import com.google.android.exoplayer2.upstream.DataSpec;
 
 import org.jetbrains.annotations.NotNull;
 import org.tvheadend.htsp.HtspConnection;
+import org.tvheadend.htsp.HtspMessage;
 import org.tvheadend.htsp.HtspMessageListener;
-import org.tvheadend.tvhclient.MainApplication;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.service.HtspService;
-import org.tvheadend.htsp.HtspMessage;
 
 import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
@@ -46,6 +45,7 @@ import java.nio.ByteBuffer;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.ReentrantLock;
 
+import leakcanary.LeakSentry;
 import timber.log.Timber;
 
 public class HtspSubscriptionDataSource implements DataSource, Closeable, HtspMessageListener, HtspDataSourceInterface {
@@ -289,7 +289,7 @@ public class HtspSubscriptionDataSource implements DataSource, Closeable, HtspMe
         htspConnection.removeMessageListener(this);
 
         // Watch for memory leaks
-        MainApplication.refWatcher.watch(this);
+        LeakSentry.INSTANCE.getRefWatcher().watch(this);
     }
 
     public void pause() {
