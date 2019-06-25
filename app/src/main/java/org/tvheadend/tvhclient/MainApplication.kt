@@ -2,6 +2,7 @@ package org.tvheadend.tvhclient
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.preference.PreferenceManager
 import androidx.multidex.MultiDexApplication
 import com.android.billingclient.api.Purchase
 import com.crashlytics.android.Crashlytics
@@ -15,14 +16,13 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import com.squareup.leakcanary.LeakCanary
 import com.squareup.leakcanary.RefWatcher
 import io.fabric.sdk.android.Fabric
-import org.tvheadend.tvhclient.di.DaggerMainApplicationComponent
-import org.tvheadend.tvhclient.di.MainApplicationComponent
-import org.tvheadend.tvhclient.di.modules.MainApplicationModule
-import org.tvheadend.tvhclient.di.modules.RepositoryModule
-import org.tvheadend.tvhclient.di.modules.SharedPreferencesModule
+import org.tvheadend.tvhclient.di.component.DaggerMainApplicationComponent
+import org.tvheadend.tvhclient.di.component.MainApplicationComponent
+import org.tvheadend.tvhclient.di.module.ContextModule
+import org.tvheadend.tvhclient.di.module.RepositoryModule
+import org.tvheadend.tvhclient.di.module.SharedPreferencesModule
 import org.tvheadend.tvhclient.ui.common.onAttach
 import org.tvheadend.tvhclient.ui.features.playback.external.ExpandedControlsActivity
-import org.tvheadend.tvhclient.util.MigrateUtils
 import org.tvheadend.tvhclient.util.billing.BillingHandler
 import org.tvheadend.tvhclient.util.billing.BillingManager
 import org.tvheadend.tvhclient.util.billing.BillingManager.UNLOCKER
@@ -31,7 +31,6 @@ import org.tvheadend.tvhclient.util.logging.CrashlyticsTree
 import org.tvheadend.tvhclient.util.logging.DebugTree
 import org.tvheadend.tvhclient.util.logging.FileLoggingTree
 import timber.log.Timber
-import javax.inject.Inject
 
 // TODO move diffutils to background thread
 // TODO use coroutines for certain stuff
@@ -40,7 +39,6 @@ import javax.inject.Inject
 // TODO use a base viewmodel with generics
 // TODO consolidate the dialog strings
 // TODO make the 12 hour check to start the epg background worker a setting
-
 // TODO load startup fragment in main activity, continue to load first fragment if all ok and viewmodel loaded data
 // TODO use viewpager2 in epg
 // TODO reduce number of used async loads in source_data, use livedata where possible
@@ -49,38 +47,32 @@ class MainApplication : MultiDexApplication(), OptionsProvider, BillingUpdatesLi
 
     lateinit var billingManager: BillingManager
     lateinit var billingHandler: BillingHandler
-    private lateinit var firebaseAnalytics: FirebaseAnalytics
+    private lateinit var sharedPreferences: SharedPreferences
+    private lateinit var fireBaseAnalytics: FirebaseAnalytics
 
-    @Inject
-    lateinit var sharedPreferences: SharedPreferences
-
-    /**
-     * Checks if the user has purchased the unlocker from the play store.
-     * If yes the application is unlocked then all extra features are accessible.
-     *
-     * @return True if the application is unlocked otherwise false
-     */
+    // TODO put this in the repository and observe via live data?
     var isUnlocked: Boolean = false
 
     override fun onCreate() {
         super.onCreate()
         instance = this
-        // Create the component upon start of the app. This component
-        // is used by all other classes to inject certain fields
-        component = buildComponent()
-        component.inject(this)
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
 
-        billingHandler = BillingHandler()
-        billingHandler.addListener(this)
+        // Setup the required dependencies for injection
+        component = DaggerMainApplicationComponent.builder()
+                .contextModule(ContextModule(this))
+                .sharedPreferencesModule(SharedPreferencesModule())
+                .repositoryModule(RepositoryModule())
+                .build()
 
         // This process is dedicated to LeakCanary for heap analysis.
-        if (LeakCanary.isInAnalyzerProcess(this)) {
-            return
-        }
+        if (LeakCanary.isInAnalyzerProcess(this)) return
+
+        // Create the RefWatcher and start watching activity references
         refWatcher = LeakCanary.install(this)
 
-        // Enable stetho to enable accessing the database
-        // and other resources via the chrome browser
+        // Enable the database debugging bridge in debug mode to access
+        // the database contents and other resources via the chrome browser
         if (BuildConfig.DEBUG) {
             Stetho.initialize(Stetho.newInitializerBuilder(this)
                     .enableDumpapp(Stetho.defaultDumperPluginsProvider(this))
@@ -88,54 +80,36 @@ class MainApplication : MultiDexApplication(), OptionsProvider, BillingUpdatesLi
                     .build())
         }
 
-        firebaseAnalytics = FirebaseAnalytics.getInstance(this)
+        fireBaseAnalytics = FirebaseAnalytics.getInstance(this)
 
-        initCrashlytics()
-        initTimber()
-        initBilling()
 
-        Timber.d("Application build time is ${BuildConfig.BUILD_TIME}, git commit hash is ${BuildConfig.GIT_SHA}")
-
-        // Migrates existing connections from the old database to the new room database.
-        // Migrates existing preferences or remove old ones before starting the actual application
-        MigrateUtils().doMigrate()
-    }
-
-    override fun attachBaseContext(context: Context) {
-        super.attachBaseContext(onAttach(context))
-    }
-
-    private fun buildComponent(): MainApplicationComponent {
-        return DaggerMainApplicationComponent.builder()
-                .mainApplicationModule(MainApplicationModule(this))
-                .sharedPreferencesModule(SharedPreferencesModule())
-                .repositoryModule(RepositoryModule(this))
-                .build()
-    }
-
-    private fun initBilling() {
-        billingManager = BillingManager(this.applicationContext, billingHandler)
-        billingManager.queryPurchases()
-    }
-
-    private fun initTimber() {
-        if (BuildConfig.DEBUG || BuildConfig.DEBUG_LOG) {
-            Timber.plant(DebugTree())
-        }
-
-        if (sharedPreferences.getBoolean("debug_mode_enabled", resources.getBoolean(R.bool.pref_default_debug_mode_enabled))) {
-            Timber.plant(FileLoggingTree(applicationContext))
-        }
-        if (sharedPreferences.getBoolean("crash_reports_enabled", resources.getBoolean(R.bool.pref_default_crash_reports_enabled))) {
-            Timber.plant(CrashlyticsTree())
-        }
-    }
-
-    private fun initCrashlytics() {
         // Initialize Fabric with the debug-disabled crashlytics.
         if (!BuildConfig.DEBUG && sharedPreferences.getBoolean("crash_reports_enabled", resources.getBoolean(R.bool.pref_default_crash_reports_enabled))) {
             Fabric.with(this, Crashlytics())
         }
+        // Initialize the logging. In release mode Log to theUse debug log
+        if (BuildConfig.DEBUG || BuildConfig.DEBUG_LOG) {
+            Timber.plant(DebugTree())
+        }
+        // Log to a file when in release mode and the user has activated the setting
+        if (!BuildConfig.DEBUG && sharedPreferences.getBoolean("debug_mode_enabled", resources.getBoolean(R.bool.pref_default_debug_mode_enabled))) {
+            Timber.plant(FileLoggingTree(applicationContext))
+        }
+        // Log any non fatal crashes via crashlytics when the app is in release mode and the user has activated the setting
+        if (!BuildConfig.DEBUG && sharedPreferences.getBoolean("crash_reports_enabled", resources.getBoolean(R.bool.pref_default_crash_reports_enabled))) {
+            Timber.plant(CrashlyticsTree())
+        }
+
+        billingHandler = BillingHandler()
+        billingHandler.addListener(this)
+        billingManager = BillingManager(this.applicationContext, billingHandler)
+        billingManager.queryPurchases()
+
+        Timber.d("Application build time is ${BuildConfig.BUILD_TIME}, git commit hash is ${BuildConfig.GIT_SHA}")
+    }
+
+    override fun attachBaseContext(context: Context) {
+        super.attachBaseContext(onAttach(context))
     }
 
     override fun onTerminate() {
@@ -143,6 +117,9 @@ class MainApplication : MultiDexApplication(), OptionsProvider, BillingUpdatesLi
         super.onTerminate()
     }
 
+    /**
+     * Provides CastOptions, which affects discovery and session management of a Cast device
+     */
     override fun getCastOptions(context: Context): CastOptions {
         val notificationOptions = NotificationOptions.Builder()
                 .setTargetActivityClassName(ExpandedControlsActivity::class.java.name)
@@ -158,6 +135,9 @@ class MainApplication : MultiDexApplication(), OptionsProvider, BillingUpdatesLi
                 .build()
     }
 
+    /**
+     * Provides a list of custom SessionProvider instances for non-Cast devices.
+     */
     override fun getAdditionalSessionProviders(context: Context): List<SessionProvider>? {
         return null
     }
