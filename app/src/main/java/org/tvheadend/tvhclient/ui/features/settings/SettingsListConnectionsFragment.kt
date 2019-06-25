@@ -1,6 +1,7 @@
 package org.tvheadend.tvhclient.ui.features.settings
 
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.*
@@ -12,9 +13,10 @@ import androidx.lifecycle.ViewModelProviders
 import com.afollestad.materialdialogs.MaterialDialog
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.data.service.HtspService
+import org.tvheadend.tvhclient.domain.entity.Connection
 import org.tvheadend.tvhclient.ui.common.callbacks.BackPressedInterface
 import org.tvheadend.tvhclient.ui.common.callbacks.ToolbarInterface
-import org.tvheadend.tvhclient.ui.common.tasks.WakeOnLanTask
+import org.tvheadend.tvhclient.ui.common.sendWakeOnLanPacket
 import org.tvheadend.tvhclient.ui.features.startup.SplashActivity
 import timber.log.Timber
 
@@ -22,9 +24,9 @@ class SettingsListConnectionsFragment : ListFragment(), BackPressedInterface, Ac
 
     private lateinit var toolbarInterface: ToolbarInterface
     private lateinit var connectionListAdapter: ConnectionListAdapter
-    private var actionMode: ActionMode? = null
-
     private lateinit var settingsViewModel: SettingsViewModel
+
+    private var actionMode: ActionMode? = null
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
@@ -41,19 +43,19 @@ class SettingsListConnectionsFragment : ListFragment(), BackPressedInterface, Ac
         setHasOptionsMenu(true)
 
         settingsViewModel.connectionHasChanged = false
-        activity?.let {
-            settingsViewModel.allConnections.observe(it, Observer { connections ->
-                if (connections != null) {
-                    connectionListAdapter.clear()
-                    connectionListAdapter.addAll(connections)
-                    connectionListAdapter.notifyDataSetChanged()
+        settingsViewModel.allConnections.observe(viewLifecycleOwner, Observer { connections ->
+            if (connections != null) {
+                connectionListAdapter.clear()
+                connectionListAdapter.addAll(connections)
+                connectionListAdapter.notifyDataSetChanged()
+                context?.let {
                     toolbarInterface.setSubtitle(it.resources.getQuantityString(
                             R.plurals.number_of_connections,
                             connectionListAdapter.count,
                             connectionListAdapter.count))
                 }
-            })
-        }
+            }
+        })
     }
 
     override fun onListItemClick(l: ListView, v: View, position: Int, id: Long) {
@@ -76,80 +78,67 @@ class SettingsListConnectionsFragment : ListFragment(), BackPressedInterface, Ac
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
-            R.id.menu_add_connection -> {
-                val intent = Intent(activity, SettingsActivity::class.java)
-                intent.putExtra("setting_type", "add_connection")
-                startActivity(intent)
-                true
-            }
+            R.id.menu_add_connection -> addConnection()
             else -> super.onOptionsItemSelected(item)
         }
     }
 
     override fun onActionItemClicked(mode: ActionMode, item: MenuItem): Boolean {
+        val ctx = context ?: return false
         val position = listView.checkedItemPosition
-        // Return in case the position is larger then the contents in the adapter
         if (connectionListAdapter.count <= position) return false
-        // Get the connection, if its null (unlikely) return
+
         val connection = connectionListAdapter.getItem(position) ?: return false
-        val intent: Intent
-        when (item.itemId) {
-            R.id.menu_set_connection_active -> {
-                connection.isActive = true
-                settingsViewModel.updateConnection(connection)
-                settingsViewModel.connectionHasChanged = true
-                mode.finish()
-                return true
-            }
-
-            R.id.menu_set_connection_not_active -> {
-                connection.isActive = false
-                settingsViewModel.updateConnection(connection)
-                mode.finish()
-                return true
-            }
-
-            R.id.menu_edit_connection -> {
-                intent = Intent(activity, SettingsActivity::class.java)
-                intent.putExtra("setting_type", "edit_connection")
-                intent.putExtra("connection_id", connection.id)
-                startActivity(intent)
-                mode.finish()
-                return true
-            }
-
-            R.id.menu_send_wol -> {
-                context?.let {
-                    WakeOnLanTask(it, connection).execute()
-                }
-                mode.finish()
-                return true
-            }
-
-            R.id.menu_delete_connection -> {
-                context?.let {
-                    MaterialDialog(it).show {
-                        message(text = getString(R.string.delete_connection, connection.name))
-                        positiveButton(R.string.delete) {
-                            settingsViewModel.removeConnection(connection)
-                        }
-                        negativeButton(R.string.cancel) {
-                            cancel()
-                        }
-                    }
-                }
-                mode.finish()
-                return true
-            }
-
-            else -> return false
+        return when (item.itemId) {
+            R.id.menu_set_connection_active -> setConnectionActiveOrInactive(connection, mode, true)
+            R.id.menu_set_connection_not_active -> setConnectionActiveOrInactive(connection, mode, false)
+            R.id.menu_edit_connection -> editConnection(connection, mode)
+            R.id.menu_send_wol -> sendWakeOnLanPacket(ctx, connection, mode)
+            R.id.menu_delete_connection -> deleteConnection(ctx, connection, mode)
+            else -> false
         }
     }
 
+    private fun addConnection(): Boolean {
+        val intent = Intent(activity, SettingsActivity::class.java)
+        intent.putExtra("setting_type", "add_connection")
+        startActivity(intent)
+        return true
+    }
+
+    private fun editConnection(connection: Connection, mode: ActionMode): Boolean {
+        val intent = Intent(activity, SettingsActivity::class.java)
+        intent.putExtra("setting_type", "edit_connection")
+        intent.putExtra("connection_id", connection.id)
+        startActivity(intent)
+        mode.finish()
+        return true
+    }
+
+    private fun setConnectionActiveOrInactive(connection: Connection, mode: ActionMode, active: Boolean): Boolean {
+        connection.isActive = active
+        settingsViewModel.updateConnection(connection)
+        settingsViewModel.connectionHasChanged = true
+        mode.finish()
+        return true
+    }
+
+    private fun deleteConnection(context: Context, connection: Connection, mode: ActionMode): Boolean {
+        MaterialDialog(context).show {
+            message(text = getString(R.string.delete_connection, connection.name))
+            positiveButton(R.string.delete) {
+                settingsViewModel.removeConnection(connection)
+            }
+            negativeButton(R.string.cancel) {
+                cancel()
+            }
+        }
+        mode.finish()
+        return true
+    }
+
     override fun onCreateActionMode(mode: ActionMode, menu: Menu): Boolean {
-        // Inflate a menu resource providing context menu items
-        val inflater = mode.menuInflater
-        inflater.inflate(R.menu.connection_list_options_menu, menu)
+        mode.menuInflater.inflate(R.menu.connection_list_options_menu, menu)
         return true
     }
 
@@ -163,7 +152,7 @@ class SettingsListConnectionsFragment : ListFragment(), BackPressedInterface, Ac
         val connection = connectionListAdapter.getItem(position)
         if (connection != null) {
             // Show or hide the wake on LAN menu item
-            menu.getItem(0).isVisible = !connection.wolMacAddress.isNullOrEmpty()
+            menu.getItem(0).isVisible = connection.isWolEnabled && !connection.wolMacAddress.isNullOrEmpty()
             // Show or hide the activate / deactivate menu items
             menu.getItem(1).isVisible = !connection.isActive
             menu.getItem(2).isVisible = connection.isActive
@@ -208,12 +197,11 @@ class SettingsListConnectionsFragment : ListFragment(), BackPressedInterface, Ac
         activity?.stopService(Intent(activity, HtspService::class.java))
 
         settingsViewModel.setSyncRequiredForActiveConnection()
+        settingsViewModel.connectionHasChanged = false
 
         val intent = Intent(activity, SplashActivity::class.java)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         activity?.startActivity(intent)
-
-        settingsViewModel.connectionHasChanged = false
         activity?.finish()
     }
 }
