@@ -13,7 +13,7 @@ import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.data.service.HtspService
 import org.tvheadend.tvhclient.domain.entity.ServerStatus
 import org.tvheadend.tvhclient.ui.base.BaseFragment
-import org.tvheadend.tvhclient.ui.common.tasks.WakeOnLanTask
+import org.tvheadend.tvhclient.ui.common.sendWakeOnLanPacket
 import org.tvheadend.tvhclient.ui.features.dvr.recordings.RecordingViewModel
 import timber.log.Timber
 
@@ -69,13 +69,9 @@ class StatusFragment : BaseFragment() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        val ctx = context ?: return super.onOptionsItemSelected(item)
         return when (item.itemId) {
-            R.id.menu_send_wake_on_lan_packet -> {
-                context?.let {
-                    WakeOnLanTask(it, connection).execute()
-                }
-                true
-            }
+            R.id.menu_send_wake_on_lan_packet -> sendWakeOnLanPacket(ctx, connection)
             else -> super.onOptionsItemSelected(item)
         }
     }
