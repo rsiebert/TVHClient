@@ -7,6 +7,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.preference.PreferenceManager
+import android.view.ActionMode
 import android.view.Menu
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.list.listItemsSingleChoice
@@ -14,6 +15,7 @@ import org.tvheadend.tvhclient.MainApplication
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.data.service.HtspService
 import org.tvheadend.tvhclient.domain.entity.*
+import org.tvheadend.tvhclient.ui.common.tasks.WakeOnLanTask
 import org.tvheadend.tvhclient.ui.features.MainViewModel
 import org.tvheadend.tvhclient.ui.features.dvr.RecordingAddEditActivity
 import org.tvheadend.tvhclient.ui.features.dvr.RecordingRemovedCallback
@@ -610,5 +612,11 @@ fun searchTitleInTheLocalDatabase(context: Context, title: String?, channelId: I
         intent.putExtra("channelId", channelId)
     }
     context.startActivity(intent)
+    return true
+}
+
+fun sendWakeOnLanPacket(context: Context, connection: Connection, mode: ActionMode? = null): Boolean {
+    WakeOnLanTask(context, connection).execute()
+    mode?.finish()
     return true
 }
