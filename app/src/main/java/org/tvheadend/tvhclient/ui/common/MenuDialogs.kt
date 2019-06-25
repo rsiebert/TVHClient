@@ -214,7 +214,7 @@ fun showProgramTimeframeSelectionDialog(context: Context, currentSelection: Int,
     return true
 }
 
-fun showChannelSortOrderSelectionDialog(context: Context, callback: ChannelTimeSelectedInterface): Boolean {
+fun showChannelSortOrderSelectionDialog(context: Context): Boolean {
 
     val channelSortOrder = Integer.valueOf(androidx.preference.PreferenceManager.getDefaultSharedPreferences(context).getString("channel_sort_order", context.resources.getString(R.string.pref_default_channel_sort_order))!!)
     MaterialDialog(context).show {
