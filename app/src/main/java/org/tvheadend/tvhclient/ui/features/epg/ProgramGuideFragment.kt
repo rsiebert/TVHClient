@@ -187,7 +187,7 @@ class ProgramGuideFragment : BaseFragment(), EpgScrollInterface, RecyclerViewCli
             R.id.menu_channel_tags -> showChannelTagSelectionDialog(ctx, channelTags.toMutableList(), channelCount, this)
             R.id.menu_program_timeframe -> showProgramTimeframeSelectionDialog(ctx, epgViewModel.selectedTimeOffset, epgViewModel.hoursToShow, epgViewModel.hoursToShow * epgViewModel.daysToShow, this)
             R.id.menu_genre_color_information -> showGenreColorDialog(ctx)
-            R.id.menu_channel_sort_order -> showChannelSortOrderSelectionDialog(ctx, this)
+            R.id.menu_channel_sort_order -> showChannelSortOrderSelectionDialog(ctx)
             else -> super.onOptionsItemSelected(item)
         }
     }
@@ -346,7 +346,7 @@ class ProgramGuideFragment : BaseFragment(), EpgScrollInterface, RecyclerViewCli
         return getString(R.string.search_program_guide)
     }
 
-    private class EpgViewPagerAdapter internal constructor(fragmentManager: FragmentManager, private val viewModel: EpgViewModel) : FragmentStatePagerAdapter(fragmentManager) {
+    private class EpgViewPagerAdapter internal constructor(fragmentManager: FragmentManager, private val viewModel: EpgViewModel) : FragmentStatePagerAdapter(fragmentManager, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
 
         private val registeredFragments = SparseArray<Fragment>()
 
