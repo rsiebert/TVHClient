@@ -1,10 +1,11 @@
 $ 2.2.16
   % VERSION 2.2.16
-  _ 13.06.2019
+  _ 25.06.2019
     * Added popup menu to directly enable or disable scheduled recordings (Only available in the unlocked version)
+    * Fixed showing the settings again after an orientation change
     * Fixed some layout issues in the startup screen
-    * Improvements under the hood
-    * Small bug fixes
+    * Fixed channel tag names were not shown in the selection dialog
+    * Improvements and some bug fixes
 $ 2.2.15
   % VERSION 2.2.15
   _ 03.06.2019
