@@ -17,16 +17,11 @@ open class BaseChannelViewModel(application: Application) : BaseViewModel(applic
     val serverStatus: LiveData<ServerStatus> = appRepository.serverStatusData.liveDataActiveItem
     val selectedChannelTagIds: LiveData<List<Int>?> = appRepository.channelTagData.liveDataSelectedItemIds
     val channelCount: LiveData<Int> = appRepository.channelData.getLiveDataItemCount()
-    val selectedTime = MutableLiveData<Long>()
-
-    init {
-        Timber.d("Loading time, sort order and channel tags ids from database")
-        selectedTime.value = Date().time
-    }
+    val selectedTime = MutableLiveData<Long>(Date().time)
+    val defaultChannelSortOrder: String = appContext.resources.getString(R.string.pref_default_channel_sort_order)
 
     fun setSelectedTime(time: Long) {
         if (selectedTime.value != time) {
-            Timber.d("Saving newly selected time")
             selectedTime.value = time
         }
     }
