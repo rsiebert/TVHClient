@@ -14,49 +14,38 @@
  * limitations under the License.
  */
 
-package org.tvheadend.tvhclient.ui.features.playback.internal.reader;
+package org.tvheadend.tvhclient.ui.features.playback.internal.reader
 
-import androidx.annotation.NonNull;
+import com.google.android.exoplayer2.C
+import com.google.android.exoplayer2.Format
+import com.google.android.exoplayer2.util.MimeTypes
 
-import com.google.android.exoplayer2.C;
-import com.google.android.exoplayer2.Format;
-import com.google.android.exoplayer2.util.MimeTypes;
+import org.tvheadend.htsp.HtspMessage
+import org.tvheadend.tvhclient.ui.features.playback.internal.utils.TvhMappings
 
-import org.tvheadend.htsp.HtspMessage;
-import org.tvheadend.tvhclient.ui.features.playback.internal.utils.TvhMappings;
+internal class Eac3StreamReader : PlainStreamReader(C.TRACK_TYPE_AUDIO) {
 
-class Ac3StreamReader extends PlainStreamReader {
-
-    Ac3StreamReader() {
-        super(C.TRACK_TYPE_AUDIO);
-    }
-
-    @NonNull
-    @Override
-    protected Format buildFormat(int streamIndex, @NonNull HtspMessage stream) {
-        int rate = Format.NO_VALUE;
+    override fun buildFormat(streamIndex: Int, stream: HtspMessage): Format {
+        var rate = Format.NO_VALUE
         if (stream.containsKey("rate")) {
-            rate = TvhMappings.sriToRate(stream.getInteger("rate"));
+            rate = TvhMappings.sriToRate(stream.getInteger("rate"))
         }
 
         return Format.createAudioSampleFormat(
                 Integer.toString(streamIndex),
-                MimeTypes.AUDIO_AC3,
+                MimeTypes.AUDIO_E_AC3,
                 null,
                 Format.NO_VALUE,
                 Format.NO_VALUE,
                 stream.getInteger("channels", Format.NO_VALUE),
                 rate,
-                C.ENCODING_PCM_16BIT,
-                null,
-                null,
+                C.ENCODING_PCM_16BIT, null, null,
                 C.SELECTION_FLAG_AUTOSELECT,
                 stream.getString("language", "und")
-        );
+        )
     }
 
-    @Override
-    protected int getTrackType() {
-        return C.TRACK_TYPE_AUDIO;
+    override fun getTrackType(): Int {
+        return C.TRACK_TYPE_AUDIO
     }
 }

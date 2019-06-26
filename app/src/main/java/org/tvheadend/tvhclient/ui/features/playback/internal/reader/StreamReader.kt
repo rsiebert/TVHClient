@@ -14,23 +14,16 @@
  * limitations under the License.
  */
 
-package org.tvheadend.tvhclient.ui.features.playback.internal.reader;
+package org.tvheadend.tvhclient.ui.features.playback.internal.reader
 
-import com.google.android.exoplayer2.Format;
+import com.google.android.exoplayer2.extractor.ExtractorOutput
 
-class StreamReaderUtils {
-    private StreamReaderUtils() {
-        throw new IllegalAccessError("Utility class");
-    }
+import org.tvheadend.htsp.HtspMessage
 
-    static float frameDurationToFrameRate(int frameDuration) {
-        float frameRate = Format.NO_VALUE;
+interface StreamReader {
+    fun createTracks(stream: HtspMessage, output: ExtractorOutput)
 
-        if (frameDuration != Format.NO_VALUE) {
-            // 1000000 = 1 second, in microseconds.
-            frameRate = 1000000 / (float) frameDuration;
-        }
+    fun consume(message: HtspMessage)
 
-        return frameRate;
-    }
+    fun release()
 }

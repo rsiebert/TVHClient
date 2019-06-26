@@ -14,25 +14,17 @@
  * limitations under the License.
  */
 
-package org.tvheadend.tvhclient.ui.features.playback.internal.reader;
+package org.tvheadend.tvhclient.ui.features.playback.internal.reader
 
-import androidx.annotation.NonNull;
+import com.google.android.exoplayer2.C
+import com.google.android.exoplayer2.Format
+import com.google.android.exoplayer2.util.MimeTypes
 
-import com.google.android.exoplayer2.C;
-import com.google.android.exoplayer2.Format;
-import com.google.android.exoplayer2.util.MimeTypes;
+import org.tvheadend.htsp.HtspMessage
 
-import org.tvheadend.htsp.HtspMessage;
+internal class Mpeg2VideoStreamReader : PlainStreamReader(C.TRACK_TYPE_VIDEO) {
 
-class Mpeg2VideoStreamReader extends PlainStreamReader {
-
-    Mpeg2VideoStreamReader() {
-        super(C.TRACK_TYPE_VIDEO);
-    }
-
-    @NonNull
-    @Override
-    protected Format buildFormat(int streamIndex, @NonNull HtspMessage stream) {
+    override fun buildFormat(streamIndex: Int, stream: HtspMessage): Format {
         return Format.createVideoSampleFormat(
                 Integer.toString(streamIndex),
                 MimeTypes.VIDEO_MPEG2,
@@ -41,13 +33,10 @@ class Mpeg2VideoStreamReader extends PlainStreamReader {
                 Format.NO_VALUE,
                 stream.getInteger("width"),
                 stream.getInteger("height"),
-                StreamReaderUtils.frameDurationToFrameRate(stream.getInteger("duration", Format.NO_VALUE)),
-                null,
-                null);
+                StreamReaderUtils.frameDurationToFrameRate(stream.getInteger("duration", Format.NO_VALUE)), null, null)
     }
 
-    @Override
-    protected int getTrackType() {
-        return C.TRACK_TYPE_VIDEO;
+    override fun getTrackType(): Int {
+        return C.TRACK_TYPE_VIDEO
     }
 }
