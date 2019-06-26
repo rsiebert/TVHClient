@@ -148,11 +148,11 @@ fun showConfirmationToReconnectToServer(context: Context, viewModel: MainViewMod
     return true
 }
 
-private fun reconnectToServer(context: Context, viewModel: MainViewModel) {
+private fun reconnectToServer(context: Context, mainViewModel: MainViewModel) {
     Timber.d("Reconnect requested, stopping service and updating active connection to require a full sync")
     context.stopService(Intent(context, HtspService::class.java))
 
-    viewModel.setConnectionSyncRequired()
+    mainViewModel.setConnectionSyncRequired()
 
     // Restart the application to show the startup fragment
     val intent = Intent(context, SplashActivity::class.java)
