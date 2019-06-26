@@ -24,10 +24,7 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
      * to trigger an initial sync after a reconnect.
      */
     fun setConnectionSyncRequired() {
-        connection = appRepository.connectionData.activeItem
-        connection.isSyncRequired = true
-        connection.lastUpdate = 0
-        appRepository.connectionData.updateItem(connection)
+        appRepository.connectionData.setSyncRequiredForActiveConnection()
     }
 
     fun setNetworkIsAvailable(isAvailable: Boolean) {

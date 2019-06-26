@@ -14,6 +14,7 @@ class ConnectionData(private val db: AppRoomDatabase) : DataSourceInterface<Conn
 
     private val ioScope = CoroutineScope(Dispatchers.IO)
 
+
     val activeItem: Connection
         get() {
             var connection = Connection().also { it.id = -1 }
@@ -82,5 +83,12 @@ class ConnectionData(private val db: AppRoomDatabase) : DataSourceInterface<Conn
             connections.addAll(db.connectionDao.loadAllConnectionsSync())
         }
         return connections
+    }
+
+    fun setSyncRequiredForActiveConnection() {
+        val connection = activeItem
+        connection.isSyncRequired = true
+        connection.lastUpdate = 0
+        updateItem(connection)
     }
 }
