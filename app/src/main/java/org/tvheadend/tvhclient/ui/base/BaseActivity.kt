@@ -10,6 +10,7 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import org.tvheadend.tvhclient.MainApplication
 import org.tvheadend.tvhclient.data.repository.AppRepository
+import org.tvheadend.tvhclient.ui.common.NetworkStatusReceiver
 import org.tvheadend.tvhclient.ui.common.SnackbarMessageReceiver
 import org.tvheadend.tvhclient.ui.common.callbacks.ToolbarInterface
 import org.tvheadend.tvhclient.ui.common.onAttach
@@ -27,23 +28,27 @@ open class BaseActivity : AppCompatActivity(), ToolbarInterface {
 
     protected lateinit var mainViewModel: MainViewModel
     private lateinit var snackbarMessageReceiver: SnackbarMessageReceiver
+    private lateinit var networkStatusReceiver: NetworkStatusReceiver
 
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         MainApplication.component.inject(this)
 
         mainViewModel = ViewModelProviders.of(this).get(MainViewModel::class.java)
-        snackbarMessageReceiver = SnackbarMessageReceiver(mainViewModel)
+        snackbarMessageReceiver = SnackbarMessageReceiver(appRepository)
+        networkStatusReceiver = NetworkStatusReceiver(appRepository)
     }
 
     public override fun onStart() {
         super.onStart()
-        LocalBroadcastManager.getInstance(this).registerReceiver(snackbarMessageReceiver, IntentFilter(SnackbarMessageReceiver.ACTION))
+        LocalBroadcastManager.getInstance(this).registerReceiver(snackbarMessageReceiver, IntentFilter(SnackbarMessageReceiver.SNACKBAR_ACTION))
+        registerReceiver(networkStatusReceiver, IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"))
     }
 
     public override fun onStop() {
         super.onStop()
         LocalBroadcastManager.getInstance(this).unregisterReceiver(snackbarMessageReceiver)
+        unregisterReceiver(networkStatusReceiver)
     }
 
     override fun attachBaseContext(context: Context) {

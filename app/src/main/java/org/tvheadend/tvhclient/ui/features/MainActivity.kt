@@ -1,7 +1,6 @@
 package org.tvheadend.tvhclient.ui.features
 
 import android.app.ActivityManager
-import android.app.NotificationManager
 import android.app.SearchManager
 import android.content.Context
 import android.content.Intent
@@ -23,13 +22,14 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.preference.PreferenceManager
 import com.google.android.gms.cast.framework.*
-import com.google.android.material.snackbar.Snackbar
-import org.tvheadend.tvhclient.MainApplication
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.data.service.HtspService
 import org.tvheadend.tvhclient.data.service.SyncStateReceiver
 import org.tvheadend.tvhclient.ui.base.BaseActivity
-import org.tvheadend.tvhclient.ui.common.*
+import org.tvheadend.tvhclient.ui.common.NetworkStatus
+import org.tvheadend.tvhclient.ui.common.getCastContext
+import org.tvheadend.tvhclient.ui.common.getCastSession
+import org.tvheadend.tvhclient.ui.common.showSnackbarMessage
 import org.tvheadend.tvhclient.ui.features.channels.ChannelListFragment
 import org.tvheadend.tvhclient.ui.features.download.DownloadPermissionGrantedInterface
 import org.tvheadend.tvhclient.ui.features.dvr.recordings.*
@@ -44,15 +44,18 @@ import org.tvheadend.tvhclient.ui.features.information.WebViewFragment
 import org.tvheadend.tvhclient.ui.features.navigation.NavigationDrawer
 import org.tvheadend.tvhclient.ui.features.navigation.NavigationDrawer.Companion.MENU_SETTINGS
 import org.tvheadend.tvhclient.ui.features.navigation.NavigationViewModel
-import org.tvheadend.tvhclient.ui.features.notification.showNotificationDiskSpaceIsLow
-import org.tvheadend.tvhclient.ui.features.notification.showNotificationProgramIsCurrentlyBeingRecorded
+import org.tvheadend.tvhclient.ui.features.notification.showOrCancelNotificationDiskSpaceIsLow
+import org.tvheadend.tvhclient.ui.features.notification.showOrCancelNotificationProgramIsCurrentlyBeingRecorded
 import org.tvheadend.tvhclient.ui.features.playback.external.CastSessionManagerListener
 import org.tvheadend.tvhclient.ui.features.programs.ProgramDetailsFragment
 import org.tvheadend.tvhclient.ui.features.programs.ProgramListFragment
 import org.tvheadend.tvhclient.ui.features.search.SearchRequestInterface
 import org.tvheadend.tvhclient.ui.features.settings.SettingsActivity
 import org.tvheadend.tvhclient.ui.features.unlocker.UnlockerFragment
-import org.tvheadend.tvhclient.util.extensions.*
+import org.tvheadend.tvhclient.util.extensions.gone
+import org.tvheadend.tvhclient.util.extensions.sendSnackbarMessage
+import org.tvheadend.tvhclient.util.extensions.visible
+import org.tvheadend.tvhclient.util.extensions.visibleOrGone
 import org.tvheadend.tvhclient.util.getThemeId
 import timber.log.Timber
 
@@ -76,7 +79,6 @@ class MainActivity : BaseActivity(), SearchView.OnQueryTextListener, SearchView.
 
     private lateinit var navigationDrawer: NavigationDrawer
     private lateinit var syncStateReceiver: SyncStateReceiver
-    private lateinit var networkStatusReceiver: NetworkStatusReceiver
 
     private var isUnlocked: Boolean = false
     private var isDualPane: Boolean = false
@@ -84,6 +86,8 @@ class MainActivity : BaseActivity(), SearchView.OnQueryTextListener, SearchView.
     private var searchQuery: String = ""
     private lateinit var queryTextSubmitTask: Runnable
     private val queryTextSubmitHandler = Handler()
+
+    private lateinit var miniController: View
 
     override fun onCreate(savedInstanceState: Bundle?) {
         setTheme(getThemeId(this))
@@ -96,10 +100,11 @@ class MainActivity : BaseActivity(), SearchView.OnQueryTextListener, SearchView.
         statusViewModel = ViewModelProviders.of(this).get(StatusViewModel::class.java)
 
         syncProgress = findViewById(R.id.sync_progress)
-        networkStatusReceiver = NetworkStatusReceiver(mainViewModel)
         syncStateReceiver = SyncStateReceiver(this)
-        isUnlocked = MainApplication.instance.isUnlocked
         isDualPane = findViewById<View>(R.id.details) != null
+
+        miniController = findViewById<View>(R.id.cast_mini_controller)
+        miniController.gone()
 
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
@@ -109,21 +114,12 @@ class MainActivity : BaseActivity(), SearchView.OnQueryTextListener, SearchView.
             actionBar.setHomeButtonEnabled(true)
         }
 
-        navigationDrawer = NavigationDrawer(this, savedInstanceState, toolbar, navigationViewModel, statusViewModel, isUnlocked)
+        navigationDrawer = NavigationDrawer(this, savedInstanceState, toolbar, navigationViewModel, statusViewModel)
 
-        // When the activity is created it got called by the main activity. Get the initial
-        // navigation menu position and show the associated fragment with it. When the device
-        // was rotated just restore the position from the saved instance.
         searchQuery = savedInstanceState?.getString(SearchManager.QUERY) ?: ""
 
-        val showCastingMiniController = isUnlocked && sharedPreferences.getBoolean("casting_minicontroller_enabled",
-                resources.getBoolean(R.bool.pref_default_casting_minicontroller_enabled))
-        val miniController = findViewById<View>(R.id.cast_mini_controller)
-        miniController.visibleOrGone(showCastingMiniController)
-
         supportFragmentManager.addOnBackStackChangedListener {
-            val fragment = supportFragmentManager.findFragmentById(R.id.main)
-            navigationDrawer.handleMenuSelection(fragment)
+            navigationDrawer.handleMenuSelection(supportFragmentManager.findFragmentById(R.id.main))
         }
 
         castContext = getCastContext(this)
@@ -167,36 +163,23 @@ class MainActivity : BaseActivity(), SearchView.OnQueryTextListener, SearchView.
         navigationViewModel.navigationMenuId.observe(this, Observer { id ->
             handleDrawerItemSelected(id)
         })
-
         statusViewModel.showRunningRecordingCount.observe(this, Observer { show ->
-            Timber.d("Notification of running recording count of ${statusViewModel.runningRecordingCount} shall be shown $show")
-            if (show) {
-                showNotificationProgramIsCurrentlyBeingRecorded(this, statusViewModel.runningRecordingCount)
-            } else {
-                (getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager).cancel(1)
-            }
+            showOrCancelNotificationProgramIsCurrentlyBeingRecorded(this, statusViewModel.runningRecordingCount, show)
         })
-
         statusViewModel.showLowStorageSpace.observe(this, Observer { show ->
-            Timber.d("Currently free disk space changed to ${statusViewModel.availableStorageSpace} gigabytes")
-            if (show) {
-                showNotificationDiskSpaceIsLow(this, statusViewModel.availableStorageSpace)
-            } else {
-                (getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager).cancel(2)
-            }
+            showOrCancelNotificationDiskSpaceIsLow(this, statusViewModel.availableStorageSpace, show)
+        })
+        mainViewModel.showSnackbar.observe(this, Observer { intent ->
+            showSnackbarMessage(this, intent)
+        })
+        mainViewModel.isUnlocked.observe(this, Observer { unlocked ->
+            Timber.d("Received live data, unlocked changed to $unlocked")
+            isUnlocked = unlocked
+            invalidateOptionsMenu()
+
+            miniController.visibleOrGone(isUnlocked && sharedPreferences.getBoolean("casting_minicontroller_enabled", resources.getBoolean(R.bool.pref_default_casting_minicontroller_enabled)))
         })
 
-        mainViewModel.showSnackbar.observe(this, Observer { intent ->
-            val msg = intent.getStringExtra(SnackbarMessageReceiver.CONTENT)
-            val duration = intent.getIntExtra(SnackbarMessageReceiver.DURATION, Snackbar.LENGTH_SHORT)
-            val view: View? = findViewById(android.R.id.content)
-            view?.let {
-                Timber.d("Showing snackbar message $msg")
-                val snackbar = Snackbar.make(view, msg, duration)
-                snackbar.config(this)
-                snackbar.show()
-            }
-        })
         Timber.d("Done initializing")
     }
 
@@ -211,13 +194,11 @@ class MainActivity : BaseActivity(), SearchView.OnQueryTextListener, SearchView.
     override fun onStart() {
         super.onStart()
         LocalBroadcastManager.getInstance(this).registerReceiver(syncStateReceiver, IntentFilter(SyncStateReceiver.ACTION))
-        registerReceiver(networkStatusReceiver, IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"))
     }
 
     override fun onStop() {
         super.onStop()
         LocalBroadcastManager.getInstance(this).unregisterReceiver(syncStateReceiver)
-        unregisterReceiver(networkStatusReceiver)
     }
 
     override fun dispatchKeyEvent(event: KeyEvent): Boolean {
@@ -363,16 +344,15 @@ class MainActivity : BaseActivity(), SearchView.OnQueryTextListener, SearchView.
     override fun onPrepareOptionsMenu(menu: Menu): Boolean {
         super.onPrepareOptionsMenu(menu)
 
-        // Show certain menus not on all screens
         when (navigationViewModel.navigationMenuId.value) {
             NavigationDrawer.MENU_STATUS, NavigationDrawer.MENU_UNLOCKER, NavigationDrawer.MENU_HELP -> {
-                mediaRouteMenuItem?.isVisible = false
+                menu.findItem(R.id.media_route_menu_item)?.isVisible = false
                 menu.findItem(R.id.menu_search).isVisible = false
                 menu.findItem(R.id.menu_reconnect_to_server).isVisible = false
                 menu.findItem(R.id.menu_send_wake_on_lan_packet)?.isVisible = false
             }
             else -> {
-                mediaRouteMenuItem?.isVisible = isUnlocked
+                menu.findItem(R.id.media_route_menu_item)?.isVisible = isUnlocked
                 menu.findItem(R.id.menu_send_wake_on_lan_packet)?.isVisible = isUnlocked && mainViewModel.connection.isWolEnabled
             }
         }
