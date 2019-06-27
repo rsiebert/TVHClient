@@ -60,9 +60,8 @@ internal class VorbisStreamReader : PlainStreamReader(C.TRACK_TYPE_AUDIO) {
         )
     }
 
-    override fun getTrackType(): Int {
-        return C.TRACK_TYPE_AUDIO
-    }
+    override val trackType: Int
+        get() = C.TRACK_TYPE_AUDIO
 
     /**
      * Builds initialization data for a [Format] from Vorbis codec private data.

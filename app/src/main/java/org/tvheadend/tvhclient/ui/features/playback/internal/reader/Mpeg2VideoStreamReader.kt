@@ -36,7 +36,6 @@ internal class Mpeg2VideoStreamReader : PlainStreamReader(C.TRACK_TYPE_VIDEO) {
                 StreamReaderUtils.frameDurationToFrameRate(stream.getInteger("duration", Format.NO_VALUE)), null, null)
     }
 
-    override fun getTrackType(): Int {
-        return C.TRACK_TYPE_VIDEO
-    }
+    override val trackType: Int
+        get() = C.TRACK_TYPE_VIDEO
 }

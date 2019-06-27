@@ -39,7 +39,6 @@ internal class DvbsubStreamReader : PlainStreamReader(C.TRACK_TYPE_TEXT) {
                 stream.getString("language", "und"), null)
     }
 
-    override fun getTrackType(): Int {
-        return C.TRACK_TYPE_TEXT
-    }
+    override val trackType: Int
+        get() = C.TRACK_TYPE_TEXT
 }

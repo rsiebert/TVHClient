@@ -52,7 +52,6 @@ internal class H264StreamReader : PlainStreamReader(C.TRACK_TYPE_VIDEO) {
                 initializationData, null)
     }
 
-    override fun getTrackType(): Int {
-        return C.TRACK_TYPE_VIDEO
-    }
+    override val trackType: Int
+        get() = C.TRACK_TYPE_VIDEO
 }

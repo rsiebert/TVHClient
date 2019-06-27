@@ -45,7 +45,6 @@ internal class Ac3StreamReader : PlainStreamReader(C.TRACK_TYPE_AUDIO) {
         )
     }
 
-    override fun getTrackType(): Int {
-        return C.TRACK_TYPE_AUDIO
-    }
+    override val trackType: Int
+        get() = C.TRACK_TYPE_AUDIO
 }

@@ -27,7 +27,7 @@ import org.tvheadend.htsp.HtspMessage
 /**
  * A PlainStreamReader simply copies the raw bytes from muxpkt's over onto the track output
  */
-internal abstract class PlainStreamReader(private val mTrackType: Int) : StreamReader {
+abstract class PlainStreamReader(private val mTrackType: Int) : StreamReader {
     private var mTrackOutput: TrackOutput? = null
 
     protected abstract val trackType: Int
