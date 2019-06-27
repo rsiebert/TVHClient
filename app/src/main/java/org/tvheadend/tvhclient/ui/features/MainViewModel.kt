@@ -15,8 +15,9 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
     val connectionCountLiveData: LiveData<Int> = appRepository.connectionData.getLiveDataItemCount()
     val serverStatus = appRepository.serverStatusData.activeItem
 
-    var networkStatus: MutableLiveData<NetworkStatus> = MutableLiveData(NetworkStatus.NETWORK_UNKNOWN)
-    var showSnackbar: MutableLiveData<Intent> = MutableLiveData()
+    var networkStatus: MutableLiveData<NetworkStatus> = appRepository.networkStatus
+    var showSnackbar: LiveData<Intent> = appRepository.snackbarMessage
+    var isUnlocked: LiveData<Boolean> = appRepository.isUnlocked
 
     /**
      * Update the current active connection from the database in case
