@@ -116,7 +116,7 @@ fun removeNotificationById(context: Context, id: Int) {
  * @param program The program for which the notification shall be created
  * @param profile The selected recording profile
  */
-fun addNotificationProgramIsAboutToStart(context: Context, program: ProgramInterface?, profile: ServerProfile?) : Boolean {
+fun addNotificationProgramIsAboutToStart(context: Context, program: ProgramInterface?, profile: ServerProfile?): Boolean {
     if (program == null) return false
 
     val preferences = PreferenceManager.getDefaultSharedPreferences(context)
@@ -139,37 +139,52 @@ fun addNotificationProgramIsAboutToStart(context: Context, program: ProgramInter
     return true
 }
 
-fun showNotificationProgramIsCurrentlyBeingRecorded(context: Context, count: Int) {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-        (context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager).activeNotifications.forEach { notification ->
-            if (notification.id == 1) {
-                Timber.d("Notification exists already, skipping")
-                return
+fun showOrCancelNotificationProgramIsCurrentlyBeingRecorded(context: Context, count: Int, showNotification: Boolean) {
+    Timber.d("Notification of running recording count of $count shall be shown $showNotification")
+    val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+    if (showNotification) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            notificationManager.activeNotifications.forEach { notification ->
+                if (notification.id == 1) {
+                    Timber.d("Notification exists already, skipping")
+                    return
+                }
             }
-        }
 
-        val builder = getNotificationBuilder(context)
-        builder.setContentTitle(context.getString(R.string.currently_recording))
-                .setContentText("$count recording are running")
-                .setSmallIcon(R.drawable.ic_menu_record_dark)
-                .setOngoing(true)
-        NotificationManagerCompat.from(context).notify(1, builder.build())
+            val builder = getNotificationBuilder(context)
+            builder.setContentTitle(context.getString(R.string.currently_recording))
+                    .setContentText("$count recording are running")
+                    .setSmallIcon(R.drawable.ic_menu_record_dark)
+                    .setOngoing(true)
+            NotificationManagerCompat.from(context).notify(NOTIFICATION_ID_PROGRAM_CURRENTLY_BEING_RECORDED, builder.build())
+        }
+    } else {
+        notificationManager.cancel(NOTIFICATION_ID_PROGRAM_CURRENTLY_BEING_RECORDED)
     }
 }
 
-fun showNotificationDiskSpaceIsLow(context: Context, gigabytes: Int) {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-        (context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager).activeNotifications.forEach { notification ->
-            if (notification.id == 2) {
-                Timber.d("Notification exists already, skipping")
-                return
+fun showOrCancelNotificationDiskSpaceIsLow(context: Context, gigabytes: Int, showNotification: Boolean) {
+    Timber.d("Notification of free disk space $gigabytes gigabytes shall be shown $showNotification")
+    val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+    if (showNotification) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            notificationManager.activeNotifications.forEach { notification ->
+                if (notification.id == 2) {
+                    Timber.d("Notification exists already, skipping")
+                    return
+                }
             }
-        }
 
-        val builder = getNotificationBuilder(context)
-        builder.setContentTitle(context.getString(R.string.disc_space))
-                .setContentText(context.getString(R.string.disc_space_low, gigabytes))
-                .setSmallIcon(R.drawable.ic_menu_info_dark)
-        NotificationManagerCompat.from(context).notify(2, builder.build())
+            val builder = getNotificationBuilder(context)
+            builder.setContentTitle(context.getString(R.string.disc_space))
+                    .setContentText(context.getString(R.string.disc_space_low, gigabytes))
+                    .setSmallIcon(R.drawable.ic_menu_info_dark)
+            NotificationManagerCompat.from(context).notify(NOTIFICATION_ID_DISK_SPACE_LOW, builder.build())
+        }
+    } else {
+        notificationManager.cancel(NOTIFICATION_ID_DISK_SPACE_LOW)
     }
 }
+
+const val NOTIFICATION_ID_PROGRAM_CURRENTLY_BEING_RECORDED: Int = 1
+const val NOTIFICATION_ID_DISK_SPACE_LOW: Int = 2
