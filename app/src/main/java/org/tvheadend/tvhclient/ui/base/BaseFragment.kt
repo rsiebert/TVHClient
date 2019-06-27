@@ -9,7 +9,6 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.preference.PreferenceManager
-import org.tvheadend.tvhclient.MainApplication
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.domain.entity.Connection
 import org.tvheadend.tvhclient.domain.entity.ServerStatus
@@ -51,14 +50,18 @@ abstract class BaseFragment : Fragment() {
 
         mainViewModel = ViewModelProviders.of(activity as BaseActivity).get(MainViewModel::class.java)
         mainViewModel.networkStatus.observe(viewLifecycleOwner, Observer { status ->
-            Timber.d("Network availability changed to $status")
+            Timber.d("Received live data, network availability changed to $status")
             isNetworkAvailable = (status == NetworkStatus.NETWORK_IS_UP || status == NetworkStatus.NETWORK_IS_STILL_UP)
+        })
+
+        mainViewModel.isUnlocked.observe(viewLifecycleOwner, Observer { unlocked ->
+            Timber.d("Received live data, unlocked changed to $unlocked")
+            isUnlocked = unlocked
         })
 
         connection = mainViewModel.connection
         serverStatus = mainViewModel.serverStatus
         htspVersion = serverStatus.htspVersion
-        isUnlocked = MainApplication.instance.isUnlocked
 
         // Check if we have a frame in which to embed the details fragment.
         // Make the frame layout visible and set the weights again in case
