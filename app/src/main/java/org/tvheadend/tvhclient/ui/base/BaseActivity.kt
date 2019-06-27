@@ -14,7 +14,6 @@ import org.tvheadend.tvhclient.ui.common.NetworkStatusReceiver
 import org.tvheadend.tvhclient.ui.common.SnackbarMessageReceiver
 import org.tvheadend.tvhclient.ui.common.callbacks.ToolbarInterface
 import org.tvheadend.tvhclient.ui.common.onAttach
-import org.tvheadend.tvhclient.ui.features.MainViewModel
 import javax.inject.Inject
 
 open class BaseActivity : AppCompatActivity(), ToolbarInterface {
@@ -26,7 +25,7 @@ open class BaseActivity : AppCompatActivity(), ToolbarInterface {
     @Inject
     lateinit var sharedPreferences: SharedPreferences
 
-    protected lateinit var mainViewModel: MainViewModel
+    protected lateinit var mainViewModel: BaseViewModel
     private lateinit var snackbarMessageReceiver: SnackbarMessageReceiver
     private lateinit var networkStatusReceiver: NetworkStatusReceiver
 
@@ -34,7 +33,7 @@ open class BaseActivity : AppCompatActivity(), ToolbarInterface {
         super.onCreate(savedInstanceState)
         MainApplication.component.inject(this)
 
-        mainViewModel = ViewModelProviders.of(this).get(MainViewModel::class.java)
+        mainViewModel = ViewModelProviders.of(this).get(BaseViewModel::class.java)
         snackbarMessageReceiver = SnackbarMessageReceiver(appRepository)
         networkStatusReceiver = NetworkStatusReceiver(appRepository)
     }

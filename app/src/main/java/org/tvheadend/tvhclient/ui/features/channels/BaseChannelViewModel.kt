@@ -5,7 +5,10 @@ import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import org.tvheadend.tvhclient.R
-import org.tvheadend.tvhclient.domain.entity.*
+import org.tvheadend.tvhclient.domain.entity.ChannelTag
+import org.tvheadend.tvhclient.domain.entity.Program
+import org.tvheadend.tvhclient.domain.entity.Recording
+import org.tvheadend.tvhclient.domain.entity.ServerProfile
 import org.tvheadend.tvhclient.ui.base.BaseViewModel
 import timber.log.Timber
 import java.util.*
@@ -14,7 +17,6 @@ open class BaseChannelViewModel(application: Application) : BaseViewModel(applic
 
     val channelTags: LiveData<List<ChannelTag>> = appRepository.channelTagData.getLiveDataItems()
     val recordings: LiveData<List<Recording>> = appRepository.recordingData.getLiveDataItems()
-    val serverStatus: LiveData<ServerStatus> = appRepository.serverStatusData.liveDataActiveItem
     val selectedChannelTagIds: LiveData<List<Int>?> = appRepository.channelTagData.liveDataSelectedItemIds
     val channelCount: LiveData<Int> = appRepository.channelData.getLiveDataItemCount()
     val selectedTime = MutableLiveData<Long>(Date().time)

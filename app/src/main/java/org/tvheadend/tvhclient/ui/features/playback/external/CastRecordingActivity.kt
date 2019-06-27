@@ -40,7 +40,7 @@ class CastRecordingActivity : BasePlaybackActivity() {
             movieMetadata.addImage(WebImage(Uri.parse(iconUrl)))   // large background icon
         }
 
-        val castingProfileId = viewModel.serverStatus?.castingServerProfileId ?: 0
+        val castingProfileId = viewModel.serverStatus.castingServerProfileId
         if (castingProfileId == 0) {
             progress_bar.gone()
             status.text = getString(R.string.error_starting_playback_no_profile)

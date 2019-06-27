@@ -11,7 +11,6 @@ import org.tvheadend.htsp.HtspResponseListener
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.domain.entity.Channel
 import org.tvheadend.tvhclient.domain.entity.Recording
-import org.tvheadend.tvhclient.domain.entity.ServerStatus
 import org.tvheadend.tvhclient.ui.base.BaseViewModel
 import timber.log.Timber
 import java.util.concurrent.ExecutionException
@@ -23,10 +22,6 @@ class ExternalPlayerViewModel(application: Application) : BaseViewModel(applicat
     // Connection related
     private val execService: ScheduledExecutorService = Executors.newScheduledThreadPool(10)
     private val htspConnection: HtspConnection
-
-    var connection = appRepository.connectionData.activeItem
-    var serverStatus: ServerStatus? = appRepository.serverStatusData.activeItem
-    var isUnlocked = appRepository.isUnlocked
 
     var channel: Channel? = null
     var recording: Recording? = null
@@ -141,8 +136,8 @@ class ExternalPlayerViewModel(application: Application) : BaseViewModel(applicat
             baseUrl = "http://$hostname:${connection.streamingPort}"
         }
 
-        if (!serverStatus?.webroot.isNullOrEmpty()) {
-            baseUrl += serverStatus?.webroot
+        if (!serverStatus.webroot.isNullOrEmpty()) {
+            baseUrl += serverStatus.webroot
         }
         return baseUrl
     }
@@ -150,8 +145,7 @@ class ExternalPlayerViewModel(application: Application) : BaseViewModel(applicat
     fun getPlaybackUrl(convertHostname: Boolean = false, profileId: Int = 0): String {
         // If the server status is null, then use the default id of zero which will
         // return a null server profile. In this case use the default profile 'pass'
-        val defaultProfile = appRepository.serverProfileData.getItemById(serverStatus?.httpPlaybackServerProfileId
-                ?: 0)
+        val defaultProfile = appRepository.serverProfileData.getItemById(serverStatus.httpPlaybackServerProfileId)
         val defaultProfileName = defaultProfile?.name ?: "pass"
 
         // Get the playback profile for the given id. In case no profile is returned, use the default name

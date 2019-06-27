@@ -12,11 +12,10 @@ import android.view.Menu
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.list.listItemsSingleChoice
 import org.tvheadend.tvhclient.R
-import org.tvheadend.tvhclient.data.repository.AppRepository
 import org.tvheadend.tvhclient.data.service.HtspService
 import org.tvheadend.tvhclient.domain.entity.*
+import org.tvheadend.tvhclient.ui.base.BaseViewModel
 import org.tvheadend.tvhclient.ui.common.tasks.WakeOnLanTask
-import org.tvheadend.tvhclient.ui.features.MainViewModel
 import org.tvheadend.tvhclient.ui.features.dvr.RecordingAddEditActivity
 import org.tvheadend.tvhclient.ui.features.dvr.RecordingRemovedCallback
 import org.tvheadend.tvhclient.ui.features.playback.external.CastChannelActivity
@@ -25,7 +24,6 @@ import org.tvheadend.tvhclient.ui.features.playback.external.PlayChannelActivity
 import org.tvheadend.tvhclient.ui.features.playback.external.PlayRecordingActivity
 import org.tvheadend.tvhclient.ui.features.playback.internal.PlaybackActivity
 import org.tvheadend.tvhclient.ui.features.search.SearchActivity
-import org.tvheadend.tvhclient.ui.features.startup.SplashActivity
 import org.tvheadend.tvhclient.util.isServerProfileEnabled
 import timber.log.Timber
 import java.io.UnsupportedEncodingException
@@ -136,7 +134,7 @@ fun preparePopupOrToolbarSearchMenu(menu: Menu, title: String?, isNetworkAvailab
     menu.findItem(R.id.menu_search_epg)?.isVisible = visible
 }
 
-fun showConfirmationToReconnectToServer(context: Context, viewModel: MainViewModel): Boolean {
+fun showConfirmationToReconnectToServer(context: Context, viewModel: BaseViewModel): Boolean {
     MaterialDialog(context).show {
         title(R.string.dialog_title_reconnect_to_server)
         message(R.string.dialog_content_reconnect_to_server)

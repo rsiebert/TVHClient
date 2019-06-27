@@ -15,14 +15,13 @@ import org.tvheadend.tvhclient.domain.entity.ServerStatus
 import org.tvheadend.tvhclient.ui.common.NetworkStatus
 import org.tvheadend.tvhclient.ui.common.callbacks.ToolbarInterface
 import org.tvheadend.tvhclient.ui.common.showConfirmationToReconnectToServer
-import org.tvheadend.tvhclient.ui.features.MainViewModel
 import org.tvheadend.tvhclient.util.extensions.gone
 import org.tvheadend.tvhclient.util.extensions.visible
 import timber.log.Timber
 
 abstract class BaseFragment : Fragment() {
 
-    lateinit var mainViewModel: MainViewModel
+    lateinit var mainViewModel: BaseViewModel
     protected lateinit var sharedPreferences: SharedPreferences
     protected lateinit var toolbarInterface: ToolbarInterface
     protected var isDualPane: Boolean = false
@@ -48,7 +47,7 @@ abstract class BaseFragment : Fragment() {
         mainFrameLayout = activity?.findViewById(R.id.main)
         detailsFrameLayout = activity?.findViewById(R.id.details)
 
-        mainViewModel = ViewModelProviders.of(activity as BaseActivity).get(MainViewModel::class.java)
+        mainViewModel = ViewModelProviders.of(activity as BaseActivity).get(BaseViewModel::class.java)
         mainViewModel.networkStatus.observe(viewLifecycleOwner, Observer { status ->
             Timber.d("Received live data, network availability changed to $status")
             isNetworkAvailable = (status == NetworkStatus.NETWORK_IS_UP || status == NetworkStatus.NETWORK_IS_STILL_UP)

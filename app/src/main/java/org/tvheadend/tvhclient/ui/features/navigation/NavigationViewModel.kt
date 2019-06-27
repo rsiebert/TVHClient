@@ -10,11 +10,9 @@ import timber.log.Timber
 
 class NavigationViewModel(application: Application) : BaseViewModel(application) {
 
-    val connection: Connection = appRepository.connectionData.activeItem
     val connections: LiveData<List<Connection>> = appRepository.connectionData.getLiveDataItems()
     val navigationMenuId: MutableLiveData<Int> = MutableLiveData()
     var previousNavigationMenuId: Int = -1
-    var isUnlocked: LiveData<Boolean> = appRepository.isUnlocked
 
     init {
         Timber.d("Initializing")

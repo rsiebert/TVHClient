@@ -19,7 +19,8 @@ import timber.log.Timber
 
 class StatusViewModel(application: Application) : BaseViewModel(application), SharedPreferences.OnSharedPreferenceChangeListener {
 
-    val serverStatus: LiveData<ServerStatus> = appRepository.serverStatusData.liveDataActiveItem
+    // TODO remove when variable in base model has been changed to live data
+    val serverStatusLiveData: LiveData<ServerStatus> = appRepository.serverStatusData.liveDataActiveItem
     val channelCount: LiveData<Int> = appRepository.channelData.getLiveDataItemCount()
     val programCount: LiveData<Int> = appRepository.programData.getLiveDataItemCount()
     val timerRecordingCount: LiveData<Int> = appRepository.timerRecordingData.getLiveDataItemCount()
@@ -54,7 +55,7 @@ class StatusViewModel(application: Application) : BaseViewModel(application), Sh
         // Listen to changes of the server status especially the free storage space.
         // If the free space is above the threshold or the setting to show
         // notifications is disabled, set the value to false to remove any notification
-        showLowStorageSpace.addSource(serverStatus) { serverStatus ->
+        showLowStorageSpace.addSource(serverStatusLiveData) { serverStatus ->
             if (serverStatus != null) {
                 availableStorageSpace = (serverStatus.freeDiskSpace / 1000000000000).toInt()
                 val enabled = sharedPreferences.getBoolean("notify_low_storage_space_enabled", appContext.resources.getBoolean(R.bool.pref_default_notify_low_storage_space_enabled))

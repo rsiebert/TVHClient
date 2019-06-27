@@ -9,9 +9,9 @@ import androidx.lifecycle.ViewModelProviders
 import com.afollestad.materialdialogs.MaterialDialog
 import kotlinx.android.synthetic.main.startup_fragment.*
 import org.tvheadend.tvhclient.R
+import org.tvheadend.tvhclient.ui.base.BaseViewModel
 import org.tvheadend.tvhclient.ui.common.callbacks.ToolbarInterface
 import org.tvheadend.tvhclient.ui.features.MainActivity
-import org.tvheadend.tvhclient.ui.features.MainViewModel
 import org.tvheadend.tvhclient.ui.features.settings.SettingsActivity
 import org.tvheadend.tvhclient.util.extensions.visible
 import timber.log.Timber
@@ -20,7 +20,7 @@ import timber.log.Timber
 
 class StartupFragment : Fragment() {
 
-    private lateinit var mainViewModel: MainViewModel
+    private lateinit var mainViewModel: BaseViewModel
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.startup_fragment, container, false)
@@ -28,7 +28,7 @@ class StartupFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        mainViewModel = ViewModelProviders.of(activity!!).get(MainViewModel::class.java)
+        mainViewModel = ViewModelProviders.of(activity!!).get(BaseViewModel::class.java)
 
         setHasOptionsMenu(true)
 
@@ -40,7 +40,7 @@ class StartupFragment : Fragment() {
                 ?: getString(R.string.initializing)
         startup_status.visible()
 
-        mainViewModel.connectionCountLiveData.observe(viewLifecycleOwner, Observer { count ->
+        mainViewModel.connectionCount.observe(viewLifecycleOwner, Observer { count ->
             if (count == 0) {
                 Timber.d("No connection available, showing settings button")
                 startup_status.text = getString(R.string.no_connection_available)

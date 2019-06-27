@@ -115,7 +115,7 @@ class StatusFragment : BaseFragment() {
             removed_recordings_view.text = resources.getQuantityString(R.plurals.removed_recordings, count
                     ?: 0, count)
         })
-        statusViewModel.serverStatus.observe(viewLifecycleOwner, Observer { serverStatus ->
+        statusViewModel.serverStatusLiveData.observe(viewLifecycleOwner, Observer { serverStatus ->
             if (serverStatus != null) {
                 showServerInformation(serverStatus)
             }

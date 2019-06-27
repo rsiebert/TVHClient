@@ -14,8 +14,6 @@ class SettingsViewModel(application: Application) : BaseViewModel(application) {
 
     val allConnections: LiveData<List<Connection>> = appRepository.connectionData.getLiveDataItems()
     val serverStatusLiveData: LiveData<ServerStatus> = appRepository.serverStatusData.liveDataActiveItem
-    var connection = appRepository.connectionData.activeItem
-    var isUnlocked = appRepository.isUnlocked
 
     val activeConnectionId: Int
         get() {
