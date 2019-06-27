@@ -11,7 +11,6 @@ import android.view.ActionMode
 import android.view.Menu
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.list.listItemsSingleChoice
-import org.tvheadend.tvhclient.MainApplication
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.data.service.HtspService
 import org.tvheadend.tvhclient.domain.entity.*
@@ -463,8 +462,8 @@ fun recordSelectedProgramWithCustomProfile(context: Context, eventId: Int, chann
     return true
 }
 
-fun playSelectedChannel(context: Context, channelId: Int): Boolean {
-    if (MainApplication.instance.isUnlocked
+fun playSelectedChannel(context: Context, channelId: Int, isUnlocked: Boolean): Boolean {
+    if (isUnlocked
             && PreferenceManager.getDefaultSharedPreferences(context).getBoolean("internal_player_for_channels_enabled",
                     context.resources.getBoolean(R.bool.pref_default_internal_player_enabled))) {
         val intent = Intent(context, PlaybackActivity::class.java)
@@ -478,8 +477,8 @@ fun playSelectedChannel(context: Context, channelId: Int): Boolean {
     return true
 }
 
-fun playSelectedRecording(context: Context, dvrId: Int): Boolean {
-    if (MainApplication.instance.isUnlocked
+fun playSelectedRecording(context: Context, dvrId: Int, isUnlocked: Boolean): Boolean {
+    if (isUnlocked
             && PreferenceManager.getDefaultSharedPreferences(context).getBoolean("internal_player_for_recordings_enabled",
                     context.resources.getBoolean(R.bool.pref_default_internal_player_enabled))) {
         val intent = Intent(context, PlaybackActivity::class.java)
@@ -507,33 +506,33 @@ fun castSelectedRecording(context: Context, id: Int): Boolean {
     return true
 }
 
-fun playOrCastChannel(context: Context, channelId: Int): Boolean {
+fun playOrCastChannel(context: Context, channelId: Int, isUnlocked: Boolean): Boolean {
     val channelIconAction = Integer.valueOf(PreferenceManager.getDefaultSharedPreferences(context).getString("channel_icon_action",
             context.resources.getString(R.string.pref_default_channel_icon_action))!!)
 
     if (channelIconAction == 1) {
-        playSelectedChannel(context, channelId)
+        playSelectedChannel(context, channelId, isUnlocked)
     } else if (channelIconAction == 2) {
         if (getCastSession(context) != null) {
             castSelectedChannel(context, channelId)
         } else {
-            playSelectedChannel(context, channelId)
+            playSelectedChannel(context, channelId, isUnlocked)
         }
     }
     return true
 }
 
-fun playOrCastRecording(context: Context, recordingId: Int): Boolean {
+fun playOrCastRecording(context: Context, recordingId: Int, isUnlocked: Boolean): Boolean {
     val channelIconAction = Integer.valueOf(PreferenceManager.getDefaultSharedPreferences(context).getString("channel_icon_action",
             context.resources.getString(R.string.pref_default_channel_icon_action))!!)
 
     if (channelIconAction == 1) {
-        playSelectedRecording(context, recordingId)
+        playSelectedRecording(context, recordingId, isUnlocked)
     } else if (channelIconAction == 2) {
         if (getCastSession(context) != null) {
             castSelectedRecording(context, recordingId)
         } else {
-            playSelectedRecording(context, recordingId)
+            playSelectedRecording(context, recordingId, isUnlocked)
         }
     }
     return true
