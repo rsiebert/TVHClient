@@ -35,7 +35,7 @@ class SettingsActivity : BaseActivity() {
             fragment = supportFragmentManager.findFragmentById(R.id.main)
         }
 
-        mainViewModel.showSnackbar.observe(this, Observer { intent ->
+        baseViewModel.showSnackbar.observe(this, Observer { intent ->
             showSnackbarMessage(this, intent)
         })
 

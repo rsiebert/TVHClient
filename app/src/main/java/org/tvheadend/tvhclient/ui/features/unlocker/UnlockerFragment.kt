@@ -81,7 +81,7 @@ class UnlockerFragment : WebViewFragment(), HtmlFileLoaderTask.Listener, Billing
                 message(R.string.dialog_content_purchase_successful)
                 cancelOnTouchOutside(false)
                 positiveButton(R.string.dialog_button_restart) {
-                    mainViewModel.updateConnectionAndRestartApplication(context, false)
+                    baseViewModel.updateConnectionAndRestartApplication(context, false)
                 }
             }
         }

@@ -151,7 +151,7 @@ class MainActivity : BaseActivity(), SearchView.OnQueryTextListener, SearchView.
         // Observe any changes in the network availability. If the app is in the background
         // and is resumed and the network is still available the lambda function is not
         // called and nothing will be done.
-        mainViewModel.networkStatus.observe(this, Observer { networkStatus ->
+        baseViewModel.networkStatus.observe(this, Observer { networkStatus ->
             Timber.d("Network status changed to $networkStatus")
             connectToServer(networkStatus)
             if (networkStatus == NetworkStatus.NETWORK_IS_DOWN) {
@@ -169,10 +169,10 @@ class MainActivity : BaseActivity(), SearchView.OnQueryTextListener, SearchView.
         statusViewModel.showLowStorageSpace.observe(this, Observer { show ->
             showOrCancelNotificationDiskSpaceIsLow(this, statusViewModel.availableStorageSpace, show)
         })
-        mainViewModel.showSnackbar.observe(this, Observer { intent ->
+        baseViewModel.showSnackbar.observe(this, Observer { intent ->
             showSnackbarMessage(this, intent)
         })
-        mainViewModel.isUnlocked.observe(this, Observer { unlocked ->
+        baseViewModel.isUnlocked.observe(this, Observer { unlocked ->
             Timber.d("Received live data, unlocked changed to $unlocked")
             isUnlocked = unlocked
             invalidateOptionsMenu()
@@ -353,7 +353,7 @@ class MainActivity : BaseActivity(), SearchView.OnQueryTextListener, SearchView.
             }
             else -> {
                 menu.findItem(R.id.media_route_menu_item)?.isVisible = isUnlocked
-                menu.findItem(R.id.menu_send_wake_on_lan_packet)?.isVisible = isUnlocked && mainViewModel.connection.isWolEnabled
+                menu.findItem(R.id.menu_send_wake_on_lan_packet)?.isVisible = isUnlocked && baseViewModel.connection.isWolEnabled
             }
         }
         return true
@@ -400,7 +400,7 @@ class MainActivity : BaseActivity(), SearchView.OnQueryTextListener, SearchView.
             SyncStateReceiver.State.CLOSED, SyncStateReceiver.State.FAILED -> {
                 Timber.d("Connection failed or closed")
                 sendSnackbarMessage(message)
-                mainViewModel.setNetworkIsAvailable(false)
+                baseViewModel.setNetworkIsAvailable(false)
             }
 
             SyncStateReceiver.State.CONNECTING -> {

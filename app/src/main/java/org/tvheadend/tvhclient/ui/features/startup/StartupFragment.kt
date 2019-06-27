@@ -20,7 +20,7 @@ import timber.log.Timber
 
 class StartupFragment : Fragment() {
 
-    private lateinit var mainViewModel: BaseViewModel
+    private lateinit var baseViewModel: BaseViewModel
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.startup_fragment, container, false)
@@ -28,7 +28,7 @@ class StartupFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        mainViewModel = ViewModelProviders.of(activity!!).get(BaseViewModel::class.java)
+        baseViewModel = ViewModelProviders.of(activity!!).get(BaseViewModel::class.java)
 
         setHasOptionsMenu(true)
 
@@ -40,14 +40,14 @@ class StartupFragment : Fragment() {
                 ?: getString(R.string.initializing)
         startup_status.visible()
 
-        mainViewModel.connectionCount.observe(viewLifecycleOwner, Observer { count ->
+        baseViewModel.connectionCount.observe(viewLifecycleOwner, Observer { count ->
             if (count == 0) {
                 Timber.d("No connection available, showing settings button")
                 startup_status.text = getString(R.string.no_connection_available)
                 add_connection_button.visible()
                 add_connection_button.setOnClickListener { showSettingsAddNewConnection() }
             } else {
-                if (mainViewModel.connection.id == -1) {
+                if (baseViewModel.connection.id == -1) {
                     Timber.d("No active connection available, showing settings button")
                     startup_status.text = getString(R.string.no_connection_active_advice)
                     settings_button.visible()
@@ -68,7 +68,7 @@ class StartupFragment : Fragment() {
     override fun onPrepareOptionsMenu(menu: Menu) {
         super.onPrepareOptionsMenu(menu)
         // Do not show the reconnect menu in case no connections are available or none is active
-        menu.findItem(R.id.menu_reconnect_to_server)?.isVisible = (mainViewModel.connection.id > 0)
+        menu.findItem(R.id.menu_reconnect_to_server)?.isVisible = (baseViewModel.connection.id > 0)
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -89,7 +89,7 @@ class StartupFragment : Fragment() {
                         message(R.string.dialog_content_reconnect_to_server)
                         positiveButton(R.string.reconnect) {
                             Timber.d("Reconnect requested, stopping service and updating active connection to require a full sync")
-                            mainViewModel.updateConnectionAndRestartApplication(context)
+                            baseViewModel.updateConnectionAndRestartApplication(context)
                         }
                         negativeButton(R.string.cancel)
                     }

@@ -21,7 +21,7 @@ import timber.log.Timber
 
 abstract class BaseFragment : Fragment() {
 
-    lateinit var mainViewModel: BaseViewModel
+    lateinit var baseViewModel: BaseViewModel
     protected lateinit var sharedPreferences: SharedPreferences
     protected lateinit var toolbarInterface: ToolbarInterface
     protected var isDualPane: Boolean = false
@@ -47,19 +47,19 @@ abstract class BaseFragment : Fragment() {
         mainFrameLayout = activity?.findViewById(R.id.main)
         detailsFrameLayout = activity?.findViewById(R.id.details)
 
-        mainViewModel = ViewModelProviders.of(activity as BaseActivity).get(BaseViewModel::class.java)
-        mainViewModel.networkStatus.observe(viewLifecycleOwner, Observer { status ->
+        baseViewModel = ViewModelProviders.of(activity as BaseActivity).get(BaseViewModel::class.java)
+        baseViewModel.networkStatus.observe(viewLifecycleOwner, Observer { status ->
             Timber.d("Received live data, network availability changed to $status")
             isNetworkAvailable = (status == NetworkStatus.NETWORK_IS_UP || status == NetworkStatus.NETWORK_IS_STILL_UP)
         })
 
-        mainViewModel.isUnlocked.observe(viewLifecycleOwner, Observer { unlocked ->
+        baseViewModel.isUnlocked.observe(viewLifecycleOwner, Observer { unlocked ->
             Timber.d("Received live data, unlocked changed to $unlocked")
             isUnlocked = unlocked
         })
 
-        connection = mainViewModel.connection
-        serverStatus = mainViewModel.serverStatus
+        connection = baseViewModel.connection
+        serverStatus = baseViewModel.serverStatus
         htspVersion = serverStatus.htspVersion
 
         // Check if we have a frame in which to embed the details fragment.
@@ -86,7 +86,7 @@ abstract class BaseFragment : Fragment() {
                 activity?.finish()
                 true
             }
-            R.id.menu_reconnect_to_server -> showConfirmationToReconnectToServer(ctx, mainViewModel)
+            R.id.menu_reconnect_to_server -> showConfirmationToReconnectToServer(ctx, baseViewModel)
             else -> super.onOptionsItemSelected(item)
         }
     }

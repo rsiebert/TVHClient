@@ -25,7 +25,7 @@ open class BaseActivity : AppCompatActivity(), ToolbarInterface {
     @Inject
     lateinit var sharedPreferences: SharedPreferences
 
-    protected lateinit var mainViewModel: BaseViewModel
+    protected lateinit var baseViewModel: BaseViewModel
     private lateinit var snackbarMessageReceiver: SnackbarMessageReceiver
     private lateinit var networkStatusReceiver: NetworkStatusReceiver
 
@@ -33,7 +33,7 @@ open class BaseActivity : AppCompatActivity(), ToolbarInterface {
         super.onCreate(savedInstanceState)
         MainApplication.component.inject(this)
 
-        mainViewModel = ViewModelProviders.of(this).get(BaseViewModel::class.java)
+        baseViewModel = ViewModelProviders.of(this).get(BaseViewModel::class.java)
         snackbarMessageReceiver = SnackbarMessageReceiver(appRepository)
         networkStatusReceiver = NetworkStatusReceiver(appRepository)
     }
