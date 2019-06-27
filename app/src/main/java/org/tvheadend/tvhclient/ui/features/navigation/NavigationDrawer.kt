@@ -44,8 +44,7 @@ class NavigationDrawer(private val activity: AppCompatActivity,
                        private val savedInstanceState: Bundle?,
                        private val toolbar: Toolbar,
                        private val navigationViewModel: NavigationViewModel,
-                       statusViewModel: StatusViewModel,
-                       private val isUnlocked: Boolean) : AccountHeader.OnAccountHeaderListener, Drawer.OnDrawerItemClickListener {
+                       statusViewModel: StatusViewModel) : AccountHeader.OnAccountHeaderListener, Drawer.OnDrawerItemClickListener {
 
     private lateinit var headerResult: AccountHeader
     private lateinit var result: Drawer
@@ -54,6 +53,7 @@ class NavigationDrawer(private val activity: AppCompatActivity,
         createHeader()
         createMenu()
 
+        navigationViewModel.isUnlocked.observe(activity, Observer { result.removeItem(MENU_UNLOCKER.toLong()) })
         navigationViewModel.connections.observe(activity, Observer { this.showConnectionsInDrawerHeader(it) })
 
         statusViewModel.channelCount.observe(activity, Observer { count -> result.updateBadge(MENU_CHANNELS.toLong(), StringHolder(count.toString())) })
@@ -142,14 +142,9 @@ class NavigationDrawer(private val activity: AppCompatActivity,
                 seriesRecordingsItem,
                 timerRecordingsItem,
                 failedRecordingsItem,
-                removedRecordingsItem)
-        if (!isUnlocked) {
-            drawerBuilder.addDrawerItems(
-                    DividerDrawerItem(),
-                    extrasItem)
-        }
-        drawerBuilder.addDrawerItems(
+                removedRecordingsItem,
                 DividerDrawerItem(),
+                extrasItem,
                 settingsItem,
                 helpItem,
                 statusItem)
