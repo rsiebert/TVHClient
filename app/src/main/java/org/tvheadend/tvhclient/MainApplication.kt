@@ -14,6 +14,7 @@ import com.google.android.gms.cast.framework.media.CastMediaOptions
 import com.google.android.gms.cast.framework.media.NotificationOptions
 import com.google.firebase.analytics.FirebaseAnalytics
 import io.fabric.sdk.android.Fabric
+import org.tvheadend.tvhclient.data.repository.AppRepository
 import org.tvheadend.tvhclient.di.component.DaggerMainApplicationComponent
 import org.tvheadend.tvhclient.di.component.MainApplicationComponent
 import org.tvheadend.tvhclient.di.module.ContextModule
@@ -29,6 +30,7 @@ import org.tvheadend.tvhclient.util.logging.CrashlyticsTree
 import org.tvheadend.tvhclient.util.logging.DebugTree
 import org.tvheadend.tvhclient.util.logging.FileLoggingTree
 import timber.log.Timber
+import javax.inject.Inject
 
 // TODO move diffutils to background thread
 // TODO use coroutines for certain stuff
@@ -43,17 +45,14 @@ import timber.log.Timber
 
 class MainApplication : MultiDexApplication(), OptionsProvider, BillingUpdatesListener {
 
-    lateinit var billingManager: BillingManager
-    lateinit var billingHandler: BillingHandler
+    @Inject
+    lateinit var appRepository: AppRepository
+
     private lateinit var sharedPreferences: SharedPreferences
     private lateinit var fireBaseAnalytics: FirebaseAnalytics
 
-    // TODO put this in the repository and observe via live data?
-    var isUnlocked: Boolean = false
-
     override fun onCreate() {
         super.onCreate()
-        instance = this
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
 
         // Setup the required dependencies for injection
@@ -62,6 +61,7 @@ class MainApplication : MultiDexApplication(), OptionsProvider, BillingUpdatesLi
                 .sharedPreferencesModule(SharedPreferencesModule())
                 .repositoryModule(RepositoryModule())
                 .build()
+        component.inject(this)
 
         // Enable the database debugging bridge in debug mode to access
         // the database contents and other resources via the chrome browser
@@ -149,7 +149,7 @@ class MainApplication : MultiDexApplication(), OptionsProvider, BillingUpdatesLi
             for (purchase in purchases) {
                 if (purchase.sku == UNLOCKER) {
                     Timber.d("Received purchase item $UNLOCKER")
-                    isUnlocked = true
+                    appRepository.isUnlocked.value = true
                 }
             }
         }
@@ -165,9 +165,8 @@ class MainApplication : MultiDexApplication(), OptionsProvider, BillingUpdatesLi
 
     companion object {
 
-        @get:Synchronized
-        lateinit var instance: MainApplication
-
         lateinit var component: MainApplicationComponent
+        lateinit var billingManager: BillingManager
+        lateinit var billingHandler: BillingHandler
     }
 }
