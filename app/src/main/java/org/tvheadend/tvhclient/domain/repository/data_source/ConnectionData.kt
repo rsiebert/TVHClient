@@ -87,8 +87,10 @@ class ConnectionData(private val db: AppRoomDatabase) : DataSourceInterface<Conn
 
     fun setSyncRequiredForActiveConnection() {
         val connection = activeItem
-        connection.isSyncRequired = true
-        connection.lastUpdate = 0
-        updateItem(connection)
+        if (connection.id >= 0) {
+            connection.isSyncRequired = true
+            connection.lastUpdate = 0
+            updateItem(connection)
+        }
     }
 }
