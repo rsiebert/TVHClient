@@ -4,7 +4,6 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Environment
 import androidx.preference.PreferenceManager
-import org.tvheadend.tvhclient.MainApplication
 import timber.log.Timber
 import java.io.File
 
@@ -24,7 +23,7 @@ class PlayRecordingActivity : BasePlaybackActivity() {
                 .getString("download_directory", Environment.DIRECTORY_DOWNLOADS)
         val file = File(downloadDirectory, "$title.mkv")
 
-        if (file.exists() && MainApplication.instance.isUnlocked) {
+        if (file.exists() && isUnlocked) {
             Timber.d("Playing recording from local file ${file.absolutePath}")
             intent.setDataAndType(Uri.parse(file.absolutePath), "video/*")
         } else {

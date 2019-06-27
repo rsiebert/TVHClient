@@ -10,7 +10,6 @@ import org.tvheadend.htsp.HtspMessage
 import org.tvheadend.htsp.HtspResponseListener
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.domain.entity.Channel
-import org.tvheadend.tvhclient.domain.entity.Connection
 import org.tvheadend.tvhclient.domain.entity.Recording
 import org.tvheadend.tvhclient.domain.entity.ServerStatus
 import org.tvheadend.tvhclient.ui.base.BaseViewModel
@@ -25,8 +24,10 @@ class ExternalPlayerViewModel(application: Application) : BaseViewModel(applicat
     private val execService: ScheduledExecutorService = Executors.newScheduledThreadPool(10)
     private val htspConnection: HtspConnection
 
-    var connection: Connection = appRepository.connectionData.activeItem
+    var connection = appRepository.connectionData.activeItem
     var serverStatus: ServerStatus? = appRepository.serverStatusData.activeItem
+    var isUnlocked = appRepository.isUnlocked
+
     var channel: Channel? = null
     var recording: Recording? = null
     private var path = ""

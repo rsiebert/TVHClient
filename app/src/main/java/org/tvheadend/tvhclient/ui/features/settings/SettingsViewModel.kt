@@ -14,7 +14,8 @@ class SettingsViewModel(application: Application) : BaseViewModel(application) {
 
     val allConnections: LiveData<List<Connection>> = appRepository.connectionData.getLiveDataItems()
     val serverStatusLiveData: LiveData<ServerStatus> = appRepository.serverStatusData.liveDataActiveItem
-    var connection: Connection = appRepository.connectionData.activeItem
+    var connection = appRepository.connectionData.activeItem
+    var isUnlocked = appRepository.isUnlocked
 
     val activeConnectionId: Int
         get() {
@@ -35,12 +36,7 @@ class SettingsViewModel(application: Application) : BaseViewModel(application) {
      */
     fun setSyncRequiredForActiveConnection() {
         Timber.d("Updating active connection to request a full sync")
-        val connection = appRepository.connectionData.activeItem
-        if (connection.id >= 0) {
-            connection.isSyncRequired = true
-            connection.lastUpdate = 0
-            updateConnection(connection)
-        }
+        appRepository.connectionData.setSyncRequiredForActiveConnection()
     }
 
     /**

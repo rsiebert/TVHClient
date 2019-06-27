@@ -10,14 +10,15 @@ import androidx.lifecycle.ViewModelProviders
 import com.afollestad.materialdialogs.MaterialDialog
 import kotlinx.android.synthetic.main.play_activity.*
 import org.tvheadend.tvhclient.R
-import org.tvheadend.tvhclient.util.extensions.gone
 import org.tvheadend.tvhclient.ui.common.onAttach
+import org.tvheadend.tvhclient.util.extensions.gone
 import org.tvheadend.tvhclient.util.getThemeId
 import timber.log.Timber
 
 abstract class BasePlaybackActivity : AppCompatActivity() {
 
     lateinit var viewModel: ExternalPlayerViewModel
+    protected var isUnlocked: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         setTheme(getThemeId(this))
@@ -30,11 +31,11 @@ abstract class BasePlaybackActivity : AppCompatActivity() {
 
         viewModel.isConnected.observe(this, Observer { isConnected ->
             if (isConnected) {
-                Timber.d("Connected to server, requesting ticket")
+                Timber.d("Received live data, connected to server, requesting ticket")
                 status.setText(R.string.requesting_playback_information)
                 viewModel.requestTicketFromServer(intent.extras)
             } else {
-                Timber.d("Not connected to server")
+                Timber.d("Received live data, not connected to server")
                 progress_bar.gone()
                 status.setText(R.string.connection_failed)
             }
@@ -47,6 +48,11 @@ abstract class BasePlaybackActivity : AppCompatActivity() {
                 status.text = getString(R.string.starting_playback)
                 onTicketReceived()
             }
+        })
+
+        viewModel.isUnlocked.observe(this, Observer { unlocked ->
+            Timber.d("Received live data, unlocked changed to $unlocked")
+            isUnlocked = unlocked
         })
     }
 
