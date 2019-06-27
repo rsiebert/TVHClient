@@ -313,7 +313,7 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickCallback, ChannelTi
                 }
                 R.id.menu_record_program_with_custom_profile -> return@setOnMenuItemClickListener recordSelectedProgramWithCustomProfile(ctx, channel.programId, channel.id, viewModel.getRecordingProfileNames(), viewModel.getRecordingProfile())
                 R.id.menu_record_program_as_series_recording -> return@setOnMenuItemClickListener recordSelectedProgramAsSeriesRecording(ctx, channel.programTitle, viewModel.getRecordingProfile(), htspVersion)
-                R.id.menu_play -> return@setOnMenuItemClickListener playSelectedChannel(ctx, channel.id)
+                R.id.menu_play -> return@setOnMenuItemClickListener playSelectedChannel(ctx, channel.id, isUnlocked)
                 R.id.menu_cast -> return@setOnMenuItemClickListener castSelectedChannel(ctx, channel.id)
 
                 R.id.menu_search_imdb -> return@setOnMenuItemClickListener searchTitleOnImdbWebsite(ctx, channel.programTitle)
@@ -351,7 +351,7 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickCallback, ChannelTi
                 && Integer.valueOf(sharedPreferences.getString("channel_icon_action", resources.getString(R.string.pref_default_channel_icon_action))!!) > 0
                 && isNetworkAvailable) {
             recyclerViewAdapter.getItem(position)?.let {
-                playOrCastChannel(view.context, it.id)
+                playOrCastChannel(view.context, it.id, isUnlocked)
             }
         } else {
             showChannelDetails(position)
