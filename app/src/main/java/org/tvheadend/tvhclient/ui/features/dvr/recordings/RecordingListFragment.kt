@@ -140,7 +140,7 @@ abstract class RecordingListFragment : BaseFragment(), RecyclerViewClickCallback
                 R.id.menu_cancel_recording -> return@setOnMenuItemClickListener showConfirmationToCancelSelectedRecording(ctx, recording, null)
                 R.id.menu_remove_recording -> return@setOnMenuItemClickListener showConfirmationToRemoveSelectedRecording(ctx, recording, null)
                 R.id.menu_edit_recording -> return@setOnMenuItemClickListener editSelectedRecording(ctx, recording.id)
-                R.id.menu_play -> return@setOnMenuItemClickListener playSelectedRecording(ctx, recording.id)
+                R.id.menu_play -> return@setOnMenuItemClickListener playSelectedRecording(ctx, recording.id, isUnlocked)
                 R.id.menu_cast -> return@setOnMenuItemClickListener castSelectedRecording(ctx, recording.id)
 
                 R.id.menu_search_imdb -> return@setOnMenuItemClickListener searchTitleOnImdbWebsite(ctx, recording.title)
@@ -165,7 +165,7 @@ abstract class RecordingListFragment : BaseFragment(), RecyclerViewClickCallback
         selectedListPosition = position
         if (view.id == R.id.icon || view.id == R.id.icon_text) {
             recyclerViewAdapter.getItem(position)?.let {
-                playOrCastRecording(view.context, it.id)
+                playOrCastRecording(view.context, it.id, isUnlocked)
             }
         } else {
             showRecordingDetails(position)

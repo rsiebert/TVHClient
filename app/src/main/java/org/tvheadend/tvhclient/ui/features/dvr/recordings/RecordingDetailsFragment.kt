@@ -12,11 +12,11 @@ import org.tvheadend.tvhclient.databinding.RecordingDetailsFragmentBinding
 import org.tvheadend.tvhclient.domain.entity.Recording
 import org.tvheadend.tvhclient.ui.base.BaseFragment
 import org.tvheadend.tvhclient.ui.common.*
-import org.tvheadend.tvhclient.util.extensions.gone
-import org.tvheadend.tvhclient.util.extensions.visible
 import org.tvheadend.tvhclient.ui.features.download.DownloadPermissionGrantedInterface
 import org.tvheadend.tvhclient.ui.features.download.DownloadRecordingManager
 import org.tvheadend.tvhclient.ui.features.dvr.RecordingRemovedCallback
+import org.tvheadend.tvhclient.util.extensions.gone
+import org.tvheadend.tvhclient.util.extensions.visible
 
 // TODO put recording into the viewmodel
 // TODO put shownId into the viewmodel
@@ -93,7 +93,7 @@ class RecordingDetailsFragment : BaseFragment(), RecordingRemovedCallback, Downl
             R.id.menu_cancel_recording -> return showConfirmationToCancelSelectedRecording(ctx, recording, this)
             R.id.menu_remove_recording -> return showConfirmationToRemoveSelectedRecording(ctx, recording, this)
             R.id.menu_edit_recording -> return editSelectedRecording(ctx, recording.id)
-            R.id.menu_play -> return playSelectedRecording(ctx, recording.id)
+            R.id.menu_play -> return playSelectedRecording(ctx, recording.id, isUnlocked)
             R.id.menu_cast -> return castSelectedRecording(ctx, recording.id)
 
             R.id.menu_search_imdb -> return searchTitleOnImdbWebsite(ctx, recording.title)

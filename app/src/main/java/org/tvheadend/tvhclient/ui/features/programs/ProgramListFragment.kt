@@ -193,7 +193,7 @@ class ProgramListFragment : BaseFragment(), RecyclerViewClickCallback, LastProgr
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         val ctx = context ?: return super.onOptionsItemSelected(item)
         return when (item.itemId) {
-            R.id.menu_play -> playSelectedChannel(ctx, shownChannelId)
+            R.id.menu_play -> playSelectedChannel(ctx, shownChannelId, isUnlocked)
             R.id.menu_cast -> castSelectedChannel(ctx, shownChannelId)
             R.id.menu_genre_color_information -> showGenreColorDialog(ctx)
             else -> super.onOptionsItemSelected(item)
@@ -242,7 +242,7 @@ class ProgramListFragment : BaseFragment(), RecyclerViewClickCallback, LastProgr
                 }
                 R.id.menu_record_program_with_custom_profile -> return@setOnMenuItemClickListener recordSelectedProgramWithCustomProfile(ctx, program.eventId, shownChannelId, programViewModel.getRecordingProfileNames(), programViewModel.getRecordingProfile())
                 R.id.menu_record_program_as_series_recording -> return@setOnMenuItemClickListener recordSelectedProgramAsSeriesRecording(ctx, program.title, programViewModel.getRecordingProfile(), htspVersion)
-                R.id.menu_play -> return@setOnMenuItemClickListener playSelectedChannel(ctx, shownChannelId)
+                R.id.menu_play -> return@setOnMenuItemClickListener playSelectedChannel(ctx, shownChannelId, isUnlocked)
                 R.id.menu_cast -> return@setOnMenuItemClickListener castSelectedChannel(ctx, shownChannelId)
 
                 R.id.menu_search_imdb -> return@setOnMenuItemClickListener searchTitleOnImdbWebsite(ctx, program.title)

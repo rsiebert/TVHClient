@@ -14,10 +14,10 @@ import org.tvheadend.tvhclient.domain.entity.Program
 import org.tvheadend.tvhclient.domain.entity.Recording
 import org.tvheadend.tvhclient.ui.base.BaseFragment
 import org.tvheadend.tvhclient.ui.common.*
-import org.tvheadend.tvhclient.util.extensions.gone
-import org.tvheadend.tvhclient.util.extensions.visible
 import org.tvheadend.tvhclient.ui.features.dvr.RecordingAddEditActivity
 import org.tvheadend.tvhclient.ui.features.notification.addNotificationProgramIsAboutToStart
+import org.tvheadend.tvhclient.util.extensions.gone
+import org.tvheadend.tvhclient.util.extensions.visible
 import timber.log.Timber
 
 // TODO put program into the viewmodel
@@ -149,7 +149,7 @@ class ProgramDetailsFragment : BaseFragment() {
             }
             R.id.menu_record_program_with_custom_profile -> return recordSelectedProgramWithCustomProfile(ctx, program.eventId, channelId, programViewModel.getRecordingProfileNames(), programViewModel.getRecordingProfile())
             R.id.menu_record_program_as_series_recording -> return recordSelectedProgramAsSeriesRecording(ctx, program.title, programViewModel.getRecordingProfile(), htspVersion)
-            R.id.menu_play -> return playSelectedChannel(ctx, channelId)
+            R.id.menu_play -> return playSelectedChannel(ctx, channelId, isUnlocked)
             R.id.menu_cast -> return castSelectedChannel(ctx, channelId)
 
             R.id.menu_search_imdb -> return searchTitleOnImdbWebsite(ctx, program.title)
