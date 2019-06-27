@@ -12,6 +12,7 @@ import android.view.Menu
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.list.listItemsSingleChoice
 import org.tvheadend.tvhclient.R
+import org.tvheadend.tvhclient.data.repository.AppRepository
 import org.tvheadend.tvhclient.data.service.HtspService
 import org.tvheadend.tvhclient.domain.entity.*
 import org.tvheadend.tvhclient.ui.common.tasks.WakeOnLanTask
@@ -141,22 +142,10 @@ fun showConfirmationToReconnectToServer(context: Context, viewModel: MainViewMod
         message(R.string.dialog_content_reconnect_to_server)
         negativeButton(R.string.cancel)
         positiveButton(R.string.reconnect) {
-            reconnectToServer(context, viewModel)
+            viewModel.updateConnectionAndRestartApplication(context)
         }
     }
     return true
-}
-
-private fun reconnectToServer(context: Context, mainViewModel: MainViewModel) {
-    Timber.d("Reconnect requested, stopping service and updating active connection to require a full sync")
-    context.stopService(Intent(context, HtspService::class.java))
-
-    mainViewModel.setConnectionSyncRequired()
-
-    // Restart the application to show the startup fragment
-    val intent = Intent(context, SplashActivity::class.java)
-    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-    context.startActivity(intent)
 }
 
 fun recordSelectedProgram(context: Context, eventId: Int, profile: ServerProfile?, htspVersion: Int): Boolean {

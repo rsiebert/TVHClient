@@ -9,12 +9,11 @@ import androidx.lifecycle.ViewModelProviders
 import com.afollestad.materialdialogs.MaterialDialog
 import kotlinx.android.synthetic.main.startup_fragment.*
 import org.tvheadend.tvhclient.R
-import org.tvheadend.tvhclient.data.service.HtspService
 import org.tvheadend.tvhclient.ui.common.callbacks.ToolbarInterface
-import org.tvheadend.tvhclient.util.extensions.visible
 import org.tvheadend.tvhclient.ui.features.MainActivity
 import org.tvheadend.tvhclient.ui.features.MainViewModel
 import org.tvheadend.tvhclient.ui.features.settings.SettingsActivity
+import org.tvheadend.tvhclient.util.extensions.visible
 import timber.log.Timber
 
 // TODO add nice background image
@@ -90,13 +89,7 @@ class StartupFragment : Fragment() {
                         message(R.string.dialog_content_reconnect_to_server)
                         positiveButton(R.string.reconnect) {
                             Timber.d("Reconnect requested, stopping service and updating active connection to require a full sync")
-                            activity.stopService(Intent(activity, HtspService::class.java))
-
-                            mainViewModel.setConnectionSyncRequired()
-                            // Finally restart the application to show the startup fragment
-                            val intent = Intent(activity, SplashActivity::class.java)
-                            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                            activity.startActivity(intent)
+                            mainViewModel.updateConnectionAndRestartApplication(context)
                         }
                         negativeButton(R.string.cancel)
                     }

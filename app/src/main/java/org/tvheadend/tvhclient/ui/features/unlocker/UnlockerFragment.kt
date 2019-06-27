@@ -1,6 +1,5 @@
 package org.tvheadend.tvhclient.ui.features.unlocker
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuInflater
@@ -12,7 +11,6 @@ import org.tvheadend.tvhclient.MainApplication
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.ui.common.tasks.HtmlFileLoaderTask
 import org.tvheadend.tvhclient.ui.features.information.WebViewFragment
-import org.tvheadend.tvhclient.ui.features.startup.SplashActivity
 import org.tvheadend.tvhclient.util.billing.BillingHandler
 import org.tvheadend.tvhclient.util.billing.BillingManager
 import org.tvheadend.tvhclient.util.billing.BillingManager.UNLOCKER
@@ -83,10 +81,7 @@ class UnlockerFragment : WebViewFragment(), HtmlFileLoaderTask.Listener, Billing
                 message(R.string.dialog_content_purchase_successful)
                 cancelOnTouchOutside(false)
                 positiveButton(R.string.dialog_button_restart) {
-                    // Restart the app so that the unlocker will be activated
-                    val intent = Intent(activity, SplashActivity::class.java)
-                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                    activity?.startActivity(intent)
+                    mainViewModel.updateConnectionAndRestartApplication(context, false)
                 }
             }
         }

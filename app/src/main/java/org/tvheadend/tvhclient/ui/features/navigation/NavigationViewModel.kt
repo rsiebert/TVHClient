@@ -29,7 +29,7 @@ class NavigationViewModel(application: Application) : BaseViewModel(application)
         }
     }
 
-    fun setNewActiveConnection(id: Int): Boolean {
+    fun setSelectedConnectionAsActive(id: Int): Boolean {
         val connection = appRepository.connectionData.getItemById(id)
         return if (connection != null) {
             connection.isActive = true

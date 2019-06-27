@@ -19,15 +19,6 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
     var showSnackbar: LiveData<Intent> = appRepository.snackbarMessage
     var isUnlocked: LiveData<Boolean> = appRepository.isUnlocked
 
-    /**
-     * Update the current active connection from the database in case
-     * it has changed from the settings. The set the required properties
-     * to trigger an initial sync after a reconnect.
-     */
-    fun setConnectionSyncRequired() {
-        appRepository.connectionData.setSyncRequiredForActiveConnection()
-    }
-
     fun setNetworkIsAvailable(isAvailable: Boolean) {
         Timber.d("Updating network status to $isAvailable")
         networkStatus.value = getNetworkStatus(networkStatus.value, isAvailable)

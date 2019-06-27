@@ -12,12 +12,10 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.afollestad.materialdialogs.MaterialDialog
 import org.tvheadend.tvhclient.R
-import org.tvheadend.tvhclient.data.service.HtspService
 import org.tvheadend.tvhclient.domain.entity.Connection
 import org.tvheadend.tvhclient.ui.common.callbacks.BackPressedInterface
 import org.tvheadend.tvhclient.ui.common.callbacks.ToolbarInterface
 import org.tvheadend.tvhclient.ui.common.sendWakeOnLanPacket
-import org.tvheadend.tvhclient.ui.features.startup.SplashActivity
 import timber.log.Timber
 
 class SettingsListConnectionsFragment : ListFragment(), BackPressedInterface, ActionMode.Callback {
@@ -194,14 +192,7 @@ class SettingsListConnectionsFragment : ListFragment(), BackPressedInterface, Ac
      */
     private fun reconnect() {
         Timber.d("Reconnecting to server, new initial sync will be done")
-        activity?.stopService(Intent(activity, HtspService::class.java))
-
-        settingsViewModel.setSyncRequiredForActiveConnection()
         settingsViewModel.connectionHasChanged = false
-
-        val intent = Intent(activity, SplashActivity::class.java)
-        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-        activity?.startActivity(intent)
-        activity?.finish()
+        settingsViewModel.updateConnectionAndRestartApplication(context)
     }
 }

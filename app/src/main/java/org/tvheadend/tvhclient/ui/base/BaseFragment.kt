@@ -22,7 +22,7 @@ import timber.log.Timber
 
 abstract class BaseFragment : Fragment() {
 
-    private lateinit var mainViewModel: MainViewModel
+    lateinit var mainViewModel: MainViewModel
     protected lateinit var sharedPreferences: SharedPreferences
     protected lateinit var toolbarInterface: ToolbarInterface
     protected var isDualPane: Boolean = false

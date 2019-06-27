@@ -1,6 +1,5 @@
 package org.tvheadend.tvhclient.ui.features.navigation
 
-import android.content.Intent
 import android.os.Bundle
 import android.util.TypedValue
 import android.view.View
@@ -22,7 +21,6 @@ import com.mikepenz.materialdrawer.model.ProfileDrawerItem
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem
 import com.mikepenz.materialdrawer.model.interfaces.IProfile
 import org.tvheadend.tvhclient.R
-import org.tvheadend.tvhclient.data.service.HtspService
 import org.tvheadend.tvhclient.domain.entity.Connection
 import org.tvheadend.tvhclient.ui.features.channels.ChannelListFragment
 import org.tvheadend.tvhclient.ui.features.dvr.recordings.CompletedRecordingListFragment
@@ -35,7 +33,6 @@ import org.tvheadend.tvhclient.ui.features.epg.ProgramGuideFragment
 import org.tvheadend.tvhclient.ui.features.information.StatusFragment
 import org.tvheadend.tvhclient.ui.features.information.StatusViewModel
 import org.tvheadend.tvhclient.ui.features.information.WebViewFragment
-import org.tvheadend.tvhclient.ui.features.startup.SplashActivity
 import org.tvheadend.tvhclient.ui.features.unlocker.UnlockerFragment
 import org.tvheadend.tvhclient.util.getThemeId
 import java.util.*
@@ -198,28 +195,14 @@ class NavigationDrawer(private val activity: AppCompatActivity,
             }
             positiveButton(R.string.dialog_button_connect) {
                 headerResult.setActiveProfile(profile.identifier)
-                handleNewServerSelected(profile.identifier.toInt())
+                if (navigationViewModel.setSelectedConnectionAsActive(profile.identifier.toInt())) {
+                    navigationViewModel.updateConnectionAndRestartApplication(activity)
+                }
             }
             cancelable(false)
             cancelOnTouchOutside(false)
         }
         return false
-    }
-
-    /**
-     * A new server was selected in the navigation header.
-     * Updates the newly selected connection as the active one and restarts the server
-     *
-     * @param id The connection id of the newly selected server
-     */
-    private fun handleNewServerSelected(id: Int) {
-        activity.stopService(Intent(activity, HtspService::class.java))
-        if (navigationViewModel.setNewActiveConnection(id)) {
-            val intent = Intent(activity, SplashActivity::class.java)
-            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-            activity.startActivity(intent)
-            activity.finish()
-        }
     }
 
     override fun onItemClick(view: View?, position: Int, drawerItem: IDrawerItem<*>): Boolean {
