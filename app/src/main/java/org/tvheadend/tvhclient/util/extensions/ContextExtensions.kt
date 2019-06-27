@@ -12,7 +12,7 @@ fun Context.sendSnackbarMessage(resId: Int) {
 
 fun Context.sendSnackbarMessage(msg: String) {
     Timber.d("Sending broadcast to show snackbar message $msg")
-    val intent = Intent(SnackbarMessageReceiver.ACTION)
-    intent.putExtra(SnackbarMessageReceiver.CONTENT, msg)
+    val intent = Intent(SnackbarMessageReceiver.SNACKBAR_ACTION)
+    intent.putExtra(SnackbarMessageReceiver.SNACKBAR_CONTENT, msg)
     LocalBroadcastManager.getInstance(this).sendBroadcast(intent)
 }
