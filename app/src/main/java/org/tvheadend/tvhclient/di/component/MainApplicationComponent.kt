@@ -8,6 +8,7 @@ import org.tvheadend.tvhclient.di.module.ContextModule
 import org.tvheadend.tvhclient.di.module.RepositoryModule
 import org.tvheadend.tvhclient.di.module.SharedPreferencesModule
 import org.tvheadend.tvhclient.ui.base.BaseActivity
+import org.tvheadend.tvhclient.ui.base.BaseFragment
 import org.tvheadend.tvhclient.ui.base.BaseViewModel
 import javax.inject.Singleton
 
@@ -22,6 +23,7 @@ interface MainApplicationComponent {
     fun inject(htspService: HtspService)
     fun inject(htspIntentService: HtspIntentService)
     fun inject(baseActivity: BaseActivity)
+    fun inject(baseFragment: BaseFragment)
     fun inject(baseViewModel: BaseViewModel)
 
     @Component.Builder
