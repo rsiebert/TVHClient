@@ -30,11 +30,11 @@ import kotlinx.android.synthetic.main.exo_player_control_view.*
 import kotlinx.android.synthetic.main.exo_player_view.*
 import kotlinx.android.synthetic.main.player_overlay_view.*
 import org.tvheadend.tvhclient.R
-import org.tvheadend.tvhclient.ui.common.*
-import org.tvheadend.tvhclient.util.extensions.*
+import org.tvheadend.tvhclient.ui.common.onAttach
 import org.tvheadend.tvhclient.ui.features.MainActivity
 import org.tvheadend.tvhclient.ui.features.playback.internal.utils.Rational
 import org.tvheadend.tvhclient.ui.features.playback.internal.utils.TrackSelectionHelper
+import org.tvheadend.tvhclient.util.extensions.*
 import org.tvheadend.tvhclient.util.getIconUrl
 import org.tvheadend.tvhclient.util.getThemeId
 import timber.log.Timber
@@ -327,7 +327,7 @@ class PlaybackActivity : AppCompatActivity(), PlayerControlView.VisibilityListen
 
         var popupMenu: PopupMenu? = null
         player_menu?.let {
-            popupMenu = PopupMenu(this, player_menu)
+            popupMenu = PopupMenu(this, it)
             popupMenu?.menuInflater?.inflate(R.menu.player_popup_menu, popupMenu?.menu)
         }
 
