@@ -110,7 +110,7 @@ class ChannelTagSelectionAdapter(private val channelTagList: List<ChannelTag>, p
         this.dialog = dialog
     }
 
-    fun onChecked(view: View, position: Int, isChecked: Boolean) {
+    fun onChecked(@Suppress("UNUSED_PARAMETER") view: View, position: Int, isChecked: Boolean) {
         val tagId = channelTagList[position].tagId
         if (isChecked) {
             selectedChannelTagIds.add(tagId)
