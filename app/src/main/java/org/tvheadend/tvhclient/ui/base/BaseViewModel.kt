@@ -33,6 +33,7 @@ open class BaseViewModel(application: Application) : AndroidViewModel(applicatio
     // TODO make this live data
     val serverStatus: ServerStatus
 
+    var connectionToServerAvailable = MutableLiveData(false)
     var networkStatus: MutableLiveData<NetworkStatus>
     var showSnackbar: LiveData<Intent>
     var isUnlocked: LiveData<Boolean>
@@ -54,6 +55,11 @@ open class BaseViewModel(application: Application) : AndroidViewModel(applicatio
     fun setNetworkIsAvailable(isAvailable: Boolean) {
         Timber.d("Updating network status to $isAvailable")
         networkStatus.value = getNetworkStatus(networkStatus.value, isAvailable)
+    }
+
+    fun setConnectionToServerIsAvailable(isAvailable: Boolean) {
+        Timber.d("Updating connection to server is available to $isAvailable")
+        connectionToServerAvailable.value = isAvailable
     }
 
     fun updateConnectionAndRestartApplication(context: Context?, isSyncRequired: Boolean = true) {

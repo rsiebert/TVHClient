@@ -154,9 +154,10 @@ class MainActivity : BaseActivity(), SearchView.OnQueryTextListener, SearchView.
         baseViewModel.networkStatus.observe(this, Observer { networkStatus ->
             Timber.d("Network status changed to $networkStatus")
             connectToServer(networkStatus)
-            if (networkStatus == NetworkStatus.NETWORK_IS_DOWN) {
-                sendSnackbarMessage(R.string.network_not_available)
-            }
+        })
+
+        baseViewModel.connectionToServerAvailable.observe(this, Observer { connectionAvailable ->
+            Timber.d("Connection to server availability changed to $connectionAvailable")
             invalidateOptionsMenu()
         })
 
@@ -400,30 +401,27 @@ class MainActivity : BaseActivity(), SearchView.OnQueryTextListener, SearchView.
             SyncStateReceiver.State.CLOSED, SyncStateReceiver.State.FAILED -> {
                 Timber.d("Connection failed or closed")
                 sendSnackbarMessage(message)
-                baseViewModel.setNetworkIsAvailable(false)
+                Timber.d("Setting connection to server not available")
+                baseViewModel.setConnectionToServerIsAvailable(false)
             }
-
             SyncStateReceiver.State.CONNECTING -> {
                 Timber.d("Connecting")
                 sendSnackbarMessage(message)
             }
-
             SyncStateReceiver.State.CONNECTED -> {
                 Timber.d("Connected")
                 sendSnackbarMessage(message)
+                baseViewModel.setConnectionToServerIsAvailable(true)
             }
-
             SyncStateReceiver.State.SYNC_STARTED -> {
                 Timber.d("Sync started, showing progress bar")
                 syncProgress.visible()
                 sendSnackbarMessage(message)
             }
-
             SyncStateReceiver.State.SYNC_IN_PROGRESS -> {
                 Timber.d("Sync in progress, updating progress bar")
                 syncProgress.visible()
             }
-
             SyncStateReceiver.State.SYNC_DONE -> {
                 Timber.d("Sync done, hiding progress bar")
                 syncProgress.gone()
@@ -442,19 +440,26 @@ class MainActivity : BaseActivity(), SearchView.OnQueryTextListener, SearchView.
         if (runningAppProcessInfo != null
                 && runningAppProcessInfo.importance <= ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND) {
 
-            if (status == NetworkStatus.NETWORK_IS_UP) {
-                Timber.d("Starting server because network is up again")
-                intent.action = "connect"
-                startService(intent)
-            }
-            if (status == NetworkStatus.NETWORK_IS_STILL_UP) {
-                Timber.d("Reconnecting to server because network is still up")
-                intent.action = "reconnect"
-                startService(intent)
-            }
-            if (status == NetworkStatus.NETWORK_IS_DOWN) {
-                Timber.d("Stopping service because network is down")
-                stopService(intent)
+            when (status) {
+                NetworkStatus.NETWORK_IS_UP -> {
+                    Timber.d("Connecting to server because network is up again")
+                    intent.action = "connect"
+                    startService(intent)
+                }
+                NetworkStatus.NETWORK_IS_STILL_UP -> {
+                    Timber.d("Reconnecting to server because network is still up")
+                    intent.action = "reconnect"
+                    startService(intent)
+                }
+                NetworkStatus.NETWORK_IS_DOWN -> {
+                    Timber.d("Disconnecting from server because network is down")
+                    stopService(intent)
+                    Timber.d("Setting connection to server not available")
+                    baseViewModel.setConnectionToServerIsAvailable(false)
+                }
+                else -> {
+                    Timber.d("Network status is $status, doing nothing")
+                }
             }
         }
     }
