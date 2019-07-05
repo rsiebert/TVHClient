@@ -159,6 +159,11 @@ class MainActivity : BaseActivity(), SearchView.OnQueryTextListener, SearchView.
         baseViewModel.connectionToServerAvailable.observe(this, Observer { connectionAvailable ->
             Timber.d("Connection to server availability changed to $connectionAvailable")
             invalidateOptionsMenu()
+            if (connectionAvailable) {
+                statusViewModel.startDiskSpaceUpdateHandler()
+            } else {
+                statusViewModel.stopDiskSpaceUpdateHandler()
+            }
         })
 
         navigationViewModel.navigationMenuId.observe(this, Observer { id ->

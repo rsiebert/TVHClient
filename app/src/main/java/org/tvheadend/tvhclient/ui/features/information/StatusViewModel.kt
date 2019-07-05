@@ -81,9 +81,6 @@ class StatusViewModel(application: Application) : BaseViewModel(application), Sh
             diskSpaceUpdateHandler.postDelayed(discSpaceUpdateTask, 60000)
         }
 
-        Timber.d("Starting disk space update handler")
-        diskSpaceUpdateHandler.post(discSpaceUpdateTask)
-
         onSharedPreferenceChanged(sharedPreferences, "notify_running_recording_count_enabled")
         onSharedPreferenceChanged(sharedPreferences, "notify_low_storage_space_enabled")
 
@@ -94,8 +91,7 @@ class StatusViewModel(application: Application) : BaseViewModel(application), Sh
     override fun onCleared() {
         Timber.d("Unregistering shared preference change listener")
         sharedPreferences.unregisterOnSharedPreferenceChangeListener(this)
-        Timber.d("Stopping disk space update handler")
-        diskSpaceUpdateHandler.removeCallbacks(discSpaceUpdateTask)
+        stopDiskSpaceUpdateHandler()
         super.onCleared()
     }
 
@@ -119,5 +115,15 @@ class StatusViewModel(application: Application) : BaseViewModel(application), Sh
 
     fun getChannelById(id: Int): Channel? {
         return appRepository.channelData.getItemById(id)
+    }
+
+    fun startDiskSpaceUpdateHandler() {
+        Timber.d("Starting disk space update handler")
+        diskSpaceUpdateHandler.post(discSpaceUpdateTask)
+    }
+
+    fun stopDiskSpaceUpdateHandler() {
+        Timber.d("Stopping disk space update handler")
+        diskSpaceUpdateHandler.removeCallbacks(discSpaceUpdateTask)
     }
 }
