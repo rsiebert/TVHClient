@@ -39,4 +39,9 @@ class NavigationViewModel(application: Application) : BaseViewModel(application)
             false
         }
     }
+
+    fun onBackPressed() {
+        Timber.d("Back button was pressed, setting current navigation id to the previous one")
+        navigationMenuId.value = previousNavigationMenuId
+    }
 }

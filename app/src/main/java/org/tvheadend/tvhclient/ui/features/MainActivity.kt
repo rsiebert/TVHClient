@@ -504,9 +504,11 @@ class MainActivity : BaseActivity(), SearchView.OnQueryTextListener, SearchView.
         if (fragment is SearchRequestInterface && fragment.isVisible) {
             if (!fragment.onSearchResultsCleared()) {
                 super.onBackPressed()
+                navigationViewModel.onBackPressed()
             }
         } else {
             super.onBackPressed()
+            navigationViewModel.onBackPressed()
         }
     }
 
