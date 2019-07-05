@@ -81,40 +81,53 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
             "reconnect" -> {
                 Timber.d("Reconnection to server requested")
                 htspConnection?.let {
-                    if (it.isNotConnected) {
+                    if (it.isConnecting) {
+                        Timber.d("Not reconnecting to server because we are currently connecting")
+                    } else if (!it.isNotConnected) {
+                        Timber.d("Not reconnecting to server because we are still connected")
+                    } else {
                         Timber.d("Reconnecting to server because we are not connected anymore")
                         startHtspConnection()
-                    } else {
-                        Timber.d("Not reconnecting to server because we are still connected")
                     }
                 } ?: run {
                     Timber.d("Reconnecting to server because no previous connection existed")
                     startHtspConnection()
                 }
             }
-            "getDiskSpace" -> getDiscSpace()
-            "getSysTime" -> getSystemTime()
-            "getChannel" -> getChannel(intent)
-            "getEvent" -> getEvent(intent)
-            "getEvents" -> getEvents(intent)
-            "epgQuery" -> getEpgQuery(intent)
-            "addDvrEntry" -> addDvrEntry(intent)
-            "updateDvrEntry" -> updateDvrEntry(intent)
-            "cancelDvrEntry", "deleteDvrEntry", "stopDvrEntry" -> removeDvrEntry(intent)
-            "addAutorecEntry" -> addAutorecEntry(intent)
-            "updateAutorecEntry" -> updateAutorecEntry(intent)
-            "deleteAutorecEntry" -> deleteAutorecEntry(intent)
-            "addTimerecEntry" -> addTimerrecEntry(intent)
-            "updateTimerecEntry" -> updateTimerrecEntry(intent)
-            "deleteTimerecEntry" -> deleteTimerrecEntry(intent)
-            "getTicket" -> getTicket(intent)
-            "getProfiles" -> getProfiles()
-            "getDvrConfigs" -> getDvrConfigs()
-            "getSubscriptions" -> getSubscriptions()
-            "getInputs" -> getInputs()
-            // Internal calls that are called from the intent service
-            "getMoreEvents" -> getMoreEvents(intent)
-            "loadChannelIcons" -> loadAllChannelIcons()
+            else -> {
+                htspConnection?.let {
+                    if (!it.isNotConnected && it.isAuthenticated) {
+                        Timber.d("Connection to server exists, executing action $action")
+                        when (action) {
+                            "getDiskSpace" -> getDiscSpace()
+                            "getSysTime" -> getSystemTime()
+                            "getChannel" -> getChannel(intent)
+                            "getEvent" -> getEvent(intent)
+                            "getEvents" -> getEvents(intent)
+                            "epgQuery" -> getEpgQuery(intent)
+                            "addDvrEntry" -> addDvrEntry(intent)
+                            "updateDvrEntry" -> updateDvrEntry(intent)
+                            "cancelDvrEntry", "deleteDvrEntry", "stopDvrEntry" -> removeDvrEntry(intent)
+                            "addAutorecEntry" -> addAutorecEntry(intent)
+                            "updateAutorecEntry" -> updateAutorecEntry(intent)
+                            "deleteAutorecEntry" -> deleteAutorecEntry(intent)
+                            "addTimerecEntry" -> addTimerrecEntry(intent)
+                            "updateTimerecEntry" -> updateTimerrecEntry(intent)
+                            "deleteTimerecEntry" -> deleteTimerrecEntry(intent)
+                            "getTicket" -> getTicket(intent)
+                            "getProfiles" -> getProfiles()
+                            "getDvrConfigs" -> getDvrConfigs()
+                            "getSubscriptions" -> getSubscriptions()
+                            "getInputs" -> getInputs()
+                            // Internal calls that are called from the intent service
+                            "getMoreEvents" -> getMoreEvents(intent)
+                            "loadChannelIcons" -> loadAllChannelIcons()
+                        }
+                    } else {
+                        Timber.d("Not connected to server, not executing action $action")
+                    }
+                }
+            }
         }
         return START_NOT_STICKY
     }
@@ -130,11 +143,11 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
         stopHtspConnection()
 
         connection = appRepository.connectionData.activeItem
-        Timber.d("Connecting to ${connection.name}, hostname is ${connection.hostname}")
+        Timber.d("Connecting to ${connection.name}, serverUrl is ${connection.serverUrl}")
 
         htspConnection = HtspConnection(
                 connection.username, connection.password,
-                connection.hostname, connection.port,
+                connection.serverUrl,
                 connectionTimeout,
                 this, this)
         // Since this is blocking, spawn to a new thread
@@ -261,7 +274,6 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
 
         val enableAsyncMetadataRequest = HtspMessage()
         enableAsyncMetadataRequest.method = "enableAsyncMetadata"
-
 
         val epgMaxTime = java.lang.Long.parseLong(sharedPreferences.getString("epg_max_time", resources.getString(R.string.pref_default_epg_max_time))!!)
         val currentTimeInSeconds = System.currentTimeMillis() / 1000L
@@ -1253,11 +1265,11 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
     }
 
     /**
-     * Downloads the file from the given url. If the url starts with http then a
+     * Downloads the file from the given serverUrl. If the serverUrl starts with http then a
      * buffered input stream is used, otherwise the htsp api is used. The file
      * will be saved in the cache directory using a unique hash value as the file name.
      *
-     * @param url The url of the file that shall be downloaded
+     * @param url The serverUrl of the file that shall be downloaded
      * @throws IOException Error message if something went wrong
      */
     // Use the icon loading from the original library?
@@ -1319,7 +1331,7 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
     /**
      * Removes the cached image file from the file system
      *
-     * @param iconUrl The icon url
+     * @param iconUrl The icon serverUrl
      */
     private fun deleteIconFileFromCache(iconUrl: String?) {
         if (iconUrl.isNullOrEmpty()) {
