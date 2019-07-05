@@ -30,5 +30,9 @@ data class Connection(
         @ColumnInfo(name = "last_update")
         var lastUpdate: Long = 0,
         @ColumnInfo(name = "sync_required")
-        var isSyncRequired: Boolean = true
+        var isSyncRequired: Boolean = true,
+        @ColumnInfo(name = "server_url")
+        var serverUrl: String? = "",
+        @ColumnInfo(name = "streaming_url")
+        var streamingUrl: String? = ""
 )

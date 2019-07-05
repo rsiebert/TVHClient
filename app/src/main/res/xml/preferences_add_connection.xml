@@ -7,24 +7,15 @@
             android:summary="@string/pref_name_sum"
             android:title="@string/pref_name" />
         <EditTextPreference
-            android:hint="@string/pref_host_hint"
-            android:key="hostname"
-            android:summary="@string/pref_host_sum"
-            android:title="@string/pref_host" />
+            android:hint="@string/pref_server_url_hint"
+            android:key="server_url"
+            android:summary="@string/pref_server_url_sum"
+            android:title="@string/pref_server_url" />
         <EditTextPreference
-            android:defaultValue="@string/pref_default_htsp_port"
-            android:hint="@string/pref_default_htsp_port"
-            android:inputType="number"
-            android:key="htsp_port"
-            android:summary="@string/pref_port_sum"
-            android:title="@string/pref_port" />
-        <EditTextPreference
-            android:defaultValue="@string/pref_default_streaming_port"
-            android:hint="@string/pref_default_streaming_port"
-            android:inputType="number"
-            android:key="streaming_port"
-            android:summary="@string/pref_streaming_port_sum"
-            android:title="@string/pref_streaming_port" />
+            android:hint="@string/pref_streaming_url_hint"
+            android:key="streaming_url"
+            android:summary="@string/pref_streaming_url_sum"
+            android:title="@string/pref_streaming_url" />
         <EditTextPreference
             android:hint="@string/pref_user"
             android:key="username"

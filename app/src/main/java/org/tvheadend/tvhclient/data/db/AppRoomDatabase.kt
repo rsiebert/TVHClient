@@ -21,7 +21,7 @@ import org.tvheadend.tvhclient.domain.entity.*
             ServerProfile::class,
             ServerStatus::class],
         exportSchema = false,
-        version = 10)
+        version = 11)
 abstract class AppRoomDatabase : RoomDatabase() {
 
     abstract val timerRecordingDao: TimerRecordingDao
@@ -61,6 +61,7 @@ abstract class AppRoomDatabase : RoomDatabase() {
                             .addMigrations(MIGRATION_7_8)
                             .addMigrations(MIGRATION_8_9)
                             .addMigrations(MIGRATION_9_10)
+                            .addMigrations(MIGRATION_10_11)
                             .build()
                 }
             }
@@ -134,6 +135,13 @@ abstract class AppRoomDatabase : RoomDatabase() {
         private val MIGRATION_9_10 = object : Migration(9, 10) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("ALTER TABLE channels ADD COLUMN server_order INTEGER NOT NULL DEFAULT 0;")
+            }
+        }
+
+        private val MIGRATION_10_11 = object : Migration(10, 11) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("ALTER TABLE connections ADD COLUMN server_url TEXT;")
+                database.execSQL("ALTER TABLE connections ADD COLUMN streaming_url TEXT;")
             }
         }
     }

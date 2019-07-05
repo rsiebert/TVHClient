@@ -37,8 +37,7 @@ internal class ConnectionListAdapter(private val context: AppCompatActivity) : A
         val c = getItem(position)
         if (c != null) {
             holder.title.text = c.name
-            val summary = c.hostname + ":" + c.port
-            holder.summary.text = summary
+            holder.summary.text = c.serverUrl
 
             // Set the active / inactive icon depending on the theme and selection status
             if (getThemeId(context) == R.style.CustomTheme_Light) {

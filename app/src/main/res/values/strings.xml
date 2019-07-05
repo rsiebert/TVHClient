@@ -172,6 +172,14 @@
     <string name="pref_genre_colors_visibility_message">Set the visibility of the colors. Higher values mean stronger colors.</string>
     <string name="pref_hide_duplicate_scheduled_recordings">Hide duplicate scheduled recordings</string>
     <string name="pref_show_menu_delete_all_recordings">Show the \'Delete all recordings\' menu</string>
+    <string name="pref_server_url">Server Url</string>
+    <string name="pref_server_url_hint">http://myserver:9982</string>
+    <string name="pref_server_url_error_invalid">The url is not valid.</string>
+    <string name="pref_server_url_sum">Enter the url with the hostname and port to connect to the server.</string>
+    <string name="pref_streaming_url">Streaming Url</string>
+    <string name="pref_streaming_url_hint">http://myserver:9982</string>
+    <string name="pref_streaming_url_error_invalid">The url is not valid.</string>
+    <string name="pref_streaming_url_sum">Enter the url with the hostname and port to stream videos from the server.</string>
     <string name="pref_host">Hostname or IP address</string>
     <string name="pref_host_hint">www.server.com or 192.168.0.10</string>
     <string name="pref_host_error_invalid">The IP-address is not valid.</string>

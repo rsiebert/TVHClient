@@ -1,11 +1,12 @@
 package org.tvheadend.tvhclient.ui.features.settings
 
+import android.content.Context
+import android.net.Uri
 import android.os.Bundle
 import android.util.Patterns
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
-import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProviders
 import androidx.preference.CheckBoxPreference
 import androidx.preference.EditTextPreference
@@ -26,9 +27,8 @@ abstract class SettingsConnectionBaseFragment : PreferenceFragmentCompat(), Back
     lateinit var settingsViewModel: SettingsViewModel
 
     private lateinit var namePreference: EditTextPreference
-    private lateinit var hostnamePreference: EditTextPreference
-    private lateinit var htspPortPreference: EditTextPreference
-    private lateinit var streamingPortPreference: EditTextPreference
+    private lateinit var serverUrlPreference: EditTextPreference
+    private lateinit var streamingUrlPreference: EditTextPreference
     private lateinit var usernamePreference: EditTextPreference
     private lateinit var passwordPreference: EditTextPreference
     private lateinit var activeEnabledPreference: CheckBoxPreference
@@ -44,7 +44,7 @@ abstract class SettingsConnectionBaseFragment : PreferenceFragmentCompat(), Back
             toolbarInterface = activity as ToolbarInterface
         }
 
-        settingsViewModel = ViewModelProviders.of(activity as AppCompatActivity).get(SettingsViewModel::class.java)
+        settingsViewModel = ViewModelProviders.of(activity as SettingsActivity).get(SettingsViewModel::class.java)
         setHasOptionsMenu(true)
 
         if (savedInstanceState == null) {
@@ -54,9 +54,8 @@ abstract class SettingsConnectionBaseFragment : PreferenceFragmentCompat(), Back
 
         // Get the connectivity preferences for later usage
         namePreference = findPreference("name")!!
-        hostnamePreference = findPreference("hostname")!!
-        htspPortPreference = findPreference("htsp_port")!!
-        streamingPortPreference = findPreference("streaming_port")!!
+        serverUrlPreference = findPreference("server_url")!!
+        streamingUrlPreference = findPreference("streaming_url")!!
         usernamePreference = findPreference("username")!!
         passwordPreference = findPreference("password")!!
         activeEnabledPreference = findPreference("active_enabled")!!
@@ -66,9 +65,8 @@ abstract class SettingsConnectionBaseFragment : PreferenceFragmentCompat(), Back
         wolUseBroadcastEnabled = findPreference("wol_broadcast_enabled")!!
 
         namePreference.onPreferenceChangeListener = this
-        hostnamePreference.onPreferenceChangeListener = this
-        htspPortPreference.onPreferenceChangeListener = this
-        streamingPortPreference.onPreferenceChangeListener = this
+        serverUrlPreference.onPreferenceChangeListener = this
+        streamingUrlPreference.onPreferenceChangeListener = this
         usernamePreference.onPreferenceChangeListener = this
         passwordPreference.onPreferenceChangeListener = this
         activeEnabledPreference.onPreferenceChangeListener = this
@@ -92,17 +90,13 @@ abstract class SettingsConnectionBaseFragment : PreferenceFragmentCompat(), Back
         namePreference.text = name
         namePreference.summary = if (name.isNullOrEmpty()) getString(R.string.pref_name_sum) else name
 
-        val address = settingsViewModel.connection.hostname
-        hostnamePreference.text = address
-        hostnamePreference.summary = if (address.isNullOrEmpty()) getString(R.string.pref_host_sum) else address
+        val serverUrl = settingsViewModel.connection.serverUrl
+        serverUrlPreference.text = serverUrl
+        serverUrlPreference.summary = if (serverUrl.isNullOrEmpty()) getString(R.string.pref_server_url_sum) else serverUrl
 
-        val port = settingsViewModel.connection.port.toString()
-        htspPortPreference.text = port
-        htspPortPreference.summary = port
-
-        val streamingPort = settingsViewModel.connection.streamingPort
-        streamingPortPreference.text = streamingPort.toString()
-        streamingPortPreference.summary = getString(R.string.pref_streaming_port_sum, streamingPort)
+        val streamingUrl = settingsViewModel.connection.streamingUrl
+        streamingUrlPreference.text = streamingUrl
+        streamingUrlPreference.summary = if (streamingUrl.isNullOrEmpty()) getString(R.string.pref_streaming_url_sum) else streamingUrl
 
         val username = settingsViewModel.connection.username
         usernamePreference.text = username
@@ -153,14 +147,9 @@ abstract class SettingsConnectionBaseFragment : PreferenceFragmentCompat(), Back
         return if (!isConnectionNameValid(connection.name)) {
             context?.sendSnackbarMessage(R.string.pref_name_error_invalid)
             false
-        } else if (!isConnectionIpAddressValid(connection.hostname)) {
-            context?.sendSnackbarMessage(R.string.pref_host_error_invalid)
+        } else if (!isConnectionUrlValid(context, connection.serverUrl)) {
             false
-        } else if (!isConnectionPortValid(connection.port)) {
-            context?.sendSnackbarMessage(R.string.pref_port_error_invalid)
-            false
-        } else if (!isConnectionPortValid(connection.streamingPort)) {
-            context?.sendSnackbarMessage(R.string.pref_port_error_invalid)
+        } else if (!isConnectionUrlValid(context, connection.streamingUrl)) {
             false
         } else if (connection.isWolEnabled && !isConnectionWolPortValid(connection.wolPort)) {
             context?.sendSnackbarMessage(R.string.pref_port_error_invalid)
@@ -201,9 +190,8 @@ abstract class SettingsConnectionBaseFragment : PreferenceFragmentCompat(), Back
         val value = o.toString()
         when (preference.key) {
             "name" -> preferenceNameChanged(value)
-            "hostname" -> preferenceHostnameChanged(value)
-            "htsp_port" -> preferenceHtspPortChanged(value)
-            "streaming_port" -> preferenceStreamingPortChanged(value)
+            "serverUrl" -> preferenceUrlChanged(value)
+            "streaming_url" -> preferenceStreamingUrlChanged(value)
             "username" -> preferenceUsernameChanged(value)
             "password" -> preferencePasswordChanged(value)
             "active_enabled" -> preferenceEnabledChanged(value)
@@ -226,49 +214,27 @@ abstract class SettingsConnectionBaseFragment : PreferenceFragmentCompat(), Back
         }
     }
 
-    private fun preferenceHostnameChanged(value: String) {
+    private fun preferenceUrlChanged(value: String) {
         settingsViewModel.connectionHasChanged = true
-        if (isConnectionIpAddressValid(value)) {
-            settingsViewModel.connection.hostname = value
-            hostnamePreference.text = value
-            hostnamePreference.summary = if (value.isEmpty()) getString(R.string.pref_host_sum) else value
+        if (isConnectionUrlValid(context, value)) {
+            settingsViewModel.connection.serverUrl = value
+            serverUrlPreference.text = value
+            serverUrlPreference.summary = if (value.isEmpty()) getString(R.string.pref_server_url_sum) else value
         } else {
-            hostnamePreference.text = settingsViewModel.connection.hostname
-            context?.sendSnackbarMessage(R.string.pref_host_error_invalid)
+            serverUrlPreference.text = settingsViewModel.connection.serverUrl
+            context?.sendSnackbarMessage(R.string.pref_server_url_error_invalid)
         }
     }
 
-    private fun preferenceHtspPortChanged(value: String) {
+    private fun preferenceStreamingUrlChanged(value: String) {
         settingsViewModel.connectionHasChanged = true
-        try {
-            val port = Integer.parseInt(value)
-            if (isConnectionPortValid(port)) {
-                settingsViewModel.connection.port = port
-                htspPortPreference.text = port.toString()
-                htspPortPreference.summary = port.toString()
-            } else {
-                htspPortPreference.text = settingsViewModel.connection.port.toString()
-                context?.sendSnackbarMessage(R.string.pref_port_error_invalid)
-            }
-        } catch (nex: NumberFormatException) {
-            // NOP
-        }
-    }
-
-    private fun preferenceStreamingPortChanged(value: String) {
-        settingsViewModel.connectionHasChanged = true
-        try {
-            val port = Integer.parseInt(value)
-            if (isConnectionPortValid(port)) {
-                settingsViewModel.connection.streamingPort = port
-                streamingPortPreference.text = value
-                streamingPortPreference.summary = getString(R.string.pref_streaming_port_sum, port)
-            } else {
-                streamingPortPreference.text = settingsViewModel.connection.streamingPort.toString()
-                context?.sendSnackbarMessage(R.string.pref_port_error_invalid)
-            }
-        } catch (e: NumberFormatException) {
-            // NOP
+        if (isConnectionUrlValid(context, value)) {
+            settingsViewModel.connection.streamingUrl = value
+            streamingUrlPreference.text = value
+            streamingUrlPreference.summary = if (value.isEmpty()) getString(R.string.pref_streaming_url_sum) else value
+        } else {
+            streamingUrlPreference.text = settingsViewModel.connection.streamingUrl
+            context?.sendSnackbarMessage(R.string.pref_streaming_url_error_invalid)
         }
     }
 
@@ -343,6 +309,37 @@ abstract class SettingsConnectionBaseFragment : PreferenceFragmentCompat(), Back
         return matcher.matches()
     }
 
+    private fun isConnectionUrlValid(context: Context? = null, value: String?): Boolean {
+        // Do not allow an empty serverUrl
+        if (value.isNullOrEmpty()) {
+            context?.sendSnackbarMessage("The url must not be empty")
+            return false
+        }
+
+        val uri = Uri.parse(value)
+        if (uri.host.isNullOrEmpty()) {
+            context?.sendSnackbarMessage("The url $uri is missing a hostname")
+            return false
+        }
+
+        if (value.contains(":") && uri.port == -1) {
+            context?.sendSnackbarMessage("The url $uri is missing a port")
+            return false
+        }
+
+        if (!uri.userInfo.isNullOrEmpty()) {
+            context?.sendSnackbarMessage("The url $uri must not contain a username or password")
+            return false
+        }
+
+        if (!isConnectionIpAddressValid(uri.host)) {
+            context?.sendSnackbarMessage("The url $uri is missing a valid hostname")
+            return false
+        }
+
+        return true
+    }
+
     private fun isConnectionIpAddressValid(value: String?): Boolean {
         // Do not allow an empty address
         if (value.isNullOrEmpty()) {
@@ -376,10 +373,6 @@ abstract class SettingsConnectionBaseFragment : PreferenceFragmentCompat(), Back
         val pattern = Pattern.compile("([0-9a-fA-F]{2}(?::|-|$)){6}")
         val matcher = pattern.matcher(value)
         return matcher.matches()
-    }
-
-    private fun isConnectionPortValid(port: Int): Boolean {
-        return port in 1..65535
     }
 
     private fun isConnectionWolPortValid(port: Int): Boolean {
