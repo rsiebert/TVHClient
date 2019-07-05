@@ -24,46 +24,28 @@ class MigrateUtils(val context: Context, val appRepository: AppRepository, val s
             Timber.i("Migrating from $lastInstalledApplicationVersion to $currentApplicationVersion")
 
             if (lastInstalledApplicationVersion < VERSION_101) {
-                migrateConvertStartScreenPreference()
-                migrateConnectionsFromDatabase()
-                migratePreferences()
+                convertStartScreenPreference()
+                copyConnectionsFromOldToNewDatabase()
+                copyOldPreferenceValuesToNewOnes()
             }
             if (lastInstalledApplicationVersion < VERSION_109) {
-                checkServerStatus()
+                addPossibleMissingServerStatusDatabaseEntry()
             }
             if (lastInstalledApplicationVersion < VERSION_116) {
-                // Convert the previous boolean channel icon action to the corresponding list entry
-                val editor = sharedPreferences.edit()
-                val enabled = sharedPreferences.getBoolean("channel_icon_starts_playback_enabled", true)
-                editor.putString("channel_icon_action", if (enabled) "2" else "0")
-                editor.apply()
+                convertChannelIconActionPreference()
             }
             if (lastInstalledApplicationVersion < VERSION_120) {
-                migratePlaybackProfiles()
+                clearAllPlaybackProfiles()
             }
             if (lastInstalledApplicationVersion < VERSION_143) {
-                migrateInterPlayerAndChannelOrderSettings()
+                convertInternalPlayerAndChannelOrderSettings()
             }
             if (lastInstalledApplicationVersion < VERSION_144) {
-                // Set the sync required flag for every connection because in this version
-                // the server defined channel order was introduced. This information needs
-                // to be saved during the initial connection with the server where
-                // channel and tags would not be saved.
-                for (connection in appRepository.connectionData.getItems()) {
-                    Timber.d("Setting sync required for connection ${connection.name} to save server defined channel order")
-                    connection.isSyncRequired = true
-                    appRepository.connectionData.updateItem(connection)
-                }
-
-                // Two new channel sorting options were introduced in this version.
-                // They are now the first to options so all other values need to be moved up by two.
-                val editor = sharedPreferences.edit()
-                var channelSortOrder = Integer.valueOf(sharedPreferences.getString("channel_sort_order", context.resources.getString(R.string.pref_default_channel_sort_order))!!)
-                if (channelSortOrder >= 2) {
-                    channelSortOrder += 2
-                }
-                editor.putString("channel_sort_order", channelSortOrder.toString())
-                editor.apply()
+                setSyncRequiredForAllConnections()
+                convertChannelSortOrderPreference()
+            }
+            if (lastInstalledApplicationVersion < VERSION_176) {
+                convertConnectionHostAndPortValuesToUrl()
             }
         }
 
@@ -73,7 +55,52 @@ class MigrateUtils(val context: Context, val appRepository: AppRepository, val s
         editor.apply()
     }
 
-    private fun migrateInterPlayerAndChannelOrderSettings() {
+    private fun setSyncRequiredForAllConnections() {
+        // Set the sync required flag for every connection because in this version
+        // the server defined channel order was introduced. This information needs
+        // to be saved during the initial connection with the server where
+        // channel and tags would not be saved.
+        for (connection in appRepository.connectionData.getItems()) {
+            Timber.d("Setting sync required for connection ${connection.name} to save server defined channel order")
+            connection.isSyncRequired = true
+            appRepository.connectionData.updateItem(connection)
+        }
+    }
+
+    private fun convertChannelSortOrderPreference() {
+        // Two new channel sorting options were introduced in this version.
+        // They are now the first to options so all other values need to be moved up by two.
+        val editor = sharedPreferences.edit()
+        var channelSortOrder = Integer.valueOf(sharedPreferences.getString("channel_sort_order", context.resources.getString(R.string.pref_default_channel_sort_order))!!)
+        if (channelSortOrder >= 2) {
+            channelSortOrder += 2
+        }
+        editor.putString("channel_sort_order", channelSortOrder.toString())
+        editor.apply()
+    }
+
+    private fun convertChannelIconActionPreference() {
+        // Convert the previous boolean channel icon action to the corresponding list entry
+        val editor = sharedPreferences.edit()
+        val enabled = sharedPreferences.getBoolean("channel_icon_starts_playback_enabled", true)
+        editor.putString("channel_icon_action", if (enabled) "2" else "0")
+        editor.apply()
+    }
+
+    private fun convertConnectionHostAndPortValuesToUrl() {
+        Timber.d("Migrating connection by populating the new urls from hostname and port")
+
+        val connectionList = appRepository.connectionData.getItems()
+        for (connection in connectionList) {
+            val serverStatus = appRepository.serverStatusData.getItemById(connection.id)
+            // Add an serverUrl in the format http://host:port. Append the server webroot if it is set
+            connection.serverUrl = "http://${connection.hostname}:${connection.port}${serverStatus?.webroot ?: ""}"
+            connection.streamingUrl = "http://${connection.hostname}:${connection.streamingPort}${serverStatus?.webroot ?: ""}"
+            appRepository.connectionData.updateItem(connection)
+        }
+    }
+
+    private fun convertInternalPlayerAndChannelOrderSettings() {
         // Convert the previous internal player settings to the
         // new one that differentiates between channels and recordings
         val editor = sharedPreferences.edit()
@@ -91,7 +118,7 @@ class MigrateUtils(val context: Context, val appRepository: AppRepository, val s
         editor.apply()
     }
 
-    private fun migratePlaybackProfiles() {
+    private fun clearAllPlaybackProfiles() {
         for (connection in appRepository.connectionData.getItems()) {
             val serverStatus = appRepository.serverStatusData.getItemById(connection.id)
             if (serverStatus != null) {
@@ -108,7 +135,7 @@ class MigrateUtils(val context: Context, val appRepository: AppRepository, val s
         appRepository.serverProfileData.removeAll()
     }
 
-    private fun checkServerStatus() {
+    private fun addPossibleMissingServerStatusDatabaseEntry() {
         Timber.d("Checking if a server status entry exists for each connection")
         for ((id, name) in appRepository.connectionData.getItems()) {
             Timber.d("Checking connection $name with id $id")
@@ -124,7 +151,7 @@ class MigrateUtils(val context: Context, val appRepository: AppRepository, val s
         }
     }
 
-    private fun migrateConnectionsFromDatabase() {
+    private fun copyConnectionsFromOldToNewDatabase() {
         Timber.d("Migrating existing connections to the new room database")
         val db = DatabaseHelperForMigration.getInstance(context)?.readableDatabase
 
@@ -174,7 +201,7 @@ class MigrateUtils(val context: Context, val appRepository: AppRepository, val s
         }
     }
 
-    private fun migrateConvertStartScreenPreference() {
+    private fun convertStartScreenPreference() {
         // migrate preferences from old names to new
         // names to have a consistent naming scheme afterwards
         try {
@@ -204,7 +231,7 @@ class MigrateUtils(val context: Context, val appRepository: AppRepository, val s
     /**
      * Renames the names of the old preferences to the new naming scheme
      */
-    private fun migratePreferences() {
+    private fun copyOldPreferenceValuesToNewOnes() {
         val editor = sharedPreferences.edit()
 
         // Advanced settings preferences
@@ -248,5 +275,6 @@ class MigrateUtils(val context: Context, val appRepository: AppRepository, val s
         private const val VERSION_120 = 120
         private const val VERSION_143 = 143
         private const val VERSION_144 = 144
+        private const val VERSION_176 = 176
     }
 }
