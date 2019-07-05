@@ -1,12 +1,17 @@
 package org.tvheadend.htsp;
 
+import android.net.Uri;
 import android.util.SparseArray;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import java.io.IOException;
+import java.net.Inet4Address;
+import java.net.Inet6Address;
+import java.net.InetAddress;
 import java.net.InetSocketAddress;
+import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.nio.channels.CancelledKeyException;
 import java.nio.channels.ClosedByInterruptException;
@@ -18,6 +23,7 @@ import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
 import java.nio.channels.UnresolvedAddressException;
+import java.nio.channels.UnsupportedAddressTypeException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashSet;
@@ -33,8 +39,7 @@ public class HtspConnection extends Thread implements HtspConnectionInterface {
 
     private final String username;
     private final String password;
-    private final String hostname;
-    private final int port;
+    private final String url;
 
     private volatile boolean isRunning;
     private final Lock lock;
@@ -46,6 +51,7 @@ public class HtspConnection extends Thread implements HtspConnectionInterface {
     private final Set<HtspMessageListener> messageListeners = new HashSet<>();
     private final SparseArray<HtspResponseListener> responseHandlers;
     private final LinkedList<HtspMessage> messageQueue;
+    private boolean isConnecting = false;
     private boolean isAuthenticated = false;
     private Selector selector;
     private final int connectionTimeout;
@@ -81,8 +87,9 @@ public class HtspConnection extends Thread implements HtspConnectionInterface {
         FAILED_EXCEPTION_OPENING_SOCKET
     }
 
-    public HtspConnection(@Nullable String username, @Nullable String password,
-                          @Nullable String hostname, int port,
+    public HtspConnection(@Nullable String username,
+                          @Nullable String password,
+                          @Nullable String url,
                           int connectionTimeout,
                           @NonNull HtspConnectionStateListener connectionListener,
                           @Nullable HtspMessageListener messageListener) {
@@ -90,8 +97,7 @@ public class HtspConnection extends Thread implements HtspConnectionInterface {
 
         this.username = username != null ? username : "";
         this.password = password != null ? password : "";
-        this.hostname = hostname != null ? hostname : "";
-        this.port = port;
+        this.url = url != null ? url : "";
         this.connectionTimeout = connectionTimeout;
 
         this.isRunning = false;
@@ -117,6 +123,9 @@ public class HtspConnection extends Thread implements HtspConnectionInterface {
             return;
         }
 
+        Timber.d("Connection to server is starting");
+        isConnecting = true;
+
         final Object signal = new Object();
 
         lock.lock();
@@ -129,8 +138,26 @@ public class HtspConnection extends Thread implements HtspConnectionInterface {
             socketChannel.socket().setSoTimeout(connectionTimeout);
             socketChannel.register(selector, SelectionKey.OP_CONNECT, signal);
 
-            Timber.d("Connecting via socket to " + hostname + ":" + port);
-            if (!socketChannel.connect(new InetSocketAddress(hostname, port))) {
+            Timber.d("Parsing url " + url + " to get required host and port information");
+            Uri uri = Uri.parse(url);
+            InetSocketAddress inetSocketAddress = new InetSocketAddress(uri.getHost(), uri.getPort());
+
+            InetAddress inetAddress = inetSocketAddress.getAddress();
+            if (inetAddress instanceof Inet4Address) {
+                Timber.d("Connecting via socket to ipv4 address '" + inetAddress.getHostName() + "' and port '" + inetSocketAddress.getPort() + "'");
+
+            } else if (inetAddress instanceof Inet6Address) {
+                Inet6Address inet6Address = (Inet6Address) inetAddress;
+                if (inet6Address.getScopeId() != 0) {
+                    Timber.d("Connecting via socket to ipv6 address '" + inetAddress.getHostName() + "' and port '" + inetSocketAddress.getPort() + "'");
+                    inetSocketAddress = new InetSocketAddress(InetAddress.getByAddress(inet6Address.getAddress()), inetSocketAddress.getPort());
+                } else {
+                    Timber.d("Scope id of ipv6 address '" + inetAddress.getHostName() + "', is 0");
+                    inetSocketAddress = null;
+                }
+            }
+
+            if (!socketChannel.connect(inetSocketAddress)) {
                 Timber.d("Socket did not yet finish connecting, calling finishConnect()");
                 socketChannel.finishConnect();
             }
@@ -139,12 +166,20 @@ public class HtspConnection extends Thread implements HtspConnectionInterface {
             isRunning = true;
             start();
 
+        } catch (UnknownHostException e) {
+            Timber.d(e, "Unknown host exception while opening HTSP connection");
+            connectionListener.onConnectionStateChange(ConnectionState.FAILED_UNRESOLVED_ADDRESS);
+
         } catch (ClosedByInterruptException e) {
             Timber.d(e, "Failed to open HTSP connection, interrupted");
             connectionListener.onConnectionStateChange(ConnectionState.FAILED_INTERRUPTED);
 
         } catch (UnresolvedAddressException e) {
             Timber.d(e, "Failed to resolve HTSP server address");
+            connectionListener.onConnectionStateChange(ConnectionState.FAILED_UNRESOLVED_ADDRESS);
+
+        } catch (UnsupportedAddressTypeException e) {
+            Timber.d(e, "Type of HTSP server address is not supported");
             connectionListener.onConnectionStateChange(ConnectionState.FAILED_UNRESOLVED_ADDRESS);
 
         } catch (IOException e) {
@@ -170,6 +205,10 @@ public class HtspConnection extends Thread implements HtspConnectionInterface {
             }
         }
         Timber.d("Opened HTSP Connection");
+    }
+
+    public boolean isConnecting() {
+        return isConnecting;
     }
 
     @Override
@@ -211,6 +250,8 @@ public class HtspConnection extends Thread implements HtspConnectionInterface {
             synchronized (authMessage) {
                 authMessage.notify();
             }
+            Timber.d("Connection to server is complete");
+            isConnecting = false;
         };
 
         Timber.d("Sending initial message to server");
@@ -244,7 +285,7 @@ public class HtspConnection extends Thread implements HtspConnectionInterface {
 
         synchronized (authMessage) {
             try {
-                authMessage.wait(5000);
+                authMessage.wait(connectionTimeout);
                 if (!isAuthenticated) {
                     Timber.d("Timeout while waiting for authentication response");
                     connectionListener.onAuthenticationStateChange(AuthenticationState.FAILED);
@@ -298,6 +339,7 @@ public class HtspConnection extends Thread implements HtspConnectionInterface {
             responseHandlers.clear();
             messageQueue.clear();
             isAuthenticated = false;
+            isConnecting = false;
             isRunning = false;
 
             if (socketChannel.isOpen()) {
