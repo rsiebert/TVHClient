@@ -1,6 +1,7 @@
 package org.tvheadend.tvhclient.ui.features.playback.external
 
 import android.app.Application
+import android.net.Uri
 import android.os.Bundle
 import androidx.lifecycle.MutableLiveData
 import androidx.preference.PreferenceManager
@@ -38,8 +39,7 @@ class ExternalPlayerViewModel(application: Application) : BaseViewModel(applicat
         htspConnection = HtspConnection(
                 connection.username ?: "",
                 connection.password ?: "",
-                connection.hostname ?: "",
-                connection.port,
+                connection.serverUrl ?: "",
                 connectionTimeout,
                 this, null)
 
@@ -117,28 +117,30 @@ class ExternalPlayerViewModel(application: Application) : BaseViewModel(applicat
         // Convert the hostname to the IP address only when required.
         // This is usually required when a channel or recording shall
         // be played on a chromecast
-        var hostname = connection.hostname
-        if (convertHostnameToAddress && !connection.hostname.isNullOrEmpty()) {
-            Timber.d("Convert hostname ${connection.hostname} to IP address")
+        val uri = Uri.parse(connection.streamingUrl)
+        var hostname = uri.host
+        if (convertHostnameToAddress && !hostname.isNullOrEmpty()) {
+            Timber.d("Convert hostname $hostname to IP address")
             try {
-                hostname = ConvertHostnameToAddressTask(connection.hostname ?: "").execute().get()
+                hostname = ConvertHostnameToAddressTask(hostname).execute().get()
             } catch (e: InterruptedException) {
-                Timber.d(e, "Could not execute task to get ip address from ${connection.hostname}")
+                Timber.d(e, "Could not execute task to get ip address from $hostname")
             } catch (e: ExecutionException) {
-                Timber.d(e, "Could not execute task to get ip address from ${connection.hostname}")
+                Timber.d(e, "Could not execute task to get ip address from $hostname")
             }
         } else {
-            Timber.d("Hostname ${connection.hostname} to IP address conversion not required")
+            Timber.d("Hostname $hostname to IP address conversion not required")
         }
 
-        var baseUrl = "http://$hostname"
-        if (connection.streamingPort != 80 && connection.streamingPort != 443) {
-            baseUrl = "http://$hostname:${connection.streamingPort}"
+        var baseUrl = "${uri.scheme}://$hostname"
+        if (uri.port != 80 && uri.port != 443) {
+            baseUrl = "${uri.scheme}://$hostname:${uri.port}"
+        }
+        if (!uri.path.isNullOrEmpty()) {
+            baseUrl += uri.path
         }
 
-        if (!serverStatus.webroot.isNullOrEmpty()) {
-            baseUrl += serverStatus.webroot
-        }
+        Timber.d("Original url was ${connection.streamingUrl}, converted url is $baseUrl")
         return baseUrl
     }
 
