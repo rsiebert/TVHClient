@@ -56,6 +56,16 @@ class StatusFragment : BaseFragment() {
             Timber.d("Restarting additional information update handler in 60s")
             loadDataHandler.postDelayed(loadDataTask, 60000)
         }
+
+        baseViewModel.connectionToServerAvailable.observe(this, Observer { connectionAvailable ->
+            Timber.d("Connection to server availability changed to $connectionAvailable")
+            if (connectionAvailable) {
+                Timber.d("Starting additional information update handler")
+                loadDataHandler.post(loadDataTask)
+            } else {
+                loadDataHandler.removeCallbacks(loadDataTask)
+            }
+        })
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -195,11 +205,6 @@ class StatusFragment : BaseFragment() {
                 Timber.d("Received input status")
             }
         })
-    }
-
-    override fun onResume() {
-        super.onResume()
-        loadDataHandler.post(loadDataTask)
     }
 
     override fun onPause() {
