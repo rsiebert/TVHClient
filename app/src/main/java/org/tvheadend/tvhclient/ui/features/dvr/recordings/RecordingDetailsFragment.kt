@@ -103,7 +103,7 @@ class RecordingDetailsFragment : BaseFragment(), RecordingRemovedCallback, Downl
             R.id.menu_search_epg -> return searchTitleInTheLocalDatabase(ctx, recording.title)
 
             R.id.menu_download_recording -> {
-                DownloadRecordingManager(activity, connection, serverStatus, recording)
+                DownloadRecordingManager(activity, connection, recording)
                 return true
             }
             else -> return super.onOptionsItemSelected(item)
@@ -125,7 +125,7 @@ class RecordingDetailsFragment : BaseFragment(), RecordingRemovedCallback, Downl
     }
 
     override fun downloadRecording() {
-        DownloadRecordingManager(activity, connection, serverStatus, recording)
+        DownloadRecordingManager(activity, connection, recording)
     }
 
     companion object {

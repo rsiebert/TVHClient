@@ -18,13 +18,12 @@ import com.google.android.material.snackbar.Snackbar
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.domain.entity.Connection
 import org.tvheadend.tvhclient.domain.entity.Recording
-import org.tvheadend.tvhclient.domain.entity.ServerStatus
 import org.tvheadend.tvhclient.ui.common.SnackbarMessageReceiver.Companion.SNACKBAR_ACTION
 import org.tvheadend.tvhclient.ui.common.SnackbarMessageReceiver.Companion.SNACKBAR_CONTENT
 import org.tvheadend.tvhclient.ui.common.SnackbarMessageReceiver.Companion.SNACKBAR_DURATION
 import timber.log.Timber
 
-class DownloadRecordingManager(private val activity: Activity?, private val connection: Connection, private val serverStatus: ServerStatus, private val recording: Recording?) {
+class DownloadRecordingManager(private val activity: Activity?, private val connection: Connection, recording: Recording?) {
 
     private lateinit var downloadManager: DownloadManager
     private var lastDownloadId: Long = 0
@@ -45,18 +44,13 @@ class DownloadRecordingManager(private val activity: Activity?, private val conn
         // Therefore /storage/emulated/0 is fixed, only the location within this folder can be changed
         val downloadDirectory = PreferenceManager.getDefaultSharedPreferences(activity)
                 .getString("download_directory", Environment.DIRECTORY_DOWNLOADS)
-        val downloadUrl = "http://" +
-                connection.hostname + ":" +
-                connection.streamingPort +
-                (serverStatus.webroot ?: "") +
-                "/dvrfile/" +
-                recording.id
+        val downloadUrl = "${connection.streamingUrl}/dvrfile/${recording.id}"
         // The user and password are required for authentication. They need to be encoded.
         val credentials = "Basic " + Base64.encodeToString((connection.username + ":" + connection.password).toByteArray(), Base64.NO_WRAP)
         // Use the recording title if present, otherwise use the recording id only
         val recordingTitle = (if (!recording.title.isNullOrEmpty()) recording.title?.replace(" ", "_") else recording.id.toString()) + ".mkv"
 
-        Timber.d("Download recording from serverUrl $downloadUrl to $downloadDirectory/$recordingTitle")
+        Timber.d("Download recording from serverUrl '$downloadUrl' to $downloadDirectory/$recordingTitle")
         val request = DownloadManager.Request(Uri.parse(downloadUrl))
                 .addRequestHeader("Authorization", credentials)
                 .setTitle(recording.title)
@@ -66,7 +60,7 @@ class DownloadRecordingManager(private val activity: Activity?, private val conn
         try {
             request.setDestinationInExternalPublicDir(downloadDirectory, recordingTitle)
         } catch (e: IllegalStateException) {
-            Timber.d(e, "Could not set download destination directory to $downloadDirectory, falling back to default ${Environment.DIRECTORY_DOWNLOADS}")
+            Timber.d(e, "Could not set download destination directory to '$downloadDirectory', falling back to default ${Environment.DIRECTORY_DOWNLOADS}")
             request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, recordingTitle)
         }
         return request
@@ -107,7 +101,6 @@ class DownloadRecordingManager(private val activity: Activity?, private val conn
      */
     private fun startDownload(activity: Activity, recording: Recording) {
         Timber.d("Starting download of recording ${recording.title}")
-
 
         lastDownloadId = downloadManager.enqueue(getDownloadRequest(recording))
         Timber.d("Started download with id $lastDownloadId")

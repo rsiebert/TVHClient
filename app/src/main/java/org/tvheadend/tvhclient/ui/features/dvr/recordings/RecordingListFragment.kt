@@ -152,7 +152,7 @@ abstract class RecordingListFragment : BaseFragment(), RecyclerViewClickCallback
                 R.id.menu_disable_recording -> return@setOnMenuItemClickListener enableScheduledRecording(recording, false)
                 R.id.menu_enable_recording -> return@setOnMenuItemClickListener enableScheduledRecording(recording, true)
                 R.id.menu_download_recording -> {
-                    DownloadRecordingManager(activity, connection, serverStatus, recording)
+                    DownloadRecordingManager(activity, connection, recording)
                     return@setOnMenuItemClickListener true
                 }
                 else -> return@setOnMenuItemClickListener false
@@ -196,7 +196,7 @@ abstract class RecordingListFragment : BaseFragment(), RecyclerViewClickCallback
     }
 
     override fun downloadRecording() {
-        DownloadRecordingManager(activity, connection, serverStatus, recyclerViewAdapter.getItem(selectedListPosition))
+        DownloadRecordingManager(activity, connection, recyclerViewAdapter.getItem(selectedListPosition))
     }
 
     override fun onFilterComplete(i: Int) {
