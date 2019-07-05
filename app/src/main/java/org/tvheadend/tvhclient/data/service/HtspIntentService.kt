@@ -52,8 +52,9 @@ class HtspIntentService : JobIntentService(), HtspConnectionStateListener {
 
         val connectionTimeout = Integer.valueOf(sharedPreferences.getString("connection_timeout", appContext.resources.getString(R.string.pref_default_connection_timeout))!!) * 1000
         htspConnection = HtspConnection(
-                connection.username, connection.password,
-                connection.hostname, connection.port,
+                connection.username,
+                connection.password,
+                connection.serverUrl,
                 connectionTimeout,
                 this, null)
 

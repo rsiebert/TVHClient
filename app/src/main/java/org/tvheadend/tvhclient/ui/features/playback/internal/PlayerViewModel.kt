@@ -76,8 +76,7 @@ class PlayerViewModel(application: Application) : BaseViewModel(application), Ht
         htspConnection = HtspConnection(
                 connection.username ?: "",
                 connection.password ?: "",
-                connection.hostname ?: "",
-                connection.port,
+                connection.serverUrl ?: "",
                 connectionTimeout,
                 this, null)
 
