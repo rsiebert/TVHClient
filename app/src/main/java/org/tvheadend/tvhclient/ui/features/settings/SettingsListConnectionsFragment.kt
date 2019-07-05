@@ -28,7 +28,7 @@ class SettingsListConnectionsFragment : ListFragment(), BackPressedInterface, Ac
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        settingsViewModel = ViewModelProviders.of(activity as AppCompatActivity).get(SettingsViewModel::class.java)
+        settingsViewModel = ViewModelProviders.of(activity as SettingsActivity).get(SettingsViewModel::class.java)
 
         if (activity is ToolbarInterface) {
             toolbarInterface = activity as ToolbarInterface
