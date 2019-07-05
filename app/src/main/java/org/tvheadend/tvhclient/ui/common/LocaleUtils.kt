@@ -51,16 +51,19 @@ private fun updateResources(context: Context, language: String?): Context {
 private fun updateResourcesLegacy(context: Context, language: String?): Context {
     val locale = Locale(language)
     Locale.setDefault(locale)
-
     val resources = context.resources
     val configuration = resources.configuration
-    configuration.locale = locale
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-        configuration.setLayoutDirection(locale)
-    }
 
-    resources.updateConfiguration(configuration, resources.displayMetrics)
-    return context
+    @Suppress("DEPRECATION")
+    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+        configuration.setLocale(locale)
+        configuration.setLayoutDirection(locale)
+        context.createConfigurationContext(configuration)
+    } else {
+        configuration.locale = locale
+        resources.updateConfiguration(configuration, resources.displayMetrics)
+        context
+    }
 }
 
 fun getLocale(context: Context): Locale {
