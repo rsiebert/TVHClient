@@ -1245,7 +1245,7 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
         for (channel in appRepository.channelData.getItems()) {
             execService.execute {
                 try {
-                    Timber.d("Downloading channel icon for channel ${channel.name}")
+                    Timber.d("Downloading channel icon ${channel.icon} for channel ${channel.name}")
                     downloadIconFromFileUrl(channel.icon)
                 } catch (e: Exception) {
                     Timber.d(e, "Could not load channel icon for channel '${channel.icon}'")
@@ -1255,7 +1255,7 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
         for (tag in appRepository.channelTagData.getItems()) {
             execService.execute {
                 try {
-                    Timber.d("Downloading channel icon for channel tag ${tag.tagName}")
+                    Timber.d("Downloading channel tag icon ${tag.tagIcon} for channel tag ${tag.tagName}")
                     downloadIconFromFileUrl(tag.tagIcon)
                 } catch (e: Exception) {
                     Timber.d(e, "Could not load channel tag icon '${tag.tagIcon}'")
@@ -1272,8 +1272,6 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
      * @param url The serverUrl of the file that shall be downloaded
      * @throws IOException Error message if something went wrong
      */
-    // Use the icon loading from the original library?
-    @Throws(IOException::class)
     private fun downloadIconFromFileUrl(url: String?) {
 
         if (url.isNullOrEmpty()) {
