@@ -59,8 +59,6 @@ import org.tvheadend.tvhclient.util.extensions.visibleOrGone
 import org.tvheadend.tvhclient.util.getThemeId
 import timber.log.Timber
 
-// TODO make the notification ids a constant in the not...utils file
-
 class MainActivity : BaseActivity(), SearchView.OnQueryTextListener, SearchView.OnSuggestionListener, SyncStateReceiver.Listener {
 
     private lateinit var navigationViewModel: NavigationViewModel

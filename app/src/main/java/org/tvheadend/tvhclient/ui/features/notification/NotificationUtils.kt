@@ -145,7 +145,7 @@ fun showOrCancelNotificationProgramIsCurrentlyBeingRecorded(context: Context, co
     if (showNotification) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             notificationManager.activeNotifications.forEach { notification ->
-                if (notification.id == 1) {
+                if (notification.id == NOTIFICATION_ID_PROGRAM_CURRENTLY_BEING_RECORDED) {
                     Timber.d("Notification exists already, skipping")
                     return
                 }
@@ -169,7 +169,7 @@ fun showOrCancelNotificationDiskSpaceIsLow(context: Context, gigabytes: Int, sho
     if (showNotification) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             notificationManager.activeNotifications.forEach { notification ->
-                if (notification.id == 2) {
+                if (notification.id == NOTIFICATION_ID_DISK_SPACE_LOW) {
                     Timber.d("Notification exists already, skipping")
                     return
                 }
