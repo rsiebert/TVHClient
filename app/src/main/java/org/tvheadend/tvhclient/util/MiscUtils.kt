@@ -34,7 +34,9 @@ fun convertUrlToHashString(url: String?): String {
 fun getIconUrl(context: Context, url: String?): String {
     // Replace all occurrences of + with the utf-8 value
     val urlEncoded = url?.replace("\\+", "%2b") ?: ""
-    return "file://" + context.cacheDir + "/" + convertUrlToHashString(urlEncoded) + ".png"
+    val iconUrl = "file://" + context.cacheDir + "/" + convertUrlToHashString(urlEncoded) + ".png"
+    Timber.d("Loaded icon url '$iconUrl' from original url '$url', encoded url is '$urlEncoded'")
+    return iconUrl
 }
 
 /**
