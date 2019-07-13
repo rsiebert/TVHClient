@@ -6,14 +6,12 @@ import android.content.Intent
 import android.content.SharedPreferences
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import org.tvheadend.tvhclient.MainApplication
 import org.tvheadend.tvhclient.data.repository.AppRepository
 import org.tvheadend.tvhclient.data.service.HtspService
 import org.tvheadend.tvhclient.domain.entity.Connection
 import org.tvheadend.tvhclient.domain.entity.ServerStatus
 import org.tvheadend.tvhclient.ui.common.NetworkStatus
-import org.tvheadend.tvhclient.ui.common.getNetworkStatus
 import org.tvheadend.tvhclient.ui.features.startup.SplashActivity
 import timber.log.Timber
 import javax.inject.Inject
@@ -33,8 +31,8 @@ open class BaseViewModel(application: Application) : AndroidViewModel(applicatio
     // TODO make this live data
     val serverStatus: ServerStatus
 
-    var connectionToServerAvailable = MutableLiveData(false)
-    var networkStatus: MutableLiveData<NetworkStatus>
+    var connectionToServerAvailable: LiveData<Boolean>
+    var networkStatus: LiveData<NetworkStatus>
     var showSnackbar: LiveData<Intent>
     var isUnlocked: LiveData<Boolean>
 
@@ -43,23 +41,19 @@ open class BaseViewModel(application: Application) : AndroidViewModel(applicatio
         connectionCount = appRepository.connectionData.getLiveDataItemCount()
         connection = appRepository.connectionData.activeItem
         serverStatus = appRepository.serverStatusData.activeItem
-        networkStatus = appRepository.networkStatus
-        showSnackbar = appRepository.snackbarMessage
-        isUnlocked = appRepository.isUnlocked
+        networkStatus = appRepository.getNetworkStatus()
+        showSnackbar = appRepository.getSnackbarMessage()
+        isUnlocked = appRepository.getIsUnlocked()
+        connectionToServerAvailable = appRepository.getConnectionToServerAvailable()
     }
 
     private fun inject() {
         MainApplication.component.inject(this)
     }
 
-    fun setNetworkIsAvailable(isAvailable: Boolean) {
-        Timber.d("Updating network status to $isAvailable")
-        networkStatus.value = getNetworkStatus(networkStatus.value, isAvailable)
-    }
-
     fun setConnectionToServerIsAvailable(isAvailable: Boolean) {
         Timber.d("Updating connection to server is available to $isAvailable")
-        connectionToServerAvailable.value = isAvailable
+        appRepository.setConnectionToServerAvailable(isAvailable)
     }
 
     fun updateConnectionAndRestartApplication(context: Context?, isSyncRequired: Boolean = true) {

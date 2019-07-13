@@ -14,7 +14,9 @@ class SnackbarMessageReceiver(private val appRepository: AppRepository) : Broadc
 
     override fun onReceive(context: Context, intent: Intent) {
         Timber.d("Received new snackbar message")
-        appRepository.snackbarMessage.value = intent
+        // TODO make this a single live data event,
+        //  when changing from the channels to the settings, the message reappears
+        appRepository.setSnackbarMessage(intent)
     }
 
     companion object {

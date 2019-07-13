@@ -1,6 +1,7 @@
 package org.tvheadend.tvhclient.data.repository
 
 import android.content.Intent
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import org.tvheadend.tvhclient.domain.repository.RepositoryInterface
 import org.tvheadend.tvhclient.domain.repository.data_source.*
@@ -24,7 +25,32 @@ constructor(
         override val inputData: InputData
 ) : RepositoryInterface {
 
-    var isUnlocked: MutableLiveData<Boolean> = MutableLiveData(false)
-    var snackbarMessage: MutableLiveData<Intent> = MutableLiveData()
-    var networkStatus: MutableLiveData<NetworkStatus> = MutableLiveData(NetworkStatus.NETWORK_UNKNOWN)
+    private var isUnlocked: MutableLiveData<Boolean> = MutableLiveData(false)
+    private var snackbarMessage: MutableLiveData<Intent> = MutableLiveData()
+    private var networkStatus: MutableLiveData<NetworkStatus> = MutableLiveData(NetworkStatus.NETWORK_UNKNOWN)
+    private var connectionToServerAvailable: MutableLiveData<Boolean> = MutableLiveData(false)
+
+    fun getSnackbarMessage(): LiveData<Intent> = snackbarMessage
+
+    fun setSnackbarMessage(msg: Intent) {
+        snackbarMessage.value = msg
+    }
+
+    fun getNetworkStatus(): LiveData<NetworkStatus> = networkStatus
+
+    fun setNetworkStatus(status: NetworkStatus) {
+        networkStatus.value = status
+    }
+
+    fun getIsUnlocked(): LiveData<Boolean> = isUnlocked
+
+    fun setIsUnlocked(unlocked: Boolean) {
+        isUnlocked.value = unlocked
+    }
+
+    fun getConnectionToServerAvailable(): LiveData<Boolean> = connectionToServerAvailable
+
+    fun setConnectionToServerAvailable(available: Boolean) {
+        connectionToServerAvailable.value = available
+    }
 }

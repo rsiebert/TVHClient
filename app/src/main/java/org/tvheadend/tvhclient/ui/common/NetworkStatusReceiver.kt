@@ -11,6 +11,7 @@ class NetworkStatusReceiver(private val appRepository: AppRepository) : Broadcas
     override fun onReceive(context: Context, intent: Intent) {
         val isAvailable = isConnectionAvailable(context)
         Timber.d("Network availability is $isAvailable")
-        appRepository.networkStatus.value = getNetworkStatus(appRepository.networkStatus.value, isAvailable)
+        val networkIsAvailable = getNetworkStatus(appRepository.getNetworkStatus().value, isAvailable)
+        appRepository.setNetworkStatus(networkIsAvailable)
     }
 }

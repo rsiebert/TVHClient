@@ -149,7 +149,7 @@ class MainApplication : MultiDexApplication(), OptionsProvider, BillingUpdatesLi
             for (purchase in purchases) {
                 if (purchase.sku == UNLOCKER) {
                     Timber.d("Received purchase item $UNLOCKER")
-                    appRepository.isUnlocked.value = true
+                    appRepository.setIsUnlocked(true)
                 }
             }
         }

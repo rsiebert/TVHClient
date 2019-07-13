@@ -407,7 +407,7 @@ class MainActivity : BaseActivity(), SearchView.OnQueryTextListener, SearchView.
                 Timber.d("Connection failed or closed")
                 sendSnackbarMessage(message)
                 Timber.d("Setting connection to server not available")
-                baseViewModel.setConnectionToServerIsAvailable(false)
+                appRepository.setConnectionToServerAvailable(false)
             }
             SyncStateReceiver.State.CONNECTING -> {
                 Timber.d("Connecting")
@@ -416,7 +416,7 @@ class MainActivity : BaseActivity(), SearchView.OnQueryTextListener, SearchView.
             SyncStateReceiver.State.CONNECTED -> {
                 Timber.d("Connected")
                 sendSnackbarMessage(message)
-                baseViewModel.setConnectionToServerIsAvailable(true)
+                appRepository.setConnectionToServerAvailable(true)
             }
             SyncStateReceiver.State.SYNC_STARTED -> {
                 Timber.d("Sync started, showing progress bar")
@@ -460,7 +460,7 @@ class MainActivity : BaseActivity(), SearchView.OnQueryTextListener, SearchView.
                     Timber.d("Disconnecting from server because network is down")
                     stopService(intent)
                     Timber.d("Setting connection to server not available")
-                    baseViewModel.setConnectionToServerIsAvailable(false)
+                    appRepository.setConnectionToServerAvailable(false)
                 }
                 else -> {
                     Timber.d("Network status is $status, doing nothing")
