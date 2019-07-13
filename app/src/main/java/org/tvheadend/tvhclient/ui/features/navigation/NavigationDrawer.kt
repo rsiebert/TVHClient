@@ -166,12 +166,12 @@ class NavigationDrawer(private val activity: AppCompatActivity,
         }
         // Add the existing connections as new profiles
         if (connections.isNotEmpty()) {
-            for ((id, name, hostname) in connections) {
+            for ((id, name, serverUrl) in connections) {
                 headerResult.addProfiles(
                         ProfileDrawerItem()
                                 .withIdentifier(id.toLong())
                                 .withName(name)
-                                .withEmail(hostname))
+                                .withEmail(serverUrl))
             }
         } else {
             headerResult.addProfiles(ProfileDrawerItem().withName(R.string.no_connection_available))
