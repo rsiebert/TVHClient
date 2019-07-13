@@ -88,7 +88,7 @@ class StatusFragment : BaseFragment() {
 
     private fun showStatus() {
 
-        val text = "${connection.name} (${connection.hostname})"
+        val text = "${connection.name} (${connection.serverUrl})"
         connection_view.text = text
 
         series_recordings_view.visibility = if (htspVersion >= 13) View.VISIBLE else View.GONE
