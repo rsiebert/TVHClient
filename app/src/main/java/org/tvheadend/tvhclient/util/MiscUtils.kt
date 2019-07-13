@@ -3,7 +3,6 @@ package org.tvheadend.tvhclient.util
 import android.content.Context
 import androidx.preference.PreferenceManager
 import org.tvheadend.tvhclient.R
-import org.tvheadend.tvhclient.domain.entity.ServerProfile
 import timber.log.Timber
 import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
@@ -51,6 +50,3 @@ fun getThemeId(context: Context): Int {
     return if (theme) R.style.CustomTheme_Light else R.style.CustomTheme
 }
 
-fun isServerProfileEnabled(serverProfile: ServerProfile?, htspVersion: Int): Boolean {
-    return serverProfile != null && htspVersion >= 16
-}

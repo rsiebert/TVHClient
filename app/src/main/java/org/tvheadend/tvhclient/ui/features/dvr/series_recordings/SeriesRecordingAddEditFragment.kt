@@ -11,11 +11,10 @@ import org.tvheadend.tvhclient.domain.entity.Channel
 import org.tvheadend.tvhclient.domain.entity.ServerProfile
 import org.tvheadend.tvhclient.ui.base.BaseFragment
 import org.tvheadend.tvhclient.ui.common.callbacks.BackPressedInterface
+import org.tvheadend.tvhclient.ui.features.dvr.*
 import org.tvheadend.tvhclient.util.extensions.afterTextChanged
 import org.tvheadend.tvhclient.util.extensions.sendSnackbarMessage
 import org.tvheadend.tvhclient.util.extensions.visibleOrGone
-import org.tvheadend.tvhclient.ui.features.dvr.*
-import org.tvheadend.tvhclient.util.isServerProfileEnabled
 import timber.log.Timber
 
 // TODO 2 way use databinding and viewmodel
@@ -219,7 +218,7 @@ class SeriesRecordingAddEditFragment : BaseFragment(), BackPressedInterface, Rec
         val intent = seriesRecordingViewModel.getIntentData(seriesRecordingViewModel.recording)
 
         // Add the recording profile if available and enabled
-        if (isServerProfileEnabled(profile, htspVersion) && dvr_config.text.isNotEmpty()) {
+        if (profile != null && htspVersion >= 16 && dvr_config.text.isNotEmpty()) {
             intent.putExtra("configName", dvr_config.text.toString())
         }
 

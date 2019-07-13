@@ -15,7 +15,6 @@ import org.tvheadend.tvhclient.util.extensions.gone
 import org.tvheadend.tvhclient.util.extensions.sendSnackbarMessage
 import org.tvheadend.tvhclient.util.extensions.visibleOrGone
 import org.tvheadend.tvhclient.ui.features.dvr.*
-import org.tvheadend.tvhclient.util.isServerProfileEnabled
 
 class RecordingAddEditFragment : BaseFragment(), BackPressedInterface, RecordingConfigSelectedListener, DatePickerFragment.Listener, TimePickerFragment.Listener {
 
@@ -183,7 +182,7 @@ class RecordingAddEditFragment : BaseFragment(), BackPressedInterface, Recording
         }
 
         val intent = recordingViewModel.getIntentData(recordingViewModel.recording)
-        if (isServerProfileEnabled(profile, htspVersion) && dvr_config.text.isNotEmpty()) {
+        if (profile != null && htspVersion >= 16 && dvr_config.text.isNotEmpty()) {
             intent.putExtra("configName", dvr_config.text.toString())
         }
 

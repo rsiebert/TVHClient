@@ -24,7 +24,6 @@ import org.tvheadend.tvhclient.ui.features.playback.external.PlayChannelActivity
 import org.tvheadend.tvhclient.ui.features.playback.external.PlayRecordingActivity
 import org.tvheadend.tvhclient.ui.features.playback.internal.PlaybackActivity
 import org.tvheadend.tvhclient.ui.features.search.SearchActivity
-import org.tvheadend.tvhclient.util.isServerProfileEnabled
 import timber.log.Timber
 import java.io.UnsupportedEncodingException
 import java.net.URLEncoder
@@ -151,7 +150,7 @@ fun recordSelectedProgram(context: Context, eventId: Int, profile: ServerProfile
     intent.action = "addDvrEntry"
     intent.putExtra("eventId", eventId)
 
-    if (profile != null && isServerProfileEnabled(profile, htspVersion)) {
+    if (profile != null && htspVersion >= 16) {
         intent.putExtra("configName", profile.name)
     }
     context.startService(intent)
@@ -163,7 +162,7 @@ fun recordSelectedProgramAsSeriesRecording(context: Context, title: String?, pro
     intent.action = "addAutorecEntry"
     intent.putExtra("title", title)
 
-    if (profile != null && isServerProfileEnabled(profile, htspVersion)) {
+    if (profile != null && htspVersion >= 16) {
         intent.putExtra("configName", profile.name)
     }
     context.startService(intent)
