@@ -17,7 +17,7 @@ import org.tvheadend.tvhclient.domain.entity.EpgProgram
 import org.tvheadend.tvhclient.domain.entity.Recording
 import org.tvheadend.tvhclient.ui.common.callbacks.RecyclerViewClickCallback
 import org.tvheadend.tvhclient.ui.features.programs.ProgramDetailsFragment
-import org.tvheadend.tvhclient.util.isEqualTo
+import org.tvheadend.tvhclient.util.extensions.isEqualTo
 import java.util.*
 
 internal class EpgProgramListRecyclerViewAdapter(private val viewModel: EpgViewModel, private val fragmentId: Int) : RecyclerView.Adapter<EpgProgramListRecyclerViewAdapter.EpgProgramListViewHolder>(), RecyclerViewClickCallback {

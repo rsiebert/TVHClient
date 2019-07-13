@@ -14,7 +14,7 @@ import org.tvheadend.tvhclient.databinding.ChannelListAdapterBinding
 import org.tvheadend.tvhclient.domain.entity.Channel
 import org.tvheadend.tvhclient.domain.entity.Recording
 import org.tvheadend.tvhclient.ui.common.callbacks.RecyclerViewClickCallback
-import org.tvheadend.tvhclient.util.isEqualTo
+import org.tvheadend.tvhclient.util.extensions.isEqualTo
 import java.util.*
 import java.util.concurrent.CopyOnWriteArrayList
 

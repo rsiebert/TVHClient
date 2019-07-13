@@ -3,7 +3,7 @@ package org.tvheadend.tvhclient.domain.entity
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.Ignore
-import org.tvheadend.tvhclient.util.isEqualTo
+import org.tvheadend.tvhclient.util.extensions.isEqualTo
 import java.util.*
 
 @Entity(tableName = "recordings", primaryKeys = ["id", "connection_id"])

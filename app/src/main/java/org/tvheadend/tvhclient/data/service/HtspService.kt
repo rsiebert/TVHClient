@@ -27,7 +27,7 @@ import org.tvheadend.tvhclient.ui.features.notification.removeNotificationById
 import org.tvheadend.tvhclient.util.convertUrlToHashString
 import org.tvheadend.tvhclient.util.extensions.sendSnackbarMessage
 import org.tvheadend.tvhclient.util.getIconUrl
-import org.tvheadend.tvhclient.util.isEqualTo
+import org.tvheadend.tvhclient.util.extensions.isEqualTo
 import timber.log.Timber
 import java.io.*
 import java.net.URL
