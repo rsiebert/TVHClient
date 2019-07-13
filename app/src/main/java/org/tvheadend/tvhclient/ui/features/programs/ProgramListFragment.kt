@@ -181,7 +181,7 @@ class ProgramListFragment : BaseFragment(), RecyclerViewClickCallback, LastProgr
         // Hide the genre color menu in dual pane mode or if no genre colors shall be shown
         menu.findItem(R.id.menu_genre_color_information)?.isVisible = !isDualPane && showGenreColors
 
-        if (!isSearchActive && isNetworkAvailable) {
+        if (!isSearchActive && isConnectionToServerAvailable) {
             menu.findItem(R.id.menu_play)?.isVisible = true
             menu.findItem(R.id.menu_cast)?.isVisible = getCastSession(ctx) != null
         } else {
@@ -226,9 +226,9 @@ class ProgramListFragment : BaseFragment(), RecyclerViewClickCallback, LastProgr
         popupMenu.menuInflater.inflate(R.menu.program_popup_and_toolbar_menu, popupMenu.menu)
         popupMenu.menuInflater.inflate(R.menu.external_search_options_menu, popupMenu.menu)
 
-        preparePopupOrToolbarRecordingMenu(ctx, popupMenu.menu, program.recording, isNetworkAvailable, htspVersion, isUnlocked)
-        preparePopupOrToolbarSearchMenu(popupMenu.menu, program.title, isNetworkAvailable)
-        preparePopupOrToolbarMiscMenu(ctx, popupMenu.menu, program, isNetworkAvailable, isUnlocked)
+        preparePopupOrToolbarRecordingMenu(ctx, popupMenu.menu, program.recording, isConnectionToServerAvailable, htspVersion, isUnlocked)
+        preparePopupOrToolbarSearchMenu(popupMenu.menu, program.title, isConnectionToServerAvailable)
+        preparePopupOrToolbarMiscMenu(ctx, popupMenu.menu, program, isConnectionToServerAvailable, isUnlocked)
 
         popupMenu.setOnMenuItemClickListener { item ->
             when (item.itemId) {
@@ -278,7 +278,7 @@ class ProgramListFragment : BaseFragment(), RecyclerViewClickCallback, LastProgr
 
     override fun onLastProgramVisible(position: Int) {
         // Do not load more programs when a search query was given or all programs were loaded.
-        if (isSearchActive || !loadingMoreProgramAllowed || !isNetworkAvailable) {
+        if (isSearchActive || !loadingMoreProgramAllowed || !isConnectionToServerAvailable) {
             return
         }
 

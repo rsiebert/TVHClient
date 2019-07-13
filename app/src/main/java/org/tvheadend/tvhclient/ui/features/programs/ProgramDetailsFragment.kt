@@ -115,9 +115,9 @@ class ProgramDetailsFragment : BaseFragment() {
 
     override fun onPrepareOptionsMenu(menu: Menu) {
         val ctx = context ?: return
-        preparePopupOrToolbarSearchMenu(menu, program?.title, isNetworkAvailable)
-        preparePopupOrToolbarRecordingMenu(ctx, nested_toolbar.menu, program?.recording, isNetworkAvailable, htspVersion, isUnlocked)
-        preparePopupOrToolbarMiscMenu(ctx, nested_toolbar.menu, program, isNetworkAvailable, isUnlocked)
+        preparePopupOrToolbarSearchMenu(menu, program?.title, isConnectionToServerAvailable)
+        preparePopupOrToolbarRecordingMenu(ctx, nested_toolbar.menu, program?.recording, isConnectionToServerAvailable, htspVersion, isUnlocked)
+        preparePopupOrToolbarMiscMenu(ctx, nested_toolbar.menu, program, isConnectionToServerAvailable, isUnlocked)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {

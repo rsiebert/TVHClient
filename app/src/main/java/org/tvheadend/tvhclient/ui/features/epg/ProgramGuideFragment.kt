@@ -214,7 +214,7 @@ class ProgramGuideFragment : BaseFragment(), EpgScrollInterface, RecyclerViewCli
     override fun onClick(view: View, position: Int) {
         if ((view.id == R.id.icon || view.id == R.id.icon_text)
                 && Integer.valueOf(sharedPreferences.getString("channel_icon_action", resources.getString(R.string.pref_default_channel_icon_action))!!) > 0
-                && isNetworkAvailable) {
+                && isConnectionToServerAvailable) {
             channelListRecyclerViewAdapter.getItem(position)?.let {
                 playOrCastChannel(view.context, it.id, isUnlocked)
             }
@@ -235,9 +235,9 @@ class ProgramGuideFragment : BaseFragment(), EpgScrollInterface, RecyclerViewCli
         popupMenu.menuInflater.inflate(R.menu.program_popup_and_toolbar_menu, popupMenu.menu)
         popupMenu.menuInflater.inflate(R.menu.external_search_options_menu, popupMenu.menu)
 
-        preparePopupOrToolbarRecordingMenu(ctx, popupMenu.menu, program.recording, isNetworkAvailable, htspVersion, isUnlocked)
-        preparePopupOrToolbarSearchMenu(popupMenu.menu, program.title, isNetworkAvailable)
-        preparePopupOrToolbarMiscMenu(ctx, popupMenu.menu, program, isNetworkAvailable, isUnlocked)
+        preparePopupOrToolbarRecordingMenu(ctx, popupMenu.menu, program.recording, isConnectionToServerAvailable, htspVersion, isUnlocked)
+        preparePopupOrToolbarSearchMenu(popupMenu.menu, program.title, isConnectionToServerAvailable)
+        preparePopupOrToolbarMiscMenu(ctx, popupMenu.menu, program, isConnectionToServerAvailable, isUnlocked)
 
         popupMenu.setOnMenuItemClickListener { item ->
             when (item.itemId) {

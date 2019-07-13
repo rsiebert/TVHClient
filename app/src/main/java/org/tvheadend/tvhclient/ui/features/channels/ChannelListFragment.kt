@@ -296,10 +296,10 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickCallback, ChannelTi
         popupMenu.menuInflater.inflate(R.menu.program_popup_and_toolbar_menu, popupMenu.menu)
         popupMenu.menuInflater.inflate(R.menu.external_search_options_menu, popupMenu.menu)
 
-        preparePopupOrToolbarRecordingMenu(ctx, popupMenu.menu, recording, isNetworkAvailable, htspVersion, isUnlocked)
-        preparePopupOrToolbarSearchMenu(popupMenu.menu, channel.programTitle, isNetworkAvailable)
-        preparePopupOrToolbarMiscMenu(ctx, popupMenu.menu, program, isNetworkAvailable, isUnlocked)
-        popupMenu.menu.findItem(R.id.menu_play).isVisible = isNetworkAvailable
+        preparePopupOrToolbarRecordingMenu(ctx, popupMenu.menu, recording, isConnectionToServerAvailable, htspVersion, isUnlocked)
+        preparePopupOrToolbarSearchMenu(popupMenu.menu, channel.programTitle, isConnectionToServerAvailable)
+        preparePopupOrToolbarMiscMenu(ctx, popupMenu.menu, program, isConnectionToServerAvailable, isUnlocked)
+        popupMenu.menu.findItem(R.id.menu_play).isVisible = isConnectionToServerAvailable
 
         popupMenu.setOnMenuItemClickListener { item ->
             when (item.itemId) {
@@ -349,7 +349,7 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickCallback, ChannelTi
     override fun onClick(view: View, position: Int) {
         if ((view.id == R.id.icon || view.id == R.id.icon_text)
                 && Integer.valueOf(sharedPreferences.getString("channel_icon_action", resources.getString(R.string.pref_default_channel_icon_action))!!) > 0
-                && isNetworkAvailable) {
+                && isConnectionToServerAvailable) {
             recyclerViewAdapter.getItem(position)?.let {
                 playOrCastChannel(view.context, it.id, isUnlocked)
             }

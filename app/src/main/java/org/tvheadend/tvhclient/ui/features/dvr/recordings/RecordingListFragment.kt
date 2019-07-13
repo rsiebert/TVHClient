@@ -80,7 +80,7 @@ abstract class RecordingListFragment : BaseFragment(), RecyclerViewClickCallback
 
         if (sharedPreferences.getBoolean("delete_all_recordings_menu_enabled", resources.getBoolean(R.bool.pref_default_delete_all_recordings_menu_enabled))
                 && recyclerViewAdapter.itemCount > 1
-                && isNetworkAvailable) {
+                && isConnectionToServerAvailable) {
             menu.findItem(R.id.menu_remove_all_recordings)?.isVisible = true
         }
         // Hide the casting icon as a default.
@@ -130,9 +130,9 @@ abstract class RecordingListFragment : BaseFragment(), RecyclerViewClickCallback
         popupMenu.menuInflater.inflate(R.menu.recordings_popup_menu, popupMenu.menu)
         popupMenu.menuInflater.inflate(R.menu.external_search_options_menu, popupMenu.menu)
 
-        preparePopupOrToolbarRecordingMenu(ctx, popupMenu.menu, recording, isNetworkAvailable, htspVersion, isUnlocked)
-        preparePopupOrToolbarSearchMenu(popupMenu.menu, recording.title, isNetworkAvailable)
-        preparePopupOrToolbarMiscMenu(ctx, popupMenu.menu, null, isNetworkAvailable, isUnlocked)
+        preparePopupOrToolbarRecordingMenu(ctx, popupMenu.menu, recording, isConnectionToServerAvailable, htspVersion, isUnlocked)
+        preparePopupOrToolbarSearchMenu(popupMenu.menu, recording.title, isConnectionToServerAvailable)
+        preparePopupOrToolbarMiscMenu(ctx, popupMenu.menu, null, isConnectionToServerAvailable, isUnlocked)
 
         popupMenu.setOnMenuItemClickListener { item ->
             when (item.itemId) {

@@ -32,7 +32,7 @@ abstract class BaseFragment : Fragment() {
     protected var isDualPane: Boolean = false
     protected var isUnlocked: Boolean = false
     protected var htspVersion: Int = 13
-    protected var isNetworkAvailable: Boolean = false // TODO rename to connectionToServerAvialable
+    protected var isConnectionToServerAvailable: Boolean = false
 
     protected lateinit var connection: Connection
     protected lateinit var serverStatus: ServerStatus
@@ -54,7 +54,7 @@ abstract class BaseFragment : Fragment() {
         baseViewModel = ViewModelProviders.of(activity as BaseActivity).get(BaseViewModel::class.java)
         baseViewModel.connectionToServerAvailable.observe(viewLifecycleOwner, Observer { isAvailable ->
             Timber.d("Received live data, connection to server availability changed to $isAvailable")
-            isNetworkAvailable = isAvailable
+            isConnectionToServerAvailable = isAvailable
         })
 
         baseViewModel.isUnlocked.observe(viewLifecycleOwner, Observer { unlocked ->

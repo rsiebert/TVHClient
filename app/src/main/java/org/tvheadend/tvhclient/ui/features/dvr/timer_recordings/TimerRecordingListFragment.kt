@@ -105,10 +105,10 @@ class TimerRecordingListFragment : BaseFragment(), RecyclerViewClickCallback, Se
         // Enable the remove all recordings menu if there are at least 2 recordings available
         if (sharedPreferences.getBoolean("delete_all_recordings_menu_enabled", resources.getBoolean(R.bool.pref_default_delete_all_recordings_menu_enabled))
                 && recyclerViewAdapter.itemCount > 1
-                && isNetworkAvailable) {
+                && isConnectionToServerAvailable) {
             menu.findItem(R.id.menu_remove_all_recordings)?.isVisible = true
         }
-        menu.findItem(R.id.menu_add_recording)?.isVisible = isNetworkAvailable
+        menu.findItem(R.id.menu_add_recording)?.isVisible = isConnectionToServerAvailable
         menu.findItem(R.id.menu_search)?.isVisible = recyclerViewAdapter.itemCount > 0
         menu.findItem(R.id.media_route_menu_item)?.isVisible = false
     }
@@ -154,7 +154,7 @@ class TimerRecordingListFragment : BaseFragment(), RecyclerViewClickCallback, Se
         popupMenu.menuInflater.inflate(R.menu.timer_recordings_popup_menu, popupMenu.menu)
         popupMenu.menuInflater.inflate(R.menu.external_search_options_menu, popupMenu.menu)
 
-        preparePopupOrToolbarSearchMenu(popupMenu.menu, timerRecording.title, isNetworkAvailable)
+        preparePopupOrToolbarSearchMenu(popupMenu.menu, timerRecording.title, isConnectionToServerAvailable)
         popupMenu.menu.findItem(R.id.menu_disable_recording)?.isVisible = htspVersion >= 19 && timerRecording.isEnabled
         popupMenu.menu.findItem(R.id.menu_enable_recording)?.isVisible = htspVersion >= 19 && !timerRecording.isEnabled
 

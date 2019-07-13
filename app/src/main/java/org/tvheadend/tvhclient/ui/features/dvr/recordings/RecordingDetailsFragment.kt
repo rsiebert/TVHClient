@@ -67,9 +67,9 @@ class RecordingDetailsFragment : BaseFragment(), RecordingRemovedCallback, Downl
     override fun onPrepareOptionsMenu(menu: Menu) {
         val ctx = context ?: return
         val recording = recording ?: return
-        preparePopupOrToolbarSearchMenu(menu, recording.title, isNetworkAvailable)
-        preparePopupOrToolbarRecordingMenu(ctx, nested_toolbar.menu, recording, isNetworkAvailable, htspVersion, isUnlocked)
-        preparePopupOrToolbarMiscMenu(ctx, nested_toolbar.menu, null, isNetworkAvailable, isUnlocked)
+        preparePopupOrToolbarSearchMenu(menu, recording.title, isConnectionToServerAvailable)
+        preparePopupOrToolbarRecordingMenu(ctx, nested_toolbar.menu, recording, isConnectionToServerAvailable, htspVersion, isUnlocked)
+        preparePopupOrToolbarMiscMenu(ctx, nested_toolbar.menu, null, isConnectionToServerAvailable, isUnlocked)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {

@@ -64,7 +64,7 @@ class SeriesRecordingDetailsFragment : BaseFragment(), RecordingRemovedCallback 
 
     override fun onPrepareOptionsMenu(menu: Menu) {
         val recording = this.recording ?: return
-        preparePopupOrToolbarSearchMenu(menu, recording.title, isNetworkAvailable)
+        preparePopupOrToolbarSearchMenu(menu, recording.title, isConnectionToServerAvailable)
 
         nested_toolbar.menu.findItem(R.id.menu_edit_recording)?.isVisible = true
         nested_toolbar.menu.findItem(R.id.menu_remove_recording)?.isVisible = true

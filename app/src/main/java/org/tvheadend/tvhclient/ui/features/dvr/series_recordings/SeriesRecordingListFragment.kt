@@ -103,11 +103,11 @@ class SeriesRecordingListFragment : BaseFragment(), RecyclerViewClickCallback, S
 
         if (sharedPreferences.getBoolean("delete_all_recordings_menu_enabled", resources.getBoolean(R.bool.pref_default_delete_all_recordings_menu_enabled))
                 && recyclerViewAdapter.itemCount > 1
-                && isNetworkAvailable) {
+                && isConnectionToServerAvailable) {
             menu.findItem(R.id.menu_remove_all_recordings)?.isVisible = true
         }
 
-        menu.findItem(R.id.menu_add_recording)?.isVisible = isUnlocked && isNetworkAvailable
+        menu.findItem(R.id.menu_add_recording)?.isVisible = isUnlocked && isConnectionToServerAvailable
         menu.findItem(R.id.menu_search)?.isVisible = recyclerViewAdapter.itemCount > 0
         menu.findItem(R.id.media_route_menu_item)?.isVisible = false
     }
@@ -153,7 +153,7 @@ class SeriesRecordingListFragment : BaseFragment(), RecyclerViewClickCallback, S
         popupMenu.menuInflater.inflate(R.menu.series_recordings_popup_menu, popupMenu.menu)
         popupMenu.menuInflater.inflate(R.menu.external_search_options_menu, popupMenu.menu)
 
-        preparePopupOrToolbarSearchMenu(popupMenu.menu, seriesRecording.title, isNetworkAvailable)
+        preparePopupOrToolbarSearchMenu(popupMenu.menu, seriesRecording.title, isConnectionToServerAvailable)
         popupMenu.menu.findItem(R.id.menu_edit_recording)?.isVisible = isUnlocked
         popupMenu.menu.findItem(R.id.menu_disable_recording)?.isVisible = htspVersion >= 19 && isUnlocked && seriesRecording.isEnabled
         popupMenu.menu.findItem(R.id.menu_enable_recording)?.isVisible = htspVersion >= 19 && isUnlocked && !seriesRecording.isEnabled
