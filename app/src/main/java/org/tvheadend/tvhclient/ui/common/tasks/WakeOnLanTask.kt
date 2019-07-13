@@ -1,6 +1,7 @@
 package org.tvheadend.tvhclient.ui.common.tasks
 
 import android.content.Context
+import android.net.Uri
 import android.os.AsyncTask
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.domain.entity.Connection
@@ -39,13 +40,16 @@ class WakeOnLanTask(context: Context, private val connection: Connection) : Asyn
         }
 
         try {
+            // TODO wake on lan with ipv6
+            // TODO get the mac address automatically and remove the setting
+            val uri = Uri.parse(connection.serverUrl)
             val address: InetAddress
             if (!connection.isWolUseBroadcast) {
-                address = InetAddress.getByName(connection.hostname)
+                address = InetAddress.getByName(uri.host)
                 Timber.d("Sending WOL packet to $address")
             } else {
                 // Replace the last number by 255 to send the packet as a broadcast
-                val ipAddress = InetAddress.getByName(connection.hostname).address
+                val ipAddress = InetAddress.getByName(uri.host).address
                 ipAddress[3] = 255.toByte()
                 address = InetAddress.getByAddress(ipAddress)
                 Timber.d("Sending WOL packet as broadcast to $address")
@@ -111,20 +115,20 @@ class WakeOnLanTask(context: Context, private val connection: Connection) : Asyn
             val message: String
             when (result) {
                 WOL_SEND -> {
-                    Timber.d("Successfully sent WOL packet to ${connection.hostname}")
-                    message = ctx.getString(R.string.wol_send, connection.hostname)
+                    Timber.d("Successfully sent WOL packet to ${connection.serverUrl}")
+                    message = ctx.getString(R.string.wol_send, connection.serverUrl)
                 }
                 WOL_SEND_BROADCAST -> {
-                    Timber.d("Successfully sent WOL packet as a broadcast to ${connection.hostname}")
-                    message = ctx.getString(R.string.wol_send_broadcast, connection.hostname)
+                    Timber.d("Successfully sent WOL packet as a broadcast to ${connection.serverUrl}")
+                    message = ctx.getString(R.string.wol_send_broadcast, connection.serverUrl)
                 }
                 WOL_INVALID_MAC -> {
                     Timber.d("Can't send WOL packet, the MAC-address is not valid")
                     message = ctx.getString(R.string.wol_address_invalid)
                 }
                 else -> {
-                    Timber.d("Error sending WOL packet to ${connection.hostname}")
-                    message = ctx.getString(R.string.wol_error, connection.hostname, exception?.localizedMessage)
+                    Timber.d("Error sending WOL packet to ${connection.serverUrl}")
+                    message = ctx.getString(R.string.wol_error, connection.serverUrl, exception?.localizedMessage)
                 }
             }
             ctx.sendSnackbarMessage(message)
