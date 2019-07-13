@@ -190,7 +190,7 @@ abstract class SettingsConnectionBaseFragment : PreferenceFragmentCompat(), Back
         val value = o.toString()
         when (preference.key) {
             "name" -> preferenceNameChanged(value)
-            "serverUrl" -> preferenceUrlChanged(value)
+            "server_url" -> preferenceUrlChanged(value)
             "streaming_url" -> preferenceStreamingUrlChanged(value)
             "username" -> preferenceUsernameChanged(value)
             "password" -> preferencePasswordChanged(value)
