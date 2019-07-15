@@ -153,7 +153,7 @@ class MainActivity : BaseActivity(R.layout.main_activity), SearchView.OnQueryTex
             }
         })
 
-        navigationViewModel.navigationMenuId.observe(this, Observer { id ->
+        navigationViewModel.getNavigationMenuId().observe(this, Observer { id ->
             handleDrawerItemSelected(id)
         })
         statusViewModel.showRunningRecordingCount.observe(this, Observer { show ->
@@ -293,6 +293,12 @@ class MainActivity : BaseActivity(R.layout.main_activity), SearchView.OnQueryTex
      */
     private fun handleDrawerItemSelected(position: Int) {
         Timber.d("Navigation menu item selected at $position, previous position was ${navigationViewModel.previousNavigationMenuId}")
+
+        if (position == MENU_SETTINGS) {
+            startActivity(Intent(this, SettingsActivity::class.java))
+            return
+        }
+
         val fragment: Fragment?
         var addFragmentToBackStack = sharedPreferences.getBoolean("navigation_history_enabled",
                 resources.getBoolean(R.bool.pref_default_navigation_history_enabled))
@@ -327,17 +333,13 @@ class MainActivity : BaseActivity(R.layout.main_activity), SearchView.OnQueryTex
                 if (addFragmentToBackStack) it.addToBackStack(null)
                 it.commit()
             }
-        } else {
-            if (position == MENU_SETTINGS) {
-                startActivity(Intent(this, SettingsActivity::class.java))
-            }
         }
     }
 
     override fun onPrepareOptionsMenu(menu: Menu): Boolean {
         super.onPrepareOptionsMenu(menu)
 
-        when (navigationViewModel.navigationMenuId.value) {
+        when (navigationViewModel.getNavigationMenuId().value) {
             NavigationDrawer.MENU_STATUS, NavigationDrawer.MENU_UNLOCKER, NavigationDrawer.MENU_HELP -> {
                 menu.findItem(R.id.media_route_menu_item)?.isVisible = false
                 menu.findItem(R.id.menu_search).isVisible = false
