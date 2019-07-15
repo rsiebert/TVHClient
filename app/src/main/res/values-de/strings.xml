@@ -216,7 +216,7 @@
     <string name="pref_send_logfile_sum">Mailt die Log-Datei an den Entwickler. Die Informationen helfen evtl. Fehler zu finden und das Program zu verbessern. Es werden nur TVHClient interne Statusdaten versendet!</string>
     <string name="pref_show_cast_minicontroller">Cast Ministeuerung</string>
     <string name="pref_show_cast_minicontroller_sum">Zeigt im unteren Bildschirmbereich die wichtigsten Informationen und Steuerelemente für den aktuellen Cast an.</string>
-    <string name="pref_show_channel_name">Zeige Senderlogo</string>
+    <string name="pref_show_channel_name">Zeige Sendername</string>
     <string name="pref_show_channel_name_sum">Zusätzlich zum Senderlogo wird der Sendername über dem Programmtitel in der Senderliste angezeigt.</string>
     <string name="pref_show_channel_number">Zeige Sendernummern</string>
     <string name="pref_show_channel_number_sum">Unterhalb des Senderlogos wird die Sendernummer angezeigt.</string>
