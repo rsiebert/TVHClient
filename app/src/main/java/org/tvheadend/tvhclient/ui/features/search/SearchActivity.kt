@@ -9,20 +9,14 @@ import androidx.lifecycle.Observer
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.ui.base.BaseActivity
 import org.tvheadend.tvhclient.ui.common.NetworkStatus
-import org.tvheadend.tvhclient.util.extensions.sendSnackbarMessage
 import org.tvheadend.tvhclient.ui.features.programs.ProgramListFragment
-import org.tvheadend.tvhclient.util.getThemeId
+import org.tvheadend.tvhclient.util.extensions.sendSnackbarMessage
 import timber.log.Timber
 
 class SearchActivity : BaseActivity(), StartSearchInterface {
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        setTheme(getThemeId(this))
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.misc_content_activity)
-
-        setSupportActionBar(findViewById(R.id.toolbar))
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         handleIntent(intent)
 

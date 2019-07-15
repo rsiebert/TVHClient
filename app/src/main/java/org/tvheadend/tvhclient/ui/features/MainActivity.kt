@@ -15,7 +15,6 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.ProgressBar
 import androidx.appcompat.widget.SearchView
-import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
@@ -56,10 +55,9 @@ import org.tvheadend.tvhclient.util.extensions.gone
 import org.tvheadend.tvhclient.util.extensions.sendSnackbarMessage
 import org.tvheadend.tvhclient.util.extensions.visible
 import org.tvheadend.tvhclient.util.extensions.visibleOrGone
-import org.tvheadend.tvhclient.util.getThemeId
 import timber.log.Timber
 
-class MainActivity : BaseActivity(), SearchView.OnQueryTextListener, SearchView.OnSuggestionListener, SyncStateReceiver.Listener {
+class MainActivity : BaseActivity(R.layout.main_activity), SearchView.OnQueryTextListener, SearchView.OnSuggestionListener, SyncStateReceiver.Listener {
 
     private lateinit var navigationViewModel: NavigationViewModel
     private lateinit var statusViewModel: StatusViewModel
@@ -88,11 +86,10 @@ class MainActivity : BaseActivity(), SearchView.OnQueryTextListener, SearchView.
     private lateinit var miniController: View
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        setTheme(getThemeId(this))
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.main_activity)
 
         Timber.d("Initializing")
+        supportActionBar?.setHomeButtonEnabled(true)
 
         navigationViewModel = ViewModelProviders.of(this).get(NavigationViewModel::class.java)
         statusViewModel = ViewModelProviders.of(this).get(StatusViewModel::class.java)
@@ -101,16 +98,8 @@ class MainActivity : BaseActivity(), SearchView.OnQueryTextListener, SearchView.
         syncStateReceiver = SyncStateReceiver(this)
         isDualPane = findViewById<View>(R.id.details) != null
 
-        miniController = findViewById<View>(R.id.cast_mini_controller)
+        miniController = findViewById(R.id.cast_mini_controller)
         miniController.gone()
-
-        val toolbar = findViewById<Toolbar>(R.id.toolbar)
-        setSupportActionBar(toolbar)
-        val actionBar = supportActionBar
-        if (actionBar != null) {
-            actionBar.setDisplayHomeAsUpEnabled(true)
-            actionBar.setHomeButtonEnabled(true)
-        }
 
         navigationDrawer = NavigationDrawer(this, savedInstanceState, toolbar, navigationViewModel, statusViewModel)
 

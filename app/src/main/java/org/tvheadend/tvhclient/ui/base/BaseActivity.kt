@@ -6,17 +6,20 @@ import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import androidx.lifecycle.ViewModelProviders
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import org.tvheadend.tvhclient.MainApplication
+import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.data.repository.AppRepository
 import org.tvheadend.tvhclient.ui.common.NetworkStatusReceiver
 import org.tvheadend.tvhclient.ui.common.SnackbarMessageReceiver
 import org.tvheadend.tvhclient.ui.common.callbacks.ToolbarInterface
 import org.tvheadend.tvhclient.ui.common.onAttach
+import org.tvheadend.tvhclient.util.getThemeId
 import javax.inject.Inject
 
-open class BaseActivity : AppCompatActivity(), ToolbarInterface {
+open class BaseActivity(private val layoutId: Int = R.layout.misc_content_activity) : AppCompatActivity(), ToolbarInterface {
 
     @Inject
     lateinit var appContext: Context
@@ -28,9 +31,17 @@ open class BaseActivity : AppCompatActivity(), ToolbarInterface {
     protected lateinit var baseViewModel: BaseViewModel
     private lateinit var snackbarMessageReceiver: SnackbarMessageReceiver
     private lateinit var networkStatusReceiver: NetworkStatusReceiver
+    protected lateinit var toolbar: Toolbar
 
     public override fun onCreate(savedInstanceState: Bundle?) {
+        setTheme(getThemeId(this))
         super.onCreate(savedInstanceState)
+        setContentView(layoutId)
+
+        toolbar = findViewById(R.id.toolbar)
+        setSupportActionBar(toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
         MainApplication.component.inject(this)
 
         baseViewModel = ViewModelProviders.of(this).get(BaseViewModel::class.java)

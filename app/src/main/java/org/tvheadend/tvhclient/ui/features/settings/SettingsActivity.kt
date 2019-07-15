@@ -8,18 +8,12 @@ import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.ui.base.BaseActivity
 import org.tvheadend.tvhclient.ui.common.callbacks.BackPressedInterface
 import org.tvheadend.tvhclient.ui.common.showSnackbarMessage
-import org.tvheadend.tvhclient.util.getThemeId
 import timber.log.Timber
 
 class SettingsActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        setTheme(getThemeId(this))
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.misc_content_activity)
-
-        setSupportActionBar(findViewById(R.id.toolbar))
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         var settingType = "default"
         if (intent.hasExtra("setting_type")) {
