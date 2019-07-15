@@ -33,10 +33,8 @@ import timber.log.Timber
 import javax.inject.Inject
 
 // TODO move diffutils to background thread
-// TODO use coroutines for certain stuff
 // TODO Use paged loading
 // TODO Move the variable programIdToBeEditedWhenBeingRecorded into the viewmodels
-// TODO use a base viewmodel with generics
 // TODO consolidate the dialog strings
 // TODO make the 12 hour check to start the epg background worker a setting
 // TODO load startup fragment in main activity, continue to load first fragment if all ok and viewmodel loaded data
@@ -73,7 +71,6 @@ class MainApplication : MultiDexApplication(), OptionsProvider, BillingUpdatesLi
         }
 
         fireBaseAnalytics = FirebaseAnalytics.getInstance(this)
-
 
         // Initialize Fabric with the debug-disabled crashlytics.
         if (!BuildConfig.DEBUG && sharedPreferences.getBoolean("crash_reports_enabled", resources.getBoolean(R.bool.pref_default_crash_reports_enabled))) {
