@@ -98,7 +98,6 @@
             android:excludeFromRecents="true"
             android:launchMode="singleTask"
             android:taskAffinity="" />
-        <activity android:name=".ui.features.unlocker.UnlockerActivity" />
         <activity android:name=".ui.features.playback.external.PlayRecordingActivity" />
         <activity android:name=".ui.features.playback.external.PlayChannelActivity" />
         <activity android:name=".ui.features.playback.external.CastChannelActivity" />
@@ -111,7 +110,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.features.information.WebViewActivity" />
         <activity android:name=".ui.base.BaseActivity" />
         <activity
             android:name=".ui.features.playback.internal.PlaybackActivity"
