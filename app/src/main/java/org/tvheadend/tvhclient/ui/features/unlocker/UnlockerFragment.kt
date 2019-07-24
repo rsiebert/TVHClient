@@ -9,7 +9,6 @@ import com.android.billingclient.api.BillingClient
 import com.android.billingclient.api.Purchase
 import org.tvheadend.tvhclient.MainApplication
 import org.tvheadend.tvhclient.R
-import org.tvheadend.tvhclient.ui.common.tasks.HtmlFileLoaderTask
 import org.tvheadend.tvhclient.ui.features.information.WebViewFragment
 import org.tvheadend.tvhclient.util.billing.BillingHandler
 import org.tvheadend.tvhclient.util.billing.BillingManager
@@ -17,7 +16,7 @@ import org.tvheadend.tvhclient.util.billing.BillingManager.UNLOCKER
 import org.tvheadend.tvhclient.util.billing.BillingUpdatesListener
 import timber.log.Timber
 
-class UnlockerFragment : WebViewFragment(), HtmlFileLoaderTask.Listener, BillingUpdatesListener {
+class UnlockerFragment : WebViewFragment(), BillingUpdatesListener {
 
     private lateinit var billingManager: BillingManager
     private lateinit var billingHandler: BillingHandler
@@ -28,6 +27,8 @@ class UnlockerFragment : WebViewFragment(), HtmlFileLoaderTask.Listener, Billing
         toolbarInterface.setSubtitle("")
         billingManager = MainApplication.billingManager
         billingHandler = MainApplication.billingHandler
+
+        website = "features"
     }
 
     override fun onResume() {
@@ -106,7 +107,7 @@ class UnlockerFragment : WebViewFragment(), HtmlFileLoaderTask.Listener, Billing
     }
 
     override fun onConsumeFinished(token: String, result: Int) {
-        Timber.d("Token \$token has been consumed with result \$result")
+        Timber.d("Token $token has been consumed with result $result")
     }
 
     override fun onPurchaseSuccessful(purchases: List<Purchase>?) {

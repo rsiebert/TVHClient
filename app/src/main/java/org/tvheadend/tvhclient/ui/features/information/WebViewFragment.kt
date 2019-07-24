@@ -10,16 +10,17 @@ import kotlinx.android.synthetic.main.webview_fragment.*
 import org.tvheadend.tvhclient.BuildConfig
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.ui.base.BaseFragment
+import org.tvheadend.tvhclient.ui.common.tasks.HtmlFileLoaderTask
+import org.tvheadend.tvhclient.ui.features.settings.RemoveFragmentFromBackstackInterface
 import org.tvheadend.tvhclient.util.extensions.gone
 import org.tvheadend.tvhclient.util.extensions.visible
-import org.tvheadend.tvhclient.ui.common.tasks.HtmlFileLoaderTask
 import org.tvheadend.tvhclient.util.getThemeId
 import java.util.regex.Pattern
 
 open class WebViewFragment : BaseFragment(), HtmlFileLoaderTask.Listener {
 
     private lateinit var htmlFileLoaderTask: HtmlFileLoaderTask
-    private var website: String = ""
+    var website: String = ""
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.webview_fragment, container, false)
@@ -34,25 +35,6 @@ open class WebViewFragment : BaseFragment(), HtmlFileLoaderTask.Listener {
         // before the stylesheets are loaded.
         webview.setBackgroundColor(Color.argb(0, 0, 0, 0))
         webview.gone()
-
-        website = if (savedInstanceState != null) {
-            savedInstanceState.getString("website", "")
-        } else {
-            arguments?.getString("website", "") ?: ""
-        }
-
-        when (website) {
-            "information" -> toolbarInterface.setTitle(getString(R.string.pref_information))
-            "help_and_support" -> toolbarInterface.setTitle(getString(R.string.help_and_support))
-            "privacy_policy" -> toolbarInterface.setTitle(getString(R.string.pref_privacy_policy))
-        }
-
-        toolbarInterface.setSubtitle("")
-    }
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        outState.putString("website", website)
     }
 
     override fun onResume() {
@@ -69,7 +51,11 @@ open class WebViewFragment : BaseFragment(), HtmlFileLoaderTask.Listener {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             android.R.id.home -> {
-                activity?.finish()
+                activity.let {
+                    if (it is RemoveFragmentFromBackstackInterface) {
+                        it.removeFragmentFromBackstack()
+                    }
+                }
                 true
             }
             else -> super.onOptionsItemSelected(item)
