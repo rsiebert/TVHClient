@@ -12,6 +12,8 @@ import org.tvheadend.htsp.HtspResponseListener
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.domain.entity.Channel
 import org.tvheadend.tvhclient.domain.entity.Recording
+import org.tvheadend.tvhclient.domain.entity.ServerProfile
+import org.tvheadend.tvhclient.domain.entity.ServerStatus
 import org.tvheadend.tvhclient.ui.base.BaseViewModel
 import timber.log.Timber
 import java.util.concurrent.ExecutionException
@@ -144,10 +146,20 @@ class ExternalPlayerViewModel(application: Application) : BaseViewModel(applicat
         return baseUrl
     }
 
+    private fun getHttpProfile(): ServerProfile? {
+        val serverStatus = appRepository.serverStatusData.activeItem
+        return appRepository.serverProfileData.getItemById(serverStatus.httpPlaybackServerProfileId)
+    }
+
+    fun getServerStatus(): ServerStatus {
+        return appRepository.serverStatusData.activeItem
+    }
+
     fun getPlaybackUrl(convertHostname: Boolean = false, profileId: Int = 0): String {
         // If the server status is null, then use the default id of zero which will
         // return a null server profile. In this case use the default profile 'pass'
-        val defaultProfile = appRepository.serverProfileData.getItemById(serverStatus.httpPlaybackServerProfileId)
+
+        val defaultProfile = getHttpProfile()
         val defaultProfileName = defaultProfile?.name ?: "pass"
 
         // Get the playback profile for the given id. In case no profile is returned, use the default name
