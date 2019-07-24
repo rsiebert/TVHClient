@@ -37,9 +37,9 @@ import org.tvheadend.tvhclient.ui.features.dvr.series_recordings.SeriesRecording
 import org.tvheadend.tvhclient.ui.features.dvr.timer_recordings.TimerRecordingDetailsFragment
 import org.tvheadend.tvhclient.ui.features.dvr.timer_recordings.TimerRecordingListFragment
 import org.tvheadend.tvhclient.ui.features.epg.ProgramGuideFragment
+import org.tvheadend.tvhclient.ui.features.information.HelpAndSupportFragment
 import org.tvheadend.tvhclient.ui.features.information.StatusFragment
 import org.tvheadend.tvhclient.ui.features.information.StatusViewModel
-import org.tvheadend.tvhclient.ui.features.information.WebViewFragment
 import org.tvheadend.tvhclient.ui.features.navigation.NavigationDrawer
 import org.tvheadend.tvhclient.ui.features.navigation.NavigationDrawer.Companion.MENU_SETTINGS
 import org.tvheadend.tvhclient.ui.features.navigation.NavigationViewModel
@@ -138,15 +138,15 @@ class MainActivity : BaseActivity(R.layout.main_activity), SearchView.OnQueryTex
         // Observe any changes in the network availability. If the app is in the background
         // and is resumed and the network is still available the lambda function is not
         // called and nothing will be done.
-        baseViewModel.networkStatus.observe(this, Observer { networkStatus ->
-            Timber.d("Network status changed to $networkStatus")
-            connectToServer(networkStatus)
+        baseViewModel.networkStatus.observe(this, Observer { status ->
+            Timber.d("Network status changed to $status")
+            connectToServer(status)
         })
 
-        baseViewModel.connectionToServerAvailable.observe(this, Observer { connectionAvailable ->
-            Timber.d("Connection to server availability changed to $connectionAvailable")
+        baseViewModel.connectionToServerAvailable.observe(this, Observer { isAvailable ->
+            Timber.d("Connection to server availability changed to $isAvailable")
             invalidateOptionsMenu()
-            if (connectionAvailable) {
+            if (isAvailable) {
                 statusViewModel.startDiskSpaceUpdateHandler()
             } else {
                 statusViewModel.stopDiskSpaceUpdateHandler()
@@ -162,14 +162,15 @@ class MainActivity : BaseActivity(R.layout.main_activity), SearchView.OnQueryTex
         statusViewModel.showLowStorageSpace.observe(this, Observer { show ->
             showOrCancelNotificationDiskSpaceIsLow(this, statusViewModel.availableStorageSpace, show)
         })
-        baseViewModel.showSnackbar.observe(this, Observer { intent ->
-            showSnackbarMessage(this, intent)
+        baseViewModel.showSnackbar.observe(this, Observer { event ->
+            event.getContentIfNotHandled()?.let {
+                showSnackbarMessage(this, it)
+            }
         })
         baseViewModel.isUnlocked.observe(this, Observer { unlocked ->
             Timber.d("Received live data, unlocked changed to $unlocked")
             isUnlocked = unlocked
             invalidateOptionsMenu()
-
             miniController.visibleOrGone(isUnlocked && sharedPreferences.getBoolean("casting_minicontroller_enabled", resources.getBoolean(R.bool.pref_default_casting_minicontroller_enabled)))
         })
 
@@ -517,16 +518,8 @@ class MainActivity : BaseActivity(R.layout.main_activity), SearchView.OnQueryTex
             NavigationDrawer.MENU_FAILED_RECORDINGS -> fragment = FailedRecordingListFragment()
             NavigationDrawer.MENU_REMOVED_RECORDINGS -> fragment = RemovedRecordingListFragment()
             NavigationDrawer.MENU_STATUS -> fragment = StatusFragment()
-            NavigationDrawer.MENU_UNLOCKER -> {
-                fragment = UnlockerFragment()
-                bundle.putString("website", "features")
-                fragment.arguments = bundle
-            }
-            NavigationDrawer.MENU_HELP -> {
-                fragment = WebViewFragment()
-                bundle.putString("website", "help_and_support")
-                fragment.arguments = bundle
-            }
+            NavigationDrawer.MENU_UNLOCKER -> fragment = UnlockerFragment()
+            NavigationDrawer.MENU_HELP -> fragment = HelpAndSupportFragment()
         }
         return fragment
     }

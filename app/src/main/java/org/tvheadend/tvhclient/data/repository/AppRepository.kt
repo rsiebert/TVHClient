@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import org.tvheadend.tvhclient.domain.repository.RepositoryInterface
 import org.tvheadend.tvhclient.domain.repository.data_source.*
+import org.tvheadend.tvhclient.ui.common.Event
 import org.tvheadend.tvhclient.ui.common.NetworkStatus
 import javax.inject.Inject
 
@@ -25,15 +26,21 @@ constructor(
         override val inputData: InputData
 ) : RepositoryInterface {
 
-    private var isUnlocked: MutableLiveData<Boolean> = MutableLiveData(false)
-    private var snackbarMessage: MutableLiveData<Intent> = MutableLiveData()
-    private var networkStatus: MutableLiveData<NetworkStatus> = MutableLiveData(NetworkStatus.NETWORK_UNKNOWN)
-    private var connectionToServerAvailable: MutableLiveData<Boolean> = MutableLiveData(false)
+    private var isUnlocked = MutableLiveData<Boolean>()
+    private var snackbarMessage = MutableLiveData<Event<Intent>>()
+    private var networkStatus = MutableLiveData<NetworkStatus>()
+    private var connectionToServerAvailable = MutableLiveData<Boolean>()
 
-    fun getSnackbarMessage(): LiveData<Intent> = snackbarMessage
+    init {
+        isUnlocked.value = false
+        networkStatus.value = NetworkStatus.NETWORK_UNKNOWN
+        connectionToServerAvailable.value = false
+    }
+
+    fun getSnackbarMessage(): LiveData<Event<Intent>> = snackbarMessage
 
     fun setSnackbarMessage(msg: Intent) {
-        snackbarMessage.value = msg
+        snackbarMessage.value = Event(msg)
     }
 
     fun getNetworkStatus(): LiveData<NetworkStatus> = networkStatus
