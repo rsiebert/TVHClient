@@ -10,14 +10,18 @@ class SettingsEditConnectionFragment : SettingsConnectionBaseFragment() {
         toolbarInterface.setTitle(getString(R.string.edit_connection))
 
         if (savedInstanceState == null) {
-            settingsViewModel.loadConnectionById(arguments?.getInt("connection_id", -1) ?: -1)
+            settingsViewModel.loadConnectionById(settingsViewModel.connectionIdToBeEdited)
         }
     }
 
     override fun save() {
         if (isConnectionInputValid(settingsViewModel.connection)) {
             settingsViewModel.updateConnection()
-            activity?.finish()
+            activity.let {
+                if (it is RemoveFragmentFromBackstackInterface) {
+                    it.removeFragmentFromBackstack()
+                }
+            }
         }
     }
 }

@@ -169,14 +169,20 @@ abstract class SettingsConnectionBaseFragment : PreferenceFragmentCompat(), Back
      */
     private fun cancel() {
         if (!settingsViewModel.connectionHasChanged) {
-            activity?.finish()
+            (activity as RemoveFragmentFromBackstackInterface).removeFragmentFromBackstack()
         } else {
             // Show confirmation dialog to cancel
             activity?.let { activity ->
                 MaterialDialog(activity).show {
                     message(R.string.confirm_discard_connection)
-                    positiveButton(R.string.discard) { activity.finish() }
-                    negativeButton(R.string.cancel) { dismiss() }
+                    positiveButton(R.string.discard) {
+                        if (activity is RemoveFragmentFromBackstackInterface) {
+                            activity.removeFragmentFromBackstack()
+                        }
+                    }
+                    negativeButton(R.string.cancel) {
+                        dismiss()
+                    }
                 }
             }
         }

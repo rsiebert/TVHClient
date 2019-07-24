@@ -17,7 +17,11 @@ class SettingsAddConnectionFragment : SettingsConnectionBaseFragment() {
     override fun save() {
         if (isConnectionInputValid(settingsViewModel.connection)) {
             settingsViewModel.addConnection()
-            activity?.finish()
+            activity.let {
+                if (it is RemoveFragmentFromBackstackInterface) {
+                    it.removeFragmentFromBackstack()
+                }
+            }
         }
     }
 }

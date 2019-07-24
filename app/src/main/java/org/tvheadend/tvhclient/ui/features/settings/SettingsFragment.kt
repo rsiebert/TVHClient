@@ -16,11 +16,8 @@ import androidx.preference.PreferenceManager
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.files.folderChooser
 import org.tvheadend.tvhclient.R
-import org.tvheadend.tvhclient.util.extensions.sendSnackbarMessage
 import org.tvheadend.tvhclient.ui.features.MainActivity
-import org.tvheadend.tvhclient.ui.features.changelog.ChangeLogActivity
-import org.tvheadend.tvhclient.ui.features.information.WebViewActivity
-import org.tvheadend.tvhclient.ui.features.unlocker.UnlockerActivity
+import org.tvheadend.tvhclient.util.extensions.sendSnackbarMessage
 import timber.log.Timber
 import java.io.File
 
@@ -107,17 +104,11 @@ class SettingsFragment : BasePreferenceFragment(), Preference.OnPreferenceClickL
 
     override fun onPreferenceClick(preference: Preference): Boolean {
         when (preference.key) {
-            "list_connections" -> showSelectedSettingsFragment("list_connections")
-            "user_interface" -> showSelectedSettingsFragment("user_interface")
             "light_theme_enabled" -> handlePreferenceThemeSelected()
             "profiles" -> handlePreferenceProfilesSelected()
             "playback" -> handlePreferencePlaybackSelected()
-            "advanced" -> showSelectedSettingsFragment("advanced")
-            "unlocker" -> handlePreferenceUnlockerSelected()
-            "changelog" -> handlePreferenceChangelogSelected()
-            "information" -> handlePreferenceInformationSelected()
-            "privacy_policy" -> handlePreferencePrivacySelected()
             "download_directory" -> handlePreferenceDownloadDirectorySelected()
+            else -> settingsViewModel.setNavigationMenuId(preference.key)
         }
         return true
     }
@@ -133,10 +124,10 @@ class SettingsFragment : BasePreferenceFragment(), Preference.OnPreferenceClickL
 
     private fun handlePreferenceProfilesSelected() {
         if (view != null) {
-            if (htspVersion < 16) {
+            if (settingsViewModel.currentServerStatus.htspVersion < 16) {
                 context?.sendSnackbarMessage(R.string.feature_not_supported_by_server)
             } else {
-                showSelectedSettingsFragment("profiles")
+                settingsViewModel.setNavigationMenuId("profiles")
             }
         }
     }
@@ -145,37 +136,8 @@ class SettingsFragment : BasePreferenceFragment(), Preference.OnPreferenceClickL
         if (!isUnlocked) {
             context?.sendSnackbarMessage(R.string.feature_not_available_in_free_version)
         } else {
-            showSelectedSettingsFragment("playback")
+            settingsViewModel.setNavigationMenuId("playback")
         }
-    }
-
-    private fun handlePreferenceUnlockerSelected() {
-        val intent = Intent(activity, UnlockerActivity::class.java)
-        startActivity(intent)
-    }
-
-    private fun handlePreferenceChangelogSelected() {
-        val intent = Intent(activity, ChangeLogActivity::class.java)
-        intent.putExtra("showFullChangelog", true)
-        startActivity(intent)
-    }
-
-    private fun handlePreferenceInformationSelected() {
-        val intent = Intent(activity, WebViewActivity::class.java)
-        intent.putExtra("website", "information")
-        startActivity(intent)
-    }
-
-    private fun handlePreferencePrivacySelected() {
-        val intent = Intent(activity, WebViewActivity::class.java)
-        intent.putExtra("website", "privacy_policy")
-        startActivity(intent)
-    }
-
-    private fun showSelectedSettingsFragment(settingType: String) {
-        val intent = Intent(activity, SettingsActivity::class.java)
-        intent.putExtra("setting_type", settingType)
-        startActivity(intent)
     }
 
     private fun handlePreferenceDownloadDirectorySelected() {

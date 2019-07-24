@@ -2,7 +2,6 @@ package org.tvheadend.tvhclient.ui.features.settings
 
 
 import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import android.view.*
 import android.widget.ListView
@@ -98,17 +97,13 @@ class SettingsListConnectionsFragment : ListFragment(), BackPressedInterface, Ac
     }
 
     private fun addConnection(): Boolean {
-        val intent = Intent(activity, SettingsActivity::class.java)
-        intent.putExtra("setting_type", "add_connection")
-        startActivity(intent)
+        settingsViewModel.setNavigationMenuId("add_connection")
         return true
     }
 
     private fun editConnection(connection: Connection, mode: ActionMode): Boolean {
-        val intent = Intent(activity, SettingsActivity::class.java)
-        intent.putExtra("setting_type", "edit_connection")
-        intent.putExtra("connection_id", connection.id)
-        startActivity(intent)
+        settingsViewModel.connectionIdToBeEdited = connection.id
+        settingsViewModel.setNavigationMenuId("edit_connection")
         mode.finish()
         return true
     }
@@ -180,7 +175,7 @@ class SettingsListConnectionsFragment : ListFragment(), BackPressedInterface, Ac
             }
             else -> {
                 settingsViewModel.connectionHasChanged = false
-                activity?.finish()
+                (activity as RemoveFragmentFromBackstackInterface).removeFragmentFromBackstack()
             }
         }
     }

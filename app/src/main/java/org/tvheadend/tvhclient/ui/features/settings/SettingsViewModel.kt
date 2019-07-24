@@ -8,12 +8,27 @@ import org.tvheadend.tvhclient.domain.entity.Connection
 import org.tvheadend.tvhclient.domain.entity.ServerProfile
 import org.tvheadend.tvhclient.domain.entity.ServerStatus
 import org.tvheadend.tvhclient.ui.base.BaseViewModel
+import org.tvheadend.tvhclient.ui.common.SingleLiveEvent
 import timber.log.Timber
 
 class SettingsViewModel(application: Application) : BaseViewModel(application) {
 
+    var connectionIdToBeEdited: Int = -1
     val allConnections: LiveData<List<Connection>> = appRepository.connectionData.getLiveDataItems()
-    val serverStatusLiveData: LiveData<ServerStatus> = appRepository.serverStatusData.liveDataActiveItem
+    val currentServerStatus = appRepository.serverStatusData.activeItem
+
+    private val navigationMenuId = SingleLiveEvent<String>()
+
+    init {
+        navigationMenuId.value = "default"
+    }
+
+    fun getNavigationMenuId(): LiveData<String> = navigationMenuId
+
+    fun setNavigationMenuId(id: String) {
+        Timber.d("Received new navigation id $id")
+        navigationMenuId.value = id
+    }
 
     val activeConnectionId: Int
         get() {
@@ -49,20 +64,32 @@ class SettingsViewModel(application: Application) : BaseViewModel(application) {
         appRepository.serverStatusData.updateItem(serverStatus)
     }
 
-    fun getProfileById(id: Int): ServerProfile? {
-        return appRepository.serverProfileData.getItemById(id)
+    fun getHtspProfile(): ServerProfile? {
+        return appRepository.serverProfileData.getItemById(currentServerStatus.htspPlaybackServerProfileId)
     }
 
     fun getHtspProfiles(): List<ServerProfile> {
         return appRepository.serverProfileData.htspPlaybackProfiles
     }
 
+    fun getHttpProfile(): ServerProfile? {
+        return appRepository.serverProfileData.getItemById(currentServerStatus.httpPlaybackServerProfileId)
+    }
+
     fun getHttpProfiles(): List<ServerProfile> {
         return appRepository.serverProfileData.httpPlaybackProfiles
     }
 
+    fun getRecordingProfile(): ServerProfile? {
+        return appRepository.serverProfileData.getItemById(currentServerStatus.recordingServerProfileId)
+    }
+
     fun getRecordingProfiles(): List<ServerProfile> {
         return appRepository.serverProfileData.recordingProfiles
+    }
+
+    fun getCastingProfile(): ServerProfile? {
+        return appRepository.serverProfileData.getItemById(currentServerStatus.castingServerProfileId)
     }
 
     fun addConnection() {
