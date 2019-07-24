@@ -392,23 +392,23 @@ fun setProgramImage(view: ImageView, url: String?, visible: Boolean) {
 @BindingAdapter("iconUrl")
 fun setChannelIcon(view: ImageView, iconUrl: String?) {
     if (iconUrl.isNullOrEmpty()) {
-        Timber.d("Channel icon '$iconUrl' is empty or null, hiding icon")
+        //Timber.d("Channel icon '$iconUrl' is empty or null, hiding icon")
         view.gone()
     } else {
         val url = getIconUrl(view.context, iconUrl)
-        Timber.d("Channel icon '$iconUrl' is not empty, loading icon from url '$url'")
+        //Timber.d("Channel icon '$iconUrl' is not empty, loading icon from url '$url'")
 
         Picasso.get().cancelRequest(view)
         Picasso.get()
                 .load(url)
                 .into(view, object : Callback {
                     override fun onSuccess() {
-                        Timber.d("Successfully loaded channel icon from url '$url'")
+                        //Timber.d("Successfully loaded channel icon from url '$url'")
                         view.visible()
                     }
 
                     override fun onError(e: Exception) {
-                        Timber.d("Error loading channel icon from url '$url'")
+                        //Timber.d("Error loading channel icon from url '$url'")
                         view.gone()
                     }
                 })
