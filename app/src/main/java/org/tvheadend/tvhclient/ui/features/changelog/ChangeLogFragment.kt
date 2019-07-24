@@ -1,6 +1,5 @@
 package org.tvheadend.tvhclient.ui.features.changelog
 
-import android.app.Activity
 import android.graphics.Color
 import android.os.Bundle
 import android.view.*
@@ -11,9 +10,10 @@ import org.tvheadend.tvhclient.BuildConfig
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.ui.common.callbacks.BackPressedInterface
 import org.tvheadend.tvhclient.ui.common.callbacks.ToolbarInterface
+import org.tvheadend.tvhclient.ui.common.tasks.HtmlFileLoaderTask
+import org.tvheadend.tvhclient.ui.features.settings.RemoveFragmentFromBackstackInterface
 import org.tvheadend.tvhclient.util.extensions.gone
 import org.tvheadend.tvhclient.util.extensions.visible
-import org.tvheadend.tvhclient.ui.common.tasks.HtmlFileLoaderTask
 
 class ChangeLogFragment : Fragment(), BackPressedInterface, HtmlFileLoaderTask.Listener {
 
@@ -74,6 +74,14 @@ class ChangeLogFragment : Fragment(), BackPressedInterface, HtmlFileLoaderTask.L
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
+            android.R.id.home -> {
+                activity.let {
+                    if (it is RemoveFragmentFromBackstackInterface) {
+                        it.removeFragmentFromBackstack()
+                    }
+                }
+                return true
+            }
             R.id.menu_show_full_changelog -> {
                 ChangeLogLoaderTask(context, versionName, this).execute(true)
                 return true
@@ -89,8 +97,11 @@ class ChangeLogFragment : Fragment(), BackPressedInterface, HtmlFileLoaderTask.L
         editor.putString("versionNameForChangelog", BuildConfig.VERSION_NAME)
         editor.apply()
 
-        activity?.setResult(Activity.RESULT_OK, null)
-        activity?.finish()
+        activity.let {
+            if (it is RemoveFragmentFromBackstackInterface) {
+                it.removeFragmentFromBackstack()
+            }
+        }
     }
 
     override fun onFileContentsLoaded(fileContent: String) {

@@ -5,8 +5,9 @@ import android.os.Bundle
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.ui.base.BaseActivity
 import org.tvheadend.tvhclient.ui.common.callbacks.BackPressedInterface
+import org.tvheadend.tvhclient.ui.features.settings.RemoveFragmentFromBackstackInterface
 
-class ChangeLogActivity : BaseActivity() {
+class ChangeLogActivity : BaseActivity(), RemoveFragmentFromBackstackInterface {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -23,5 +24,9 @@ class ChangeLogActivity : BaseActivity() {
         if (fragment is BackPressedInterface) {
             fragment.onBackPressed()
         }
+    }
+
+    override fun removeFragmentFromBackstack() {
+        super.onBackPressed()
     }
 }
