@@ -10,7 +10,7 @@ import org.tvheadend.tvhclient.MainApplication
 import org.tvheadend.tvhclient.data.repository.AppRepository
 import org.tvheadend.tvhclient.data.service.HtspService
 import org.tvheadend.tvhclient.domain.entity.Connection
-import org.tvheadend.tvhclient.domain.entity.ServerStatus
+import org.tvheadend.tvhclient.ui.common.Event
 import org.tvheadend.tvhclient.ui.common.NetworkStatus
 import org.tvheadend.tvhclient.ui.features.startup.SplashActivity
 import timber.log.Timber
@@ -28,23 +28,22 @@ open class BaseViewModel(application: Application) : AndroidViewModel(applicatio
     var connectionCount: LiveData<Int>
     // TODO make this live data
     var connection: Connection
-    // TODO make this live data
-    val serverStatus: ServerStatus
 
     var connectionToServerAvailable: LiveData<Boolean>
     var networkStatus: LiveData<NetworkStatus>
-    var showSnackbar: LiveData<Intent>
+    var showSnackbar: LiveData<Event<Intent>>
     var isUnlocked: LiveData<Boolean>
+    var htspVersion: Int
 
     init {
         inject()
         connectionCount = appRepository.connectionData.getLiveDataItemCount()
         connection = appRepository.connectionData.activeItem
-        serverStatus = appRepository.serverStatusData.activeItem
         networkStatus = appRepository.getNetworkStatus()
         showSnackbar = appRepository.getSnackbarMessage()
         isUnlocked = appRepository.getIsUnlocked()
         connectionToServerAvailable = appRepository.getConnectionToServerAvailable()
+        htspVersion = appRepository.serverStatusData.activeItem.htspVersion
     }
 
     private fun inject() {

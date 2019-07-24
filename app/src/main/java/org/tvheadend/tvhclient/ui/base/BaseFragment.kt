@@ -12,7 +12,6 @@ import org.tvheadend.tvhclient.MainApplication
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.data.repository.AppRepository
 import org.tvheadend.tvhclient.domain.entity.Connection
-import org.tvheadend.tvhclient.domain.entity.ServerStatus
 import org.tvheadend.tvhclient.ui.common.callbacks.ToolbarInterface
 import org.tvheadend.tvhclient.ui.common.showConfirmationToReconnectToServer
 import org.tvheadend.tvhclient.util.extensions.gone
@@ -33,10 +32,9 @@ abstract class BaseFragment : Fragment() {
     protected var isUnlocked: Boolean = false
     protected var htspVersion: Int = 13
     protected var isConnectionToServerAvailable: Boolean = false
-
     protected lateinit var connection: Connection
-    protected lateinit var serverStatus: ServerStatus
 
+    // TODO get the information from the layout (see medium article) not by checking for null
     private var mainFrameLayout: FrameLayout? = null
     private var detailsFrameLayout: FrameLayout? = null
 
@@ -63,8 +61,7 @@ abstract class BaseFragment : Fragment() {
         })
 
         connection = baseViewModel.connection
-        serverStatus = baseViewModel.serverStatus
-        htspVersion = serverStatus.htspVersion
+        htspVersion = baseViewModel.htspVersion
 
         // Check if we have a frame in which to embed the details fragment.
         // Make the frame layout visible and set the weights again in case
