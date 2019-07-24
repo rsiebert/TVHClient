@@ -19,7 +19,6 @@ import timber.log.Timber
 
 class StatusViewModel(application: Application) : BaseViewModel(application), SharedPreferences.OnSharedPreferenceChangeListener {
 
-    // TODO remove when variable in base model has been changed to live data
     val serverStatusLiveData: LiveData<ServerStatus> = appRepository.serverStatusData.liveDataActiveItem
     val channelCount: LiveData<Int> = appRepository.channelData.getLiveDataItemCount()
     val programCount: LiveData<Int> = appRepository.programData.getLiveDataItemCount()
