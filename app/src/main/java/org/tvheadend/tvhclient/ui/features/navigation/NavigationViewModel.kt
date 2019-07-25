@@ -12,19 +12,21 @@ class NavigationViewModel(application: Application) : BaseViewModel(application)
 
     val connections = appRepository.connectionData.getLiveDataItems()
     private val navigationMenuId = SingleLiveEvent<Int>()
-    var previousNavigationMenuId: Int = -1
+    private var previousNavigationMenuId: Int
 
     init {
         Timber.d("Initializing")
-        navigationMenuId.value = Integer.parseInt(sharedPreferences.getString("start_screen", appContext.resources.getString(R.string.pref_default_start_screen))!!)
+        previousNavigationMenuId = Integer.parseInt(sharedPreferences.getString("start_screen", appContext.resources.getString(R.string.pref_default_start_screen))!!)
+        navigationMenuId.value = previousNavigationMenuId
     }
 
     fun getNavigationMenuId(): LiveData<Int> = navigationMenuId
 
     fun setNavigationMenuId(id: Int) {
-        Timber.d("Received new navigation id $id")
+        Timber.d("Received new navigation id $id, previous navigation id is ${navigationMenuId.value}")
         if (previousNavigationMenuId != id || id == MENU_SETTINGS) {
             Timber.d("Setting navigation id to $id")
+            previousNavigationMenuId = id
             navigationMenuId.value = id
         }
     }
@@ -42,8 +44,8 @@ class NavigationViewModel(application: Application) : BaseViewModel(application)
         }
     }
 
-    fun onBackPressed() {
-        Timber.d("Back button was pressed, setting current navigation id ${navigationMenuId.value} to the previous id $previousNavigationMenuId")
-        navigationMenuId.value = previousNavigationMenuId
+    fun setSelectedMenuItemId(id: Int) {
+        Timber.d("Back button was pressed, setting current navigation id ${navigationMenuId.value} to id $id")
+        previousNavigationMenuId = id
     }
 }

@@ -211,6 +211,10 @@ class NavigationDrawer(private val activity: AppCompatActivity,
         return true
     }
 
+    fun getSelectedMenu(): Int {
+        return result.currentSelection.toInt()
+    }
+
     fun saveInstanceState(outState: Bundle): Bundle {
         var out = outState
         out = result.saveInstanceState(out)
