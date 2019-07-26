@@ -153,9 +153,11 @@ class MainActivity : BaseActivity(R.layout.main_activity), SearchView.OnQueryTex
             }
         })
 
-        navigationViewModel.getNavigationMenuId().observe(this, Observer { id ->
-            Timber.d("Navigation menu id changed to $id")
-            handleDrawerItemSelected(id)
+        navigationViewModel.getNavigationMenuId().observe(this, Observer { event ->
+            event.getContentIfNotHandled()?.let {
+                Timber.d("Navigation menu id changed to $it")
+                handleDrawerItemSelected(it)
+            }
         })
         statusViewModel.showRunningRecordingCount.observe(this, Observer { show ->
             showOrCancelNotificationProgramIsCurrentlyBeingRecorded(this, statusViewModel.runningRecordingCount, show)
@@ -327,7 +329,7 @@ class MainActivity : BaseActivity(R.layout.main_activity), SearchView.OnQueryTex
     override fun onPrepareOptionsMenu(menu: Menu): Boolean {
         super.onPrepareOptionsMenu(menu)
 
-        when (navigationViewModel.getNavigationMenuId().value) {
+        when (navigationViewModel.getNavigationMenuId().value?.getContentIfNotHandled()) {
             NavigationDrawer.MENU_STATUS, NavigationDrawer.MENU_UNLOCKER, NavigationDrawer.MENU_HELP -> {
                 menu.findItem(R.id.media_route_menu_item)?.isVisible = false
                 menu.findItem(R.id.menu_search).isVisible = false

@@ -2,32 +2,33 @@ package org.tvheadend.tvhclient.ui.features.navigation
 
 import android.app.Application
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.ui.base.BaseViewModel
-import org.tvheadend.tvhclient.ui.common.SingleLiveEvent
+import org.tvheadend.tvhclient.ui.common.Event
 import org.tvheadend.tvhclient.ui.features.navigation.NavigationDrawer.Companion.MENU_SETTINGS
 import timber.log.Timber
 
 class NavigationViewModel(application: Application) : BaseViewModel(application) {
 
     val connections = appRepository.connectionData.getLiveDataItems()
-    private val navigationMenuId = SingleLiveEvent<Int>()
+    private val navigationMenuId = MutableLiveData<Event<Int>>()
     private var previousNavigationMenuId: Int
 
     init {
         Timber.d("Initializing")
         previousNavigationMenuId = Integer.parseInt(sharedPreferences.getString("start_screen", appContext.resources.getString(R.string.pref_default_start_screen))!!)
-        navigationMenuId.value = previousNavigationMenuId
+        navigationMenuId.value = Event(previousNavigationMenuId)
     }
 
-    fun getNavigationMenuId(): LiveData<Int> = navigationMenuId
+    fun getNavigationMenuId(): LiveData<Event<Int>> = navigationMenuId
 
     fun setNavigationMenuId(id: Int) {
         Timber.d("Received new navigation id $id, previous navigation id is ${navigationMenuId.value}")
         if (previousNavigationMenuId != id || id == MENU_SETTINGS) {
             Timber.d("Setting navigation id to $id")
             previousNavigationMenuId = id
-            navigationMenuId.value = id
+            navigationMenuId.value = Event(id)
         }
     }
 
