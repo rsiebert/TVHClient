@@ -13,6 +13,7 @@ import org.tvheadend.tvhclient.ui.base.BaseViewModel
 import org.tvheadend.tvhclient.ui.common.callbacks.ToolbarInterface
 import org.tvheadend.tvhclient.ui.features.MainActivity
 import org.tvheadend.tvhclient.ui.features.settings.SettingsActivity
+import org.tvheadend.tvhclient.util.extensions.gone
 import org.tvheadend.tvhclient.util.extensions.visible
 import timber.log.Timber
 
@@ -21,6 +22,8 @@ import timber.log.Timber
 class StartupFragment : Fragment() {
 
     private lateinit var baseViewModel: BaseViewModel
+    private var connectionCount: Int = 0
+    private var isConnectionActive: Boolean = false
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.startup_fragment, container, false)
@@ -30,34 +33,47 @@ class StartupFragment : Fragment() {
         super.onActivityCreated(savedInstanceState)
         baseViewModel = ViewModelProviders.of(activity!!).get(BaseViewModel::class.java)
 
-        setHasOptionsMenu(true)
-
         if (activity is StartupActivity) {
             (activity as ToolbarInterface).setTitle(getString(R.string.status))
         }
+
+        setHasOptionsMenu(true)
 
         startup_status.text = savedInstanceState?.getString("stateText", "")
                 ?: getString(R.string.initializing)
         startup_status.visible()
 
         baseViewModel.connectionCount.observe(viewLifecycleOwner, Observer { count ->
-            if (count == 0) {
-                Timber.d("No connection available, showing settings button")
-                startup_status.text = getString(R.string.no_connection_available)
-                add_connection_button.visible()
-                add_connection_button.setOnClickListener { showSettingsAddNewConnection() }
-            } else {
-                if (baseViewModel.connection.id == -1) {
-                    Timber.d("No active connection available, showing settings button")
-                    startup_status.text = getString(R.string.no_connection_active_advice)
-                    settings_button.visible()
-                    settings_button.setOnClickListener { showConnectionListSettings() }
-                } else {
-                    Timber.d("Connection is available and active, showing contents")
-                    showContentScreen()
-                }
-            }
+            Timber.d("Connection count changed to $count")
+            connectionCount = count
+            showStatus()
         })
+
+        baseViewModel.connectionLiveData.observe(viewLifecycleOwner, Observer { connection ->
+            isConnectionActive = connection != null
+            Timber.d("Active connection is available $isConnectionActive")
+            showStatus()
+        })
+    }
+
+    private fun showStatus() {
+        if (connectionCount == 0) {
+            Timber.d("No connection available, showing settings button")
+            startup_status.text = getString(R.string.no_connection_available)
+            add_connection_button.visible()
+            add_connection_button.setOnClickListener { showSettingsAddNewConnection() }
+        } else {
+            if (!isConnectionActive) {
+                Timber.d("No active connection available, showing settings button")
+                startup_status.text = getString(R.string.no_connection_active_advice)
+                add_connection_button.gone()
+                settings_button.visible()
+                settings_button.setOnClickListener { showConnectionListSettings() }
+            } else {
+                Timber.d("Connection is available and active, showing contents")
+                showContentScreen()
+            }
+        }
     }
 
     override fun onSaveInstanceState(outState: Bundle) {

@@ -14,6 +14,8 @@ class ConnectionData(private val db: AppRoomDatabase) : DataSourceInterface<Conn
 
     private val ioScope = CoroutineScope(Dispatchers.IO)
 
+    val liveDataActiveItem: LiveData<Connection>
+        get() = db.connectionDao.loadActiveConnection()
 
     val activeItem: Connection
         get() {
