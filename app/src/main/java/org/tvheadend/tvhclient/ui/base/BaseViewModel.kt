@@ -28,6 +28,7 @@ open class BaseViewModel(application: Application) : AndroidViewModel(applicatio
     var connectionCount: LiveData<Int>
     // TODO make this live data
     var connection: Connection
+    var connectionLiveData: LiveData<Connection>
 
     var connectionToServerAvailable: LiveData<Boolean>
     var networkStatus: LiveData<NetworkStatus>
@@ -39,6 +40,7 @@ open class BaseViewModel(application: Application) : AndroidViewModel(applicatio
         inject()
         connectionCount = appRepository.connectionData.getLiveDataItemCount()
         connection = appRepository.connectionData.activeItem
+        connectionLiveData = appRepository.connectionData.liveDataActiveItem
         networkStatus = appRepository.getNetworkStatus()
         showSnackbar = appRepository.getSnackbarMessage()
         isUnlocked = appRepository.getIsUnlocked()
