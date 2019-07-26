@@ -85,7 +85,6 @@
             android:exported="false" />
 
         <activity android:name=".ui.features.dvr.RecordingAddEditActivity" />
-        <activity android:name=".ui.features.changelog.ChangeLogActivity" />
         <activity
             android:name=".ui.features.MainActivity"
             android:launchMode="singleTask">
