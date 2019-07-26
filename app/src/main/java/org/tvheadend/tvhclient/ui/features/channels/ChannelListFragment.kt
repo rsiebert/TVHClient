@@ -339,7 +339,13 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickCallback, ChannelTi
     }
 
     override fun onSearchResultsCleared(): Boolean {
-        return false
+        return if (searchQuery.isNotEmpty()) {
+            searchQuery = ""
+            recyclerViewAdapter.filter.filter("", this)
+            true
+        } else {
+            false
+        }
     }
 
     override fun getQueryHint(): String {
