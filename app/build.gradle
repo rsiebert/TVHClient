@@ -102,10 +102,10 @@ dependencies {
 
     // Support library basics
     implementation 'androidx.appcompat:appcompat:1.1.0-beta01'
-    implementation 'androidx.recyclerview:recyclerview:1.1.0-alpha06'
+    implementation 'androidx.recyclerview:recyclerview:1.1.0-beta01'
     implementation 'androidx.annotation:annotation:1.1.0'
-    implementation 'androidx.preference:preference:1.1.0-beta01'
-    implementation 'com.google.android.material:material:1.1.0-alpha07'
+    implementation 'androidx.preference:preference:1.1.0-rc01'
+    implementation 'com.google.android.material:material:1.1.0-alpha08'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.0-beta2'
 
     // Kotlin
@@ -129,14 +129,14 @@ dependencies {
     implementation "com.afollestad.material-dialogs:files:$dialog_version"
     implementation "com.afollestad.material-dialogs:datetime:$dialog_version"
     implementation "com.afollestad.material-dialogs:lifecycle:$dialog_version"
-    implementation 'com.mikepenz:materialdrawer:7.0.0-rc01'
+    implementation 'com.mikepenz:materialdrawer:7.0.0-rc03'
 
     // Memory leaks
     implementation 'com.squareup.leakcanary:leakcanary-android:2.0-alpha-2'
 
     // Firebase and crash reporting
     implementation 'com.crashlytics.sdk.android:crashlytics:2.10.1'
-    implementation 'com.google.firebase:firebase-core:17.0.0'
+    implementation 'com.google.firebase:firebase-core:17.0.1'
 
     // Life cycles, LiveData and ViewModel
     def lifecycle_version = "2.2.0-alpha01"
@@ -179,7 +179,7 @@ dependencies {
     // Required to connect to the tvheadend server
     implementation project(path: ':htsp')
 
-    implementation 'com.squareup.okhttp3:okhttp:4.0.0-alpha02'
+    implementation 'com.squareup.okhttp3:okhttp:4.0.1'
 }
 
 apply plugin: 'com.google.gms.google-services'
