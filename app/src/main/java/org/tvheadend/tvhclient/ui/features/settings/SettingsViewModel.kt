@@ -2,40 +2,39 @@ package org.tvheadend.tvhclient.ui.features.settings
 
 import android.app.Application
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.domain.entity.Channel
 import org.tvheadend.tvhclient.domain.entity.Connection
 import org.tvheadend.tvhclient.domain.entity.ServerProfile
 import org.tvheadend.tvhclient.domain.entity.ServerStatus
 import org.tvheadend.tvhclient.ui.base.BaseViewModel
-import org.tvheadend.tvhclient.ui.common.SingleLiveEvent
+import org.tvheadend.tvhclient.ui.common.Event
 import timber.log.Timber
 
 class SettingsViewModel(application: Application) : BaseViewModel(application) {
 
+    var connectionHasChanged: Boolean = false
     var connectionIdToBeEdited: Int = -1
     val allConnections: LiveData<List<Connection>> = appRepository.connectionData.getLiveDataItems()
     val currentServerStatus = appRepository.serverStatusData.activeItem
-
-    private val navigationMenuId = SingleLiveEvent<String>()
+    private val navigationMenuId = MutableLiveData<Event<String>>()
 
     init {
-        navigationMenuId.value = "default"
+        navigationMenuId.value = Event("default")
     }
 
-    fun getNavigationMenuId(): LiveData<String> = navigationMenuId
+    fun getNavigationMenuId(): LiveData<Event<String>> = navigationMenuId
 
     fun setNavigationMenuId(id: String) {
         Timber.d("Received new navigation id $id")
-        navigationMenuId.value = id
+        navigationMenuId.value = Event(id)
     }
 
     val activeConnectionId: Int
         get() {
             return appRepository.connectionData.activeItem.id
         }
-
-    var connectionHasChanged: Boolean = false
 
     fun getChannelList(): List<Channel> {
         val defaultChannelSortOrder = appContext.resources.getString(R.string.pref_default_channel_sort_order)
