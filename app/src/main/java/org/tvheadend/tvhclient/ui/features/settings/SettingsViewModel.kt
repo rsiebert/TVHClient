@@ -14,7 +14,6 @@ import timber.log.Timber
 
 class SettingsViewModel(application: Application) : BaseViewModel(application) {
 
-    var connectionHasChanged: Boolean = false
     var connectionIdToBeEdited: Int = -1
     val allConnections: LiveData<List<Connection>> = appRepository.connectionData.getLiveDataItems()
     val currentServerStatus = appRepository.serverStatusData.activeItem
@@ -30,11 +29,6 @@ class SettingsViewModel(application: Application) : BaseViewModel(application) {
         Timber.d("Received new navigation id $id")
         navigationMenuId.value = Event(id)
     }
-
-    val activeConnectionId: Int
-        get() {
-            return appRepository.connectionData.activeItem.id
-        }
 
     fun getChannelList(): List<Channel> {
         val defaultChannelSortOrder = appContext.resources.getString(R.string.pref_default_channel_sort_order)
@@ -93,11 +87,6 @@ class SettingsViewModel(application: Application) : BaseViewModel(application) {
 
     fun addConnection() {
         appRepository.connectionData.addItem(connection)
-        // Save the information in the view model that a new connection is active.
-        // This will then trigger a reconnect when the user leaves the connection list screen
-        if (connection.isActive) {
-            connectionHasChanged = true
-        }
     }
 
     fun loadConnectionById(id: Int) {
