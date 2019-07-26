@@ -35,7 +35,7 @@ class SettingsProfilesFragment : BasePreferenceFragment() {
         setRecordingPreferenceSummary()
         setCastingPreferenceSummary()
 
-        settingsViewModel.isUnlocked.observe(viewLifecycleOwner, Observer { _ ->
+        settingsViewModel.isUnlocked.observe(viewLifecycleOwner, Observer {
             initProfileChangeListeners()
         })
     }
