@@ -8,6 +8,7 @@ class SettingsAddConnectionFragment : SettingsConnectionBaseFragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         toolbarInterface.setTitle(getString(R.string.add_connection))
+        toolbarInterface.setSubtitle("")
 
         if (savedInstanceState == null) {
             settingsViewModel.createNewConnection()

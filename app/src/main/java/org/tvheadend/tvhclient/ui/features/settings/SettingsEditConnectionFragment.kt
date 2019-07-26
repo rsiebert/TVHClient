@@ -11,6 +11,7 @@ class SettingsEditConnectionFragment : SettingsConnectionBaseFragment() {
 
         if (savedInstanceState == null) {
             settingsViewModel.loadConnectionById(settingsViewModel.connectionIdToBeEdited)
+            toolbarInterface.setSubtitle(settingsViewModel.connection.name ?: "")
         }
     }
 
