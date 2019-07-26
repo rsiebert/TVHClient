@@ -1,12 +1,14 @@
 $ 2.2.16
   % VERSION 2.2.16
-  _ 05.07.2019
+  _ 26.07.2019
     * Added popup menu to directly enable or disable scheduled recordings (Only available in the unlocked version)
-    * Connections are now defined by an url like 'http://myserver:9982' instead of a host and port
-    * Fixed showing the settings again after an orientation change
+    * Connections are now defined by an url like 'http://myserver:9982'
+    * Fixed showing the wrong screen after an orientation change
     * Fixed some layout issues in the startup screen
     * Fixed channel tag names were not shown in the selection dialog
     * Crash reports moved from Fabric.io to Firebase
+    * Increased the performance when switching between settings screens
+    * Added initial support for ipv6 addresses
     * Improvements and some bug fixes
 $ 2.2.15
   % VERSION 2.2.15
