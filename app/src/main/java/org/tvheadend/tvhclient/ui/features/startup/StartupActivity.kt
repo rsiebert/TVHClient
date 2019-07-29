@@ -1,26 +1,47 @@
 package org.tvheadend.tvhclient.ui.features.startup
 
+import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import org.tvheadend.tvhclient.BuildConfig
+import org.tvheadend.tvhclient.MainApplication
 import org.tvheadend.tvhclient.R
-import org.tvheadend.tvhclient.ui.base.BaseActivity
+import org.tvheadend.tvhclient.data.repository.AppRepository
 import org.tvheadend.tvhclient.ui.common.callbacks.BackPressedInterface
+import org.tvheadend.tvhclient.ui.common.callbacks.ToolbarInterface
 import org.tvheadend.tvhclient.ui.features.changelog.ChangeLogFragment
 import org.tvheadend.tvhclient.ui.features.settings.RemoveFragmentFromBackstackInterface
 import org.tvheadend.tvhclient.util.MigrateUtils
 import timber.log.Timber
+import javax.inject.Inject
 
-class StartupActivity : BaseActivity(), RemoveFragmentFromBackstackInterface {
+class StartupActivity : AppCompatActivity(), ToolbarInterface, RemoveFragmentFromBackstackInterface {
+
+    @Inject
+    lateinit var appContext: Context
+    @Inject
+    lateinit var appRepository: AppRepository
+    @Inject
+    lateinit var sharedPreferences: SharedPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        setTheme(R.style.CustomTheme_Light)
         super.onCreate(savedInstanceState)
+        setContentView(R.layout.misc_content_activity)
+
+        val toolbar: Toolbar = findViewById(R.id.toolbar)
+        setSupportActionBar(toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(false)
+
+        MainApplication.component.inject(this)
 
         // Migrates existing connections from the old database to the new room database.
         // Migrates existing preferences or remove old ones before starting the actual application
         MigrateUtils(appContext, appRepository, sharedPreferences).doMigrate()
 
         if (savedInstanceState == null) {
-
             supportActionBar?.setDisplayHomeAsUpEnabled(false)
 
             supportFragmentManager.beginTransaction()
@@ -69,5 +90,13 @@ class StartupActivity : BaseActivity(), RemoveFragmentFromBackstackInterface {
         } else {
             super.onBackPressed()
         }
+    }
+
+    override fun setTitle(title: String) {
+        supportActionBar?.title = title
+    }
+
+    override fun setSubtitle(subtitle: String) {
+        supportActionBar?.subtitle = subtitle
     }
 }

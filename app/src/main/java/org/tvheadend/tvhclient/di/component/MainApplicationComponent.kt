@@ -10,6 +10,7 @@ import org.tvheadend.tvhclient.di.module.SharedPreferencesModule
 import org.tvheadend.tvhclient.ui.base.BaseActivity
 import org.tvheadend.tvhclient.ui.base.BaseFragment
 import org.tvheadend.tvhclient.ui.base.BaseViewModel
+import org.tvheadend.tvhclient.ui.features.startup.StartupActivity
 import javax.inject.Singleton
 
 @Singleton
@@ -25,6 +26,7 @@ interface MainApplicationComponent {
     fun inject(baseActivity: BaseActivity)
     fun inject(baseFragment: BaseFragment)
     fun inject(baseViewModel: BaseViewModel)
+    fun inject(startupActivity: StartupActivity)
 
     @Component.Builder
     interface Builder {
