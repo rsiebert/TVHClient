@@ -17,8 +17,6 @@ import org.tvheadend.tvhclient.util.extensions.gone
 import org.tvheadend.tvhclient.util.extensions.visible
 import timber.log.Timber
 
-// TODO add nice background image
-
 class StartupFragment : Fragment() {
 
     private lateinit var baseViewModel: BaseViewModel
@@ -39,24 +37,19 @@ class StartupFragment : Fragment() {
 
         setHasOptionsMenu(true)
 
-        startup_status.text = savedInstanceState?.getString("stateText", "")
-                ?: getString(R.string.initializing)
-        startup_status.visible()
+        startup_status.text = savedInstanceState?.getString("stateText", "") ?: getString(R.string.initializing)
 
-        baseViewModel.connectionCount.observe(viewLifecycleOwner, Observer { count ->
-            Timber.d("Connection count changed to $count")
-            connectionCount = count
-            showStatus()
-        })
-
-        baseViewModel.connectionLiveData.observe(viewLifecycleOwner, Observer { connection ->
-            isConnectionActive = connection != null
-            Timber.d("Active connection is available $isConnectionActive")
-            showStatus()
+        baseViewModel.connectionStatus.observe(viewLifecycleOwner, Observer { status ->
+            status?.let {
+                connectionCount = it.first!!
+                isConnectionActive = it.second!!
+                Timber.d("connection count is $connectionCount and connection is active is $isConnectionActive")
+                showStartupStatus()
+            }
         })
     }
 
-    private fun showStatus() {
+    private fun showStartupStatus() {
         if (connectionCount == 0) {
             Timber.d("No connection available, showing settings button")
             startup_status.text = getString(R.string.no_connection_available)
@@ -74,11 +67,6 @@ class StartupFragment : Fragment() {
                 showContentScreen()
             }
         }
-    }
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        outState.putString("stateText", startup_status.text.toString())
-        super.onSaveInstanceState(outState)
     }
 
     override fun onPrepareOptionsMenu(menu: Menu) {
