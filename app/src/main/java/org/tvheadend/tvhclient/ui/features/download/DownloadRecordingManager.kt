@@ -115,7 +115,7 @@ class DownloadRecordingManager(private val activity: Activity?, private val conn
         Timber.d("Checking download status of recording ${recording.title}")
 
         // Initialize the default status message
-        var msg = "Download of recording " + recording.title + " was not found"
+        var msg = "Unknown status"
 
         val cursor = downloadManager.query(DownloadManager.Query().setFilterById(lastDownloadId))
         if (cursor != null) {
@@ -125,6 +125,7 @@ class DownloadRecordingManager(private val activity: Activity?, private val conn
 
             when (status) {
                 DownloadManager.STATUS_FAILED -> when (reason) {
+                    404 -> msg = "Recording was not found"
                     401, 407 -> msg = activity.getString(R.string.download_error_authentication_required, recording.title)
                     DownloadManager.ERROR_CANNOT_RESUME -> msg = "Download failed, cannot resume"
                     DownloadManager.ERROR_DEVICE_NOT_FOUND -> msg = "Download failed, device not found"
