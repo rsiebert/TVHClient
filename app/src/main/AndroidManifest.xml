@@ -31,19 +31,9 @@
             android:name="firebase_crashlytics_collection_enabled"
             android:value="false" />
 
-        <provider
-            android:name="androidx.core.content.FileProvider"
-            android:authorities="org.tvheadend.tvhclient.fileprovider"
-            android:exported="false"
-            android:grantUriPermissions="true">
-            <meta-data
-                android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/file_paths" />
-        </provider>
-
         <activity
             android:name=".ui.features.startup.StartupActivity"
-            android:theme="@android:style/Theme.NoTitleBar">
+            android:launchMode="singleTask">
             <intent-filter>
                 <data android:scheme="tvhclient" />
                 <action android:name="android.intent.action.VIEW" />
@@ -70,20 +60,6 @@
                 <action android:name="android.intent.action.MAIN" />
             </intent-filter>
         </activity>
-
-        <service
-            android:name=".data.service.HtspService"
-            android:exported="false" />
-        <service
-            android:name=".data.service.HtspIntentService"
-            android:exported="false"
-            android:permission="android.permission.BIND_JOB_SERVICE" />
-
-        <provider
-            android:name="org.tvheadend.tvhclient.ui.features.search.SuggestionProvider"
-            android:authorities="org.tvheadend.tvhclient.ui.features.search.SuggestionProvider"
-            android:exported="false" />
-
         <activity android:name=".ui.features.dvr.RecordingAddEditActivity" />
         <activity
             android:name=".ui.features.MainActivity"
@@ -118,6 +94,28 @@
             android:launchMode="singleTask"
             android:resizeableActivity="true"
             android:supportsPictureInPicture="true" />
+
+        <service
+            android:name=".data.service.HtspService"
+            android:exported="false" />
+        <service
+            android:name=".data.service.HtspIntentService"
+            android:exported="false"
+            android:permission="android.permission.BIND_JOB_SERVICE" />
+
+        <provider
+            android:name="org.tvheadend.tvhclient.ui.features.search.SuggestionProvider"
+            android:authorities="org.tvheadend.tvhclient.ui.features.search.SuggestionProvider"
+            android:exported="false" />
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="org.tvheadend.tvhclient.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
 
     </application>
 </manifest>
