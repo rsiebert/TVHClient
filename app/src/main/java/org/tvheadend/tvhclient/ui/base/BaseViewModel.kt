@@ -13,7 +13,6 @@ import org.tvheadend.tvhclient.domain.entity.Connection
 import org.tvheadend.tvhclient.ui.common.Event
 import org.tvheadend.tvhclient.ui.common.NetworkStatus
 import org.tvheadend.tvhclient.ui.features.startup.SplashActivity
-import org.tvheadend.tvhclient.ui.features.startup.StartupActivity
 import timber.log.Timber
 import javax.inject.Inject
 
