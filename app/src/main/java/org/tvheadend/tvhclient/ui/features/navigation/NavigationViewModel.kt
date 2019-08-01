@@ -33,12 +33,17 @@ class NavigationViewModel(application: Application) : BaseViewModel(application)
     }
 
     fun setSelectedConnectionAsActive(id: Int): Boolean {
-        val connection = appRepository.connectionData.getItemById(id)
-        return if (connection != null) {
-            connection.isActive = true
-            connection.isSyncRequired = true
-            connection.lastUpdate = 0
-            appRepository.connectionData.updateItem(connection)
+        val newActiveConnection = appRepository.connectionData.getItemById(id)
+        return if (newActiveConnection != null) {
+
+            val currentlyActiveConnection = appRepository.connectionData.activeItem
+            currentlyActiveConnection.isActive = false
+            appRepository.connectionData.updateItem(currentlyActiveConnection)
+
+            newActiveConnection.isActive = true
+            newActiveConnection.isSyncRequired = true
+            newActiveConnection.lastUpdate = 0
+            appRepository.connectionData.updateItem(newActiveConnection)
             true
         } else {
             false
