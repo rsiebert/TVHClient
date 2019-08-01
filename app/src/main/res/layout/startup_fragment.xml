@@ -31,6 +31,7 @@
         android:layout_marginRight="64dp"
         android:text="@string/status"
         android:textAlignment="center"
+        android:visibility="invisible"
         app:layout_constraintBottom_toTopOf="@+id/add_connection_button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
@@ -46,14 +47,14 @@
         android:contentDescription="@null"
         android:src="?attr/ic_menu_add"
         android:visibility="gone"
-        app:layout_constraintBottom_toTopOf="@+id/settings_button"
+        app:layout_constraintBottom_toTopOf="@+id/list_connections_button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/startup_status" />
 
     <ImageButton
-        android:id="@+id/settings_button"
+        android:id="@+id/list_connections_button"
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:layout_marginTop="16dp"
