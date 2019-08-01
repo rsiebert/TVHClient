@@ -21,8 +21,8 @@ import org.tvheadend.tvhclient.BuildConfig
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.data.service.HtspService
 import org.tvheadend.tvhclient.data.worker.LoadChannelIconWorker
-import org.tvheadend.tvhclient.util.extensions.sendSnackbarMessage
 import org.tvheadend.tvhclient.ui.features.search.SuggestionProvider
+import org.tvheadend.tvhclient.util.extensions.sendSnackbarMessage
 import org.tvheadend.tvhclient.util.getIconUrl
 import org.tvheadend.tvhclient.util.logging.FileLoggingTree
 import timber.log.Timber
@@ -189,7 +189,7 @@ class SettingsAdvancedFragment : BasePreferenceFragment(), Preference.OnPreferen
         try {
             context?.let {
                 val logFile = File(it.cacheDir, "logs/$filename")
-                fileUri = FileProvider.getUriForFile(it, "org.tvheadend.tvhclient.fileprovider", logFile)
+                fileUri = FileProvider.getUriForFile(it, "fileprovider", logFile)
             }
         } catch (e: IllegalArgumentException) {
             Timber.e(e, "Could not load logfile")
@@ -270,7 +270,6 @@ class SettingsAdvancedFragment : BasePreferenceFragment(), Preference.OnPreferen
                     context.sendSnackbarMessage(R.string.clear_search_history_done)
                 }
                 negativeButton(R.string.cancel)
-
             }
         }
     }
@@ -278,33 +277,41 @@ class SettingsAdvancedFragment : BasePreferenceFragment(), Preference.OnPreferen
     private fun handlePreferenceClearIconCacheSelected() {
         context?.let {
             MaterialDialog(it).show {
-                title(R.string.clear_icon_cache)
-                        .message(R.string.clear_icon_cache_sum)
+                title(R.string.clear_icon_cache).message(R.string.clear_icon_cache_sum)
                 positiveButton(R.string.delete) { _ ->
-                    // Delete all channel icon files that were downloaded for the active
-                    // connection. Additionally remove the icons from the Glide cache
-                    Timber.d("Deleting channel icons and invalidating cache")
-                    for (channel in settingsViewModel.getChannelList()) {
-                        if (channel.icon.isNullOrEmpty()) {
-                            continue
-                        }
-                        val url = getIconUrl(it, channel.icon)
-                        val file = File(url)
-                        if (file.exists()) {
-                            if (!file.delete()) {
-                                Timber.d("Could not delete channel icon ${file.name}")
-                            }
-                        }
-                        Picasso.get().invalidate(file)
-                    }
-                    context.sendSnackbarMessage(R.string.clear_icon_cache_done)
+                    Timber.d("Deleting channel icons, invalidating cache and reloading icons via a background worker")
+                    clearIconsFromCache(it)
+                    it.sendSnackbarMessage(R.string.clear_icon_cache_done)
 
-                    Timber.d("Starting background worker to reload channel icons")
                     val loadChannelIcons = OneTimeWorkRequest.Builder(LoadChannelIconWorker::class.java).build()
                     WorkManager.getInstance().enqueueUniqueWork("LoadChannelIcons", ExistingWorkPolicy.REPLACE, loadChannelIcons)
-
                 }
                 negativeButton(R.string.cancel)
+            }
+        }
+    }
+
+    /**
+     * Clear the cached channel icons by checking all cached files if their name
+     * matches with the url from a channel icon. If this is the case remove the file
+     */
+    private fun clearIconsFromCache(context: Context) {
+        val channels = settingsViewModel.getChannelList()
+        if (context.cacheDir.exists()) {
+            val fileNames = context.cacheDir.list()
+            for (fileName in fileNames!!) {
+                for (channel in channels) {
+                    if (!channel.icon.isNullOrEmpty()) {
+                        val url = getIconUrl(context, channel.icon)
+                        if (url.contains(fileName)) {
+                            val file = File(context.cacheDir, fileName)
+                            if (file.delete()) {
+                                Picasso.get().invalidate(file)
+                            }
+                            break
+                        }
+                    }
+                }
             }
         }
     }
