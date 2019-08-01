@@ -6,6 +6,7 @@ import androidx.preference.ListPreference
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.domain.entity.ServerProfile
 import org.tvheadend.tvhclient.util.extensions.sendSnackbarMessage
+import timber.log.Timber
 
 class SettingsProfilesFragment : BasePreferenceFragment() {
 
@@ -30,14 +31,14 @@ class SettingsProfilesFragment : BasePreferenceFragment() {
         addProfileValuesToListPreference(recordingProfilesPreference, settingsViewModel.getRecordingProfiles(), settingsViewModel.currentServerStatus.recordingServerProfileId)
         addProfileValuesToListPreference(castingProfilesPreference, settingsViewModel.getHttpProfiles(), settingsViewModel.currentServerStatus.castingServerProfileId)
 
+        settingsViewModel.isUnlocked.observe(viewLifecycleOwner, Observer {
+            initProfileChangeListeners()
+        })
+
         setHttpPlaybackPreferenceSummary()
         setHtspPlaybackPreferenceSummary()
         setRecordingPreferenceSummary()
         setCastingPreferenceSummary()
-
-        settingsViewModel.isUnlocked.observe(viewLifecycleOwner, Observer {
-            initProfileChangeListeners()
-        })
     }
 
     private fun initProfileChangeListeners() {
@@ -90,6 +91,7 @@ class SettingsProfilesFragment : BasePreferenceFragment() {
     }
 
     private fun setHtspPlaybackPreferenceSummary() {
+        Timber.d("Htsp playback profile id is ${settingsViewModel.currentServerStatus.htspPlaybackServerProfileId}")
         if (settingsViewModel.currentServerStatus.htspPlaybackServerProfileId == 0) {
             htspPlaybackProfilesPreference.summary = "None"
         } else {
@@ -98,6 +100,7 @@ class SettingsProfilesFragment : BasePreferenceFragment() {
     }
 
     private fun setHttpPlaybackPreferenceSummary() {
+        Timber.d("Http playback profile id is ${settingsViewModel.currentServerStatus.httpPlaybackServerProfileId}")
         if (settingsViewModel.currentServerStatus.httpPlaybackServerProfileId == 0) {
             httpPlaybackProfilesPreference.summary = "None"
         } else {
@@ -106,6 +109,7 @@ class SettingsProfilesFragment : BasePreferenceFragment() {
     }
 
     private fun setRecordingPreferenceSummary() {
+        Timber.d("Recording profile id is ${settingsViewModel.currentServerStatus.recordingServerProfileId}")
         if (settingsViewModel.currentServerStatus.recordingServerProfileId == 0) {
             recordingProfilesPreference.summary = "None"
         } else {
@@ -114,6 +118,7 @@ class SettingsProfilesFragment : BasePreferenceFragment() {
     }
 
     private fun setCastingPreferenceSummary() {
+        Timber.d("Casting profile id is ${settingsViewModel.currentServerStatus.recordingServerProfileId}")
         if (settingsViewModel.currentServerStatus.castingServerProfileId == 0) {
             castingProfilesPreference.summary = "None"
         } else {

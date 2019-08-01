@@ -62,7 +62,9 @@ class SettingsViewModel(application: Application) : BaseViewModel(application) {
     }
 
     fun getHtspProfiles(): List<ServerProfile> {
-        return appRepository.serverProfileData.htspPlaybackProfiles
+        val profiles = appRepository.serverProfileData.htspPlaybackProfiles
+        Timber.d("Loaded ${profiles.size} Htsp profiles")
+        return profiles
     }
 
     fun getHttpProfile(): ServerProfile? {
@@ -70,7 +72,9 @@ class SettingsViewModel(application: Application) : BaseViewModel(application) {
     }
 
     fun getHttpProfiles(): List<ServerProfile> {
-        return appRepository.serverProfileData.httpPlaybackProfiles
+        val profiles = appRepository.serverProfileData.httpPlaybackProfiles
+        Timber.d("Loaded ${profiles.size} Http profiles")
+        return profiles
     }
 
     fun getRecordingProfile(): ServerProfile? {
@@ -78,7 +82,9 @@ class SettingsViewModel(application: Application) : BaseViewModel(application) {
     }
 
     fun getRecordingProfiles(): List<ServerProfile> {
-        return appRepository.serverProfileData.recordingProfiles
+        val profiles = appRepository.serverProfileData.recordingProfiles
+        Timber.d("Loaded ${profiles.size} recording profiles")
+        return profiles
     }
 
     fun getCastingProfile(): ServerProfile? {
