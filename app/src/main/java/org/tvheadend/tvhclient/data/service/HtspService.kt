@@ -25,9 +25,9 @@ import org.tvheadend.tvhclient.domain.entity.*
 import org.tvheadend.tvhclient.ui.features.notification.addNotificationScheduledRecordingStarts
 import org.tvheadend.tvhclient.ui.features.notification.removeNotificationById
 import org.tvheadend.tvhclient.util.convertUrlToHashString
+import org.tvheadend.tvhclient.util.extensions.isEqualTo
 import org.tvheadend.tvhclient.util.extensions.sendSnackbarMessage
 import org.tvheadend.tvhclient.util.getIconUrl
-import org.tvheadend.tvhclient.util.extensions.isEqualTo
 import timber.log.Timber
 import java.io.*
 import java.net.URL
@@ -928,11 +928,12 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
             for (obj in message.getList("profiles")) {
                 val msg = obj as HtspMessage
                 val name = msg.getString("name")
+                val uuid = msg.getString("uuid")
 
-                val profileNames = appRepository.serverProfileData.htspPlaybackProfileNames
+                val profiles = appRepository.serverProfileData.htspPlaybackProfiles
                 var profileExists = false
-                for (profileName in profileNames) {
-                    if (profileName == name) {
+                for (p in profiles) {
+                    if (p.name == name && p.uuid == uuid) {
                         profileExists = true
                         break
                     }
@@ -941,7 +942,7 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
                     val serverProfile = ServerProfile()
                     serverProfile.connectionId = connection.id
                     serverProfile.name = name
-                    serverProfile.uuid = msg.getString("uuid")
+                    serverProfile.uuid = uuid
                     serverProfile.comment = msg.getString("comment")
                     serverProfile.type = "htsp_playback"
 
@@ -967,11 +968,12 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
                             val profile = entries.getJSONObject(i)
                             if (profile.has("key") && profile.has("val")) {
                                 val name = profile.getString("val")
+                                val uuid = profile.getString("key")
 
-                                val profileNames = appRepository.serverProfileData.httpPlaybackProfileNames
+                                val profiles = appRepository.serverProfileData.httpPlaybackProfiles
                                 var profileExists = false
-                                for (profileName in profileNames) {
-                                    if (profileName == name) {
+                                for (p in profiles) {
+                                    if (p.name == name && p.uuid == uuid) {
                                         profileExists = true
                                         break
                                     }
@@ -980,7 +982,7 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
                                     val serverProfile = ServerProfile()
                                     serverProfile.connectionId = connection.id
                                     serverProfile.name = name
-                                    serverProfile.uuid = profile.getString("key")
+                                    serverProfile.uuid = uuid
                                     serverProfile.type = "http_playback"
 
                                     Timber.d("Adding http playback profile ${serverProfile.name}")
