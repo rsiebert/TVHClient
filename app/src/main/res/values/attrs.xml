@@ -5,6 +5,7 @@
     <attr name="ic_menu_save" format="reference" />
     <attr name="ic_menu_cancel" format="reference" />
     <attr name="ic_menu_add" format="reference" />
+    <attr name="ic_menu_list" format="reference" />
     <attr name="ic_menu_download" format="reference" />
     <attr name="ic_menu_edit" format="reference" />
     <attr name="ic_menu_delete" format="reference" />

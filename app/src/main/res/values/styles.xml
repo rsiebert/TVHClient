@@ -85,6 +85,7 @@
         <item name="ic_menu_save">@drawable/ic_menu_save_dark</item>
         <item name="ic_menu_cancel">@drawable/ic_menu_cancel_dark</item>
         <item name="ic_menu_add">@drawable/ic_menu_add_dark</item>
+        <item name="ic_menu_list">@drawable/ic_menu_list_dark</item>
         <item name="ic_menu_download">@drawable/ic_menu_download_dark</item>
         <item name="ic_menu_tags">@drawable/ic_menu_tag_dark</item>
         <item name="ic_menu_record_once">@drawable/ic_menu_record_dark</item>
@@ -165,6 +166,7 @@
         <item name="ic_menu_save">@drawable/ic_menu_save_light</item>
         <item name="ic_menu_cancel">@drawable/ic_menu_cancel_light</item>
         <item name="ic_menu_add">@drawable/ic_menu_add_light</item>
+        <item name="ic_menu_list">@drawable/ic_menu_list_light</item>
         <item name="ic_menu_download">@drawable/ic_menu_download_light</item>
         <item name="ic_menu_tags">@drawable/ic_menu_tag_light</item>
         <item name="ic_menu_record_once">@drawable/ic_menu_record_light</item>

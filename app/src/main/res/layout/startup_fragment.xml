@@ -61,7 +61,7 @@
         android:layout_marginBottom="16dp"
         android:background="?attr/rounded_corners"
         android:contentDescription="@null"
-        android:src="?attr/ic_menu_settings"
+        android:src="?attr/ic_menu_list"
         android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@+id/status_background"
         app:layout_constraintEnd_toEndOf="parent"
