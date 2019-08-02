@@ -47,7 +47,7 @@ internal class TextsubStreamReader : StreamReader {
                 String(message.getByteArray("payload"), UTF_8).trim { it <= ' ' })
 
         val lengthWithPrefix = SUBRIP_PREFIX.size + payload.size
-        val subsipSample = Arrays.copyOf(SUBRIP_PREFIX, lengthWithPrefix)
+        val subsipSample = SUBRIP_PREFIX.copyOf(lengthWithPrefix)
 
         System.arraycopy(payload, 0, subsipSample, SUBRIP_PREFIX.size, payload.size)
 
@@ -65,7 +65,7 @@ internal class TextsubStreamReader : StreamReader {
 
     private fun buildFormat(streamIndex: Int, stream: HtspMessage): Format {
         return Format.createTextSampleFormat(
-                Integer.toString(streamIndex),
+                streamIndex.toString(),
                 MimeTypes.APPLICATION_SUBRIP,
                 C.SELECTION_FLAG_AUTOSELECT,
                 stream.getString("language", "und"), null

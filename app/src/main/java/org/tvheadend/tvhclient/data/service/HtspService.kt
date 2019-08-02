@@ -36,6 +36,8 @@ import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledExecutorService
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
+import kotlin.math.floor
+import kotlin.math.max
 
 class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener {
 
@@ -1315,8 +1317,8 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
         // either dimension that correspond to a single pixel in the decoded
         // bitmap. For example, inSampleSize == 4 returns an image that is 1/4
         // the width/height of the original, and 1/16 the number of pixels.
-        val ratio = Math.max(o.outWidth / width, o.outHeight / height)
-        val sampleSize = Integer.highestOneBit(Math.floor(ratio.toDouble()).toInt())
+        val ratio = max(o.outWidth / width, o.outHeight / height)
+        val sampleSize = Integer.highestOneBit(floor(ratio.toDouble()).toInt())
         o = BitmapFactory.Options()
         o.inSampleSize = sampleSize
 
