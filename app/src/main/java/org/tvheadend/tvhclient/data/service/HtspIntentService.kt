@@ -7,7 +7,7 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import androidx.core.app.JobIntentService
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import leakcanary.LeakSentry
+import leakcanary.AppWatcher
 import org.tvheadend.htsp.*
 import org.tvheadend.tvhclient.MainApplication
 import org.tvheadend.tvhclient.R
@@ -97,7 +97,7 @@ class HtspIntentService : JobIntentService(), HtspConnectionStateListener {
         Timber.d("Stopping service")
         execService.shutdown()
         htspConnection.closeConnection()
-        LeakSentry.refWatcher.watch(this)
+        AppWatcher.objectWatcher.watch(this)
     }
 
     override fun onAuthenticationStateChange(state: HtspConnection.AuthenticationState) {
