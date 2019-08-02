@@ -37,8 +37,11 @@ class StartupFragment : Fragment() {
         }
 
         setHasOptionsMenu(true)
+        showStartupStatus()
 
+        Timber.d("Observing connection status")
         baseViewModel.connectionStatus.observe(viewLifecycleOwner, Observer { status ->
+            Timber.d("Received connection status from view model")
             status?.let {
                 loadingDone = true
                 connectionCount = it.first!!
@@ -51,6 +54,7 @@ class StartupFragment : Fragment() {
 
     private fun showStartupStatus() {
         if (!loadingDone) {
+            Timber.d("Connection count and active connection are still loading")
             startup_status.visible()
             startup_status.text = getString(R.string.initializing)
             add_connection_button.gone()
@@ -95,7 +99,7 @@ class StartupFragment : Fragment() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.menu_settings -> {
-                showConnectionListSettings()
+                showMainSettings()
                 true
             }
             R.id.menu_reconnect_to_server -> {
@@ -125,6 +129,11 @@ class StartupFragment : Fragment() {
     private fun showConnectionListSettings() {
         val intent = Intent(context, SettingsActivity::class.java)
         intent.putExtra("setting_type", "list_connections")
+        startActivity(intent)
+    }
+
+    private fun showMainSettings() {
+        val intent = Intent(context, SettingsActivity::class.java)
         startActivity(intent)
     }
 
