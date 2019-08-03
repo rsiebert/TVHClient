@@ -14,9 +14,14 @@
     </string-array>
 
     <string-array name="pref_sort_channels_names">
-        <item>Určené serverom</item>
-        <item>Meno kanálu</item>
-        <item>Číslo kanálu</item>
+        <item>Ako odoslané zo servera (stúpajúca)</item>
+        <item>Ako odoslané zo servera (klesajúci)</item>
+        <item>ID kanála (stúpajúca)</item>
+        <item>ID kanála (klesajúci)</item>
+        <item>Meno kanálu (stúpajúca)</item>
+        <item>Meno kanálu (klesajúci)</item>
+        <item>Číslo kanálu (stúpajúca)</item>
+        <item>Číslo kanálu (klesajúci)</item>
     </string-array>
 
     <string-array name="day_short_names">
@@ -39,7 +44,7 @@
         <item>Nedeľa</item>
     </string-array>
 
-    <string-array name="dvr_priorities">
+    <string-array name="dvr_priority_names">
         <item>Dôležité</item>
         <item>Vysoká</item>
         <item>Normálna</item>
@@ -58,15 +63,18 @@
 
     <string-array name="duplicate_detection_list">
         <item>Nahrať všetko</item>
+        <item>Všetko: Zaznamenajte, ak EPG indikuje, že ide o unikátny program</item>
         <item>Všetko: Nahrať, ak číslo epizódy je iné</item>
         <item>Všetko: Nahrať, ak titulky sú iné</item>
         <item>Všetko: Nahrať, ak popis je iný</item>
+        <item>Všetko: Nahrajte raz za mesiac</item>
         <item>Všetko: Nahrať raz týždenne</item>
         <item>Všetko: Nahrať raz denne</item>
         <item>Lokálne: Nahrať, ak číslo epizódy je iné</item>
         <item>Lokálne: Nahrať, ak názov je iný</item>
         <item>Lokálne: Nahrať, ak podtitulok je iný</item>
         <item>Lokálne: Nahrať, ak popis je iný</item>
+        <item>Lokálne: Nahrajte raz za mesiac</item>
         <item>Lokálne: Nahrať raz týždenne</item>
         <item>Lokálne: Nahrať raz denne</item>
     </string-array>

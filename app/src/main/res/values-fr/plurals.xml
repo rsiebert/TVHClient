@@ -9,10 +9,6 @@
         <item quantity="one">%d Elément</item>
         <item quantity="other">%d Eléments</item>
     </plurals>
-    <plurals name="recordings">
-        <item quantity="one">%d Enregistrement</item>
-        <item quantity="other">%d Enregistrements</item>
-    </plurals>
     <plurals name="completed_recordings">
         <item quantity="one">%d Terminé</item>
         <item quantity="other">%d Terminés</item>
@@ -24,14 +20,6 @@
     <plurals name="failed_recordings">
         <item quantity="one">%d Echec</item>
         <item quantity="other">%d Echecs</item>
-    </plurals>
-    <plurals name="searching_programs">
-        <item quantity="one">Recherche %d programme</item>
-        <item quantity="other">Recherche %d programmes</item>
-    </plurals>
-    <plurals name="searching_recordings">
-        <item quantity="one">Recherche de l\'enregistrement %d</item>
-        <item quantity="other">Recherche de l\'enregistrements %d</item>
     </plurals>
     <plurals name="number_of_connections">
         <item quantity="one">%d connexion disponible</item>

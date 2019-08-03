@@ -14,9 +14,14 @@
     </string-array>
 
     <string-array name="pref_sort_channels_names">
-        <item>Gedefinieerd door de server</item>
-        <item>Kanaal naam</item>
-        <item>Kanaal nummer</item>
+        <item>Zoals verzonden vanaf de server (oplopend)</item>
+        <item>Zoals verzonden vanaf de server (aflopend)</item>
+        <item>Kanaal-ID (oplopend)</item>
+        <item>Kanaal-ID (aflopend)</item>
+        <item>Kanaal naam (oplopend)</item>
+        <item>Kanaal naam (aflopend)</item>
+        <item>Kanaal nummer (oplopend)</item>
+        <item>Kanaal nummer (aflopend)</item>
     </string-array>
 
     <string-array name="day_long_names">

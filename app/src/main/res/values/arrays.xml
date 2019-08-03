@@ -14,6 +14,7 @@
         <item>cs</item>
         <item>sk</item>
         <item>es</item>
+        <item>hu</item>
     </string-array>
 
     <string-array name="pref_language_list_display">
@@ -28,6 +29,7 @@
         <item>Česky</item>
         <item>Slovensky</item>
         <item>Español</item>
+        <item>Húngaro</item>
     </string-array>
 
     <string-array name="pref_menu_ids" translatable="false">
@@ -70,12 +72,22 @@
         <item>0</item>
         <item>1</item>
         <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
     </string-array>
 
     <string-array name="pref_sort_channels_names">
-        <item>Defined by the server</item>
-        <item>Channel name</item>
-        <item>Channel number</item>
+        <item>As sent from server (ascending)</item>
+        <item>As sent from the server (descending)</item>
+        <item>Channel ID (ascending)</item>
+        <item>Channel ID (descending)</item>
+        <item>Channel name (ascending)</item>
+        <item>Channel name (descending)</item>
+        <item>Channel number (ascending)</item>
+        <item>Channel number (descending)</item>
     </string-array>
 
     <string-array name="day_short_names">
@@ -98,7 +110,7 @@
         <item>Sunday</item>
     </string-array>
 
-    <string-array name="dvr_priorities">
+    <string-array name="dvr_priority_names">
         <item>Important</item>
         <item>High</item>
         <item>Normal</item>
@@ -125,15 +137,18 @@
 
     <string-array name="duplicate_detection_list">
         <item>Record all</item>
+        <item>All: Record if EPG indicates it is a unique program</item>
         <item>All: Record if different episode number</item>
         <item>All: Record if different subtitle</item>
         <item>All: Record if different description</item>
+        <item>All: Record once per month</item>
         <item>All: Record once per week</item>
         <item>All: Record once per day</item>
         <item>Local: Record if different episode number</item>
         <item>Local: Record if different title</item>
         <item>Local: Record if different subtitle</item>
         <item>Local: Record if different description</item>
+        <item>Local: Record once per month</item>
         <item>Local: Record once per week</item>
         <item>Local: Record once per day</item>
     </string-array>

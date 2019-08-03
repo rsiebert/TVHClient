@@ -14,9 +14,14 @@
     </string-array>
 
     <string-array name="pref_sort_channels_names">
-        <item>Určené serverem</item>
-        <item>Jméno kanálu</item>
-        <item>Číslo kanálu</item>
+        <item>Jak je odeslán ze serveru (stoupající)</item>
+        <item>Jak je odeslán ze serveru (klesající)</item>
+        <item>ID kanálu (stoupající)</item>
+        <item>ID kanálu (klesající)</item>
+        <item>Jméno kanálu (stoupající)</item>
+        <item>Jméno kanálu (klesající)</item>
+        <item>Číslo kanálu (stoupající)</item>
+        <item>Číslo kanálu (klesající)</item>
     </string-array>
 
     <string-array name="day_short_names">
@@ -39,7 +44,7 @@
         <item>Neď</item>
     </string-array>
 
-    <string-array name="dvr_priorities">
+    <string-array name="dvr_priority_names">
         <item>Důležité</item>
         <item>Vysoká</item>
         <item>Normální</item>

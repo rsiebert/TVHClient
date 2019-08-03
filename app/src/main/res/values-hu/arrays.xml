@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="pref_menu_names">
+        <item>Csatornák</item>
+        <item>Műsorújság</item>
+        <item>Befejezett felvételek</item>
+        <item>Ütemezett felvételek</item>
+        <item>Sorozat-felvétel</item>
+        <item>Időzített felvételek</item>
+        <item>Sikertelen felvételek</item>
+        <item>Eltávolított felvételek</item>
+        <item>Státusz</item>
+    </string-array>
+
+    <string-array name="pref_channel_icon_action_names">
+        <item>Ne tegyen semmit</item>
+        <item>Lejátszás</item>
+        <item>Külső lejátszás (Cast)</item>
+    </string-array>
+
+    <string-array name="pref_sort_channels_names">
+        <item>Szerverről küldött (emelkedő)</item>
+        <item>Szerverről küldött (csökkenő)</item>
+        <item>Csatorna azonosító (emelkedő)</item>
+        <item>Csatorna azonosító (csökkenő)</item>
+        <item>Csatorna név (emelkedő)</item>
+        <item>Csatorna név (csökkenő)</item>
+        <item>Csatorna szám (emelkedő)</item>
+        <item>Csatorna szám (csökkenő)</item>
+    </string-array>
+
+    <string-array name="day_short_names">
+        <item>Hét</item>
+        <item>Ke</item>
+        <item>Sze</item>
+        <item>Csüt</item>
+        <item>Pén</item>
+        <item>Szo</item>
+        <item>Vas</item>
+    </string-array>
+
+    <string-array name="day_long_names">
+        <item>Héftő</item>
+        <item>Kedd</item>
+        <item>Szerda</item>
+        <item>Csütörtök</item>
+        <item>Péntek</item>
+        <item>Szombat</item>
+        <item>Vasárnap</item>
+    </string-array>
+
+    <string-array name="dvr_priority_names">
+        <item>Fontos</item>
+        <item>Magas</item>
+        <item>Normál</item>
+        <item>Kicsi</item>
+        <item>Nem fontos</item>
+        <item>Nincs beállítás</item>
+    </string-array>
+
+    <string-array name="pref_show_notification_offset_list_display">
+        <item>Pontos kezdési idő</item>
+        <item>5 perccel előtte</item>
+        <item>10 perccel előtte</item>
+        <item>15 perccel előtte</item>
+        <item>30 perccel előtte</item>
+    </string-array>
+
+    <string-array name="duplicate_detection_list">
+        <item>Összes felvétele</item>
+        <item>Mind: Felvétel, ha az EPG azt jelzi, hogy ez egy egyedi program</item>
+        <item>Mind: Felvétel ha különböző az epizód száma</item>
+        <item>Mind: Felvétel ha új a felirat</item>
+        <item>Mind: Felvétel akkor ha eltérő a leírás</item>
+        <item>Mind: havonta egyszeri rögzítés</item>
+        <item>Mind: hetente egyszeri rögzítés</item>
+        <item>Mind: naponta egyszeri rögzítés</item>
+        <item>Helyi: Felvétel ha különböző az epizód száma</item>
+        <item>Helyi: Felvétel ha más a cím</item>
+        <item>Helyi: Felvétel ha új a felirat</item>
+        <item>Helyi: Felvétel akkor ha eltérő a leírás</item>
+        <item>Helyi: havonta egyszeri rögzítés</item>
+        <item>Helyi: hetente egyszeri rögzítés</item>
+        <item>Helyi: naponta egyszeri rögzítés</item>
+    </string-array>
+
+    <string-array name="pr_content_type0">
+        <item>Film/Dráma</item>
+        <item>Hírek/Aktuális</item>
+        <item>Showműsor/Játék</item>
+        <item>Sport</item>
+        <item>Gyerek/Ifjúsági</item>
+        <item>Zene/Ballett/Tánc</item>
+        <item>Művészet/Kultúra</item>
+        <item>Szociális/Politikai/Gazdasági</item>
+        <item>Oktatás/Tudomány</item>
+        <item>Szabadidős/Hobbi</item>
+        <item>Egyéb</item>
+    </string-array>
+
+    <string-array name="pr_content_type1">
+        <item>Film/Dráma</item>
+        <item>Nyomozás/Thriller</item>
+        <item>Kaland/Western/Háborús</item>
+        <item>Sci-Fi/Fantázia/Horror</item>
+        <item>Vígjáték</item>
+        <item>Szappanopera/Melodráma/Folklor</item>
+        <item>Romantikus</item>
+        <item>Klasszikus/Történelmi</item>
+        <item>Felnőttfilm/Dráma</item>
+    </string-array>
+
+    <string-array name="pr_content_type2">
+        <item>Hírek/Aktuális</item>
+        <item>Hírek/Időjárás</item>
+        <item>Magazinműsor</item>
+        <item>Dokumentumfilm</item>
+        <item>Interjú/Vitaműsor</item>
+    </string-array>
+
+    <string-array name="pr_content_type3">
+        <item>Showműsor/Játék</item>
+        <item>Kvíz/Verseny</item>
+        <item>Varieté</item>
+        <item>Beszélgetős műsor</item>
+    </string-array>
+    
+    <string-array name="pr_content_type4">
+        <item>Sport</item>
+        <item>Speciális</item>
+        <item>Magazin</item>
+        <item>Football</item>
+        <item>Tennisz/Squash</item>
+        <item>Csapatsportok</item>
+        <item>Atletika</item>
+        <item>Motorsport</item>
+        <item>Vizi sport</item>
+        <item>Téli sport</item>
+        <item>Lovas</item>
+        <item>Harci sportok</item>
+    </string-array>
+
+    <string-array name="pr_content_type5">
+        <item>Gyermek/Ifjúsági</item>
+        <item>Iskola előtti</item>
+        <item>Szórakoztató (6-tól 14 éves korig)</item>
+        <item>Szórakoztató (10-től 16 éves korig)</item>
+        <item>Információs/Oktatási/Iskolai</item>
+        <item>Rajzfilmek</item>
+    </string-array>
+    
+    <string-array name="pr_content_type6">
+        <item>Zene/Ballett/Tánc</item>
+        <item>Rock/Pop</item>
+        <item>Klasszikus zene</item>
+        <item>Folk/Hagyománytisztelő</item>
+        <item>Jazz</item>
+        <item>Opera</item>
+        <item>Ballett</item>
+    </string-array>
+
+    <string-array name="pr_content_type7">
+        <item>Művészet/Kultúra</item>
+        <item>Előadóművészet</item>
+        <item>Szépművészet</item>
+        <item>Vallás</item>
+        <item>Popkultúra/Hagyományos művészet</item>
+        <item>Irodalom</item>
+        <item>Film/Mozi</item>
+        <item>Kísérleti film/Videó</item>
+        <item>Nyomtatott sajtó</item>
+        <item>Új média</item>
+        <item>Magazin</item>
+        <item>Divat</item>
+    </string-array>
+
+    <string-array name="pr_content_type8">
+        <item>Szociális/Politikai/Gazdasági</item>
+        <item>Magazin/Riport/Domentum</item>
+        <item>Közgazdaságtan/Szociális tanácsadó</item>
+        <item>Figyelemre méltó emberek</item>
+    </string-array>
+ 
+    <string-array name="pr_content_type9">
+        <item>Oktatás/Tudomány</item>        
+        <item>Természet/Állatok/Környezet</item>
+        <item>Technológia/Tudomány</item>
+        <item>Gyógyszer/Élettan/Pszichológia</item>
+        <item>Külföldi országok/Expedíciók</item>
+        <item>Szociális/Szellemi tudományok</item>
+        <item>Továbbképzés</item>
+        <item>Nyelvek</item>
+    </string-array>
+
+    <string-array name="pr_content_type10">
+        <item>Szabadidős/Hobbi</item>
+        <item>Turizmus/Utazás</item>
+        <item>Kézművesség</item>
+        <item>Motorozás</item>
+        <item>Fitnessz/Egészség</item>
+        <item>Főzés</item>
+        <item>Reklám/Vásárlás</item>
+        <item>Ketrészkedés</item>
+    </string-array>
+
+    <string-array name="pr_content_type11">
+        <item>Egyéb</item>
+        <item>Fekete és fehér</item>
+        <item>Nem publikált</item>
+        <item>Elő adás</item>
+    </string-array>
+
+    <string-array name="buffer_playback_ms_names">
+        <item>Nincs puffer</item>
+        <item>0.5 másodperc</item>
+        <item>1 másodperc</item>
+        <item>1.5 másodperc</item>
+        <item>2 másodperc</item>
+        <item>2.5 másodperc</item>
+        <item>3 másodperc</item>
+        <item>4 másodperc</item>
+        <item>5 másodperc</item>
+    </string-array>
+
+    <string-array name="epg_max_time_names">
+        <item>1 óra</item>
+        <item>6 óra</item>
+        <item>12 óras</item>
+        <item>1 nap</item>
+        <item>3 nap</item>
+        <item>7 nap</item>
+        <item>8 nap</item>
+    </string-array>
+
+</resources>

@@ -2,59 +2,58 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
     <PreferenceCategory android:title="@string/details">
         <EditTextPreference
+            android:hint="@string/pref_name"
             android:key="name"
             android:summary="@string/pref_name_sum"
             android:title="@string/pref_name" />
         <EditTextPreference
-            android:key="hostname"
-            android:summary="@string/pref_host_sum"
-            android:title="@string/pref_host" />
+            android:hint="@string/pref_server_url_hint"
+            android:key="server_url"
+            android:summary="@string/pref_server_url_sum"
+            android:title="@string/pref_server_url" />
         <EditTextPreference
-            android:defaultValue="9982"
-            android:inputType="number"
-            android:key="htsp_port"
-            android:summary="@string/pref_port_sum"
-            android:title="@string/pref_port" />
+            android:hint="@string/pref_streaming_url_hint"
+            android:key="streaming_url"
+            android:summary="@string/pref_streaming_url_sum"
+            android:title="@string/pref_streaming_url" />
         <EditTextPreference
-            android:defaultValue="9981"
-            android:inputType="number"
-            android:key="streaming_port"
-            android:summary="@string/pref_streaming_port_sum"
-            android:title="@string/pref_streaming_port" />
-        <EditTextPreference
+            android:hint="@string/pref_user"
             android:key="username"
             android:summary="@string/pref_user_sum"
             android:title="@string/pref_user" />
         <EditTextPreference
+            android:hint="@string/pref_pass"
             android:inputType="textPassword"
             android:key="password"
             android:summary="@string/pref_pass_sum"
             android:title="@string/pref_pass" />
         <CheckBoxPreference
-            android:defaultValue="true"
+            android:defaultValue="@bool/pref_default_active_enabled"
             android:key="active_enabled"
             android:summary="@string/pref_selected_sum"
             android:title="@string/pref_selected" />
     </PreferenceCategory>
     <PreferenceCategory android:title="Wake On Lan">
         <CheckBoxPreference
-            android:defaultValue="false"
+            android:defaultValue="@bool/pref_default_wol_enabled"
             android:key="wol_enabled"
             android:title="Enable Wake On Lan" />
         <EditTextPreference
             android:dependency="wol_enabled"
+            android:hint="00:ef:aa:dc:09:45"
             android:key="wol_mac_address"
             android:summary="@string/pref_wol_address_sum"
             android:title="@string/pref_wol_address" />
         <CheckBoxPreference
-            android:defaultValue="false"
+            android:defaultValue="@bool/pref_default_wol_broadcast_enabled"
             android:dependency="wol_enabled"
             android:key="wol_broadcast_enabled"
             android:summary="@string/pref_wol_broadcast_sum"
             android:title="@string/pref_wol_broadcast" />
         <EditTextPreference
-            android:defaultValue="9"
+            android:defaultValue="@string/pref_default_wol_port"
             android:dependency="wol_enabled"
+            android:hint="@string/pref_default_wol_port"
             android:inputType="number"
             android:key="wol_port"
             android:summary="@string/pref_wol_port_sum"

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <plurals name="programs">
+        <item quantity="one">%d program</item>
+        <item quantity="other">%d program</item>
+    </plurals>
+    <plurals name="channels">
+        <item quantity="one">%d csatorna</item>
+        <item quantity="other">%d csatorna</item>
+    </plurals>
+    <plurals name="items">
+        <item quantity="one">%d elem</item>
+        <item quantity="other">%d elem</item>
+    </plurals>
+    <plurals name="completed_recordings">
+        <item quantity="one">%d Befejezett felvétel</item>
+        <item quantity="other">%d Befejezett felvétel</item>
+    </plurals>
+    <plurals name="upcoming_recordings">
+        <item quantity="one">%d Következő felvétel</item>
+        <item quantity="other">%d Következő felvétel</item>
+    </plurals>
+    <plurals name="failed_recordings">
+        <item quantity="one">%d Sikertelen felvétel</item>
+        <item quantity="other">%d Sikertelen felvétel</item>
+    </plurals>
+    <plurals name="removed_recordings">
+        <item quantity="one">%d Eltávolított felvétel</item>
+        <item quantity="other">%d Eltávolított felvétel</item>
+    </plurals>
+    <plurals name="series_recordings">
+        <item quantity="one">%d Sorozat felvétel</item>
+        <item quantity="other">%d Sorozat felvétel</item>
+    </plurals>
+    <plurals name="timer_recordings">
+        <item quantity="one">%d Ütemezett felvétel</item>
+        <item quantity="other">%d Ütemezett felvétel</item>
+    </plurals>
+    <plurals name="results">
+        <item quantity="one">%d találat</item>
+        <item quantity="other">%d találat</item>
+    </plurals>
+    <plurals name="number_of_connections">
+        <item quantity="one">%d kapcsolat elérhető</item>
+        <item quantity="other">%d kapcsolat elérhető</item>
+    </plurals>
+</resources>

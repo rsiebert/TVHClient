@@ -2,13 +2,13 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
     <PreferenceCategory android:title="@string/pref_crash_reporting_settings">
         <CheckBoxPreference
-            android:defaultValue="true"
+            android:defaultValue="@bool/pref_default_crash_reports_enabled"
             android:key="crash_reports_enabled"
             android:summary="@string/pref_enable_crash_reports_sum"
             android:title="@string/pref_enable_crash_reports" />
 
         <CheckBoxPreference
-            android:defaultValue="false"
+            android:defaultValue="@bool/pref_default_debug_mode_enabled"
             android:key="debug_mode_enabled"
             android:summary="@string/pref_debug_mode_sum"
             android:title="@string/pref_debug_mode" />
@@ -22,9 +22,8 @@
 
     <PreferenceCategory android:title="@string/pref_connections">
         <EditTextPreference
-            android:id="@+id/connection_timeout"
             android:name="@string/pref_connection_timeout"
-            android:defaultValue="5"
+            android:defaultValue="@string/pref_default_connection_timeout"
             android:key="connection_timeout"
             android:numeric="integer"
             android:summary="@string/pref_connection_timeout_sum"
@@ -44,14 +43,14 @@
 
     <PreferenceCategory android:title="@string/pref_notifications">
         <CheckBoxPreference
-            android:defaultValue="false"
+            android:defaultValue="@bool/pref_default_notifications_enabled"
             android:key="notifications_enabled"
             android:summary="@string/pref_show_notifications_sum"
             android:title="@string/pref_show_notifications" />
 
         <ListPreference
             android:name="@string/pref_show_notification_offset"
-            android:defaultValue="0"
+            android:defaultValue="@string/pref_default_notification_lead_time"
             android:dependency="notifications_enabled"
             android:dialogTitle="@string/pref_show_notification_offset"
             android:entries="@array/pref_show_notification_offset_list_display"
@@ -59,11 +58,30 @@
             android:key="notification_lead_time"
             android:summary="@string/pref_show_notification_offset_sum"
             android:title="@string/pref_show_notification_offset" />
+
+        <CheckBoxPreference
+            android:defaultValue="@bool/pref_default_notify_running_recording_count_enabled"
+            android:key="notify_running_recording_count_enabled"
+            android:title="@string/pref_notify_about_running_recordings" />
+
+        <CheckBoxPreference
+            android:defaultValue="@bool/pref_default_notify_low_storage_space_enabled"
+            android:key="notify_low_storage_space_enabled"
+            android:title="@string/pref_notify_low_server_storage_space" />
+
+        <EditTextPreference
+            android:name=""
+            android:defaultValue="@string/pref_default_low_storage_space_threshold"
+            android:dependency="notify_low_storage_space_enabled"
+            android:key="low_storage_space_threshold"
+            android:numeric="integer"
+            android:summary="@string/pref_notify_low_server_storage_space_threshold_sum"
+            android:title="@string/pref_notify_low_server_storage_space_threshold" />
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/pref_navigation">
         <CheckBoxPreference
-            android:defaultValue="true"
+            android:defaultValue="@bool/pref_default_navigation_history_enabled"
             android:key="navigation_history_enabled"
             android:summary="@string/pref_navigation_history_enabled_sum"
             android:title="@string/pref_navigation_history_enabled" />
@@ -80,5 +98,10 @@
             android:key="clear_database"
             android:summary="@string/pref_clear_database_sum"
             android:title="@string/pref_clear_database" />
+        <CheckBoxPreference
+            android:defaultValue="@bool/pref_default_copy_playback_url_to_clipboard_enabled"
+            android:key="copy_playback_url_to_clipboard_enabled"
+            android:summary="@string/pref_copy_playback_url_to_clipboard_enabled_sum"
+            android:title="@string/pref_copy_playback_url_to_clipboard_enabled" />
     </PreferenceCategory>
 </PreferenceScreen>

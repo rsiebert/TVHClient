@@ -1,20 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string-array name="pref_language_list_display">
-        <item>Domylny</item>
-        <item>Niemiecki</item>
-        <item>Angielski</item>
-        <item>Francuzki</item>
-        <item>Włoski</item>
-        <item>Holenderski</item>
-        <item>Polski</item>
-        <item>Szwedzki</item>
-        <item>Czeski</item>
-        <item>Slovensky</item>
-        <item>Hiszpański</item>
-	</string-array>
-
     <string-array name="pref_menu_names">
         <item>Kanały</item>
         <item>Przewodnik programów</item>
@@ -28,9 +14,14 @@
     </string-array>
 
     <string-array name="pref_sort_channels_names">
-        <item>Zdefiniowane przez serwer</item>
-        <item>Nazwa kanału</item>
-        <item>Numer kanału</item>
+        <item>Jako wysłane z serwera (rosnąco)</item>
+        <item>Jako wysłane z serwera (malejąco)</item>
+        <item>ID kanału (rosnąco)</item>
+        <item>ID kanału (malejąco)</item>
+        <item>Nazwa kanału (rosnąco)</item>
+        <item>Nazwa kanału (malejąco)</item>
+        <item>Numer kanału (rosnąco)</item>
+        <item>Numer kanału (malejąco)</item>
     </string-array>
     
     <string-array name="day_short_names">
@@ -53,7 +44,7 @@
         <item>Niedziela</item>
     </string-array>
 
-    <string-array name="dvr_priorities">
+    <string-array name="dvr_priority_names">
         <item>Ważny</item>
         <item>Wysoki</item>
         <item>Normalny</item>

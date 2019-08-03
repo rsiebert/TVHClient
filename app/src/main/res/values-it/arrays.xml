@@ -21,7 +21,7 @@
         <item>Domenica</item>
     </string-array>
 
-    <string-array name="dvr_priorities">
+    <string-array name="dvr_priority_names">
         <item>Molto alta</item>
         <item>Alta</item>
         <item>Normale</item>
@@ -156,8 +156,13 @@
     </string-array>
 
     <string-array name="pref_sort_channels_names">
-        <item>Definito dal server</item>
-        <item>Nome canale</item>
-        <item>Numero canale</item>
+        <item>Come inviato dal server (ascendente)</item>
+        <item>Come inviato dal server (discendente)</item>
+        <item>ID canale (ascendente)</item>
+        <item>ID canale (discendente)</item>
+        <item>Nome canale (ascendente)</item>
+        <item>Nome canale (discendente)</item>
+        <item>Numero canale (ascendente)</item>
+        <item>Numero canale (discendente)</item>
     </string-array>
 </resources>

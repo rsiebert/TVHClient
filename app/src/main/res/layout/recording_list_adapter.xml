@@ -1,266 +1,325 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="?android:attr/selectableItemBackground"
-    android:paddingBottom="16dp">
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <ImageView
-        android:id="@+id/icon"
-        android:layout_width="56dp"
-        android:layout_height="40dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:contentDescription="@null"
-        android:scaleType="fitStart"
-        android:visibility="invisible"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+    <data>
 
-    <TextView
-        android:id="@+id/icon_text"
-        style="?attr/ContentFont"
-        android:layout_width="56dp"
-        android:layout_height="40dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        <import type="android.view.View" />
 
-    <TextView
-        android:id="@+id/title"
-        style="?attr/TitleFont"
-        android:layout_width="0dp"
+        <variable
+            name="recording"
+            type="org.tvheadend.tvhclient.domain.entity.Recording" />
+
+        <variable
+            name="viewModel"
+            type="org.tvheadend.tvhclient.ui.features.dvr.recordings.RecordingViewModel" />
+
+        <variable
+            name="position"
+            type="int" />
+
+        <variable
+            name="isSelected"
+            type="boolean" />
+
+        <variable
+            name="isDualPane"
+            type="boolean" />
+
+        <variable
+            name="htspVersion"
+            type="int" />
+
+        <variable
+            name="callback"
+            type="org.tvheadend.tvhclient.ui.common.callbacks.RecyclerViewClickCallback" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_weight="0.9"
-        android:ellipsize="end"
-        android:text="@string/title"
-        app:layout_constraintEnd_toStartOf="@+id/state"
-        app:layout_constraintStart_toEndOf="@+id/icon"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:background="?android:attr/selectableItemBackground"
+        android:onClick="@{(view) -> callback.onClick(view, position)}"
+        android:onLongClick="@{(view) -> callback.onLongClick(view, position)}"
+        android:paddingBottom="16dp">
 
-    <ImageView
-        android:id="@+id/state"
-        android:layout_width="20dp"
-        android:layout_height="20dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginRight="16dp"
-        android:layout_marginTop="16dp"
-        android:contentDescription="@null"
-        android:scaleType="fitCenter"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        <ImageView
+            android:id="@+id/icon"
+            android:layout_width="56dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="16dp"
+            android:contentDescription="@null"
+            android:scaleType="fitStart"
+            app:iconUrl="@{recording.channelIcon}"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/subtitle"
-        style="?attr/SubtitleFont"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:layout_marginStart="16dp"
-        android:ellipsize="end"
-        android:singleLine="true"
-        android:text="@string/subtitle"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/icon"
-        app:layout_constraintTop_toBottomOf="@+id/title" />
+        <TextView
+            android:id="@+id/icon_text"
+            style="?attr/ContentFont"
+            android:layout_width="56dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="16dp"
+            app:iconName="@{recording.channelName}"
+            app:iconUrl="@{recording.channelIcon}"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/summary"
-        style="?attr/SubtitleFont"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:layout_marginStart="16dp"
-        android:ellipsize="end"
-        android:singleLine="true"
-        android:text="@string/summary"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/icon"
-        app:layout_constraintTop_toBottomOf="@+id/subtitle" />
+        <TextView
+            android:id="@+id/title"
+            style="?attr/TitleFont"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="88dp"
+            android:layout_marginLeft="88dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_weight="0.9"
+            android:ellipsize="end"
+            android:text="@{recording.title}"
+            app:layout_constraintEnd_toStartOf="@+id/state"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/channel"
-        style="?attr/ContentFont"
-        android:layout_width="0dip"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="16dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="4dp"
-        android:text="@string/channel"
-        app:layout_constraintStart_toEndOf="@+id/icon"
-        app:layout_constraintTop_toBottomOf="@+id/summary" />
+        <ImageView
+            android:id="@+id/state"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginRight="16dp"
+            android:contentDescription="@null"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_rec_small"
+            android:visibility="@{recording.isRecording ? View.VISIBLE : View.GONE}"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/duration"
-        style="?attr/ContentFont"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:layout_marginRight="16dp"
-        android:layout_marginTop="4dp"
-        android:gravity="end"
-        android:text="@string/duration"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/summary" />
+        <TextView
+            android:id="@+id/subtitle"
+            style="?attr/SubtitleFont"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:layout_marginRight="16dp"
+            android:ellipsize="end"
+            android:singleLine="true"
+            android:visibility="@{recording.subtitle != null &amp;&amp; !recording.subtitle.equals(recording.title) ? View.VISIBLE : View.GONE}"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/title"
+            app:layout_constraintTop_toBottomOf="@+id/title"
+            app:optionalText="@{recording.subtitle}" />
 
-    <TextView
-        android:id="@+id/date"
-        style="?attr/ContentFont"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="16dp"
-        android:layout_marginStart="16dp"
-        android:text="@string/date"
-        app:layout_constraintStart_toEndOf="@+id/icon"
-        app:layout_constraintTop_toBottomOf="@+id/channel" />
+        <TextView
+            android:id="@+id/summary"
+            style="?attr/SubtitleFont"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:layout_marginRight="16dp"
+            android:ellipsize="end"
+            android:singleLine="true"
+            android:visibility="@{recording.summary != null &amp;&amp; !recording.summary.equals(recording.subtitle) ? View.VISIBLE : View.GONE}"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/title"
+            app:layout_constraintTop_toBottomOf="@+id/subtitle"
+            app:optionalText="@{recording.summary}" />
 
-    <TextView
-        android:id="@+id/start"
-        style="?attr/ContentFont"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:layout_marginRight="16dp"
-        android:gravity="end"
-        android:text="@string/time"
-        app:layout_constraintEnd_toStartOf="@+id/stop"
-        app:layout_constraintTop_toBottomOf="@+id/duration" />
+        <TextView
+            android:id="@+id/channel"
+            style="?attr/ContentFont"
+            android:layout_width="0dip"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="@{recording.channelName != null ? recording.channelName : @string/all_channels}"
+            app:layout_constraintStart_toStartOf="@+id/title"
+            app:layout_constraintTop_toBottomOf="@+id/summary" />
 
-    <TextView
-        android:id="@+id/stop"
-        style="?attr/ContentFont"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:layout_marginRight="16dp"
-        android:gravity="end"
-        android:text="@string/time"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/duration" />
+        <TextView
+            android:id="@+id/duration"
+            style="?attr/ContentFont"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginRight="16dp"
+            android:gravity="end"
+            android:text="@{@string/minutes(recording.duration)}"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/summary" />
 
-    <TextView
-        android:id="@+id/description"
-        style="?attr/ContentFont"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="4dp"
-        android:ellipsize="end"
-        android:maxLines="4"
-        android:text="@string/description"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/icon"
-        app:layout_constraintTop_toBottomOf="@+id/date" />
+        <TextView
+            android:id="@+id/date"
+            style="?attr/ContentFont"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:dateText="@{recording.start}"
+            app:layout_constraintStart_toStartOf="@+id/title"
+            app:layout_constraintTop_toBottomOf="@+id/channel" />
 
-    <TextView
-        android:id="@+id/is_series_recording"
-        style="?attr/SubtitleFont"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="4dp"
-        android:text="@string/is_series_recording"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/icon"
-        app:layout_constraintTop_toBottomOf="@+id/description" />
+        <TextView
+            android:id="@+id/start"
+            style="?attr/ContentFont"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:layout_marginRight="16dp"
+            android:gravity="end"
+            app:layout_constraintEnd_toStartOf="@+id/stop"
+            app:layout_constraintTop_toBottomOf="@+id/duration"
+            app:timeText="@{recording.start}" />
 
-    <TextView
-        android:id="@+id/is_timer_recording"
-        style="?attr/SubtitleFont"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="4dp"
-        android:text="@string/is_timer_recording"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/icon"
-        app:layout_constraintTop_toBottomOf="@+id/is_series_recording" />
+        <TextView
+            android:id="@+id/stop"
+            style="?attr/ContentFont"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:layout_marginRight="16dp"
+            android:gravity="end"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/duration"
+            app:timeText="@{recording.stop}" />
 
-    <TextView
-        android:id="@+id/failed_reason"
-        style="?attr/SubtitleFont"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="4dp"
-        android:ellipsize="end"
-        android:text="@null"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/icon"
-        app:layout_constraintTop_toBottomOf="@+id/is_timer_recording" />
+        <TextView
+            android:id="@+id/description"
+            style="?attr/ContentFont"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginRight="16dp"
+            android:ellipsize="end"
+            android:maxLines="4"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/title"
+            app:layout_constraintTop_toBottomOf="@+id/date"
+            app:optionalText="@{recording.description}" />
 
-    <TextView
-        android:id="@+id/disabled"
-        style="?attr/ContentFont"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="4dp"
-        android:text="@string/recording_disabled"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/icon"
-        app:layout_constraintTop_toBottomOf="@+id/failed_reason" />
+        <TextView
+            android:id="@+id/is_series_recording"
+            style="?attr/SubtitleFont"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginRight="16dp"
+            android:text="@string/is_series_recording"
+            android:visibility="@{recording.autorecId != null &amp;&amp; !recording.autorecId.isEmpty ? View.VISIBLE : View.GONE}"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/title"
+            app:layout_constraintTop_toBottomOf="@+id/description" />
 
-    <TextView
-        android:id="@+id/duplicate"
-        style="?attr/ContentFont"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="4dp"
-        android:text="@string/duplicate_recording"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/icon"
-        app:layout_constraintTop_toBottomOf="@+id/disabled" />
+        <TextView
+            android:id="@+id/is_timer_recording"
+            style="?attr/SubtitleFont"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginRight="16dp"
+            android:text="@string/is_timer_recording"
+            android:visibility="@{recording.timerecId != null &amp;&amp; !recording.timerecId.isEmpty ? View.VISIBLE : View.GONE}"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/title"
+            app:layout_constraintTop_toBottomOf="@+id/is_series_recording" />
 
-    <TextView
-        android:id="@+id/data_size"
-        style="?attr/ContentFont"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="4dp"
-        android:text="@string/data_size"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/icon"
-        app:layout_constraintTop_toBottomOf="@+id/duplicate" />
+        <TextView
+            android:id="@+id/failed_reason"
+            style="?attr/SubtitleFont"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginRight="16dp"
+            android:ellipsize="end"
+            app:failedReasonText="@{recording}"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/title"
+            app:layout_constraintTop_toBottomOf="@+id/is_timer_recording" />
 
-    <TextView
-        android:id="@+id/data_errors"
-        style="?attr/ContentFont"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:layout_marginStart="16dp"
-        android:text="@string/data_errors"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/icon"
-        app:layout_constraintTop_toBottomOf="@+id/data_size" />
+        <TextView
+            android:id="@+id/disabled"
+            style="?attr/ContentFont"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginRight="16dp"
+            app:disabledText="@{recording}"
+            app:htspVersion="@{htspVersion}"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/title"
+            app:layout_constraintTop_toBottomOf="@+id/failed_reason" />
 
-    <ImageView
-        android:id="@+id/dual_pane_list_item_selection"
-        android:layout_width="12dp"
-        android:layout_height="36dp"
-        android:layout_marginBottom="8dp"
-        android:layout_marginTop="8dp"
-        android:contentDescription="@null"
-        android:scaleType="center"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        <TextView
+            android:id="@+id/duplicate"
+            style="?attr/ContentFont"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginRight="16dp"
+            app:duplicateText="@{recording}"
+            app:htspVersion="@{htspVersion}"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/title"
+            app:layout_constraintTop_toBottomOf="@+id/disabled" />
 
-</android.support.constraint.ConstraintLayout>
+        <TextView
+            android:id="@+id/data_size"
+            style="?attr/ContentFont"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginRight="16dp"
+            app:dataSizeText="@{recording}"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/title"
+            app:layout_constraintTop_toBottomOf="@+id/duplicate" />
+
+        <TextView
+            android:id="@+id/data_errors"
+            style="?attr/ContentFont"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:layout_marginRight="16dp"
+            app:dataErrorText="@{recording}"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/title"
+            app:layout_constraintTop_toBottomOf="@+id/data_size" />
+
+        <TextView
+            android:id="@+id/stream_errors"
+            style="?attr/ContentFont"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:layout_marginRight="16dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/title"
+            app:layout_constraintTop_toBottomOf="@+id/data_errors"
+            app:streamErrorText="@{recording}" />
+
+        <ImageView
+            android:id="@+id/dual_pane_list_item_selection"
+            android:layout_width="12dp"
+            android:layout_height="36dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:contentDescription="@null"
+            android:scaleType="center"
+            android:visibility="@{isDualPane ? View.VISIBLE : View.GONE}"
+            app:backgroundImage="@{isSelected}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

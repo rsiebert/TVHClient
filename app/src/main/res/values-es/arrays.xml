@@ -14,9 +14,14 @@
     </string-array>
 
     <string-array name="pref_sort_channels_names">
-        <item>Definidos en el servidor</item>
-        <item>Nombre de canal</item>
-        <item>Número de canal</item>
+        <item>Como enviado desde el servidor (ascendente)</item>
+        <item>Como enviado desde el servidor (descendente)</item>
+        <item>ID de canal (ascendente)</item>
+        <item>ID de canal (descendente)</item>
+        <item>Nombre de canal (ascendente)</item>
+        <item>Nombre de canal (descendente)</item>
+        <item>Número de canal (ascendente)</item>
+        <item>Número de canal (descendente)</item>
     </string-array>
 
     <string-array name="day_short_names">
@@ -39,7 +44,7 @@
         <item>Domingo</item>
     </string-array>
 
-    <string-array name="dvr_priorities">
+    <string-array name="dvr_priority_names">
         <item>Importante</item>
         <item>Alta</item>
         <item>Normal</item>

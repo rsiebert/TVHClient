@@ -1,6 +1,169 @@
+$ 2.2.16
+  % VERSION 2.2.16
+  _ 05.07.2019
+    * Added popup menu to directly enable or disable scheduled recordings (Only available in the unlocked version)
+    * Connections are now defined by an url like 'http://myserver:9982' instead of a host and port
+    * Fixed showing the settings again after an orientation change
+    * Fixed some layout issues in the startup screen
+    * Fixed channel tag names were not shown in the selection dialog
+    * Crash reports moved from Fabric.io to Firebase
+    * Improvements and some bug fixes
+$ 2.2.15
+  % VERSION 2.2.15
+  _ 03.06.2019
+    * Fixed current time indication in the epg screen
+    * Fixed possible crash when certain epg settings were not an integer
+    * Fixed profiles not being saved in the settings
+    * Fixed selecting the settings menu from the navigation menu
+$ 2.2.14
+  % VERSION 2.2.14
+  _ 26.05.2019
+    * Fixed issue where the start screen would always be the channel screen
+    * Fixed navigation not working after device was rotated
+    * Small bug fixes
+$ 2.2.13
+  % VERSION 2.2.13
+  _ 23.05.2019
+    * Prevent reloading a screen when the same menu item was selected from the navigation menu
+    * Changed the default low server storage space notification threshold from 5GB to 1GB
+    * Replaced image loading library Glide with Picasso again
+    * Fixed crash when opening the time selection dialog in the epg or channel list screen
+    * Fixed crash when clearing the database from the advanced settings
+    * Fixed crash during startup when no server status entry was found in the database
+$ 2.2.12
+  % VERSION 2.2.12
+  _ 22.05.2019
+    * Added popup menu to directly enable or disable series or timer recordings (Only available in the unlocked version)
+    * Replaced image loading library Picasso with Glide
+    * Small bug fixes
+$ 2.2.11
+  % VERSION 2.2.11
+  _ 20.05.2019
+    * Hide the progress bar in the channel list if no program is currently shown
+    * Do not pause the internal player when PIP mode is entered on devices running Android P
+    * Searching from the channel list will now search through all programs as in the epg screen, not only for channels and the current program
+    * Improved the search speed a little
+    * Show the timer recording name below the title if available
+    * Fixed showing the snackbar on devices running Android P
+    * Fixed showing the correct elapsed and remaining times in the internal player
+    * Fixed the channel number overlapping the icon in the channel list
+    * Added an option in the advanced settings to show a notification when a recording is currently being recorded(Only available in the unlocked version and on Android 6 or higher)
+    * Added an option in the advanced settings to show a notification when the free storage space is below a user defined threshold (Only available in the unlocked version and on Android 6 or higher)
+    * Some improvements under the hood
+$ 2.2.10
+  % VERSION 2.2.10
+  _ 15.04.2019
+    * Fixed error where changes to an edited recording were not saved
+$ 2.2.9
+  % VERSION 2.2.9
+  _ 15.04.2019
+    * Show the correct channel numbers in the program guide
+    * Updated translations
+    * Small bug fixes and improvements under the hood
+$ 2.2.8
+  % VERSION 2.2.8
+  _ 13.04.2019
+    * Fixed possible crash in the scheduled recording screen when the setting to hide duplicate recordings is enabled
+    * Separate the day and month by a dot instead of a colon in the add edit recording screens
+    * Fixed messed up layout in the add manual recording screen
+    * When adding or editing a recording show a sorted  list of channels
+$ 2.2.7
+  % VERSION 2.2.7
+  _ 12.04.2019
+    * Fixed possible crash in the profile settings screen
+$ 2.2.6
+  % VERSION 2.2.6
+  _ 12.04.2019
+    * Fixed time selection handling in the add edit recording screens
+    * Added internal player menu item to switch playback to fullscreen (landscape mode)
+    * Fixed search menu not shown in the program list
+    * Added setting to show the channel number below the icon
+    * Small bug fixes and improvements under the hood
+$ 2.2.5
+  % VERSION 2.2.5
+  _ 31.03.2019
+    * Small bug fixes
+$ 2.2.4
+  % VERSION 2.2.4
+  _ 27.03.2019
+    * Make the menu to jump to a certain time and date in the program guide a free feature
+    * Show the channel name in case the icon can't be loaded
+    * Fixed setting to show or hide the program detail cover
+    * Show the series recording title in case the name is not set
+    * Support dual screen again on older tablets
+    * Small bug fixes
+$ 2.2.3
+  % VERSION 2.2.3
+  _ 18.03.2019
+    * Fixed crash when the server did not provide a valid playback path or ticket
+    * Show the program subtitles only when enabled in the UI settings
+    * Small bug fixes
+$ 2.2.2
+  % VERSION 2.2.2
+  _ 17.03.2019
+    * Display the stream errors for a recording again
+    * Fixed custom language sometimes not being shown
+    * Fixed playback sometimes not starting when an external player is used
+    * Fixed text overlapping the channel icons in the program list
+    * Prevent crashing older servers when requesting http profiles
+    * Fixed showing the wrong start and stop times for timer recordings
+    * Show 'Any' instead of 23:59 for timer and series recording in case no time was provided by the server
+    * Fixed updating the channels in the database when channels were removed on the server
+$ 2.2.1
+  % VERSION 2.2.1
+  _ 01.03.2019
+    * Do not restart the main activity when stopping playback and picture in picture mode was active
+$ 2.2.0
+  % VERSION 2.2.0
+  _ 01.03.2019
+    * Replaced current connection service with the one from application version 1.9.12
+    * Added picture in picture mode for the internal player
+    * Added toolbar menu in the channel list screen to wake up the server
+    * Added Discord link as a contact option in the Help & Support page
+    * Internal enhancements and bug fixes
+    * Small layout changes
+$ 2.1.0
+  % VERSION 2.1.0
+  _ 04.02.2019
+    * Improved the loading of more programs if there are none available. Please select reconnect from the top menu if you have no epg data!
+    * Some internal changes to the code base like upgrading to AndroidX, switching some source files to kotlin and adding data binding in the manual recordings screen
+    * Some bug fixes
+$ 2.0.5
+  % VERSION 2.0.5
+  _ 29.01.2019
+    * Fixed selection of series and timer recording priorities
+    * Small bug fixes
+$ 2.0.4
+  % VERSION 2.0.4
+  _ 29.01.2019
+    * Added adaptive launcher icon
+    * Added toolbar menu to change the channel sort order from the channel or epg screens
+    * Small bug fixes
+$ 2.0.3
+  % VERSION 2.0.3
+  _ 28.01.2019
+    * Fixed crash when selecting the option to sort by channel number
+    * Fixed crash when deleting channel icons
+    * Fixed showing changelog contents for new versions
+$ 2.0.2
+  % VERSION 2.0.2
+  _ 28.01.2019
+    * Added sorting option "Defined by server". It is now the order in which order the server has send the channels to the client. The option "Sort by channel ID" sorts by the internal channel number defined by the server. Please check or adjust the settings!
+    * The initial sync is now done completely in the background, the ongoing sync is shown as a progressbar below the toolbar
+    * Changed option to show the "Delete all recordings" menu instead of hiding it
+    * The setting to delete the channel icons will now automatically start loading the icons from the server
+    * Fixed selection of multiple channel tags
+$ 2.0.1
+  % VERSION 2.0.1
+  _ 25.01.2019
+    * Changed the one time initial sync of data to faster show the channel screen. (Only when a reconnect is requested from the menu or a certain time since the last sync has passed, new epg data is fetched in the background.)
+    * Use the hostname for regular playback and the IP address only for casting
+    * Added separate option to use the internal player only for either channels or recordings
+    * Replaced billing library to prevent the app from sometimes not unlocking
+    * Added more choices how to sort the channels
 $ 2.0.0
   % VERSION 2.0.0
-  _ 30.10.2018
+  _ 15.01.2019
     * Some UI changes according to the material design guidelines (popup menus, new navigation menu and icons)
     * Channels, recordings and epg data are now stored in a database
     * Epg data will be periodically fetched in the background
@@ -10,14 +173,15 @@ $ 2.0.0
     * New popup menu to directly add and then edit a recording (Only available in the unlocked version)
     * New popup menu to search program details on the fileaffinity website
     * New popup menus to search program details on google and youtube (Only available in the unlocked version)
+    * New option to filter channels by selecting multiple channel tags instead of only one (Only available in the unlocked version)
     * New option to hide duplicate scheduled recordings
     * New options to hide certain popup menu items
     * New option to disable the navigation history. The back button will then close the app.
+    * New option to enable copying the playback url to the clipboard.
     * Updated Spanish translation
     * Updated Dutch translation
     * Updated Polish translation
     * Crashlytics is used in favour of the previous crash reporting library TracePot (enabled by default in the advanced settings)
-    * Answers is used to gather anonymous user statistics (disabled by default in the advanced settings)
     * Relevant menu items are enabled or disabled based on the network status
     * Added option to show the privacy policy
     * Added a new help and support navigation menu item

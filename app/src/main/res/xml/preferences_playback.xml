@@ -1,43 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <PreferenceCategory android:title="Player">
+    <PreferenceCategory android:title="@string/pref_general">
         <CheckBoxPreference
-            android:defaultValue="false"
-            android:key="internal_player_enabled"
-            android:summary="Play live TV or recordings with the internal player which uses the HTSP protocol"
-            android:title="Enable Internal Player" />
+            android:defaultValue="@bool/pref_default_internal_player_enabled"
+            android:key="internal_player_for_channels_enabled"
+            android:title="@string/pref_internal_player_for_channels_enabled" />
+        <CheckBoxPreference
+            android:defaultValue="@bool/pref_default_internal_player_enabled"
+            android:key="internal_player_for_recordings_enabled"
+            android:title="@string/pref_internal_player_for_recordings_enabled" />
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="Audio and Video">
+    <PreferenceCategory android:title="@string/pref_advanced_settings">
         <ListPreference
             android:defaultValue="@string/pref_default_buffer_playback_ms"
-            android:dependency="internal_player_enabled"
-            android:dialogTitle="Buffer Seconds"
+            android:dialogTitle="@string/pref_internal_player_buffer_duration_dialog_title"
             android:entries="@array/buffer_playback_ms_names"
             android:entryValues="@array/buffer_playback_ms_values"
             android:key="buffer_playback_ms"
-            android:summary="How many seconds to buffer before starting playback"
-            android:title="Buffer Duration" />
+            android:summary="@string/pref_internal_player_buffer_duration_sum"
+            android:title="@string/pref_internal_player_buffer_duration" />
         <CheckBoxPreference
             android:defaultValue="@bool/pref_default_audio_passthrough_decoder_enabled"
-            android:dependency="internal_player_enabled"
             android:key="audio_passthrough_decoder_enabled"
-            android:summary="You must also ensure the system audio settings allows passthrough"
-            android:title="Enable Audio Passthrough" />
+            android:summary="@string/pref_internal_player_audio_passthrough_enabled_sum"
+            android:title="@string/pref_internal_player_audio_passthrough_enabled" />
         <CheckBoxPreference
             android:defaultValue="@bool/pref_default_audio_tunneling_enabled"
-            android:dependency="internal_player_enabled"
             android:key="audio_tunneling_enabled"
-            android:summary="Enable support for DSP audio tunneling"
-            android:title="Enable Audio Tunneling" />
-    </PreferenceCategory>
-
-    <PreferenceCategory android:title="Advanced">
+            android:summary="@string/pref_internal_player_audio_tunneling_enabled_sum"
+            android:title="@string/pref_internal_player_audio_tunneling_enabled" />
         <CheckBoxPreference
+            android:enabled="false"
             android:defaultValue="@bool/pref_default_timeshift_enabled"
-            android:dependency="internal_player_enabled"
             android:key="timeshift_enabled"
-            android:title="Enable timeshift support" />
+            android:title="@string/pref_internal_player_timeshift_enabled" />
     </PreferenceCategory>
 </PreferenceScreen>

@@ -20,9 +20,14 @@
     </string-array>
 
     <string-array name="pref_sort_channels_names">
-        <item>Definiert durch Server</item>
-        <item>Sendername</item>
-        <item>Sendernummer</item>
+        <item>Wie vom Server gesendet (aufsteigend)</item>
+        <item>Wie vom Server gesendet (absteigend)</item>
+        <item>Sender-ID (aufsteigend)</item>
+        <item>Sender-ID (absteigend)</item>
+        <item>Sendername (aufsteigend)</item>
+        <item>Sendername (absteigend)</item>
+        <item>Sendernummer (aufsteigend)</item>
+        <item>Sendernummer (absteigend)</item>
     </string-array>
 
     <string-array name="day_short_names">
@@ -45,7 +50,7 @@
         <item>Sonntag</item>
     </string-array>
 
-    <string-array name="dvr_priorities">
+    <string-array name="dvr_priority_names">
         <item>Wichtig</item>
         <item>Hoch</item>
         <item>Normal</item>
@@ -64,17 +69,30 @@
 
     <string-array name="duplicate_detection_list">
         <item>Alles aufnehmen</item>
+        <item>Alle: Aufnahme wenn das EPG angibt, dass das Program einmalig ist</item>
         <item>Alle: Aufnahme bei anderer Episodennummer</item>
         <item>Alle: Aufnahme bei anderem Untertitel</item>
         <item>Alle: Aufnahme bei anderer Beschreibung</item>
+        <item>Alle: Aufnahme einmal pro Monat</item>
         <item>Alle: Aufnahme einmal pro Woche</item>
         <item>Alle: Aufnahme einmal pro Tag</item>
         <item>Lolal: Aufnahme bei anderer Episodennummer</item>
         <item>Lokal: Aufnahme bei anderem Titel</item>
         <item>Lokal: Aufnahme bei anderem Untertitel</item>
         <item>Lokal: Aufnahme bei anderer Beschreibung</item>
+        <item>Lokal: Aufnahme einmal pro Monat</item>
         <item>Lokal: Aufnahme einmal pro Woche</item>
         <item>Lokal: Aufnahme einmal pro Tag</item>
+    </string-array>
+
+    <string-array name="epg_max_time_names">
+        <item>1 Stunde</item>
+        <item>6 Stunden</item>
+        <item>12 Stunden</item>
+        <item>1 Tag</item>
+        <item>3 Tage</item>
+        <item>7 Tage</item>
+        <item>8 Tage</item>
     </string-array>
 
     <string-array name="pr_content_type0">

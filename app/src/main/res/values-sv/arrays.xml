@@ -14,9 +14,14 @@
     </string-array>
 
     <string-array name="pref_sort_channels_names">
-        <item>Definieras av servern</item>
-        <item>Kanalnamn</item>
-        <item>Kanalnummer</item>
+        <item>Som skickas från servern (Stigande)</item>
+        <item>Som skickas från servern (Fallande)</item>
+        <item>Kanal-ID (Stigande)</item>
+        <item>Kanal-ID (Fallande)</item>
+        <item>Kanalnamn (Stigande)</item>
+        <item>Kanalnamn (Fallande)</item>
+        <item>Kanalnummer (Stigande)</item>
+        <item>Kanalnummer (Fallande)</item>
     </string-array>
 
     <string-array name="day_short_names">

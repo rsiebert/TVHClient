@@ -1,12 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <!-- Default Preference values -->
+    <!-- Default main preference values -->
+    <string name="pref_default_language" translatable="false">default</string>
+    <bool name="pref_default_light_theme_enabled">true</bool>
+
+    <!-- Default playback preference values -->
+    <bool name="pref_default_internal_player_enabled">false</bool>
     <string name="pref_default_buffer_playback_ms" translatable="false">500</string>
     <bool name="pref_default_audio_passthrough_decoder_enabled">false</bool>
     <bool name="pref_default_audio_tunneling_enabled">false</bool>
-    <bool name="pref_default_audio_ffmpeg_audio_enabled">true</bool>
-
-    <string name="pref_default_epg_max_time" translatable="false">86400</string>
     <bool name="pref_default_timeshift_enabled">false</bool>
+
+    <!-- Default connection preference values -->
+    <string name="pref_default_htsp_port" translatable="false">9982</string>
+    <string name="pref_default_streaming_port" translatable="false">9981</string>
+    <bool name="pref_default_active_enabled">true</bool>
+    <bool name="pref_default_wol_enabled">false</bool>
+    <bool name="pref_default_wol_broadcast_enabled">false</bool>
+    <string name="pref_default_wol_port" translatable="false">9</string>
+
+    <!-- Default advanced preference values -->
+    <bool name="pref_default_crash_reports_enabled">true</bool>
+    <bool name="pref_default_debug_mode_enabled">false</bool>
+    <string name="pref_default_connection_timeout" translatable="false">5</string>
+    <string name="pref_default_epg_max_time" translatable="false">86400</string>
+    <bool name="pref_default_notifications_enabled">false</bool>
+    <string name="pref_default_notification_lead_time" translatable="false">0</string>
+    <bool name="pref_default_navigation_history_enabled">true</bool>
+    <bool name="pref_default_copy_playback_url_to_clipboard_enabled">false</bool>
+    <bool name="pref_default_notify_running_recording_count_enabled">false</bool>
+    <bool name="pref_default_notify_low_storage_space_enabled">false</bool>
+    <string name="pref_default_low_storage_space_threshold" translatable="false">1</string>
+
+    <!-- Default UI preference values -->
+    <string name="pref_default_start_screen" translatable="false">0</string>
+    <bool name="pref_default_localized_date_time_format_enabled">false</bool>
+    <bool name="pref_default_channel_name_enabled">true</bool>
+    <bool name="pref_default_channel_number_enabled">false</bool>
+    <string name="pref_default_channel_icon_action" translatable="false">0</string>
+    <string name="pref_default_channel_sort_order" translatable="false">0</string>
+    <bool name="pref_default_channel_tag_icons_enabled">false</bool>
+    <bool name="pref_default_multiple_channel_tags_enabled">false</bool>
+    <bool name="pref_default_program_progressbar_enabled">true</bool>
+    <bool name="pref_default_next_program_title_enabled">true</bool>
+    <bool name="pref_default_program_subtitle_enabled">false</bool>
+    <bool name="pref_default_program_artwork_enabled">false</bool>
+    <bool name="pref_default_hide_duplicate_scheduled_recordings_enabled">false</bool>
+    <bool name="pref_default_show_recording_file_status_enabled">false</bool>
+    <string name="pref_default_hours_of_epg_data_per_screen" translatable="false">4</string>
+    <string name="pref_default_days_of_epg_data" translatable="false">7</string>
+    <bool name="pref_default_casting_minicontroller_enabled">false</bool>
+    <bool name="pref_default_genre_colors_for_channels_enabled">false</bool>
+    <bool name="pref_default_genre_colors_for_programs_enabled">false</bool>
+    <bool name="pref_default_genre_colors_for_program_guide_enabled">false</bool>
+    <string name="pref_default_genre_color_transparency" translatable="false">70</string>
+    <bool name="pref_default_delete_all_recordings_menu_enabled">false</bool>
+    <bool name="pref_default_channel_tag_menu_enabled">true</bool>
+
 </resources>

@@ -14,9 +14,14 @@
     </string-array>
 
     <string-array name="pref_sort_channels_names">
-        <item>Défini par le serveur</item>
-        <item>Nom de la chaine</item>
-        <item>Numero de la chaine</item>
+        <item>Comme envoyé du serveur (ascendant)</item>
+        <item>Comme envoyé du serveur (descendant)</item>
+        <item>Identifiant de chaîne (ascendant)</item>
+        <item>Identifiant de chaîne (descendant)</item>
+        <item>Nom de la chaine (ascendant)</item>
+        <item>Nom de la chaine (descendant)</item>
+        <item>Numero de la chaine (ascendant)</item>
+        <item>Numero de la chaine (descendant)</item>
     </string-array>
 
     <string-array name="day_short_names">
@@ -39,7 +44,7 @@
         <item>Dimanche</item>
     </string-array>
 
-    <string-array name="dvr_priorities">
+    <string-array name="dvr_priority_names">
         <item>Important</item>
         <item>Haute</item>
         <item>Normal</item>

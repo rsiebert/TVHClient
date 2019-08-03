@@ -13,9 +13,11 @@
     <application
         android:name="org.tvheadend.tvhclient.MainApplication"
         android:allowBackup="true"
+        android:extractNativeLibs="false"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:supportsRtl="false">
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true">
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
@@ -26,11 +28,11 @@
             android:name="com.google.android.gms.cast.framework.OPTIONS_PROVIDER_CLASS_NAME"
             android:value="org.tvheadend.tvhclient.MainApplication" />
         <meta-data
-            android:name="io.fabric.ApiKey"
-            android:value="8ea21b9d2155f0843c3c57f71a18568c71ef17f9" />
+            android:name="firebase_crashlytics_collection_enabled"
+            android:value="false" />
 
         <provider
-            android:name="android.support.v4.content.FileProvider"
+            android:name="androidx.core.content.FileProvider"
             android:authorities="org.tvheadend.tvhclient.fileprovider"
             android:exported="false"
             android:grantUriPermissions="true">
@@ -40,7 +42,7 @@
         </provider>
 
         <activity
-            android:name=".features.startup.StartupActivity"
+            android:name=".ui.features.startup.StartupActivity"
             android:theme="@android:style/Theme.NoTitleBar">
             <intent-filter>
                 <data android:scheme="tvhclient" />
@@ -50,7 +52,7 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <activity android:name=".features.search.SearchActivity">
+        <activity android:name=".ui.features.search.SearchActivity">
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
             </intent-filter>
@@ -58,9 +60,9 @@
                 android:name="android.app.searchable"
                 android:resource="@xml/searchable" />
         </activity>
-        <activity android:name=".features.settings.SettingsActivity" />
+        <activity android:name=".ui.features.settings.SettingsActivity" />
         <activity
-            android:name=".features.streaming.external.ExpandedControlsActivity"
+            android:name=".ui.features.playback.external.ExpandedControlsActivity"
             android:label="@string/app_name"
             android:launchMode="singleTask"
             android:screenOrientation="portrait">
@@ -70,50 +72,53 @@
         </activity>
 
         <service
-            android:name=".data.service.EpgSyncService"
-            android:enabled="true"
+            android:name=".data.service.HtspService"
             android:exported="false" />
         <service
-            android:name=".data.service.EpgSyncIntentService"
+            android:name=".data.service.HtspIntentService"
             android:exported="false"
             android:permission="android.permission.BIND_JOB_SERVICE" />
 
         <provider
-            android:name="org.tvheadend.tvhclient.features.search.SuggestionProvider"
-            android:authorities="org.tvheadend.tvhclient.features.search.SuggestionProvider"
+            android:name="org.tvheadend.tvhclient.ui.features.search.SuggestionProvider"
+            android:authorities="org.tvheadend.tvhclient.ui.features.search.SuggestionProvider"
             android:exported="false" />
 
-        <receiver android:name=".features.notifications.ProgramNotificationReceiver" />
-        <receiver android:name=".features.notifications.RecordingNotificationReceiver" />
-
-        <activity android:name=".features.dvr.RecordingAddEditActivity" />
-        <activity android:name=".features.dvr.recordings.RecordingDetailsActivity" />
-        <activity android:name=".features.changelog.ChangeLogActivity" />
-        <activity android:name=".features.MainActivity">
+        <activity android:name=".ui.features.dvr.RecordingAddEditActivity" />
+        <activity android:name=".ui.features.changelog.ChangeLogActivity" />
+        <activity
+            android:name=".ui.features.MainActivity"
+            android:launchMode="singleTask">
             <meta-data
                 android:name="android.app.default_searchable"
-                android:value=".features.search.SearchActivity" />
+                android:value=".ui.features.search.SearchActivity" />
         </activity>
         <activity
-            android:name=".features.programs.ProgramDetailsActivity"
+            android:name=".ui.features.programs.ProgramDetailsActivity"
             android:excludeFromRecents="true"
             android:launchMode="singleTask"
             android:taskAffinity="" />
-        <activity android:name=".features.purchase.UnlockerActivity" />
-        <activity android:name=".features.streaming.external.PlayRecordingActivity" />
-        <activity android:name=".features.streaming.external.PlayChannelActivity" />
-        <activity android:name=".features.streaming.external.CastChannelActivity" />
-        <activity android:name=".features.streaming.external.CastRecordingActivity" />
+        <activity android:name=".ui.features.playback.external.PlayRecordingActivity" />
+        <activity android:name=".ui.features.playback.external.PlayChannelActivity" />
+        <activity android:name=".ui.features.playback.external.CastChannelActivity" />
+        <activity android:name=".ui.features.playback.external.CastRecordingActivity" />
         <activity
-            android:name=".features.startup.SplashActivity"
+            android:name=".ui.features.startup.SplashActivity"
             android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".features.streaming.internal.HtspPlaybackActivity" />
-        <activity android:name=".features.information.WebViewActivity" />
+        <activity android:name=".ui.base.BaseActivity" />
+        <activity
+            android:name=".ui.features.playback.internal.PlaybackActivity"
+            android:autoRemoveFromRecents="true"
+            android:configChanges="smallestScreenSize|screenLayout|screenSize|orientation"
+            android:excludeFromRecents="true"
+            android:launchMode="singleTask"
+            android:resizeableActivity="true"
+            android:supportsPictureInPicture="true" />
 
     </application>
 </manifest>

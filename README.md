@@ -2,39 +2,50 @@
 
 [![Build Status](https://travis-ci.org/rsiebert/TVHClient.svg?branch=develop)](https://travis-ci.org/rsiebert/TVHClient)
 
-This android application allows you to interact and control the TVHeadend server. It is based on TVHGuide but contains many improvements and new features. It provides a clean and modern UI. The following major features are available: 
+This application allows you to fully control your TVHeadend server. 
 
 <b>Main features:</b>
-* Show TV channels
-* Show current and upcoming programs
-* Full EPG (electronic program guide)
+* Watch Live-TV or your recordings on your smartphone, tablet or Chromecast
+* Show TV channels including current and upcoming programs
+* Full electronic program guide
 * Schedule and manage recordings
-* Watch TV or your recordings
-* Search for programs
+* Create series and timer recordings
+* Search for programs and recordings
+* Download recordings
 * Modern and intuitive design
-* Supports multiple TVHeadend servers
+* Connect to multiple TVHeadend servers
 <br />
 
 <b>Other features:</b>
-* Filter channels by category
-* Show server statistics
+* Filter channels by channel tags
+* Sorting of channels
+* Show channel logos
 * Different playback profiles for TV programs and recordings
 * Show program genre colors
 * Multiple languages
 * Light and dark theme
+* Wake up the server via wake on LAN
+* Show server statistics
 
 This program is licensed under the GPLv3 (see LICENSE).
 
-# How can I help?
+# Get in contact
 
-If you are a programmer, fork the project, and provide patches or enhancements via pull requests. If you don't have coding skills, you can help with translations. Otherwise, file bugs, and open enhancement requests.
+Contact me either by
+* creating a new issue in Github
+* write a mail to rsiebert80@gmail.com
+* Discord (https://discord.gg/RbBXfG3)
+
+# How can I help?
+    
+* Provide pull request with patches or new features
+* Report bugs and/or request new features
+* Help with translations
 
 # Building from Source (Android Studio)
 
-* Download Android Studio (http://developer.android.com/sdk/index.html)
-* Install and setup Android Studio (http://developer.android.com/sdk/installing/index.html)
-* Download and install Git (https://git-scm.com/downloads)
-* Clone the TVHClient repository
+* Download and install Android Studio 3.4 (http://developer.android.com/sdk/index.html)
+* Clone the TVHClient repository within Android Studio
 * Open the project from Android Studio
 
 # Build Properties

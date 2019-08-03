@@ -30,7 +30,6 @@
 
     <!-- Theme colors -->
     <color name="window_background_color_light">#fff5f5f5</color>
-    <color name="window_background_color_dark">#ff141414</color>
 
 	<!-- MaterialDrawer DEFAULT DARK colors -->
 	<color name="material_drawer_background_dark">#303030</color>
@@ -42,9 +41,11 @@
 	<color name="material_drawer_divider_dark">#1FFFFFFF</color>
 	<color name="material_drawer_badge_dark">#1FAAAAAA</color>
 	<!-- MaterialDrawer DEFAULT DARK drawer colors -->
-	<color name="material_drawer_selected_dark">#202020</color>
+    <color name="material_drawer_selected_dark">#202020</color>
+	<color name="material_drawer_selected_legacy_dark">#202020</color>
 	<color name="material_drawer_selected_text_dark">@color/material_drawer_primary</color>
-	<color name="material_drawer_header_selection_text_dark">#FFF</color>
+	<color name="material_drawer_header_selection_text_dark">#FFFFFFFF</color>
+	<color name="material_drawer_header_selection_subtext_dark">#B3FFFFFF</color>
 
 	<color name="fab_background_color_dark">#7f8c8d</color>
 
@@ -59,8 +60,10 @@
 	<color name="material_drawer_badge_light">#0F000000</color>
 	<!-- Material DEFAULT drawer colors -->
 	<color name="material_drawer_selected_light">#E8E8E8</color>
+	<color name="material_drawer_selected_legacy_light">#E8E8E8</color>
 	<color name="material_drawer_selected_text_light">#2196F3</color>
-	<color name="material_drawer_header_selection_text_light">#FFF</color>
+	<color name="material_drawer_header_selection_text_light">#FFFFFFFF</color>
+	<color name="material_drawer_header_selection_subtext_light">#B3FFFFFF</color>
 
 	<color name="fab_background_color_light">#bdc3c7</color>
 
@@ -71,4 +74,13 @@
 	<color name="title_text_dark">#ceffffff</color>
 	<color name="subtitle_text_dark">#acffffff</color>
 	<color name="content_text_dark">#7cffffff</color>
+
+	<color name="scrollbar_track_light">#F0F0F0</color>
+	<color name="scrollbar_thumb_light">#C9C9C9</color>
+	<color name="scrollbar_thumb_selected_light">#AAAAAA</color>
+
+	<color name="scrollbar_track_dark">#393939</color>
+	<color name="scrollbar_thumb_dark">#777777</color>
+	<color name="scrollbar_thumb_selected_dark">#BBBBBB</color>
+
 </resources>

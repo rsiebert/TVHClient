@@ -11,27 +11,33 @@
         android:title="@string/cast"
         android:visible="false" />
     <item
-        android:id="@+id/menu_edit"
+        android:id="@+id/menu_edit_recording"
         android:icon="?attr/ic_menu_edit"
         android:title="@string/edit"
         android:visible="false" />
     <item
-        android:id="@+id/menu_record_remove"
+        android:id="@+id/menu_remove_recording"
         android:icon="?attr/ic_menu_record_remove"
         android:title="@string/remove"
         android:visible="false" />
     <item
-        android:id="@+id/menu_record_stop"
+        android:id="@+id/menu_stop_recording"
         android:icon="?attr/ic_menu_stop"
         android:title="@string/stop"
         android:visible="false" />
     <item
-        android:id="@+id/menu_record_cancel"
+        android:id="@+id/menu_cancel_recording"
         android:icon="?attr/ic_menu_cancel"
         android:title="@string/cancel"
         android:visible="false" />
     <item
-        android:id="@+id/menu_download"
+        android:id="@+id/menu_enable_recording"
+        android:title="@string/enable" />
+    <item
+        android:id="@+id/menu_disable_recording"
+        android:title="@string/disable" />
+    <item
+        android:id="@+id/menu_download_recording"
         android:icon="?attr/ic_menu_download"
         android:title="@string/download"
         android:visible="false" />

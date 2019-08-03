@@ -4,12 +4,12 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent">
 
-    <android.support.constraint.ConstraintLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
         <TextView
-            android:id="@+id/connection_label"
+            android:id="@+id/connection_label_view"
             style="?attr/TitleFont"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
@@ -23,7 +23,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/connection"
+            android:id="@+id/connection_view"
             style="?attr/ContentFont"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
@@ -32,10 +32,10 @@
             android:text="@string/connection"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/connection_label" />
+            app:layout_constraintTop_toBottomOf="@+id/connection_label_view" />
 
         <TextView
-            android:id="@+id/channels_label"
+            android:id="@+id/channels_label_view"
             style="?attr/TitleFont"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
@@ -46,10 +46,10 @@
             android:text="@string/channels"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/connection" />
+            app:layout_constraintTop_toBottomOf="@+id/connection_view" />
 
         <TextView
-            android:id="@+id/channels"
+            android:id="@+id/channels_view"
             style="?attr/ContentFont"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
@@ -58,10 +58,10 @@
             android:text="@string/channels"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/channels_label" />
+            app:layout_constraintTop_toBottomOf="@+id/channels_label_view" />
 
         <TextView
-            android:id="@+id/programs_label"
+            android:id="@+id/programs_label_view"
             style="?attr/TitleFont"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
@@ -72,10 +72,10 @@
             android:text="@string/programs"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/channels" />
+            app:layout_constraintTop_toBottomOf="@+id/channels_view" />
 
         <TextView
-            android:id="@+id/programs"
+            android:id="@+id/programs_view"
             style="?attr/ContentFont"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
@@ -84,10 +84,10 @@
             android:text="@string/programs"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/programs_label" />
+            app:layout_constraintTop_toBottomOf="@+id/programs_label_view" />
 
         <TextView
-            android:id="@+id/recording_label"
+            android:id="@+id/recording_label_view"
             style="?attr/TitleFont"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
@@ -97,10 +97,10 @@
             android:text="@string/recordings"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/programs" />
+            app:layout_constraintTop_toBottomOf="@+id/programs_view" />
 
         <TextView
-            android:id="@+id/completed_recordings"
+            android:id="@+id/completed_recordings_view"
             style="?attr/ContentFont"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
@@ -109,10 +109,10 @@
             android:text="@string/completed_recordings"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/recording_label" />
+            app:layout_constraintTop_toBottomOf="@+id/recording_label_view" />
 
         <TextView
-            android:id="@+id/upcoming_recordings"
+            android:id="@+id/upcoming_recordings_view"
             style="?attr/ContentFont"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
@@ -121,10 +121,10 @@
             android:text="@string/scheduled_recordings"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/completed_recordings" />
+            app:layout_constraintTop_toBottomOf="@+id/completed_recordings_view" />
 
         <TextView
-            android:id="@+id/series_recordings"
+            android:id="@+id/series_recordings_view"
             style="?attr/ContentFont"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
@@ -133,10 +133,10 @@
             android:text="@string/series_recordings"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/upcoming_recordings" />
+            app:layout_constraintTop_toBottomOf="@+id/upcoming_recordings_view" />
 
         <TextView
-            android:id="@+id/timer_recordings"
+            android:id="@+id/timer_recordings_view"
             style="?attr/ContentFont"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
@@ -145,10 +145,10 @@
             android:text="@string/timer_recordings"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/series_recordings" />
+            app:layout_constraintTop_toBottomOf="@+id/series_recordings_view" />
 
         <TextView
-            android:id="@+id/failed_recordings"
+            android:id="@+id/failed_recordings_view"
             style="?attr/ContentFont"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
@@ -157,10 +157,10 @@
             android:text="@string/failed_recordings"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/timer_recordings" />
+            app:layout_constraintTop_toBottomOf="@+id/timer_recordings_view" />
 
         <TextView
-            android:id="@+id/removed_recordings"
+            android:id="@+id/removed_recordings_view"
             style="?attr/ContentFont"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
@@ -169,10 +169,10 @@
             android:text="@string/removed_recordings"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/failed_recordings" />
+            app:layout_constraintTop_toBottomOf="@+id/failed_recordings_view" />
 
         <TextView
-            android:id="@+id/currently_recording_label"
+            android:id="@+id/currently_recording_label_view"
             style="?attr/TitleFont"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
@@ -182,10 +182,10 @@
             android:text="@string/currently_recording"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/removed_recordings" />
+            app:layout_constraintTop_toBottomOf="@+id/removed_recordings_view" />
 
         <TextView
-            android:id="@+id/currently_recording"
+            android:id="@+id/currently_recording_view"
             style="?attr/ContentFont"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
@@ -194,10 +194,10 @@
             android:text="@string/nothing"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/currently_recording_label" />
+            app:layout_constraintTop_toBottomOf="@+id/currently_recording_label_view" />
 
         <TextView
-            android:id="@+id/discspace_label"
+            android:id="@+id/discspace_label_view"
             style="?attr/TitleFont"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
@@ -207,10 +207,10 @@
             android:text="@string/disc_space"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/currently_recording" />
+            app:layout_constraintTop_toBottomOf="@+id/currently_recording_view" />
 
         <TextView
-            android:id="@+id/total_discspace"
+            android:id="@+id/total_discspace_view"
             style="?attr/ContentFont"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
@@ -219,10 +219,10 @@
             android:text="@string/unknown"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/discspace_label" />
+            app:layout_constraintTop_toBottomOf="@+id/discspace_label_view" />
 
         <TextView
-            android:id="@+id/free_discspace"
+            android:id="@+id/free_discspace_view"
             style="?attr/ContentFont"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
@@ -231,10 +231,10 @@
             android:text="@string/unknown"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/total_discspace" />
+            app:layout_constraintTop_toBottomOf="@+id/total_discspace_view" />
 
         <TextView
-            android:id="@+id/server_api_version_label"
+            android:id="@+id/server_api_version_label_view"
             style="?attr/TitleFont"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
@@ -244,10 +244,10 @@
             android:text="@string/server_api_version"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/free_discspace" />
+            app:layout_constraintTop_toBottomOf="@+id/free_discspace_view" />
 
         <TextView
-            android:id="@+id/server_api_version"
+            android:id="@+id/server_api_version_view"
             style="?attr/ContentFont"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
@@ -256,6 +256,6 @@
             android:text="@string/unknown"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/server_api_version_label" />
-    </android.support.constraint.ConstraintLayout>
+            app:layout_constraintTop_toBottomOf="@+id/server_api_version_label_view" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

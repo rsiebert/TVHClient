@@ -13,12 +13,6 @@
         <item quantity="many">%d pozycji</item>
         <item quantity="other">%d pozycji</item>
     </plurals>
-    <plurals name="recordings">
-        <item quantity="one">%d nagranie</item>
-        <item quantity="few">%d nagrania</item>
-        <item quantity="many">%d nagrań</item>
-        <item quantity="other">%d nagrań</item>
-    </plurals>
     <plurals name="completed_recordings">
         <item quantity="one">%d Zakończone nagranie</item>
         <item quantity="few">%d Zakończone nagrania</item>
@@ -48,18 +42,6 @@
         <item quantity="few">%d wyniki</item>
         <item quantity="many">%d wyników</item>
         <item quantity="other">%d wyników</item>
-    </plurals>
-    <plurals name="searching_programs">
-        <item quantity="one">Wyszukano %d program</item>
-        <item quantity="few">Wyszukano %d programy</item>
-        <item quantity="many">Wyszukano %d programów</item>
-        <item quantity="other">Wyszukano %d programów</item>
-    </plurals>
-    <plurals name="searching_recordings">
-        <item quantity="one">Wyszukiwanie %d nagranie</item>
-        <item quantity="few">Wyszukiwanie %d nagrania</item>
-        <item quantity="many">Wyszukiwanie %d nagrań</item>
-        <item quantity="other">Wyszukiwanie %d nagrań</item>
     </plurals>
     <plurals name="number_of_connections">
         <item quantity="one">%d połączenie dostępne</item>

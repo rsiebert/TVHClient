@@ -73,28 +73,6 @@
         <item name="android:textSize">14sp</item>
     </style>
 
-    <style name="spinnerItemStyle">
-        <item name="android:padding">8dp</item>
-        <item name="android:textSize">14sp</item>
-    </style>
-    <style name="spinnerItemStyle.Light" parent="spinnerItemStyle">
-        <item name="android:textColor">@color/content_text_light</item>
-    </style>
-    <style name="spinnerItemStyle.Dark" parent="spinnerItemStyle.Light">
-        <item name="android:textColor">@color/content_text_dark</item>
-    </style>
-
-    <style name="spinnerDropDownItemStyle">
-        <item name="android:padding">8dp</item>
-        <item name="android:textSize">14sp</item>
-    </style>
-    <style name="spinnerDropDownItemStyle.Light" parent="spinnerDropDownItemStyle">
-        <item name="android:textColor">@color/content_text_light</item>
-    </style>
-    <style name="spinnerDropDownItemStyle.Dark" parent="spinnerDropDownItemStyle.Light">
-        <item name="android:textColor">@color/content_text_dark</item>
-    </style>
-
     <!-- Styles that will be used for the dark holo theme -->
     <style name="CustomTheme" parent="Theme.AppCompat">
         <item name="windowActionModeOverlay">true</item>
@@ -126,7 +104,6 @@
         <item name="ic_menu_wol">@drawable/ic_menu_send_wol_dark</item>
         <item name="ic_menu_help">@drawable/ic_menu_help_dark</item>
         <item name="ic_menu_info">@drawable/ic_menu_info_dark</item>
-        <item name="ic_arrow_drop_down">@drawable/ic_arrow_drop_down_dark</item>
         <item name="ic_arrow_drop_down_like_spinner">@drawable/ic_arrow_drop_down_like_spinner_dark</item>
         <item name="item_active">@drawable/item_active_dark</item>
         <item name="item_not_active">@drawable/item_not_active_dark</item>
@@ -152,11 +129,6 @@
         <item name="ic_menu_information">@drawable/ic_menu_info_dark</item>
         <item name="ic_menu_extras">@drawable/ic_menu_extras_dark</item>
 
-        <!-- For the resting Spinner style -->
-        <item name="android:spinnerItemStyle">@style/spinnerItemStyle.Dark</item>
-        <!-- For each individual Spinner list item once clicked on -->
-        <item name="android:spinnerDropDownItemStyle">@style/spinnerDropDownItemStyle.Dark</item>
-
         <!-- MaterialDrawer specific values -->
         <item name="material_drawer_badge">@color/material_drawer_badge_dark</item>
         <item name="material_drawer_background">@color/material_drawer_background_dark</item>
@@ -165,9 +137,20 @@
         <item name="material_drawer_secondary_text">@color/material_drawer_secondary_text_dark</item>
         <item name="material_drawer_hint_text">@color/material_drawer_hint_text_dark</item>
         <item name="material_drawer_divider">@color/material_drawer_divider_dark</item>
-        <item name="material_drawer_selected">@color/material_drawer_selected_dark</item>
+        <item name="material_drawer_selected">@color/material_drawer_selected_dark</item> <!-- Material 2 defines 12% alpha, primary color -->
+        <item name="material_drawer_selected_legacy">@color/material_drawer_selected_legacy_dark</item> <!-- Defines the color if legacy style (Material 1, is enabled) -->
         <item name="material_drawer_selected_text">@color/material_drawer_selected_text_dark</item>
         <item name="material_drawer_header_selection_text">@color/material_drawer_header_selection_text_dark</item>
+        <item name="material_drawer_header_selection_subtext">@color/material_drawer_header_selection_subtext_dark</item>
+        <item name="material_drawer_legacy_style">false</item> <!-- Enables legacy Material 1 style -->
+
+        <!-- Fast scrollbar styles -->
+        <item name="fast_scroll_track">@drawable/fast_scroll_track_dark</item>
+        <item name="fast_scroll_thumb">@drawable/fast_scroll_thumb_dark</item>
+
+        <item name="md_color_title">@android:color/primary_text_dark</item>
+        <item name="md_color_content">@android:color/secondary_text_dark</item>
+        <item name="md_color_button_text">@android:color/secondary_text_dark</item>
     </style>
 
     <!-- Styles that will be used for the light holo theme -->
@@ -201,7 +184,6 @@
         <item name="ic_menu_wol">@drawable/ic_menu_send_wol_light</item>
         <item name="ic_menu_help">@drawable/ic_menu_help_light</item>
         <item name="ic_menu_info">@drawable/ic_menu_info_light</item>
-        <item name="ic_arrow_drop_down">@drawable/ic_arrow_drop_down_light</item>
         <item name="ic_arrow_drop_down_like_spinner">@drawable/ic_arrow_drop_down_like_spinner_light</item>
         <item name="item_active">@drawable/item_active_light</item>
         <item name="item_not_active">@drawable/item_not_active_light</item>
@@ -227,11 +209,6 @@
         <item name="ic_menu_information">@drawable/ic_menu_info_light</item>
         <item name="ic_menu_extras">@drawable/ic_menu_extras_light</item>
 
-        <!-- For the resting Spinner style -->
-        <item name="android:spinnerItemStyle">@style/spinnerItemStyle.Light</item>
-        <!-- For each individual Spinner list item once clicked on -->
-        <item name="android:spinnerDropDownItemStyle">@style/spinnerDropDownItemStyle.Light</item>
-
         <!-- MaterialDrawer specific values -->
         <item name="material_drawer_badge">@color/material_drawer_badge_light</item>
         <item name="material_drawer_background">@color/material_drawer_background_light</item>
@@ -240,9 +217,20 @@
         <item name="material_drawer_secondary_text">@color/material_drawer_secondary_text_light</item>
         <item name="material_drawer_hint_text">@color/material_drawer_hint_text_light</item>
         <item name="material_drawer_divider">@color/material_drawer_divider_light</item>
-        <item name="material_drawer_selected">@color/material_drawer_selected_light</item>
+        <item name="material_drawer_selected">@color/material_drawer_selected_light</item> <!-- Material 2 defines 12% alpha, primary color -->
+        <item name="material_drawer_selected_legacy">@color/material_drawer_selected_legacy_light</item> <!-- Defines the color if legacy style (Material 1, is enabled) -->
         <item name="material_drawer_selected_text">@color/material_drawer_selected_text_light</item>
         <item name="material_drawer_header_selection_text">@color/material_drawer_header_selection_text_light</item>
+        <item name="material_drawer_header_selection_subtext">@color/material_drawer_header_selection_subtext_light</item>
+        <item name="material_drawer_legacy_style">false</item> <!-- Enables legacy Material 1 style -->
+
+        <!-- Fast scrollbar styles -->
+        <item name="fast_scroll_track">@drawable/fast_scroll_track_light</item>
+        <item name="fast_scroll_thumb">@drawable/fast_scroll_thumb_light</item>
+
+        <item name="md_color_title">@android:color/primary_text_light</item>
+        <item name="md_color_content">@android:color/secondary_text_light</item>
+        <item name="md_color_button_text">@android:color/secondary_text_light</item>
     </style>
 
     <style name="SplashTheme" parent="Theme.AppCompat.NoActionBar">

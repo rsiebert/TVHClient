@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:custom="http://schemas.android.com/apk/res-auto">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
     <PreferenceCategory android:title="@string/pref_general">
         <ListPreference
             android:name="@string/pref_default_menu"
-            android:defaultValue="0"
+            android:defaultValue="@string/pref_default_start_screen"
             android:dialogTitle="@string/pref_default_menu"
             android:entries="@array/pref_menu_names"
             android:entryValues="@array/pref_menu_ids"
@@ -14,20 +13,25 @@
             android:title="@string/pref_default_menu" />
         <CheckBoxPreference
             android:name="@string/pref_date_time_format"
-            android:defaultValue="false"
+            android:defaultValue="@bool/pref_default_localized_date_time_format_enabled"
             android:key="localized_date_time_format_enabled"
             android:summary="@string/pref_date_time_format_sum"
             android:title="@string/pref_date_time_format" />
     </PreferenceCategory>
-    <PreferenceCategory android:title="@string/pref_channels">
+    <PreferenceCategory android:title="@string/channels">
         <CheckBoxPreference
-            android:defaultValue="true"
+            android:defaultValue="@bool/pref_default_channel_name_enabled"
             android:key="channel_name_enabled"
             android:summary="@string/pref_show_channel_name_sum"
             android:title="@string/pref_show_channel_name" />
+        <CheckBoxPreference
+            android:defaultValue="@bool/pref_default_channel_number_enabled"
+            android:key="channel_number_enabled"
+            android:summary="@string/pref_show_channel_number_sum"
+            android:title="@string/pref_show_channel_number" />
         <ListPreference
             android:name="@string/pref_play_when_channel_icon_selected"
-            android:defaultValue="0"
+            android:defaultValue="@string/pref_default_channel_icon_action"
             android:entries="@array/pref_channel_icon_action_names"
             android:entryValues="@array/pref_channel_icon_action_ids"
             android:key="channel_icon_action"
@@ -35,7 +39,7 @@
             android:title="@string/pref_play_when_channel_icon_selected" />
         <ListPreference
             android:name="@string/pref_sort_channels"
-            android:defaultValue="0"
+            android:defaultValue="@string/pref_default_channel_sort_order"
             android:dialogTitle="@string/pref_sort_channels"
             android:entries="@array/pref_sort_channels_names"
             android:entryValues="@array/pref_sort_channels_ids"
@@ -43,42 +47,47 @@
             android:summary="@string/pref_sort_channels_sum"
             android:title="@string/pref_sort_channels" />
         <CheckBoxPreference
-            android:defaultValue="false"
+            android:defaultValue="@bool/pref_default_channel_tag_icons_enabled"
             android:key="channel_tag_icons_enabled"
             android:summary="@string/pref_tag_icon_sum"
             android:title="@string/pref_tag_icon" />
         <CheckBoxPreference
-            android:defaultValue="true"
+            android:defaultValue="@bool/pref_default_multiple_channel_tags_enabled"
+            android:key="multiple_channel_tags_enabled"
+            android:summary="@string/pref_multiple_channel_tags_enabled_sum"
+            android:title="@string/pref_multiple_channel_tags_enabled" />
+        <CheckBoxPreference
+            android:defaultValue="@bool/pref_default_program_progressbar_enabled"
             android:key="program_progressbar_enabled"
             android:summary="@string/pref_show_progressbar_sum"
             android:title="@string/pref_show_progressbar" />
         <CheckBoxPreference
-            android:defaultValue="true"
+            android:defaultValue="@bool/pref_default_next_program_title_enabled"
             android:key="next_program_title_enabled"
             android:summary="@string/pref_show_next_program_sum"
             android:title="@string/pref_show_next_program" />
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="@string/pref_programs">
+    <PreferenceCategory android:title="@string/programs">
         <CheckBoxPreference
-            android:defaultValue="false"
+            android:defaultValue="@bool/pref_default_program_subtitle_enabled"
             android:key="program_subtitle_enabled"
             android:summary="@string/pref_show_program_subtitle_sum"
             android:title="@string/pref_show_program_subtitle" />
         <CheckBoxPreference
-            android:defaultValue="false"
+            android:defaultValue="@bool/pref_default_program_artwork_enabled"
             android:key="program_artwork_enabled"
             android:summary="@string/pref_show_program_artwork_sum"
             android:title="@string/pref_show_program_artwork" />
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="Recordings">
+    <PreferenceCategory android:title="@string/recordings">
         <CheckBoxPreference
-            android:defaultValue="false"
+            android:defaultValue="@bool/pref_default_hide_duplicate_scheduled_recordings_enabled"
             android:key="hide_duplicate_scheduled_recordings_enabled"
             android:title="@string/pref_hide_duplicate_scheduled_recordings" />
         <CheckBoxPreference
-            android:defaultValue="false"
+            android:defaultValue="@bool/pref_default_show_recording_file_status_enabled"
             android:key="show_recording_file_status_enabled"
             android:summary="@string/pref_show_recording_file_status_sum"
             android:title="@string/pref_show_recording_file_status" />
@@ -89,17 +98,15 @@
         android:title="@string/pref_program_guide">
 
         <EditTextPreference
-            android:id="@+id/pref_epg_hours_visible"
             android:name="@string/pref_epg_hours_visible"
-            android:defaultValue="4"
+            android:defaultValue="@string/pref_default_hours_of_epg_data_per_screen"
             android:key="hours_of_epg_data_per_screen"
             android:numeric="integer"
             android:summary="@string/pref_epg_hours_visible_sum"
             android:title="@string/pref_epg_hours_visible" />
         <EditTextPreference
-            android:id="@+id/pref_epg_max_days"
             android:name="@string/pref_epg_max_days"
-            android:defaultValue="7"
+            android:defaultValue="@string/pref_default_days_of_epg_data"
             android:key="days_of_epg_data"
             android:numeric="integer"
             android:summary="@string/pref_epg_max_days_sum"
@@ -110,7 +117,7 @@
         android:title="@string/pref_casting">
 
         <CheckBoxPreference
-            android:defaultValue="false"
+            android:defaultValue="@bool/pref_default_casting_minicontroller_enabled"
             android:key="casting_minicontroller_enabled"
             android:summary="@string/pref_show_cast_minicontroller_sum"
             android:title="@string/pref_show_cast_minicontroller" />
@@ -125,41 +132,39 @@
         android:summary="@string/pref_genre_colors_sum"
         android:title="@string/pref_genre_colors">
         <CheckBoxPreference
-            android:defaultValue="false"
+            android:defaultValue="@bool/pref_default_genre_colors_for_channels_enabled"
             android:key="genre_colors_for_channels_enabled"
             android:summary="@string/pref_genre_colors_channels_sum"
             android:title="@string/pref_genre_colors_channels" />
         <CheckBoxPreference
-            android:defaultValue="false"
+            android:defaultValue="@bool/pref_default_genre_colors_for_programs_enabled"
             android:key="genre_colors_for_programs_enabled"
             android:summary="@string/pref_genre_colors_programs_sum"
             android:title="@string/pref_genre_colors_programs" />
         <CheckBoxPreference
-            android:defaultValue="false"
+            android:defaultValue="@bool/pref_default_genre_colors_for_program_guide_enabled"
             android:key="genre_colors_for_program_guide_enabled"
             android:summary="@string/pref_genre_colors_epg_sum"
             android:title="@string/pref_genre_colors_epg" />
 
-        <org.tvheadend.tvhclient.features.settings.SliderPreference
-            android:defaultValue="70"
-            android:dialogMessage="@string/pref_genre_colors_visibility_message"
+        <SeekBarPreference
+            android:defaultValue="@string/pref_default_genre_color_transparency"
             android:key="genre_color_transparency"
-            android:summary="@string/pref_genre_colors_visibility_value"
-            android:title="@string/pref_genre_colors_visibility"
-            custom:maximumValue="100"
-            custom:minimumValue="30" />
+            android:max="100"
+            android:min="30"
+            android:summary="@string/pref_genre_colors_visibility_message"
+            android:title="@string/pref_genre_colors_visibility" />
     </PreferenceCategory>
 
     <PreferenceCategory
         android:summary="@string/pref_menu_visibility_sum"
         android:title="@string/pref_menu_visibility">
         <CheckBoxPreference
-            android:defaultValue="false"
+            android:defaultValue="@bool/pref_default_delete_all_recordings_menu_enabled"
             android:key="delete_all_recordings_menu_enabled"
-            android:summary="@string/pref_hide_menu_delete_all_recordings_sum"
-            android:title="@string/pref_hide_menu_delete_all_recordings" />
+            android:title="@string/pref_show_menu_delete_all_recordings" />
         <CheckBoxPreference
-            android:defaultValue="false"
+            android:defaultValue="@bool/pref_default_channel_tag_menu_enabled"
             android:key="channel_tag_menu_enabled"
             android:summary="@string/pref_visible_menu_icon_tags_sum"
             android:title="@string/pref_visible_menu_icon_tags" />
