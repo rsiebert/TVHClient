@@ -9,7 +9,6 @@ import androidx.lifecycle.ViewModelProviders
 import com.afollestad.materialdialogs.MaterialDialog
 import kotlinx.android.synthetic.main.startup_fragment.*
 import org.tvheadend.tvhclient.R
-import org.tvheadend.tvhclient.ui.base.BaseViewModel
 import org.tvheadend.tvhclient.ui.common.callbacks.ToolbarInterface
 import org.tvheadend.tvhclient.ui.features.MainActivity
 import org.tvheadend.tvhclient.ui.features.settings.SettingsActivity
@@ -19,7 +18,7 @@ import timber.log.Timber
 
 class StartupFragment : Fragment() {
 
-    private lateinit var baseViewModel: BaseViewModel
+    private lateinit var startupViewModel: StartupViewModel
     private var loadingDone = false
     private var connectionCount: Int = 0
     private var isConnectionActive = false
@@ -30,7 +29,7 @@ class StartupFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        baseViewModel = ViewModelProviders.of(activity!!).get(BaseViewModel::class.java)
+        startupViewModel = ViewModelProviders.of(activity!!).get(StartupViewModel::class.java)
 
         if (activity is ToolbarInterface) {
             (activity as ToolbarInterface).setTitle(getString(R.string.status))
@@ -40,7 +39,7 @@ class StartupFragment : Fragment() {
         showStartupStatus()
 
         Timber.d("Observing connection status")
-        baseViewModel.connectionStatus.observe(viewLifecycleOwner, Observer { status ->
+        startupViewModel.connectionStatus.observe(viewLifecycleOwner, Observer { status ->
             Timber.d("Received connection status from view model")
             status?.let {
                 loadingDone = true
@@ -109,7 +108,7 @@ class StartupFragment : Fragment() {
                         message(R.string.dialog_content_reconnect_to_server)
                         positiveButton(R.string.reconnect) {
                             Timber.d("Reconnect requested, stopping service and updating active connection to require a full sync")
-                            baseViewModel.updateConnectionAndRestartApplication(context)
+                            startupViewModel.updateConnectionAndRestartApplication(context)
                         }
                         negativeButton(R.string.cancel)
                     }

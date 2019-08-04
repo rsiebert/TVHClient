@@ -11,6 +11,7 @@ import org.tvheadend.tvhclient.ui.base.BaseActivity
 import org.tvheadend.tvhclient.ui.base.BaseFragment
 import org.tvheadend.tvhclient.ui.base.BaseViewModel
 import org.tvheadend.tvhclient.ui.features.startup.StartupActivity
+import org.tvheadend.tvhclient.ui.features.startup.StartupViewModel
 import javax.inject.Singleton
 
 @Singleton
@@ -27,6 +28,7 @@ interface MainApplicationComponent {
     fun inject(baseFragment: BaseFragment)
     fun inject(baseViewModel: BaseViewModel)
     fun inject(startupActivity: StartupActivity)
+    fun inject(startupViewModel: StartupViewModel)
 
     @Component.Builder
     interface Builder {
