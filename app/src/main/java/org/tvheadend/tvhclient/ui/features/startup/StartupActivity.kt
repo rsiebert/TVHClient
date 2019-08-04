@@ -1,6 +1,5 @@
 package org.tvheadend.tvhclient.ui.features.startup
 
-import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
@@ -8,21 +7,15 @@ import androidx.appcompat.widget.Toolbar
 import org.tvheadend.tvhclient.BuildConfig
 import org.tvheadend.tvhclient.MainApplication
 import org.tvheadend.tvhclient.R
-import org.tvheadend.tvhclient.data.repository.AppRepository
 import org.tvheadend.tvhclient.ui.common.callbacks.BackPressedInterface
 import org.tvheadend.tvhclient.ui.common.callbacks.ToolbarInterface
 import org.tvheadend.tvhclient.ui.features.changelog.ChangeLogFragment
 import org.tvheadend.tvhclient.ui.features.settings.RemoveFragmentFromBackstackInterface
-import org.tvheadend.tvhclient.util.MigrateUtils
 import timber.log.Timber
 import javax.inject.Inject
 
 class StartupActivity : AppCompatActivity(), ToolbarInterface, RemoveFragmentFromBackstackInterface {
 
-    @Inject
-    lateinit var appContext: Context
-    @Inject
-    lateinit var appRepository: AppRepository
     @Inject
     lateinit var sharedPreferences: SharedPreferences
 
@@ -37,13 +30,7 @@ class StartupActivity : AppCompatActivity(), ToolbarInterface, RemoveFragmentFro
 
         MainApplication.component.inject(this)
 
-        // Migrates existing connections from the old database to the new room database.
-        // Migrates existing preferences or remove old ones before starting the actual application
-        MigrateUtils(appContext, appRepository, sharedPreferences).doMigrate()
-
         if (savedInstanceState == null) {
-            supportActionBar?.setDisplayHomeAsUpEnabled(false)
-
             supportFragmentManager.beginTransaction()
                     .replace(R.id.main, StartupFragment())
                     .addToBackStack(null)
@@ -54,14 +41,14 @@ class StartupActivity : AppCompatActivity(), ToolbarInterface, RemoveFragmentFro
             // the one in the preferences. Otherwise show the changelog of the newest app version.
             val versionName = sharedPreferences.getString("versionNameForChangelog", "")
             val showChangeLogRequired = BuildConfig.VERSION_NAME != versionName
+            Timber.d("Version name from prefs is $versionName, build version from gradle is ${BuildConfig.VERSION_NAME}")
 
             if (showChangeLogRequired) {
-                Timber.d("Showing changelog, version name from prefs is $versionName, build version from gradle is ${BuildConfig.VERSION_NAME}")
+                Timber.d("Showing changelog")
+                supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
                 val bundle = Bundle()
-                bundle.putBoolean("showFullChangelog", true)
                 bundle.putString("versionNameForChangelog", versionName)
-
                 val fragment = ChangeLogFragment()
                 fragment.arguments = bundle
 
@@ -89,6 +76,9 @@ class StartupActivity : AppCompatActivity(), ToolbarInterface, RemoveFragmentFro
             finish()
         } else {
             super.onBackPressed()
+            // The changelog fragment was removed and the startup fragment
+            // is only fragment in the back stack, disable the home button
+            supportActionBar?.setDisplayHomeAsUpEnabled(false)
         }
     }
 
