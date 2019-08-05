@@ -16,7 +16,8 @@ class SettingsViewModel(application: Application) : BaseViewModel(application) {
 
     var connectionIdToBeEdited: Int = -1
     val allConnections: LiveData<List<Connection>> = appRepository.connectionData.getLiveDataItems()
-    val currentServerStatus = appRepository.serverStatusData.activeItem
+    var currentServerStatus = appRepository.serverStatusData.activeItem
+    val currentServerStatusLiveData = appRepository.serverStatusData.liveDataActiveItem
     private val navigationMenuId = MutableLiveData<Event<String>>()
 
     init {

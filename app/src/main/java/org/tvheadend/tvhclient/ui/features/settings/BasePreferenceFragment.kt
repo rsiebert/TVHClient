@@ -31,5 +31,13 @@ abstract class BasePreferenceFragment : PreferenceFragmentCompat() {
             Timber.d("Received live data, unlocked changed to $unlocked")
             isUnlocked = unlocked
         })
+
+        // Observe and update the server status. This is required to get the update server status
+        // in case the database has been cleared. The view model is not destroyed so it would
+        // contain an old version with invalid profile ids.
+        settingsViewModel.currentServerStatusLiveData.observe(viewLifecycleOwner, Observer { serverStatus ->
+            Timber.d("Received live data, server status changed")
+            settingsViewModel.currentServerStatus = serverStatus
+        })
     }
 }
