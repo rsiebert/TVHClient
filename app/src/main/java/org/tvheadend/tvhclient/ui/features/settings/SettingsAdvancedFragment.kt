@@ -22,6 +22,7 @@ import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.data.service.HtspService
 import org.tvheadend.tvhclient.data.worker.LoadChannelIconWorker
 import org.tvheadend.tvhclient.ui.features.search.SuggestionProvider
+import org.tvheadend.tvhclient.ui.features.startup.SplashActivity
 import org.tvheadend.tvhclient.util.extensions.sendSnackbarMessage
 import org.tvheadend.tvhclient.util.getIconUrl
 import org.tvheadend.tvhclient.util.logging.FileLoggingTree
@@ -126,7 +127,7 @@ class SettingsAdvancedFragment : BasePreferenceFragment(), Preference.OnPreferen
                 message(R.string.dialog_content_reconnect_to_server)
                 positiveButton(R.string.clear) {
                     Timber.d("Clear database requested")
-                    settingsViewModel.setSyncRequiredForActiveConnection()
+                    context.sendSnackbarMessage("Database contents cleared, reconnecting to server")
                     settingsViewModel.clearDatabase(this@SettingsAdvancedFragment)
                     dismiss()
                 }
@@ -249,13 +250,13 @@ class SettingsAdvancedFragment : BasePreferenceFragment(), Preference.OnPreferen
 
     override fun onDatabaseCleared() {
         Timber.d("Database has been cleared, stopping service and restarting application")
-        activity?.let {
-            it.sendSnackbarMessage("Database contents cleared, reconnecting to server")
-            it.stopService(Intent(activity, HtspService::class.java))
+        context?.let {
+            it.stopService(Intent(it, HtspService::class.java))
             settingsViewModel.setSyncRequiredForActiveConnection()
-            val intent = Intent(activity, HtspService::class.java)
-            intent.action = "connect"
-            it.startService(intent)
+
+            val intent = Intent(it, SplashActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            it.startActivity(intent)
         }
     }
 
