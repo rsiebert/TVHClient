@@ -123,7 +123,10 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
                             "getInputs" -> getInputs()
                             // Internal calls that are called from the intent service
                             "getMoreEvents" -> getMoreEvents(intent)
-                            "loadChannelIcons" -> loadAllChannelIcons()
+                            "loadChannelIcons" -> {
+                                loadAllChannelIcons()
+                                loadAllChannelTagIcons()
+                            }
                         }
                     } else {
                         Timber.d("Not connected to server, not executing action $action")
@@ -324,7 +327,8 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
             Timber.d("Sync of initial data is required, saving received channels, tags and downloading icons")
             saveAllReceivedChannels()
             saveAllReceivedChannelTags()
-            loadAllChannelIcons()
+            loadAllChannelIcons(pendingChannelOps)
+            loadAllChannelTagIcons(pendingChannelTagOps)
         } else {
             Timber.d("Sync of initial data is not required")
         }
@@ -927,15 +931,19 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
     private fun onHtspProfiles(message: HtspMessage) {
         Timber.d("Handling htsp playback profiles")
         if (message.containsKey("profiles")) {
+            val profiles = appRepository.serverProfileData.htspPlaybackProfiles
+            Timber.d("Loaded existing ${profiles.size} htsp playback profiles for connection ${connection.name}")
             for (obj in message.getList("profiles")) {
                 val msg = obj as HtspMessage
                 val name = msg.getString("name")
                 val uuid = msg.getString("uuid")
+                Timber.d("Checking if htsp playback profile $name should be added to the database")
 
-                val profiles = appRepository.serverProfileData.htspPlaybackProfiles
                 var profileExists = false
                 for (p in profiles) {
+                    Timber.d("Comparing profile $name with database profile ${p.name}")
                     if (p.name == name && p.uuid == uuid) {
+                        Timber.d("Htsp playback profile $name exists already")
                         profileExists = true
                         break
                     }
@@ -958,7 +966,8 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
     private fun onHttpProfiles(message: HtspMessage) {
         Timber.d("Handling http playback profiles")
         if (message.containsKey("response")) {
-            Timber.d("Received playback profile data")
+            val profiles = appRepository.serverProfileData.httpPlaybackProfiles
+            Timber.d("Loaded existing ${profiles.size} http playback profiles for connection ${connection.name}")
             try {
                 val response = JSONObject(message.getString("response"))
                 if (response.has("entries")) {
@@ -971,11 +980,13 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
                             if (profile.has("key") && profile.has("val")) {
                                 val name = profile.getString("val")
                                 val uuid = profile.getString("key")
+                                Timber.d("Checking if http playback profile $name should be added to the database")
 
-                                val profiles = appRepository.serverProfileData.httpPlaybackProfiles
                                 var profileExists = false
                                 for (p in profiles) {
+                                    Timber.d("Comparing profile $name with database profile ${p.name}")
                                     if (p.name == name && p.uuid == uuid) {
+                                        Timber.d("Http playback profile $name exists already")
                                         profileExists = true
                                         break
                                     }
@@ -1239,14 +1250,10 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
         }
     }
 
-    /**
-     * Tries to download and save all received channel and channel
-     * tag logos from the initial sync in the database.
-     */
-    private fun loadAllChannelIcons() {
-        Timber.d("Downloading and saving all channel and channel tag icons...")
+    private fun loadAllChannelIcons(channels:  List<Channel> = appRepository.channelData.getItems()) {
+        Timber.d("Downloading and saving all channel icons...")
 
-        for (channel in appRepository.channelData.getItems()) {
+        for (channel in channels) {
             execService.execute {
                 try {
                     Timber.d("Downloading channel icon ${channel.icon} for channel ${channel.name}")
@@ -1256,7 +1263,12 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
                 }
             }
         }
-        for (tag in appRepository.channelTagData.getItems()) {
+    }
+
+    private fun loadAllChannelTagIcons(tags:  List<ChannelTag> = appRepository.channelTagData.getItems()) {
+        Timber.d("Downloading and saving all channel tag icons...")
+
+        for (tag in tags) {
             execService.execute {
                 try {
                     Timber.d("Downloading channel tag icon ${tag.tagIcon} for channel tag ${tag.tagName}")
