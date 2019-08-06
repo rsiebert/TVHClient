@@ -13,6 +13,7 @@ import androidx.preference.EditTextPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import com.afollestad.materialdialogs.MaterialDialog
+import com.google.android.material.snackbar.Snackbar
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.domain.entity.Connection
 import org.tvheadend.tvhclient.ui.common.callbacks.BackPressedInterface
@@ -217,7 +218,6 @@ abstract class SettingsConnectionBaseFragment : PreferenceFragmentCompat(), Back
             serverUrlPreference.summary = if (value.isEmpty()) getString(R.string.pref_server_url_sum) else value
         } else {
             serverUrlPreference.text = settingsViewModel.connection.serverUrl
-            context?.sendSnackbarMessage(R.string.pref_server_url_error_invalid)
         }
     }
 
@@ -228,7 +228,6 @@ abstract class SettingsConnectionBaseFragment : PreferenceFragmentCompat(), Back
             streamingUrlPreference.summary = if (value.isEmpty()) getString(R.string.pref_streaming_url_sum) else value
         } else {
             streamingUrlPreference.text = settingsViewModel.connection.streamingUrl
-            context?.sendSnackbarMessage(R.string.pref_streaming_url_error_invalid)
         }
     }
 
@@ -309,22 +308,22 @@ abstract class SettingsConnectionBaseFragment : PreferenceFragmentCompat(), Back
 
         val uri = Uri.parse(value)
         if (uri.host.isNullOrEmpty()) {
-            context?.sendSnackbarMessage("The url $uri is missing a hostname")
+            context?.sendSnackbarMessage("The url is missing a hostname", Snackbar.LENGTH_LONG)
             return false
         }
 
         if (value.contains(":") && uri.port == -1) {
-            context?.sendSnackbarMessage("The url $uri is missing a port")
+            context?.sendSnackbarMessage("The url is missing a port", Snackbar.LENGTH_LONG)
             return false
         }
 
         if (!uri.userInfo.isNullOrEmpty()) {
-            context?.sendSnackbarMessage("The url $uri must not contain a username or password")
+            context?.sendSnackbarMessage("The url must not contain a username or password", Snackbar.LENGTH_LONG)
             return false
         }
 
         if (!isConnectionIpAddressValid(uri.host)) {
-            context?.sendSnackbarMessage("The url $uri is missing a valid hostname")
+            context?.sendSnackbarMessage("The url is missing a valid hostname", Snackbar.LENGTH_LONG)
             return false
         }
 
