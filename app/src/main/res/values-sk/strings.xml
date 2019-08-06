@@ -81,8 +81,8 @@
     <string name="minutes">%d min</string>
     <string name="monday">Pondelok</string>
     <string name="name">Meno</string>
-    <string name="no_connection_active_advice">Ani jedno dostupné pripojenie nie je aktivované.</string>
-    <string name="no_connection_available">K dispozícii nie je žiadne pripojenie.</string>
+    <string name="no_connection_active_advice">Aspoň jedno pripojenie je definované, ale nie je aktivované. Zoznam dostupných pripojení zobrazíte kliknutím na tlačidlo nižšie alebo pomocou ponuky na paneli nástrojov. Ak chcete aktivovať pripojenie, vyberte jedno zo zoznamu a na paneli nástrojov klepnite na symbol hviezdy.</string>
+    <string name="no_connection_available">Spojenie nie je k dispozícii. Pridajte nové pripojenie na pripojenie k serveru. Použite tlačidlo nižšie alebo ponuku na paneli nástrojov.</string>
     <!-- Connection related -->
     <string name="no_data">Údaje o programe sú nedostupné</string>
     <string name="no_media_player">Nebol nájdený žiaden prehrávač multimédií.</string>

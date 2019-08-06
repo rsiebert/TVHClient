@@ -85,8 +85,8 @@ Verifica che siano soddsifatti i requisiti descritti nelle impostazioni trasmiss
     <string name="minutes">%d minuti</string>
     <string name="monday">Lunedì</string>
     <string name="name">Nome</string>
-    <string name="no_connection_active_advice">Almeno una connessione definita, ma non attivata.</string>
-    <string name="no_connection_available">Nessuna connessione disponibile.</string>
+    <string name="no_connection_active_advice">È stata definita almeno una connessione, ma non attivata. Utilizzare il pulsante in basso o il menu nella barra degli strumenti per visualizzare l\'elenco delle connessioni disponibili. Per attivare una connessione, selezionane una dall\'elenco e tocca il simbolo a stella nella barra degli strumenti.</string>
+    <string name="no_connection_available">Nessuna connessione disponibile. Aggiungi una nuova connessione per connettersi al server. Utilizzare il pulsante in basso o il menu nella barra degli strumenti.</string>
     <string name="no_data">Dati programmazione non disponibili</string>
     <string name="no_media_player">Nessun riproduttore multimediale trovato</string>
     <string name="hint_not_set">Non impostato</string>

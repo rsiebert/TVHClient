@@ -117,9 +117,9 @@
     <string name="monday">Hétfő</string>
     <string name="name">Név</string>
     <string name="no_cast_session">Nincs elérhető cast szekció</string>
-    <string name="no_connection_active_advice">Legalább egy kapcsolat van definiálva, de nincs aktiválva.</string>
+    <string name="no_connection_active_advice">Legalább egy kapcsolat meg van határozva, de nincs aktiválva. Használja az alábbi gombot vagy az eszközsor menüjét az elérhető kapcsolatok listájának megjelenítéséhez. A kapcsolat aktiválásához válasszon egyet a listából, és koppintson a csillag szimbólumra az eszköztáron.</string>
     <!-- Connection related -->
-    <string name="no_connection_available">Nincs elérhető kapcsolat</string>
+    <string name="no_connection_available">Nincs kapcsolat. Kérjük, adjon hozzá egy új kapcsolatot a szerverhez való csatlakozáshoz. Vagy használja az alábbi gombot, vagy az eszköztár menüjét.</string>
     <string name="no_data">Nincs elérhető adat</string>
     <string name="no_media_player">Nem található médialejátszó</string>
     <string name="hint_not_set">Nincs beállítva</string>

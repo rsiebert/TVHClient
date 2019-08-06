@@ -116,9 +116,9 @@
     <string name="monday">Monday</string>
     <string name="name">Name</string>
     <string name="no_cast_session">No cast session available</string>
-    <string name="no_connection_active_advice">At least one connection is defined, but not activated.</string>
+    <string name="no_connection_active_advice">At least one connection is defined, but not activated. Either use the button below or the menu in the toolbar to show the list of available connections. To activate a connection select one from the list and tap the star symbol in the toolbar.</string>
     <!-- Connection related -->
-    <string name="no_connection_available">No connection available</string>
+    <string name="no_connection_available">No connection available. Please add a new connection to connect to the server. Either use the button below or the menu in the toolbar.</string>
     <string name="no_data">No program data available</string>
     <string name="no_media_player">No media player found</string>
     <string name="hint_not_set">Not set</string>
