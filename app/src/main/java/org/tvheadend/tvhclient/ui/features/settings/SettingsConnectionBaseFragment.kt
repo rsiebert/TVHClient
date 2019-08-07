@@ -3,7 +3,6 @@ package org.tvheadend.tvhclient.ui.features.settings
 import android.content.Context
 import android.net.Uri
 import android.os.Bundle
-import android.util.Patterns
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
@@ -313,7 +312,7 @@ abstract class SettingsConnectionBaseFragment : PreferenceFragmentCompat(), Back
         }
 
         if (value.contains(":") && uri.port == -1) {
-            context?.sendSnackbarMessage("The url is missing a port", Snackbar.LENGTH_LONG)
+            context?.sendSnackbarMessage("The url must contain a port", Snackbar.LENGTH_LONG)
             return false
         }
 
@@ -322,35 +321,6 @@ abstract class SettingsConnectionBaseFragment : PreferenceFragmentCompat(), Back
             return false
         }
 
-        if (!isConnectionIpAddressValid(uri.host)) {
-            context?.sendSnackbarMessage("The url is missing a valid hostname", Snackbar.LENGTH_LONG)
-            return false
-        }
-
-        return true
-    }
-
-    private fun isConnectionIpAddressValid(value: String?): Boolean {
-        // Do not allow an empty address
-        if (value.isNullOrEmpty()) {
-            return false
-        }
-        // Check if the name contains only valid characters.
-        var pattern = Pattern.compile("^[0-9a-zA-Z_\\-.]*$")
-        var matcher = pattern.matcher(value)
-        if (!matcher.matches()) {
-            return false
-        }
-        // Check if the address has only numbers and dots in it.
-        pattern = Pattern.compile("^[0-9.]*$")
-        matcher = pattern.matcher(value)
-
-        // Now validate the IP address
-        if (matcher.matches()) {
-            pattern = Patterns.IP_ADDRESS
-            matcher = pattern.matcher(value)
-            return matcher.matches()
-        }
         return true
     }
 
