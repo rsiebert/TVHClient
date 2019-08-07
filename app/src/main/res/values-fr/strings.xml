@@ -170,9 +170,6 @@
     <string name="pref_genre_colors_visibility_message">Paramètre la visibilité des couleurs. Plus la valeur est grande, plus la couleur sera foncée.</string>
     <string name="pref_hide_duplicate_scheduled_recordings">Cacher les enregistrements dupliqués</string>
     <string name="pref_show_menu_delete_all_recordings">Afficher le menu \'Supprimer tous les enregistrements\'</string>
-    <string name="pref_host">Nom d\'hôte</string>
-    <string name="pref_host_error_invalid">L\'adresse IP n\'est pas valide.</string>
-    <string name="pref_host_sum">Entrer le nom du serveur</string>
     <string name="pref_information">Information</string>
     <string name="pref_language">Langue</string>
     <string name="pref_language_sum">Choisir la langue que devra utiliser l\'application.</string>
@@ -191,9 +188,7 @@
     <string name="pref_play_when_channel_icon_selected">Action de l\'icone de de canal</string>
     <string name="pref_play_when_channel_icon_selected_sum">Lancer la diffusion du programme en cours ou de l\'enregistrement quand l\icone de de la chaine est sélectionnée dans la liste des chaine, le guide des programmes ou la liste des enregistrements.</string>
     <string name="pref_playback_and_recording">Lecture et enregistrements</string>
-    <string name="pref_port">HTSP Port</string>
     <string name="pref_port_error_invalid">Le port n\'est pas valide. Spécifier un nombre entre 1 et 65535.</string>
-    <string name="pref_port_sum">Entrer le port du serveur</string>
     <string name="pref_profiles">Profils</string>
     <string name="pref_profiles_sum">Défini les paramètres ou les profils (si supporté) de comment les programmes sont enregistrés ou comment les enregistrements sont joués.</string>
     <string name="pref_program_guide">Guide des programmes</string>
@@ -225,8 +220,6 @@
     <string name="pref_show_recording_file_status_sum">La taille du fichier et le nombre d\'erreurs de chaque enregistrements et affiché dans la liste des enregistrements.</string>
     <string name="pref_sort_channels">Ordre des chaines.</string>
     <string name="pref_sort_channels_sum">Choisir l\'ordre des chaînes à afficher.</string>
-    <string name="pref_streaming_port">Port pour le flux vidéo</string>
-    <string name="pref_streaming_port_sum">%d sera utilisé pour le flux vidéo. Le port par défaut est 9981 qu\'il est préférable d\'utiliser.</string>
     <string name="pref_tag_icon">Icone du tag de la chaine</string>
     <string name="pref_tag_icon_sum">Montre licône de la chaine.</string>
     <string name="pref_theme">Thème soft</string>
@@ -377,7 +370,6 @@
     <string name="pref_copy_playback_url_to_clipboard_enabled">Copier l\'URL de lecture dans le presse-papier</string>
     <string name="selection_disabled">Handicapés</string>
     <string name="selection_default">Activé</string>
-    <string name="pref_host_hint">www.server.com ou 192.168.0.10</string>
     <string name="subtitle_settings">Paramètres de sous-titres</string>
     <string name="enable_random_adaptation">Activer l\'adaptation aléatoire</string>
     <string name="player_is_loading_more_data">Veuillez patienter, le lecteur charge plus de données…</string>

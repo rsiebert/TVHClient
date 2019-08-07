@@ -129,9 +129,6 @@
     <string name="pref_genre_colors_visibility">Intenzita farby žánrov</string>
     <string name="pref_genre_colors_visibility_message">Nastaviť viditeľnosť farieb. Vyššie hodnoty znamenajú sýtejšie farby.</string>
     <string name="pref_show_menu_delete_all_recordings">Zobraziť menu \"Vymazať všetky nahrávky\"</string>
-    <string name="pref_host">Názov hostiteľa</string>
-    <string name="pref_host_error_invalid">Neplatná adresa servera.</string>
-    <string name="pref_host_sum">Zadajte adresu servera (hostname alebo IP)</string>
     <string name="pref_information">Informácie</string>
     <string name="pref_language">Jazyk</string>
     <string name="pref_language_sum">Výber jazyka, ktorý bude použitý v aplikácii.</string>
@@ -150,9 +147,7 @@
     <string name="pref_play_when_channel_icon_selected">Začať prehrávanie po kliknutí na logo kanálu</string>
     <string name="pref_play_when_channel_icon_selected_sum">Po kliknutí na logo kanálu v zozname kanálov, v programovom sprievodcovi alebo v zozname nahrávaní, začne prehrávanie aktuálneho programu alebo nahrávania.</string>
     <string name="pref_playback_and_recording">Prehrávanie a nahrávanie</string>
-    <string name="pref_port">HTSP Port</string>
     <string name="pref_port_error_invalid">Číslo portu je neplatné. Zadajte číslo v rozsahu 1 a 65535.</string>
-    <string name="pref_port_sum">Zadajte port servera</string>
     <string name="pref_profiles">Profily</string>
     <string name="pref_profiles_sum">Nadefinovanie parametrov alebo profilov (ak sú podporované) pre prehrávanie alebo nahrávanie.</string>
     <string name="pref_program_guide">Programový sprievodca</string>
@@ -180,8 +175,6 @@
     <string name="pref_show_progressbar_sum">Indikuje v zozname kanálov, koľko času už ubehlo z aktuálneho programu.</string>
     <string name="pref_sort_channels">Poradie kanálov</string>
     <string name="pref_sort_channels_sum">Nadefinovanie poradia kanálov.</string>
-    <string name="pref_streaming_port">HTTP Port pre media streaming</string>
-    <string name="pref_streaming_port_sum">Port %d bude použitý pre media streaming. Predvolený port je 9981, ktorý je väčšinou správny.</string>
     <string name="pref_tag_icon">Skupiny kanálov</string>
     <string name="pref_tag_icon_sum">Zobrazenie ikony \'skupiny kanálov\'.</string>
     <string name="pref_theme">Svetla téma</string>
@@ -319,7 +312,6 @@
     <string name="pref_http_playback_profiles">Profily prehrávania (externé prehrávače)</string>
     <string name="pref_htsp_playback_profiles_sum">Vyberte profil, ktorý interný prehrávač používa na prehrávanie nahratého programu pomocou interného prehrávača.</string>
     <string name="pref_htsp_playback_profiles">Profily prehrávania (interný prehrávač)</string>
-    <string name="pref_host_hint">www.server.com alebo 192.168.0.10</string>
     <string name="pref_hide_duplicate_scheduled_recordings">Skryť duplicitné naplánované nahrávky</string>
     <string name="pref_epg_sync_duration_sum">Množstvo údajov sprievodcu programom, ktoré sa majú načítať zo servera.</string>
     <string name="pref_epg_sync_duration">Synchronizácia trvania programových dát</string>

@@ -126,9 +126,6 @@ Verifica che siano soddsifatti i requisiti descritti nelle impostazioni trasmiss
     <string name="pref_genre_colors_visibility">Visibilità colore del genere</string>
     <string name="pref_genre_colors_visibility_message">Imposta la visibilità dei colori. Valori più alti indicano colori più forti.</string>
     <string name="pref_show_menu_delete_all_recordings">Mostra il menu \'Elimina tutte le registrazioni\'</string>
-    <string name="pref_host">Nome host</string>
-    <string name="pref_host_error_invalid">"L'indirizzo IP non è valido."</string>
-    <string name="pref_host_sum">Inserisci il nome host del server</string>
     <string name="pref_information">Informazioni</string>
     <string name="pref_language">Lingua</string>
     <string name="pref_language_sum">"Scegli la lingua che utilizzerà l'applicazione."</string>
@@ -147,9 +144,7 @@ Verifica che siano soddsifatti i requisiti descritti nelle impostazioni trasmiss
     <string name="pref_play_when_channel_icon_selected">Azione dell\'icona del canale</string>
     <string name="pref_play_when_channel_icon_selected_sum">"Avvia la riproduzione del canale o registrazione attuale quando l'icona del canale è selezionata nell'elenco canali, guida programmi e elenco registrazioni."</string>
     <string name="pref_playback_and_recording">Riproduzione e registrazione</string>
-    <string name="pref_port">HTSP Porta</string>
     <string name="pref_port_error_invalid">Il numero di porta non è valido. Specifica un numero compreso tra 1 e 65535.</string>
-    <string name="pref_port_sum">Inserisci la porta del server</string>
     <string name="pref_profiles">Profili</string>
     <string name="pref_profiles_sum">Definisci i parametri o i profili (se supportati) di come i programmi devono essere registrati o le registrazioni riprodotte.</string>
     <string name="pref_program_guide">Guida programmi</string>
@@ -174,8 +169,6 @@ Verifica che siano soddsifatti i requisiti descritti nelle impostazioni trasmiss
     <string name="pref_show_progressbar_sum">Indica nella lista dei canali quanto del programma corrente è già stato mostrato.</string>
     <string name="pref_sort_channels">Ordine canali</string>
     <string name="pref_sort_channels_sum">"Scegli l'ordine in cui verranno visualizzati i canali."</string>
-    <string name="pref_streaming_port">HTTP Porta per lo streaming multimediale</string>
-    <string name="pref_streaming_port_sum">Per lo streaming multimediale sarà usata la porta %d. La porta predefinita 9981 va in genere bene.</string>
     <string name="pref_tag_icon">Icone etichette canali</string>
     <string name="pref_tag_icon_sum">Visualizzare l\'icona dell\'etichetta del canale.</string>
     <string name="pref_theme">Tema chiaro</string>
@@ -356,7 +349,6 @@ L'indirizzo deve essere nella forma '01:24:67:9a:cd:ef' e può contenere solo ci
     <string name="player_is_loading_more_data">Per favore aspetta, il giocatore sta caricando più dati…</string>
     <string name="pref_copy_playback_url_to_clipboard_enabled">Copia l\'URL di riproduzione negli appunti</string>
     <string name="pref_copy_playback_url_to_clipboard_enabled_sum">In caso di problemi di riproduzione, l\'Url copiato può essere utilizzato per testare la riproduzione in un browser.</string>
-    <string name="pref_host_hint">www.server.com o 192.168.0.10</string>
     <string name="selection_disabled">Invalido</string>
     <string name="selection_default">Permettere</string>
     <string name="search_timer_recordings">Cerca registrazioni timer</string>

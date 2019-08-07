@@ -84,9 +84,6 @@
     <string name="pref_genre_colors_visibility">Intenzita barvy žánrů</string>
     <string name="pref_genre_colors_visibility_message">Nastavit viditelnost barev. Vyšší hodnoty znamenají sytější barvy.</string>
     <string name="pref_show_menu_delete_all_recordings">Zobrazte nabídku \"Smazat všechny záznamy\"</string>
-    <string name="pref_host">Název hostitele</string>
-    <string name="pref_host_error_invalid">Neplatná adresa serveru.</string>
-    <string name="pref_host_sum">Zadejte adresu serveru (hostname nebo IP)</string>
     <string name="pref_information">Informace</string>
     <string name="pref_language">Jazyk</string>
     <string name="pref_language_sum">Zvolte jazyk, který bude použit v aplikaci.</string>
@@ -101,9 +98,7 @@
     <string name="pref_pass">Heslo</string>
     <string name="pref_pass_set_sum">Heslo je nastavené, ale je skryté.</string>
     <string name="pref_pass_sum">Zadejte heslo</string>
-    <string name="pref_port">HTSP Port</string>
     <string name="pref_port_error_invalid">Číslo portu je neplatné. Zadejte číslo v rozsahu 1 a 65535.</string>
-    <string name="pref_port_sum">Zadejte port serveru</string>
     <string name="pref_profiles">Profily</string>
     <string name="pref_profiles_sum">Určuje parametry nebo profily (pokud jsou podporovány) jak mají být programy nahrávány nebo nahrávky přehrávány.</string>
     <string name="pref_program_guide">Programový průvodce</string>
@@ -118,8 +113,6 @@
     <string name="pref_show_notifications_sum">Informuje uživatele vždy, když nahrávání začalo nebo bylo dokončeno. To vyžaduje službu běžící na pozadí.</string>
     <string name="pref_sort_channels">Řazení kanálů</string>
     <string name="pref_sort_channels_sum">Vyberte v jakém pořadí budou zobrazeny kanály.</string>
-    <string name="pref_streaming_port">HTTP Port pro media streaming</string>
-    <string name="pref_streaming_port_sum">%d bude použit pro media streaming. Výchozí port je 9981, který je obvykle správně.</string>
     <string name="pref_tag_icon">Ikona štítku kanálu</string>
     <string name="pref_tag_icon_sum">Zobrazit ikonu pro štítek kanálu.</string>
     <string name="pref_theme">Světlé téma</string>
@@ -265,7 +258,6 @@
     <string name="no_cast_session">K dispozici není žádné obsazení</string>
     <string name="no_connection_active_advice">Je definováno alespoň jedno spojení, ale není aktivováno. Seznam dostupných připojení zobrazíte pomocí tlačítka níže nebo nabídky na panelu nástrojů. Chcete-li aktivovat připojení, vyberte jedno ze seznamu a klepněte na symbol hvězdičky na panelu nástrojů.</string>
     <string name="pref_hide_duplicate_scheduled_recordings">Skrýt duplicitní naplánované nahrávky</string>
-    <string name="pref_host_hint">www.server.com nebo 192.168.0.10</string>
     <string name="edit_connection">Upravit připojení</string>
     <string name="edit_recording">Úprava záznamu</string>
     <string name="enable_random_adaptation">Povolit náhodné přizpůsobení</string>

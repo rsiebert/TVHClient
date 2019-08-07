@@ -147,9 +147,6 @@
     <string name="pref_genre_colors_visibility_message">Stel de zichtbaarheid in van de kleuren. Hogere waarden betekend sterkere kleuren.</string>
     <string name="pref_hide_duplicate_scheduled_recordings">Verberg dubbele geplande opnames</string>
     <string name="pref_show_menu_delete_all_recordings">Toon het \'Verwijder alle opnames\' menu</string>
-    <string name="pref_host">Hostnaam</string>
-    <string name="pref_host_error_invalid">Het ip adres is niet juist.</string>
-    <string name="pref_host_sum">Type de server hostnaam</string>
     <string name="pref_information">Informatie</string>
     <string name="pref_language">Taal</string>
     <string name="pref_language_sum">Kies de taal die door het programma gebruikt zal worden.</string>
@@ -165,9 +162,7 @@
     <string name="pref_pass">Wachtwoord</string>
     <string name="pref_pass_set_sum">Wachtwoord is ingesteld maar wordt niet getoond.</string>
     <string name="pref_pass_sum">Type wachtwoord</string>
-    <string name="pref_port">HTSP Poort</string>
     <string name="pref_port_error_invalid">Poort nummer is niet geldig. Specificeer een nummer tussen 1 en 65535.</string>
-    <string name="pref_port_sum">Type de server poort</string>
     <string name="pref_profiles">Profielen</string>
     <string name="pref_program_guide">Programmagids</string>
     <string name="pref_program_guide_sum">Configureer het programmagids scherm en hoe de data getoond moet worden.</string>
@@ -177,8 +172,6 @@
     <string name="pref_show_recording_file_status_sum">De bestandsgrootte en het aantal gegevensfouten van elke opname worden getoond in de opnamelijsten.</string>
     <string name="pref_sort_channels">Kanaal sortering</string>
     <string name="pref_sort_channels_sum">Kies hoe de kanalen worden gesorteerd.</string>
-    <string name="pref_streaming_port">HTTP Poort voor media streaming</string>
-    <string name="pref_streaming_port_sum">%d zal voor media streaming worden gebruikt. De standaard poort is 9981 welke meestal goed zal zijn.</string>
     <string name="pref_tag_icon">Logo voor stationsgroepen</string>
     <string name="pref_tag_icon_sum">Toont het bijbehorende logo voor de geselecteerde kanaalgroep (indien beschikbaar).</string>
     <string name="pref_theme">Licht thema</string>
@@ -374,7 +367,6 @@
     <string name="pref_copy_playback_url_to_clipboard_enabled">Kopieer weergave-URL naar klembord</string>
     <string name="selection_disabled">Invalide</string>
     <string name="selection_default">Ingeschakeld</string>
-    <string name="pref_host_hint">www.server.com of 192.168.0.10</string>
     <string name="subtitle_settings">Ondertitelinstellingen</string>
     <string name="enable_random_adaptation">Schakel willekeurige aanpassing in</string>
     <string name="player_is_loading_more_data">Even geduld, speler laadt meer gegevens…</string>

@@ -170,10 +170,6 @@
     <string name="pref_genre_colors_visibility_message">Definiere wie stark die Farben sichtbar sein sollen. Je höher der Wert, desto stärker wirken die Farben.</string>
     <string name="pref_hide_duplicate_scheduled_recordings">Ausblenden von doppelten geplanten Aufnahmen</string>
     <string name="pref_show_menu_delete_all_recordings">Zeige Menü \'Alle Aufnahmen löschen\'</string>
-    <string name="pref_host">Hostname oder IP-Adresse</string>
-    <string name="pref_host_hint">www.server.de oder 192.168.0.10</string>
-    <string name="pref_host_error_invalid">Die IP-Adresse ist ungültig.</string>
-    <string name="pref_host_sum">Hostname oder IP-Adresse des Servers eingeben</string>
     <string name="pref_htsp_playback_profiles">Wiedergabeprofile (Interner Player)</string>
     <string name="pref_htsp_playback_profiles_sum">Wählen Sie ein Profil aus, das vom internen Player verwendet wird, um ein aufgenommenes Programm mit dem internen Player abzuspielen.</string>
     <string name="pref_http_playback_profiles">Wiedergabeprofile (Externe Player)</string>
@@ -200,9 +196,7 @@
     <string name="pref_play_when_channel_icon_selected">Senderlogo-Aktion</string>
     <string name="pref_play_when_channel_icon_selected_sum">Startet das aktuelle Programm bzw. Aufnahme, wenn das Senderlogo in der Senderliste, Programmanzeige oder in der Aufnahmelist angeklickt wurde.</string>
     <string name="pref_playback_and_recording">Wiedergabe und Aufnahme</string>
-    <string name="pref_port">HTSP-Port</string>
     <string name="pref_port_error_invalid">Die Port-Nummer ist ungültig. Der Wert muss zwischen 1 und 65535 liegen.</string>
-    <string name="pref_port_sum">Server-Port eingeben</string>
     <string name="pref_privacy_policy">Datenschutzerklärung</string>
     <string name="pref_profiles">Profile</string>
     <string name="pref_profiles_sum">Auswahl eines verfügbaren Serverprofils, mit denen Programme aufgenommen oder Aufnahmen abgespielt werden.</string>
@@ -237,8 +231,6 @@
     <string name="pref_show_recording_file_status_sum">Die Dateigröße und die Anzahl der Datenfehler jeder Aufnahme werden in den Aufnahmelisten angezeigt.</string>
     <string name="pref_sort_channels">Sender-Reihenfolge</string>
     <string name="pref_sort_channels_sum">Legt fest in welcher Reihenfolge die Sender angezeigt werden sollen.</string>
-    <string name="pref_streaming_port">HTTP-Port zum Streamen</string>
-    <string name="pref_streaming_port_sum">%d wird zum Streamen von TV-Programmen oder Aufnahmen verwendet. Normalerweise ist 9981 der Standardport und kann meistens beibehalten werden.</string>
     <string name="pref_tag_icon">Logo für Sendergruppen</string>
     <string name="pref_tag_icon_sum">Zeigt für die gewählte Sendergruppe (falls verfügbar) das dazugehörige Logo.</string>
     <string name="pref_theme">Helles Theme</string>

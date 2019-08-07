@@ -173,9 +173,6 @@
     <string name="pref_genre_colors_visibility_message">Állítsa be a színek láthatóságát. A magasabb értékek erősebb színeket jelentenek.</string>
     <string name="pref_hide_duplicate_scheduled_recordings">Az ismételt ütemezett felvételek elrejtése.</string>
     <string name="pref_show_menu_delete_all_recordings">Mutassa meg az \"Összes felvétel törlése\" menüt</string>
-    <string name="pref_host">Gépnév</string>
-    <string name="pref_host_error_invalid">Az IP cím nem megfelelő.</string>
-    <string name="pref_host_sum">A gyerver gépnevének beírása</string>
     <string name="pref_htsp_playback_profiles">Lejátszási profilok (belső lejátszó)</string>
     <string name="pref_htsp_playback_profiles_sum">Válasszon ki egy profilt, amelyet a belső lejátszó használ a felvett program lejátszásához a belső lejátszó segítségével.</string>
     <string name="pref_http_playback_profiles">Lejátszási profilok (külső lejátszók)</string>
@@ -202,9 +199,7 @@
     <string name="pref_play_when_channel_icon_selected">Csatorna ikon művelet</string>
     <string name="pref_play_when_channel_icon_selected_sum">Indítsa el az aktuális programot vagy a vegye fel, ha a csatorna ikonra kattint.</string>
     <string name="pref_playback_and_recording">Lejátszás és felvétel</string>
-    <string name="pref_port">HTSP Port</string>
     <string name="pref_port_error_invalid">A port száma nem érvényes. Adjon meg egy számot 1 és 65535 között.</string>
-    <string name="pref_port_sum">Szerver port beírása</string>
     <string name="pref_privacy_policy">Adatvédelmi irányelvek</string>
     <string name="pref_profiles">Profilok</string>
     <string name="pref_profiles_sum">Adja meg a lejátszási és felvételi profilokat.</string>
@@ -237,8 +232,6 @@
     <string name="pref_show_recording_file_status_sum">Az egyes felvételek fájlmérete és adathibáinak száma megjelenik a felvételi listákban.</string>
     <string name="pref_sort_channels">Csatornák rendezése</string>
     <string name="pref_sort_channels_sum">Válassza ki, hogy milyen sorrendben jelenjenek meg a csatornák.</string>
-    <string name="pref_streaming_port">HTTP port a média streaminghez</string>
-    <string name="pref_streaming_port_sum" tools:ignore="PluralsCandidate">A(z) %d port használható a média streaminghez. Az alapértelmezett port 9981.</string>
     <string name="pref_tag_icon">Csatorna címke ikon</string>
     <string name="pref_tag_icon_sum">Mutassa a csatorna címke ikonját.</string>
     <string name="pref_theme">Világos téma</string>
@@ -377,7 +370,6 @@
     <string name="pref_copy_playback_url_to_clipboard_enabled">Másolja a lejátszási URL-t a vágólapra</string>
     <string name="pref_copy_playback_url_to_clipboard_enabled_sum">Lejátszási problémák esetén a másolás használható a lejátszás tesztelésére a böngészőben.</string>
     <string name="selection_default">Engedélyezve</string>
-    <string name="pref_host_hint">www.server.com vagy 192.168.0.10</string>
     <string name="subtitle_settings">Felirat beállítások</string>
     <string name="player_is_loading_more_data">Kérjük, várjon, a lejátszó további adatokat tölt be…</string>
     <string name="receiving_data">Adatok fogadása</string>

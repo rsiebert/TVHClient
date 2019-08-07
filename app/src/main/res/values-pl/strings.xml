@@ -171,9 +171,6 @@
     <string name="pref_genre_colors_visibility_message">Ustaw widoczność kolorów. Wyższe wartości oznaczją mocniejsze kolory.</string>
     <string name="pref_hide_duplicate_scheduled_recordings">Ukryj zduplikowane zaplanowane nagrania</string>
     <string name="pref_show_menu_delete_all_recordings">Pokaż menu \"Usuń wszystkie nagrania\"</string>
-    <string name="pref_host">Nazwa hosta</string>
-    <string name="pref_host_error_invalid">IP adres jest nie poprawny.</string>
-    <string name="pref_host_sum">Wpisz adres serwera hosta</string>
     <string name="pref_information">Informacja</string>
     <string name="pref_information_sum">Pokaż wyjaśnienie używanych uprawnień, używanych bibliotek i podziękowania dla osób, które przyczyniły się do rozwoju</string>
     <string name="pref_language">Język</string>
@@ -196,9 +193,7 @@
     <string name="pref_play_when_channel_icon_selected">Akcja ikony kanału</string>
     <string name="pref_play_when_channel_icon_selected_sum">Zacznij odtwarzać bieżący program lub nagranie, gdy ikona kanał jest zaznaczony na ekranie listy kanałów, przewodnika po programach lub listy nagrywania.</string>
     <string name="pref_playback_and_recording">Odtwarzanie i nagrywanie</string>
-    <string name="pref_port">HTSP Port</string>
     <string name="pref_port_error_invalid">Numer portu jest nie poprawny. Powinien zawierać się pomiędzy 1 a 65535.</string>
-    <string name="pref_port_sum">Wpisz port serwera</string>
     <string name="pref_privacy_policy">Polityka prywatności</string>
     <string name="pref_profiles">Profile</string>
     <string name="pref_profiles_sum">Określ parametry lub profil (jeśli jest obsługiwany), jak programy będą nagrywane lub jak nagrania będą odtwarzane.</string>
@@ -231,8 +226,6 @@
     <string name="pref_show_recording_file_status_sum">Rozmiar pliku i liczba błędów danych każdego nagrania będą wyświetlane na listach nagrań.</string>
     <string name="pref_sort_channels">Kolejność kanałów</string>
     <string name="pref_sort_channels_sum">Wybierz w jakiej kolejności mają być wyświetlane kanały.</string>
-    <string name="pref_streaming_port">HTTP Port dla strumieniowej transmisji multimediów</string>
-    <string name="pref_streaming_port_sum">Port %d będzie wykorzystany do strumieniowej transmisji multimediów. Domyślnie jest to port 9981, który zazwyczaj jest najlepiej używać.</string>
     <string name="pref_tag_icon">Ikona tagu kanałów</string>
     <string name="pref_tag_icon_sum">Pokaż ikonę tagu kanałów.</string>
     <string name="pref_theme">Jasny motyw</string>
@@ -377,7 +370,6 @@
     <string name="pref_internal_player_audio_tunneling_enabled">Włącz tunelowanie dźwięku</string>
     <string name="pref_internal_player_audio_passthrough_enabled_sum">Musisz także upewnić się, że ustawienia audio systemu umożliwiają przesyłanie</string>
     <string name="pref_internal_player_audio_passthrough_enabled">Włącz przejście audio</string>
-    <string name="pref_host_hint">www.server.com lub 192.168.0.10</string>
     <string name="pref_copy_playback_url_to_clipboard_enabled_sum">W przypadku problemów z odtwarzaniem skopiowany adres URL można wykorzystać do testowania odtwarzania w przeglądarce.</string>
     <string name="pref_copy_playback_url_to_clipboard_enabled">Skopiuj Url odtwarzania do schowka</string>
     <string name="player_is_loading_more_data">Poczekaj, odtwarzacz ładuje więcej danych…</string>

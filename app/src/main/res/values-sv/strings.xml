@@ -84,9 +84,6 @@
     <string name="pref_genre_colors_visibility">Genrefärgstyrka</string>
     <string name="pref_genre_colors_visibility_message">Konfigurera färgernas synlighet. Högre värden ger starkare färg.</string>
     <string name="pref_show_menu_delete_all_recordings">Visa menyn \"Ta bort alla inspelningar\"</string>
-    <string name="pref_host">Värdnamn</string>
-    <string name="pref_host_error_invalid">IP-adressen är inte giltig.</string>
-    <string name="pref_host_sum">Fyll i serverns värdnamn</string>
     <string name="pref_information">Information</string>
     <string name="pref_language">Språk</string>
     <string name="pref_language_sum">Välj det språk applikationen skall använda.</string>
@@ -101,9 +98,7 @@
     <string name="pref_pass">Lösenord</string>
     <string name="pref_pass_set_sum">Lösenordet är aktiverat men visas ej.</string>
     <string name="pref_pass_sum">Fyll i lösenord</string>
-    <string name="pref_port">HTSP Port</string>
     <string name="pref_port_error_invalid">Portnummret är inte giltigt. Specificera ett värde mellan 1 och 65535.</string>
-    <string name="pref_port_sum">Fyll i serverport</string>
     <string name="pref_profiles">Profiler</string>
     <string name="pref_profiles_sum">Definera parametrar eller profiler (om det stöds) för hur program ska spelas in eller hur inspelningar ska spelas upp.</string>
     <string name="pref_program_guide">Programguide</string>
@@ -118,8 +113,6 @@
     <string name="pref_show_notifications_sum">Informarea användaren när en inspelning har startat eller är färdig.</string>
     <string name="pref_sort_channels">Kanalordning</string>
     <string name="pref_sort_channels_sum">Välj i vilken ordning kanaler skall visas.</string>
-    <string name="pref_streaming_port">HTTP Port för medieström</string>
-    <string name="pref_streaming_port_sum">%d är standardport för medieström.</string>
     <string name="pref_tag_icon">Kanaltaggikon</string>
     <string name="pref_tag_icon_sum">Visa ikonen för en kanaltagg.</string>
     <string name="pref_theme">Ljust tema</string>
@@ -358,7 +351,6 @@
     <string name="pref_http_playback_profiles">Uppspelningsprofiler (Externa spelare)</string>
     <string name="pref_htsp_playback_profiles_sum">Välj en profil som används av den interna spelaren för att spela ett inspelat program med den interna spelaren.</string>
     <string name="pref_htsp_playback_profiles">Uppspelningsprofiler (intern spelare)</string>
-    <string name="pref_host_hint">www.server.com eller 192.168.0.10</string>
     <string name="pref_hide_duplicate_scheduled_recordings">Dölj dubbla schemalagda inspelningar</string>
     <string name="pref_epg_sync_duration_sum">Antal programguidedata som ska laddas från servern.</string>
     <string name="pref_epg_sync_duration">Synkroniseringsvaraktighet för programdata</string>

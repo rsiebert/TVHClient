@@ -173,10 +173,6 @@
     <string name="pref_genre_colors_visibility_message">Establecer la visibilidad de los colores. Los valores más altos significan colores más fuertes.</string>
     <string name="pref_hide_duplicate_scheduled_recordings">Ocultar grabaciones programadas duplicadas</string>
     <string name="pref_show_menu_delete_all_recordings">Mostrar el menú \'Borrar todas las grabaciones\'</string>
-    <string name="pref_host">Nombre o IP del servidor</string>
-    <string name="pref_host_error_invalid">La dirección IP o servidor no es válido.</string>
-    <string name="pref_host_hint">www.server.com order 192.168.0.10</string>
-    <string name="pref_host_sum">Ingrese el nombre del servidor</string>
     <string name="pref_htsp_playback_profiles">Perfiles de reproducción (Reproductor interno)</string>
     <string name="pref_htsp_playback_profiles_sum">Seleccione un perfil que utilice el reproductor interno para reproducir un programa grabado utilizando el reproductor interno.</string>
     <string name="pref_http_playback_profiles">Perfiles de reproducción (Reproductores externos)</string>
@@ -213,9 +209,7 @@
     <string name="pref_play_when_channel_icon_selected">Acción del icono del canal</string>
     <string name="pref_play_when_channel_icon_selected_sum">Comience a reproducir el programa actual o la grabación cuando se selecciona el icono de canal en la lista de canales, guía de programas o pantalla de lista de grabación.</string>
     <string name="pref_playback_and_recording">Reproducción y grabación</string>
-    <string name="pref_port">Puerto</string>
     <string name="pref_port_error_invalid">El número de puerto no es válido. Especifique un número entre 1 y 65535.</string>
-    <string name="pref_port_sum">Ingrese el puerto del servidor</string>
     <string name="pref_privacy_policy">Política de privacidad</string>
     <string name="pref_profiles">Perfiles</string>
     <string name="pref_profiles_sum">Defina los parámetros o los perfiles (si se admite) cómo se grabarán los programas o cómo se reproducirán las grabaciones.</string>
@@ -247,8 +241,6 @@
     <string name="pref_show_recording_file_status_sum">El tamaño del archivo y la cantidad de errores de datos de cada grabación se mostrarán en las listas de grabación.</string>
     <string name="pref_sort_channels">Orden de canales</string>
     <string name="pref_sort_channels_sum">Elija en qué orden se mostrarán los canales.</string>
-    <string name="pref_streaming_port">Puerto para transmisión de medios</string>
-    <string name="pref_streaming_port_sum">Puerto %d se usará para la transmisión multimedia. El puerto predeterminado es 9981, que generalmente está bien de usar.</string>
     <string name="pref_tag_icon">Icono de etiqueta de canal</string>
     <string name="pref_tag_icon_sum">Mostrar el icono de una etiqueta de canal.</string>
     <string name="pref_theme">Tema Luz</string>
