@@ -56,6 +56,9 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
     private val pendingChannelTagOps = ArrayList<ChannelTag>()
     private val pendingRecordingOps = ArrayList<Recording>()
 
+    private lateinit var httpPlaybackProfiles: List<ServerProfile>
+    private lateinit var htspPlaybackProfiles: List<ServerProfile>
+
     private var initialSyncWithServerRunning: Boolean = false
     private var syncEventsRequired: Boolean = false
     private var syncRequired: Boolean = false
@@ -66,6 +69,15 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
         Timber.d("Starting service")
         MainApplication.component.inject(this)
         connectionTimeout = Integer.valueOf(sharedPreferences.getString("connection_timeout", resources.getString(R.string.pref_default_connection_timeout))!!) * 1000
+
+        connection = appRepository.connectionData.activeItem
+        Timber.d("Loaded connection ${connection.name}")
+
+        httpPlaybackProfiles = appRepository.serverProfileData.httpPlaybackProfiles
+        Timber.d("Loaded existing ${httpPlaybackProfiles.size} http playback profiles for connection ${connection.name}")
+
+        htspPlaybackProfiles = appRepository.serverProfileData.htspPlaybackProfiles
+        Timber.d("Loaded existing ${htspPlaybackProfiles.size} htsp playback profiles for connection ${connection.name}")
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -146,10 +158,7 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
 
     private fun startHtspConnection() {
         stopHtspConnection()
-
-        connection = appRepository.connectionData.activeItem
         Timber.d("Connecting to ${connection.name}, serverUrl is ${connection.serverUrl}")
-
         htspConnection = HtspConnection(
                 connection.username, connection.password,
                 connection.serverUrl,
@@ -931,8 +940,6 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
     private fun onHtspProfiles(message: HtspMessage) {
         Timber.d("Handling htsp playback profiles")
         if (message.containsKey("profiles")) {
-            val profiles = appRepository.serverProfileData.htspPlaybackProfiles
-            Timber.d("Loaded existing ${profiles.size} htsp playback profiles for connection ${connection.name}")
             for (obj in message.getList("profiles")) {
                 val msg = obj as HtspMessage
                 val name = msg.getString("name")
@@ -940,7 +947,7 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
                 Timber.d("Checking if htsp playback profile $name should be added to the database")
 
                 var profileExists = false
-                for (p in profiles) {
+                for (p in htspPlaybackProfiles) {
                     Timber.d("Comparing profile $name with database profile ${p.name}")
                     if (p.name == name && p.uuid == uuid) {
                         Timber.d("Htsp playback profile $name exists already")
@@ -966,8 +973,6 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
     private fun onHttpProfiles(message: HtspMessage) {
         Timber.d("Handling http playback profiles")
         if (message.containsKey("response")) {
-            val profiles = appRepository.serverProfileData.httpPlaybackProfiles
-            Timber.d("Loaded existing ${profiles.size} http playback profiles for connection ${connection.name}")
             try {
                 val response = JSONObject(message.getString("response"))
                 if (response.has("entries")) {
@@ -983,7 +988,7 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
                                 Timber.d("Checking if http playback profile $name should be added to the database")
 
                                 var profileExists = false
-                                for (p in profiles) {
+                                for (p in httpPlaybackProfiles) {
                                     Timber.d("Comparing profile $name with database profile ${p.name}")
                                     if (p.name == name && p.uuid == uuid) {
                                         Timber.d("Http playback profile $name exists already")
