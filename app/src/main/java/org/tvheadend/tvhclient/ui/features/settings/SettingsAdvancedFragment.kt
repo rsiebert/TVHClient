@@ -8,7 +8,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.provider.SearchRecentSuggestions
 import androidx.core.content.FileProvider
-import androidx.preference.CheckBoxPreference
+import androidx.preference.SwitchPreference
 import androidx.preference.EditTextPreference
 import androidx.preference.Preference
 import androidx.work.ExistingWorkPolicy
@@ -33,9 +33,9 @@ import java.util.*
 
 class SettingsAdvancedFragment : BasePreferenceFragment(), Preference.OnPreferenceChangeListener, Preference.OnPreferenceClickListener, SharedPreferences.OnSharedPreferenceChangeListener, DatabaseClearedCallback {
 
-    private var notificationsEnabledPreference: CheckBoxPreference? = null
-    private var notifyRunningRecordingCountEnabledPreference: CheckBoxPreference? = null
-    private var notifyLowStorageSpaceEnabledPreference: CheckBoxPreference? = null
+    private var notificationsEnabledPreference: SwitchPreference? = null
+    private var notifyRunningRecordingCountEnabledPreference: SwitchPreference? = null
+    private var notifyLowStorageSpaceEnabledPreference: SwitchPreference? = null
     private var connectionTimeoutPreference: EditTextPreference? = null
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {

@@ -1,7 +1,9 @@
 package org.tvheadend.tvhclient.ui.features.settings
 
 import android.os.Bundle
+import androidx.lifecycle.Observer
 import org.tvheadend.tvhclient.R
+import timber.log.Timber
 
 class SettingsAddConnectionFragment : SettingsConnectionBaseFragment() {
 
@@ -13,6 +15,11 @@ class SettingsAddConnectionFragment : SettingsConnectionBaseFragment() {
         if (savedInstanceState == null) {
             settingsViewModel.createNewConnection()
         }
+
+        settingsViewModel.connectionCount.observe(viewLifecycleOwner, Observer { count ->
+            Timber.d("Received live data, connection count is $count")
+            activeEnabledPreference.isChecked = (count == 0)
+        })
     }
 
     override fun save() {

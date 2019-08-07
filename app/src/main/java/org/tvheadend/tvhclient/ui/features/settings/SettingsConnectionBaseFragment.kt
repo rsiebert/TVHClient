@@ -7,10 +7,10 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import androidx.lifecycle.ViewModelProviders
-import androidx.preference.CheckBoxPreference
 import androidx.preference.EditTextPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
+import androidx.preference.SwitchPreference
 import com.afollestad.materialdialogs.MaterialDialog
 import com.google.android.material.snackbar.Snackbar
 import org.tvheadend.tvhclient.R
@@ -31,11 +31,11 @@ abstract class SettingsConnectionBaseFragment : PreferenceFragmentCompat(), Back
     private lateinit var streamingUrlPreference: EditTextPreference
     private lateinit var usernamePreference: EditTextPreference
     private lateinit var passwordPreference: EditTextPreference
-    private lateinit var activeEnabledPreference: CheckBoxPreference
+    protected lateinit var activeEnabledPreference: SwitchPreference
     private lateinit var wolMacAddressPreference: EditTextPreference
     private lateinit var wolPortPreference: EditTextPreference
-    private lateinit var wolEnabledPreference: CheckBoxPreference
-    private lateinit var wolUseBroadcastEnabled: CheckBoxPreference
+    private lateinit var wolEnabledPreference: SwitchPreference
+    private lateinit var wolUseBroadcastEnabled: SwitchPreference
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)

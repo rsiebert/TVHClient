@@ -2,11 +2,11 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
     <PreferenceCategory android:title="@string/pref_general">
-        <CheckBoxPreference
+        <SwitchPreference
             android:defaultValue="@bool/pref_default_internal_player_enabled"
             android:key="internal_player_for_channels_enabled"
             android:title="@string/pref_internal_player_for_channels_enabled" />
-        <CheckBoxPreference
+        <SwitchPreference
             android:defaultValue="@bool/pref_default_internal_player_enabled"
             android:key="internal_player_for_recordings_enabled"
             android:title="@string/pref_internal_player_for_recordings_enabled" />
@@ -21,17 +21,17 @@
             android:key="buffer_playback_ms"
             android:summary="@string/pref_internal_player_buffer_duration_sum"
             android:title="@string/pref_internal_player_buffer_duration" />
-        <CheckBoxPreference
+        <SwitchPreference
             android:defaultValue="@bool/pref_default_audio_passthrough_decoder_enabled"
             android:key="audio_passthrough_decoder_enabled"
             android:summary="@string/pref_internal_player_audio_passthrough_enabled_sum"
             android:title="@string/pref_internal_player_audio_passthrough_enabled" />
-        <CheckBoxPreference
+        <SwitchPreference
             android:defaultValue="@bool/pref_default_audio_tunneling_enabled"
             android:key="audio_tunneling_enabled"
             android:summary="@string/pref_internal_player_audio_tunneling_enabled_sum"
             android:title="@string/pref_internal_player_audio_tunneling_enabled" />
-        <CheckBoxPreference
+        <SwitchPreference
             android:enabled="false"
             android:defaultValue="@bool/pref_default_timeshift_enabled"
             android:key="timeshift_enabled"
