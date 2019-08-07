@@ -22,7 +22,7 @@
 
     <TextView
         android:id="@+id/startup_status"
-        android:layout_width="347dp"
+        android:layout_width="350dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"
@@ -35,9 +35,7 @@
         android:visibility="invisible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/guideline3"
-        tools:text="Mindestens eine Verbindung ist definiert, aber nicht aktiviert. Verwenden Sie entweder die Schaltfläche unten oder das Menü in der Symbolleiste, um die Liste der verfügbaren Verbindungen anzuzeigen. Um eine Verbindung zu aktivieren, wählen Sie eine aus der Liste aus und tippen Sie auf das Sternsymbol in der Symbolleiste."
-        tools:visibility="visible" />
+        app:layout_constraintTop_toTopOf="@+id/guideline3" />
 
     <ImageButton
         android:id="@+id/add_connection_button"
@@ -54,8 +52,7 @@
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/startup_status"
-        tools:visibility="visible" />
+        app:layout_constraintTop_toBottomOf="@+id/startup_status" />
 
     <ImageButton
         android:id="@+id/list_connections_button"
@@ -72,8 +69,7 @@
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/add_connection_button"
-        tools:visibility="visible" />
+        app:layout_constraintTop_toBottomOf="@+id/add_connection_button" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline3"
