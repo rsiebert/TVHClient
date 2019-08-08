@@ -98,11 +98,10 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickCallback, ChannelTi
             }
 
             recycler_view?.visible()
-
             showChannelTagOrChannelCountInToolbar()
 
             if (isDualPane && recyclerViewAdapter.itemCount > 0) {
-                showChannelDetails(selectedListPosition)
+                showProgramListOfSelectedChannelInDualPane(selectedListPosition)
             }
         })
 
@@ -236,13 +235,15 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickCallback, ChannelTi
         viewModel.setSelectedChannelTagIds(ids)
     }
 
-    /**
-     * Show the program list when a channel was selected. In single pane mode a separate
-     * activity is called. In dual pane mode a list fragment will be shown in the right side.
-     *
-     * @param position The selected position in the list
-     */
     private fun showChannelDetails(position: Int) {
+        if (!isDualPane) {
+            showProgramListOfSelectedChannelInSinglePane(position)
+        } else {
+            showProgramListOfSelectedChannelInDualPane(position)
+        }
+    }
+
+    private fun showProgramListOfSelectedChannelInSinglePane(position: Int) {
         selectedListPosition = position
         recyclerViewAdapter.setPosition(position)
         val channel = recyclerViewAdapter.getItem(position)
@@ -250,38 +251,45 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickCallback, ChannelTi
             return
         }
 
+        // Show the fragment to display the program list of the selected channel.
         val fm = activity?.supportFragmentManager
-        if (!isDualPane) {
-            // Show the fragment to display the program list of the selected channel.
-            val bundle = Bundle()
-            bundle.putString("channelName", channel.name)
-            bundle.putInt("channelId", channel.id)
-            bundle.putLong("selectedTime", selectedTime)
+        val bundle = Bundle()
+        bundle.putString("channelName", channel.name)
+        bundle.putInt("channelId", channel.id)
+        bundle.putLong("selectedTime", selectedTime)
 
-            val fragment = ProgramListFragment()
-            fragment.arguments = bundle
+        val fragment = ProgramListFragment()
+        fragment.arguments = bundle
+        fm?.beginTransaction()?.also {
+            it.replace(R.id.main, fragment)
+            it.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+            it.addToBackStack(null)
+            it.commit()
+        }
+    }
+
+    private fun showProgramListOfSelectedChannelInDualPane(position: Int) {
+        selectedListPosition = position
+        recyclerViewAdapter.setPosition(position)
+        val channel = recyclerViewAdapter.getItem(position)
+        if (channel == null || !isVisible) {
+            return
+        }
+        // Check if an instance of the program list fragment for the selected channel is
+        // already available. If an instance exist already then update the selected time
+        // that was selected from the channel list.
+        val fm = activity?.supportFragmentManager
+        var fragment = fm?.findFragmentById(R.id.details)
+        if (fragment !is ProgramListFragment
+                || fragment.shownChannelId != channel.id) {
+            fragment = ProgramListFragment.newInstance(channel.name ?: "", channel.id, selectedTime)
             fm?.beginTransaction()?.also {
-                it.replace(R.id.main, fragment)
+                it.replace(R.id.details, fragment)
                 it.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
-                it.addToBackStack(null)
                 it.commit()
             }
         } else {
-            // Check if an instance of the program list fragment for the selected channel is
-            // already available. If an instance exist already then update the selected time
-            // that was selected from the channel list.
-            var fragment = fm?.findFragmentById(R.id.details)
-            if (fragment !is ProgramListFragment
-                    || fragment.shownChannelId != channel.id) {
-                fragment = ProgramListFragment.newInstance(channel.name ?: "", channel.id, selectedTime)
-                fm?.beginTransaction()?.also {
-                    it.replace(R.id.details, fragment)
-                    it.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
-                    it.commit()
-                }
-            } else {
-                fragment.updatePrograms(selectedTime)
-            }
+            fragment.updatePrograms(selectedTime)
         }
     }
 
