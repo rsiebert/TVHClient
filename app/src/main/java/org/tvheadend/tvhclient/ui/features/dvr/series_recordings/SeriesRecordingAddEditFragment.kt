@@ -44,7 +44,6 @@ class SeriesRecordingAddEditFragment : BaseFragment(), BackPressedInterface, Rec
             seriesRecordingViewModel.loadRecordingByIdSync(arguments?.getString("id", "") ?: "")
         }
 
-        setHasOptionsMenu(true)
         updateUI()
 
         toolbarInterface.setTitle(if (seriesRecordingViewModel.recording.id.isNotEmpty())

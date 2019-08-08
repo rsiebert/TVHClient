@@ -42,7 +42,6 @@ class TimerRecordingAddEditFragment : BaseFragment(), BackPressedInterface, Reco
             timerRecordingViewModel.loadRecordingByIdSync(arguments?.getString("id", "") ?: "")
         }
 
-        setHasOptionsMenu(true)
         updateUI()
 
         toolbarInterface.setTitle(if (timerRecordingViewModel.recording.id.isNotEmpty())
