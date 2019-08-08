@@ -32,7 +32,7 @@ import java.net.URLEncoder
 fun preparePopupOrToolbarRecordingMenu(context: Context,
                                        menu: Menu,
                                        recording: Recording?,
-                                       isNetworkAvailable: Boolean,
+                                       isConnectionToServerAvailable: Boolean,
                                        htspVersion: Int,
                                        isUnlocked: Boolean) {
 
@@ -41,7 +41,7 @@ fun preparePopupOrToolbarRecordingMenu(context: Context,
         menu.getItem(i)?.isVisible = false
     }
 
-    if (isNetworkAvailable) {
+    if (isConnectionToServerAvailable) {
         if (recording == null || (!recording.isRecording
                         && !recording.isScheduled
                         && !recording.isCompleted
@@ -91,14 +91,14 @@ fun preparePopupOrToolbarRecordingMenu(context: Context,
 fun preparePopupOrToolbarMiscMenu(context: Context,
                                   menu: Menu,
                                   program: ProgramInterface?,
-                                  isNetworkAvailable: Boolean,
+                                  isConnectionToServerAvailable: Boolean,
                                   isUnlocked: Boolean) {
 
     menu.findItem(R.id.menu_cast)?.isVisible = false
     menu.findItem(R.id.menu_play)?.isVisible = false
     menu.findItem(R.id.menu_add_notification)?.isVisible = false
 
-    if (isNetworkAvailable) {
+    if (isConnectionToServerAvailable) {
         // Show the play menu item and the cast menu item (if available)
         // when the current time is between the program start and end time
         val currentTime = System.currentTimeMillis()
@@ -123,8 +123,8 @@ fun preparePopupOrToolbarMiscMenu(context: Context,
     }
 }
 
-fun preparePopupOrToolbarSearchMenu(menu: Menu, title: String?, isNetworkAvailable: Boolean) {
-    val visible = isNetworkAvailable && !title.isNullOrEmpty()
+fun preparePopupOrToolbarSearchMenu(menu: Menu, title: String?, isConnectionToServerAvailable: Boolean) {
+    val visible = isConnectionToServerAvailable && !title.isNullOrEmpty()
     menu.findItem(R.id.menu_search)?.isVisible = visible
     menu.findItem(R.id.menu_search_imdb)?.isVisible = visible
     menu.findItem(R.id.menu_search_fileaffinity)?.isVisible = visible
