@@ -99,7 +99,7 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickCallback, ChannelTi
 
             recycler_view?.visible()
 
-            showChannelTagOrChannelCount()
+            showChannelTagOrChannelCountInToolbar()
 
             if (isDualPane && recyclerViewAdapter.itemCount > 0) {
                 showChannelDetails(selectedListPosition)
@@ -146,7 +146,7 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickCallback, ChannelTi
         }
     }
 
-    private fun showChannelTagOrChannelCount() {
+    private fun showChannelTagOrChannelCountInToolbar() {
         // Show either all channels or the name of the selected
         // channel tag and the channel count in the toolbar
         context?.let {
@@ -370,7 +370,7 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickCallback, ChannelTi
     }
 
     override fun onFilterComplete(count: Int) {
-        showChannelTagOrChannelCount()
+        showChannelTagOrChannelCountInToolbar()
         // Show the first search result item in the details screen
         if (isDualPane && recyclerViewAdapter.itemCount > 0) {
             showChannelDetails(0)
