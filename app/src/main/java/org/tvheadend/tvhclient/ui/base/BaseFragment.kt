@@ -65,6 +65,8 @@ abstract class BaseFragment : Fragment() {
         } else {
             enableSingleScreenLayout()
         }
+
+        setHasOptionsMenu(true)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -82,8 +84,8 @@ abstract class BaseFragment : Fragment() {
     private fun enableSingleScreenLayout() {
         Timber.d("Dual pane is not active, hiding details layout")
         val mainFrameLayout: FrameLayout = activity!!.findViewById(R.id.main)
-        val detailsFrameLayout: FrameLayout = activity!!.findViewById(R.id.details)
-        detailsFrameLayout.gone()
+        val detailsFrameLayout: FrameLayout? = activity!!.findViewById(R.id.details)
+        detailsFrameLayout?.gone()
         mainFrameLayout.layoutParams = LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.MATCH_PARENT,
@@ -93,8 +95,8 @@ abstract class BaseFragment : Fragment() {
     private fun enableDualScreenLayout() {
         Timber.d("Dual pane is active, showing details layout")
         val mainFrameLayout: FrameLayout = activity!!.findViewById(R.id.main)
-        val detailsFrameLayout: FrameLayout = activity!!.findViewById(R.id.details)
-        detailsFrameLayout.visible()
+        val detailsFrameLayout: FrameLayout? = activity!!.findViewById(R.id.details)
+        detailsFrameLayout?.visible()
         mainFrameLayout.layoutParams = LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.MATCH_PARENT,
