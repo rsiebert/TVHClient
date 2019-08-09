@@ -13,9 +13,16 @@
             android:layout_height="?android:attr/actionBarSize" />
     </com.google.android.material.appbar.AppBarLayout>
 
-    <FrameLayout
-        android:id="@+id/main"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="?android:attr/actionBarSize" />
+        android:baselineAligned="false"
+        android:orientation="horizontal">
+
+        <FrameLayout
+            android:id="@+id/main"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="?android:attr/actionBarSize" />
+    </LinearLayout>
 </merge>
