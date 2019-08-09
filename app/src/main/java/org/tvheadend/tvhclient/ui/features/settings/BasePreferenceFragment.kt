@@ -36,8 +36,11 @@ abstract class BasePreferenceFragment : PreferenceFragmentCompat() {
         // in case the database has been cleared. The view model is not destroyed so it would
         // contain an old version with invalid profile ids.
         settingsViewModel.currentServerStatusLiveData.observe(viewLifecycleOwner, Observer { serverStatus ->
-            Timber.d("Received live data, server status changed")
-            settingsViewModel.currentServerStatus = serverStatus
+            Timber.d("Received live data, server status has changed")
+            if (serverStatus != null) {
+                Timber.d("Received server status")
+                settingsViewModel.currentServerStatus = serverStatus
+            }
         })
     }
 }
