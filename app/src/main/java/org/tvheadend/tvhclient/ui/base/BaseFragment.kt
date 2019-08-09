@@ -34,10 +34,6 @@ abstract class BaseFragment : Fragment() {
     protected var isConnectionToServerAvailable: Boolean = false
     protected lateinit var connection: Connection
 
-    // TODO get the information from the layout (see medium article) not by checking for null
-    private var mainFrameLayout: FrameLayout? = null
-    private var detailsFrameLayout: FrameLayout? = null
-
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         MainApplication.component.inject(this)
@@ -45,9 +41,6 @@ abstract class BaseFragment : Fragment() {
         if (activity is ToolbarInterface) {
             toolbarInterface = activity as ToolbarInterface
         }
-
-        mainFrameLayout = activity?.findViewById(R.id.main)
-        detailsFrameLayout = activity?.findViewById(R.id.details)
 
         baseViewModel = ViewModelProviders.of(activity as BaseActivity).get(BaseViewModel::class.java)
         baseViewModel.connectionToServerAvailable.observe(viewLifecycleOwner, Observer { isAvailable ->
@@ -66,18 +59,12 @@ abstract class BaseFragment : Fragment() {
         // Check if we have a frame in which to embed the details fragment.
         // Make the frame layout visible and set the weights again in case
         // it was hidden by the call to forceSingleScreenLayout()
-        isDualPane = detailsFrameLayout != null
+        isDualPane = resources.getBoolean(R.bool.isDualScreen)
         if (isDualPane) {
-            detailsFrameLayout?.visible()
-            val param = LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.MATCH_PARENT,
-                    LinearLayout.LayoutParams.MATCH_PARENT,
-                    0.65f
-            )
-            mainFrameLayout?.layoutParams = param
+            enableDualScreenLayout()
+        } else {
+            enableSingleScreenLayout()
         }
-
-        setHasOptionsMenu(true)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -92,15 +79,32 @@ abstract class BaseFragment : Fragment() {
         }
     }
 
+    private fun enableSingleScreenLayout() {
+        Timber.d("Dual pane is not active, hiding details layout")
+        val mainFrameLayout: FrameLayout = activity!!.findViewById(R.id.main)
+        val detailsFrameLayout: FrameLayout = activity!!.findViewById(R.id.details)
+        detailsFrameLayout.gone()
+        mainFrameLayout.layoutParams = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                1.0f)
+    }
+
+    private fun enableDualScreenLayout() {
+        Timber.d("Dual pane is active, showing details layout")
+        val mainFrameLayout: FrameLayout = activity!!.findViewById(R.id.main)
+        val detailsFrameLayout: FrameLayout = activity!!.findViewById(R.id.details)
+        detailsFrameLayout.visible()
+        mainFrameLayout.layoutParams = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                0.65f)
+    }
+
     protected fun forceSingleScreenLayout() {
-        if (detailsFrameLayout != null) {
-            detailsFrameLayout?.gone()
-            val param = LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.MATCH_PARENT,
-                    LinearLayout.LayoutParams.MATCH_PARENT,
-                    1.0f
-            )
-            mainFrameLayout?.layoutParams = param
+        if (isDualPane) {
+            Timber.d("Dual pane is active, forcing single screen layout")
+            enableSingleScreenLayout()
         }
     }
 }
