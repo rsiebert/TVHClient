@@ -36,6 +36,7 @@ class StartupFragment : Fragment() {
         }
 
         setHasOptionsMenu(true)
+        loadingDone = false
         showStartupStatus()
 
         Timber.d("Observing connection status")
