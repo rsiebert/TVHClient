@@ -37,9 +37,7 @@ import javax.inject.Inject
 // TODO Move the variable programIdToBeEditedWhenBeingRecorded into the viewmodels
 // TODO consolidate the dialog strings
 // TODO make the 12 hour check to start the epg background worker a setting
-// TODO load startup fragment in main activity, continue to load first fragment if all ok and viewmodel loaded data
 // TODO use viewpager2 in epg
-// TODO reduce number of used async loads in source_data, use livedata where possible
 
 class MainApplication : MultiDexApplication(), OptionsProvider, BillingUpdatesListener {
 

@@ -40,8 +40,6 @@ class WakeOnLanTask(context: Context, private val connection: Connection) : Asyn
         }
 
         try {
-            // TODO wake on lan with ipv6
-            // TODO get the mac address automatically and remove the setting
             val uri = Uri.parse(connection.serverUrl)
             val address: InetAddress
             if (!connection.isWolUseBroadcast) {
