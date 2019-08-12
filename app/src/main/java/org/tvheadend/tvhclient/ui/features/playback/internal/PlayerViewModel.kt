@@ -23,6 +23,7 @@ import timber.log.Timber
 import java.util.*
 import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledExecutorService
+import kotlin.math.max
 
 class PlayerViewModel(application: Application) : BaseViewModel(application), HtspConnectionStateListener, VideoListener, Player.EventListener {
 
@@ -219,6 +220,11 @@ class PlayerViewModel(application: Application) : BaseViewModel(application), Ht
     override fun onCleared() {
         super.onCleared()
         Timber.d("Clearing view model")
+        stopPlaybackAndReleaseMediaSource()
+    }
+
+    fun stopPlaybackAndReleaseMediaSource() {
+        Timber.d("Stopping playback, releasing media source ")
         releaseMediaSource()
         player.release()
 
@@ -333,8 +339,8 @@ class PlayerViewModel(application: Application) : BaseViewModel(application), Ht
             System.currentTimeMillis() + timeshiftOffsetPts / 1000 else player.currentPosition
         Timber.d("Timeshift current time is $currentTime")
 
-        val time = Math.max(currentTime + offset, startTime)
+        val time = max(currentTime + offset, startTime)
         val seekPts = time * 1000 - timeshiftStartTime
-        return Math.max(seekPts, timeshiftStartPts) / 1000
+        return max(seekPts, timeshiftStartPts) / 1000
     }
 }
