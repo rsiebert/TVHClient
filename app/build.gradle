@@ -17,8 +17,8 @@ android {
         minSdkVersion 16
         targetSdkVersion 28
 
-        versionCode 178
-        versionName "2.2.17"
+        versionCode 179
+        versionName "2.2.18"
 
         // Define the apk naming convention
         applicationId "org.tvheadend.tvhclient"
