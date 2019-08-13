@@ -36,6 +36,16 @@ class StartupActivity : AppCompatActivity(), ToolbarInterface, RemoveFragmentFro
                     .addToBackStack(null)
                     .commit()
 
+            val showPrivacyPolicyRequired = sharedPreferences.getBoolean("showPrivacyPolicy", true)
+            Timber.d("Privacy policy needs to be displayed $showPrivacyPolicyRequired")
+            if (showPrivacyPolicyRequired) {
+                supportFragmentManager.beginTransaction()
+                        .replace(R.id.main, StartupPrivacyPolicyFragment())
+                        .addToBackStack(null)
+                        .commit()
+                supportActionBar?.setDisplayHomeAsUpEnabled(false)
+            }
+
             // Show the full changelog if the changelog was never shown before (app version
             // name is empty) or if it was already shown and the version name is the same as
             // the one in the preferences. Otherwise show the changelog of the newest app version.
