@@ -17,7 +17,7 @@ android {
         minSdkVersion 16
         targetSdkVersion 28
 
-        versionCode 177
+        versionCode 178
         versionName "2.2.17"
 
         // Define the apk naming convention
