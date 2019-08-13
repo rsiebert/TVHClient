@@ -38,6 +38,7 @@ import org.tvheadend.tvhclient.ui.features.dvr.timer_recordings.TimerRecordingDe
 import org.tvheadend.tvhclient.ui.features.dvr.timer_recordings.TimerRecordingListFragment
 import org.tvheadend.tvhclient.ui.features.epg.ProgramGuideFragment
 import org.tvheadend.tvhclient.ui.features.information.HelpAndSupportFragment
+import org.tvheadend.tvhclient.ui.features.information.PrivacyPolicyFragment
 import org.tvheadend.tvhclient.ui.features.information.StatusFragment
 import org.tvheadend.tvhclient.ui.features.information.StatusViewModel
 import org.tvheadend.tvhclient.ui.features.navigation.NavigationDrawer
@@ -342,6 +343,21 @@ class MainActivity : BaseActivity(R.layout.main_activity), SearchView.OnQueryTex
             }
         }
         return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.menu_privacy_policy -> {
+                Timber.d("Showing privacy policy fragment")
+                val fragment: Fragment = PrivacyPolicyFragment()
+                supportFragmentManager.beginTransaction()
+                        .replace(R.id.main, fragment)
+                        .addToBackStack(null)
+                        .commit()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
     }
 
     override fun onQueryTextSubmit(query: String): Boolean {

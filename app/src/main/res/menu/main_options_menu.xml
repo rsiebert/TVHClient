@@ -26,5 +26,10 @@
         android:title="@string/send_wol"
         android:visible="false"
         app:showAsAction="collapseActionView" />
+    <item
+        android:id="@+id/menu_privacy_policy"
+        android:orderInCategory="10"
+        android:title="@string/pref_privacy_policy"
+        app:showAsAction="collapseActionView" />
 
 </menu>
