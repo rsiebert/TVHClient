@@ -132,14 +132,15 @@ dependencies {
     implementation 'com.mikepenz:materialdrawer:7.0.0-rc04'
 
     // Memory leaks
-    implementation 'com.squareup.leakcanary:leakcanary-android:2.0-beta-1'
+    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.0-beta-2'
+    implementation 'com.squareup.leakcanary:leakcanary-object-watcher-android:2.0-beta-2'
 
     // Firebase and crash reporting
     implementation 'com.crashlytics.sdk.android:crashlytics:2.10.1'
     implementation 'com.google.firebase:firebase-core:17.0.1'
 
     // Life cycles, LiveData and ViewModel
-    def lifecycle_version = "2.2.0-alpha02"
+    def lifecycle_version = '2.2.0-alpha02'
     implementation "androidx.lifecycle:lifecycle-extensions:$lifecycle_version"
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version"
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version"
