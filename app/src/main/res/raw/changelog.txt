@@ -1,7 +1,8 @@
 $ 2.2.17
   % VERSION 2.2.17
-  _ 12.08.2019
+  _ 13.08.2019
     * Fixed player playing audio in background after close
+    * Show the updated privacy policy upon startup
 $ 2.2.16
   % VERSION 2.2.16
   _ 09.08.2019
