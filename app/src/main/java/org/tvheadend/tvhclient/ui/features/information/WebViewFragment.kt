@@ -62,6 +62,7 @@ open class WebViewFragment : Fragment(), HtmlFileLoaderTask.Listener {
         menu.findItem(R.id.menu_search)?.isVisible = false
         menu.findItem(R.id.menu_reconnect_to_server)?.isVisible = false
         menu.findItem(R.id.menu_send_wake_on_lan_packet)?.isVisible = false
+        menu.findItem(R.id.menu_privacy_policy)?.isVisible = false
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
