@@ -3,10 +3,12 @@ package org.tvheadend.tvhclient.ui.features.information
 import android.graphics.Color
 import android.os.Bundle
 import android.view.*
+import androidx.fragment.app.Fragment
 import kotlinx.android.synthetic.main.webview_fragment.*
 import org.tvheadend.tvhclient.BuildConfig
 import org.tvheadend.tvhclient.R
-import org.tvheadend.tvhclient.ui.base.BaseFragment
+import org.tvheadend.tvhclient.ui.common.callbacks.LayoutInterface
+import org.tvheadend.tvhclient.ui.common.callbacks.ToolbarInterface
 import org.tvheadend.tvhclient.ui.common.tasks.HtmlFileLoaderTask
 import org.tvheadend.tvhclient.ui.features.settings.RemoveFragmentFromBackstackInterface
 import org.tvheadend.tvhclient.util.extensions.gone
@@ -14,9 +16,10 @@ import org.tvheadend.tvhclient.util.extensions.visible
 import org.tvheadend.tvhclient.util.getThemeId
 import java.util.regex.Pattern
 
-open class WebViewFragment : BaseFragment(), HtmlFileLoaderTask.Listener {
+open class WebViewFragment : Fragment(), HtmlFileLoaderTask.Listener {
 
     private lateinit var htmlFileLoaderTask: HtmlFileLoaderTask
+    protected lateinit var toolbarInterface: ToolbarInterface
     var website: String = ""
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -25,7 +28,15 @@ open class WebViewFragment : BaseFragment(), HtmlFileLoaderTask.Listener {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        forceSingleScreenLayout()
+
+        if (activity is LayoutInterface) {
+            (activity as LayoutInterface).forceSingleScreenLayout()
+        }
+        if (activity is ToolbarInterface) {
+            toolbarInterface = activity as ToolbarInterface
+        }
+
+        setHasOptionsMenu(true)
 
         // Make the background transparent to remove flickering.
         // This avoids seeing the default theme background color
