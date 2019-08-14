@@ -24,6 +24,7 @@ import org.tvheadend.tvhclient.domain.entity.ChannelTag
 import org.tvheadend.tvhclient.domain.entity.EpgProgram
 import org.tvheadend.tvhclient.ui.base.BaseFragment
 import org.tvheadend.tvhclient.ui.common.*
+import org.tvheadend.tvhclient.ui.common.callbacks.LayoutInterface
 import org.tvheadend.tvhclient.ui.common.callbacks.RecyclerViewClickCallback
 import org.tvheadend.tvhclient.ui.features.channels.ChannelTagIdsSelectedInterface
 import org.tvheadend.tvhclient.ui.features.channels.ChannelTimeSelectedInterface
@@ -55,7 +56,9 @@ class ProgramGuideFragment : BaseFragment(), EpgScrollInterface, RecyclerViewCli
         super.onActivityCreated(savedInstanceState)
         epgViewModel = ViewModelProviders.of(activity!!).get(EpgViewModel::class.java)
 
-        forceSingleScreenLayout()
+        if (activity is LayoutInterface) {
+            (activity as LayoutInterface).forceSingleScreenLayout()
+        }
 
         if (savedInstanceState == null) {
             epgViewModel.searchQuery = arguments?.getString(SearchManager.QUERY) ?: ""

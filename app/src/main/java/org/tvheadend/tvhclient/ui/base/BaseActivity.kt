@@ -5,6 +5,8 @@ import android.content.IntentFilter
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.MenuItem
+import android.widget.FrameLayout
+import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.lifecycle.ViewModelProviders
@@ -14,12 +16,16 @@ import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.data.repository.AppRepository
 import org.tvheadend.tvhclient.ui.common.NetworkStatusReceiver
 import org.tvheadend.tvhclient.ui.common.SnackbarMessageReceiver
+import org.tvheadend.tvhclient.ui.common.callbacks.LayoutInterface
 import org.tvheadend.tvhclient.ui.common.callbacks.ToolbarInterface
 import org.tvheadend.tvhclient.ui.common.onAttach
+import org.tvheadend.tvhclient.util.extensions.gone
+import org.tvheadend.tvhclient.util.extensions.visible
 import org.tvheadend.tvhclient.util.getThemeId
+import timber.log.Timber
 import javax.inject.Inject
 
-open class BaseActivity(private val layoutId: Int = R.layout.misc_content_activity) : AppCompatActivity(), ToolbarInterface {
+open class BaseActivity(private val layoutId: Int = R.layout.misc_content_activity) : AppCompatActivity(), ToolbarInterface, LayoutInterface {
 
     @Inject
     lateinit var appContext: Context
@@ -81,5 +87,31 @@ open class BaseActivity(private val layoutId: Int = R.layout.misc_content_activi
             }
             else -> super.onOptionsItemSelected(item)
         }
+    }
+
+    override fun enableSingleScreenLayout() {
+        Timber.d("Dual pane is not active, hiding details layout")
+        val mainFrameLayout: FrameLayout = findViewById(R.id.main)
+        val detailsFrameLayout: FrameLayout? = findViewById(R.id.details)
+        detailsFrameLayout?.gone()
+        mainFrameLayout.layoutParams = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                1.0f)
+    }
+
+    override fun enableDualScreenLayout() {
+        Timber.d("Dual pane is active, showing details layout")
+        val mainFrameLayout: FrameLayout = findViewById(R.id.main)
+        val detailsFrameLayout: FrameLayout? = findViewById(R.id.details)
+        detailsFrameLayout?.visible()
+        mainFrameLayout.layoutParams = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                0.65f)
+    }
+
+    override fun forceSingleScreenLayout() {
+        enableSingleScreenLayout()
     }
 }

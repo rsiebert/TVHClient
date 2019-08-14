@@ -14,6 +14,7 @@ import org.tvheadend.tvhclient.domain.entity.Program
 import org.tvheadend.tvhclient.domain.entity.Recording
 import org.tvheadend.tvhclient.ui.base.BaseFragment
 import org.tvheadend.tvhclient.ui.common.*
+import org.tvheadend.tvhclient.ui.common.callbacks.LayoutInterface
 import org.tvheadend.tvhclient.ui.features.dvr.RecordingAddEditActivity
 import org.tvheadend.tvhclient.ui.features.notification.addNotificationProgramIsAboutToStart
 import org.tvheadend.tvhclient.util.extensions.gone
@@ -42,7 +43,9 @@ class ProgramDetailsFragment : BaseFragment() {
         super.onActivityCreated(savedInstanceState)
         programViewModel = ViewModelProviders.of(activity!!).get(ProgramViewModel::class.java)
 
-        forceSingleScreenLayout()
+        if (activity is LayoutInterface) {
+            (activity as LayoutInterface).forceSingleScreenLayout()
+        }
 
         if (!isDualPane) {
             toolbarInterface.setTitle(getString(R.string.details))
