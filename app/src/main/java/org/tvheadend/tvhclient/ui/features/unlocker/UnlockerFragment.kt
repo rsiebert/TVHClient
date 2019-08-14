@@ -4,11 +4,15 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
 import com.afollestad.materialdialogs.MaterialDialog
 import com.android.billingclient.api.BillingClient
 import com.android.billingclient.api.Purchase
 import org.tvheadend.tvhclient.MainApplication
 import org.tvheadend.tvhclient.R
+import org.tvheadend.tvhclient.ui.base.BaseActivity
+import org.tvheadend.tvhclient.ui.base.BaseViewModel
 import org.tvheadend.tvhclient.ui.features.information.WebViewFragment
 import org.tvheadend.tvhclient.util.billing.BillingHandler
 import org.tvheadend.tvhclient.util.billing.BillingManager
@@ -20,13 +24,22 @@ class UnlockerFragment : WebViewFragment(), BillingUpdatesListener {
 
     private lateinit var billingManager: BillingManager
     private lateinit var billingHandler: BillingHandler
+    private lateinit var baseViewModel: BaseViewModel
+    private var isUnlocked: Boolean = false
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         toolbarInterface.setTitle(getString(R.string.pref_unlocker))
         toolbarInterface.setSubtitle("")
+
         billingManager = MainApplication.billingManager
         billingHandler = MainApplication.billingHandler
+
+        baseViewModel = ViewModelProviders.of(activity as BaseActivity).get(BaseViewModel::class.java)
+        baseViewModel.isUnlocked.observe(viewLifecycleOwner, Observer { unlocked ->
+            Timber.d("Received live data, unlocked changed to $unlocked")
+            isUnlocked = unlocked
+        })
 
         website = "features"
     }
