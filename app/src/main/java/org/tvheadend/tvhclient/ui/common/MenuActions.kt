@@ -66,8 +66,8 @@ fun preparePopupOrToolbarRecordingMenu(context: Context,
             Timber.d("Recording is scheduled")
             menu.findItem(R.id.menu_cancel_recording)?.isVisible = true
             menu.findItem(R.id.menu_edit_recording)?.isVisible = isUnlocked
-            menu.findItem(R.id.menu_disable_recording)?.isVisible = htspVersion >= 19 && isUnlocked && recording.isEnabled
-            menu.findItem(R.id.menu_enable_recording)?.isVisible = htspVersion >= 19 && isUnlocked && !recording.isEnabled
+            menu.findItem(R.id.menu_disable_recording)?.isVisible = htspVersion >= 23 && isUnlocked && recording.isEnabled
+            menu.findItem(R.id.menu_enable_recording)?.isVisible = htspVersion >= 23 && isUnlocked && !recording.isEnabled
 
         } else if (recording.isRecording) {
             Timber.d("Recording is being recorded")
