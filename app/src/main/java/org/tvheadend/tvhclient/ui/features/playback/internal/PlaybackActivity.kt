@@ -39,14 +39,13 @@ import org.tvheadend.tvhclient.util.extensions.*
 import org.tvheadend.tvhclient.util.getIconUrl
 import org.tvheadend.tvhclient.util.getThemeId
 import timber.log.Timber
-import java.util.*
 
 class PlaybackActivity : AppCompatActivity(), PlayerControlView.VisibilityListener {
 
     private var timeshiftSupported: Boolean = false
     private lateinit var viewModel: PlayerViewModel
 
-    private val videoAspectRatioNameList = Arrays.asList("5:4 (1.25:1)", "4:3 (1.3:1)", "16:9 (1.7:1)", "16:10 (1.6:1)")
+    private val videoAspectRatioNameList = listOf("5:4 (1.25:1)", "4:3 (1.3:1)", "16:9 (1.7:1)", "16:10 (1.6:1)")
     private val videoAspectRatioList = listOf(Rational(5, 4), Rational(4, 3), Rational(16, 9), Rational(16, 10))
     private var selectedVideoAspectRatio: Rational? = null
 
@@ -116,6 +115,8 @@ class PlaybackActivity : AppCompatActivity(), PlayerControlView.VisibilityListen
         player_pause?.invisible()
         player_play?.invisible()
         player_forward?.invisible()
+        play_next_channel?.invisible()
+        play_previous_channel?.invisible()
 
         player_play?.setOnClickListener { onPlayButtonSelected() }
         player_pause?.setOnClickListener { onPauseButtonSelected() }
@@ -124,6 +125,8 @@ class PlaybackActivity : AppCompatActivity(), PlayerControlView.VisibilityListen
         player_menu?.setOnClickListener { onMenuButtonSelected() }
         player_menu_aspect_ratio?.setOnClickListener { onChangeAspectRatioSelected() }
         player_menu_fullscreen?.setOnClickListener { onMenuFullscreenSelected() }
+        play_next_channel?.setOnClickListener { onPlayNextChannelButtonSelected() }
+        play_previous_channel?.setOnClickListener { onPlayPreviousChannelButtonSelected() }
 
         Timber.d("Getting view model")
         viewModel = ViewModelProviders.of(this).get(PlayerViewModel::class.java)
@@ -176,6 +179,13 @@ class PlaybackActivity : AppCompatActivity(), PlayerControlView.VisibilityListen
             player_pause?.visibleOrInvisible(isPlaying)
             player_forward?.visibleOrInvisible(isPlaying && timeshiftSupported)
             player_rewind?.visibleOrInvisible(isPlaying && timeshiftSupported)
+        })
+
+        Timber.d("Observing live TV playing")
+        viewModel.liveTvIsPlaying.observe(this, Observer { isPlaying ->
+            Timber.d("Received live TV is playing $isPlaying")
+            play_previous_channel?.visibleOrGone(isPlaying)
+            play_next_channel?.visibleOrGone(isPlaying)
         })
 
         Timber.d("Observing playback information")
@@ -418,6 +428,16 @@ class PlaybackActivity : AppCompatActivity(), PlayerControlView.VisibilityListen
     private fun onForwardButtonSelected() {
         Timber.d("Forward button selected")
         viewModel.seekForward()
+    }
+
+    private fun onPlayPreviousChannelButtonSelected() {
+        Timber.d("Play previous channel button selected")
+        viewModel.playPreviousChannel()
+    }
+
+    private fun onPlayNextChannelButtonSelected() {
+        Timber.d("Play next channel button selected")
+        viewModel.playNextChannel()
     }
 
     override fun onVisibilityChange(visibility: Int) {

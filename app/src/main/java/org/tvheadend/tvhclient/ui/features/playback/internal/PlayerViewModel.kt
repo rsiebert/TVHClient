@@ -17,6 +17,7 @@ import com.google.android.exoplayer2.video.VideoListener
 import org.tvheadend.htsp.HtspConnection
 import org.tvheadend.htsp.HtspConnectionStateListener
 import org.tvheadend.tvhclient.R
+import org.tvheadend.tvhclient.domain.entity.Channel
 import org.tvheadend.tvhclient.ui.base.BaseViewModel
 import org.tvheadend.tvhclient.ui.features.playback.internal.utils.Rational
 import timber.log.Timber
@@ -26,6 +27,9 @@ import java.util.concurrent.ScheduledExecutorService
 import kotlin.math.max
 
 class PlayerViewModel(application: Application) : BaseViewModel(application), HtspConnectionStateListener, VideoListener, Player.EventListener {
+
+    private var channelId: Int = 0
+    private var dvrId: Int = 0
 
     // Connection related
     private val execService: ScheduledExecutorService = Executors.newScheduledThreadPool(10)
@@ -45,6 +49,7 @@ class PlayerViewModel(application: Application) : BaseViewModel(application), Ht
     // Observable fields
     var playerState: MutableLiveData<Int> = MutableLiveData()
     var playerIsPlaying: MutableLiveData<Boolean> = MutableLiveData()
+    var liveTvIsPlaying: MutableLiveData<Boolean> = MutableLiveData()
     var isConnected: MutableLiveData<Boolean> = MutableLiveData()
     var channelIcon: MutableLiveData<String> = MutableLiveData()
     var channelName: MutableLiveData<String> = MutableLiveData()
@@ -62,7 +67,7 @@ class PlayerViewModel(application: Application) : BaseViewModel(application), Ht
     private lateinit var timeUpdateRunnable: Runnable
     private val timeUpdateHandler = Handler()
 
-    var pipModeActive : Boolean = false
+    var pipModeActive: Boolean = false
 
     init {
         Timber.d("Initializing view model")
@@ -120,8 +125,16 @@ class PlayerViewModel(application: Application) : BaseViewModel(application), Ht
         Timber.d("Loading new media source")
 
         releaseMediaSource()
-        loadMediaSourceForChannel(bundle?.getInt("channelId") ?: 0)
-        loadMediaSourceForRecording(bundle?.getInt("dvrId") ?: 0)
+        channelId = bundle?.getInt("channelId", 0) ?: 0
+        dvrId = bundle?.getInt("dvrId", 0) ?: 0
+
+        if (channelId > 0) {
+            liveTvIsPlaying.value = true
+            loadMediaSourceForChannel(channelId)
+        } else if (dvrId > 0) {
+            liveTvIsPlaying.value = false
+            loadMediaSourceForRecording(dvrId)
+        }
 
         Timber.d("Showing playback information")
         channelIcon.postValue(playbackInformation.channelIcon)
@@ -342,5 +355,47 @@ class PlayerViewModel(application: Application) : BaseViewModel(application), Ht
         val time = max(currentTime + offset, startTime)
         val seekPts = time * 1000 - timeshiftStartTime
         return max(seekPts, timeshiftStartPts) / 1000
+    }
+
+    private fun getChannelList(): List<Channel> {
+        val defaultChannelSortOrder = appContext.resources.getString(R.string.pref_default_channel_sort_order)
+        val channelSortOrder = Integer.valueOf(sharedPreferences.getString("channel_sort_order", defaultChannelSortOrder)
+                ?: defaultChannelSortOrder)
+        return appRepository.channelData.getChannels(channelSortOrder)
+    }
+
+    fun playNextChannel() {
+
+        val channels = getChannelList()
+        var newChannelId = channelId
+        channels.forEachIndexed { index, channel ->
+            if (channel.id == channelId) {
+                newChannelId = if (index + 1 < channels.size) {
+                    channels[index + 1].id
+                } else {
+                    channels.first().id
+                }
+            }
+        }
+        val bundle = Bundle()
+        bundle.putInt("channelId", newChannelId)
+        loadMediaSource(bundle)
+    }
+
+    fun playPreviousChannel() {
+        val channels = getChannelList()
+        var newChannelId = channelId
+        channels.forEachIndexed { index, channel ->
+            if (channel.id == channelId) {
+                newChannelId = if (index - 1 > 0) {
+                    channels[index - 1].id
+                } else {
+                    channels.last().id
+                }
+            }
+        }
+        val bundle = Bundle()
+        bundle.putInt("channelId", newChannelId)
+        loadMediaSource(bundle)
     }
 }

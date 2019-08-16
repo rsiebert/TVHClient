@@ -190,4 +190,23 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/progress" />
 
+    <ImageButton
+        android:id="@+id/play_next_channel"
+        style="@style/ExoMediaButton.Next"
+        android:layout_marginBottom="32dp"
+        android:contentDescription="@null"
+        app:layout_constraintBottom_toTopOf="@+id/program_title"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageButton
+        android:id="@+id/play_previous_channel"
+        style="@style/ExoMediaButton.Previous"
+        android:layout_marginBottom="32dp"
+        android:contentDescription="@null"
+        app:layout_constraintBottom_toTopOf="@+id/program_title"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>
