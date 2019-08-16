@@ -7,7 +7,7 @@
             android:summary="@string/pref_name_sum"
             android:title="@string/pref_name" />
         <EditTextPreference
-            android:dialogMessage="@string/pref_streaming_url_hint"
+            android:dialogMessage="@string/pref_server_url_hint"
             android:hint="@string/pref_server_url_hint"
             android:key="server_url"
             android:summary="@string/pref_server_url_sum"
