@@ -17,8 +17,8 @@ android {
         minSdkVersion 16
         targetSdkVersion 28
 
-        versionCode 181
-        versionName "2.2.20"
+        versionCode 182
+        versionName "2.2.21"
 
         // Define the apk naming convention
         applicationId "org.tvheadend.tvhclient"
@@ -101,11 +101,11 @@ dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
 
     // Support library basics
-    implementation 'androidx.appcompat:appcompat:1.1.0-rc01'
-    implementation 'androidx.recyclerview:recyclerview:1.1.0-beta02'
+    implementation 'androidx.appcompat:appcompat:1.0.2'
+    implementation 'androidx.recyclerview:recyclerview:1.0.0'
     implementation 'androidx.annotation:annotation:1.1.0'
     implementation 'androidx.preference:preference:1.1.0-rc01'
-    implementation 'com.google.android.material:material:1.1.0-alpha09'
+    implementation 'com.google.android.material:material:1.0.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.0-beta2'
 
     // Kotlin
@@ -113,11 +113,11 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinx_coroutines_version"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$kotlinx_coroutines_version"
-    implementation 'androidx.core:core-ktx:1.2.0-alpha03'
+    implementation 'androidx.core:core-ktx:1.0.2'
 
     // Casting
     implementation 'com.google.android.gms:play-services-cast-framework:17.0.0'
-    implementation 'androidx.mediarouter:mediarouter:1.1.0-rc01'
+    implementation 'androidx.mediarouter:mediarouter:1.0.0'
 
     // Billing
     implementation 'com.android.billingclient:billing:1.2'
@@ -128,7 +128,7 @@ dependencies {
     implementation "com.afollestad.material-dialogs:input:$dialog_version"
     implementation "com.afollestad.material-dialogs:files:$dialog_version"
     implementation "com.afollestad.material-dialogs:datetime:$dialog_version"
-    implementation "com.afollestad.material-dialogs:lifecycle:$dialog_version"
+    implementation "com.afollestad.material-dialogs:lifecycle:${dialog_version}"
     implementation 'com.mikepenz:materialdrawer:7.0.0-rc05'
 
     // Memory leaks
@@ -140,7 +140,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-core:17.0.1'
 
     // Life cycles, LiveData and ViewModel
-    def lifecycle_version = '2.2.0-alpha03'
+    def lifecycle_version = '2.1.0-rc01'
     implementation "androidx.lifecycle:lifecycle-extensions:$lifecycle_version"
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version"
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version"
