@@ -208,7 +208,7 @@ class PlaybackActivity : AppCompatActivity(), PlayerControlView.VisibilityListen
 
         viewModel.channelName.observe(this, Observer { channelName ->
             Timber.d("Received channel name $channelName")
-            channel_name?.text = channelName
+            channel_name?.text = if (!channelName.isNullOrEmpty()) channelName else getString(R.string.all_channels)
         })
         viewModel.title.observe(this, Observer { title ->
             Timber.d("Received title $title")
