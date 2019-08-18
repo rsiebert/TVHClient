@@ -25,7 +25,7 @@ class SettingsActivity : BaseActivity(), RemoveFragmentFromBackstackInterface {
 
         // If the user wants to go directly to a sub setting screen like the connections
         // and not the main settings screen the setting type can be passed here
-        if (intent.hasExtra("setting_type")) {
+        if (savedInstanceState == null && intent.hasExtra("setting_type")) {
             val id = intent.getStringExtra("setting_type")
             settingsViewModel.setNavigationMenuId(id)
         }
