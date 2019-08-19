@@ -259,7 +259,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/genre"
             app:marginStart="@{safeUnbox(viewModel.showProgramChannelIcon)}"
-            app:optionalText="@{program.description}" />
+            app:optionalDescriptionText="@{program.description}" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

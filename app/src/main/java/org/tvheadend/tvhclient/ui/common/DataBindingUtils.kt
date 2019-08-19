@@ -4,7 +4,10 @@ import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.os.Build
+import android.text.SpannableString
+import android.text.SpannableStringBuilder
 import android.text.format.DateUtils
+import android.text.style.ForegroundColorSpan
 import android.util.SparseArray
 import android.view.View
 import android.view.ViewGroup
@@ -17,6 +20,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
 import com.squareup.picasso.Transformation
+import org.tvheadend.tvhclient.MainApplication
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.domain.entity.ProgramInterface
 import org.tvheadend.tvhclient.domain.entity.Recording
@@ -297,6 +301,34 @@ fun setFailedReasonText(view: TextView, recording: Recording?) {
             && recording != null
             && !recording.isCompleted)
     view.text = failedReasonText
+}
+
+@BindingAdapter("optionalDescriptionText")
+fun setOptionalDescriptionText(view: TextView, text: String?) {
+    view.visibleOrGone(!text.isNullOrEmpty())
+    if (text.isNullOrEmpty()) return
+
+    if (text.contains("[COLOR ") && text.contains("[/COLOR]")) {
+        val builder = SpannableStringBuilder()
+        builder.append(text.substringBefore("[COLOR ", ""))
+
+        val textArray = text.split("[COLOR").toTypedArray()
+        textArray.forEach { str ->
+            val colorName = str.substringBefore("]", "").trim()
+            val coloredText = SpannableString(str.substringAfter("]", "").substringBefore("[/COLOR]", ""))
+            val remainingText = str.substringAfter("[/COLOR]", "")
+
+            val colorId = view.resources.getIdentifier(colorName, "color", MainApplication.instance.packageName)
+            if (colorId > 0) {
+                coloredText.setSpan(ForegroundColorSpan(ContextCompat.getColor(view.context, colorId)), 0, coloredText.length, 0)
+            }
+            builder.append(coloredText)
+            builder.append(remainingText)
+        }
+        view.setText( builder, TextView.BufferType.SPANNABLE)
+    } else {
+        view.text = text
+    }
 }
 
 @BindingAdapter("optionalText")
