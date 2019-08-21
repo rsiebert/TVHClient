@@ -5,12 +5,12 @@
     <item
         android:id="@+id/menu_accept"
         android:icon="?attr/ic_menu_save"
-        android:title="Accept"
+        android:title="@string/accept"
         app:showAsAction="ifRoom|withText"/>
     <item
         android:id="@+id/menu_reject"
         android:icon="?attr/ic_menu_cancel"
-        android:title="Reject"
+        android:title="@string/reject"
         app:showAsAction="ifRoom|withText"/>
 
 </menu>
