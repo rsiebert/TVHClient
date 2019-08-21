@@ -5,9 +5,9 @@ import androidx.lifecycle.MutableLiveData
 import org.tvheadend.tvhclient.data.db.AppRoomDatabase
 import org.tvheadend.tvhclient.domain.entity.Subscription
 
-class SubscriptionData(private val db: AppRoomDatabase) : DataSourceInterface<Subscription> {
+class SubscriptionData(@Suppress("unused") private val db: AppRoomDatabase) : DataSourceInterface<Subscription> {
 
-    var subscriptions: MutableList<Subscription> = ArrayList()
+    private var subscriptions: MutableList<Subscription> = ArrayList()
 
     override fun getLiveDataItemCount(): LiveData<Int> {
         val inputLiveDataCount = MutableLiveData<Int>()
