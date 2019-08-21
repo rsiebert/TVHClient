@@ -3,6 +3,7 @@ package org.tvheadend.tvhclient.domain.entity
 import androidx.room.ColumnInfo
 import androidx.room.Ignore
 import java.util.*
+import kotlin.math.floor
 
 data class SearchResultProgram(
 
@@ -89,6 +90,6 @@ data class SearchResultProgram(
             if (durationTime > 0 && elapsedTime > 0) {
                 percentage = elapsedTime / durationTime
             }
-            return Math.floor(percentage * 100).toInt()
+            return floor(percentage * 100).toInt()
         }
 }
