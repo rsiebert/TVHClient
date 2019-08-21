@@ -273,9 +273,6 @@ public class HtspSubscriptionDataSource implements DataSource, Closeable, HtspMe
             case "signalStatus":
             case "timeshiftStatus":
                 break;
-
-            default:
-                break;
         }
     }
 

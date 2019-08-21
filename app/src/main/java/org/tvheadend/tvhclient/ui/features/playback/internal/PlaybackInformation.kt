@@ -29,8 +29,8 @@ class PlaybackInformation {
     var title: String = ""
     var subtitle: String = ""
     var nextTitle: String = ""
-    var startTime: Long = 0
-    var stopTime: Long = 0
+    private var startTime: Long = 0
+    private var stopTime: Long = 0
 
     val remainingTime: String
         get() {
