@@ -74,7 +74,7 @@
     </style>
 
     <!-- Styles that will be used for the dark holo theme -->
-    <style name="CustomTheme" parent="Theme.AppCompat">
+    <style name="CustomTheme" parent="Theme.MaterialComponents">
         <item name="windowActionModeOverlay">true</item>
         <item name="android:actionModeBackground">@android:color/background_dark</item>
         <item name="actionModeBackground">@android:color/background_dark</item>
@@ -155,7 +155,7 @@
     </style>
 
     <!-- Styles that will be used for the light holo theme -->
-    <style name="CustomTheme.Light" parent="Theme.AppCompat.Light">
+    <style name="CustomTheme.Light" parent="Theme.MaterialComponents.Light">
         <item name="windowActionModeOverlay">true</item>
         <item name="android:actionModeBackground">@android:color/background_light</item>
         <item name="actionModeBackground">@android:color/background_light</item>
@@ -210,6 +210,12 @@
         <item name="ic_menu_status">@drawable/ic_menu_status_light</item>
         <item name="ic_menu_information">@drawable/ic_menu_info_light</item>
         <item name="ic_menu_extras">@drawable/ic_menu_extras_light</item>
+
+        <item name="colorPrimary">@color/primaryColor</item>
+        <item name="colorPrimaryVariant">@color/primaryLightColor</item>
+        <item name="colorPrimaryDark">@color/primaryDarkColor</item>
+        <item name="colorSecondary">@color/secondaryColor</item>
+        <item name="colorSecondaryVariant">@color/secondaryLightColor</item>
 
         <!-- MaterialDrawer specific values -->
         <item name="material_drawer_badge">@color/material_drawer_badge_light</item>

@@ -31,6 +31,12 @@
     <!-- Theme colors -->
     <color name="window_background_color_light">#fff5f5f5</color>
 
+    <color name="primaryColor">#eeeeee</color>
+    <color name="primaryLightColor">#f5f5f5</color>
+    <color name="primaryDarkColor">#707070</color>
+    <color name="secondaryColor">#4db6ac</color>
+    <color name="secondaryLightColor">#80cbc4</color>
+
     <!-- MaterialDrawer DEFAULT DARK colors -->
     <color name="material_drawer_background_dark">#303030</color>
     <!-- MaterialDrawer DEFAULT DARK text / items colors -->
