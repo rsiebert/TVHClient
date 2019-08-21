@@ -26,7 +26,7 @@ internal class Mpeg2VideoStreamReader : PlainStreamReader(C.TRACK_TYPE_VIDEO) {
 
     override fun buildFormat(streamIndex: Int, stream: HtspMessage): Format {
         return Format.createVideoSampleFormat(
-                Integer.toString(streamIndex),
+                streamIndex.toString(),
                 MimeTypes.VIDEO_MPEG2,
                 null,
                 Format.NO_VALUE,

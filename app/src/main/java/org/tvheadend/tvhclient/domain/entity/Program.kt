@@ -5,6 +5,7 @@ import androidx.room.Entity
 import androidx.room.Ignore
 import androidx.room.Index
 import java.util.*
+import kotlin.math.floor
 
 @Entity(tableName = "programs", primaryKeys = ["id", "connection_id"], indices = [Index(value = ["start"]), Index(value = ["channel_id"])])
 data class Program(
@@ -88,6 +89,6 @@ data class Program(
             if (durationTime > 0 && elapsedTime > 0) {
                 percentage = elapsedTime / durationTime
             }
-            return Math.floor(percentage * 100).toInt()
+            return floor(percentage * 100).toInt()
         }
 }

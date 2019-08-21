@@ -30,7 +30,7 @@ internal class DvbsubStreamReader : PlainStreamReader(C.TRACK_TYPE_TEXT) {
         val initializationData = listOf(byteArrayOf((compositionId shr 8 and 0xFF).toByte(), (compositionId and 0xFF).toByte(), (ancillaryId shr 8 and 0xFF).toByte(), (ancillaryId and 0xFF).toByte()))
 
         return Format.createImageSampleFormat(
-                Integer.toString(streamIndex),
+                streamIndex.toString(),
                 MimeTypes.APPLICATION_DVBSUBS,
                 null,
                 Format.NO_VALUE,

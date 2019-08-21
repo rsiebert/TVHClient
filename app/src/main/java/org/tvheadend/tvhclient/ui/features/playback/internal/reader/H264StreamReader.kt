@@ -42,7 +42,7 @@ internal class H264StreamReader : PlainStreamReader(C.TRACK_TYPE_VIDEO) {
         }
 
         return Format.createVideoSampleFormat(
-                Integer.toString(streamIndex),
+                streamIndex.toString(),
                 MimeTypes.VIDEO_H264, null,
                 Format.NO_VALUE,
                 Format.NO_VALUE,

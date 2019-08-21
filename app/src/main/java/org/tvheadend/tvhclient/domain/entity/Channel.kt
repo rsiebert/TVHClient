@@ -4,6 +4,7 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.Ignore
 import java.util.*
+import kotlin.math.floor
 
 @Entity(tableName = "channels", primaryKeys = ["id", "connection_id"])
 data class Channel(
@@ -67,6 +68,6 @@ data class Channel(
             if (durationTime > 0) {
                 percentage = elapsedTime / durationTime
             }
-            return Math.floor(percentage * 100).toInt()
+            return floor(percentage * 100).toInt()
         }
 }
