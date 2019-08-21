@@ -43,8 +43,8 @@ class StatusFragment : BaseFragment() {
         showSubscriptionAndInputStatus()
 
         loadDataTask = Runnable {
-            val activityManager = activity!!.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
-            val runningAppProcessInfo = activityManager.runningAppProcesses?.get(0)
+            val activityManager: ActivityManager? = activity?.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+            val runningAppProcessInfo = activityManager?.runningAppProcesses?.get(0)
 
             if (runningAppProcessInfo != null
                     && runningAppProcessInfo.importance <= ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND) {
