@@ -30,6 +30,7 @@ import org.tvheadend.tvhclient.ui.features.dvr.recordings.ScheduledRecordingList
 import org.tvheadend.tvhclient.ui.features.dvr.series_recordings.SeriesRecordingListFragment
 import org.tvheadend.tvhclient.ui.features.dvr.timer_recordings.TimerRecordingListFragment
 import org.tvheadend.tvhclient.ui.features.epg.ProgramGuideFragment
+import org.tvheadend.tvhclient.ui.features.information.HelpAndSupportFragment
 import org.tvheadend.tvhclient.ui.features.information.StatusFragment
 import org.tvheadend.tvhclient.ui.features.information.StatusViewModel
 import org.tvheadend.tvhclient.ui.features.information.WebViewFragment
@@ -235,6 +236,26 @@ class NavigationDrawer(private val activity: AppCompatActivity,
             is StatusFragment -> result.setSelection(MENU_STATUS.toLong(), false)
             is UnlockerFragment -> result.setSelection(MENU_UNLOCKER.toLong(), false)
             is WebViewFragment -> result.setSelection(MENU_HELP.toLong(), false)
+        }
+    }
+
+    /**
+     * Creates and returns a new fragment that is associated with the given menu
+     */
+    fun getFragmentFromSelection(position: Int): Fragment? {
+        return when (position) {
+            MENU_CHANNELS -> ChannelListFragment()
+            MENU_PROGRAM_GUIDE -> ProgramGuideFragment()
+            MENU_COMPLETED_RECORDINGS -> CompletedRecordingListFragment()
+            MENU_SCHEDULED_RECORDINGS -> ScheduledRecordingListFragment()
+            MENU_SERIES_RECORDINGS -> SeriesRecordingListFragment()
+            MENU_TIMER_RECORDINGS -> TimerRecordingListFragment()
+            MENU_FAILED_RECORDINGS -> FailedRecordingListFragment()
+            MENU_REMOVED_RECORDINGS -> RemovedRecordingListFragment()
+            MENU_UNLOCKER -> UnlockerFragment()
+            MENU_HELP -> HelpAndSupportFragment()
+            MENU_STATUS -> StatusFragment()
+            else -> null
         }
     }
 
