@@ -16,11 +16,11 @@ import org.tvheadend.tvhclient.domain.entity.Recording
 import org.tvheadend.tvhclient.ui.base.BaseFragment
 import org.tvheadend.tvhclient.ui.common.*
 import org.tvheadend.tvhclient.ui.common.callbacks.RecyclerViewClickCallback
-import org.tvheadend.tvhclient.util.extensions.gone
-import org.tvheadend.tvhclient.util.extensions.visible
 import org.tvheadend.tvhclient.ui.features.download.DownloadPermissionGrantedInterface
 import org.tvheadend.tvhclient.ui.features.download.DownloadRecordingManager
 import org.tvheadend.tvhclient.ui.features.search.SearchRequestInterface
+import org.tvheadend.tvhclient.util.extensions.gone
+import org.tvheadend.tvhclient.util.extensions.visible
 import timber.log.Timber
 import java.util.concurrent.CopyOnWriteArrayList
 
@@ -130,9 +130,9 @@ abstract class RecordingListFragment : BaseFragment(), RecyclerViewClickCallback
         popupMenu.menuInflater.inflate(R.menu.recordings_popup_menu, popupMenu.menu)
         popupMenu.menuInflater.inflate(R.menu.external_search_options_menu, popupMenu.menu)
 
+        preparePopupOrToolbarMiscMenu(ctx, popupMenu.menu, null, isConnectionToServerAvailable, isUnlocked)
         preparePopupOrToolbarRecordingMenu(ctx, popupMenu.menu, recording, isConnectionToServerAvailable, htspVersion, isUnlocked)
         preparePopupOrToolbarSearchMenu(popupMenu.menu, recording.title, isConnectionToServerAvailable)
-        preparePopupOrToolbarMiscMenu(ctx, popupMenu.menu, null, isConnectionToServerAvailable, isUnlocked)
 
         popupMenu.setOnMenuItemClickListener { item ->
             when (item.itemId) {

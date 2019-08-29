@@ -4,6 +4,7 @@ import android.app.PictureInPictureParams
 import android.content.Context
 import android.content.Intent
 import android.content.pm.ActivityInfo
+import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.graphics.Point
 import android.hardware.Sensor
@@ -243,6 +244,17 @@ class PlaybackActivity : AppCompatActivity(), PlayerControlView.VisibilityListen
             sensorManager?.unregisterListener(orientationSensorListener)
         }
         super.onPause()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        Timber.d("Stopping")
+        if ((Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
+                && packageManager.hasSystemFeature(PackageManager.FEATURE_PICTURE_IN_PICTURE)) {
+            Timber.d("Finishing playback activity")
+            viewModel.stopPlaybackAndReleaseMediaSource()
+            finish()
+        }
     }
 
     override fun onResume() {

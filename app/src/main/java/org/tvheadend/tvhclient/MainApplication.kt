@@ -2,7 +2,6 @@ package org.tvheadend.tvhclient
 
 import android.content.Context
 import android.content.SharedPreferences
-import android.preference.PreferenceManager
 import androidx.multidex.MultiDexApplication
 import com.android.billingclient.api.Purchase
 import com.crashlytics.android.Crashlytics
@@ -22,6 +21,7 @@ import org.tvheadend.tvhclient.di.module.RepositoryModule
 import org.tvheadend.tvhclient.di.module.SharedPreferencesModule
 import org.tvheadend.tvhclient.ui.common.onAttach
 import org.tvheadend.tvhclient.ui.features.playback.external.ExpandedControlsActivity
+import org.tvheadend.tvhclient.util.MigrateUtils
 import org.tvheadend.tvhclient.util.billing.BillingHandler
 import org.tvheadend.tvhclient.util.billing.BillingManager
 import org.tvheadend.tvhclient.util.billing.BillingManager.UNLOCKER
@@ -37,21 +37,19 @@ import javax.inject.Inject
 // TODO Move the variable programIdToBeEditedWhenBeingRecorded into the viewmodels
 // TODO consolidate the dialog strings
 // TODO make the 12 hour check to start the epg background worker a setting
-// TODO load startup fragment in main activity, continue to load first fragment if all ok and viewmodel loaded data
 // TODO use viewpager2 in epg
-// TODO reduce number of used async loads in source_data, use livedata where possible
 
 class MainApplication : MultiDexApplication(), OptionsProvider, BillingUpdatesListener {
 
     @Inject
     lateinit var appRepository: AppRepository
+    @Inject
+    lateinit var sharedPreferences: SharedPreferences
 
-    private lateinit var sharedPreferences: SharedPreferences
     private lateinit var fireBaseAnalytics: FirebaseAnalytics
 
     override fun onCreate() {
         super.onCreate()
-        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
 
         // Setup the required dependencies for injection
         component = DaggerMainApplicationComponent.builder()
@@ -91,10 +89,14 @@ class MainApplication : MultiDexApplication(), OptionsProvider, BillingUpdatesLi
 
         billingHandler = BillingHandler()
         billingHandler.addListener(this)
-        billingManager = BillingManager(this.applicationContext, billingHandler)
+        billingManager = BillingManager(applicationContext, billingHandler)
         billingManager.queryPurchases()
 
         Timber.d("Application build time is ${BuildConfig.BUILD_TIME}, git commit hash is ${BuildConfig.GIT_SHA}")
+
+        // Migrates existing connections from the old database to the new room database.
+        // Migrates existing preferences or remove old ones before starting the actual application
+        MigrateUtils(applicationContext, appRepository, sharedPreferences).doMigrate()
     }
 
     override fun attachBaseContext(context: Context) {

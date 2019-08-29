@@ -8,7 +8,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.provider.SearchRecentSuggestions
 import androidx.core.content.FileProvider
-import androidx.preference.CheckBoxPreference
+import androidx.preference.SwitchPreference
 import androidx.preference.EditTextPreference
 import androidx.preference.Preference
 import androidx.work.ExistingWorkPolicy
@@ -21,8 +21,9 @@ import org.tvheadend.tvhclient.BuildConfig
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.data.service.HtspService
 import org.tvheadend.tvhclient.data.worker.LoadChannelIconWorker
-import org.tvheadend.tvhclient.util.extensions.sendSnackbarMessage
 import org.tvheadend.tvhclient.ui.features.search.SuggestionProvider
+import org.tvheadend.tvhclient.ui.features.startup.SplashActivity
+import org.tvheadend.tvhclient.util.extensions.sendSnackbarMessage
 import org.tvheadend.tvhclient.util.getIconUrl
 import org.tvheadend.tvhclient.util.logging.FileLoggingTree
 import timber.log.Timber
@@ -32,9 +33,9 @@ import java.util.*
 
 class SettingsAdvancedFragment : BasePreferenceFragment(), Preference.OnPreferenceChangeListener, Preference.OnPreferenceClickListener, SharedPreferences.OnSharedPreferenceChangeListener, DatabaseClearedCallback {
 
-    private var notificationsEnabledPreference: CheckBoxPreference? = null
-    private var notifyRunningRecordingCountEnabledPreference: CheckBoxPreference? = null
-    private var notifyLowStorageSpaceEnabledPreference: CheckBoxPreference? = null
+    private var notificationsEnabledPreference: SwitchPreference? = null
+    private var notifyRunningRecordingCountEnabledPreference: SwitchPreference? = null
+    private var notifyLowStorageSpaceEnabledPreference: SwitchPreference? = null
     private var connectionTimeoutPreference: EditTextPreference? = null
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -126,7 +127,7 @@ class SettingsAdvancedFragment : BasePreferenceFragment(), Preference.OnPreferen
                 message(R.string.dialog_content_reconnect_to_server)
                 positiveButton(R.string.clear) {
                     Timber.d("Clear database requested")
-                    settingsViewModel.setSyncRequiredForActiveConnection()
+                    context.sendSnackbarMessage("Database contents cleared, reconnecting to server")
                     settingsViewModel.clearDatabase(this@SettingsAdvancedFragment)
                     dismiss()
                 }
@@ -189,7 +190,7 @@ class SettingsAdvancedFragment : BasePreferenceFragment(), Preference.OnPreferen
         try {
             context?.let {
                 val logFile = File(it.cacheDir, "logs/$filename")
-                fileUri = FileProvider.getUriForFile(it, "org.tvheadend.tvhclient.fileprovider", logFile)
+                fileUri = FileProvider.getUriForFile(it, "fileprovider", logFile)
             }
         } catch (e: IllegalArgumentException) {
             Timber.e(e, "Could not load logfile")
@@ -249,13 +250,13 @@ class SettingsAdvancedFragment : BasePreferenceFragment(), Preference.OnPreferen
 
     override fun onDatabaseCleared() {
         Timber.d("Database has been cleared, stopping service and restarting application")
-        activity?.let {
-            it.sendSnackbarMessage("Database contents cleared, reconnecting to server")
-            it.stopService(Intent(activity, HtspService::class.java))
+        context?.let {
+            it.stopService(Intent(it, HtspService::class.java))
             settingsViewModel.setSyncRequiredForActiveConnection()
-            val intent = Intent(activity, HtspService::class.java)
-            intent.action = "connect"
-            it.startService(intent)
+
+            val intent = Intent(it, SplashActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            it.startActivity(intent)
         }
     }
 
@@ -270,7 +271,6 @@ class SettingsAdvancedFragment : BasePreferenceFragment(), Preference.OnPreferen
                     context.sendSnackbarMessage(R.string.clear_search_history_done)
                 }
                 negativeButton(R.string.cancel)
-
             }
         }
     }
@@ -278,33 +278,41 @@ class SettingsAdvancedFragment : BasePreferenceFragment(), Preference.OnPreferen
     private fun handlePreferenceClearIconCacheSelected() {
         context?.let {
             MaterialDialog(it).show {
-                title(R.string.clear_icon_cache)
-                        .message(R.string.clear_icon_cache_sum)
+                title(R.string.clear_icon_cache).message(R.string.clear_icon_cache_sum)
                 positiveButton(R.string.delete) { _ ->
-                    // Delete all channel icon files that were downloaded for the active
-                    // connection. Additionally remove the icons from the Glide cache
-                    Timber.d("Deleting channel icons and invalidating cache")
-                    for (channel in settingsViewModel.getChannelList()) {
-                        if (channel.icon.isNullOrEmpty()) {
-                            continue
-                        }
-                        val url = getIconUrl(it, channel.icon)
-                        val file = File(url)
-                        if (file.exists()) {
-                            if (!file.delete()) {
-                                Timber.d("Could not delete channel icon ${file.name}")
-                            }
-                        }
-                        Picasso.get().invalidate(file)
-                    }
-                    context.sendSnackbarMessage(R.string.clear_icon_cache_done)
+                    Timber.d("Deleting channel icons, invalidating cache and reloading icons via a background worker")
+                    clearIconsFromCache(it)
+                    it.sendSnackbarMessage(R.string.clear_icon_cache_done)
 
-                    Timber.d("Starting background worker to reload channel icons")
                     val loadChannelIcons = OneTimeWorkRequest.Builder(LoadChannelIconWorker::class.java).build()
                     WorkManager.getInstance().enqueueUniqueWork("LoadChannelIcons", ExistingWorkPolicy.REPLACE, loadChannelIcons)
-
                 }
                 negativeButton(R.string.cancel)
+            }
+        }
+    }
+
+    /**
+     * Clear the cached channel icons by checking all cached files if their name
+     * matches with the url from a channel icon. If this is the case remove the file
+     */
+    private fun clearIconsFromCache(context: Context) {
+        val channels = settingsViewModel.getChannelList()
+        if (context.cacheDir.exists()) {
+            val fileNames = context.cacheDir.list()
+            for (fileName in fileNames!!) {
+                for (channel in channels) {
+                    if (!channel.icon.isNullOrEmpty()) {
+                        val url = getIconUrl(context, channel.icon)
+                        if (url.contains(fileName)) {
+                            val file = File(context.cacheDir, fileName)
+                            if (file.delete()) {
+                                Picasso.get().invalidate(file)
+                            }
+                            break
+                        }
+                    }
+                }
             }
         }
     }

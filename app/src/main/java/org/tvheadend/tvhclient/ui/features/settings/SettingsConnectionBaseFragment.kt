@@ -3,16 +3,16 @@ package org.tvheadend.tvhclient.ui.features.settings
 import android.content.Context
 import android.net.Uri
 import android.os.Bundle
-import android.util.Patterns
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import androidx.lifecycle.ViewModelProviders
-import androidx.preference.CheckBoxPreference
 import androidx.preference.EditTextPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
+import androidx.preference.SwitchPreference
 import com.afollestad.materialdialogs.MaterialDialog
+import com.google.android.material.snackbar.Snackbar
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.domain.entity.Connection
 import org.tvheadend.tvhclient.ui.common.callbacks.BackPressedInterface
@@ -31,11 +31,11 @@ abstract class SettingsConnectionBaseFragment : PreferenceFragmentCompat(), Back
     private lateinit var streamingUrlPreference: EditTextPreference
     private lateinit var usernamePreference: EditTextPreference
     private lateinit var passwordPreference: EditTextPreference
-    private lateinit var activeEnabledPreference: CheckBoxPreference
+    protected lateinit var activeEnabledPreference: SwitchPreference
     private lateinit var wolMacAddressPreference: EditTextPreference
     private lateinit var wolPortPreference: EditTextPreference
-    private lateinit var wolEnabledPreference: CheckBoxPreference
-    private lateinit var wolUseBroadcastEnabled: CheckBoxPreference
+    private lateinit var wolEnabledPreference: SwitchPreference
+    private lateinit var wolUseBroadcastEnabled: SwitchPreference
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
@@ -46,11 +46,6 @@ abstract class SettingsConnectionBaseFragment : PreferenceFragmentCompat(), Back
 
         settingsViewModel = ViewModelProviders.of(activity as SettingsActivity).get(SettingsViewModel::class.java)
         setHasOptionsMenu(true)
-
-        if (savedInstanceState == null) {
-            Timber.d("Saved instance is null, setting connection changed to false")
-            settingsViewModel.connectionHasChanged = false
-        }
 
         // Get the connectivity preferences for later usage
         namePreference = findPreference("name")!!
@@ -168,21 +163,16 @@ abstract class SettingsConnectionBaseFragment : PreferenceFragmentCompat(), Back
      * the input will be discarded and the activity will be closed.
      */
     private fun cancel() {
-        if (!settingsViewModel.connectionHasChanged) {
-            (activity as RemoveFragmentFromBackstackInterface).removeFragmentFromBackstack()
-        } else {
-            // Show confirmation dialog to cancel
-            activity?.let { activity ->
-                MaterialDialog(activity).show {
-                    message(R.string.confirm_discard_connection)
-                    positiveButton(R.string.discard) {
-                        if (activity is RemoveFragmentFromBackstackInterface) {
-                            activity.removeFragmentFromBackstack()
-                        }
+        activity?.let { activity ->
+            MaterialDialog(activity).show {
+                message(R.string.confirm_discard_connection)
+                positiveButton(R.string.discard) {
+                    if (activity is RemoveFragmentFromBackstackInterface) {
+                        activity.removeFragmentFromBackstack()
                     }
-                    negativeButton(R.string.cancel) {
-                        dismiss()
-                    }
+                }
+                negativeButton(R.string.cancel) {
+                    dismiss()
                 }
             }
         }
@@ -221,45 +211,38 @@ abstract class SettingsConnectionBaseFragment : PreferenceFragmentCompat(), Back
     }
 
     private fun preferenceUrlChanged(value: String) {
-        settingsViewModel.connectionHasChanged = true
         if (isConnectionUrlValid(context, value)) {
             settingsViewModel.connection.serverUrl = value
             serverUrlPreference.text = value
             serverUrlPreference.summary = if (value.isEmpty()) getString(R.string.pref_server_url_sum) else value
         } else {
             serverUrlPreference.text = settingsViewModel.connection.serverUrl
-            context?.sendSnackbarMessage(R.string.pref_server_url_error_invalid)
         }
     }
 
     private fun preferenceStreamingUrlChanged(value: String) {
-        settingsViewModel.connectionHasChanged = true
         if (isConnectionUrlValid(context, value)) {
             settingsViewModel.connection.streamingUrl = value
             streamingUrlPreference.text = value
             streamingUrlPreference.summary = if (value.isEmpty()) getString(R.string.pref_streaming_url_sum) else value
         } else {
             streamingUrlPreference.text = settingsViewModel.connection.streamingUrl
-            context?.sendSnackbarMessage(R.string.pref_streaming_url_error_invalid)
         }
     }
 
     private fun preferenceUsernameChanged(value: String) {
-        settingsViewModel.connectionHasChanged = true
         settingsViewModel.connection.username = value
         usernamePreference.text = value
         usernamePreference.summary = if (value.isEmpty()) getString(R.string.pref_user_sum) else value
     }
 
     private fun preferencePasswordChanged(value: String) {
-        settingsViewModel.connectionHasChanged = true
         settingsViewModel.connection.password = value
         passwordPreference.text = value
         passwordPreference.summary = if (value.isEmpty()) getString(R.string.pref_pass_sum) else getString(R.string.pref_pass_set_sum)
     }
 
     private fun preferenceEnabledChanged(value: String) {
-        settingsViewModel.connectionHasChanged = true
         // When the connection was set as the new active
         // connection, an initial sync is required
         val isActive = java.lang.Boolean.valueOf(value)
@@ -324,49 +307,20 @@ abstract class SettingsConnectionBaseFragment : PreferenceFragmentCompat(), Back
 
         val uri = Uri.parse(value)
         if (uri.host.isNullOrEmpty()) {
-            context?.sendSnackbarMessage("The url $uri is missing a hostname")
+            context?.sendSnackbarMessage("The url is missing a hostname", Snackbar.LENGTH_LONG)
             return false
         }
 
         if (value.contains(":") && uri.port == -1) {
-            context?.sendSnackbarMessage("The url $uri is missing a port")
+            context?.sendSnackbarMessage("The url must contain a port", Snackbar.LENGTH_LONG)
             return false
         }
 
         if (!uri.userInfo.isNullOrEmpty()) {
-            context?.sendSnackbarMessage("The url $uri must not contain a username or password")
+            context?.sendSnackbarMessage("The url must not contain a username or password", Snackbar.LENGTH_LONG)
             return false
         }
 
-        if (!isConnectionIpAddressValid(uri.host)) {
-            context?.sendSnackbarMessage("The url $uri is missing a valid hostname")
-            return false
-        }
-
-        return true
-    }
-
-    private fun isConnectionIpAddressValid(value: String?): Boolean {
-        // Do not allow an empty address
-        if (value.isNullOrEmpty()) {
-            return false
-        }
-        // Check if the name contains only valid characters.
-        var pattern = Pattern.compile("^[0-9a-zA-Z_\\-.]*$")
-        var matcher = pattern.matcher(value)
-        if (!matcher.matches()) {
-            return false
-        }
-        // Check if the address has only numbers and dots in it.
-        pattern = Pattern.compile("^[0-9.]*$")
-        matcher = pattern.matcher(value)
-
-        // Now validate the IP address
-        if (matcher.matches()) {
-            pattern = Patterns.IP_ADDRESS
-            matcher = pattern.matcher(value)
-            return matcher.matches()
-        }
         return true
     }
 

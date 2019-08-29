@@ -116,9 +116,9 @@
     <string name="monday">Monday</string>
     <string name="name">Name</string>
     <string name="no_cast_session">No cast session available</string>
-    <string name="no_connection_active_advice">At least one connection is defined, but not activated.</string>
+    <string name="no_connection_active_advice">At least one connection is defined, but not activated. Either use the button below or the menu in the toolbar to show the list of available connections. To activate a connection select one from the list and tap the star symbol in the toolbar.</string>
     <!-- Connection related -->
-    <string name="no_connection_available">No connection available</string>
+    <string name="no_connection_available">No connection available. Please add a new connection to connect to the server. Either use the button below or the menu in the toolbar.</string>
     <string name="no_data">No program data available</string>
     <string name="no_media_player">No media player found</string>
     <string name="hint_not_set">Not set</string>
@@ -173,17 +173,13 @@
     <string name="pref_hide_duplicate_scheduled_recordings">Hide duplicate scheduled recordings</string>
     <string name="pref_show_menu_delete_all_recordings">Show the \'Delete all recordings\' menu</string>
     <string name="pref_server_url">Server Url</string>
-    <string name="pref_server_url_hint">http://myserver:9982</string>
+    <string name="pref_server_url_hint">Example: http://myserver:9982</string>
     <string name="pref_server_url_error_invalid">The url is not valid.</string>
-    <string name="pref_server_url_sum">Enter the url with the hostname and port to connect to the server.</string>
+    <string name="pref_server_url_sum">Enter the url with the hostname and port to connect to the server. Example: http://myserver:9982</string>
     <string name="pref_streaming_url">Streaming Url</string>
-    <string name="pref_streaming_url_hint">http://myserver:9982</string>
+    <string name="pref_streaming_url_hint">Example: http://myserver:9981</string>
     <string name="pref_streaming_url_error_invalid">The url is not valid.</string>
-    <string name="pref_streaming_url_sum">Enter the url with the hostname and port to stream videos from the server.</string>
-    <string name="pref_host">Hostname or IP address</string>
-    <string name="pref_host_hint">www.server.com or 192.168.0.10</string>
-    <string name="pref_host_error_invalid">The IP-address is not valid.</string>
-    <string name="pref_host_sum">Enter the server hostname or IP address</string>
+    <string name="pref_streaming_url_sum">Enter the url with the hostname and port to stream videos from the server. Example: http://myserver:9981</string>
     <string name="pref_htsp_playback_profiles">Playback profiles (Internal player)</string>
     <string name="pref_htsp_playback_profiles_sum">Select a profile that is used by the internal player to play a recorded program using the internal player.</string>
     <string name="pref_http_playback_profiles">Playback profiles (External players)</string>
@@ -210,9 +206,7 @@
     <string name="pref_play_when_channel_icon_selected">Channel icon action</string>
     <string name="pref_play_when_channel_icon_selected_sum">Start playing the current program or recording when the channel icon is selected in the channel list, program guide or recording list screen.</string>
     <string name="pref_playback_and_recording">Playback and recording</string>
-    <string name="pref_port">HTSP Port</string>
     <string name="pref_port_error_invalid">The port number is not valid. Specify a number between 1 and 65535.</string>
-    <string name="pref_port_sum">Enter the server port</string>
     <string name="pref_privacy_policy">Privacy Policy</string>
     <string name="pref_profiles">Profiles</string>
     <string name="pref_profiles_sum">Define the profiles how content should be recorded or played.</string>
@@ -247,8 +241,6 @@
     <string name="pref_show_recording_file_status_sum">The file size and number of data errors of each recording will be shown in the recording lists.</string>
     <string name="pref_sort_channels">Channel Order</string>
     <string name="pref_sort_channels_sum">Choose in which order the channels will be displayed.</string>
-    <string name="pref_streaming_port">HTTP Port for media streaming</string>
-    <string name="pref_streaming_port_sum" tools:ignore="PluralsCandidate">Port %d will be used for media streaming. The default port is 9981 which is usually fine to use.</string>
     <string name="pref_tag_icon">Channel tag icon</string>
     <string name="pref_tag_icon_sum">Show the icon for a channel tag.</string>
     <string name="pref_theme">Light theme</string>

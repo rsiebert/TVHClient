@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
     <PreferenceCategory android:title="@string/pref_crash_reporting_settings">
-        <CheckBoxPreference
+        <SwitchPreference
             android:defaultValue="@bool/pref_default_crash_reports_enabled"
             android:key="crash_reports_enabled"
             android:summary="@string/pref_enable_crash_reports_sum"
             android:title="@string/pref_enable_crash_reports" />
 
-        <CheckBoxPreference
+        <SwitchPreference
             android:defaultValue="@bool/pref_default_debug_mode_enabled"
             android:key="debug_mode_enabled"
             android:summary="@string/pref_debug_mode_sum"
@@ -42,7 +42,7 @@
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/pref_notifications">
-        <CheckBoxPreference
+        <SwitchPreference
             android:defaultValue="@bool/pref_default_notifications_enabled"
             android:key="notifications_enabled"
             android:summary="@string/pref_show_notifications_sum"
@@ -59,12 +59,12 @@
             android:summary="@string/pref_show_notification_offset_sum"
             android:title="@string/pref_show_notification_offset" />
 
-        <CheckBoxPreference
+        <SwitchPreference
             android:defaultValue="@bool/pref_default_notify_running_recording_count_enabled"
             android:key="notify_running_recording_count_enabled"
             android:title="@string/pref_notify_about_running_recordings" />
 
-        <CheckBoxPreference
+        <SwitchPreference
             android:defaultValue="@bool/pref_default_notify_low_storage_space_enabled"
             android:key="notify_low_storage_space_enabled"
             android:title="@string/pref_notify_low_server_storage_space" />
@@ -80,7 +80,7 @@
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/pref_navigation">
-        <CheckBoxPreference
+        <SwitchPreference
             android:defaultValue="@bool/pref_default_navigation_history_enabled"
             android:key="navigation_history_enabled"
             android:summary="@string/pref_navigation_history_enabled_sum"
@@ -98,7 +98,7 @@
             android:key="clear_database"
             android:summary="@string/pref_clear_database_sum"
             android:title="@string/pref_clear_database" />
-        <CheckBoxPreference
+        <SwitchPreference
             android:defaultValue="@bool/pref_default_copy_playback_url_to_clipboard_enabled"
             android:key="copy_playback_url_to_clipboard_enabled"
             android:summary="@string/pref_copy_playback_url_to_clipboard_enabled_sum"

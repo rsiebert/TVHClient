@@ -19,6 +19,8 @@ import timber.log.Timber
 
 class SettingsListConnectionsFragment : ListFragment(), BackPressedInterface, ActionMode.Callback {
 
+    private var activeConnectionId: Int = -1
+    private var connectionHasChanged: Boolean = false
     private lateinit var toolbarInterface: ToolbarInterface
     private lateinit var connectionListAdapter: ConnectionListAdapter
     private lateinit var settingsViewModel: SettingsViewModel
@@ -39,7 +41,6 @@ class SettingsListConnectionsFragment : ListFragment(), BackPressedInterface, Ac
         listView.choiceMode = ListView.CHOICE_MODE_SINGLE
         setHasOptionsMenu(true)
 
-        settingsViewModel.connectionHasChanged = false
         settingsViewModel.allConnections.observe(viewLifecycleOwner, Observer { connections ->
             if (connections != null) {
                 connectionListAdapter.clear()
@@ -52,6 +53,11 @@ class SettingsListConnectionsFragment : ListFragment(), BackPressedInterface, Ac
                             connectionListAdapter.count))
                 }
             }
+        })
+
+        settingsViewModel.connectionLiveData.observe(viewLifecycleOwner, Observer { connection ->
+            connectionHasChanged = connection != null && connection.id != settingsViewModel.connection.id
+            activeConnectionId = connection?.id ?: -1
         })
     }
 
@@ -111,7 +117,6 @@ class SettingsListConnectionsFragment : ListFragment(), BackPressedInterface, Ac
     private fun setConnectionActiveOrInactive(connection: Connection, mode: ActionMode, active: Boolean): Boolean {
         connection.isActive = active
         settingsViewModel.updateConnection(connection)
-        settingsViewModel.connectionHasChanged = true
         mode.finish()
         return true
     }
@@ -157,7 +162,7 @@ class SettingsListConnectionsFragment : ListFragment(), BackPressedInterface, Ac
 
     override fun onBackPressed() {
         when {
-            settingsViewModel.activeConnectionId < 0 -> context?.let {
+            activeConnectionId < 0 -> context?.let {
                 MaterialDialog(it).show {
                     title(R.string.dialog_title_disconnect_from_server)
                     message(R.string.dialog_content_disconnect_from_server)
@@ -166,7 +171,7 @@ class SettingsListConnectionsFragment : ListFragment(), BackPressedInterface, Ac
                     }
                 }
             }
-            settingsViewModel.connectionHasChanged -> context?.let {
+            connectionHasChanged -> context?.let {
                 MaterialDialog(it).show {
                     title(R.string.dialog_title_connection_changed)
                     message(R.string.dialog_content_connection_changed)
@@ -174,7 +179,6 @@ class SettingsListConnectionsFragment : ListFragment(), BackPressedInterface, Ac
                 }
             }
             else -> {
-                settingsViewModel.connectionHasChanged = false
                 (activity as RemoveFragmentFromBackstackInterface).removeFragmentFromBackstack()
             }
         }
@@ -187,7 +191,6 @@ class SettingsListConnectionsFragment : ListFragment(), BackPressedInterface, Ac
      */
     private fun reconnect() {
         Timber.d("Reconnecting to server, new initial sync will be done")
-        settingsViewModel.connectionHasChanged = false
         settingsViewModel.updateConnectionAndRestartApplication(context)
     }
 }

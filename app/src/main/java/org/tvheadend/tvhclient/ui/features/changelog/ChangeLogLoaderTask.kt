@@ -124,7 +124,7 @@ class ChangeLogLoaderTask(context: Context?, private val lastAppVersion: String,
         bufferedReader.close()
 
         stringBuffer.append("</body></html>")
-        Timber.d("Done reading changelog file, contents are: $stringBuffer")
+        Timber.d("Done reading changelog file")
         return stringBuffer.toString()
     }
 

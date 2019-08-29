@@ -75,11 +75,7 @@ class ChangeLogFragment : Fragment(), BackPressedInterface, HtmlFileLoaderTask.L
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             android.R.id.home -> {
-                activity.let {
-                    if (it is RemoveFragmentFromBackstackInterface) {
-                        it.removeFragmentFromBackstack()
-                    }
-                }
+                onBackPressed()
                 return true
             }
             R.id.menu_show_full_changelog -> {

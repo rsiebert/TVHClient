@@ -1,7 +1,7 @@
 package org.tvheadend.tvhclient.ui.features.settings
 
 import android.os.Bundle
-import androidx.preference.CheckBoxPreference
+import androidx.preference.SwitchPreference
 import androidx.preference.EditTextPreference
 import androidx.preference.Preference
 import org.tvheadend.tvhclient.R
@@ -10,9 +10,9 @@ import timber.log.Timber
 
 class SettingsUserInterfaceFragment : BasePreferenceFragment(), Preference.OnPreferenceChangeListener, Preference.OnPreferenceClickListener {
 
-    private var programArtworkEnabledPreference: CheckBoxPreference? = null
-    private var castMiniControllerPreference: CheckBoxPreference? = null
-    private var multipleChannelTagsPreference: CheckBoxPreference? = null
+    private var programArtworkEnabledPreference: SwitchPreference? = null
+    private var castMiniControllerPreference: SwitchPreference? = null
+    private var multipleChannelTagsPreference: SwitchPreference? = null
     private var hoursOfEpgDataPreference: EditTextPreference? = null
     private var daysOfEpgDataPreference: EditTextPreference? = null
 

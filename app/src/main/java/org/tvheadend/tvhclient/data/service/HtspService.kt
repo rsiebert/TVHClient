@@ -13,7 +13,7 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequest
 import androidx.work.WorkManager
-import leakcanary.LeakSentry
+import leakcanary.AppWatcher
 import org.json.JSONException
 import org.json.JSONObject
 import org.tvheadend.htsp.*
@@ -25,9 +25,9 @@ import org.tvheadend.tvhclient.domain.entity.*
 import org.tvheadend.tvhclient.ui.features.notification.addNotificationScheduledRecordingStarts
 import org.tvheadend.tvhclient.ui.features.notification.removeNotificationById
 import org.tvheadend.tvhclient.util.convertUrlToHashString
+import org.tvheadend.tvhclient.util.extensions.isEqualTo
 import org.tvheadend.tvhclient.util.extensions.sendSnackbarMessage
 import org.tvheadend.tvhclient.util.getIconUrl
-import org.tvheadend.tvhclient.util.extensions.isEqualTo
 import timber.log.Timber
 import java.io.*
 import java.net.URL
@@ -36,6 +36,8 @@ import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledExecutorService
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
+import kotlin.math.floor
+import kotlin.math.max
 
 class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener {
 
@@ -54,6 +56,9 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
     private val pendingChannelTagOps = ArrayList<ChannelTag>()
     private val pendingRecordingOps = ArrayList<Recording>()
 
+    private lateinit var httpPlaybackProfiles: List<ServerProfile>
+    private lateinit var htspPlaybackProfiles: List<ServerProfile>
+
     private var initialSyncWithServerRunning: Boolean = false
     private var syncEventsRequired: Boolean = false
     private var syncRequired: Boolean = false
@@ -64,6 +69,15 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
         Timber.d("Starting service")
         MainApplication.component.inject(this)
         connectionTimeout = Integer.valueOf(sharedPreferences.getString("connection_timeout", resources.getString(R.string.pref_default_connection_timeout))!!) * 1000
+
+        connection = appRepository.connectionData.activeItem
+        Timber.d("Loaded connection ${connection.name}")
+
+        httpPlaybackProfiles = appRepository.serverProfileData.httpPlaybackProfiles
+        Timber.d("Loaded existing ${httpPlaybackProfiles.size} http playback profiles for connection ${connection.name}")
+
+        htspPlaybackProfiles = appRepository.serverProfileData.htspPlaybackProfiles
+        Timber.d("Loaded existing ${htspPlaybackProfiles.size} htsp playback profiles for connection ${connection.name}")
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -121,7 +135,10 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
                             "getInputs" -> getInputs()
                             // Internal calls that are called from the intent service
                             "getMoreEvents" -> getMoreEvents(intent)
-                            "loadChannelIcons" -> loadAllChannelIcons()
+                            "loadChannelIcons" -> {
+                                loadAllChannelIcons()
+                                loadAllChannelTagIcons()
+                            }
                         }
                     } else {
                         Timber.d("Not connected to server, not executing action $action")
@@ -136,15 +153,12 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
         Timber.d("Stopping service")
         execService.shutdown()
         stopHtspConnection()
-        LeakSentry.refWatcher.watch(this)
+        AppWatcher.objectWatcher.watch(this)
     }
 
     private fun startHtspConnection() {
         stopHtspConnection()
-
-        connection = appRepository.connectionData.activeItem
         Timber.d("Connecting to ${connection.name}, serverUrl is ${connection.serverUrl}")
-
         htspConnection = HtspConnection(
                 connection.username, connection.password,
                 connection.serverUrl,
@@ -322,7 +336,8 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
             Timber.d("Sync of initial data is required, saving received channels, tags and downloading icons")
             saveAllReceivedChannels()
             saveAllReceivedChannelTags()
-            loadAllChannelIcons()
+            loadAllChannelIcons(pendingChannelOps)
+            loadAllChannelTagIcons(pendingChannelTagOps)
         } else {
             Timber.d("Sync of initial data is not required")
         }
@@ -928,11 +943,14 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
             for (obj in message.getList("profiles")) {
                 val msg = obj as HtspMessage
                 val name = msg.getString("name")
+                val uuid = msg.getString("uuid")
+                Timber.d("Checking if htsp playback profile $name should be added to the database")
 
-                val profileNames = appRepository.serverProfileData.htspPlaybackProfileNames
                 var profileExists = false
-                for (profileName in profileNames) {
-                    if (profileName == name) {
+                for (p in htspPlaybackProfiles) {
+                    Timber.d("Comparing profile $name with database profile ${p.name}")
+                    if (p.name == name && p.uuid == uuid) {
+                        Timber.d("Htsp playback profile $name exists already")
                         profileExists = true
                         break
                     }
@@ -941,7 +959,7 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
                     val serverProfile = ServerProfile()
                     serverProfile.connectionId = connection.id
                     serverProfile.name = name
-                    serverProfile.uuid = msg.getString("uuid")
+                    serverProfile.uuid = uuid
                     serverProfile.comment = msg.getString("comment")
                     serverProfile.type = "htsp_playback"
 
@@ -955,7 +973,6 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
     private fun onHttpProfiles(message: HtspMessage) {
         Timber.d("Handling http playback profiles")
         if (message.containsKey("response")) {
-            Timber.d("Received playback profile data")
             try {
                 val response = JSONObject(message.getString("response"))
                 if (response.has("entries")) {
@@ -967,11 +984,14 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
                             val profile = entries.getJSONObject(i)
                             if (profile.has("key") && profile.has("val")) {
                                 val name = profile.getString("val")
+                                val uuid = profile.getString("key")
+                                Timber.d("Checking if http playback profile $name should be added to the database")
 
-                                val profileNames = appRepository.serverProfileData.httpPlaybackProfileNames
                                 var profileExists = false
-                                for (profileName in profileNames) {
-                                    if (profileName == name) {
+                                for (p in httpPlaybackProfiles) {
+                                    Timber.d("Comparing profile $name with database profile ${p.name}")
+                                    if (p.name == name && p.uuid == uuid) {
+                                        Timber.d("Http playback profile $name exists already")
                                         profileExists = true
                                         break
                                     }
@@ -980,7 +1000,7 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
                                     val serverProfile = ServerProfile()
                                     serverProfile.connectionId = connection.id
                                     serverProfile.name = name
-                                    serverProfile.uuid = profile.getString("key")
+                                    serverProfile.uuid = uuid
                                     serverProfile.type = "http_playback"
 
                                     Timber.d("Adding http playback profile ${serverProfile.name}")
@@ -1235,14 +1255,10 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
         }
     }
 
-    /**
-     * Tries to download and save all received channel and channel
-     * tag logos from the initial sync in the database.
-     */
-    private fun loadAllChannelIcons() {
-        Timber.d("Downloading and saving all channel and channel tag icons...")
+    private fun loadAllChannelIcons(channels:  List<Channel> = appRepository.channelData.getItems()) {
+        Timber.d("Downloading and saving all channel icons...")
 
-        for (channel in appRepository.channelData.getItems()) {
+        for (channel in channels) {
             execService.execute {
                 try {
                     Timber.d("Downloading channel icon ${channel.icon} for channel ${channel.name}")
@@ -1252,7 +1268,12 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
                 }
             }
         }
-        for (tag in appRepository.channelTagData.getItems()) {
+    }
+
+    private fun loadAllChannelTagIcons(tags:  List<ChannelTag> = appRepository.channelTagData.getItems()) {
+        Timber.d("Downloading and saving all channel tag icons...")
+
+        for (tag in tags) {
             execService.execute {
                 try {
                     Timber.d("Downloading channel tag icon ${tag.tagIcon} for channel tag ${tag.tagName}")
@@ -1313,8 +1334,8 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
         // either dimension that correspond to a single pixel in the decoded
         // bitmap. For example, inSampleSize == 4 returns an image that is 1/4
         // the width/height of the original, and 1/16 the number of pixels.
-        val ratio = Math.max(o.outWidth / width, o.outHeight / height)
-        val sampleSize = Integer.highestOneBit(Math.floor(ratio.toDouble()).toInt())
+        val ratio = max(o.outWidth / width, o.outHeight / height)
+        val sampleSize = Integer.highestOneBit(floor(ratio.toDouble()).toInt())
         o = BitmapFactory.Options()
         o.inSampleSize = sampleSize
 

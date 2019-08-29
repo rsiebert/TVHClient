@@ -11,7 +11,7 @@
             android:key="start_screen"
             android:summary="@string/pref_default_menu_sum"
             android:title="@string/pref_default_menu" />
-        <CheckBoxPreference
+        <SwitchPreference
             android:name="@string/pref_date_time_format"
             android:defaultValue="@bool/pref_default_localized_date_time_format_enabled"
             android:key="localized_date_time_format_enabled"
@@ -19,12 +19,12 @@
             android:title="@string/pref_date_time_format" />
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/channels">
-        <CheckBoxPreference
+        <SwitchPreference
             android:defaultValue="@bool/pref_default_channel_name_enabled"
             android:key="channel_name_enabled"
             android:summary="@string/pref_show_channel_name_sum"
             android:title="@string/pref_show_channel_name" />
-        <CheckBoxPreference
+        <SwitchPreference
             android:defaultValue="@bool/pref_default_channel_number_enabled"
             android:key="channel_number_enabled"
             android:summary="@string/pref_show_channel_number_sum"
@@ -46,22 +46,22 @@
             android:key="channel_sort_order"
             android:summary="@string/pref_sort_channels_sum"
             android:title="@string/pref_sort_channels" />
-        <CheckBoxPreference
+        <SwitchPreference
             android:defaultValue="@bool/pref_default_channel_tag_icons_enabled"
             android:key="channel_tag_icons_enabled"
             android:summary="@string/pref_tag_icon_sum"
             android:title="@string/pref_tag_icon" />
-        <CheckBoxPreference
+        <SwitchPreference
             android:defaultValue="@bool/pref_default_multiple_channel_tags_enabled"
             android:key="multiple_channel_tags_enabled"
             android:summary="@string/pref_multiple_channel_tags_enabled_sum"
             android:title="@string/pref_multiple_channel_tags_enabled" />
-        <CheckBoxPreference
+        <SwitchPreference
             android:defaultValue="@bool/pref_default_program_progressbar_enabled"
             android:key="program_progressbar_enabled"
             android:summary="@string/pref_show_progressbar_sum"
             android:title="@string/pref_show_progressbar" />
-        <CheckBoxPreference
+        <SwitchPreference
             android:defaultValue="@bool/pref_default_next_program_title_enabled"
             android:key="next_program_title_enabled"
             android:summary="@string/pref_show_next_program_sum"
@@ -69,12 +69,12 @@
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/programs">
-        <CheckBoxPreference
+        <SwitchPreference
             android:defaultValue="@bool/pref_default_program_subtitle_enabled"
             android:key="program_subtitle_enabled"
             android:summary="@string/pref_show_program_subtitle_sum"
             android:title="@string/pref_show_program_subtitle" />
-        <CheckBoxPreference
+        <SwitchPreference
             android:defaultValue="@bool/pref_default_program_artwork_enabled"
             android:key="program_artwork_enabled"
             android:summary="@string/pref_show_program_artwork_sum"
@@ -82,11 +82,11 @@
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/recordings">
-        <CheckBoxPreference
+        <SwitchPreference
             android:defaultValue="@bool/pref_default_hide_duplicate_scheduled_recordings_enabled"
             android:key="hide_duplicate_scheduled_recordings_enabled"
             android:title="@string/pref_hide_duplicate_scheduled_recordings" />
-        <CheckBoxPreference
+        <SwitchPreference
             android:defaultValue="@bool/pref_default_show_recording_file_status_enabled"
             android:key="show_recording_file_status_enabled"
             android:summary="@string/pref_show_recording_file_status_sum"
@@ -116,13 +116,13 @@
         android:summary="@string/pref_casting_sum"
         android:title="@string/pref_casting">
 
-        <CheckBoxPreference
+        <SwitchPreference
             android:defaultValue="@bool/pref_default_casting_minicontroller_enabled"
             android:key="casting_minicontroller_enabled"
             android:summary="@string/pref_show_cast_minicontroller_sum"
             android:title="@string/pref_show_cast_minicontroller" />
 
-        <!--         <CheckBoxPreference -->
+        <!--         <SwitchPreference -->
         <!--             android:defaultValue="false" -->
         <!--             android:key="pref_show_cast_program_duration" -->
         <!--             android:summary="@string/pref_pref_show_cast_program_duration_sum" -->
@@ -131,17 +131,17 @@
     <PreferenceCategory
         android:summary="@string/pref_genre_colors_sum"
         android:title="@string/pref_genre_colors">
-        <CheckBoxPreference
+        <SwitchPreference
             android:defaultValue="@bool/pref_default_genre_colors_for_channels_enabled"
             android:key="genre_colors_for_channels_enabled"
             android:summary="@string/pref_genre_colors_channels_sum"
             android:title="@string/pref_genre_colors_channels" />
-        <CheckBoxPreference
+        <SwitchPreference
             android:defaultValue="@bool/pref_default_genre_colors_for_programs_enabled"
             android:key="genre_colors_for_programs_enabled"
             android:summary="@string/pref_genre_colors_programs_sum"
             android:title="@string/pref_genre_colors_programs" />
-        <CheckBoxPreference
+        <SwitchPreference
             android:defaultValue="@bool/pref_default_genre_colors_for_program_guide_enabled"
             android:key="genre_colors_for_program_guide_enabled"
             android:summary="@string/pref_genre_colors_epg_sum"
@@ -159,11 +159,11 @@
     <PreferenceCategory
         android:summary="@string/pref_menu_visibility_sum"
         android:title="@string/pref_menu_visibility">
-        <CheckBoxPreference
+        <SwitchPreference
             android:defaultValue="@bool/pref_default_delete_all_recordings_menu_enabled"
             android:key="delete_all_recordings_menu_enabled"
             android:title="@string/pref_show_menu_delete_all_recordings" />
-        <CheckBoxPreference
+        <SwitchPreference
             android:defaultValue="@bool/pref_default_channel_tag_menu_enabled"
             android:key="channel_tag_menu_enabled"
             android:summary="@string/pref_visible_menu_icon_tags_sum"

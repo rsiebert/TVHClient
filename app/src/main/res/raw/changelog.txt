@@ -1,13 +1,33 @@
+$ 2.2.19
+  % VERSION 2.2.19
+  _ 14.08.2019
+    * Show the play menu again for completed recordings
+$ 2.2.18
+  % VERSION 2.2.18
+  _ 14.08.2019
+    * Removed the memory leak detection app that was installed in parallel
+    * Hide unneeded toolbar menu items when the privacy policy is shown from the settings
+$ 2.2.17
+  % VERSION 2.2.17
+  _ 13.08.2019
+    * Fixed player playing audio in background after close
+    * Show the updated privacy policy upon startup
 $ 2.2.16
   % VERSION 2.2.16
-  _ 05.07.2019
+  _ 09.08.2019
     * Added popup menu to directly enable or disable scheduled recordings (Only available in the unlocked version)
-    * Connections are now defined by an url like 'http://myserver:9982' instead of a host and port
-    * Fixed showing the settings again after an orientation change
+    * New connections are now defined by an url like 'http://myserver:9982'
+    * Fixed showing the wrong screen after an orientation change
     * Fixed some layout issues in the startup screen
-    * Fixed channel tag names were not shown in the selection dialog
+    * Fixed missing channel tag names in the selection dialog
+    * Fixed some recording download problems in Android Pie
+    * Fixed adding duplicate profiles to the database
+    * Fixed clearing channel icons from the cache
     * Crash reports moved from Fabric.io to Firebase
-    * Improvements and some bug fixes
+    * Increased the performance when switching between settings screens
+    * Added initial support for ipv6 addresses
+    * Improvements under the hood
+    * Bug fixes
 $ 2.2.15
   % VERSION 2.2.15
   _ 03.06.2019

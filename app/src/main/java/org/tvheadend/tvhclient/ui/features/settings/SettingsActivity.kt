@@ -21,15 +21,24 @@ class SettingsActivity : BaseActivity(), RemoveFragmentFromBackstackInterface {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         settingsViewModel = ViewModelProviders.of(this).get(SettingsViewModel::class.java)
-        settingsViewModel.getNavigationMenuId().observe(this, Observer { id ->
-            Timber.d("New preference selected with id $id, replacing settings fragment")
-            val fragment: Fragment = getSettingsFragment(id)
-            supportFragmentManager.beginTransaction()
-                    .replace(R.id.main, fragment)
-                    .addToBackStack(null)
-                    .commit()
+
+        // If the user wants to go directly to a sub setting screen like the connections
+        // and not the main settings screen the setting type can be passed here
+        if (intent.hasExtra("setting_type")) {
+            val id = intent.getStringExtra("setting_type")
+            settingsViewModel.setNavigationMenuId(id)
+        }
+
+        settingsViewModel.getNavigationMenuId().observe(this, Observer { event ->
+            event.getContentIfNotHandled()?.let {
+                Timber.d("New preference selected with id $it, replacing settings fragment")
+                val fragment: Fragment = getSettingsFragment(it)
+                supportFragmentManager.beginTransaction()
+                        .replace(R.id.main, fragment)
+                        .addToBackStack(null)
+                        .commit()
+            }
         })
 
         baseViewModel.showSnackbar.observe(this, Observer { event ->

@@ -17,7 +17,7 @@
             android:key="language"
             android:summary="@string/pref_language_sum"
             android:title="@string/pref_language" />
-        <CheckBoxPreference
+        <SwitchPreference
             android:defaultValue="@bool/pref_default_light_theme_enabled"
             android:key="light_theme_enabled"
             android:summary="@string/pref_theme_sum"

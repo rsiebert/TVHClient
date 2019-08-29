@@ -2,40 +2,34 @@ package org.tvheadend.tvhclient.ui.features.settings
 
 import android.app.Application
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.domain.entity.Channel
 import org.tvheadend.tvhclient.domain.entity.Connection
 import org.tvheadend.tvhclient.domain.entity.ServerProfile
 import org.tvheadend.tvhclient.domain.entity.ServerStatus
 import org.tvheadend.tvhclient.ui.base.BaseViewModel
-import org.tvheadend.tvhclient.ui.common.SingleLiveEvent
+import org.tvheadend.tvhclient.ui.common.Event
 import timber.log.Timber
 
 class SettingsViewModel(application: Application) : BaseViewModel(application) {
 
     var connectionIdToBeEdited: Int = -1
     val allConnections: LiveData<List<Connection>> = appRepository.connectionData.getLiveDataItems()
-    val currentServerStatus = appRepository.serverStatusData.activeItem
-
-    private val navigationMenuId = SingleLiveEvent<String>()
+    var currentServerStatus = appRepository.serverStatusData.activeItem
+    val currentServerStatusLiveData = appRepository.serverStatusData.liveDataActiveItem
+    private val navigationMenuId = MutableLiveData<Event<String>>()
 
     init {
-        navigationMenuId.value = "default"
+        navigationMenuId.value = Event("default")
     }
 
-    fun getNavigationMenuId(): LiveData<String> = navigationMenuId
+    fun getNavigationMenuId(): LiveData<Event<String>> = navigationMenuId
 
     fun setNavigationMenuId(id: String) {
         Timber.d("Received new navigation id $id")
-        navigationMenuId.value = id
+        navigationMenuId.value = Event(id)
     }
-
-    val activeConnectionId: Int
-        get() {
-            return appRepository.connectionData.activeItem.id
-        }
-
-    var connectionHasChanged: Boolean = false
 
     fun getChannelList(): List<Channel> {
         val defaultChannelSortOrder = appContext.resources.getString(R.string.pref_default_channel_sort_order)
@@ -69,7 +63,9 @@ class SettingsViewModel(application: Application) : BaseViewModel(application) {
     }
 
     fun getHtspProfiles(): List<ServerProfile> {
-        return appRepository.serverProfileData.htspPlaybackProfiles
+        val profiles = appRepository.serverProfileData.htspPlaybackProfiles
+        Timber.d("Loaded ${profiles.size} Htsp profiles")
+        return profiles
     }
 
     fun getHttpProfile(): ServerProfile? {
@@ -77,7 +73,9 @@ class SettingsViewModel(application: Application) : BaseViewModel(application) {
     }
 
     fun getHttpProfiles(): List<ServerProfile> {
-        return appRepository.serverProfileData.httpPlaybackProfiles
+        val profiles = appRepository.serverProfileData.httpPlaybackProfiles
+        Timber.d("Loaded ${profiles.size} Http profiles")
+        return profiles
     }
 
     fun getRecordingProfile(): ServerProfile? {
@@ -85,7 +83,9 @@ class SettingsViewModel(application: Application) : BaseViewModel(application) {
     }
 
     fun getRecordingProfiles(): List<ServerProfile> {
-        return appRepository.serverProfileData.recordingProfiles
+        val profiles = appRepository.serverProfileData.recordingProfiles
+        Timber.d("Loaded ${profiles.size} recording profiles")
+        return profiles
     }
 
     fun getCastingProfile(): ServerProfile? {
@@ -94,11 +94,6 @@ class SettingsViewModel(application: Application) : BaseViewModel(application) {
 
     fun addConnection() {
         appRepository.connectionData.addItem(connection)
-        // Save the information in the view model that a new connection is active.
-        // This will then trigger a reconnect when the user leaves the connection list screen
-        if (connection.isActive) {
-            connectionHasChanged = true
-        }
     }
 
     fun loadConnectionById(id: Int) {

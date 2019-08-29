@@ -24,7 +24,7 @@ import com.google.android.exoplayer2.extractor.TrackOutput
 import com.google.android.exoplayer2.util.MimeTypes
 import com.google.android.exoplayer2.util.ParsableByteArray
 import com.google.android.exoplayer2.util.Util
-import leakcanary.LeakSentry
+import leakcanary.AppWatcher
 import org.tvheadend.htsp.HtspMessage
 import java.nio.charset.Charset
 import java.util.*
@@ -47,7 +47,7 @@ internal class TextsubStreamReader : StreamReader {
                 String(message.getByteArray("payload"), UTF_8).trim { it <= ' ' })
 
         val lengthWithPrefix = SUBRIP_PREFIX.size + payload.size
-        val subsipSample = Arrays.copyOf(SUBRIP_PREFIX, lengthWithPrefix)
+        val subsipSample = SUBRIP_PREFIX.copyOf(lengthWithPrefix)
 
         System.arraycopy(payload, 0, subsipSample, SUBRIP_PREFIX.size, payload.size)
 
@@ -60,12 +60,12 @@ internal class TextsubStreamReader : StreamReader {
 
     override fun release() {
         // Watch for memory leaks
-        LeakSentry.refWatcher.watch(this)
+        AppWatcher.objectWatcher.watch(this)
     }
 
     private fun buildFormat(streamIndex: Int, stream: HtspMessage): Format {
         return Format.createTextSampleFormat(
-                Integer.toString(streamIndex),
+                streamIndex.toString(),
                 MimeTypes.APPLICATION_SUBRIP,
                 C.SELECTION_FLAG_AUTOSELECT,
                 stream.getString("language", "und"), null

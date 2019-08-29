@@ -7,7 +7,7 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import androidx.core.app.JobIntentService
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import leakcanary.LeakSentry
+import leakcanary.AppWatcher
 import org.tvheadend.htsp.*
 import org.tvheadend.tvhclient.MainApplication
 import org.tvheadend.tvhclient.R
@@ -23,6 +23,8 @@ import java.util.*
 import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledExecutorService
 import javax.inject.Inject
+import kotlin.math.floor
+import kotlin.math.max
 
 class HtspIntentService : JobIntentService(), HtspConnectionStateListener {
 
@@ -97,7 +99,7 @@ class HtspIntentService : JobIntentService(), HtspConnectionStateListener {
         Timber.d("Stopping service")
         execService.shutdown()
         htspConnection.closeConnection()
-        LeakSentry.refWatcher.watch(this)
+        AppWatcher.objectWatcher.watch(this)
     }
 
     override fun onAuthenticationStateChange(state: HtspConnection.AuthenticationState) {
@@ -265,8 +267,8 @@ class HtspIntentService : JobIntentService(), HtspConnectionStateListener {
         // either dimension that correspond to a single pixel in the decoded
         // bitmap. For example, inSampleSize == 4 returns an image that is 1/4
         // the width/height of the original, and 1/16 the number of pixels.
-        val ratio = Math.max(options.outWidth / width, options.outHeight / height)
-        val sampleSize = Integer.highestOneBit(Math.floor(ratio.toDouble()).toInt())
+        val ratio = max(options.outWidth / width, options.outHeight / height)
+        val sampleSize = Integer.highestOneBit(floor(ratio.toDouble()).toInt())
         options = BitmapFactory.Options()
         options.inSampleSize = sampleSize
 

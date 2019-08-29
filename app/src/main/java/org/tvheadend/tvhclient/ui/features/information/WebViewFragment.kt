@@ -2,10 +2,7 @@ package org.tvheadend.tvhclient.ui.features.information
 
 import android.graphics.Color
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.MenuItem
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import kotlinx.android.synthetic.main.webview_fragment.*
 import org.tvheadend.tvhclient.BuildConfig
 import org.tvheadend.tvhclient.R
@@ -46,6 +43,14 @@ open class WebViewFragment : BaseFragment(), HtmlFileLoaderTask.Listener {
     override fun onPause() {
         super.onPause()
         htmlFileLoaderTask.cancel(true)
+    }
+
+    override fun onPrepareOptionsMenu(menu: Menu) {
+        super.onPrepareOptionsMenu(menu)
+        menu.findItem(R.id.media_route_menu_item)?.isVisible = false
+        menu.findItem(R.id.menu_search)?.isVisible = false
+        menu.findItem(R.id.menu_reconnect_to_server)?.isVisible = false
+        menu.findItem(R.id.menu_send_wake_on_lan_packet)?.isVisible = false
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

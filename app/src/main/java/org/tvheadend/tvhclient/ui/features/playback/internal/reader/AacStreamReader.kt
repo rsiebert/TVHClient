@@ -23,7 +23,6 @@ import com.google.android.exoplayer2.extractor.TrackOutput
 import com.google.android.exoplayer2.util.CodecSpecificDataUtil
 import com.google.android.exoplayer2.util.MimeTypes
 import com.google.android.exoplayer2.util.ParsableByteArray
-import okhttp3.internal.and
 import org.tvheadend.htsp.HtspMessage
 import org.tvheadend.tvhclient.ui.features.playback.internal.utils.TvhMappings
 
@@ -84,7 +83,7 @@ internal class AacStreamReader : StreamReader {
         }
 
         return Format.createAudioSampleFormat(
-                Integer.toString(streamIndex),
+                streamIndex.toString(),
                 MimeTypes.AUDIO_AAC, null,
                 Format.NO_VALUE,
                 Format.NO_VALUE,
@@ -98,8 +97,8 @@ internal class AacStreamReader : StreamReader {
     }
 
     private fun hasCrc(b: Byte): Boolean {
-        val data = b.and(0xFF)
-        return data.and(0x1) == 0
+        val data = b.toInt() and 0xFF
+        return (data and 0x1) == 0
     }
 
     companion object {

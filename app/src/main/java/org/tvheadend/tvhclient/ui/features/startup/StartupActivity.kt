@@ -1,72 +1,102 @@
 package org.tvheadend.tvhclient.ui.features.startup
 
-import android.app.Activity
-import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
-import androidx.preference.PreferenceManager
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import org.tvheadend.tvhclient.BuildConfig
+import org.tvheadend.tvhclient.MainApplication
 import org.tvheadend.tvhclient.R
-import org.tvheadend.tvhclient.ui.base.BaseActivity
 import org.tvheadend.tvhclient.ui.common.callbacks.BackPressedInterface
-import org.tvheadend.tvhclient.ui.features.changelog.ChangeLogActivity
-import org.tvheadend.tvhclient.util.MigrateUtils
+import org.tvheadend.tvhclient.ui.common.callbacks.ToolbarInterface
+import org.tvheadend.tvhclient.ui.features.changelog.ChangeLogFragment
+import org.tvheadend.tvhclient.ui.features.settings.RemoveFragmentFromBackstackInterface
 import timber.log.Timber
+import javax.inject.Inject
 
-class StartupActivity : BaseActivity() {
+class StartupActivity : AppCompatActivity(), ToolbarInterface, RemoveFragmentFromBackstackInterface {
 
-    private var showStatusFragment = false
+    @Inject
+    lateinit var sharedPreferences: SharedPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        setTheme(R.style.CustomTheme_Light)
         super.onCreate(savedInstanceState)
+        setContentView(R.layout.misc_content_activity)
 
+        val toolbar: Toolbar = findViewById(R.id.toolbar)
+        setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(false)
 
-        // Migrates existing connections from the old database to the new room database.
-        // Migrates existing preferences or remove old ones before starting the actual application
-        MigrateUtils(appContext, appRepository, sharedPreferences).doMigrate()
+        MainApplication.component.inject(this)
 
         if (savedInstanceState == null) {
+            supportFragmentManager.beginTransaction()
+                    .replace(R.id.main, StartupFragment())
+                    .addToBackStack(null)
+                    .commit()
+
+            val showPrivacyPolicyRequired = sharedPreferences.getBoolean("showPrivacyPolicy", true)
+            Timber.d("Privacy policy needs to be displayed $showPrivacyPolicyRequired")
+            if (showPrivacyPolicyRequired) {
+                supportFragmentManager.beginTransaction()
+                        .replace(R.id.main, StartupPrivacyPolicyFragment())
+                        .addToBackStack(null)
+                        .commit()
+                supportActionBar?.setDisplayHomeAsUpEnabled(false)
+            }
+
             // Show the full changelog if the changelog was never shown before (app version
             // name is empty) or if it was already shown and the version name is the same as
             // the one in the preferences. Otherwise show the changelog of the newest app version.
-            val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
             val versionName = sharedPreferences.getString("versionNameForChangelog", "")
             val showChangeLogRequired = BuildConfig.VERSION_NAME != versionName
+            Timber.d("Version name from prefs is $versionName, build version from gradle is ${BuildConfig.VERSION_NAME}")
 
             if (showChangeLogRequired) {
-                Timber.d("Showing changelog, version name from prefs is $versionName, build version from gradle is ${BuildConfig.VERSION_NAME}")
-                val intent = Intent(this, ChangeLogActivity::class.java)
-                intent.putExtra("showFullChangelog", versionName.isNullOrEmpty())
-                intent.putExtra("versionNameForChangelog", versionName)
-                startActivityForResult(intent, 0)
-            } else {
-                showStatusFragment = true
+                Timber.d("Showing changelog")
+                supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
+                val bundle = Bundle()
+                bundle.putString("versionNameForChangelog", versionName)
+                val fragment = ChangeLogFragment()
+                fragment.arguments = bundle
+
+                supportFragmentManager.beginTransaction()
+                        .replace(R.id.main, fragment)
+                        .addToBackStack(null)
+                        .commit()
             }
-        }
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (resultCode == Activity.RESULT_OK) {
-            showStatusFragment = true
-        }
-    }
-
-    override fun onPostResume() {
-        super.onPostResume()
-        if (showStatusFragment) {
-            val fragment = StartupFragment()
-            fragment.arguments = intent.extras
-            supportFragmentManager.beginTransaction().replace(R.id.main, fragment).commit()
         }
     }
 
     override fun onBackPressed() {
         val fragment = supportFragmentManager.findFragmentById(R.id.main)
-        if (fragment is BackPressedInterface) {
+        if (fragment is BackPressedInterface && fragment.isVisible) {
+            Timber.d("Calling back press in the fragment")
             fragment.onBackPressed()
         } else {
-            super.onBackPressed()
+            Timber.d("Calling back press of super")
+            removeFragmentFromBackstack()
         }
+    }
+
+    override fun removeFragmentFromBackstack() {
+        if (supportFragmentManager.backStackEntryCount <= 1) {
+            finish()
+        } else {
+            super.onBackPressed()
+            // The changelog fragment was removed and the startup fragment
+            // is only fragment in the back stack, disable the home button
+            supportActionBar?.setDisplayHomeAsUpEnabled(false)
+        }
+    }
+
+    override fun setTitle(title: String) {
+        supportActionBar?.title = title
+    }
+
+    override fun setSubtitle(subtitle: String) {
+        supportActionBar?.subtitle = subtitle
     }
 }

@@ -9,18 +9,19 @@ import androidx.lifecycle.ViewModelProviders
 import com.afollestad.materialdialogs.MaterialDialog
 import kotlinx.android.synthetic.main.startup_fragment.*
 import org.tvheadend.tvhclient.R
-import org.tvheadend.tvhclient.ui.base.BaseViewModel
 import org.tvheadend.tvhclient.ui.common.callbacks.ToolbarInterface
 import org.tvheadend.tvhclient.ui.features.MainActivity
 import org.tvheadend.tvhclient.ui.features.settings.SettingsActivity
+import org.tvheadend.tvhclient.util.extensions.gone
 import org.tvheadend.tvhclient.util.extensions.visible
 import timber.log.Timber
 
-// TODO add nice background image
-
 class StartupFragment : Fragment() {
 
-    private lateinit var baseViewModel: BaseViewModel
+    private lateinit var startupViewModel: StartupViewModel
+    private var loadingDone = false
+    private var connectionCount: Int = 0
+    private var isConnectionActive = false
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.startup_fragment, container, false)
@@ -28,47 +29,66 @@ class StartupFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        baseViewModel = ViewModelProviders.of(activity!!).get(BaseViewModel::class.java)
+        startupViewModel = ViewModelProviders.of(activity!!).get(StartupViewModel::class.java)
 
-        setHasOptionsMenu(true)
-
-        if (activity is StartupActivity) {
+        if (activity is ToolbarInterface) {
             (activity as ToolbarInterface).setTitle(getString(R.string.status))
         }
 
-        startup_status.text = savedInstanceState?.getString("stateText", "")
-                ?: getString(R.string.initializing)
-        startup_status.visible()
+        setHasOptionsMenu(true)
+        loadingDone = false
+        showStartupStatus()
 
-        baseViewModel.connectionCount.observe(viewLifecycleOwner, Observer { count ->
-            if (count == 0) {
-                Timber.d("No connection available, showing settings button")
-                startup_status.text = getString(R.string.no_connection_available)
-                add_connection_button.visible()
-                add_connection_button.setOnClickListener { showSettingsAddNewConnection() }
-            } else {
-                if (baseViewModel.connection.id == -1) {
-                    Timber.d("No active connection available, showing settings button")
-                    startup_status.text = getString(R.string.no_connection_active_advice)
-                    settings_button.visible()
-                    settings_button.setOnClickListener { showConnectionListSettings() }
-                } else {
-                    Timber.d("Connection is available and active, showing contents")
-                    showContentScreen()
-                }
+        Timber.d("Observing connection status")
+        startupViewModel.connectionStatus.observe(viewLifecycleOwner, Observer { status ->
+            Timber.d("Received connection status from view model")
+            status?.let {
+                loadingDone = true
+                connectionCount = it.first!!
+                isConnectionActive = it.second!!
+                Timber.d("connection count is $connectionCount and connection is active is $isConnectionActive")
+                showStartupStatus()
             }
         })
     }
 
-    override fun onSaveInstanceState(outState: Bundle) {
-        outState.putString("stateText", startup_status.text.toString())
-        super.onSaveInstanceState(outState)
+    private fun showStartupStatus() {
+        if (!loadingDone) {
+            Timber.d("Connection count and active connection are still loading")
+            startup_status.visible()
+            startup_status.text = getString(R.string.initializing)
+            add_connection_button.gone()
+            list_connections_button.gone()
+
+        } else {
+            if (!isConnectionActive && connectionCount == 0) {
+                Timber.d("No connection available, showing settings button")
+                startup_status.visible()
+                startup_status.text = getString(R.string.no_connection_available)
+                add_connection_button.visible()
+                add_connection_button.setOnClickListener { showSettingsAddNewConnection() }
+                list_connections_button.gone()
+
+            } else if (!isConnectionActive && connectionCount > 0) {
+                Timber.d("No active connection available, showing settings button")
+                startup_status.visible()
+                startup_status.text = getString(R.string.no_connection_active_advice)
+                add_connection_button.gone()
+                list_connections_button.visible()
+                list_connections_button.setOnClickListener { showConnectionListSettings() }
+
+            } else {
+                Timber.d("Connection is available and active, showing contents")
+                showContentScreen()
+            }
+        }
     }
 
     override fun onPrepareOptionsMenu(menu: Menu) {
         super.onPrepareOptionsMenu(menu)
         // Do not show the reconnect menu in case no connections are available or none is active
-        menu.findItem(R.id.menu_reconnect_to_server)?.isVisible = (baseViewModel.connection.id > 0)
+        menu.findItem(R.id.menu_settings)?.isVisible = loadingDone
+        menu.findItem(R.id.menu_reconnect_to_server)?.isVisible = loadingDone && isConnectionActive
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -79,7 +99,7 @@ class StartupFragment : Fragment() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.menu_settings -> {
-                showConnectionListSettings()
+                showMainSettings()
                 true
             }
             R.id.menu_reconnect_to_server -> {
@@ -89,7 +109,7 @@ class StartupFragment : Fragment() {
                         message(R.string.dialog_content_reconnect_to_server)
                         positiveButton(R.string.reconnect) {
                             Timber.d("Reconnect requested, stopping service and updating active connection to require a full sync")
-                            baseViewModel.updateConnectionAndRestartApplication(context)
+                            startupViewModel.updateConnectionAndRestartApplication(context)
                         }
                         negativeButton(R.string.cancel)
                     }
@@ -109,6 +129,11 @@ class StartupFragment : Fragment() {
     private fun showConnectionListSettings() {
         val intent = Intent(context, SettingsActivity::class.java)
         intent.putExtra("setting_type", "list_connections")
+        startActivity(intent)
+    }
+
+    private fun showMainSettings() {
+        val intent = Intent(context, SettingsActivity::class.java)
         startActivity(intent)
     }
 

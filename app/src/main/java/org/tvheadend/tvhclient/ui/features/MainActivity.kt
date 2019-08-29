@@ -38,6 +38,7 @@ import org.tvheadend.tvhclient.ui.features.dvr.timer_recordings.TimerRecordingDe
 import org.tvheadend.tvhclient.ui.features.dvr.timer_recordings.TimerRecordingListFragment
 import org.tvheadend.tvhclient.ui.features.epg.ProgramGuideFragment
 import org.tvheadend.tvhclient.ui.features.information.HelpAndSupportFragment
+import org.tvheadend.tvhclient.ui.features.information.PrivacyPolicyFragment
 import org.tvheadend.tvhclient.ui.features.information.StatusFragment
 import org.tvheadend.tvhclient.ui.features.information.StatusViewModel
 import org.tvheadend.tvhclient.ui.features.navigation.NavigationDrawer
@@ -153,8 +154,11 @@ class MainActivity : BaseActivity(R.layout.main_activity), SearchView.OnQueryTex
             }
         })
 
-        navigationViewModel.getNavigationMenuId().observe(this, Observer { id ->
-            handleDrawerItemSelected(id)
+        navigationViewModel.getNavigationMenuId().observe(this, Observer { event ->
+            event.getContentIfNotHandled()?.let {
+                Timber.d("Navigation menu id changed to $it")
+                handleDrawerItemSelected(it)
+            }
         })
         statusViewModel.showRunningRecordingCount.observe(this, Observer { show ->
             showOrCancelNotificationProgramIsCurrentlyBeingRecorded(this, statusViewModel.runningRecordingCount, show)
@@ -290,39 +294,25 @@ class MainActivity : BaseActivity(R.layout.main_activity), SearchView.OnQueryTex
      * and shows the correct fragment or fragments depending on the selected
      * menu item.
      *
-     * @param position Selected position within the menu array
+     * @param id Selected position within the menu array
      */
-    private fun handleDrawerItemSelected(position: Int) {
-        Timber.d("Navigation menu item selected at $position, previous position was ${navigationViewModel.previousNavigationMenuId}")
+    private fun handleDrawerItemSelected(id: Int) {
+        Timber.d("Handling new navigation menu id $id")
 
-        if (position == MENU_SETTINGS) {
+        if (id == MENU_SETTINGS) {
             startActivity(Intent(this, SettingsActivity::class.java))
             return
         }
 
-        val fragment: Fragment?
-        var addFragmentToBackStack = sharedPreferences.getBoolean("navigation_history_enabled",
+        val addFragmentToBackStack = sharedPreferences.getBoolean("navigation_history_enabled",
                 resources.getBoolean(R.bool.pref_default_navigation_history_enabled))
-
-        // Get the already created fragment when the device orientation changes. In this
-        // case the saved instance is not null. This avoids recreating fragments after
-        // every orientation change which would reset any saved states in these fragments.
-        if (position != navigationViewModel.previousNavigationMenuId) {
-            Timber.d("New navigation menu $position was selected, getting new fragment")
-            fragment = getFragmentFromSelection(position)
-        } else {
-            Timber.d("Same navigation menu was selected, trying to get existing fragment")
-            fragment = supportFragmentManager.findFragmentById(R.id.main)
-            addFragmentToBackStack = false
-        }
-
-        navigationViewModel.previousNavigationMenuId = position
 
         // A new or existing main fragment shall be shown. So save the menu position so we
         // know which one was selected. Additionally remove any old details fragment in case
         // dual pane mode is active to prevent showing wrong details data.
         // Finally show the new main fragment and add it to the back stack
         // only if it is a new fragment and not an existing one.
+        val fragment = getFragmentFromSelection(id)
         if (fragment != null) {
             if (isDualPane) {
                 val detailsFragment = supportFragmentManager.findFragmentById(R.id.details)
@@ -340,7 +330,7 @@ class MainActivity : BaseActivity(R.layout.main_activity), SearchView.OnQueryTex
     override fun onPrepareOptionsMenu(menu: Menu): Boolean {
         super.onPrepareOptionsMenu(menu)
 
-        when (navigationViewModel.getNavigationMenuId().value) {
+        when (navigationViewModel.currentNavigationMenuId) {
             NavigationDrawer.MENU_STATUS, NavigationDrawer.MENU_UNLOCKER, NavigationDrawer.MENU_HELP -> {
                 menu.findItem(R.id.media_route_menu_item)?.isVisible = false
                 menu.findItem(R.id.menu_search).isVisible = false
@@ -353,6 +343,21 @@ class MainActivity : BaseActivity(R.layout.main_activity), SearchView.OnQueryTex
             }
         }
         return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.menu_privacy_policy -> {
+                Timber.d("Showing privacy policy fragment")
+                val fragment: Fragment = PrivacyPolicyFragment()
+                supportFragmentManager.beginTransaction()
+                        .replace(R.id.main, fragment)
+                        .addToBackStack(null)
+                        .commit()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
     }
 
     override fun onQueryTextSubmit(query: String): Boolean {
@@ -490,15 +495,16 @@ class MainActivity : BaseActivity(R.layout.main_activity), SearchView.OnQueryTex
      * After that a new back press can finish the activity.
      */
     private fun clearSearchResultsOrPopBackStack() {
+        Timber.d("Popping back stack or finishing")
         val fragment = supportFragmentManager.findFragmentById(R.id.main)
         if (fragment is SearchRequestInterface && fragment.isVisible) {
             if (!fragment.onSearchResultsCleared()) {
                 super.onBackPressed()
-                navigationViewModel.onBackPressed()
+                navigationViewModel.setSelectedMenuItemId(navigationDrawer.getSelectedMenu())
             }
         } else {
             super.onBackPressed()
-            navigationViewModel.onBackPressed()
+            navigationViewModel.setSelectedMenuItemId(navigationDrawer.getSelectedMenu())
         }
     }
 
@@ -506,21 +512,19 @@ class MainActivity : BaseActivity(R.layout.main_activity), SearchView.OnQueryTex
      * Creates and returns a new fragment that is associated with the given menu
      */
     private fun getFragmentFromSelection(position: Int): Fragment? {
-        var fragment: Fragment? = null
-        val bundle = Bundle()
-        when (position) {
-            NavigationDrawer.MENU_CHANNELS -> fragment = ChannelListFragment()
-            NavigationDrawer.MENU_PROGRAM_GUIDE -> fragment = ProgramGuideFragment()
-            NavigationDrawer.MENU_COMPLETED_RECORDINGS -> fragment = CompletedRecordingListFragment()
-            NavigationDrawer.MENU_SCHEDULED_RECORDINGS -> fragment = ScheduledRecordingListFragment()
-            NavigationDrawer.MENU_SERIES_RECORDINGS -> fragment = SeriesRecordingListFragment()
-            NavigationDrawer.MENU_TIMER_RECORDINGS -> fragment = TimerRecordingListFragment()
-            NavigationDrawer.MENU_FAILED_RECORDINGS -> fragment = FailedRecordingListFragment()
-            NavigationDrawer.MENU_REMOVED_RECORDINGS -> fragment = RemovedRecordingListFragment()
-            NavigationDrawer.MENU_STATUS -> fragment = StatusFragment()
-            NavigationDrawer.MENU_UNLOCKER -> fragment = UnlockerFragment()
-            NavigationDrawer.MENU_HELP -> fragment = HelpAndSupportFragment()
+        return when (position) {
+            NavigationDrawer.MENU_CHANNELS -> ChannelListFragment()
+            NavigationDrawer.MENU_PROGRAM_GUIDE -> ProgramGuideFragment()
+            NavigationDrawer.MENU_COMPLETED_RECORDINGS -> CompletedRecordingListFragment()
+            NavigationDrawer.MENU_SCHEDULED_RECORDINGS -> ScheduledRecordingListFragment()
+            NavigationDrawer.MENU_SERIES_RECORDINGS -> SeriesRecordingListFragment()
+            NavigationDrawer.MENU_TIMER_RECORDINGS -> TimerRecordingListFragment()
+            NavigationDrawer.MENU_FAILED_RECORDINGS -> FailedRecordingListFragment()
+            NavigationDrawer.MENU_REMOVED_RECORDINGS -> RemovedRecordingListFragment()
+            NavigationDrawer.MENU_UNLOCKER -> UnlockerFragment()
+            NavigationDrawer.MENU_HELP -> HelpAndSupportFragment()
+            NavigationDrawer.MENU_STATUS -> StatusFragment()
+            else -> null
         }
-        return fragment
     }
 }

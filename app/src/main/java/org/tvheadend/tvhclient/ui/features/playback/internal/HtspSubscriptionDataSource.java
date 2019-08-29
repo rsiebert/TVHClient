@@ -45,7 +45,7 @@ import java.nio.ByteBuffer;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.ReentrantLock;
 
-import leakcanary.LeakSentry;
+import leakcanary.AppWatcher;
 import timber.log.Timber;
 
 public class HtspSubscriptionDataSource implements DataSource, Closeable, HtspMessageListener, HtspDataSourceInterface {
@@ -152,7 +152,7 @@ public class HtspSubscriptionDataSource implements DataSource, Closeable, HtspMe
         if (!isSubscribed) {
             String path = dataSpec.uri.getPath();
             Timber.d("We are not yet subscribed to path %s", path);
-            if (path != null && path.length() > 0 ) {
+            if (path != null && path.length() > 0) {
 
                 int channelId = Integer.parseInt(path.substring(1));
                 Timber.d("Sending subscription start to service with id " + subscriptionId + " for channel id " + channelId);
@@ -289,7 +289,7 @@ public class HtspSubscriptionDataSource implements DataSource, Closeable, HtspMe
         htspConnection.removeMessageListener(this);
 
         // Watch for memory leaks
-        LeakSentry.INSTANCE.getRefWatcher().watch(this);
+        AppWatcher.INSTANCE.getObjectWatcher().watch(this);
     }
 
     public void pause() {

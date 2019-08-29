@@ -39,7 +39,6 @@ class RecordingAddEditFragment : BaseFragment(), BackPressedInterface, Recording
             recordingViewModel.loadRecordingByIdSync(arguments?.getInt("id", 0) ?: 0)
         }
 
-        setHasOptionsMenu(true)
         updateUI()
 
         toolbarInterface.setTitle(if (id > 0)
