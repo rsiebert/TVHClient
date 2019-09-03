@@ -24,7 +24,6 @@ import com.google.android.exoplayer2.extractor.TrackOutput
 import com.google.android.exoplayer2.util.MimeTypes
 import com.google.android.exoplayer2.util.ParsableByteArray
 import com.google.android.exoplayer2.util.Util
-import leakcanary.AppWatcher
 import org.tvheadend.htsp.HtspMessage
 import java.nio.charset.Charset
 import java.util.*
@@ -56,11 +55,6 @@ internal class TextsubStreamReader : StreamReader {
         mTrackOutput!!.sampleData(ParsableByteArray(subsipSample), lengthWithPrefix)
         mTrackOutput!!.sampleMetadata(pts, C.BUFFER_FLAG_KEY_FRAME, lengthWithPrefix, 0,
                 null)
-    }
-
-    override fun release() {
-        // Watch for memory leaks
-        AppWatcher.objectWatcher.watch(this)
     }
 
     private fun buildFormat(streamIndex: Int, stream: HtspMessage): Format {

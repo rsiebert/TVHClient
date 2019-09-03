@@ -15,7 +15,6 @@ import java.io.Closeable;
 import java.nio.ByteBuffer;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import leakcanary.AppWatcher;
 import timber.log.Timber;
 
 public class HtspFileInputStreamDataSource implements DataSource, Closeable, HtspMessageListener, HtspDataSourceInterface {
@@ -226,9 +225,6 @@ public class HtspFileInputStreamDataSource implements DataSource, Closeable, Hts
         request.put("id", fileId);
         htspConnection.sendMessage(request, null);
         htspConnection.removeMessageListener(this);
-
-        // Watch for memory leaks
-        AppWatcher.INSTANCE.getObjectWatcher().watch(this);
     }
 
     private void sendFileRead(long offset) {

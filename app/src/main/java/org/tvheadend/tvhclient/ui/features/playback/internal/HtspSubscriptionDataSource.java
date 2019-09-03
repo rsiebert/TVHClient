@@ -45,7 +45,6 @@ import java.nio.ByteBuffer;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.ReentrantLock;
 
-import leakcanary.AppWatcher;
 import timber.log.Timber;
 
 public class HtspSubscriptionDataSource implements DataSource, Closeable, HtspMessageListener, HtspDataSourceInterface {
@@ -284,9 +283,6 @@ public class HtspSubscriptionDataSource implements DataSource, Closeable, HtspMe
         request.put("subscriptionId", subscriptionId);
         htspConnection.sendMessage(request, null);
         htspConnection.removeMessageListener(this);
-
-        // Watch for memory leaks
-        AppWatcher.INSTANCE.getObjectWatcher().watch(this);
     }
 
     public void pause() {

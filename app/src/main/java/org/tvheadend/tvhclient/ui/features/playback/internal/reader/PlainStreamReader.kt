@@ -21,7 +21,6 @@ import com.google.android.exoplayer2.Format
 import com.google.android.exoplayer2.extractor.ExtractorOutput
 import com.google.android.exoplayer2.extractor.TrackOutput
 import com.google.android.exoplayer2.util.ParsableByteArray
-import leakcanary.AppWatcher
 import org.tvheadend.htsp.HtspMessage
 
 /**
@@ -63,11 +62,6 @@ abstract class PlainStreamReader(private val mTrackType: Int) : StreamReader {
 
         mTrackOutput!!.sampleData(pba, payload.size)
         mTrackOutput!!.sampleMetadata(pts, bufferFlags, payload.size, 0, null)
-    }
-
-    override fun release() {
-        // Watch for memory leaks
-        AppWatcher.objectWatcher.watch(this)
     }
 
     protected abstract fun buildFormat(streamIndex: Int, stream: HtspMessage): Format
