@@ -2,7 +2,6 @@
 <resources>
 
     <!-- Colors for the program guide genres, taken from XBMC -->
-
     <!-- movie drama, orange -->
     <color name="EPG_MOVIES">#db7817</color>
     <!-- news, green -->
@@ -30,65 +29,46 @@
 
     <!-- Theme colors -->
     <color name="window_background_color_light">#fff5f5f5</color>
+    <color name="window_background_color_dark">#303030</color>
 
+    <!-- Material Components light mode main colors -->
     <color name="primaryColor">#eeeeee</color>
     <color name="primaryLightColor">#f5f5f5</color>
     <color name="primaryDarkColor">#707070</color>
     <color name="secondaryColor">#4db6ac</color>
     <color name="secondaryLightColor">#80cbc4</color>
 
-    <!-- MaterialDrawer DEFAULT DARK colors -->
+    <!-- MaterialDrawer colors -->
     <color name="material_drawer_background_dark">#303030</color>
-    <!-- MaterialDrawer DEFAULT DARK text / items colors -->
-    <color name="material_drawer_primary_text_dark">#DEFFFFFF</color>
-    <color name="material_drawer_primary_icon_dark">#8AFFFFFF</color>
-    <color name="material_drawer_secondary_text_dark">#8AFFFFFF</color>
-    <color name="material_drawer_hint_text_dark">#42FFFFFF</color>
-    <color name="material_drawer_divider_dark">#1FFFFFFF</color>
-    <color name="material_drawer_badge_dark">#1FAAAAAA</color>
-    <!-- MaterialDrawer DEFAULT DARK drawer colors -->
-    <color name="material_drawer_selected_dark">#202020</color>
-    <color name="material_drawer_selected_legacy_dark">#202020</color>
-    <color name="material_drawer_selected_text_dark">@color/material_drawer_primary</color>
-    <color name="material_drawer_header_selection_text_dark">#FFFFFFFF</color>
-    <color name="material_drawer_header_selection_subtext_dark">#B3FFFFFF</color>
-
-    <color name="fab_background_color_dark">#7f8c8d</color>
-
-    <!-- MaterialDrawer DEFAULT colors -->
     <color name="material_drawer_background_light">#F9F9F9</color>
-    <!-- Material DEFAULT text / items colors -->
-    <color name="material_drawer_primary_text_light">#DE000000</color>
-    <color name="material_drawer_primary_icon_light">#8A000000</color>
-    <color name="material_drawer_secondary_text_light">#8A000000</color>
-    <color name="material_drawer_hint_text_light">#42000000</color>
-    <color name="material_drawer_divider_light">#1F000000</color>
+    <color name="material_drawer_badge_dark">#1FAAAAAA</color>
     <color name="material_drawer_badge_light">#0F000000</color>
-    <!-- Material DEFAULT drawer colors -->
+    <color name="material_drawer_selected_dark">#202020</color>
     <color name="material_drawer_selected_light">#E8E8E8</color>
-    <color name="material_drawer_selected_legacy_light">#E8E8E8</color>
-    <color name="material_drawer_selected_text_light">#2196F3</color>
-    <color name="material_drawer_header_selection_text_light">#FFFFFFFF</color>
-    <color name="material_drawer_header_selection_subtext_light">#B3FFFFFF</color>
 
-    <color name="fab_background_color_light">#bdc3c7</color>
+    <!-- Colors for the rounded edges of buttons in the startup screen -->
+    <color name="rounded_corners_background_color_dark">#7f8c8d</color>
+    <color name="rounded_corners_background_color_light">#bdc3c7</color>
 
+    <!-- Text colors -->
     <color name="title_text_light">#ce000000</color>
-    <color name="subtitle_text_light">#ac000000</color>
-    <color name="content_text_light">#7c000000</color>
-
     <color name="title_text_dark">#ceffffff</color>
+
+    <color name="subtitle_text_light">#ac000000</color>
     <color name="subtitle_text_dark">#acffffff</color>
+
+    <color name="content_text_light">#7c000000</color>
     <color name="content_text_dark">#7cffffff</color>
 
+    <!-- Scrolling and fast scroll indications -->
     <color name="scrollbar_track_light">#F0F0F0</color>
-    <color name="scrollbar_thumb_light">#C9C9C9</color>
-    <color name="scrollbar_thumb_selected_light">#AAAAAA</color>
-
     <color name="scrollbar_track_dark">#393939</color>
+    <color name="scrollbar_thumb_light">#C9C9C9</color>
     <color name="scrollbar_thumb_dark">#777777</color>
+    <color name="scrollbar_thumb_selected_light">#AAAAAA</color>
     <color name="scrollbar_thumb_selected_dark">#BBBBBB</color>
 
+    <!-- Colors for the program guide genres, taken from Kodi -->
     <color name="aliceblue">#fff0f8ff</color>
     <color name="antiquewhite">#fffaebd7</color>
     <color name="aqua">#ff00ffff</color>
