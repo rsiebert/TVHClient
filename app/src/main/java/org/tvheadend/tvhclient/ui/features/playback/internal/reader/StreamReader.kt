@@ -24,6 +24,4 @@ interface StreamReader {
     fun createTracks(stream: HtspMessage, output: ExtractorOutput)
 
     fun consume(message: HtspMessage)
-
-    fun release()
 }
