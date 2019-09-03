@@ -50,6 +50,10 @@ class RecordingData(private val db: AppRoomDatabase) : DataSourceInterface<Recor
         return db.recordingDao.loadRecordingsByChannelId(channelId)
     }
 
+    suspend fun getItemsByChannelIdSuspendable(channelId: Int): List<Recording> {
+        return db.recordingDao.loadRecordingsByChannelIdSuspendable(channelId)
+    }
+
     fun getCompletedRecordings(): LiveData<List<Recording>> {
         return db.recordingDao.loadCompletedRecordings()
     }

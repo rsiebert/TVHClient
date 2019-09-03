@@ -86,6 +86,12 @@ class ProgramData(private val db: AppRoomDatabase) : DataSourceInterface<Program
         return db.programDao.loadProgramsFromChannelFromTime(channelId, time)
     }
 
+    suspend fun getItemByChannelIdAndBetweenTimeSuspendable(channelId: Int, startTime: Long, endTime: Long): List<EpgProgram> {
+        val programs = ArrayList<EpgProgram>()
+        programs.addAll(db.programDao.loadProgramsFromChannelBetweenTimeSuspendable(channelId, startTime, endTime))
+        return programs
+    }
+
     fun getItemByChannelIdAndBetweenTime(channelId: Int, startTime: Long, endTime: Long): List<EpgProgram> {
         val programs = ArrayList<EpgProgram>()
         runBlocking(Dispatchers.IO) {
