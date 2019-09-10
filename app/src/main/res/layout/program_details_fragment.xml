@@ -1,29 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
-
-    <data>
-
-        <import type="android.view.View" />
-
-        <variable
-            name="program"
-            type="org.tvheadend.tvhclient.domain.entity.Program" />
-
-        <variable
-            name="viewModel"
-            type="org.tvheadend.tvhclient.ui.features.programs.ProgramViewModel" />
-
-        <variable
-            name="isProgramArtworkEnabled"
-            type="boolean" />
-    </data>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
-
-        <include layout="@layout/details_fragment_header" />
 
         <ScrollView
             android:id="@+id/scrollview"
@@ -31,7 +14,7 @@
             android:layout_height="fill_parent"
             android:paddingBottom="16dp">
 
-            <androidx.constraintlayout.widget.ConstraintLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
@@ -49,6 +32,38 @@
                     app:programImage="@{program.image}"
                     app:programImageVisibility="@{safeUnbox(viewModel.showProgramArtwork)}" />
 
+                <ImageView
+                    android:id="@+id/state"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginRight="16dp"
+                    android:contentDescription="@null"
+                    android:scaleType="fitCenter"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:stateIcon="@{program.recording}" />
+
+                <RatingBar
+                    android:id="@+id/star_rating"
+                    style="?android:attr/ratingBarStyleSmall"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="4dp"
+                    android:layout_marginEnd="16dp"
+                    android:isIndicator="true"
+                    android:max="10"
+                    android:numStars="10"
+                    android:rating="@{(float) program.starRating / 10.0f}"
+                    android:stepSize="1"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/star_rating_label" />
+
                 <TextView
                     android:id="@+id/title_label"
                     style="?attr/TitleFont"
@@ -64,31 +79,19 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/image" />
 
-                <ImageView
-                    android:id="@+id/state"
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:layout_marginTop="16dp"
-                    android:layout_marginEnd="16dp"
-                    android:layout_marginRight="16dp"
-                    android:contentDescription="@null"
-                    android:scaleType="fitCenter"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:stateIcon="@{program.recording}" />
-
                 <TextView
                     android:id="@+id/title"
                     style="?attr/ContentFont"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
-                    android:layout_marginTop="8dp"
+                    android:layout_marginTop="4dp"
                     android:layout_marginEnd="16dp"
                     android:text="@{program.title}"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/title_label" />
+                    app:layout_constraintTop_toBottomOf="@+id/title_label"
+                    tools:text="@string/title" />
 
                 <TextView
                     android:id="@+id/subtitle"
@@ -96,12 +99,13 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
-                    android:layout_marginTop="8dp"
+                    android:layout_marginTop="4dp"
                     android:layout_marginEnd="16dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/title"
-                    app:optionalText="@{program.subtitle}" />
+                    app:optionalText="@{program.subtitle}"
+                    tools:text="@string/subtitle" />
 
                 <TextView
                     android:id="@+id/series_info"
@@ -109,12 +113,13 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
-                    android:layout_marginTop="8dp"
+                    android:layout_marginTop="4dp"
                     android:layout_marginEnd="16dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/subtitle"
-                    app:seriesInfoText="@{program}" />
+                    app:seriesInfoText="@{program}"
+                    tools:text="@tools:sample/lorem" />
 
                 <TextView
                     android:id="@+id/summary_label"
@@ -136,12 +141,13 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
-                    android:layout_marginTop="8dp"
+                    android:layout_marginTop="4dp"
                     android:layout_marginEnd="16dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/summary_label"
-                    app:optionalText="@{program.summary}" />
+                    app:optionalText="@{program.summary}"
+                    tools:text="@string/summary" />
 
                 <TextView
                     android:id="@+id/description_label"
@@ -163,12 +169,13 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
-                    android:layout_marginTop="8dp"
+                    android:layout_marginTop="4dp"
                     android:layout_marginEnd="16dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/description_label"
-                    app:optionalDescriptionText="@{program.description}" />
+                    app:optionalDescriptionText="@{program.description}"
+                    tools:text="@string/description" />
 
                 <TextView
                     android:id="@+id/time_date_label"
@@ -190,10 +197,11 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
                     android:layout_marginLeft="16dp"
-                    android:layout_marginTop="8dp"
+                    android:layout_marginTop="4dp"
                     app:dateText="@{program.start}"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/time_date_label" />
+                    app:layout_constraintTop_toBottomOf="@+id/time_date_label"
+                    tools:text="@tools:sample/date/ddmmyy" />
 
                 <TextView
                     android:id="@+id/start_time"
@@ -202,10 +210,11 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
                     android:layout_marginLeft="16dp"
-                    android:layout_marginTop="8dp"
+                    android:layout_marginTop="4dp"
                     app:layout_constraintStart_toEndOf="@+id/date"
                     app:layout_constraintTop_toBottomOf="@+id/time_date_label"
-                    app:timeText="@{program.start}" />
+                    app:timeText="@{program.start}"
+                    tools:text="@tools:sample/date/hhmm" />
 
                 <TextView
                     android:id="@+id/stop_time"
@@ -214,10 +223,11 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
                     android:layout_marginLeft="16dp"
-                    android:layout_marginTop="8dp"
+                    android:layout_marginTop="4dp"
                     app:layout_constraintStart_toEndOf="@+id/start_time"
                     app:layout_constraintTop_toBottomOf="@+id/time_date_label"
-                    app:timeText="@{program.stop}" />
+                    app:timeText="@{program.stop}"
+                    tools:text="@tools:sample/date/hhmm" />
 
                 <TextView
                     android:id="@+id/duration_label"
@@ -238,12 +248,13 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
-                    android:layout_marginTop="8dp"
+                    android:layout_marginTop="4dp"
                     android:layout_marginEnd="16dp"
                     android:text="@{@string/minutes(program.duration)}"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/duration_label" />
+                    app:layout_constraintTop_toBottomOf="@+id/duration_label"
+                    tools:text="@string/minutes" />
 
                 <TextView
                     android:id="@+id/progress"
@@ -251,12 +262,13 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
-                    android:layout_marginTop="16dp"
+                    android:layout_marginTop="4dp"
                     android:layout_marginEnd="16dp"
                     android:text="@{@string/progress(program.progress)}"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/duration" />
+                    app:layout_constraintTop_toBottomOf="@+id/duration"
+                    tools:text="@string/progress" />
 
                 <TextView
                     android:id="@+id/channel_label"
@@ -278,13 +290,14 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
-                    android:layout_marginTop="8dp"
+                    android:layout_marginTop="4dp"
                     android:layout_marginEnd="16dp"
                     android:text="@{program.channelName != null ? program.channelName : @string/hint_not_set}"
                     android:visibility="@{program.channelName != null ? View.VISIBLE : View.GONE}"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/channel_label" />
+                    app:layout_constraintTop_toBottomOf="@+id/channel_label"
+                    tools:text="@string/channel" />
 
                 <TextView
                     android:id="@+id/content_type_label"
@@ -305,12 +318,13 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
-                    android:layout_marginTop="8dp"
+                    android:layout_marginTop="4dp"
                     android:layout_marginEnd="16dp"
                     app:contentTypeText="@{program.contentType}"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/content_type_label" />
+                    app:layout_constraintTop_toBottomOf="@+id/content_type_label"
+                    tools:text="@string/content_type" />
 
                 <TextView
                     android:id="@+id/star_rating_label"
@@ -325,32 +339,13 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/content_type" />
 
-                <RatingBar
-                    android:id="@+id/star_rating"
-                    style="?android:attr/ratingBarStyleSmall"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginEnd="16dp"
-                    android:isIndicator="true"
-                    android:max="10"
-                    android:numStars="10"
-                    android:rating="@{(float) program.starRating / 10.0f}"
-                    android:stepSize="1"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.0"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/star_rating_label" />
-
                 <TextView
                     android:id="@+id/star_rating_text"
                     style="?attr/ContentFont"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
-                    android:layout_marginTop="8dp"
+                    android:layout_marginTop="4dp"
                     android:layout_marginEnd="16dp"
                     android:text="@{String.valueOf((float) program.starRating / 10.0f)}"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -359,5 +354,24 @@
 
             </androidx.constraintlayout.widget.ConstraintLayout>
         </ScrollView>
+
+        <include layout="@layout/details_fragment_header" />
     </LinearLayout>
+
+    <data>
+
+        <import type="android.view.View" />
+
+        <variable
+            name="program"
+            type="org.tvheadend.tvhclient.domain.entity.Program" />
+
+        <variable
+            name="viewModel"
+            type="org.tvheadend.tvhclient.ui.features.programs.ProgramViewModel" />
+
+        <variable
+            name="isProgramArtworkEnabled"
+            type="boolean" />
+    </data>
 </layout>

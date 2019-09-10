@@ -28,8 +28,11 @@
     <color name="EPG_OTHER">#7f8185</color>
 
     <!-- Theme colors -->
-    <color name="window_background_color_light">#fff5f5f5</color>
+    <color name="window_background_color_light">#f3f3f3</color>
     <color name="window_background_color_dark">#303030</color>
+
+    <color name="divider_color_light">#e0e0e0</color>
+    <color name="divider_color_dark">#404040</color>
 
     <!-- Material Components light mode main colors -->
     <color name="primaryColor">#eeeeee</color>
@@ -51,14 +54,14 @@
     <color name="rounded_corners_background_color_light">#bdc3c7</color>
 
     <!-- Text colors -->
-    <color name="title_text_light">#ce000000</color>
-    <color name="title_text_dark">#ceffffff</color>
+    <color name="header_text_light">#cc000000</color>
+    <color name="header_text_dark">#eeffffff</color>
 
-    <color name="subtitle_text_light">#ac000000</color>
-    <color name="subtitle_text_dark">#acffffff</color>
+    <color name="subtitle_text_light">#aa000000</color>
+    <color name="subtitle_text_dark">#ccffffff</color>
 
-    <color name="content_text_light">#7c000000</color>
-    <color name="content_text_dark">#7cffffff</color>
+    <color name="content_text_light">#99000000</color>
+    <color name="content_text_dark">#aaffffff</color>
 
     <!-- Scrolling and fast scroll indications -->
     <color name="scrollbar_track_light">#F0F0F0</color>

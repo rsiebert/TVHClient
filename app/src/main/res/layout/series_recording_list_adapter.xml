@@ -1,5 +1,177 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?android:attr/selectableItemBackground"
+        android:onClick="@{(view) -> callback.onClick(view, position)}"
+        android:onLongClick="@{(view) -> callback.onLongClick(view, position)}">
+
+        <ImageView
+            android:id="@+id/icon"
+            android:layout_width="56dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="16dp"
+            android:contentDescription="@null"
+            android:scaleType="fitStart"
+            app:iconUrl="@{recording.channelIcon}"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/dual_pane_list_item_selection"
+            android:layout_width="12dp"
+            android:layout_height="36dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:contentDescription="@null"
+            android:scaleType="center"
+            android:visibility="@{isDualPane ? View.VISIBLE : View.GONE}"
+            app:backgroundImage="@{isSelected}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/icon_text"
+            style="?attr/ContentFont"
+            android:layout_width="56dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="16dp"
+            app:iconName="@{recording.channelName}"
+            app:iconUrl="@{recording.channelIcon}"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/title"
+            style="?attr/TitleFont"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="88dp"
+            android:layout_marginLeft="88dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginRight="16dp"
+            android:ellipsize="end"
+            android:text="@{recording.title}"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="@string/title" />
+
+        <TextView
+            android:id="@+id/name"
+            style="?attr/ContentFont"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:layout_marginRight="16dp"
+            android:ellipsize="end"
+            android:text="@{recording.name}"
+            android:visibility="@{recording.name != null ? View.VISIBLE : View.GONE}"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/title"
+            app:layout_constraintTop_toBottomOf="@+id/title"
+            tools:text="@string/name" />
+
+        <TextView
+            android:id="@+id/channel"
+            style="?attr/ContentFont"
+            android:layout_width="0dip"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="@{recording.channelName != null ? recording.channelName : @string/all_channels}"
+            app:layout_constraintStart_toStartOf="@+id/title"
+            app:layout_constraintTop_toBottomOf="@+id/name"
+            tools:text="@string/channel" />
+
+        <TextView
+            android:id="@+id/duration"
+            style="?attr/ContentFont"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:layout_marginRight="16dp"
+            android:gravity="end"
+            android:text="@{@string/minutes(recording.duration)}"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/channel"
+            tools:text="@tools:sample/date/hhmm" />
+
+        <TextView
+            android:id="@+id/days_of_week"
+            style="?attr/ContentFont"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:daysText="@{recording.daysOfWeek}"
+            app:layout_constraintStart_toStartOf="@+id/title"
+            app:layout_constraintTop_toBottomOf="@+id/channel"
+            tools:text="@string/days_of_week" />
+
+        <TextView
+            android:id="@+id/start"
+            style="?attr/ContentFont"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:layout_marginRight="16dp"
+            android:gravity="end"
+            app:layout_constraintEnd_toStartOf="@+id/stop"
+            app:layout_constraintTop_toTopOf="@+id/days_of_week"
+            app:timeText="@{recording.start &lt; 0 ? recording.start : recording.startTimeInMillis}"
+            tools:text="@tools:sample/date/hhmm" />
+
+        <TextView
+            android:id="@+id/stop"
+            style="?attr/ContentFont"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:layout_marginRight="16dp"
+            android:gravity="end"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/start"
+            app:timeText="@{recording.startWindow &lt; 0 ? recording.startWindow : recording.startWindowTimeInMillis}"
+            tools:text="@tools:sample/date/hhmm" />
+
+        <TextView
+            android:id="@+id/disabled"
+            style="?attr/ContentFont"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginRight="16dp"
+            app:disabledText="@{recording.enabled}"
+            app:htspVersion="@{htspVersion}"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/title"
+            app:layout_constraintTop_toBottomOf="@+id/days_of_week"
+            tools:text="@string/recording_disabled" />
+
+        <View
+            android:id="@+id/horizontal_divider"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_marginStart="88dp"
+            android:layout_marginLeft="88dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginRight="16dp"
+            android:background="?attr/divider_color"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/disabled" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <data>
 
@@ -29,154 +201,4 @@
             name="callback"
             type="org.tvheadend.tvhclient.ui.common.callbacks.RecyclerViewClickCallback" />
     </data>
-
-    <androidx.constraintlayout.widget.ConstraintLayout xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="?android:attr/selectableItemBackground"
-        android:onClick="@{(view) -> callback.onClick(view, position)}"
-        android:onLongClick="@{(view) -> callback.onLongClick(view, position)}"
-        android:paddingBottom="16dp">
-
-        <ImageView
-            android:id="@+id/icon"
-            android:layout_width="56dp"
-            android:layout_height="40dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginLeft="16dp"
-            android:layout_marginTop="16dp"
-            android:contentDescription="@null"
-            android:scaleType="fitStart"
-            app:iconUrl="@{recording.channelIcon}"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/icon_text"
-            style="?attr/ContentFont"
-            android:layout_width="56dp"
-            android:layout_height="40dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginLeft="16dp"
-            android:layout_marginTop="16dp"
-            app:iconUrl="@{recording.channelIcon}"
-            app:iconName="@{recording.channelName}"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/title"
-            style="?attr/TitleFont"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="88dp"
-            android:layout_marginLeft="88dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginRight="16dp"
-            android:ellipsize="end"
-            android:text="@{recording.title}"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/name"
-            style="?attr/ContentFont"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="16dp"
-            android:layout_marginRight="16dp"
-            android:ellipsize="end"
-            android:text="@{recording.name}"
-            android:visibility="@{recording.name != null ? View.VISIBLE : View.GONE}"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/title"
-            app:layout_constraintTop_toBottomOf="@+id/title" />
-
-        <TextView
-            android:id="@+id/channel"
-            style="?attr/ContentFont"
-            android:layout_width="0dip"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:text="@{recording.channelName != null ? recording.channelName : @string/all_channels}"
-            app:layout_constraintStart_toStartOf="@+id/title"
-            app:layout_constraintTop_toBottomOf="@+id/name" />
-
-        <TextView
-            android:id="@+id/duration"
-            style="?attr/ContentFont"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginRight="16dp"
-            android:gravity="end"
-            android:text="@{@string/minutes(recording.duration)}"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/name" />
-
-        <TextView
-            android:id="@+id/days_of_week"
-            style="?attr/ContentFont"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:daysText="@{recording.daysOfWeek}"
-            app:layout_constraintStart_toStartOf="@+id/title"
-            app:layout_constraintTop_toBottomOf="@+id/channel" />
-
-        <TextView
-            android:id="@+id/start"
-            style="?attr/ContentFont"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="16dp"
-            android:layout_marginRight="16dp"
-            android:gravity="end"
-            app:layout_constraintEnd_toStartOf="@+id/stop"
-            app:layout_constraintTop_toBottomOf="@+id/duration"
-            app:timeText="@{recording.start &lt; 0 ? recording.start : recording.startTimeInMillis}" />
-
-        <TextView
-            android:id="@+id/stop"
-            style="?attr/ContentFont"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="16dp"
-            android:layout_marginRight="16dp"
-            android:gravity="end"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/duration"
-            app:timeText="@{recording.startWindow &lt; 0 ? recording.startWindow : recording.startWindowTimeInMillis}" />
-
-        <TextView
-            android:id="@+id/disabled"
-            style="?attr/ContentFont"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginRight="16dp"
-            app:disabledText="@{recording.enabled}"
-            app:htspVersion="@{htspVersion}"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/title"
-            app:layout_constraintTop_toBottomOf="@+id/days_of_week" />
-
-        <ImageView
-            android:id="@+id/dual_pane_list_item_selection"
-            android:layout_width="12dp"
-            android:layout_height="36dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp"
-            android:contentDescription="@null"
-            android:scaleType="center"
-            android:visibility="@{isDualPane ? View.VISIBLE : View.GONE}"
-            app:backgroundImage="@{isSelected}"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

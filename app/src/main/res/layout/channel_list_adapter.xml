@@ -39,6 +39,61 @@
         android:onClick="@{(view) -> callback.onClick(view, position)}"
         android:onLongClick="@{(view) -> callback.onLongClick(view, position)}">
 
+        <ImageView
+            android:id="@+id/icon"
+            android:layout_width="56dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="12dp"
+            android:layout_marginLeft="12dp"
+            android:layout_marginTop="16dp"
+            android:contentDescription="@null"
+            android:onClick="@{(view) -> callback.onClick(view, position)}"
+            android:scaleType="fitStart"
+            app:iconUrl="@{channel.icon}"
+            app:layout_constraintStart_toEndOf="@+id/genre"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/state"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginRight="16dp"
+            android:contentDescription="@null"
+            android:scaleType="fitCenter"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:stateIcon="@{channel.recording}" />
+
+        <ImageView
+            android:id="@+id/dual_pane_list_item_selection"
+            android:layout_width="12dp"
+            android:layout_height="36dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:contentDescription="@null"
+            android:scaleType="center"
+            android:visibility="@{isDualPane ? View.VISIBLE : View.GONE}"
+            app:backgroundImage="@{isSelected}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ProgressBar
+            android:id="@+id/progressbar"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="0dp"
+            android:layout_height="4dip"
+            android:layout_marginEnd="16dp"
+            android:layout_marginRight="16dp"
+            android:progress="@{channel.progress}"
+            android:scaleY="0.5"
+            android:visibility="@{channel.programId > 0 &amp;&amp; channel.progress >= 0 &amp;&amp; safeUnbox(viewModel.showProgressBar) == true ? View.VISIBLE : View.GONE}"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/guideline"
+            app:layout_constraintTop_toBottomOf="@+id/duration" />
+
         <TextView
             android:id="@+id/genre"
             android:layout_width="8dp"
@@ -53,20 +108,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:showGenreColor="@{safeUnbox(viewModel.showGenreColor)}" />
-
-        <ImageView
-            android:id="@+id/icon"
-            android:layout_width="56dp"
-            android:layout_height="40dp"
-            android:layout_marginStart="12dp"
-            android:layout_marginLeft="12dp"
-            android:layout_marginTop="16dp"
-            android:contentDescription="@null"
-            android:onClick="@{(view) -> callback.onClick(view, position)}"
-            android:scaleType="fitStart"
-            app:iconUrl="@{channel.icon}"
-            app:layout_constraintStart_toEndOf="@+id/genre"
-            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/icon_text"
@@ -99,7 +140,8 @@
             android:text="@{channel.displayNumber}"
             android:visibility="@{safeUnbox(viewModel.showChannelNumber) ? View.VISIBLE : View.GONE}"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/genre" />
+            app:layout_constraintStart_toEndOf="@+id/genre"
+            tools:text="@tools:sample/us_zipcodes" />
 
         <TextView
             android:id="@+id/channel_name"
@@ -115,20 +157,8 @@
             app:layout_constraintEnd_toStartOf="@+id/state"
             app:layout_constraintStart_toStartOf="@+id/guideline"
             app:layout_constraintTop_toTopOf="@+id/guideline2"
+            tools:text="@string/channel"
             tools:visibility="visible" />
-
-        <ImageView
-            android:id="@+id/state"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginRight="16dp"
-            android:contentDescription="@null"
-            android:scaleType="fitCenter"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:stateIcon="@{channel.recording}" />
 
         <TextView
             android:id="@+id/title"
@@ -143,7 +173,8 @@
             android:visibility="@{channel.programId > 0 ? View.VISIBLE : View.GONE}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@+id/guideline"
-            app:layout_constraintTop_toBottomOf="@+id/channel_name" />
+            app:layout_constraintTop_toBottomOf="@+id/channel_name"
+            tools:text="@string/title" />
 
         <TextView
             android:id="@+id/subtitle"
@@ -158,7 +189,8 @@
             android:visibility="@{channel.programId > 0  &amp;&amp; safeUnbox(viewModel.showProgramSubtitle) == true &amp;&amp; channel.programSubtitle != null &amp;&amp; !channel.programSubtitle.equals(channel.programTitle) ? View.VISIBLE : View.GONE}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@+id/guideline"
-            app:layout_constraintTop_toBottomOf="@+id/title" />
+            app:layout_constraintTop_toBottomOf="@+id/title"
+            tools:text="@string/subtitle" />
 
         <TextView
             android:id="@+id/start_time"
@@ -172,7 +204,8 @@
             app:layout_constraintStart_toStartOf="@+id/guideline"
             app:layout_constraintTop_toBottomOf="@+id/subtitle"
             app:layout_constraintVertical_bias="0.0"
-            app:timeText="@{channel.programStart}" />
+            app:timeText="@{channel.programStart}"
+            tools:text="@tools:sample/date/hhmm" />
 
         <TextView
             android:id="@+id/stop_time"
@@ -185,7 +218,8 @@
             android:visibility="@{channel.programId > 0 ? View.VISIBLE : View.GONE}"
             app:layout_constraintStart_toEndOf="@+id/start_time"
             app:layout_constraintTop_toTopOf="@+id/start_time"
-            app:timeText="@{channel.programStop}" />
+            app:timeText="@{channel.programStop}"
+            tools:text="@tools:sample/date/hhmm" />
 
         <TextView
             android:id="@+id/duration"
@@ -199,21 +233,8 @@
             android:text="@{@string/minutes(channel.duration)}"
             android:visibility="@{channel.programId > 0 ? View.VISIBLE : View.GONE}"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/subtitle" />
-
-        <ProgressBar
-            android:id="@+id/progressbar"
-            style="?android:attr/progressBarStyleHorizontal"
-            android:layout_width="0dp"
-            android:layout_height="4dip"
-            android:layout_marginEnd="16dp"
-            android:layout_marginRight="16dp"
-            android:progress="@{channel.progress}"
-            android:scaleY="0.5"
-            android:visibility="@{channel.programId > 0 &amp;&amp; channel.progress >= 0 &amp;&amp; safeUnbox(viewModel.showProgressBar) == true ? View.VISIBLE : View.GONE}"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/guideline"
-            app:layout_constraintTop_toBottomOf="@+id/duration" />
+            app:layout_constraintTop_toBottomOf="@+id/subtitle"
+            tools:text="@string/duration" />
 
         <TextView
             android:id="@+id/next_title"
@@ -232,11 +253,12 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@+id/guideline"
             app:layout_constraintTop_toBottomOf="@+id/progressbar"
-            app:layout_constraintVertical_bias="0.0" />
+            app:layout_constraintVertical_bias="0.0"
+            tools:text="@string/title" />
 
         <TextView
             android:id="@+id/no_programs"
-            style="?attr/SubtitleFont"
+            style="?attr/ContentFont"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
@@ -252,19 +274,16 @@
             app:layout_constraintTop_toBottomOf="@+id/channel_name"
             app:layout_constraintVertical_bias="0.0" />
 
-        <ImageView
-            android:id="@+id/dual_pane_list_item_selection"
-            android:layout_width="12dp"
-            android:layout_height="36dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp"
-            android:contentDescription="@null"
-            android:scaleType="center"
-            android:visibility="@{isDualPane ? View.VISIBLE : View.GONE}"
-            app:backgroundImage="@{isSelected}"
+        <View
+            android:id="@+id/horizontal_divider"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginRight="16dp"
+            android:background="?attr/divider_color"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintStart_toStartOf="@+id/guideline" />
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guideline"
@@ -279,6 +298,5 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             app:layout_constraintGuide_begin="16dp" />
-
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

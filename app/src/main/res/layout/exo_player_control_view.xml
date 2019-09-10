@@ -7,6 +7,97 @@
     android:layout_gravity="bottom"
     android:background="#CC000000">
 
+    <ImageButton
+        android:id="@+id/player_rewind"
+        style="@style/ExoMediaButton.Rewind"
+        android:layout_marginBottom="8dp"
+        android:contentDescription="@null"
+        app:layout_constraintBottom_toTopOf="@+id/elapsed_time"
+        app:layout_constraintEnd_toStartOf="@+id/player_play"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <ImageButton
+        android:id="@+id/player_play"
+        style="@style/ExoMediaButton.Play"
+        android:contentDescription="@null"
+        app:layout_constraintEnd_toStartOf="@+id/player_forward"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/player_rewind"
+        app:layout_constraintTop_toTopOf="@+id/player_rewind" />
+
+    <ImageButton
+        android:id="@+id/player_pause"
+        style="@style/ExoMediaButton.Pause"
+        android:contentDescription="@null"
+        app:layout_constraintBottom_toBottomOf="@+id/player_play"
+        app:layout_constraintStart_toStartOf="@+id/player_play"
+        app:layout_constraintTop_toTopOf="@+id/player_rewind" />
+
+    <ImageButton
+        android:id="@+id/player_forward"
+        style="@style/ExoMediaButton.FastForward"
+        android:contentDescription="@null"
+        app:layout_constraintEnd_toStartOf="@+id/player_menu_aspect_ratio"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/player_play"
+        app:layout_constraintTop_toTopOf="@+id/player_rewind" />
+
+    <ImageButton
+        android:id="@+id/player_menu_aspect_ratio"
+        style="?android:attr/actionOverflowButtonStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@null"
+        android:src="@drawable/ic_player_aspect_ratio"
+        app:layout_constraintEnd_toStartOf="@+id/player_menu_fullscreen"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/player_forward"
+        app:layout_constraintTop_toTopOf="@+id/player_rewind" />
+
+    <ImageButton
+        android:id="@+id/player_menu_fullscreen"
+        style="?android:attr/actionOverflowButtonStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@null"
+        android:src="@drawable/ic_player_fullscreen"
+        app:layout_constraintEnd_toStartOf="@+id/player_menu"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/player_menu_aspect_ratio"
+        app:layout_constraintTop_toTopOf="@+id/player_rewind" />
+
+    <ImageButton
+        android:id="@+id/player_menu"
+        style="?android:attr/actionOverflowButtonStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@null"
+        android:src="@drawable/ic_player_menu"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/player_menu_fullscreen"
+        app:layout_constraintTop_toTopOf="@+id/player_rewind" />
+
+    <ImageButton
+        android:id="@+id/play_next_channel"
+        style="@style/ExoMediaButton.Next"
+        android:layout_marginBottom="32dp"
+        android:contentDescription="@null"
+        app:layout_constraintBottom_toTopOf="@+id/program_title"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageButton
+        android:id="@+id/play_previous_channel"
+        style="@style/ExoMediaButton.Previous"
+        android:layout_marginBottom="32dp"
+        android:contentDescription="@null"
+        app:layout_constraintBottom_toTopOf="@+id/program_title"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
     <ImageView
         android:id="@+id/channel_icon"
         android:layout_width="70dp"
@@ -45,7 +136,8 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0" />
+        app:layout_constraintVertical_bias="1.0"
+        tools:text="@string/title" />
 
     <TextView
         android:id="@+id/program_subtitle"
@@ -56,7 +148,7 @@
         app:layout_constraintEnd_toEndOf="@+id/program_title"
         app:layout_constraintStart_toStartOf="@+id/program_title"
         app:layout_constraintTop_toBottomOf="@+id/program_title"
-        tools:text=" " />
+        tools:text="@string/subtitle" />
 
     <TextView
         android:id="@+id/next_program_title"
@@ -67,80 +159,8 @@
         android:maxLines="1"
         app:layout_constraintEnd_toEndOf="@+id/program_title"
         app:layout_constraintStart_toStartOf="@+id/program_title"
-        app:layout_constraintTop_toBottomOf="@+id/program_subtitle" />
-
-    <ImageButton
-        android:id="@+id/player_rewind"
-        style="@style/ExoMediaButton.Rewind"
-        android:layout_marginBottom="8dp"
-        android:contentDescription="@null"
-        app:layout_constraintBottom_toTopOf="@+id/elapsed_time"
-        app:layout_constraintEnd_toStartOf="@+id/player_play"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <ImageButton
-        android:id="@+id/player_play"
-        style="@style/ExoMediaButton.Play"
-        android:contentDescription="@null"
-        app:layout_constraintEnd_toStartOf="@+id/player_forward"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/player_rewind"
-        app:layout_constraintTop_toTopOf="@+id/player_rewind" />
-
-    <ImageButton
-        android:id="@+id/player_pause"
-        style="@style/ExoMediaButton.Pause"
-        android:contentDescription="@null"
-        app:layout_constraintBottom_toBottomOf="@+id/player_play"
-        app:layout_constraintStart_toStartOf="@+id/player_play"
-        app:layout_constraintTop_toTopOf="@+id/player_rewind" />
-
-    <ImageButton
-        android:id="@+id/player_forward"
-        style="@style/ExoMediaButton.FastForward"
-        android:contentDescription="@null"
-        app:layout_constraintEnd_toStartOf="@+id/player_menu_aspect_ratio"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/player_play"
-        app:layout_constraintTop_toTopOf="@+id/player_rewind" />
-
-
-    <ImageButton
-        android:id="@+id/player_menu_aspect_ratio"
-        style="?android:attr/actionOverflowButtonStyle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:contentDescription="@null"
-        android:src="@drawable/ic_player_aspect_ratio"
-        app:layout_constraintEnd_toStartOf="@+id/player_menu_fullscreen"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/player_forward"
-        app:layout_constraintTop_toTopOf="@+id/player_rewind" />
-
-    <ImageButton
-        android:id="@+id/player_menu_fullscreen"
-        style="?android:attr/actionOverflowButtonStyle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:contentDescription="@null"
-        android:src="@drawable/ic_player_fullscreen"
-        app:layout_constraintEnd_toStartOf="@+id/player_menu"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/player_menu_aspect_ratio"
-        app:layout_constraintTop_toTopOf="@+id/player_rewind" />
-
-    <ImageButton
-        android:id="@+id/player_menu"
-        style="?android:attr/actionOverflowButtonStyle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:contentDescription="@null"
-        android:src="@drawable/ic_player_menu"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/player_menu_fullscreen"
-        app:layout_constraintTop_toTopOf="@+id/player_rewind" />
+        app:layout_constraintTop_toBottomOf="@+id/program_subtitle"
+        tools:text="@string/title" />
 
     <TextView
         android:id="@+id/elapsed_time"
@@ -159,21 +179,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <com.google.android.exoplayer2.ui.DefaultTimeBar
-        android:id="@+id/progress"
-        android:layout_width="0dp"
-        android:layout_height="26dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginBottom="8dp"
-        android:layout_weight="1"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/remaining_time"
-        app:layout_constraintStart_toEndOf="@+id/elapsed_time"
-        app:layout_constraintTop_toTopOf="@+id/elapsed_time" />
-
     <TextView
         android:id="@+id/remaining_time"
         android:layout_width="wrap_content"
@@ -190,23 +195,20 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/progress" />
 
-    <ImageButton
-        android:id="@+id/play_next_channel"
-        style="@style/ExoMediaButton.Next"
-        android:layout_marginBottom="32dp"
-        android:contentDescription="@null"
-        app:layout_constraintBottom_toTopOf="@+id/program_title"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <ImageButton
-        android:id="@+id/play_previous_channel"
-        style="@style/ExoMediaButton.Previous"
-        android:layout_marginBottom="32dp"
-        android:contentDescription="@null"
-        app:layout_constraintBottom_toTopOf="@+id/program_title"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+    <com.google.android.exoplayer2.ui.DefaultTimeBar
+        android:id="@+id/progress"
+        android:layout_width="0dp"
+        android:layout_height="26dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginBottom="8dp"
+        android:layout_weight="1"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/remaining_time"
+        app:layout_constraintStart_toEndOf="@+id/elapsed_time"
+        app:layout_constraintTop_toTopOf="@+id/elapsed_time" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

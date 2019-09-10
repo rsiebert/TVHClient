@@ -44,7 +44,6 @@
     <attr name="TitleFont" format="reference" />
     <attr name="SubtitleFont" format="reference" />
     <attr name="ContentFont" format="reference" />
-    <attr name="ProgramGuideTimelineFont" format="reference" />
     <attr name="ProgramGuideTitleFont" format="reference" />
     <attr name="ProgramGuideContentFont" format="reference" />
 
@@ -54,6 +53,6 @@
     <attr name="fast_scroll_thumb" format="reference" />
 
     <attr name="material_drawer_badge" format="reference" />
-    <attr name="window_background_color" format="reference" />
+    <attr name="divider_color" format="reference" />
 
 </resources>
