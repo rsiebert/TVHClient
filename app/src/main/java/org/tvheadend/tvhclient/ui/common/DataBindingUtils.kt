@@ -28,6 +28,7 @@ import org.tvheadend.tvhclient.util.extensions.gone
 import org.tvheadend.tvhclient.util.extensions.visible
 import org.tvheadend.tvhclient.util.extensions.visibleOrGone
 import org.tvheadend.tvhclient.util.getIconUrl
+import org.tvheadend.tvhclient.util.getThemeId
 import timber.log.Timber
 import java.text.SimpleDateFormat
 import java.util.*
@@ -660,3 +661,12 @@ fun setGenreColor(view: TextView, contentType: Int, showGenreColors: Boolean, of
     }
 }
 
+@BindingAdapter("activeIcon")
+fun setConnectionActiveIcon(view: ImageView, isActive: Boolean) {
+    // Set the active / inactive icon depending on the theme and selection status
+    if (getThemeId(view.context) == R.style.CustomTheme_Light) {
+        view.setImageResource(if (isActive) R.drawable.item_active_light else R.drawable.item_not_active_light)
+    } else {
+        view.setImageResource(if (isActive) R.drawable.item_active_dark else R.drawable.item_not_active_dark)
+    }
+}
