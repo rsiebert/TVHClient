@@ -1,36 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:tools="http://schemas.android.com/tools"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
-
-    <data>
-
-        <import type="android.view.View" />
-
-        <variable
-            name="channel"
-            type="org.tvheadend.tvhclient.domain.entity.Channel" />
-
-        <variable
-            name="viewModel"
-            type="org.tvheadend.tvhclient.ui.features.channels.ChannelViewModel" />
-
-        <variable
-            name="isDualPane"
-            type="boolean" />
-
-        <variable
-            name="position"
-            type="int" />
-
-        <variable
-            name="isSelected"
-            type="boolean" />
-
-        <variable
-            name="callback"
-            type="org.tvheadend.tvhclient.ui.common.callbacks.RecyclerViewClickCallback" />
-    </data>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -299,4 +270,33 @@
             android:orientation="horizontal"
             app:layout_constraintGuide_begin="16dp" />
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <data>
+
+        <import type="android.view.View" />
+
+        <variable
+            name="channel"
+            type="org.tvheadend.tvhclient.domain.entity.Channel" />
+
+        <variable
+            name="viewModel"
+            type="org.tvheadend.tvhclient.ui.features.channels.ChannelViewModel" />
+
+        <variable
+            name="isDualPane"
+            type="boolean" />
+
+        <variable
+            name="position"
+            type="int" />
+
+        <variable
+            name="isSelected"
+            type="boolean" />
+
+        <variable
+            name="callback"
+            type="org.tvheadend.tvhclient.ui.common.callbacks.RecyclerViewClickCallback" />
+    </data>
 </layout>
