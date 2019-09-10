@@ -52,8 +52,6 @@ class SeriesRecordingListFragment : BaseFragment(), RecyclerViewClickCallback, S
 
         recyclerViewAdapter = SeriesRecordingRecyclerViewAdapter(isDualPane, this, htspVersion)
         recycler_view.layoutManager = LinearLayoutManager(activity)
-        recycler_view.addItemDecoration(DividerItemDecoration(activity, LinearLayoutManager.VERTICAL))
-        recycler_view.itemAnimator = DefaultItemAnimator()
         recycler_view.adapter = recyclerViewAdapter
         recycler_view.gone()
 

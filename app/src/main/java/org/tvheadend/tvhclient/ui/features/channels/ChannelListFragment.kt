@@ -69,8 +69,6 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickCallback, ChannelTi
 
         recyclerViewAdapter = ChannelRecyclerViewAdapter(viewModel, isDualPane, this)
         recycler_view.layoutManager = LinearLayoutManager(activity)
-        recycler_view.addItemDecoration(DividerItemDecoration(activity, LinearLayoutManager.VERTICAL))
-        recycler_view.itemAnimator = DefaultItemAnimator()
         recycler_view.adapter = recyclerViewAdapter
         recycler_view.gone()
 
