@@ -55,7 +55,7 @@
 
     <!-- Text colors -->
     <color name="header_text_light">#cc000000</color>
-    <color name="header_text_dark">#eeffffff</color>
+    <color name="header_text_dark">#faffffff</color>
 
     <color name="subtitle_text_light">#aa000000</color>
     <color name="subtitle_text_dark">#ccffffff</color>

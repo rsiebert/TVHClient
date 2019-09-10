@@ -133,7 +133,7 @@
         <!-- Material dialog colors -->
         <item name="md_color_title">@color/header_text_dark</item>
         <item name="md_color_content">@color/content_text_dark</item>
-        <item name="md_color_button_text">@color/content_text_dark</item>
+        <item name="md_color_button_text">@color/header_text_dark</item>
         <item name="md_corner_radius">@dimen/md_corner_radius</item>
     </style>
 
@@ -225,7 +225,7 @@
         <!-- Material dialog colors -->
         <item name="md_color_title">@color/header_text_light</item>
         <item name="md_color_content">@color/content_text_light</item>
-        <item name="md_color_button_text">@color/content_text_light</item>
+        <item name="md_color_button_text">@color/header_text_light</item>
         <item name="md_corner_radius">@dimen/md_corner_radius</item>
     </style>
 
