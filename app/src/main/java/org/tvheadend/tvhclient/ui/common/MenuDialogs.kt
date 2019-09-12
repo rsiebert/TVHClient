@@ -24,7 +24,7 @@ import java.util.*
 
 
 fun showChannelTagSelectionDialog(context: Context, channelTags: MutableList<ChannelTag>, channelCount: Int, callback: ChannelTagIdsSelectedInterface): Boolean {
-    val isMultipleChoice = androidx.preference.PreferenceManager.getDefaultSharedPreferences(context).getBoolean("multiple_channel_tags_enabled",
+    val isMultipleChoice = PreferenceManager.getDefaultSharedPreferences(context).getBoolean("multiple_channel_tags_enabled",
             context.resources.getBoolean(R.bool.pref_default_multiple_channel_tags_enabled))
 
     // Create a default tag (All channels)
@@ -216,12 +216,12 @@ fun showProgramTimeframeSelectionDialog(context: Context, currentSelection: Int,
 
 fun showChannelSortOrderSelectionDialog(context: Context): Boolean {
 
-    val channelSortOrder = Integer.valueOf(androidx.preference.PreferenceManager.getDefaultSharedPreferences(context).getString("channel_sort_order", context.resources.getString(R.string.pref_default_channel_sort_order))!!)
+    val channelSortOrder = Integer.valueOf(PreferenceManager.getDefaultSharedPreferences(context).getString("channel_sort_order", context.resources.getString(R.string.pref_default_channel_sort_order))!!)
     MaterialDialog(context).show {
         title(R.string.select_dvr_config)
         listItemsSingleChoice(R.array.pref_sort_channels_names, initialSelection = channelSortOrder) { _, index, _ ->
             Timber.d("New selected channel sort order changed from $channelSortOrder to $index")
-            val editor = androidx.preference.PreferenceManager.getDefaultSharedPreferences(context).edit()
+            val editor = PreferenceManager.getDefaultSharedPreferences(context).edit()
             editor.putString("channel_sort_order", index.toString())
             editor.apply()
         }

@@ -1304,9 +1304,9 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
         }
 
         var inputStream: InputStream
-        when {
-            url.startsWith("http") -> inputStream = BufferedInputStream(URL(url).openStream())
-            htspVersion > 9 -> inputStream = HtspFileInputStream(htspConnection, url)
+        inputStream = when {
+            url.startsWith("http") -> BufferedInputStream(URL(url).openStream())
+            htspVersion > 9 -> HtspFileInputStream(htspConnection, url)
             else -> return
         }
 

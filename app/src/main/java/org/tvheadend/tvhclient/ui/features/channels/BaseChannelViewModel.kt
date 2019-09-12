@@ -30,7 +30,7 @@ open class BaseChannelViewModel(application: Application) : BaseViewModel(applic
 
     fun setSelectedChannelTagIds(ids: Set<Int>) {
         val tagValues = channelTags.value ?: HashSet<Int>()
-        if (!Arrays.equals(tagValues.toTypedArray(), ids.toTypedArray())) {
+        if (!tagValues.toTypedArray().contentEquals(ids.toTypedArray())) {
             Timber.d("Updating database with newly selected channel tag ids")
             appRepository.channelTagData.updateSelectedChannelTags(ids)
         }
