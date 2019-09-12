@@ -120,7 +120,7 @@ interface ChannelDao {
                 "CASE :sortOrder WHEN 3 THEN c.id END DESC," +
                 "CASE :sortOrder WHEN 4 THEN c.name END ASC," +
                 "CASE :sortOrder WHEN 5 THEN c.name END DESC," +
-                "CASE :sortOrder WHEN 6 THEN (c.display_number + 0) END ASC," +
+                "CASE :sortOrder WHEN 6 THEN (c.display_number + 0) == 0, (c.display_number + 0) END ASC," +
                 "CASE :sortOrder WHEN 7 THEN (c.display_number + 0) END DESC"
 
         const val CONNECTION_IS_ACTIVE = " c.connection_id IN (SELECT id FROM connections WHERE active = 1) "
