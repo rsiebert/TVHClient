@@ -28,7 +28,7 @@ install:
   - chmod +x ./gradlew; ls -l gradlew; ./gradlew wrapper -v
 
 script:
-  - ./gradlew clean build -Pbuild=dev
+  - ./gradlew clean assembleDebug -Pbuild=dev
 
 before_install:
 - yes | sdkmanager "platforms;android-28"
