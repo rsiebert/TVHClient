@@ -18,7 +18,7 @@ package org.tvheadend.tvhclient.ui.features.playback.internal
 
 import android.content.Context
 import android.os.Handler
-import android.preference.PreferenceManager
+import androidx.preference.PreferenceManager
 import com.google.android.exoplayer2.DefaultRenderersFactory
 import com.google.android.exoplayer2.Renderer
 import com.google.android.exoplayer2.audio.AudioCapabilities
