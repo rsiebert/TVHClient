@@ -15,14 +15,6 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
 
-            <ProgressBar
-                android:id="@+id/sync_progress"
-                style="?android:attr/progressBarStyleHorizontal"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:indeterminateOnly="true"
-                android:visibility="gone" />
-
             <com.google.android.material.appbar.AppBarLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
@@ -32,6 +24,14 @@
                     android:layout_width="match_parent"
                     android:layout_height="?android:attr/actionBarSize" />
             </com.google.android.material.appbar.AppBarLayout>
+
+            <ProgressBar
+                android:id="@+id/sync_progress"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:indeterminateOnly="true"
+                android:visibility="gone" />
 
             <LinearLayout
                 android:layout_width="match_parent"
