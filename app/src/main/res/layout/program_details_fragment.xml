@@ -350,7 +350,8 @@
                     android:text="@{String.valueOf((float) program.starRating / 10.0f)}"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/star_rating" />
+                    app:layout_constraintTop_toBottomOf="@+id/star_rating"
+                    tools:text="@string/rating" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
         </ScrollView>
