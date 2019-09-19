@@ -31,4 +31,5 @@ script:
   - ./gradlew clean build -Pbuild=dev
 
 before_install:
-- yes | sdkmanager "platforms;android-28;android-29"
+- yes | sdkmanager "platforms;android-28"
+- yes | sdkmanager "platforms;android-29"
