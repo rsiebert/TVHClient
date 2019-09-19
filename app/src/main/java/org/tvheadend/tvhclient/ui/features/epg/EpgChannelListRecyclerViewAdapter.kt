@@ -9,7 +9,7 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LifecycleRegistry
 import androidx.recyclerview.widget.RecyclerView
 import org.tvheadend.tvhclient.R
-import org.tvheadend.tvhclient.databinding.EpgChannelListAdapterBinding
+import org.tvheadend.tvhclient.databinding.EpgChannelAdapterItemBinding
 import org.tvheadend.tvhclient.domain.entity.EpgChannel
 import org.tvheadend.tvhclient.ui.common.callbacks.RecyclerViewClickCallback
 import java.util.*
@@ -22,7 +22,7 @@ class EpgChannelListRecyclerViewAdapter(private val viewModel: EpgViewModel, pri
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): EpgChannelViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
-        val itemBinding = EpgChannelListAdapterBinding.inflate(layoutInflater, parent, false)
+        val itemBinding = EpgChannelAdapterItemBinding.inflate(layoutInflater, parent, false)
         val viewHolder = EpgChannelViewHolder(itemBinding, viewModel)
         itemBinding.lifecycleOwner = viewHolder
         return viewHolder
@@ -47,7 +47,7 @@ class EpgChannelListRecyclerViewAdapter(private val viewModel: EpgViewModel, pri
     }
 
     override fun getItemViewType(position: Int): Int {
-        return R.layout.epg_channel_list_adapter
+        return R.layout.epg_channel_adapter_item
     }
 
     fun getItem(position: Int): EpgChannel? {
@@ -102,7 +102,7 @@ class EpgChannelListRecyclerViewAdapter(private val viewModel: EpgViewModel, pri
         holder.markDetach()
     }
 
-    class EpgChannelViewHolder(private val binding: EpgChannelListAdapterBinding, private val viewModel: EpgViewModel) : RecyclerView.ViewHolder(binding.root), LifecycleOwner {
+    class EpgChannelViewHolder(private val binding: EpgChannelAdapterItemBinding, private val viewModel: EpgViewModel) : RecyclerView.ViewHolder(binding.root), LifecycleOwner {
 
         private val lifecycleRegistry = LifecycleRegistry(this)
 

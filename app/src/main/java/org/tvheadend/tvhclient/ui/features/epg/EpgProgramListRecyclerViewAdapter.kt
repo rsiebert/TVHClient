@@ -12,7 +12,7 @@ import androidx.lifecycle.LifecycleRegistry
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import org.tvheadend.tvhclient.R
-import org.tvheadend.tvhclient.databinding.EpgProgramItemAdapterBinding
+import org.tvheadend.tvhclient.databinding.EpgProgramAdapterItemBinding
 import org.tvheadend.tvhclient.domain.entity.EpgProgram
 import org.tvheadend.tvhclient.domain.entity.Recording
 import org.tvheadend.tvhclient.ui.common.callbacks.RecyclerViewClickCallback
@@ -27,7 +27,7 @@ internal class EpgProgramListRecyclerViewAdapter(private val viewModel: EpgViewM
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): EpgProgramListViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
-        val itemBinding = EpgProgramItemAdapterBinding.inflate(layoutInflater, parent, false)
+        val itemBinding = EpgProgramAdapterItemBinding.inflate(layoutInflater, parent, false)
         val viewHolder = EpgProgramListViewHolder(itemBinding, viewModel, this)
         itemBinding.lifecycleOwner = viewHolder
         return viewHolder
@@ -101,7 +101,7 @@ internal class EpgProgramListRecyclerViewAdapter(private val viewModel: EpgViewM
     }
 
     override fun getItemViewType(position: Int): Int {
-        return R.layout.epg_program_item_adapter
+        return R.layout.epg_program_adapter_item
     }
 
     private fun getItem(position: Int): EpgProgram? {
@@ -171,7 +171,7 @@ internal class EpgProgramListRecyclerViewAdapter(private val viewModel: EpgViewM
         holder.markDetach()
     }
 
-    internal class EpgProgramListViewHolder(private val binding: EpgProgramItemAdapterBinding, private val viewModel: EpgViewModel, private val clickCallback: RecyclerViewClickCallback) : RecyclerView.ViewHolder(binding.root), LifecycleOwner {
+    internal class EpgProgramListViewHolder(private val binding: EpgProgramAdapterItemBinding, private val viewModel: EpgViewModel, private val clickCallback: RecyclerViewClickCallback) : RecyclerView.ViewHolder(binding.root), LifecycleOwner {
 
         private val lifecycleRegistry = LifecycleRegistry(this)
 

@@ -4,12 +4,9 @@ import android.view.View
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
-import androidx.recyclerview.widget.DefaultItemAnimator
-import androidx.recyclerview.widget.DividerItemDecoration
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.extensions.LayoutContainer
-import kotlinx.android.synthetic.main.epg_program_list_adapter.*
+import kotlinx.android.synthetic.main.epg_program_adapter_host.*
 import org.tvheadend.tvhclient.domain.entity.EpgChannel
 import org.tvheadend.tvhclient.util.extensions.gone
 import org.tvheadend.tvhclient.util.extensions.visible
@@ -24,8 +21,6 @@ class EpgViewPagerViewHolder(override val containerView: View, private val activ
 
     init {
         program_list_recycler_view.layoutManager = CustomHorizontalLayoutManager(containerView.context)
-        program_list_recycler_view.addItemDecoration(DividerItemDecoration(containerView.context, LinearLayoutManager.HORIZONTAL))
-        program_list_recycler_view.itemAnimator = DefaultItemAnimator()
         program_list_recycler_view.setRecycledViewPool(viewPool)
         recyclerViewAdapter = EpgProgramListRecyclerViewAdapter(viewModel, fragmentId)
         program_list_recycler_view.adapter = recyclerViewAdapter
