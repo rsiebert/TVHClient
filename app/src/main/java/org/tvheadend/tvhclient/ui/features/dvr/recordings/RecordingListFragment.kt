@@ -226,7 +226,7 @@ abstract class RecordingListFragment : BaseFragment(), RecyclerViewClickCallback
     private fun enableScheduledRecording(recording: Recording, enabled: Boolean): Boolean {
         val intent = recordingViewModel.getIntentData(recording)
         intent.action = "updateDvrEntry"
-        intent.putExtra("id", recordingViewModel.recording.id)
+        intent.putExtra("id", recording.id)
         intent.putExtra("enabled", if (enabled) 1 else 0)
         activity?.startService(intent)
         return true
