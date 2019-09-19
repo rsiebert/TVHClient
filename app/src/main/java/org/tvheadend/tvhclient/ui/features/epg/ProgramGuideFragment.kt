@@ -12,8 +12,6 @@ import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentStatePagerAdapter
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
-import androidx.recyclerview.widget.DefaultItemAnimator
-import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.SCROLL_STATE_IDLE
@@ -67,8 +65,6 @@ class ProgramGuideFragment : BaseFragment(), EpgScrollInterface, RecyclerViewCli
         channelListRecyclerViewAdapter = EpgChannelListRecyclerViewAdapter(epgViewModel, this)
         channelListRecyclerViewLayoutManager = LinearLayoutManager(activity)
         channel_list_recycler_view.layoutManager = channelListRecyclerViewLayoutManager
-        channel_list_recycler_view.addItemDecoration(DividerItemDecoration(activity, LinearLayoutManager.VERTICAL))
-        channel_list_recycler_view.itemAnimator = DefaultItemAnimator()
         channel_list_recycler_view.adapter = channelListRecyclerViewAdapter
         channel_list_recycler_view.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
