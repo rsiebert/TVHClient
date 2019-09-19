@@ -48,7 +48,7 @@ class DownloadRecordingManager(private val activity: Activity?, private val conn
         // The user and password are required for authentication. They need to be encoded.
         val credentials = "Basic " + Base64.encodeToString((connection.username + ":" + connection.password).toByteArray(), Base64.NO_WRAP)
         // Use the recording title if present, otherwise use the recording id only
-        val recordingTitle = (if (!recording.title.isNullOrEmpty()) recording.title?.replace(" ", "_") else recording.id.toString()) + ".mkv"
+        val recordingTitle = getRecordingTitle(recording)
 
         Timber.d("Download recording from serverUrl '$downloadUrl' to $downloadDirectory/$recordingTitle")
         val request = DownloadManager.Request(Uri.parse(downloadUrl))
@@ -66,6 +66,14 @@ class DownloadRecordingManager(private val activity: Activity?, private val conn
         return request
     }
 
+    private fun getRecordingTitle(recording: Recording): String {
+        var title = "";
+        title += if (!recording.title.isNullOrEmpty()) recording.title?.replace(" ", "-") else recording.id.toString()
+        title += if (!recording.subtitle.isNullOrEmpty()) "_" + recording.subtitle?.replace(" ", "-") else ""
+        title += if (!recording.episode.isNullOrEmpty()) "_" + recording.episode?.replace(" ", "-") else ""
+        title += ".mkv"
+        return title
+    }
     /**
      * Android API version 23 and higher requires that the permission to access
      * the external storage must be requested programmatically (if it has not
