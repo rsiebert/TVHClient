@@ -20,10 +20,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
-import android.preference.PreferenceManager;
 import android.text.TextUtils;
 
 import androidx.annotation.NonNull;
+import androidx.preference.PreferenceManager;
 
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.upstream.DataSource;
@@ -45,7 +45,6 @@ import java.nio.ByteBuffer;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.ReentrantLock;
 
-import leakcanary.AppWatcher;
 import timber.log.Timber;
 
 public class HtspSubscriptionDataSource implements DataSource, Closeable, HtspMessageListener, HtspDataSourceInterface {
@@ -273,9 +272,6 @@ public class HtspSubscriptionDataSource implements DataSource, Closeable, HtspMe
             case "signalStatus":
             case "timeshiftStatus":
                 break;
-
-            default:
-                break;
         }
     }
 
@@ -287,9 +283,6 @@ public class HtspSubscriptionDataSource implements DataSource, Closeable, HtspMe
         request.put("subscriptionId", subscriptionId);
         htspConnection.sendMessage(request, null);
         htspConnection.removeMessageListener(this);
-
-        // Watch for memory leaks
-        AppWatcher.INSTANCE.getObjectWatcher().watch(this);
     }
 
     public void pause() {

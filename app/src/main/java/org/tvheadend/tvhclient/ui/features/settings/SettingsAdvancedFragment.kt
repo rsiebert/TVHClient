@@ -8,9 +8,9 @@ import android.net.Uri
 import android.os.Bundle
 import android.provider.SearchRecentSuggestions
 import androidx.core.content.FileProvider
-import androidx.preference.SwitchPreference
 import androidx.preference.EditTextPreference
 import androidx.preference.Preference
+import androidx.preference.SwitchPreference
 import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequest
 import androidx.work.WorkManager
@@ -190,7 +190,7 @@ class SettingsAdvancedFragment : BasePreferenceFragment(), Preference.OnPreferen
         try {
             context?.let {
                 val logFile = File(it.cacheDir, "logs/$filename")
-                fileUri = FileProvider.getUriForFile(it, "fileprovider", logFile)
+                fileUri = FileProvider.getUriForFile(it, "org.tvheadend.tvhclient.fileprovider", logFile)
             }
         } catch (e: IllegalArgumentException) {
             Timber.e(e, "Could not load logfile")

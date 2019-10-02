@@ -20,18 +20,18 @@
 -keep interface androidx.** { *; }
 -keep class androidx.** { *; }
 
+# Material dialogs
 -dontwarn com.google.android.material.**
 -keep class com.google.android.material.** { *; }
 
-# These warnings are safe to ignore
--dontwarn okhttp3.internal.platform.*
+# Kotlin coroutines
+# ServiceLoader support
+-keepnames class kotlinx.coroutines.internal.MainDispatcherFactory {}
+-keepnames class kotlinx.coroutines.CoroutineExceptionHandler {}
+-keepnames class kotlinx.coroutines.android.AndroidExceptionPreHandler {}
+-keepnames class kotlinx.coroutines.android.AndroidDispatcherFactory {}
 
-# Crashlytics
-# Skip proguard on stuff that crashlytics uses internally
--keepattributes *Annotation*
--keepattributes SourceFile,LineNumberTable
-# Keep custom exceptions
--keep public class * extends java.lang.Exception
-# Speeds up build time
--keep class com.crashlytics.** { *; }
--dontwarn com.crashlytics.**
+# Most of volatile fields are updated with AFU and should not be mangled
+-keepclassmembernames class kotlinx.** {
+    volatile <fields>;
+}

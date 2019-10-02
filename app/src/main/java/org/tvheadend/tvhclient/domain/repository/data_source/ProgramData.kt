@@ -86,6 +86,12 @@ class ProgramData(private val db: AppRoomDatabase) : DataSourceInterface<Program
         return db.programDao.loadProgramsFromChannelFromTime(channelId, time)
     }
 
+    suspend fun getItemByChannelIdAndBetweenTimeSuspendable(channelId: Int, startTime: Long, endTime: Long): List<EpgProgram> {
+        val programs = ArrayList<EpgProgram>()
+        programs.addAll(db.programDao.loadProgramsFromChannelBetweenTimeSuspendable(channelId, startTime, endTime))
+        return programs
+    }
+
     fun getItemByChannelIdAndBetweenTime(channelId: Int, startTime: Long, endTime: Long): List<EpgProgram> {
         val programs = ArrayList<EpgProgram>()
         runBlocking(Dispatchers.IO) {
@@ -120,7 +126,7 @@ class ProgramData(private val db: AppRoomDatabase) : DataSourceInterface<Program
         val channels = db.channelDao.loadAllEpgChannelsSync(order)
 
         Timber.d("Loading programs for ${channels.size} channels between $startTime and $endTime")
-        (0 until channels.size).forEach { i ->
+        (channels.indices).forEach { i ->
             val programs = db.programDao.loadProgramsFromChannelBetweenTimeSyncSuspendable(channels[i].id, startTime, endTime)
             Timber.d("Loaded ${programs.size} programs for channel ${channels[i].name}")
             epgData[channels[i].id] = programs

@@ -4,28 +4,33 @@ package org.tvheadend.tvhclient.ui.features.settings
 import android.content.Context
 import android.os.Bundle
 import android.view.*
-import android.widget.ListView
-import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.ListFragment
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.afollestad.materialdialogs.MaterialDialog
+import kotlinx.android.synthetic.main.recyclerview_fragment.*
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.domain.entity.Connection
 import org.tvheadend.tvhclient.ui.common.callbacks.BackPressedInterface
+import org.tvheadend.tvhclient.ui.common.callbacks.RecyclerViewClickCallback
 import org.tvheadend.tvhclient.ui.common.callbacks.ToolbarInterface
 import org.tvheadend.tvhclient.ui.common.sendWakeOnLanPacket
 import timber.log.Timber
 
-class SettingsListConnectionsFragment : ListFragment(), BackPressedInterface, ActionMode.Callback {
+class SettingsListConnectionsFragment : Fragment(), BackPressedInterface, ActionMode.Callback, RecyclerViewClickCallback {
 
     private var activeConnectionId: Int = -1
     private var connectionHasChanged: Boolean = false
     private lateinit var toolbarInterface: ToolbarInterface
-    private lateinit var connectionListAdapter: ConnectionListAdapter
+    private lateinit var recyclerViewAdapter: ConnectionRecyclerViewAdapter
     private lateinit var settingsViewModel: SettingsViewModel
 
     private var actionMode: ActionMode? = null
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        return inflater.inflate(R.layout.recyclerview_fragment, container, false)
+    }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
@@ -36,21 +41,19 @@ class SettingsListConnectionsFragment : ListFragment(), BackPressedInterface, Ac
             toolbarInterface.setTitle(getString(R.string.settings))
         }
 
-        connectionListAdapter = ConnectionListAdapter(activity as AppCompatActivity)
-        listAdapter = connectionListAdapter
-        listView.choiceMode = ListView.CHOICE_MODE_SINGLE
+        recyclerViewAdapter = ConnectionRecyclerViewAdapter(this)
+        recycler_view.layoutManager = LinearLayoutManager(activity)
+        recycler_view.adapter = recyclerViewAdapter
         setHasOptionsMenu(true)
 
         settingsViewModel.allConnections.observe(viewLifecycleOwner, Observer { connections ->
             if (connections != null) {
-                connectionListAdapter.clear()
-                connectionListAdapter.addAll(connections)
-                connectionListAdapter.notifyDataSetChanged()
+                recyclerViewAdapter.addItems(connections)
                 context?.let {
                     toolbarInterface.setSubtitle(it.resources.getQuantityString(
                             R.plurals.number_of_connections,
-                            connectionListAdapter.count,
-                            connectionListAdapter.count))
+                            recyclerViewAdapter.itemCount,
+                            recyclerViewAdapter.itemCount))
                 }
             }
         })
@@ -59,14 +62,6 @@ class SettingsListConnectionsFragment : ListFragment(), BackPressedInterface, Ac
             connectionHasChanged = connection != null && connection.id != settingsViewModel.connection.id
             activeConnectionId = connection?.id ?: -1
         })
-    }
-
-    override fun onListItemClick(l: ListView, v: View, position: Int, id: Long) {
-        if (actionMode == null) {
-            listView.setItemChecked(position, true)
-            listView.isSelected = true
-            startActionMode()
-        }
     }
 
     private fun startActionMode() {
@@ -88,10 +83,10 @@ class SettingsListConnectionsFragment : ListFragment(), BackPressedInterface, Ac
 
     override fun onActionItemClicked(mode: ActionMode, item: MenuItem): Boolean {
         val ctx = context ?: return false
-        val position = listView.checkedItemPosition
-        if (connectionListAdapter.count <= position) return false
+        val position = recyclerViewAdapter.selectedPosition
+        if (recyclerViewAdapter.itemCount <= position) return false
 
-        val connection = connectionListAdapter.getItem(position) ?: return false
+        val connection = recyclerViewAdapter.getItem(position) ?: return false
         return when (item.itemId) {
             R.id.menu_set_connection_active -> setConnectionActiveOrInactive(connection, mode, true)
             R.id.menu_set_connection_not_active -> setConnectionActiveOrInactive(connection, mode, false)
@@ -146,8 +141,8 @@ class SettingsListConnectionsFragment : ListFragment(), BackPressedInterface, Ac
 
     override fun onPrepareActionMode(mode: ActionMode, menu: Menu): Boolean {
         // Get the currently selected program from the list
-        val position = listView.checkedItemPosition
-        val connection = connectionListAdapter.getItem(position)
+        val position = recyclerViewAdapter.selectedPosition
+        val connection = recyclerViewAdapter.getItem(position)
         if (connection != null) {
             // Show or hide the wake on LAN menu item
             menu.getItem(0).isVisible = connection.isWolEnabled && !connection.wolMacAddress.isNullOrEmpty()
@@ -192,5 +187,17 @@ class SettingsListConnectionsFragment : ListFragment(), BackPressedInterface, Ac
     private fun reconnect() {
         Timber.d("Reconnecting to server, new initial sync will be done")
         settingsViewModel.updateConnectionAndRestartApplication(context)
+    }
+
+    override fun onClick(view: View, position: Int) {
+        actionMode?.finish()
+        if (actionMode == null) {
+            recyclerViewAdapter.setPosition(position)
+            startActionMode()
+        }
+    }
+
+    override fun onLongClick(view: View, position: Int): Boolean {
+        return true
     }
 }

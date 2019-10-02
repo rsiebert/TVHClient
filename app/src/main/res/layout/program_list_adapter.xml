@@ -1,27 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
-
-    <data>
-
-        <import type="android.view.View" />
-
-        <variable
-            name="program"
-            type="org.tvheadend.tvhclient.domain.entity.ProgramInterface" />
-
-        <variable
-            name="viewModel"
-            type="org.tvheadend.tvhclient.ui.features.programs.ProgramViewModel" />
-
-        <variable
-            name="position"
-            type="int" />
-
-        <variable
-            name="callback"
-            type="org.tvheadend.tvhclient.ui.common.callbacks.RecyclerViewClickCallback" />
-    </data>
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -29,6 +9,33 @@
         android:background="?android:attr/selectableItemBackground"
         android:onClick="@{(view) -> callback.onClick(view, position)}"
         android:onLongClick="@{(view) -> callback.onLongClick(view, position)}">
+
+        <ImageView
+            android:id="@+id/icon"
+            android:layout_width="56dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="16dp"
+            android:contentDescription="@null"
+            android:scaleType="fitStart"
+            app:iconUrl="@{program.channelIcon}"
+            app:iconVisibility="@{safeUnbox(viewModel.showProgramChannelIcon)}"
+            app:layout_constraintStart_toEndOf="@+id/genre"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/state"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginRight="16dp"
+            android:contentDescription="@null"
+            android:scaleType="fitCenter"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:stateIcon="@{program.recording}" />
 
         <TextView
             android:id="@+id/genre"
@@ -44,20 +51,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:showGenreColor="@{safeUnbox(viewModel.showGenreColor)}" />
-
-        <ImageView
-            android:id="@+id/icon"
-            android:layout_width="56dp"
-            android:layout_height="40dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginLeft="16dp"
-            android:layout_marginTop="16dp"
-            android:contentDescription="@null"
-            android:scaleType="fitStart"
-            app:iconUrl="@{program.channelIcon}"
-            app:iconVisibility="@{safeUnbox(viewModel.showProgramChannelIcon)}"
-            app:layout_constraintStart_toEndOf="@+id/genre"
-            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/icon_text"
@@ -80,6 +73,8 @@
             style="?attr/TitleFont"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp"
             android:layout_marginTop="16dp"
             android:layout_marginEnd="8dp"
             android:layout_marginRight="8dp"
@@ -88,26 +83,17 @@
             app:layout_constraintEnd_toStartOf="@+id/state"
             app:layout_constraintStart_toEndOf="@+id/genre"
             app:layout_constraintTop_toTopOf="parent"
-            app:marginStart="@{safeUnbox(viewModel.showProgramChannelIcon)}" />
-
-        <ImageView
-            android:id="@+id/state"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginRight="16dp"
-            android:contentDescription="@null"
-            android:scaleType="fitCenter"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:stateIcon="@{program.recording}" />
+            app:marginStart="@{safeUnbox(viewModel.showProgramChannelIcon)}"
+            tools:text="@string/title" />
 
         <TextView
             android:id="@+id/subtitle"
             style="?attr/SubtitleFont"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="4dp"
             android:layout_marginEnd="16dp"
             android:layout_marginRight="16dp"
             android:ellipsize="end"
@@ -117,13 +103,17 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/genre"
             app:layout_constraintTop_toBottomOf="@+id/title"
-            app:marginStart="@{safeUnbox(viewModel.showProgramChannelIcon)}" />
+            app:marginStart="@{safeUnbox(viewModel.showProgramChannelIcon)}"
+            tools:text="@string/subtitle" />
 
         <TextView
             android:id="@+id/summary"
-            style="?attr/SubtitleFont"
+            style="?attr/ContentFont"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="4dp"
             android:layout_marginEnd="16dp"
             android:layout_marginRight="16dp"
             android:ellipsize="end"
@@ -133,13 +123,17 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/genre"
             app:layout_constraintTop_toBottomOf="@+id/subtitle"
-            app:marginStart="@{safeUnbox(viewModel.showProgramChannelIcon)}" />
+            app:marginStart="@{safeUnbox(viewModel.showProgramChannelIcon)}"
+            tools:text="@string/summary" />
 
         <TextView
             android:id="@+id/content_type"
             style="?attr/ContentFont"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="4dp"
             android:layout_marginEnd="16dp"
             android:layout_marginRight="16dp"
             android:singleLine="true"
@@ -147,13 +141,16 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/genre"
             app:layout_constraintTop_toBottomOf="@+id/summary"
-            app:marginStart="@{safeUnbox(viewModel.showProgramChannelIcon)}" />
+            app:marginStart="@{safeUnbox(viewModel.showProgramChannelIcon)}"
+            tools:text="@string/content_type" />
 
         <TextView
             android:id="@+id/date"
             style="?attr/ContentFont"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp"
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
             android:gravity="start"
@@ -162,7 +159,8 @@
             app:layout_constraintBottom_toTopOf="@+id/progress"
             app:layout_constraintStart_toEndOf="@+id/genre"
             app:layout_constraintTop_toBottomOf="@+id/content_type"
-            app:marginStart="@{safeUnbox(viewModel.showProgramChannelIcon)}" />
+            app:marginStart="@{safeUnbox(viewModel.showProgramChannelIcon)}"
+            tools:text="@tools:sample/date/mmddyy" />
 
         <TextView
             android:id="@+id/start_time"
@@ -171,54 +169,49 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginLeft="8dp"
-            android:layout_marginTop="8dp"
             android:layout_marginEnd="16dp"
             android:layout_marginRight="16dp"
-            android:layout_marginBottom="8dp"
-            app:layout_constraintBottom_toTopOf="@+id/progress"
             app:layout_constraintEnd_toStartOf="@+id/stop_time"
             app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toEndOf="@+id/date"
-            app:layout_constraintTop_toBottomOf="@+id/content_type"
-            app:layout_constraintVertical_bias="0.0"
-            app:timeText="@{program.start}" />
+            app:layout_constraintTop_toTopOf="@+id/date"
+            app:timeText="@{program.start}"
+            tools:text="@tools:sample/date/hhmm" />
 
         <TextView
             android:id="@+id/stop_time"
             style="?attr/ContentFont"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
             android:layout_marginEnd="16dp"
             android:layout_marginRight="16dp"
-            android:layout_marginBottom="8dp"
-            app:layout_constraintBottom_toTopOf="@+id/progress"
             app:layout_constraintEnd_toStartOf="@+id/duration"
-            app:layout_constraintTop_toBottomOf="@+id/content_type"
-            app:timeText="@{program.stop}" />
+            app:layout_constraintTop_toTopOf="@+id/date"
+            app:timeText="@{program.stop}"
+            tools:text="@tools:sample/date/hhmm" />
 
         <TextView
             android:id="@+id/duration"
             style="?attr/ContentFont"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
             android:layout_marginEnd="16dp"
             android:layout_marginRight="16dp"
-            android:layout_marginBottom="8dp"
             android:layout_weight="0.3"
             android:gravity="end"
             android:text="@{@string/minutes(program.duration)}"
             android:textAlignment="textEnd"
-            app:layout_constraintBottom_toTopOf="@+id/progress"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/content_type" />
+            app:layout_constraintTop_toTopOf="@+id/date"
+            tools:text="@tools:sample/date/hhmm" />
 
         <TextView
             android:id="@+id/progress"
             style="?attr/ContentFont"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp"
             android:layout_marginEnd="16dp"
             android:layout_marginRight="16dp"
             android:layout_marginBottom="8dp"
@@ -228,13 +221,16 @@
             app:layout_constraintBottom_toTopOf="@+id/series_info"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/genre"
-            app:marginStart="@{safeUnbox(viewModel.showProgramChannelIcon)}" />
+            app:marginStart="@{safeUnbox(viewModel.showProgramChannelIcon)}"
+            tools:text="@string/progress" />
 
         <TextView
             android:id="@+id/series_info"
             style="?attr/ContentFont"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp"
             android:layout_marginEnd="16dp"
             android:layout_marginRight="16dp"
             android:layout_marginBottom="8dp"
@@ -243,13 +239,16 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/genre"
             app:marginStart="@{safeUnbox(viewModel.showProgramChannelIcon)}"
-            app:seriesInfoText="@{program}" />
+            app:seriesInfoText="@{program}"
+            tools:text="@tools:sample/lorem" />
 
         <TextView
             android:id="@+id/description"
             style="?attr/ContentFont"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp"
             android:layout_marginEnd="16dp"
             android:layout_marginRight="16dp"
             android:layout_marginBottom="16dp"
@@ -259,7 +258,42 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/genre"
             app:marginStart="@{safeUnbox(viewModel.showProgramChannelIcon)}"
-            app:optionalText="@{program.description}" />
+            app:optionalDescriptionText="@{program.description}"
+            tools:text="@tools:sample/lorem/random" />
+
+        <View
+            android:id="@+id/horizontal_divider"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginRight="16dp"
+            android:background="?attr/divider_color"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/genre" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <data>
+
+        <import type="android.view.View" />
+
+        <variable
+            name="program"
+            type="org.tvheadend.tvhclient.domain.entity.ProgramInterface" />
+
+        <variable
+            name="viewModel"
+            type="org.tvheadend.tvhclient.ui.features.programs.ProgramViewModel" />
+
+        <variable
+            name="position"
+            type="int" />
+
+        <variable
+            name="callback"
+            type="org.tvheadend.tvhclient.ui.common.callbacks.RecyclerViewClickCallback" />
+    </data>
 </layout>

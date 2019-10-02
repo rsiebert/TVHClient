@@ -59,6 +59,8 @@ class MainApplication : MultiDexApplication(), OptionsProvider, BillingUpdatesLi
                 .build()
         component.inject(this)
 
+        instance = this
+
         // Enable the database debugging bridge in debug mode to access
         // the database contents and other resources via the chrome browser
         if (BuildConfig.DEBUG) {
@@ -164,6 +166,7 @@ class MainApplication : MultiDexApplication(), OptionsProvider, BillingUpdatesLi
 
     companion object {
 
+        lateinit var instance: MainApplication
         lateinit var component: MainApplicationComponent
         lateinit var billingManager: BillingManager
         lateinit var billingHandler: BillingHandler

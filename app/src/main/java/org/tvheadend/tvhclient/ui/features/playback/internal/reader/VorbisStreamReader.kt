@@ -47,7 +47,7 @@ internal class VorbisStreamReader : PlainStreamReader(C.TRACK_TYPE_AUDIO) {
         }
 
         return Format.createAudioSampleFormat(
-                Integer.toString(streamIndex),
+                streamIndex.toString(),
                 MimeTypes.AUDIO_VORBIS, null,
                 Format.NO_VALUE,
                 Format.NO_VALUE,

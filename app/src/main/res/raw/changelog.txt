@@ -1,3 +1,26 @@
+$ 2.2.22
+  % VERSION 2.2.22
+  _ 19.09.2019
+    * Minor UI changes
+    * Fixed disable option not working for scheduled recordings
+    * Fixed server name was not shown in the main menu header
+    * The filename of a downloaded recording is now created from the title, subtitle and episode
+    * Handle channel number ordering with number 0 properly
+    * Improvements under the hood
+$ 2.2.21
+  % VERSION 2.2.21
+  _ 18.08.2019
+    * Added buttons to the internal player to change the channel during live TV playback
+    * Use the defined casting profile when starting a cast session
+    * Use the correct example for the server url in the connection settings. It is http://myserver:9982
+    * Reverted the IPv6 support
+$ 2.2.20
+  % VERSION 2.2.20
+  _ 14.08.2019
+    * Added german privacy policy
+    * Use the defined theme when showing the changelog or privacy policy for the first time
+    * The toolbar does not overlap content in the changelog or privacy policy anymore
+    * Selecting a debug log is working again
 $ 2.2.19
   % VERSION 2.2.19
   _ 14.08.2019

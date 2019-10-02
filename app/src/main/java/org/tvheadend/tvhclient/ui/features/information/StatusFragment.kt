@@ -13,6 +13,7 @@ import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.data.service.HtspService
 import org.tvheadend.tvhclient.domain.entity.ServerStatus
 import org.tvheadend.tvhclient.ui.base.BaseFragment
+import org.tvheadend.tvhclient.ui.common.callbacks.LayoutInterface
 import org.tvheadend.tvhclient.ui.common.sendWakeOnLanPacket
 import org.tvheadend.tvhclient.ui.features.dvr.recordings.RecordingViewModel
 import timber.log.Timber
@@ -31,7 +32,9 @@ class StatusFragment : BaseFragment() {
         super.onActivityCreated(savedInstanceState)
         statusViewModel = ViewModelProviders.of(activity!!).get(StatusViewModel::class.java)
 
-        forceSingleScreenLayout()
+        if (activity is LayoutInterface) {
+            (activity as LayoutInterface).forceSingleScreenLayout()
+        }
 
         toolbarInterface.setTitle(getString(R.string.status))
         toolbarInterface.setSubtitle("")
@@ -40,8 +43,8 @@ class StatusFragment : BaseFragment() {
         showSubscriptionAndInputStatus()
 
         loadDataTask = Runnable {
-            val activityManager = activity!!.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
-            val runningAppProcessInfo = activityManager.runningAppProcesses?.get(0)
+            val activityManager: ActivityManager? = activity?.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+            val runningAppProcessInfo = activityManager?.runningAppProcesses?.get(0)
 
             if (runningAppProcessInfo != null
                     && runningAppProcessInfo.importance <= ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND) {

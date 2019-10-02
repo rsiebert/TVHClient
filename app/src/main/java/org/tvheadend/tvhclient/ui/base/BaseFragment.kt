@@ -3,8 +3,6 @@ package org.tvheadend.tvhclient.ui.base
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.MenuItem
-import android.widget.FrameLayout
-import android.widget.LinearLayout
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
@@ -12,10 +10,9 @@ import org.tvheadend.tvhclient.MainApplication
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.data.repository.AppRepository
 import org.tvheadend.tvhclient.domain.entity.Connection
+import org.tvheadend.tvhclient.ui.common.callbacks.LayoutInterface
 import org.tvheadend.tvhclient.ui.common.callbacks.ToolbarInterface
 import org.tvheadend.tvhclient.ui.common.showConfirmationToReconnectToServer
-import org.tvheadend.tvhclient.util.extensions.gone
-import org.tvheadend.tvhclient.util.extensions.visible
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -61,9 +58,13 @@ abstract class BaseFragment : Fragment() {
         // it was hidden by the call to forceSingleScreenLayout()
         isDualPane = resources.getBoolean(R.bool.isDualScreen)
         if (isDualPane) {
-            enableDualScreenLayout()
+            if (activity is LayoutInterface) {
+                (activity as LayoutInterface).enableDualScreenLayout()
+            }
         } else {
-            enableSingleScreenLayout()
+            if (activity is LayoutInterface) {
+                (activity as LayoutInterface).enableSingleScreenLayout()
+            }
         }
 
         setHasOptionsMenu(true)
@@ -78,35 +79,6 @@ abstract class BaseFragment : Fragment() {
             }
             R.id.menu_reconnect_to_server -> showConfirmationToReconnectToServer(ctx, baseViewModel)
             else -> super.onOptionsItemSelected(item)
-        }
-    }
-
-    private fun enableSingleScreenLayout() {
-        Timber.d("Dual pane is not active, hiding details layout")
-        val mainFrameLayout: FrameLayout = activity!!.findViewById(R.id.main)
-        val detailsFrameLayout: FrameLayout? = activity!!.findViewById(R.id.details)
-        detailsFrameLayout?.gone()
-        mainFrameLayout.layoutParams = LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                1.0f)
-    }
-
-    private fun enableDualScreenLayout() {
-        Timber.d("Dual pane is active, showing details layout")
-        val mainFrameLayout: FrameLayout = activity!!.findViewById(R.id.main)
-        val detailsFrameLayout: FrameLayout? = activity!!.findViewById(R.id.details)
-        detailsFrameLayout?.visible()
-        mainFrameLayout.layoutParams = LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                0.65f)
-    }
-
-    protected fun forceSingleScreenLayout() {
-        if (isDualPane) {
-            Timber.d("Dual pane is active, forcing single screen layout")
-            enableSingleScreenLayout()
         }
     }
 }

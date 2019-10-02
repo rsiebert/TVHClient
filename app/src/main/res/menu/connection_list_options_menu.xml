@@ -9,12 +9,12 @@
         app:showAsAction="ifRoom|withText"/>
     <item
         android:id="@+id/menu_set_connection_active"
-        android:icon="?attr/item_active"
+        android:icon="?attr/ic_item_active"
         android:title="@string/set_active"
         app:showAsAction="ifRoom|withText"/>
     <item
         android:id="@+id/menu_set_connection_not_active"
-        android:icon="?attr/item_not_active"
+        android:icon="?attr/ic_item_not_active"
         android:title="@string/set_not_active"
         app:showAsAction="ifRoom|withText"/>
     <item

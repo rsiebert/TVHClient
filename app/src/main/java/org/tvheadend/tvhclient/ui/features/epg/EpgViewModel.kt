@@ -4,7 +4,9 @@ import android.app.Application
 import android.content.SharedPreferences
 import androidx.core.util.Pair
 import androidx.lifecycle.*
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.domain.entity.EpgChannel
 import org.tvheadend.tvhclient.domain.entity.EpgProgram
@@ -88,7 +90,7 @@ class EpgViewModel(application: Application) : BaseChannelViewModel(application)
     }
 
     fun loadEpgData() {
-        Timber.d("Loading epg data via a coroutine")
+        Timber.d("Loading epg data via coroutine")
         viewModelScope.launch {
             val defaultChannelSortOrder = appContext.resources.getString(R.string.pref_default_channel_sort_order)
             val order = Integer.valueOf(sharedPreferences.getString("channel_sort_order", defaultChannelSortOrder) ?: defaultChannelSortOrder)
@@ -97,9 +99,15 @@ class EpgViewModel(application: Application) : BaseChannelViewModel(application)
             val days = daysOfEpgData.value!!
 
             Timber.d("Loading epg data from database with channel order $order, $hours hours per screen and for $days days")
-            epgData.value = appRepository.programData.getEpgItemsBetweenTime(order, hours, days)
-            Timber.d("Done loading epg data")
+            withContext(Dispatchers.IO) {
+                epgData.postValue(loadProgramsBetweenTime(order, hours, days))
+            }
         }
+        Timber.d("Done loading epg data via coroutine")
+    }
+
+    private suspend fun loadProgramsBetweenTime(order: Int, hours: Int, days: Int) = withContext(Dispatchers.IO) {
+        appRepository.programData.getEpgItemsBetweenTime(order, hours, days)
     }
 
     override fun onCleared() {
@@ -111,7 +119,8 @@ class EpgViewModel(application: Application) : BaseChannelViewModel(application)
         Timber.d("Shared preference $key has changed")
         if (sharedPreferences == null) return
         when (key) {
-            "channel_sort_order" -> channelSortOrder.value = Integer.valueOf(sharedPreferences.getString("channel_sort_order", defaultChannelSortOrder) ?: defaultChannelSortOrder)
+            "channel_sort_order" -> channelSortOrder.value = Integer.valueOf(sharedPreferences.getString("channel_sort_order", defaultChannelSortOrder)
+                    ?: defaultChannelSortOrder)
             "channel_number_enabled" -> showChannelNumber.value = sharedPreferences.getBoolean(key, appContext.resources.getBoolean(R.bool.pref_default_channel_number_enabled))
             "program_subtitle_enabled" -> showProgramSubtitle.value = sharedPreferences.getBoolean(key, appContext.resources.getBoolean(R.bool.pref_default_program_subtitle_enabled))
             "genre_colors_for_program_guide_enabled" -> showGenreColor.value = sharedPreferences.getBoolean(key, appContext.resources.getBoolean(R.bool.pref_default_genre_colors_for_program_guide_enabled))

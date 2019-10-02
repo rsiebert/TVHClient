@@ -12,7 +12,6 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
-import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.SCROLL_STATE_IDLE
@@ -26,7 +25,7 @@ import java.util.*
 class EpgViewPagerFragment : Fragment(), EpgScrollInterface {
 
     private lateinit var epgViewModel: EpgViewModel
-    private lateinit var recyclerViewAdapter: EpgViewPagerRecyclerViewAdapter
+    private lateinit var recyclerViewAdapter: EpgViewPagerRecyclerViewAdapterHost
     private var showTimeIndication: Boolean = false
 
     private lateinit var updateViewHandler: Handler
@@ -75,9 +74,8 @@ class EpgViewPagerFragment : Fragment(), EpgScrollInterface {
 
         epgViewModel.calcPixelsPerMinute(displayWidth)
 
-        recyclerViewAdapter = EpgViewPagerRecyclerViewAdapter(requireActivity(), epgViewModel, fragmentId)
+        recyclerViewAdapter = EpgViewPagerRecyclerViewAdapterHost(requireActivity(), epgViewModel, fragmentId)
         recyclerViewLinearLayoutManager = LinearLayoutManager(activity, RecyclerView.VERTICAL, false)
-        viewpager_recycler_view.addItemDecoration(DividerItemDecoration(activity, LinearLayoutManager.VERTICAL))
         viewpager_recycler_view.layoutManager = recyclerViewLinearLayoutManager
         viewpager_recycler_view.setHasFixedSize(true)
         viewpager_recycler_view.adapter = recyclerViewAdapter

@@ -19,7 +19,7 @@ open class BaseChannelViewModel(application: Application) : BaseViewModel(applic
     val recordings: LiveData<List<Recording>> = appRepository.recordingData.getLiveDataItems()
     val selectedChannelTagIds: LiveData<List<Int>?> = appRepository.channelTagData.liveDataSelectedItemIds
     val channelCount: LiveData<Int> = appRepository.channelData.getLiveDataItemCount()
-    val selectedTime = MutableLiveData<Long>(Date().time)
+    val selectedTime = MutableLiveData(Date().time)
     val defaultChannelSortOrder: String = appContext.resources.getString(R.string.pref_default_channel_sort_order)
 
     fun setSelectedTime(time: Long) {
@@ -30,7 +30,7 @@ open class BaseChannelViewModel(application: Application) : BaseViewModel(applic
 
     fun setSelectedChannelTagIds(ids: Set<Int>) {
         val tagValues = channelTags.value ?: HashSet<Int>()
-        if (!Arrays.equals(tagValues.toTypedArray(), ids.toTypedArray())) {
+        if (!tagValues.toTypedArray().contentEquals(ids.toTypedArray())) {
             Timber.d("Updating database with newly selected channel tag ids")
             appRepository.channelTagData.updateSelectedChannelTags(ids)
         }

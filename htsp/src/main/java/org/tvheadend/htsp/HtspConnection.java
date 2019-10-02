@@ -7,9 +7,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import java.io.IOException;
-import java.net.Inet4Address;
-import java.net.Inet6Address;
-import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
@@ -141,22 +138,22 @@ public class HtspConnection extends Thread implements HtspConnectionInterface {
             Timber.d("Parsing url " + url + " to get required host and port information");
             Uri uri = Uri.parse(url);
             InetSocketAddress inetSocketAddress = new InetSocketAddress(uri.getHost(), uri.getPort());
-
+/*
             InetAddress inetAddress = inetSocketAddress.getAddress();
             if (inetAddress instanceof Inet4Address) {
                 Timber.d("Connecting via socket to ipv4 address '" + inetAddress.getHostName() + "' and port '" + inetSocketAddress.getPort() + "'");
 
             } else if (inetAddress instanceof Inet6Address) {
                 Inet6Address inet6Address = (Inet6Address) inetAddress;
-                if (inet6Address.getScopeId() != 0) {
+                //if (inet6Address.getScopeId() != 0) {
                     Timber.d("Connecting via socket to ipv6 address '" + inetAddress.getHostName() + "' and port '" + inetSocketAddress.getPort() + "'");
                     inetSocketAddress = new InetSocketAddress(InetAddress.getByAddress(inet6Address.getAddress()), inetSocketAddress.getPort());
-                } else {
-                    Timber.d("Scope id of ipv6 address '" + inetAddress.getHostName() + "', is 0");
-                    inetSocketAddress = null;
-                }
+                //} else {
+                //    Timber.d("Scope id of ipv6 address '" + inetAddress.getHostName() + "', is 0");
+                //    inetSocketAddress = null;
+                //}
             }
-
+*/
             if (!socketChannel.connect(inetSocketAddress)) {
                 Timber.d("Socket did not yet finish connecting, calling finishConnect()");
                 socketChannel.finishConnect();

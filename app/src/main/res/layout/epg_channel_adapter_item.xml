@@ -2,34 +2,13 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <data>
-
-        <import type="android.view.View" />
-
-        <variable
-            name="channel"
-            type="org.tvheadend.tvhclient.domain.entity.EpgChannel" />
-
-        <variable
-            name="viewModel"
-            type="org.tvheadend.tvhclient.ui.features.epg.EpgViewModel" />
-
-        <variable
-            name="position"
-            type="int" />
-
-        <variable
-            name="callback"
-            type="org.tvheadend.tvhclient.ui.common.callbacks.RecyclerViewClickCallback" />
-    </data>
-
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="80dp"
         android:background="?android:attr/selectableItemBackground">
 
         <ImageView
-            android:id="@+id/icon"
+            android:id="@+id/channel_icon"
             android:layout_width="56dp"
             android:layout_height="40dp"
             android:contentDescription="@null"
@@ -42,7 +21,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/icon_text"
+            android:id="@+id/channel_icon_text"
             style="?attr/ContentFont"
             android:layout_width="56dp"
             android:layout_height="40dp"
@@ -67,7 +46,28 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/icon_text" />
+            app:layout_constraintTop_toBottomOf="@+id/channel_icon_text" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <data>
+
+        <import type="android.view.View" />
+
+        <variable
+            name="channel"
+            type="org.tvheadend.tvhclient.domain.entity.EpgChannel" />
+
+        <variable
+            name="viewModel"
+            type="org.tvheadend.tvhclient.ui.features.epg.EpgViewModel" />
+
+        <variable
+            name="position"
+            type="int" />
+
+        <variable
+            name="callback"
+            type="org.tvheadend.tvhclient.ui.common.callbacks.RecyclerViewClickCallback" />
+    </data>
 </layout>

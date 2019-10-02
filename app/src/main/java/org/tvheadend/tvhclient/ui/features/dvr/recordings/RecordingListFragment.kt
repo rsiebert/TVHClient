@@ -7,8 +7,6 @@ import android.widget.Filter
 import androidx.appcompat.widget.PopupMenu
 import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.ViewModelProviders
-import androidx.recyclerview.widget.DefaultItemAnimator
-import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.recyclerview_fragment.*
 import org.tvheadend.tvhclient.R
@@ -49,8 +47,6 @@ abstract class RecordingListFragment : BaseFragment(), RecyclerViewClickCallback
 
         recyclerViewAdapter = RecordingRecyclerViewAdapter(isDualPane, this, htspVersion)
         recycler_view.layoutManager = LinearLayoutManager(activity)
-        recycler_view.addItemDecoration(DividerItemDecoration(activity, LinearLayoutManager.VERTICAL))
-        recycler_view.itemAnimator = DefaultItemAnimator()
         recycler_view.adapter = recyclerViewAdapter
         recycler_view.gone()
     }
@@ -226,7 +222,7 @@ abstract class RecordingListFragment : BaseFragment(), RecyclerViewClickCallback
     private fun enableScheduledRecording(recording: Recording, enabled: Boolean): Boolean {
         val intent = recordingViewModel.getIntentData(recording)
         intent.action = "updateDvrEntry"
-        intent.putExtra("id", recordingViewModel.recording.id)
+        intent.putExtra("id", recording.id)
         intent.putExtra("enabled", if (enabled) 1 else 0)
         activity?.startService(intent)
         return true

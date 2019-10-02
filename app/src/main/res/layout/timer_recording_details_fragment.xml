@@ -1,30 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <data>
-
-        <import type="android.view.View" />
-
-        <variable
-            name="recording"
-            type="org.tvheadend.tvhclient.domain.entity.TimerRecording" />
-
-        <variable
-            name="htspVersion"
-            type="int" />
-
-        <variable
-            name="isDualPane"
-            type="boolean" />
-    </data>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
-
-        <include layout="@layout/details_fragment_header" />
 
         <ScrollView
             android:id="@+id/scrollview"
@@ -48,7 +31,8 @@
                     app:htspVersion="@{htspVersion}"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:text="@string/recording_disabled" />
 
                 <TextView
                     android:id="@+id/title_label"
@@ -70,14 +54,15 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
-                    android:layout_marginTop="8dp"
+                    android:layout_marginTop="4dp"
                     android:layout_marginEnd="16dp"
                     android:hint="@string/name"
                     android:text="@{recording.title != null &amp;&amp; recording.title.length() > 0 ? recording.title : @string/hint_not_set}"
                     android:visibility="@{!isDualPane ? View.VISIBLE : View.GONE}"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/title_label" />
+                    app:layout_constraintTop_toBottomOf="@+id/title_label"
+                    tools:text="@string/title" />
 
                 <TextView
                     android:id="@+id/name_label"
@@ -98,14 +83,15 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
-                    android:layout_marginTop="8dp"
+                    android:layout_marginTop="4dp"
                     android:layout_marginEnd="16dp"
                     android:hint="@string/name"
                     android:text="@{recording.name != null &amp;&amp; recording.name.length() > 0 ? recording.name : recording.title}"
                     android:visibility="@{recording.name != null || recording.title != null ? View.VISIBLE : View.GONE}"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/name_label" />
+                    app:layout_constraintTop_toBottomOf="@+id/name_label"
+                    tools:text="@string/name" />
 
                 <TextView
                     android:id="@+id/channel_label"
@@ -126,12 +112,13 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
-                    android:layout_marginTop="8dp"
+                    android:layout_marginTop="4dp"
                     android:layout_marginEnd="16dp"
                     android:text="@{recording.channelName != null ? recording.channelName : @string/all_channels}"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/channel_label" />
+                    app:layout_constraintTop_toBottomOf="@+id/channel_label"
+                    tools:text="@string/channel" />
 
                 <TextView
                     android:id="@+id/recording_time_label"
@@ -147,54 +134,75 @@
                     app:layout_constraintTop_toBottomOf="@+id/channel" />
 
                 <TextView
+                    android:id="@+id/start_label"
+                    style="?attr/ContentFont"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginTop="4dp"
+                    android:text="@string/start_after_time"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/recording_time_label"
+                    tools:text="@string/start_time" />
+
+                <TextView
                     android:id="@+id/start_time"
                     style="?attr/ContentFont"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
                     android:layout_marginLeft="16dp"
-                    android:layout_marginTop="8dp"
+                    app:layout_constraintStart_toEndOf="@+id/start_label"
+                    app:layout_constraintTop_toTopOf="@+id/start_label"
+                    app:timeText="@{recording.start &lt; 0 ? recording.start : recording.startTimeInMillis}"
+                    tools:text="@tools:sample/date/hhmm" />
+
+                <TextView
+                    android:id="@+id/stop_label"
+                    style="?attr/ContentFont"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginTop="4dp"
+                    android:text="@string/start_after_time"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/recording_time_label"
-                    app:timeText="@{recording.start &lt; 0 ? recording.start : recording.startTimeInMillis}" />
+                    app:layout_constraintTop_toBottomOf="@+id/start_label"
+                    tools:text="@string/stop_time" />
 
                 <TextView
                     android:id="@+id/stop_time"
                     style="?attr/ContentFont"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginLeft="16dp"
-                    android:layout_marginTop="8dp"
-                    app:layout_constraintStart_toEndOf="@+id/start_time"
-                    app:layout_constraintTop_toBottomOf="@+id/recording_time_label"
-                    app:timeText="@{recording.stop &lt; 0 ? recording.stop : recording.stopTimeInMillis}" />
+                    app:layout_constraintStart_toStartOf="@+id/start_time"
+                    app:layout_constraintTop_toTopOf="@+id/stop_label"
+                    app:timeText="@{recording.stop &lt; 0 ? recording.stop : recording.stopTimeInMillis}"
+                    tools:text="@tools:sample/date/hhmm" />
 
                 <TextView
                     android:id="@+id/duration_label"
-                    style="?attr/TitleFont"
-                    android:layout_width="0dp"
+                    style="?attr/ContentFont"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginTop="16dp"
                     android:layout_marginEnd="16dp"
+                    android:layout_marginRight="16dp"
                     android:text="@string/duration"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/start_time" />
+                    app:layout_constraintEnd_toStartOf="@+id/duration"
+                    app:layout_constraintTop_toTopOf="@+id/stop_time" />
 
                 <TextView
                     android:id="@+id/duration"
                     style="?attr/ContentFont"
-                    android:layout_width="0dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginTop="8dp"
                     android:layout_marginEnd="16dp"
+                    android:layout_marginRight="16dp"
                     android:text="@{@string/minutes(recording.duration)}"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/duration_label" />
+                    app:layout_constraintTop_toTopOf="@+id/duration_label"
+                    tools:text="@string/minutes" />
 
                 <TextView
                     android:id="@+id/days_of_week_label"
@@ -215,12 +223,13 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
-                    android:layout_marginTop="8dp"
+                    android:layout_marginTop="4dp"
                     android:layout_marginEnd="16dp"
                     app:daysText="@{recording.daysOfWeek}"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/days_of_week_label" />
+                    app:layout_constraintTop_toBottomOf="@+id/days_of_week_label"
+                    tools:text="@string/days_of_week" />
 
                 <TextView
                     android:id="@+id/priority_label"
@@ -241,12 +250,13 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
-                    android:layout_marginTop="8dp"
+                    android:layout_marginTop="4dp"
                     android:layout_marginEnd="16dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/priority_label"
-                    app:priorityText="@{recording.priority}" />
+                    app:priorityText="@{recording.priority}"
+                    tools:text="@string/priority" />
 
                 <TextView
                     android:id="@+id/directory_label"
@@ -267,7 +277,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
-                    android:layout_marginTop="8dp"
+                    android:layout_marginTop="4dp"
                     android:layout_marginEnd="16dp"
                     android:layout_marginBottom="16dp"
                     android:hint="@string/add_recording_directory"
@@ -275,9 +285,29 @@
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/directory_label" />
+                    app:layout_constraintTop_toBottomOf="@+id/directory_label"
+                    tools:text="@string/add_recording_directory" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
         </ScrollView>
+
+        <include layout="@layout/details_fragment_header" />
     </LinearLayout>
+
+    <data>
+
+        <import type="android.view.View" />
+
+        <variable
+            name="recording"
+            type="org.tvheadend.tvhclient.domain.entity.TimerRecording" />
+
+        <variable
+            name="htspVersion"
+            type="int" />
+
+        <variable
+            name="isDualPane"
+            type="boolean" />
+    </data>
 </layout>

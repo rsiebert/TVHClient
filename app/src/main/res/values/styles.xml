@@ -2,19 +2,19 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
     <!-- Font for the title texts in various screens -->
-    <style name="TitleFont.Light" parent="@android:style/TextAppearance.Large">
-        <item name="android:textColor">@color/title_text_light</item>
+    <style name="TitleFont.Light" parent="TextAppearance.AppCompat.Title">
         <item name="android:textSize">16sp</item>
+        <item name="android:textColor">@color/header_text_light</item>
     </style>
 
     <style name="TitleFont.Dark" parent="TitleFont.Light">
-        <item name="android:textColor">@color/title_text_dark</item>
+        <item name="android:textColor">@color/header_text_dark</item>
     </style>
 
     <!-- Font for the subtitles in various screens -->
-    <style name="SubtitleFont.Light" parent="@android:style/TextAppearance.Medium">
-        <item name="android:textColor">@color/subtitle_text_light</item>
+    <style name="SubtitleFont.Light" parent="TextAppearance.AppCompat.Subhead">
         <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/subtitle_text_light</item>
     </style>
 
     <style name="SubtitleFont.Dark" parent="SubtitleFont.Light">
@@ -22,9 +22,9 @@
     </style>
 
     <!-- Font for the content in various screens -->
-    <style name="ContentFont.Light" parent="@android:style/TextAppearance.Medium">
-        <item name="android:textColor">@color/content_text_light</item>
+    <style name="ContentFont.Light" parent="TextAppearance.AppCompat.Body1">
         <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/content_text_light</item>
     </style>
 
     <style name="ContentFont.Dark" parent="ContentFont.Light">
@@ -32,45 +32,25 @@
     </style>
 
     <!-- Font for the program title in the program guide screen -->
-    <style name="ProgramGuideTimelineFont.Light" parent="@android:style/TextAppearance.Small">
-        <item name="android:textColor">@color/title_text_light</item>
-        <item name="android:textSize">14sp</item>
-    </style>
+    <style name="ProgramGuideTitleFont.Light" parent="TextAppearance.AppCompat.Caption" />
 
-    <style name="ProgramGuideTimelineFont.Dark" parent="ProgramGuideTimelineFont.Light">
-        <item name="android:textColor">@color/title_text_dark</item>
-    </style>
-
-    <!-- Font for the program title in the program guide screen -->
-    <style name="ProgramGuideTitleFont.Light" parent="@android:style/TextAppearance.Small">
-        <item name="android:textColor">@color/subtitle_text_light</item>
-        <item name="android:textSize">13sp</item>
-    </style>
-
-    <style name="ProgramGuideTitleFont.Dark" parent="ProgramGuideTitleFont.Light">
-        <item name="android:textColor">@color/subtitle_text_dark</item>
-    </style>
+    <style name="ProgramGuideTitleFont.Dark" parent="ProgramGuideTitleFont.Light" />
 
     <!-- Font for the additional information in the program guide screen -->
-    <style name="ProgramGuideContentFont.Light" parent="@android:style/TextAppearance.Small">
-        <item name="android:textColor">@color/content_text_light</item>
+    <style name="ProgramGuideContentFont.Light" parent="TextAppearance.AppCompat.Caption">
         <item name="android:textSize">11sp</item>
     </style>
 
-    <style name="ProgramGuideContentFont.Dark" parent="ProgramGuideContentFont.Light">
-        <item name="android:textColor">@color/content_text_dark</item>
-    </style>
+    <style name="ProgramGuideContentFont.Dark" parent="ProgramGuideContentFont.Light" />
 
     <!-- Font for the title texts in various screens -->
-    <style name="PlayerTitleFont" parent="@android:style/TextAppearance.Large">
-        <item name="android:textColor">@color/title_text_dark</item>
-        <item name="android:textSize">16sp</item>
+    <style name="PlayerTitleFont" parent="TextAppearance.MaterialComponents.Headline6">
+        <item name="android:textColor">@color/header_text_dark</item>
     </style>
 
     <!-- Font for the subtitles in various screens -->
-    <style name="PlayerSubtitleFont" parent="@android:style/TextAppearance.Medium">
+    <style name="PlayerSubtitleFont" parent="TextAppearance.MaterialComponents.Subtitle1">
         <item name="android:textColor">@color/subtitle_text_dark</item>
-        <item name="android:textSize">14sp</item>
     </style>
 
     <!-- Styles that will be used for the dark holo theme -->
@@ -105,19 +85,8 @@
         <item name="ic_menu_wol">@drawable/ic_menu_send_wol_dark</item>
         <item name="ic_menu_help">@drawable/ic_menu_help_dark</item>
         <item name="ic_menu_info">@drawable/ic_menu_info_dark</item>
-        <item name="ic_arrow_drop_down_like_spinner">@drawable/ic_arrow_drop_down_like_spinner_dark</item>
-        <item name="item_active">@drawable/item_active_dark</item>
-        <item name="item_not_active">@drawable/item_not_active_dark</item>
-
-        <item name="TitleFont">@style/TitleFont.Dark</item>
-        <item name="SubtitleFont">@style/SubtitleFont.Dark</item>
-        <item name="ContentFont">@style/ContentFont.Dark</item>
-        <item name="ProgramGuideTimelineFont">@style/ProgramGuideTimelineFont.Dark</item>
-        <item name="ProgramGuideTitleFont">@style/ProgramGuideTitleFont.Dark</item>
-        <item name="ProgramGuideContentFont">@style/ProgramGuideContentFont.Dark</item>
-
-        <item name="rounded_corners">@drawable/rounded_corners_dark</item>
-
+        <item name="ic_item_active">@drawable/item_active_dark</item>
+        <item name="ic_item_not_active">@drawable/item_not_active_dark</item>
         <item name="ic_menu_channels">@drawable/ic_menu_channels_dark</item>
         <item name="ic_menu_program_guide">@drawable/ic_menu_program_guide_dark</item>
         <item name="ic_menu_completed_recordings">@drawable/ic_menu_completed_recordings_dark</item>
@@ -130,28 +99,42 @@
         <item name="ic_menu_information">@drawable/ic_menu_info_dark</item>
         <item name="ic_menu_extras">@drawable/ic_menu_extras_dark</item>
 
+        <item name="ic_arrow_drop_down_like_spinner">
+            @drawable/ic_arrow_drop_down_like_spinner_dark
+        </item>
+
+        <item name="TitleFont">@style/TitleFont.Dark</item>
+        <item name="SubtitleFont">@style/SubtitleFont.Dark</item>
+        <item name="ContentFont">@style/ContentFont.Dark</item>
+        <item name="ProgramGuideTitleFont">@style/ProgramGuideTitleFont.Dark</item>
+        <item name="ProgramGuideContentFont">@style/ProgramGuideContentFont.Dark</item>
+
+        <item name="rounded_corners">@drawable/rounded_corners_dark</item>
+
         <!-- MaterialDrawer specific values -->
         <item name="material_drawer_badge">@color/material_drawer_badge_dark</item>
         <item name="material_drawer_background">@color/material_drawer_background_dark</item>
-        <item name="material_drawer_primary_text">@color/material_drawer_primary_text_dark</item>
-        <item name="material_drawer_primary_icon">@color/material_drawer_primary_icon_dark</item>
-        <item name="material_drawer_secondary_text">@color/material_drawer_secondary_text_dark</item>
-        <item name="material_drawer_hint_text">@color/material_drawer_hint_text_dark</item>
-        <item name="material_drawer_divider">@color/material_drawer_divider_dark</item>
-        <item name="material_drawer_selected">@color/material_drawer_selected_dark</item> <!-- Material 2 defines 12% alpha, primary color -->
-        <item name="material_drawer_selected_legacy">@color/material_drawer_selected_legacy_dark</item> <!-- Defines the color if legacy style (Material 1, is enabled) -->
-        <item name="material_drawer_selected_text">@color/material_drawer_selected_text_dark</item>
-        <item name="material_drawer_header_selection_text">@color/material_drawer_header_selection_text_dark</item>
-        <item name="material_drawer_header_selection_subtext">@color/material_drawer_header_selection_subtext_dark</item>
-        <item name="material_drawer_legacy_style">false</item> <!-- Enables legacy Material 1 style -->
+        <item name="material_drawer_primary_text">@color/material_drawer_dark_primary_text</item>
+        <item name="material_drawer_primary_icon">@color/material_drawer_dark_primary_icon</item>
+        <item name="material_drawer_header_selection_text">
+            @color/material_drawer_dark_primary_text
+        </item>
+        <item name="material_drawer_header_selection_subtext">
+            @color/material_drawer_dark_secondary_text
+        </item>
+        <item name="material_drawer_selected">@color/material_drawer_selected_dark</item>
+
+        <item name="divider_color">@color/divider_color_dark</item>
 
         <!-- Fast scrollbar styles -->
         <item name="fast_scroll_track">@drawable/fast_scroll_track_dark</item>
         <item name="fast_scroll_thumb">@drawable/fast_scroll_thumb_dark</item>
 
-        <item name="md_color_title">@android:color/primary_text_dark</item>
-        <item name="md_color_content">@android:color/secondary_text_dark</item>
-        <item name="md_color_button_text">@android:color/secondary_text_dark</item>
+        <!-- Material dialog colors -->
+        <item name="md_color_title">@color/header_text_dark</item>
+        <item name="md_color_content">@color/content_text_dark</item>
+        <item name="md_color_button_text">@color/header_text_dark</item>
+        <item name="md_corner_radius">@dimen/md_corner_radius</item>
     </style>
 
     <!-- Styles that will be used for the light holo theme -->
@@ -171,7 +154,8 @@
         <item name="ic_menu_tags">@drawable/ic_menu_tag_light</item>
         <item name="ic_menu_record_once">@drawable/ic_menu_record_light</item>
         <item name="ic_menu_record_once_and_edit">@drawable/ic_menu_record_and_edit_light</item>
-        <item name="ic_menu_record_once_custom_profile">@drawable/ic_menu_record_profile_light</item>
+        <item name="ic_menu_record_once_custom_profile">@drawable/ic_menu_record_profile_light
+        </item>
         <item name="ic_menu_record_series">@drawable/ic_menu_record_series_light</item>
         <item name="ic_menu_record_cancel">@drawable/ic_menu_cancel_light</item>
         <item name="ic_menu_record_remove">@drawable/ic_menu_delete_light</item>
@@ -186,23 +170,14 @@
         <item name="ic_menu_wol">@drawable/ic_menu_send_wol_light</item>
         <item name="ic_menu_help">@drawable/ic_menu_help_light</item>
         <item name="ic_menu_info">@drawable/ic_menu_info_light</item>
-        <item name="ic_arrow_drop_down_like_spinner">@drawable/ic_arrow_drop_down_like_spinner_light</item>
-        <item name="item_active">@drawable/item_active_light</item>
-        <item name="item_not_active">@drawable/item_not_active_light</item>
-
-        <item name="TitleFont">@style/TitleFont.Light</item>
-        <item name="SubtitleFont">@style/SubtitleFont.Light</item>
-        <item name="ContentFont">@style/ContentFont.Light</item>
-        <item name="ProgramGuideTimelineFont">@style/ProgramGuideTimelineFont.Light</item>
-        <item name="ProgramGuideTitleFont">@style/ProgramGuideTitleFont.Light</item>
-        <item name="ProgramGuideContentFont">@style/ProgramGuideContentFont.Light</item>
-
-        <item name="rounded_corners">@drawable/rounded_corners_light</item>
-
+        <item name="ic_item_active">@drawable/item_active_light</item>
+        <item name="ic_item_not_active">@drawable/item_not_active_light</item>
         <item name="ic_menu_channels">@drawable/ic_menu_channels_light</item>
         <item name="ic_menu_program_guide">@drawable/ic_menu_program_guide_light</item>
-        <item name="ic_menu_completed_recordings">@drawable/ic_menu_completed_recordings_light</item>
-        <item name="ic_menu_scheduled_recordings">@drawable/ic_menu_scheduled_recordings_light</item>
+        <item name="ic_menu_completed_recordings">@drawable/ic_menu_completed_recordings_light
+        </item>
+        <item name="ic_menu_scheduled_recordings">@drawable/ic_menu_scheduled_recordings_light
+        </item>
         <item name="ic_menu_series_recordings">@drawable/ic_menu_scheduled_recordings_light</item>
         <item name="ic_menu_timer_recordings">@drawable/ic_menu_scheduled_recordings_light</item>
         <item name="ic_menu_failed_recordings">@drawable/ic_menu_failed_recordings_light</item>
@@ -211,28 +186,47 @@
         <item name="ic_menu_information">@drawable/ic_menu_info_light</item>
         <item name="ic_menu_extras">@drawable/ic_menu_extras_light</item>
 
+        <item name="ic_arrow_drop_down_like_spinner">
+            @drawable/ic_arrow_drop_down_like_spinner_light
+        </item>
+
+        <item name="TitleFont">@style/TitleFont.Light</item>
+        <item name="SubtitleFont">@style/SubtitleFont.Light</item>
+        <item name="ContentFont">@style/ContentFont.Light</item>
+        <item name="ProgramGuideTitleFont">@style/ProgramGuideTitleFont.Light</item>
+        <item name="ProgramGuideContentFont">@style/ProgramGuideContentFont.Light</item>
+
+        <item name="rounded_corners">@drawable/rounded_corners_light</item>
+
+        <!-- Material Components light mode main colors -->
+        <item name="colorPrimary">@color/primaryColor</item>
+        <item name="colorPrimaryVariant">@color/primaryLightColor</item>
+        <item name="colorPrimaryDark">@color/primaryDarkColor</item>
+        <item name="colorSecondary">@color/secondaryColor</item>
+        <item name="colorSecondaryVariant">@color/secondaryLightColor</item>
+
         <!-- MaterialDrawer specific values -->
         <item name="material_drawer_badge">@color/material_drawer_badge_light</item>
         <item name="material_drawer_background">@color/material_drawer_background_light</item>
-        <item name="material_drawer_primary_text">@color/material_drawer_primary_text_light</item>
-        <item name="material_drawer_primary_icon">@color/material_drawer_primary_icon_light</item>
-        <item name="material_drawer_secondary_text">@color/material_drawer_secondary_text_light</item>
-        <item name="material_drawer_hint_text">@color/material_drawer_hint_text_light</item>
-        <item name="material_drawer_divider">@color/material_drawer_divider_light</item>
-        <item name="material_drawer_selected">@color/material_drawer_selected_light</item> <!-- Material 2 defines 12% alpha, primary color -->
-        <item name="material_drawer_selected_legacy">@color/material_drawer_selected_legacy_light</item> <!-- Defines the color if legacy style (Material 1, is enabled) -->
-        <item name="material_drawer_selected_text">@color/material_drawer_selected_text_light</item>
-        <item name="material_drawer_header_selection_text">@color/material_drawer_header_selection_text_light</item>
-        <item name="material_drawer_header_selection_subtext">@color/material_drawer_header_selection_subtext_light</item>
-        <item name="material_drawer_legacy_style">false</item> <!-- Enables legacy Material 1 style -->
+        <item name="material_drawer_header_selection_text">
+            @color/material_drawer_dark_primary_text
+        </item>
+        <item name="material_drawer_header_selection_subtext">
+            @color/material_drawer_dark_secondary_text
+        </item>
+        <item name="material_drawer_selected">@color/material_drawer_selected_light</item>
+
+        <item name="divider_color">@color/divider_color_light</item>
 
         <!-- Fast scrollbar styles -->
         <item name="fast_scroll_track">@drawable/fast_scroll_track_light</item>
         <item name="fast_scroll_thumb">@drawable/fast_scroll_thumb_light</item>
 
-        <item name="md_color_title">@android:color/primary_text_light</item>
-        <item name="md_color_content">@android:color/secondary_text_light</item>
-        <item name="md_color_button_text">@android:color/secondary_text_light</item>
+        <!-- Material dialog colors -->
+        <item name="md_color_title">@color/header_text_light</item>
+        <item name="md_color_content">@color/content_text_light</item>
+        <item name="md_color_button_text">@color/header_text_light</item>
+        <item name="md_corner_radius">@dimen/md_corner_radius</item>
     </style>
 
     <style name="SplashTheme" parent="Theme.AppCompat.NoActionBar">

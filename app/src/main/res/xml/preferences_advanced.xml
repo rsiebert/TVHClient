@@ -25,7 +25,7 @@
             android:name="@string/pref_connection_timeout"
             android:defaultValue="@string/pref_default_connection_timeout"
             android:key="connection_timeout"
-            android:numeric="integer"
+            android:inputType="number"
             android:summary="@string/pref_connection_timeout_sum"
             android:title="@string/pref_connection_timeout" />
     </PreferenceCategory>
@@ -74,7 +74,7 @@
             android:defaultValue="@string/pref_default_low_storage_space_threshold"
             android:dependency="notify_low_storage_space_enabled"
             android:key="low_storage_space_threshold"
-            android:numeric="integer"
+            android:inputType="number"
             android:summary="@string/pref_notify_low_server_storage_space_threshold_sum"
             android:title="@string/pref_notify_low_server_storage_space_threshold" />
     </PreferenceCategory>

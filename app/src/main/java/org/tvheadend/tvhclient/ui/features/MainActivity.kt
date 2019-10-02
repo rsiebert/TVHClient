@@ -29,17 +29,12 @@ import org.tvheadend.tvhclient.ui.common.NetworkStatus
 import org.tvheadend.tvhclient.ui.common.getCastContext
 import org.tvheadend.tvhclient.ui.common.getCastSession
 import org.tvheadend.tvhclient.ui.common.showSnackbarMessage
-import org.tvheadend.tvhclient.ui.features.channels.ChannelListFragment
 import org.tvheadend.tvhclient.ui.features.download.DownloadPermissionGrantedInterface
-import org.tvheadend.tvhclient.ui.features.dvr.recordings.*
+import org.tvheadend.tvhclient.ui.features.dvr.recordings.RecordingDetailsFragment
 import org.tvheadend.tvhclient.ui.features.dvr.series_recordings.SeriesRecordingDetailsFragment
-import org.tvheadend.tvhclient.ui.features.dvr.series_recordings.SeriesRecordingListFragment
 import org.tvheadend.tvhclient.ui.features.dvr.timer_recordings.TimerRecordingDetailsFragment
-import org.tvheadend.tvhclient.ui.features.dvr.timer_recordings.TimerRecordingListFragment
 import org.tvheadend.tvhclient.ui.features.epg.ProgramGuideFragment
-import org.tvheadend.tvhclient.ui.features.information.HelpAndSupportFragment
 import org.tvheadend.tvhclient.ui.features.information.PrivacyPolicyFragment
-import org.tvheadend.tvhclient.ui.features.information.StatusFragment
 import org.tvheadend.tvhclient.ui.features.information.StatusViewModel
 import org.tvheadend.tvhclient.ui.features.navigation.NavigationDrawer
 import org.tvheadend.tvhclient.ui.features.navigation.NavigationDrawer.Companion.MENU_SETTINGS
@@ -51,7 +46,6 @@ import org.tvheadend.tvhclient.ui.features.programs.ProgramDetailsFragment
 import org.tvheadend.tvhclient.ui.features.programs.ProgramListFragment
 import org.tvheadend.tvhclient.ui.features.search.SearchRequestInterface
 import org.tvheadend.tvhclient.ui.features.settings.SettingsActivity
-import org.tvheadend.tvhclient.ui.features.unlocker.UnlockerFragment
 import org.tvheadend.tvhclient.util.extensions.gone
 import org.tvheadend.tvhclient.util.extensions.sendSnackbarMessage
 import org.tvheadend.tvhclient.util.extensions.visible
@@ -312,7 +306,7 @@ class MainActivity : BaseActivity(R.layout.main_activity), SearchView.OnQueryTex
         // dual pane mode is active to prevent showing wrong details data.
         // Finally show the new main fragment and add it to the back stack
         // only if it is a new fragment and not an existing one.
-        val fragment = getFragmentFromSelection(id)
+        val fragment = navigationDrawer.getFragmentFromSelection(id)
         if (fragment != null) {
             if (isDualPane) {
                 val detailsFragment = supportFragmentManager.findFragmentById(R.id.details)
@@ -427,8 +421,6 @@ class MainActivity : BaseActivity(R.layout.main_activity), SearchView.OnQueryTex
                 syncProgress.gone()
                 sendSnackbarMessage(message)
             }
-            else -> {
-            }
         }
     }
 
@@ -505,26 +497,6 @@ class MainActivity : BaseActivity(R.layout.main_activity), SearchView.OnQueryTex
         } else {
             super.onBackPressed()
             navigationViewModel.setSelectedMenuItemId(navigationDrawer.getSelectedMenu())
-        }
-    }
-
-    /**
-     * Creates and returns a new fragment that is associated with the given menu
-     */
-    private fun getFragmentFromSelection(position: Int): Fragment? {
-        return when (position) {
-            NavigationDrawer.MENU_CHANNELS -> ChannelListFragment()
-            NavigationDrawer.MENU_PROGRAM_GUIDE -> ProgramGuideFragment()
-            NavigationDrawer.MENU_COMPLETED_RECORDINGS -> CompletedRecordingListFragment()
-            NavigationDrawer.MENU_SCHEDULED_RECORDINGS -> ScheduledRecordingListFragment()
-            NavigationDrawer.MENU_SERIES_RECORDINGS -> SeriesRecordingListFragment()
-            NavigationDrawer.MENU_TIMER_RECORDINGS -> TimerRecordingListFragment()
-            NavigationDrawer.MENU_FAILED_RECORDINGS -> FailedRecordingListFragment()
-            NavigationDrawer.MENU_REMOVED_RECORDINGS -> RemovedRecordingListFragment()
-            NavigationDrawer.MENU_UNLOCKER -> UnlockerFragment()
-            NavigationDrawer.MENU_HELP -> HelpAndSupportFragment()
-            NavigationDrawer.MENU_STATUS -> StatusFragment()
-            else -> null
         }
     }
 }

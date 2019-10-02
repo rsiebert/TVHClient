@@ -9,8 +9,8 @@
     <attr name="ic_menu_download" format="reference" />
     <attr name="ic_menu_edit" format="reference" />
     <attr name="ic_menu_delete" format="reference" />
-    <attr name="item_active" format="reference" />
-    <attr name="item_not_active" format="reference" />
+    <attr name="ic_item_active" format="reference" />
+    <attr name="ic_item_not_active" format="reference" />
     <attr name="ic_menu_tags" format="reference" />
     <attr name="ic_menu_record_once" format="reference" />
     <attr name="ic_menu_record_once_and_edit" format="reference" />
@@ -27,16 +27,6 @@
     <attr name="ic_menu_wol" format="reference" />
     <attr name="ic_menu_help" format="reference" />
     <attr name="ic_menu_info" format="reference" />
-    <attr name="ic_arrow_drop_down_like_spinner" format="reference" />
-    <attr name="TitleFont" format="reference" />
-    <attr name="SubtitleFont" format="reference" />
-    <attr name="ContentFont" format="reference" />
-    <attr name="ProgramGuideTimelineFont" format="reference" />
-    <attr name="ProgramGuideTitleFont" format="reference" />
-    <attr name="ProgramGuideContentFont" format="reference" />
-
-    <attr name="rounded_corners" format="reference" />
-
     <attr name="ic_menu_channels" format="reference" />
     <attr name="ic_menu_program_guide" format="reference" />
     <attr name="ic_menu_completed_recordings" format="reference" />
@@ -49,9 +39,20 @@
     <attr name="ic_menu_information" format="reference" />
     <attr name="ic_menu_extras" format="reference" />
 
+    <attr name="ic_arrow_drop_down_like_spinner" format="reference" />
+
+    <attr name="TitleFont" format="reference" />
+    <attr name="SubtitleFont" format="reference" />
+    <attr name="ContentFont" format="reference" />
+    <attr name="ProgramGuideTitleFont" format="reference" />
+    <attr name="ProgramGuideContentFont" format="reference" />
+
+    <attr name="rounded_corners" format="reference" />
+
     <attr name="fast_scroll_track" format="reference" />
     <attr name="fast_scroll_thumb" format="reference" />
 
     <attr name="material_drawer_badge" format="reference" />
+    <attr name="divider_color" format="reference" />
 
 </resources>

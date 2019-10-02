@@ -19,6 +19,7 @@ class SettingsAddConnectionFragment : SettingsConnectionBaseFragment() {
         settingsViewModel.connectionCount.observe(viewLifecycleOwner, Observer { count ->
             Timber.d("Received live data, connection count is $count")
             activeEnabledPreference.isChecked = (count == 0)
+            settingsViewModel.connection.isActive = (count == 0)
         })
     }
 

@@ -62,10 +62,6 @@ internal class AacStreamReader : StreamReader {
         mTrackOutput!!.sampleMetadata(pts, C.BUFFER_FLAG_KEY_FRAME, aacFrameLength, 0, null)
     }
 
-    override fun release() {
-        // Nothing to be released
-    }
-
     private fun buildFormat(streamIndex: Int, stream: HtspMessage): Format {
         val initializationData: List<ByteArray>
 

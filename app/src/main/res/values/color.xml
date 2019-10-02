@@ -2,85 +2,222 @@
 <resources>
 
     <!-- Colors for the program guide genres, taken from XBMC -->
-
     <!-- movie drama, orange -->
-	<color name="EPG_MOVIES">#db7817</color>
-	<!-- news, green -->
-	<color name="EPG_NEWS">#649a64</color>
-	<!-- show, yellow -->
-	<color name="EPG_SHOWS">#dbd917</color>
-	<!-- sports, red -->
-	<color name="EPG_SPORTS">#ed0e28</color>
-	<!-- child, turquoise -->
-	<color name="EPG_CHILD">#17dbc2</color>
-	<!-- music, bright green -->
-	<color name="EPG_MUSIC">#41ea4d</color>
-	<!-- arts, blue -->
-	<color name="EPG_ARTS">#0043ec</color>
-	<!-- social, grey -->
-	<color name="EPG_SOCIAL">#c6c8cb</color>
-	<!-- science, violet -->
-	<color name="EPG_SCIENCE">#9e209e</color>
-	<!-- hobby, grey blue -->
-	<color name="EPG_HOBBY">#9393cf</color>
-	<!-- special, cyan -->
-	<color name="EPG_SPECIAL">#1da1b1</color>
-	<!-- other/unknown, dark grey -->
-	<color name="EPG_OTHER">#7f8185</color>
+    <color name="EPG_MOVIES">#db7817</color>
+    <!-- news, green -->
+    <color name="EPG_NEWS">#649a64</color>
+    <!-- show, yellow -->
+    <color name="EPG_SHOWS">#dbd917</color>
+    <!-- sports, red -->
+    <color name="EPG_SPORTS">#ed0e28</color>
+    <!-- child, turquoise -->
+    <color name="EPG_CHILD">#17dbc2</color>
+    <!-- music, bright green -->
+    <color name="EPG_MUSIC">#41ea4d</color>
+    <!-- arts, blue -->
+    <color name="EPG_ARTS">#0043ec</color>
+    <!-- social, grey -->
+    <color name="EPG_SOCIAL">#c6c8cb</color>
+    <!-- science, violet -->
+    <color name="EPG_SCIENCE">#9e209e</color>
+    <!-- hobby, grey blue -->
+    <color name="EPG_HOBBY">#9393cf</color>
+    <!-- special, cyan -->
+    <color name="EPG_SPECIAL">#1da1b1</color>
+    <!-- other/unknown, dark grey -->
+    <color name="EPG_OTHER">#7f8185</color>
 
     <!-- Theme colors -->
-    <color name="window_background_color_light">#fff5f5f5</color>
+    <color name="window_background_color_light">#f3f3f3</color>
+    <color name="window_background_color_dark">#303030</color>
 
-	<!-- MaterialDrawer DEFAULT DARK colors -->
-	<color name="material_drawer_background_dark">#303030</color>
-	<!-- MaterialDrawer DEFAULT DARK text / items colors -->
-	<color name="material_drawer_primary_text_dark">#DEFFFFFF</color>
-	<color name="material_drawer_primary_icon_dark">#8AFFFFFF</color>
-	<color name="material_drawer_secondary_text_dark">#8AFFFFFF</color>
-	<color name="material_drawer_hint_text_dark">#42FFFFFF</color>
-	<color name="material_drawer_divider_dark">#1FFFFFFF</color>
-	<color name="material_drawer_badge_dark">#1FAAAAAA</color>
-	<!-- MaterialDrawer DEFAULT DARK drawer colors -->
+    <color name="divider_color_light">#e0e0e0</color>
+    <color name="divider_color_dark">#404040</color>
+
+    <!-- Material Components light mode main colors -->
+    <color name="primaryColor">#eeeeee</color>
+    <color name="primaryLightColor">#f5f5f5</color>
+    <color name="primaryDarkColor">#707070</color>
+    <color name="secondaryColor">#4db6ac</color>
+    <color name="secondaryLightColor">#80cbc4</color>
+
+    <!-- MaterialDrawer colors -->
+    <color name="material_drawer_background_dark">#303030</color>
+    <color name="material_drawer_background_light">#F9F9F9</color>
+    <color name="material_drawer_badge_dark">#1FAAAAAA</color>
+    <color name="material_drawer_badge_light">#0F000000</color>
     <color name="material_drawer_selected_dark">#202020</color>
-	<color name="material_drawer_selected_legacy_dark">#202020</color>
-	<color name="material_drawer_selected_text_dark">@color/material_drawer_primary</color>
-	<color name="material_drawer_header_selection_text_dark">#FFFFFFFF</color>
-	<color name="material_drawer_header_selection_subtext_dark">#B3FFFFFF</color>
+    <color name="material_drawer_selected_light">#E8E8E8</color>
 
-	<color name="fab_background_color_dark">#7f8c8d</color>
+    <!-- Colors for the rounded edges of buttons in the startup screen -->
+    <color name="rounded_corners_background_color_dark">#7f8c8d</color>
+    <color name="rounded_corners_background_color_light">#bdc3c7</color>
 
-	<!-- MaterialDrawer DEFAULT colors -->
-	<color name="material_drawer_background_light">#F9F9F9</color>
-	<!-- Material DEFAULT text / items colors -->
-	<color name="material_drawer_primary_text_light">#DE000000</color>
-	<color name="material_drawer_primary_icon_light">#8A000000</color>
-	<color name="material_drawer_secondary_text_light">#8A000000</color>
-	<color name="material_drawer_hint_text_light">#42000000</color>
-	<color name="material_drawer_divider_light">#1F000000</color>
-	<color name="material_drawer_badge_light">#0F000000</color>
-	<!-- Material DEFAULT drawer colors -->
-	<color name="material_drawer_selected_light">#E8E8E8</color>
-	<color name="material_drawer_selected_legacy_light">#E8E8E8</color>
-	<color name="material_drawer_selected_text_light">#2196F3</color>
-	<color name="material_drawer_header_selection_text_light">#FFFFFFFF</color>
-	<color name="material_drawer_header_selection_subtext_light">#B3FFFFFF</color>
+    <!-- Text colors -->
+    <color name="header_text_light">#cc000000</color>
+    <color name="header_text_dark">#faffffff</color>
 
-	<color name="fab_background_color_light">#bdc3c7</color>
+    <color name="subtitle_text_light">#aa000000</color>
+    <color name="subtitle_text_dark">#ccffffff</color>
 
-	<color name="title_text_light">#ce000000</color>
-	<color name="subtitle_text_light">#ac000000</color>
-	<color name="content_text_light">#7c000000</color>
+    <color name="content_text_light">#99000000</color>
+    <color name="content_text_dark">#aaffffff</color>
 
-	<color name="title_text_dark">#ceffffff</color>
-	<color name="subtitle_text_dark">#acffffff</color>
-	<color name="content_text_dark">#7cffffff</color>
+    <!-- Scrolling and fast scroll indications -->
+    <color name="scrollbar_track_light">#F0F0F0</color>
+    <color name="scrollbar_track_dark">#393939</color>
+    <color name="scrollbar_thumb_light">#C9C9C9</color>
+    <color name="scrollbar_thumb_dark">#777777</color>
+    <color name="scrollbar_thumb_selected_light">#AAAAAA</color>
+    <color name="scrollbar_thumb_selected_dark">#BBBBBB</color>
 
-	<color name="scrollbar_track_light">#F0F0F0</color>
-	<color name="scrollbar_thumb_light">#C9C9C9</color>
-	<color name="scrollbar_thumb_selected_light">#AAAAAA</color>
-
-	<color name="scrollbar_track_dark">#393939</color>
-	<color name="scrollbar_thumb_dark">#777777</color>
-	<color name="scrollbar_thumb_selected_dark">#BBBBBB</color>
+    <!-- Colors for the program guide genres, taken from Kodi -->
+    <color name="aliceblue">#fff0f8ff</color>
+    <color name="antiquewhite">#fffaebd7</color>
+    <color name="aqua">#ff00ffff</color>
+    <color name="aquamarine">#ff7fffd4</color>
+    <color name="azure">#fff0ffff</color>
+    <color name="beige">#fff5f5dc</color>
+    <color name="bisque">#ffffe4c4</color>
+    <color name="black">#ff000000</color>
+    <color name="blanchedalmond">#ffffebcd</color>
+    <color name="blue">#ff0000ff</color>
+    <color name="blueviolet">#ff8a2be2</color>
+    <color name="brown">#ffa52a2a</color>
+    <color name="burlywood">#ffdeb887</color>
+    <color name="cadetblue">#ff5f9ea0</color>
+    <color name="chartreuse">#ff7fff00</color>
+    <color name="chocolate">#ffd2691e</color>
+    <color name="coral">#ffff7f50</color>
+    <color name="cornflowerblue">#ff6495ed</color>
+    <color name="cornsilk">#fffff8dc</color>
+    <color name="crimson">#ffdc143c</color>
+    <color name="cyan">#ff00ffff</color>
+    <color name="darkblue">#ff00008b</color>
+    <color name="darkcyan">#ff008b8b</color>
+    <color name="darkgoldenrod">#ffb8860b</color>
+    <color name="darkgray">#ffa9a9a9</color>
+    <color name="darkgreen">#ff006400</color>
+    <color name="darkgrey">#ffa9a9a9</color>
+    <color name="darkkhaki">#ffbdb76b</color>
+    <color name="darkmagenta">#ff8b008b</color>
+    <color name="darkolivegreen">#ff556b2f</color>
+    <color name="darkorange">#ffff8c00</color>
+    <color name="darkorchid">#ff9932cc</color>
+    <color name="darkred">#ff8b0000</color>
+    <color name="darksalmon">#ffe9967a</color>
+    <color name="darkseagreen">#ff8fbc8f</color>
+    <color name="darkslateblue">#ff483d8b</color>
+    <color name="darkslategray">#ff2f4f4f</color>
+    <color name="darkslategrey">#ff2f4f4f</color>
+    <color name="darkturquoise">#ff00ced1</color>
+    <color name="darkviolet">#ff9400d3</color>
+    <color name="deeppink">#ffff1493</color>
+    <color name="deepskyblue">#ff00bfff</color>
+    <color name="dimgray">#ff696969</color>
+    <color name="dimgrey">#ff696969</color>
+    <color name="dodgerblue">#ff1e90ff</color>
+    <color name="firebrick">#ffb22222</color>
+    <color name="floralwhite">#fffffaf0</color>
+    <color name="forestgreen">#ff228b22</color>
+    <color name="fuchsia">#ffff00ff</color>
+    <color name="gainsboro">#ffdcdcdc</color>
+    <color name="ghostwhite">#fff8f8ff</color>
+    <color name="gold">#ffffd700</color>
+    <color name="goldenrod">#ffdaa520</color>
+    <color name="gray">#ff808080</color>
+    <color name="green">#ff008000</color>
+    <color name="greenyellow">#ffadff2f</color>
+    <color name="grey">#ff808080</color>
+    <color name="honeydew">#fff0fff0</color>
+    <color name="hotpink">#ffff69b4</color>
+    <color name="indianred">#ffcd5c5c</color>
+    <color name="indigo">#ff4b0082</color>
+    <color name="ivory">#fffffff0</color>
+    <color name="khaki">#fff0e68c</color>
+    <color name="lavender">#ffe6e6fa</color>
+    <color name="lavenderblush">#fffff0f5</color>
+    <color name="lawngreen">#ff7cfc00</color>
+    <color name="lemonchiffon">#fffffacd</color>
+    <color name="lightblue">#ffadd8e6</color>
+    <color name="lightcoral">#fff08080</color>
+    <color name="lightcyan">#ffe0ffff</color>
+    <color name="lightgoldenrodyellow">#fffafad2</color>
+    <color name="lightgray">#ffd3d3d3</color>
+    <color name="lightgreen">#ff90ee90</color>
+    <color name="lightgrey">#ffd3d3d3</color>
+    <color name="lightpink">#ffffb6c1</color>
+    <color name="lightsalmon">#ffffa07a</color>
+    <color name="lightseagreen">#ff20b2aa</color>
+    <color name="lightskyblue">#ff87cefa</color>
+    <color name="lightslategray">#ff778899</color>
+    <color name="lightslategrey">#ff778899</color>
+    <color name="lightsteelblue">#ffb0c4de</color>
+    <color name="lightyellow">#ffffffe0</color>
+    <color name="lime">#ff00ff00</color>
+    <color name="limegreen">#ff32cd32</color>
+    <color name="linen">#fffaf0e6</color>
+    <color name="magenta">#ffff00ff</color>
+    <color name="maroon">#ff800000</color>
+    <color name="mediumaquamarine">#ff66cdaa</color>
+    <color name="mediumblue">#ff0000cd</color>
+    <color name="mediumorchid">#ffba55d3</color>
+    <color name="mediumpurple">#ff9370db</color>
+    <color name="mediumseagreen">#ff3cb371</color>
+    <color name="mediumslateblue">#ff7b68ee</color>
+    <color name="mediumspringgreen">#ff00fa9a</color>
+    <color name="mediumturquoise">#ff48d1cc</color>
+    <color name="mediumvioletred">#ffc71585</color>
+    <color name="midnightblue">#ff191970</color>
+    <color name="mintcream">#fff5fffa</color>
+    <color name="mistyrose">#ffffe4e1</color>
+    <color name="moccasin">#ffffe4b5</color>
+    <color name="navajowhite">#ffffdead</color>
+    <color name="navy">#ff000080</color>
+    <color name="oldlace">#fffdf5e6</color>
+    <color name="olive">#ff808000</color>
+    <color name="olivedrab">#ff6b8e23</color>
+    <color name="orange">#ffffa500</color>
+    <color name="orangered">#ffff4500</color>
+    <color name="orchid">#ffda70d6</color>
+    <color name="palegoldenrod">#ffeee8aa</color>
+    <color name="palegreen">#ff98fb98</color>
+    <color name="paleturquoise">#ffafeeee</color>
+    <color name="palevioletred">#ffdb7093</color>
+    <color name="papayawhip">#ffffefd5</color>
+    <color name="peachpuff">#ffffdab9</color>
+    <color name="peru">#ffcd853f</color>
+    <color name="pink">#ffffc0cb</color>
+    <color name="plum">#ffdda0dd</color>
+    <color name="powderblue">#ffb0e0e6</color>
+    <color name="purple">#ff800080</color>
+    <color name="red">#ffff0000</color>
+    <color name="rosybrown">#ffbc8f8f</color>
+    <color name="royalblue">#ff4169e1</color>
+    <color name="saddlebrown">#ff8b4513</color>
+    <color name="salmon">#fffa8072</color>
+    <color name="sandybrown">#fff4a460</color>
+    <color name="seagreen">#ff2e8b57</color>
+    <color name="seashell">#fffff5ee</color>
+    <color name="sienna">#ffa0522d</color>
+    <color name="silver">#ffc0c0c0</color>
+    <color name="skyblue">#ff87ceeb</color>
+    <color name="slateblue">#ff6a5acd</color>
+    <color name="slategray">#ff708090</color>
+    <color name="slategrey">#ff708090</color>
+    <color name="snow">#fffffafa</color>
+    <color name="springgreen">#ff00ff7f</color>
+    <color name="steelblue">#ff4682b4</color>
+    <color name="tan">#ffd2b48c</color>
+    <color name="teal">#ff008080</color>
+    <color name="thistle">#ffd8bfd8</color>
+    <color name="tomato">#ffff6347</color>
+    <color name="turquoise">#ff40e0d0</color>
+    <color name="violet">#ffee82ee</color>
+    <color name="wheat">#fff5deb3</color>
+    <color name="white">#ffffffff</color>
+    <color name="whitesmoke">#fff5f5f5</color>
+    <color name="yellow">#ffffff00</color>
+    <color name="yellowgreen">#ff9acd32</color>
 
 </resources>

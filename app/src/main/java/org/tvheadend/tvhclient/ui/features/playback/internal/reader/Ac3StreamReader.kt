@@ -32,7 +32,7 @@ internal class Ac3StreamReader : PlainStreamReader(C.TRACK_TYPE_AUDIO) {
         }
 
         return Format.createAudioSampleFormat(
-                Integer.toString(streamIndex),
+                streamIndex.toString(),
                 MimeTypes.AUDIO_AC3,
                 null,
                 Format.NO_VALUE,

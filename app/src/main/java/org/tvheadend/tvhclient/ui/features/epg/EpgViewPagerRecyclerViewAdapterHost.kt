@@ -11,7 +11,7 @@ import org.tvheadend.tvhclient.domain.entity.EpgChannel
 import java.util.*
 import java.util.concurrent.CopyOnWriteArrayList
 
-internal class EpgViewPagerRecyclerViewAdapter(private val activity: FragmentActivity, private val epgViewModel: EpgViewModel, private val fragmentId: Int) : RecyclerView.Adapter<EpgViewPagerViewHolder>(), Filterable {
+internal class EpgViewPagerRecyclerViewAdapterHost(private val activity: FragmentActivity, private val epgViewModel: EpgViewModel, private val fragmentId: Int) : RecyclerView.Adapter<EpgViewPagerViewHolder>(), Filterable {
 
     private val viewPool: RecyclerView.RecycledViewPool = RecyclerView.RecycledViewPool()
     private val channelList = ArrayList<EpgChannel>()
@@ -32,7 +32,7 @@ internal class EpgViewPagerRecyclerViewAdapter(private val activity: FragmentAct
     }
 
     override fun getItemViewType(position: Int): Int {
-        return R.layout.epg_program_list_adapter
+        return R.layout.epg_program_adapter_host
     }
 
     override fun getFilter(): Filter {
@@ -46,8 +46,10 @@ internal class EpgViewPagerRecyclerViewAdapter(private val activity: FragmentAct
                     // Iterate over the available channels. Use a copy on write
                     // array in case the channel list changes during filtering.
                     for (channel in CopyOnWriteArrayList(channelList)) {
-                        if (channel.name != null && channel.name!!.toLowerCase().contains(charString.toLowerCase())) {
-                            filteredList.add(channel)
+                        channel.name?.let {
+                            if (it.toLowerCase().contains(charString.toLowerCase())) {
+                                filteredList.add(channel)
+                            }
                         }
                     }
                     filteredList

@@ -10,7 +10,9 @@ import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.ui.common.callbacks.BackPressedInterface
 import org.tvheadend.tvhclient.ui.common.callbacks.ToolbarInterface
 import org.tvheadend.tvhclient.ui.features.changelog.ChangeLogFragment
+import org.tvheadend.tvhclient.ui.features.information.StartupPrivacyPolicyFragment
 import org.tvheadend.tvhclient.ui.features.settings.RemoveFragmentFromBackstackInterface
+import org.tvheadend.tvhclient.util.getThemeId
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -20,7 +22,7 @@ class StartupActivity : AppCompatActivity(), ToolbarInterface, RemoveFragmentFro
     lateinit var sharedPreferences: SharedPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        setTheme(R.style.CustomTheme_Light)
+        setTheme(getThemeId(this))
         super.onCreate(savedInstanceState)
         setContentView(R.layout.misc_content_activity)
 

@@ -12,8 +12,6 @@ import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentStatePagerAdapter
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
-import androidx.recyclerview.widget.DefaultItemAnimator
-import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.SCROLL_STATE_IDLE
@@ -24,6 +22,7 @@ import org.tvheadend.tvhclient.domain.entity.ChannelTag
 import org.tvheadend.tvhclient.domain.entity.EpgProgram
 import org.tvheadend.tvhclient.ui.base.BaseFragment
 import org.tvheadend.tvhclient.ui.common.*
+import org.tvheadend.tvhclient.ui.common.callbacks.LayoutInterface
 import org.tvheadend.tvhclient.ui.common.callbacks.RecyclerViewClickCallback
 import org.tvheadend.tvhclient.ui.features.channels.ChannelTagIdsSelectedInterface
 import org.tvheadend.tvhclient.ui.features.channels.ChannelTimeSelectedInterface
@@ -55,7 +54,9 @@ class ProgramGuideFragment : BaseFragment(), EpgScrollInterface, RecyclerViewCli
         super.onActivityCreated(savedInstanceState)
         epgViewModel = ViewModelProviders.of(activity!!).get(EpgViewModel::class.java)
 
-        forceSingleScreenLayout()
+        if (activity is LayoutInterface) {
+            (activity as LayoutInterface).forceSingleScreenLayout()
+        }
 
         if (savedInstanceState == null) {
             epgViewModel.searchQuery = arguments?.getString(SearchManager.QUERY) ?: ""
@@ -64,8 +65,6 @@ class ProgramGuideFragment : BaseFragment(), EpgScrollInterface, RecyclerViewCli
         channelListRecyclerViewAdapter = EpgChannelListRecyclerViewAdapter(epgViewModel, this)
         channelListRecyclerViewLayoutManager = LinearLayoutManager(activity)
         channel_list_recycler_view.layoutManager = channelListRecyclerViewLayoutManager
-        channel_list_recycler_view.addItemDecoration(DividerItemDecoration(activity, LinearLayoutManager.VERTICAL))
-        channel_list_recycler_view.itemAnimator = DefaultItemAnimator()
         channel_list_recycler_view.adapter = channelListRecyclerViewAdapter
         channel_list_recycler_view.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {

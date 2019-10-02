@@ -13,7 +13,6 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequest
 import androidx.work.WorkManager
-import leakcanary.AppWatcher
 import org.json.JSONException
 import org.json.JSONObject
 import org.tvheadend.htsp.*
@@ -153,7 +152,6 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
         Timber.d("Stopping service")
         execService.shutdown()
         stopHtspConnection()
-        AppWatcher.objectWatcher.watch(this)
     }
 
     private fun startHtspConnection() {
@@ -1306,9 +1304,9 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
         }
 
         var inputStream: InputStream
-        when {
-            url.startsWith("http") -> inputStream = BufferedInputStream(URL(url).openStream())
-            htspVersion > 9 -> inputStream = HtspFileInputStream(htspConnection, url)
+        inputStream = when {
+            url.startsWith("http") -> BufferedInputStream(URL(url).openStream())
+            htspVersion > 9 -> HtspFileInputStream(htspConnection, url)
             else -> return
         }
 

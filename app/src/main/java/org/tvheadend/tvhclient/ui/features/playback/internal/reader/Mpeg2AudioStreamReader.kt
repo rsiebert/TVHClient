@@ -50,7 +50,7 @@ internal class Mpeg2AudioStreamReader : PlainStreamReader(C.TRACK_TYPE_AUDIO) {
         }
 
         return Format.createAudioSampleFormat(
-                Integer.toString(streamIndex),
+                streamIndex.toString(),
                 mimeType,
                 null,
                 Format.NO_VALUE,

@@ -11,14 +11,14 @@ repositories {
 apply from: '../signing.gradle'
 
 android {
-    compileSdkVersion 28
+    compileSdkVersion 29
     defaultConfig {
 
         minSdkVersion 16
-        targetSdkVersion 28
+        targetSdkVersion 29
 
-        versionCode 180
-        versionName "2.2.19"
+        versionCode 182
+        versionName "2.2.21"
 
         // Define the apk naming convention
         applicationId "org.tvheadend.tvhclient"
@@ -89,10 +89,46 @@ android {
             // Reduce the apk file size by enabling proguard
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+        dev {
+            // Show all features when true
+            buildConfigField "Boolean", "UNLOCKED", "false"
+            // Enable all logging, otherwise it is suppressed
+            buildConfigField "Boolean", "DEBUG_LOG", "true"
+
+            // The property file must exist in release mode so that the
+            // actual values can be assigned from the property file to these fields.
+            if (tvhHasProperty("developerEmail")) {
+                buildConfigField "String", "DEVELOPER_EMAIL", "\"" + tvhProperty("developerEmail") + "\""
+            }
+            if (tvhHasProperty("publicKeySalt")) {
+                buildConfigField "String", "PUBLIC_KEY_SALT", "\"" + tvhProperty("publicKeySalt") + "\""
+            }
+
+            // Reduce the apk file size by enabling proguard
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
     }
 
     packagingOptions {
         exclude 'META-INF/library-core_release.kotlin_module'
+    }
+}
+
+def build_param = "${build}"
+
+if (build_param != "dev") {
+    // exclude the dev build in the production build
+    android.variantFilter { variant ->
+        if (variant.buildType.name == 'dev') {
+            variant.setIgnore(true)
+        }
+    }
+} else {
+    // exclude all other builds except the dev build
+    android.variantFilter { variant ->
+        if (variant.buildType.name != 'dev') {
+            variant.setIgnore(true)
+        }
     }
 }
 
@@ -101,50 +137,44 @@ dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
 
     // Support library basics
-    implementation 'androidx.appcompat:appcompat:1.1.0-rc01'
-    implementation 'androidx.recyclerview:recyclerview:1.1.0-beta01'
+    implementation 'androidx.appcompat:appcompat:1.1.0'
+    implementation 'androidx.recyclerview:recyclerview:1.0.0'
     implementation 'androidx.annotation:annotation:1.1.0'
-    implementation 'androidx.preference:preference:1.1.0-rc01'
-    implementation 'com.google.android.material:material:1.1.0-alpha09'
+    implementation 'androidx.preference:preference:1.1.0'
+    implementation 'com.google.android.material:material:1.0.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.0-beta2'
 
     // Kotlin
-    def kotlinx_coroutines_version = '1.3.0-RC'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinx_coroutines_version"
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$kotlinx_coroutines_version"
-    implementation 'androidx.core:core-ktx:1.2.0-alpha02'
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.1"
+    implementation 'androidx.core:core-ktx:1.1.0'
 
     // Casting
     implementation 'com.google.android.gms:play-services-cast-framework:17.0.0'
-    implementation 'androidx.mediarouter:mediarouter:1.1.0-rc01'
+    implementation 'androidx.mediarouter:mediarouter:1.1.0'
 
     // Billing
     implementation 'com.android.billingclient:billing:1.2'
 
     // Material navigation drawer and dialogs
-    def dialog_version = '3.0.0-beta2'
+    def dialog_version = '3.1.1'
     implementation "com.afollestad.material-dialogs:core:$dialog_version"
     implementation "com.afollestad.material-dialogs:input:$dialog_version"
     implementation "com.afollestad.material-dialogs:files:$dialog_version"
     implementation "com.afollestad.material-dialogs:datetime:$dialog_version"
-    implementation "com.afollestad.material-dialogs:lifecycle:$dialog_version"
-    implementation 'com.mikepenz:materialdrawer:7.0.0-rc04'
-
-    // Memory leaks
-    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.0-beta-2'
-    implementation 'com.squareup.leakcanary:leakcanary-object-watcher-android:2.0-beta-2'
+    implementation "com.afollestad.material-dialogs:lifecycle:${dialog_version}"
+    implementation 'com.mikepenz:materialdrawer:7.0.0-rc06'
 
     // Firebase and crash reporting
     implementation 'com.crashlytics.sdk.android:crashlytics:2.10.1'
-    implementation 'com.google.firebase:firebase-core:17.0.1'
+    implementation 'com.google.firebase:firebase-core:17.2.0'
 
     // Life cycles, LiveData and ViewModel
-    def lifecycle_version = '2.2.0-alpha02'
+    def lifecycle_version = '2.1.0'
     implementation "androidx.lifecycle:lifecycle-extensions:$lifecycle_version"
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version"
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version"
-    kapt "androidx.lifecycle:lifecycle-compiler:$lifecycle_version"
+    kapt "androidx.lifecycle:lifecycle-common-java8:$lifecycle_version"
 
     // Workmanager
     implementation 'android.arch.work:work-runtime:1.0.1'

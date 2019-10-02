@@ -44,7 +44,7 @@ internal class H265StreamReader : PlainStreamReader(C.TRACK_TYPE_VIDEO) {
         }
 
         return Format.createVideoSampleFormat(
-                Integer.toString(streamIndex),
+                streamIndex.toString(),
                 MimeTypes.VIDEO_H265, null,
                 Format.NO_VALUE,
                 Format.NO_VALUE,

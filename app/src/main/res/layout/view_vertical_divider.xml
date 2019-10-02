@@ -3,4 +3,4 @@
     android:id="@+id/divider"
     android:layout_width="1dp"
     android:layout_height="match_parent"
-    android:background="?attr/material_drawer_selected" />
+    android:background="?attr/divider_color" />
