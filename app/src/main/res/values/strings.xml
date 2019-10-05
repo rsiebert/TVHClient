@@ -174,11 +174,9 @@
     <string name="pref_show_menu_delete_all_recordings">Show the \'Delete all recordings\' menu</string>
     <string name="pref_server_url">Server Url</string>
     <string name="pref_server_url_hint">Example: http://myserver:9982</string>
-    <string name="pref_server_url_error_invalid">The url is not valid.</string>
     <string name="pref_server_url_sum">Enter the url with the hostname and port to connect to the server. Example: http://myserver:9982</string>
     <string name="pref_streaming_url">Streaming Url</string>
     <string name="pref_streaming_url_hint">Example: http://myserver:9981</string>
-    <string name="pref_streaming_url_error_invalid">The url is not valid.</string>
     <string name="pref_streaming_url_sum">Enter the url with the hostname and port to stream videos from the server. Example: http://myserver:9981</string>
     <string name="pref_htsp_playback_profiles">Playback profiles (Internal player)</string>
     <string name="pref_htsp_playback_profiles_sum">Select a profile that is used by the internal player to play a recorded program using the internal player.</string>
