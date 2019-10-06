@@ -163,7 +163,7 @@ dependencies {
     implementation "com.afollestad.material-dialogs:files:$dialog_version"
     implementation "com.afollestad.material-dialogs:datetime:$dialog_version"
     implementation "com.afollestad.material-dialogs:lifecycle:${dialog_version}"
-    implementation 'com.mikepenz:materialdrawer:7.0.0-rc07'
+    implementation 'com.mikepenz:materialdrawer:7.0.0-rc08'
 
     // Firebase and crash reporting
     implementation 'com.crashlytics.sdk.android:crashlytics:2.10.1'
