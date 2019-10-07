@@ -115,7 +115,7 @@
     <string name="monday">Montag</string>
     <string name="name">Name</string>
     <string name="no_cast_session">Keine Cast-Session verfügbar</string>
-    <string name="no_connection_active_advice">Mindestens eine Verbindung ist definiert, aber nicht aktiviert. Wähle aus der Liste der Verbindungen die gewünschte aus und tippen Sie auf das Sternsymbol in der Symbolleiste.</string>
+    <string name="no_connection_active_advice">Mindestens eine Verbindung ist definiert, aber nicht aktiviert. Wähle aus der Liste der Verbindungen die gewünschte aus und tippe auf das Sternsymbol in der Symbolleiste.</string>
     <string name="no_connection_available">Keine Verbindung verfügbar. Bitte fügen Sie eine neue hinzu, um mit dem Server kommunizieren zu können.</string>
     <string name="no_data">Keine Programme verfügbar</string>
     <string name="no_media_player">Konnte keinen Mediaplayer finden.</string>
