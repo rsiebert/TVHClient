@@ -114,9 +114,9 @@
     <string name="monday">Lundi</string>
     <string name="name">Nom</string>
     <string name="no_cast_session">Pas de session de diffusion disponible</string>
-    <string name="no_connection_active_advice">Au moins une connexion est définie mais non activée. Utilisez le bouton ci-dessous ou le menu de la barre d’outils pour afficher la liste des connexions disponibles. Pour activer une connexion, sélectionnez-en une dans la liste et tapez sur l\'étoile dans la barre d\'outils.</string>
+    <string name="no_connection_active_advice">Au moins une connexion est définie mais non activée. Sélectionnez la connexion dans la liste et appuyez sur l\'étoile dans la barre d\'outils.</string>
     <!-- Connection related -->
-    <string name="no_connection_available">Aucune connexion disponible. Veuillez ajouter une nouvelle connexion pour vous connecter au serveur. Utilisez le bouton ci-dessous ou le menu de la barre d’outils.</string>
+    <string name="no_connection_available">Aucune connexion disponible. Veuillez ajouter une nouvelle connexion pour vous connecter au serveur.</string>
     <string name="no_data">Aucun programme disponible</string>
     <string name="no_media_player">Aucun lecteur de média trouvé</string>
     <string name="hint_not_set">Non défini</string>

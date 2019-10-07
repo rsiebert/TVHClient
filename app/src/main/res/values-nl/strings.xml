@@ -107,8 +107,8 @@
     <string name="minutes">%d min</string>
     <string name="monday">Maandag</string>
     <string name="name">Benaming</string>
-    <string name="no_connection_active_advice">Ten minste één verbinding is gedefinieerd, maar niet geactiveerd. Gebruik de onderstaande knop of het menu op de toolbar om de lijst met beschikbare verbindingen weer te geven. Om een verbinding te activeren, selecteert u er een in de lijst en tikt u op het sterrensymbool op de toolbar.</string>
-    <string name="no_connection_available">Geen verbinding beschikbaar. Voeg een nieuwe verbinding toe om verbinding te maken met de server. Gebruik de onderstaande knop of het menu op de toolbar.</string>
+    <string name="no_connection_active_advice">Ten minste één verbinding is gedefinieerd, maar niet geactiveerd. Selecteer de verbinding in de lijst en tik op het stersymbool op de werkbalk.</string>
+    <string name="no_connection_available">Geen verbinding beschikbaar. Voeg een nieuwe verbinding toe om verbinding te maken met de server.</string>
     <string name="no_data">Geen programma data beschikbaar</string>
     <string name="no_media_player">Geen media speler gevonden</string>
     <string name="hint_not_set">Niet ingesteld</string>

@@ -55,7 +55,7 @@
     <string name="minutes">%d min</string>
     <string name="monday">Pondělí</string>
     <string name="name">Jméno</string>
-    <string name="no_connection_available">Žádné připojení není k dispozici. Chcete-li se připojit k serveru, přidejte nové připojení. Použijte tlačítko níže nebo nabídku na panelu nástrojů.</string>
+    <string name="no_connection_available">Žádné připojení není k dispozici. Chcete-li se připojit k serveru, přidejte nové připojení.</string>
     <string name="no_data">Žádná dostupná data o programu</string>
     <string name="no_media_player">Nebyl nalezen žádný přehrávač multimédií.</string>
     <string name="hint_not_set">Není nastaveno</string>
@@ -256,7 +256,7 @@
     <string name="feature_not_supported_by_server">Server TVHeadend tuto funkci nepodporuje. Přejděte na novější verzi.</string>
     <string name="multiple_channel_tags">Více značek kanálů</string>
     <string name="no_cast_session">K dispozici není žádné obsazení</string>
-    <string name="no_connection_active_advice">Je definováno alespoň jedno spojení, ale není aktivováno. Seznam dostupných připojení zobrazíte pomocí tlačítka níže nebo nabídky na panelu nástrojů. Chcete-li aktivovat připojení, vyberte jedno ze seznamu a klepněte na symbol hvězdičky na panelu nástrojů.</string>
+    <string name="no_connection_active_advice">Je definováno alespoň jedno spojení, ale není aktivováno. Vyberte připojení ze seznamu a klepněte na symbol hvězdičky na panelu nástrojů.</string>
     <string name="pref_hide_duplicate_scheduled_recordings">Skrýt duplicitní naplánované nahrávky</string>
     <string name="edit_connection">Upravit připojení</string>
     <string name="edit_recording">Úprava záznamu</string>

@@ -116,7 +116,7 @@
     <string name="monday">Poniedziałek</string>
     <string name="name">Nazwa</string>
     <string name="no_cast_session">No cast session available</string>
-    <string name="no_connection_active_advice">Co najmniej jedno połączenie jest zdefiniowane, ale nie aktywowane. Użyj przycisku poniżej lub menu na pasku narzędzi, aby wyświetlić listę dostępnych połączeń. Aby aktywować połączenie, wybierz je z listy i dotknij symbolu gwiazdki na pasku narzędzi.</string>
+    <string name="no_connection_active_advice">Co najmniej jedno połączenie jest zdefiniowane, ale nie aktywowane. Wybierz połączenie z listy i dotknij symbolu gwiazdy na pasku narzędzi.</string>
     <!-- Connection related -->
     <string name="no_data">Brak dostępnych danych dla kanału</string>
     <string name="no_media_player">Nie znaleziono odtwarzacza multimedialnego</string>
@@ -384,5 +384,5 @@
     <string name="disable">Dezaktywować</string>
     <string name="network_not_available">Sieć jest niedostępna</string>
     <string name="disc_space_low">Za mało miejsca na dysku, pozostało „%d” GB</string>
-    <string name="no_connection_available">Brak dostępnego połączenia. Dodaj nowe połączenie, aby połączyć się z serwerem. Użyj przycisku poniżej lub menu na pasku narzędzi.</string>
+    <string name="no_connection_available">Brak dostępnego połączenia. Dodaj nowe połączenie, aby połączyć się z serwerem.</string>
 </resources>

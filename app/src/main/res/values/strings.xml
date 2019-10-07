@@ -116,9 +116,8 @@
     <string name="monday">Monday</string>
     <string name="name">Name</string>
     <string name="no_cast_session">No cast session available</string>
-    <string name="no_connection_active_advice">At least one connection is defined, but not activated. Either use the button below or the menu in the toolbar to show the list of available connections. To activate a connection select one from the list and tap the star symbol in the toolbar.</string>
-    <!-- Connection related -->
-    <string name="no_connection_available">No connection available. Please add a new connection to connect to the server. Either use the button below or the menu in the toolbar.</string>
+    <string name="no_connection_active_advice">At least one connection is defined, but not activated. Select the connection from the list and tap the star symbol in the toolbar.</string>
+    <string name="no_connection_available">No connection available. Please add a new connection to connect to the server.</string>
     <string name="no_data">No program data available</string>
     <string name="no_media_player">No media player found</string>
     <string name="hint_not_set">Not set</string>
@@ -172,12 +171,12 @@
     <string name="pref_genre_colors_visibility_message">Set the visibility of the colors. Higher values mean stronger colors.</string>
     <string name="pref_hide_duplicate_scheduled_recordings">Hide duplicate scheduled recordings</string>
     <string name="pref_show_menu_delete_all_recordings">Show the \'Delete all recordings\' menu</string>
-    <string name="pref_server_url">Server Url</string>
+    <string name="pref_server_url">Connection Url</string>
     <string name="pref_server_url_hint">Example: http://myserver:9982</string>
-    <string name="pref_server_url_sum">Enter the url with the hostname and port to connect to the server. Example: http://myserver:9982</string>
-    <string name="pref_streaming_url">Streaming Url</string>
+    <string name="pref_server_url_sum">Enter the url with the hostname and port to connect to the server. This is the same url used to connect to the webinterface of the server.\nExample: http://myserver:9982</string>
+    <string name="pref_streaming_url">Playback Url</string>
     <string name="pref_streaming_url_hint">Example: http://myserver:9981</string>
-    <string name="pref_streaming_url_sum">Enter the url with the hostname and port to stream videos from the server. Example: http://myserver:9981</string>
+    <string name="pref_streaming_url_sum">Enter the url with the hostname and port to stream videos from the server. Only required if an external player is used.\nExample: http://myserver:9981</string>
     <string name="pref_htsp_playback_profiles">Playback profiles (Internal player)</string>
     <string name="pref_htsp_playback_profiles_sum">Select a profile that is used by the internal player to play a recorded program using the internal player.</string>
     <string name="pref_http_playback_profiles">Playback profiles (External players)</string>
@@ -398,4 +397,5 @@
     <string name="select_multiple_channel_tags">Select multiple channel tags or none to show all channels.</string>
     <string name="accept">Accept</string>
     <string name="reject">Reject</string>
+    <string name="contact_information">Please contact me if you require support.\nEmail: rsiebert80@gmail.com\nDiscord: https://discord.gg/RbBXfG3</string>
 </resources>

@@ -118,8 +118,8 @@
     <string name="multiple_channel_tags">múltiples etiquetas de canal</string>
     <string name="name">Nombre</string>
     <string name="no_cast_session">No hay sesión de emisión disponible</string>
-    <string name="no_connection_active_advice">Se define al menos una conexión, pero no está activada. Utilice el botón a continuación o el menú en la barra de herramientas para mostrar la lista de conexiones disponibles. Para activar una conexión, seleccione una de la lista y toque el símbolo de estrella en la barra de herramientas.</string>
-    <string name="no_connection_available">No hay conexión disponible. Agregue una nueva conexión para conectarse al servidor. Utilice el botón a continuación o el menú en la barra de herramientas.</string>
+    <string name="no_connection_active_advice">Se define al menos una conexión, pero no está activada. Seleccione la conexión de la lista y toque el símbolo de estrella en la barra de herramientas.</string>
+    <string name="no_connection_available">No hay conexión disponible. Agregue una nueva conexión para conectarse al servidor.</string>
     <string name="no_data">No hay datos del programa disponibles</string>
     <string name="no_media_player">No se encontró ningún reproductor multimedia</string>
     <string name="hint_not_set">No establecido</string>

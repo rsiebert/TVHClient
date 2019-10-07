@@ -55,7 +55,7 @@
     <string name="minutes">%d min</string>
     <string name="monday">Måndag</string>
     <string name="name">Namn</string>
-    <string name="no_connection_available">Ingen anslutning tillgänglig. Lägg till en ny anslutning för att ansluta till servern. Använd antingen knappen nedan eller menyn i verktygsfältet.</string>
+    <string name="no_connection_available">Ingen anslutning tillgänglig. Lägg till en ny anslutning för att ansluta till servern.</string>
     <string name="no_data">Programinformation ej tillgänglig</string>
     <string name="no_media_player">Ingen mediaspelare hittad</string>
     <string name="hint_not_set">Inte satt</string>
@@ -334,7 +334,7 @@
     <string name="media_route_menu_title">Spela på…</string>
     <string name="multiple_channel_tags">Flerkanaliga taggar</string>
     <string name="no_cast_session">Ingen gjutningssession tillgänglig</string>
-    <string name="no_connection_active_advice">Minst en anslutning är definierad, men inte aktiverad. Använd antingen knappen nedan eller menyn i verktygsfältet för att visa listan över tillgängliga anslutningar. För att aktivera en anslutning, välj en från listan och tryck på stjärnsymbolen i verktygsfältet.</string>
+    <string name="no_connection_active_advice">Minst en anslutning är definierad, men inte aktiverad. Välj anslutningen från listan och tryck på stjärnsymbolen i verktygsfältet.</string>
     <string name="playback">Uppspelning</string>
     <string name="pref_internal_player_timeshift_enabled">Aktivera tidsskiftstöd</string>
     <string name="pref_internal_player_for_recordings_enabled">Spela inspelningar med den interna spelaren</string>
