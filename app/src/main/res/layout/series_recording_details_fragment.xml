@@ -8,6 +8,8 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
+        <include layout="@layout/details_fragment_header" />
+
         <ScrollView
             android:id="@+id/scrollview"
             android:layout_width="fill_parent"
@@ -313,7 +315,6 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
         </ScrollView>
 
-        <include layout="@layout/details_fragment_header" />
     </LinearLayout>
 
     <data>
