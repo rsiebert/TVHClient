@@ -18,7 +18,7 @@ class TimerRecordingRecyclerViewAdapter internal constructor(private val isDualP
     private var recordingListFiltered: MutableList<TimerRecording> = ArrayList()
     private var selectedPosition = 0
 
-    val items: List<TimerRecording>?
+    val items: List<TimerRecording>
         get() = recordingListFiltered
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TimerRecordingViewHolder {

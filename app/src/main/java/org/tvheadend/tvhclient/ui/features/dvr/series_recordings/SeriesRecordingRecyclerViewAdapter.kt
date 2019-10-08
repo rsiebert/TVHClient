@@ -18,7 +18,7 @@ class SeriesRecordingRecyclerViewAdapter internal constructor(private val isDual
     private var recordingListFiltered: MutableList<SeriesRecording> = ArrayList()
     private var selectedPosition = 0
 
-    val items: List<SeriesRecording>?
+    val items: List<SeriesRecording>
         get() = recordingListFiltered
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SeriesRecordingViewHolder {
