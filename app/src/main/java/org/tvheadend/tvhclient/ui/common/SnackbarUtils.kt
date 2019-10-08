@@ -12,7 +12,8 @@ fun showSnackbarMessage(activity: AppCompatActivity, intent: Intent) {
     val msg = intent.getStringExtra(SNACKBAR_CONTENT)
     val duration = intent.getIntExtra(SNACKBAR_DURATION, Snackbar.LENGTH_SHORT)
     val view: View? = activity.findViewById(android.R.id.content)
-    view?.let {
+
+    if (view != null && !msg.isNullOrEmpty()) {
         Timber.d("Showing snackbar message $msg")
         Snackbar.make(view, msg, duration).show()
     }

@@ -52,7 +52,7 @@ class SearchActivity : BaseActivity(), StartSearchInterface {
     override fun startSearch() {
         val fragment = supportFragmentManager.findFragmentById(R.id.main)
         if (fragment is SearchRequestInterface && fragment.isVisible) {
-            val query = intent.getStringExtra(SearchManager.QUERY)
+            val query = intent.getStringExtra(SearchManager.QUERY) ?: ""
             fragment.onSearchRequested(query)
         }
     }
