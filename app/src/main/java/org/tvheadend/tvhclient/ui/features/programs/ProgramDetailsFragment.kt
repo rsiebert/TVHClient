@@ -118,6 +118,10 @@ class ProgramDetailsFragment : BaseFragment() {
 
     override fun onPrepareOptionsMenu(menu: Menu) {
         val ctx = context ?: return
+
+        // Hide the play button in the main toolbar, its already available in the nested toolbar
+        menu.findItem(R.id.menu_play)?.isVisible = false
+
         preparePopupOrToolbarSearchMenu(menu, program?.title, isConnectionToServerAvailable)
         preparePopupOrToolbarRecordingMenu(ctx, nested_toolbar.menu, program?.recording, isConnectionToServerAvailable, htspVersion, isUnlocked)
         preparePopupOrToolbarMiscMenu(ctx, nested_toolbar.menu, program, isConnectionToServerAvailable, isUnlocked)
