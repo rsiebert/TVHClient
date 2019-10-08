@@ -67,13 +67,17 @@ class DownloadRecordingManager(private val activity: Activity?, private val conn
     }
 
     private fun getRecordingTitle(recording: Recording): String {
-        var title = "";
-        title += if (!recording.title.isNullOrEmpty()) recording.title?.replace(" ", "-") else recording.id.toString()
-        title += if (!recording.subtitle.isNullOrEmpty()) "_" + recording.subtitle?.replace(" ", "-") else ""
-        title += if (!recording.episode.isNullOrEmpty()) "_" + recording.episode?.replace(" ", "-") else ""
+        var title = ""
+        title += if (!recording.title.isNullOrEmpty()) recording.title else recording.id.toString()
+        title += if (!recording.subtitle.isNullOrEmpty()) "_" + recording.subtitle else ""
+        title += if (!recording.episode.isNullOrEmpty()) "_" + recording.episode else ""
+        // Replace blanks with minus and remove other characters that shall could mess
+        // things up. E.g. a backslash generates a new directory
+        title.replace(" ", "-").replace(Regex("/\\\\"), "")
         title += ".mkv"
         return title
     }
+
     /**
      * Android API version 23 and higher requires that the permission to access
      * the external storage must be requested programmatically (if it has not
