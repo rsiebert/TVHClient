@@ -42,7 +42,7 @@ class ProgramListFragment : BaseFragment(), RecyclerViewClickCallback, LastProgr
     var searchQuery: String = ""
 
     private var loadingMoreProgramAllowed: Boolean = false
-    private var loadingProgramsAllowedTask: Runnable? = null
+    private lateinit var loadingProgramsAllowedTask: Runnable
     private val loadingProgramAllowedHandler = Handler()
     private var programIdToBeEditedWhenBeingRecorded = 0
     private var isSearchActive: Boolean = false
