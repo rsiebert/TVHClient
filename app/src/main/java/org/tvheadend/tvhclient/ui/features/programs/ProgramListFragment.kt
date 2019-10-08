@@ -43,7 +43,7 @@ class ProgramListFragment : BaseFragment(), RecyclerViewClickCallback, LastProgr
 
     private var loadingMoreProgramAllowed: Boolean = false
     private lateinit var loadingProgramsAllowedTask: Runnable
-    private val loadingProgramAllowedHandler = Handler()
+    private var loadingProgramAllowedHandler: Handler? = null
     private var programIdToBeEditedWhenBeingRecorded = 0
     private var isSearchActive: Boolean = false
 
@@ -93,6 +93,7 @@ class ProgramListFragment : BaseFragment(), RecyclerViewClickCallback, LastProgr
             programViewModel.getRecordingsByChannelId(shownChannelId).observe(viewLifecycleOwner, Observer { this.handleObservedRecordings(it) })
 
             loadingMoreProgramAllowed = true
+            loadingProgramAllowedHandler = Handler()
             loadingProgramsAllowedTask = Runnable { loadingMoreProgramAllowed = true }
 
         } else {
@@ -154,7 +155,7 @@ class ProgramListFragment : BaseFragment(), RecyclerViewClickCallback, LastProgr
 
     override fun onPause() {
         super.onPause()
-        loadingProgramAllowedHandler.removeCallbacks(loadingProgramsAllowedTask)
+        loadingProgramAllowedHandler?.removeCallbacks(loadingProgramsAllowedTask)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -279,7 +280,7 @@ class ProgramListFragment : BaseFragment(), RecyclerViewClickCallback, LastProgr
         }
 
         loadingMoreProgramAllowed = false
-        loadingProgramAllowedHandler.postDelayed(loadingProgramsAllowedTask, 2000)
+        loadingProgramAllowedHandler?.postDelayed(loadingProgramsAllowedTask, 2000)
 
         val lastProgram = recyclerViewAdapter.getItem(position)
         lastProgram?.let {
