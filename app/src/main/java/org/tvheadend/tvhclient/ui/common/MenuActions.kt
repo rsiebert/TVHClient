@@ -8,6 +8,7 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.view.ActionMode
 import android.view.Menu
+import androidx.core.view.children
 import androidx.preference.PreferenceManager
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.list.listItemsSingleChoice
@@ -28,7 +29,6 @@ import timber.log.Timber
 import java.io.UnsupportedEncodingException
 import java.net.URLEncoder
 
-
 fun preparePopupOrToolbarRecordingMenu(context: Context,
                                        menu: Menu,
                                        recording: Recording?,
@@ -37,9 +37,7 @@ fun preparePopupOrToolbarRecordingMenu(context: Context,
                                        isUnlocked: Boolean) {
 
     // Hide the menus because the ones in the toolbar are not hidden when set in the xml
-    for (i in 0 until menu.size()) {
-        menu.getItem(i)?.isVisible = false
-    }
+    menu.children.forEach { it.isVisible = false }
 
     if (isConnectionToServerAvailable) {
         if (recording == null || (!recording.isRecording
