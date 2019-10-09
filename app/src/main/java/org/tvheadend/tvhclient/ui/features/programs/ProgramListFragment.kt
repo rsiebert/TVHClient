@@ -72,10 +72,6 @@ class ProgramListFragment : BaseFragment(), RecyclerViewClickCallback, LastProgr
 
         isSearchActive = searchQuery.isNotEmpty()
 
-        if (!isDualPane) {
-            toolbarInterface.setTitle(if (isSearchActive) getString(R.string.search_results) else channelName)
-        }
-
         // Show the channel icons when a search is active and all channels shall be searched
         programViewModel.showProgramChannelIcon = isSearchActive && shownChannelId == 0
 
@@ -118,13 +114,16 @@ class ProgramListFragment : BaseFragment(), RecyclerViewClickCallback, LastProgr
         }
         recycler_view?.visible()
 
-        if (!isDualPane) {
-            if (!isSearchActive) {
+        if (!isSearchActive) {
+            if (!isDualPane) {
+                toolbarInterface.setTitle(channelName)
                 toolbarInterface.setSubtitle(resources.getQuantityString(R.plurals.items, recyclerViewAdapter.itemCount, recyclerViewAdapter.itemCount))
-            } else {
-                toolbarInterface.setSubtitle(resources.getQuantityString(R.plurals.programs, recyclerViewAdapter.itemCount, recyclerViewAdapter.itemCount))
             }
+        } else {
+            toolbarInterface.setTitle(getString(R.string.search_results))
+            toolbarInterface.setSubtitle(resources.getQuantityString(R.plurals.programs, recyclerViewAdapter.itemCount, recyclerViewAdapter.itemCount))
         }
+
         // Invalidate the menu so that the search menu item is shown in
         // case the adapter contains items now.
         activity?.invalidateOptionsMenu()
@@ -256,6 +255,7 @@ class ProgramListFragment : BaseFragment(), RecyclerViewClickCallback, LastProgr
     }
 
     override fun onSearchRequested(query: String) {
+        Timber.d("Search requested with query $query")
         recyclerViewAdapter.filter.filter(query, this)
     }
 
@@ -299,13 +299,13 @@ class ProgramListFragment : BaseFragment(), RecyclerViewClickCallback, LastProgr
     }
 
     override fun onFilterComplete(count: Int) {
-        if (!isDualPane) {
-            context?.let {
-                if (!isSearchActive) {
-                    toolbarInterface.setSubtitle(it.resources.getQuantityString(R.plurals.items, recyclerViewAdapter.itemCount, recyclerViewAdapter.itemCount))
-                } else {
-                    toolbarInterface.setSubtitle(it.resources.getQuantityString(R.plurals.programs, recyclerViewAdapter.itemCount, recyclerViewAdapter.itemCount))
-                }
+        Timber.d("Filter is complete")
+        context?.let {
+            if (!isDualPane) {
+                toolbarInterface.setTitle(getString(R.string.search_results))
+                toolbarInterface.setSubtitle(it.resources.getQuantityString(R.plurals.items, recyclerViewAdapter.itemCount, recyclerViewAdapter.itemCount))
+            } else {
+                toolbarInterface.setSubtitle(it.resources.getQuantityString(R.plurals.programs, recyclerViewAdapter.itemCount, recyclerViewAdapter.itemCount))
             }
         }
     }

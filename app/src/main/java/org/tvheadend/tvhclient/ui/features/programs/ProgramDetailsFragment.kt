@@ -47,10 +47,6 @@ class ProgramDetailsFragment : BaseFragment() {
             (activity as LayoutInterface).forceSingleScreenLayout()
         }
 
-        if (!isDualPane) {
-            toolbarInterface.setTitle(getString(R.string.details))
-            toolbarInterface.setSubtitle("")
-        }
         if (savedInstanceState != null) {
             eventId = savedInstanceState.getInt("eventId", 0)
             channelId = savedInstanceState.getInt("channelId", 0)
