@@ -7,6 +7,7 @@ import android.os.Handler
 import android.view.*
 import android.widget.Filter
 import androidx.appcompat.widget.PopupMenu
+import androidx.core.view.children
 import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
@@ -303,7 +304,13 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickCallback, ChannelTi
         preparePopupOrToolbarRecordingMenu(ctx, popupMenu.menu, recording, isConnectionToServerAvailable, htspVersion, isUnlocked)
         preparePopupOrToolbarSearchMenu(popupMenu.menu, channel.programTitle, isConnectionToServerAvailable)
         preparePopupOrToolbarMiscMenu(ctx, popupMenu.menu, program, isConnectionToServerAvailable, isUnlocked)
-        popupMenu.menu.findItem(R.id.menu_play).isVisible = isConnectionToServerAvailable
+
+        // If no program data is available for the channel, hide all menu items except
+        // playing the channel. This is the only option possible
+        if (program == null && isConnectionToServerAvailable) {
+            popupMenu.menu.children.forEach { it.isVisible = false }
+            popupMenu.menu.findItem(R.id.menu_play)?.isVisible = true
+        }
 
         popupMenu.setOnMenuItemClickListener { item ->
             when (item.itemId) {
