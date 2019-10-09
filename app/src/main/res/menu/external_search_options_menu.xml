@@ -23,11 +23,11 @@
                 android:id="@+id/menu_search_google"
                 android:title="@string/search_google"
                 app:showAsAction="never|withText" />
-
+            <item
+                android:id="@+id/menu_search_epg"
+                android:title="@string/search_epg"
+                app:showAsAction="never|withText" />
         </menu>
     </item>
-    <item
-        android:id="@+id/menu_search_epg"
-        android:title="@string/search_epg"
-        app:showAsAction="never|withText" />
+
 </menu>
