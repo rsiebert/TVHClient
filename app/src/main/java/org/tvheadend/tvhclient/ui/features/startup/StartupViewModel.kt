@@ -34,7 +34,7 @@ open class StartupViewModel(application: Application) : AndroidViewModel(applica
         connectionStatus = Transformations.switchMap(ConnectionStatusLiveData(connectionCount, connectionLiveData)) { value ->
             val count = value.first ?: 0
             val connection = value.second
-            return@switchMap MutableLiveData(Pair(count, connection != null))
+            return@switchMap MutableLiveData(Pair(count, connection?.isActive ?: false))
         }
     }
 

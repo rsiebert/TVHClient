@@ -37,30 +37,29 @@ class StartupFragment : Fragment() {
 
         setHasOptionsMenu(true)
         loadingDone = false
-        showStartupStatus()
 
         Timber.d("Observing connection status")
         startupViewModel.connectionStatus.observe(viewLifecycleOwner, Observer { status ->
             Timber.d("Received connection status from view model")
-            status?.let {
+
+            if (status != null) {
                 loadingDone = true
-                connectionCount = it.first!!
-                isConnectionActive = it.second!!
+                connectionCount = status.first!!
+                isConnectionActive = status.second!!
                 Timber.d("connection count is $connectionCount and connection is active is $isConnectionActive")
                 showStartupStatus()
+            } else {
+                Timber.d("Connection count and active connection are still loading")
+                startup_status.visible()
+                startup_status.text = getString(R.string.initializing)
+                add_connection_button.gone()
+                list_connections_button.gone()
             }
         })
     }
 
     private fun showStartupStatus() {
-        if (!loadingDone) {
-            Timber.d("Connection count and active connection are still loading")
-            startup_status.visible()
-            startup_status.text = getString(R.string.initializing)
-            add_connection_button.gone()
-            list_connections_button.gone()
-
-        } else {
+        if (loadingDone) {
             if (!isConnectionActive && connectionCount == 0) {
                 Timber.d("No connection available, showing settings button")
                 startup_status.visible()
