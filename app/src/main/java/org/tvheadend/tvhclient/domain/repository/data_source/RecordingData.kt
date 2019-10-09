@@ -101,8 +101,10 @@ class RecordingData(private val db: AppRoomDatabase) : DataSourceInterface<Recor
 
     fun getItemByEventId(id: Int): Recording? {
         var recording: Recording? = null
-        runBlocking(Dispatchers.IO) {
-            recording = db.recordingDao.loadRecordingByEventIdSync(id)
+        if (id > 0) {
+            runBlocking(Dispatchers.IO) {
+                recording = db.recordingDao.loadRecordingByEventIdSync(id)
+            }
         }
         return recording
     }
