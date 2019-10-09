@@ -1,11 +1,14 @@
 $ 2.2.22
   % VERSION 2.2.22
-  _ 19.09.2019
+  _ 09.10.2019
     * Minor UI changes
     * Fixed disable option not working for scheduled recordings
     * Fixed server name was not shown in the main menu header
+    * Fixed some minor search issues
+    * The menu to search the epg moved into the search submenu
     * The filename of a downloaded recording is now created from the title, subtitle and episode
     * Handle channel number ordering with number 0 properly
+    * Added contact information to the status screen
     * Improvements under the hood
 $ 2.2.21
   % VERSION 2.2.21
