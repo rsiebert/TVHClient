@@ -41,7 +41,6 @@ class SearchActivity : BaseActivity(), StartSearchInterface {
             }
         }
 
-
         baseViewModel.networkStatus.observe(this, Observer { status ->
             Timber.d("Network availability changed to $status")
             if (status == NetworkStatus.NETWORK_IS_DOWN) sendSnackbarMessage(R.string.network_not_available)
