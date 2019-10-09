@@ -9,6 +9,7 @@ import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.epg_program_adapter_host.*
 import org.tvheadend.tvhclient.domain.entity.EpgChannel
 import org.tvheadend.tvhclient.util.extensions.gone
+import org.tvheadend.tvhclient.util.extensions.invisible
 import org.tvheadend.tvhclient.util.extensions.visible
 import timber.log.Timber
 import java.util.concurrent.Executors
@@ -40,12 +41,12 @@ class EpgViewPagerViewHolder(override val containerView: View, private val activ
                     recyclerViewAdapter.addItems(programs.toMutableList())
                     program_list_recycler_view.visible()
                     progress_bar.gone()
-                    no_programs.gone()
+                    no_programs.invisible()
                 }
             } else {
                 Timber.d("Loaded no programs for channel ${epgChannel.name}")
                 activity.runOnUiThread {
-                    program_list_recycler_view.gone()
+                    program_list_recycler_view.invisible()
                     progress_bar.gone()
                     no_programs.visible()
                 }
