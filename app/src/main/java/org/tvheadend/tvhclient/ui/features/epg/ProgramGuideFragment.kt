@@ -195,7 +195,6 @@ class ProgramGuideFragment : BaseFragment(), EpgScrollInterface, RecyclerViewCli
         epgViewModel.selectedTimeOffset = which
         program_list_viewpager?.currentItem = which
 
-        // TODO check if this is required
         // Add the selected list index as extra hours to the current time.
         // If the first index was selected then use the current time.
         var timeInMillis = System.currentTimeMillis()
