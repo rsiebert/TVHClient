@@ -106,7 +106,7 @@ abstract class RecordingListFragment : BaseFragment(), RecyclerViewClickCallback
         } else {
             // Check what fragment is currently shown, replace if needed.
             var fragment = activity?.supportFragmentManager?.findFragmentById(R.id.details)
-            if (fragment !is RecordingDetailsFragment || fragment.shownDvrId != recording.id) {
+            if (fragment !is RecordingDetailsFragment || recordingViewModel.currentId != recording.id) {
                 // Make new fragment to show this selection.
                 fragment = RecordingDetailsFragment.newInstance(recording.id)
                 fm?.beginTransaction()?.also {

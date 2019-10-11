@@ -17,6 +17,7 @@ import timber.log.Timber
 
 class RecordingViewModel(application: Application) : BaseViewModel(application), SharedPreferences.OnSharedPreferenceChangeListener {
 
+    var currentId: Int = 0
     val completedRecordings: LiveData<List<Recording>>
     val scheduledRecordings: LiveData<List<Recording>>
     val failedRecordings: LiveData<List<Recording>>
@@ -83,8 +84,8 @@ class RecordingViewModel(application: Application) : BaseViewModel(application),
         }
     }
 
-    fun getRecordingById(id: Int): LiveData<Recording>? {
-        return appRepository.recordingData.getLiveDataItemById(id)
+    fun getCurrentRecording(): LiveData<Recording>? {
+        return appRepository.recordingData.getLiveDataItemById(currentId)
     }
 
     fun loadRecordingByIdSync(id: Int) {

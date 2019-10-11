@@ -18,14 +18,10 @@ import org.tvheadend.tvhclient.ui.features.dvr.RecordingRemovedCallback
 import org.tvheadend.tvhclient.util.extensions.gone
 import org.tvheadend.tvhclient.util.extensions.visible
 
-// TODO put recording into the viewmodel
-// TODO put shownId into the viewmodel
-
 class RecordingDetailsFragment : BaseFragment(), RecordingRemovedCallback, DownloadPermissionGrantedInterface {
 
     private lateinit var recordingViewModel: RecordingViewModel
     private var recording: Recording? = null
-    var shownDvrId: Int = 0
     private lateinit var itemBinding: RecordingDetailsFragmentBinding
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -44,10 +40,9 @@ class RecordingDetailsFragment : BaseFragment(), RecordingRemovedCallback, Downl
 
         // Get the recording id after an orientation change has occurred
         // or when the fragment is shown for the first time
-        shownDvrId = savedInstanceState?.getInt("id", 0) ?: (arguments?.getInt("id", 0) ?: 0)
+        recordingViewModel.currentId = arguments?.getInt("id", 0) ?: 0
 
-
-        recordingViewModel.getRecordingById(shownDvrId)?.observe(viewLifecycleOwner, Observer { rec ->
+        recordingViewModel.getCurrentRecording()?.observe(viewLifecycleOwner, Observer { rec ->
             if (rec != null) {
                 recording = rec
                 itemBinding.recording = recording
@@ -70,11 +65,6 @@ class RecordingDetailsFragment : BaseFragment(), RecordingRemovedCallback, Downl
         preparePopupOrToolbarMiscMenu(ctx, nested_toolbar.menu, null, isConnectionToServerAvailable, isUnlocked)
         preparePopupOrToolbarRecordingMenu(ctx, nested_toolbar.menu, recording, isConnectionToServerAvailable, htspVersion, isUnlocked)
         preparePopupOrToolbarSearchMenu(menu, recording.title, isConnectionToServerAvailable)
-    }
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        outState.putInt("id", shownDvrId)
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
