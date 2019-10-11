@@ -12,18 +12,14 @@ import org.tvheadend.tvhclient.databinding.SeriesRecordingDetailsFragmentBinding
 import org.tvheadend.tvhclient.domain.entity.SeriesRecording
 import org.tvheadend.tvhclient.ui.base.BaseFragment
 import org.tvheadend.tvhclient.ui.common.*
+import org.tvheadend.tvhclient.ui.features.dvr.RecordingRemovedCallback
 import org.tvheadend.tvhclient.util.extensions.gone
 import org.tvheadend.tvhclient.util.extensions.visible
-import org.tvheadend.tvhclient.ui.features.dvr.RecordingRemovedCallback
-
-// TODO put recording into the viewmodel
-// TODO put shownId into the viewmodel
 
 class SeriesRecordingDetailsFragment : BaseFragment(), RecordingRemovedCallback {
 
     private lateinit var seriesRecordingViewModel: SeriesRecordingViewModel
     private var recording: SeriesRecording? = null
-    var shownId: String = ""
     private lateinit var itemBinding: SeriesRecordingDetailsFragmentBinding
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -42,9 +38,9 @@ class SeriesRecordingDetailsFragment : BaseFragment(), RecordingRemovedCallback 
 
         // Get the recording id after an orientation change has occurred
         // or when the fragment is shown for the first time
-        shownId = savedInstanceState?.getString("id", "") ?: (arguments?.getString("id", "") ?: "")
+        seriesRecordingViewModel.currentId = arguments?.getString("id", "") ?: ""
 
-        seriesRecordingViewModel.getRecordingById(shownId).observe(viewLifecycleOwner, Observer { rec ->
+        seriesRecordingViewModel.getCurrentRecording().observe(viewLifecycleOwner, Observer { rec ->
             if (rec != null) {
                 recording = rec
                 itemBinding.recording = recording
@@ -68,11 +64,6 @@ class SeriesRecordingDetailsFragment : BaseFragment(), RecordingRemovedCallback 
 
         nested_toolbar.menu.findItem(R.id.menu_edit_recording)?.isVisible = true
         nested_toolbar.menu.findItem(R.id.menu_remove_recording)?.isVisible = true
-    }
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        outState.putString("id", shownId)
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {

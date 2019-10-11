@@ -129,7 +129,7 @@ class SeriesRecordingListFragment : BaseFragment(), RecyclerViewClickCallback, S
         } else {
             // Check what fragment is currently shown, replace if needed.
             var fragment = activity?.supportFragmentManager?.findFragmentById(R.id.details)
-            if (fragment !is SeriesRecordingDetailsFragment || fragment.shownId == recording.id) {
+            if (fragment !is SeriesRecordingDetailsFragment || seriesRecordingViewModel.currentId == recording.id) {
                 // Make new fragment to show this selection.
                 fragment = SeriesRecordingDetailsFragment.newInstance(recording.id)
                 fm?.beginTransaction()?.also {

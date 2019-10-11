@@ -14,6 +14,7 @@ import java.util.*
 
 class SeriesRecordingViewModel(application: Application) : BaseViewModel(application) {
 
+    var currentId = ""
     var recording = SeriesRecording()
     val recordings: LiveData<List<SeriesRecording>> = appRepository.seriesRecordingData.getLiveDataItems()
     var recordingProfileNameId: Int = 0
@@ -61,8 +62,8 @@ class SeriesRecordingViewModel(application: Application) : BaseViewModel(applica
             }
         }
 
-    fun getRecordingById(id: String): LiveData<SeriesRecording> {
-        return appRepository.seriesRecordingData.getLiveDataItemById(id)
+    fun getCurrentRecording(): LiveData<SeriesRecording> {
+        return appRepository.seriesRecordingData.getLiveDataItemById(currentId)
     }
 
     fun loadRecordingByIdSync(id: String) {
