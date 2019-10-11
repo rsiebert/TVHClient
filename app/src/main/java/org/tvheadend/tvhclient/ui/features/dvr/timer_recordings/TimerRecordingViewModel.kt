@@ -14,6 +14,7 @@ import java.util.*
 
 class TimerRecordingViewModel(application: Application) : BaseViewModel(application) {
 
+    var currentId = ""
     var recording = TimerRecording()
     val recordings: LiveData<List<TimerRecording>> = appRepository.timerRecordingData.getLiveDataItems()
     var recordingProfileNameId: Int = 0
@@ -54,8 +55,8 @@ class TimerRecordingViewModel(application: Application) : BaseViewModel(applicat
             }
         }
 
-    fun getRecordingById(id: String): LiveData<TimerRecording> {
-        return appRepository.timerRecordingData.getLiveDataItemById(id)
+    fun getCurrentRecording(): LiveData<TimerRecording> {
+        return appRepository.timerRecordingData.getLiveDataItemById(currentId)
     }
 
     fun loadRecordingByIdSync(id: String) {

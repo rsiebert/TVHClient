@@ -130,7 +130,7 @@ class TimerRecordingListFragment : BaseFragment(), RecyclerViewClickCallback, Se
         } else {
             // Check what fragment is currently shown, replace if needed.
             var fragment = activity?.supportFragmentManager?.findFragmentById(R.id.main)
-            if (fragment !is TimerRecordingDetailsFragment || fragment.shownId != recording.id) {
+            if (fragment !is TimerRecordingDetailsFragment || timerRecordingViewModel.currentId != recording.id) {
                 // Make new fragment to show this selection.
                 fragment = TimerRecordingDetailsFragment.newInstance(recording.id)
                 fm?.beginTransaction()?.also {
