@@ -73,7 +73,7 @@ class DownloadRecordingManager(private val activity: Activity?, private val conn
         title += if (!recording.episode.isNullOrEmpty()) "_" + recording.episode else ""
         // Replace blanks with minus and remove other characters that shall could mess
         // things up. E.g. a backslash generates a new directory
-        title.replace(Regex("""[ /\\]"""), "-")
+        title = title.replace(Regex("""[ /\\]"""), "-")
         title += ".mkv"
         return title
     }
