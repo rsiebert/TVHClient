@@ -21,6 +21,7 @@ import org.tvheadend.tvhclient.ui.common.callbacks.RecyclerViewClickCallback
 import org.tvheadend.tvhclient.ui.features.dvr.RecordingAddEditActivity
 import org.tvheadend.tvhclient.ui.features.notification.addNotificationProgramIsAboutToStart
 import org.tvheadend.tvhclient.ui.features.programs.ProgramListFragment
+import org.tvheadend.tvhclient.ui.features.programs.ProgramViewModel
 import org.tvheadend.tvhclient.ui.features.search.SearchActivity
 import org.tvheadend.tvhclient.ui.features.search.SearchRequestInterface
 import org.tvheadend.tvhclient.util.extensions.gone
@@ -31,6 +32,7 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickCallback, ChannelTi
 
     lateinit var recyclerViewAdapter: ChannelRecyclerViewAdapter
     lateinit var viewModel: ChannelViewModel
+    lateinit var programViewModel: ProgramViewModel
 
     private var selectedTimeOffset: Int = 0
     private var selectedListPosition: Int = 0
@@ -52,6 +54,7 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickCallback, ChannelTi
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         viewModel = ViewModelProviders.of(activity!!).get(ChannelViewModel::class.java)
+        programViewModel = ViewModelProviders.of(activity!!).get(ProgramViewModel::class.java)
 
         if (savedInstanceState != null) {
             selectedListPosition = savedInstanceState.getInt("listPosition", 0)
@@ -278,7 +281,7 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickCallback, ChannelTi
         val fm = activity?.supportFragmentManager
         var fragment = fm?.findFragmentById(R.id.details)
         if (fragment !is ProgramListFragment
-                || fragment.shownChannelId != channel.id) {
+                || programViewModel.channelId != channel.id) {
             fragment = ProgramListFragment.newInstance(channel.name ?: "", channel.id, selectedTime)
             fm?.beginTransaction()?.also {
                 it.replace(R.id.details, fragment)

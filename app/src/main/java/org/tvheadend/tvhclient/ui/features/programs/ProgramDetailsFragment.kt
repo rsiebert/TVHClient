@@ -21,14 +21,11 @@ import org.tvheadend.tvhclient.util.extensions.gone
 import org.tvheadend.tvhclient.util.extensions.visible
 import timber.log.Timber
 
-// TODO put program into the viewmodel
 // TODO put event and channel Id into the viewmodel
 
 class ProgramDetailsFragment : BaseFragment() {
 
     private lateinit var programViewModel: ProgramViewModel
-    private var eventId: Int = 0
-    private var channelId: Int = 0
     private var program: Program? = null
     private var recording: Recording? = null
     private var programIdToBeEditedWhenBeingRecorded = 0
@@ -47,18 +44,10 @@ class ProgramDetailsFragment : BaseFragment() {
             (activity as LayoutInterface).forceSingleScreenLayout()
         }
 
-        if (savedInstanceState != null) {
-            eventId = savedInstanceState.getInt("eventId", 0)
-            channelId = savedInstanceState.getInt("channelId", 0)
-        } else {
-            val bundle = arguments
-            if (bundle != null) {
-                eventId = bundle.getInt("eventId", 0)
-                channelId = bundle.getInt("channelId", 0)
-            }
-        }
+        programViewModel.eventId = arguments?.getInt("eventId", 0) ?: 0
+        programViewModel.channelId = arguments?.getInt("channelId", 0) ?: 0
 
-        program = programViewModel.getProgramByIdSync(eventId)
+        program = programViewModel.getCurrentProgram()
         if (program != null) {
             program?.let {
                 Timber.d("Loaded details for program ${it.title}")
@@ -75,7 +64,7 @@ class ProgramDetailsFragment : BaseFragment() {
             status.visible()
         }
 
-        programViewModel.getRecordingsByChannelId(channelId).observe(viewLifecycleOwner, Observer { recordings ->
+        programViewModel.getRecordingsFromCurrentChannel().observe(viewLifecycleOwner, Observer { recordings ->
             Timber.d("Got recordings")
             if (recordings != null) {
                 var recordingExists = false
@@ -123,12 +112,6 @@ class ProgramDetailsFragment : BaseFragment() {
         preparePopupOrToolbarMiscMenu(ctx, nested_toolbar.menu, program, isConnectionToServerAvailable, isUnlocked)
     }
 
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        outState.putInt("eventId", eventId)
-        outState.putInt("channelId", channelId)
-    }
-
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
         inflater.inflate(R.menu.external_search_options_menu, menu)
@@ -150,10 +133,10 @@ class ProgramDetailsFragment : BaseFragment() {
                 programIdToBeEditedWhenBeingRecorded = program.eventId
                 return recordSelectedProgram(ctx, program.eventId, programViewModel.getRecordingProfile(), htspVersion)
             }
-            R.id.menu_record_program_with_custom_profile -> return recordSelectedProgramWithCustomProfile(ctx, program.eventId, channelId, programViewModel.getRecordingProfileNames(), programViewModel.getRecordingProfile())
+            R.id.menu_record_program_with_custom_profile -> return recordSelectedProgramWithCustomProfile(ctx, program.eventId, program.channelId, programViewModel.getRecordingProfileNames(), programViewModel.getRecordingProfile())
             R.id.menu_record_program_as_series_recording -> return recordSelectedProgramAsSeriesRecording(ctx, program.title, programViewModel.getRecordingProfile(), htspVersion)
-            R.id.menu_play -> return playSelectedChannel(ctx, channelId, isUnlocked)
-            R.id.menu_cast -> return castSelectedChannel(ctx, channelId)
+            R.id.menu_play -> return playSelectedChannel(ctx, program.channelId, isUnlocked)
+            R.id.menu_cast -> return castSelectedChannel(ctx, program.channelId)
 
             R.id.menu_search_imdb -> return searchTitleOnImdbWebsite(ctx, program.title)
             R.id.menu_search_fileaffinity -> return searchTitleOnFileAffinityWebsite(ctx, program.title)

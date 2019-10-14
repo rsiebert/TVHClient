@@ -14,6 +14,10 @@ import timber.log.Timber
 
 class ProgramViewModel(application: Application) : BaseViewModel(application), SharedPreferences.OnSharedPreferenceChangeListener {
 
+    var selectedTime: Long = System.currentTimeMillis()
+    var eventId: Int = 0
+    var channelId: Int = 0
+    var channelName: String = ""
     val recordings: LiveData<List<Recording>>? = appRepository.recordingData.getLiveDataItems()
     var showProgramChannelIcon: Boolean = false
     var showGenreColor: MutableLiveData<Boolean> = MutableLiveData()
@@ -46,19 +50,19 @@ class ProgramViewModel(application: Application) : BaseViewModel(application), S
         }
     }
 
-    fun getProgramsByChannelFromTime(channelId: Int, time: Long): LiveData<List<Program>> {
-        return appRepository.programData.getLiveDataItemByChannelIdAndTime(channelId, time)
+    fun getProgramsFromCurrentChannelFromTime(): LiveData<List<Program>> {
+        return appRepository.programData.getLiveDataItemByChannelIdAndTime(channelId, selectedTime)
     }
 
-    fun getProgramsFromTime(time: Long): LiveData<List<SearchResultProgram>> {
-        return appRepository.programData.getLiveDataItemsFromTime(time)
+    fun getProgramsFromTime(): LiveData<List<SearchResultProgram>> {
+        return appRepository.programData.getLiveDataItemsFromTime(selectedTime)
     }
 
-    fun getProgramByIdSync(eventId: Int): Program? {
+    fun getCurrentProgram(): Program? {
         return appRepository.programData.getItemById(eventId)
     }
 
-    fun getRecordingsByChannelId(channelId: Int): LiveData<List<Recording>> {
+    fun getRecordingsFromCurrentChannel(): LiveData<List<Recording>> {
         return appRepository.recordingData.getLiveDataItemsByChannelId(channelId)
     }
 
