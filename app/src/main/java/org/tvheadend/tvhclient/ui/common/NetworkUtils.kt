@@ -2,9 +2,12 @@ package org.tvheadend.tvhclient.ui.common
 
 import android.content.Context
 import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import android.net.wifi.WifiManager
+import android.os.Build
 import timber.log.Timber
 import java.lang.reflect.InvocationTargetException
+
 
 enum class NetworkStatus {
     NETWORK_UNKNOWN,
@@ -18,10 +21,22 @@ fun isConnectionAvailable(context: Context): Boolean {
     return isNetworkAvailable(context) || isWifiApEnabled(context)
 }
 
+@Suppress("DEPRECATION")
 fun isNetworkAvailable(context: Context): Boolean {
     val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-    val activeNetworkInfo = connectivityManager.activeNetworkInfo
-    return activeNetworkInfo != null && activeNetworkInfo.isConnected
+    return if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+        val activeNetworkInfo = connectivityManager.activeNetworkInfo
+        (activeNetworkInfo != null && activeNetworkInfo.isConnected)
+    } else {
+        val activeNetwork = connectivityManager.activeNetwork
+        val networkCapabilities = connectivityManager.getNetworkCapabilities(activeNetwork)
+        (networkCapabilities != null
+                && (networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)
+                || networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_BLUETOOTH)
+                || networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET)
+                || networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_VPN)
+                || networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)))
+    }
 }
 
 private fun isWifiApEnabled(context: Context): Boolean {
