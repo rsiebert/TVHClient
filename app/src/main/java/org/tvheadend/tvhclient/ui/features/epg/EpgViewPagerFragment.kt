@@ -26,7 +26,7 @@ class EpgViewPagerFragment : Fragment(), EpgScrollInterface {
 
     private lateinit var epgViewModel: EpgViewModel
     private lateinit var recyclerViewAdapter: EpgViewPagerRecyclerViewAdapterHost
-    private var showTimeIndication: Boolean = false
+    private var showTimeIndication = false
 
     private lateinit var updateViewHandler: Handler
     private lateinit var updateViewTask: Runnable
@@ -35,7 +35,7 @@ class EpgViewPagerFragment : Fragment(), EpgScrollInterface {
     private lateinit var constraintSet: ConstraintSet
     private lateinit var itemBinding: EpgViewpagerFragmentBinding
     private var recyclerViewLinearLayoutManager: LinearLayoutManager? = null
-    private var enableScrolling: Boolean = false
+    private var enableScrolling = false
     private var fragmentId = 0
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {

@@ -44,7 +44,7 @@ class ProgramGuideFragment : BaseFragment(), EpgScrollInterface, RecyclerViewCli
     private lateinit var channelListRecyclerViewLayoutManager: LinearLayoutManager
     private var programIdToBeEditedWhenBeingRecorded = 0
     private var channelTags: List<ChannelTag> = ArrayList()
-    private var channelCount: Int = 0
+    private var channelCount = 0
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.epg_main_fragment, container, false)
