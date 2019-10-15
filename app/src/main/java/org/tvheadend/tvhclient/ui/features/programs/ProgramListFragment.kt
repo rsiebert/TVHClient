@@ -34,9 +34,6 @@ class ProgramListFragment : BaseFragment(), RecyclerViewClickCallback, LastProgr
     lateinit var recyclerViewAdapter: ProgramRecyclerViewAdapter
     private lateinit var programViewModel: ProgramViewModel
 
-    private var selectedListPosition: Int = 0
-    var searchQuery: String = ""
-
     private var loadingMoreProgramAllowed: Boolean = false
     private lateinit var loadingProgramsAllowedTask: Runnable
     private var loadingProgramAllowedHandler: Handler? = null
@@ -51,20 +48,15 @@ class ProgramListFragment : BaseFragment(), RecyclerViewClickCallback, LastProgr
         super.onActivityCreated(savedInstanceState)
         programViewModel = ViewModelProviders.of(activity!!).get(ProgramViewModel::class.java)
 
-        if (savedInstanceState != null) {
-            selectedListPosition = savedInstanceState.getInt("listPosition", 0)
-            searchQuery = savedInstanceState.getString(SearchManager.QUERY, "")
-        } else {
-            selectedListPosition = 0
-            searchQuery = arguments?.getString(SearchManager.QUERY) ?: ""
+        arguments?.let {
+            programViewModel.channelId = it.getInt("channelId", 0)
+            programViewModel.channelId = it.getInt("channelId", 0)
+            programViewModel.channelName = it.getString("channelName", "")
+            programViewModel.selectedTime = it.getLong("selectedTime", System.currentTimeMillis())
+            programViewModel.searchQuery = it.getString(SearchManager.QUERY) ?: ""
         }
 
-        programViewModel.channelId = arguments?.getInt("channelId", 0) ?: 0
-        programViewModel.channelName = arguments?.getString("channelName", "") ?: ""
-        programViewModel.selectedTime = arguments?.getLong("selectedTime", System.currentTimeMillis())
-                ?: System.currentTimeMillis()
-
-        isSearchActive = searchQuery.isNotEmpty()
+        isSearchActive = programViewModel.searchQuery.isNotEmpty()
 
         // Show the channel icons when a search is active and all channels shall be searched
         programViewModel.showProgramChannelIcon = isSearchActive && programViewModel.channelId == 0
@@ -151,12 +143,6 @@ class ProgramListFragment : BaseFragment(), RecyclerViewClickCallback, LastProgr
         loadingProgramAllowedHandler?.removeCallbacks(loadingProgramsAllowedTask)
     }
 
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        outState.putInt("listPosition", selectedListPosition)
-        outState.putString(SearchManager.QUERY, searchQuery)
-    }
-
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
         inflater.inflate(R.menu.program_list_options_menu, menu)
@@ -188,7 +174,6 @@ class ProgramListFragment : BaseFragment(), RecyclerViewClickCallback, LastProgr
     }
 
     private fun showProgramDetails(position: Int) {
-        selectedListPosition = position
         val program = recyclerViewAdapter.getItem(position)
         if (program == null
                 || !isVisible
@@ -251,8 +236,8 @@ class ProgramListFragment : BaseFragment(), RecyclerViewClickCallback, LastProgr
     }
 
     override fun onSearchResultsCleared(): Boolean {
-        return if (searchQuery.isNotEmpty()) {
-            searchQuery = ""
+        return if (programViewModel.searchQuery.isNotEmpty()) {
+            programViewModel.searchQuery = ""
             recyclerViewAdapter.filter.filter("", this)
             true
         } else {

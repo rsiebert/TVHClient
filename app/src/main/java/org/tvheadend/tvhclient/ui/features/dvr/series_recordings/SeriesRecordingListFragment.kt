@@ -23,9 +23,7 @@ import java.util.concurrent.CopyOnWriteArrayList
 class SeriesRecordingListFragment : BaseFragment(), RecyclerViewClickCallback, SearchRequestInterface, Filter.FilterListener {
 
     private lateinit var seriesRecordingViewModel: SeriesRecordingViewModel
-    private var selectedListPosition: Int = 0
     private lateinit var recyclerViewAdapter: SeriesRecordingRecyclerViewAdapter
-    private var searchQuery: String = ""
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.recyclerview_fragment, container, false)
@@ -35,15 +33,12 @@ class SeriesRecordingListFragment : BaseFragment(), RecyclerViewClickCallback, S
         super.onActivityCreated(savedInstanceState)
         seriesRecordingViewModel = ViewModelProviders.of(activity!!).get(SeriesRecordingViewModel::class.java)
 
-        if (savedInstanceState != null) {
-            selectedListPosition = savedInstanceState.getInt("listPosition", 0)
-            searchQuery = savedInstanceState.getString(SearchManager.QUERY) ?: ""
-        } else {
-            selectedListPosition = 0
-            searchQuery = arguments?.getString(SearchManager.QUERY) ?: ""
+        arguments?.let {
+            seriesRecordingViewModel.selectedListPosition = it.getInt("listPosition")
+            seriesRecordingViewModel.searchQuery = it.getString(SearchManager.QUERY) ?: ""
         }
 
-        toolbarInterface.setTitle(if (searchQuery.isEmpty())
+        toolbarInterface.setTitle(if (seriesRecordingViewModel.searchQuery.isEmpty())
             getString(R.string.series_recordings)
         else
             getString(R.string.search_results))
@@ -59,25 +54,19 @@ class SeriesRecordingListFragment : BaseFragment(), RecyclerViewClickCallback, S
             }
             recycler_view?.visible()
 
-            if (searchQuery.isEmpty()) {
+            if (seriesRecordingViewModel.searchQuery.isEmpty()) {
                 toolbarInterface.setSubtitle(resources.getQuantityString(R.plurals.items, recyclerViewAdapter.itemCount, recyclerViewAdapter.itemCount))
             } else {
                 toolbarInterface.setSubtitle(resources.getQuantityString(R.plurals.series_recordings, recyclerViewAdapter.itemCount, recyclerViewAdapter.itemCount))
             }
 
             if (isDualPane && recyclerViewAdapter.itemCount > 0) {
-                showRecordingDetails(selectedListPosition)
+                showRecordingDetails(seriesRecordingViewModel.selectedListPosition)
             }
             // Invalidate the menu so that the search menu item is shown in
             // case the adapter contains items now.
             activity?.invalidateOptionsMenu()
         })
-    }
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        outState.putInt("listPosition", selectedListPosition)
-        outState.putString(SearchManager.QUERY, searchQuery)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -109,7 +98,7 @@ class SeriesRecordingListFragment : BaseFragment(), RecyclerViewClickCallback, S
     }
 
     private fun showRecordingDetails(position: Int) {
-        selectedListPosition = position
+        seriesRecordingViewModel.selectedListPosition = position
         recyclerViewAdapter.setPosition(position)
 
         val recording = recyclerViewAdapter.getItem(position)
@@ -192,7 +181,7 @@ class SeriesRecordingListFragment : BaseFragment(), RecyclerViewClickCallback, S
 
     override fun onFilterComplete(i: Int) {
         context?.let {
-            if (searchQuery.isEmpty()) {
+            if (seriesRecordingViewModel.searchQuery.isEmpty()) {
                 toolbarInterface.setSubtitle(it.resources.getQuantityString(R.plurals.items, recyclerViewAdapter.itemCount, recyclerViewAdapter.itemCount))
             } else {
                 toolbarInterface.setSubtitle(it.resources.getQuantityString(R.plurals.series_recordings, recyclerViewAdapter.itemCount, recyclerViewAdapter.itemCount))
@@ -201,13 +190,13 @@ class SeriesRecordingListFragment : BaseFragment(), RecyclerViewClickCallback, S
     }
 
     override fun onSearchRequested(query: String) {
-        searchQuery = query
+        seriesRecordingViewModel.searchQuery = query
         recyclerViewAdapter.filter.filter(query, this)
     }
 
     override fun onSearchResultsCleared(): Boolean {
-        return if (searchQuery.isNotEmpty()) {
-            searchQuery = ""
+        return if (seriesRecordingViewModel.searchQuery.isNotEmpty()) {
+            seriesRecordingViewModel.searchQuery = ""
             recyclerViewAdapter.filter.filter("", this)
             true
         } else {

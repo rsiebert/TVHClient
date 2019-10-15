@@ -10,7 +10,7 @@ class CompletedRecordingListFragment : RecordingListFragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        toolbarInterface.setTitle(if (searchQuery.isEmpty())
+        toolbarInterface.setTitle(if (recordingViewModel.searchQuery.isEmpty())
             getString(R.string.completed_recordings)
         else
             getString(R.string.search_results))
@@ -31,7 +31,7 @@ class CompletedRecordingListFragment : RecordingListFragment() {
 
     override fun onFilterComplete(i: Int) {
         context?.let {
-            if (searchQuery.isEmpty()) {
+            if (recordingViewModel.searchQuery.isEmpty()) {
                 toolbarInterface.setSubtitle(it.resources.getQuantityString(R.plurals.items, recyclerViewAdapter.itemCount, recyclerViewAdapter.itemCount))
             } else {
                 toolbarInterface.setSubtitle(it.resources.getQuantityString(R.plurals.completed_recordings, recyclerViewAdapter.itemCount, recyclerViewAdapter.itemCount))

@@ -26,8 +26,6 @@ abstract class RecordingListFragment : BaseFragment(), RecyclerViewClickCallback
 
     lateinit var recordingViewModel: RecordingViewModel
     lateinit var recyclerViewAdapter: RecordingRecyclerViewAdapter
-    private var selectedListPosition: Int = 0
-    var searchQuery: String = ""
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.recyclerview_fragment, container, false)
@@ -37,24 +35,15 @@ abstract class RecordingListFragment : BaseFragment(), RecyclerViewClickCallback
         super.onActivityCreated(savedInstanceState)
         recordingViewModel = ViewModelProviders.of(activity!!).get(RecordingViewModel::class.java)
 
-        if (savedInstanceState != null) {
-            selectedListPosition = savedInstanceState.getInt("listPosition", 0)
-            searchQuery = savedInstanceState.getString(SearchManager.QUERY) ?: ""
-        } else {
-            selectedListPosition = 0
-            searchQuery = arguments?.getString(SearchManager.QUERY) ?: ""
+        arguments?.let {
+            recordingViewModel.selectedListPosition = it.getInt("listPosition")
+            recordingViewModel.searchQuery = it.getString(SearchManager.QUERY) ?: ""
         }
 
         recyclerViewAdapter = RecordingRecyclerViewAdapter(isDualPane, this, htspVersion)
         recycler_view.layoutManager = LinearLayoutManager(activity)
         recycler_view.adapter = recyclerViewAdapter
         recycler_view.gone()
-    }
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        outState.putInt("listPosition", selectedListPosition)
-        outState.putString(SearchManager.QUERY, searchQuery)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -86,7 +75,7 @@ abstract class RecordingListFragment : BaseFragment(), RecyclerViewClickCallback
     }
 
     private fun showRecordingDetails(position: Int) {
-        selectedListPosition = position
+        recordingViewModel.selectedListPosition = position
         recyclerViewAdapter.setPosition(position)
 
         val recording = recyclerViewAdapter.getItem(position)
@@ -158,7 +147,7 @@ abstract class RecordingListFragment : BaseFragment(), RecyclerViewClickCallback
     }
 
     override fun onClick(view: View, position: Int) {
-        selectedListPosition = position
+        recordingViewModel.selectedListPosition = position
         if (view.id == R.id.icon || view.id == R.id.icon_text) {
             recyclerViewAdapter.getItem(position)?.let {
                 playOrCastRecording(view.context, it.id, isUnlocked)
@@ -177,14 +166,14 @@ abstract class RecordingListFragment : BaseFragment(), RecyclerViewClickCallback
     fun updateUI(stringId: Int) {
         recycler_view?.visible()
 
-        if (searchQuery.isEmpty()) {
+        if (recordingViewModel.searchQuery.isEmpty()) {
             toolbarInterface.setSubtitle(resources.getQuantityString(R.plurals.items, recyclerViewAdapter.itemCount, recyclerViewAdapter.itemCount))
         } else {
             toolbarInterface.setSubtitle(resources.getQuantityString(stringId, recyclerViewAdapter.itemCount, recyclerViewAdapter.itemCount))
         }
 
         if (isDualPane && recyclerViewAdapter.itemCount > 0) {
-            showRecordingDetails(selectedListPosition)
+            showRecordingDetails(recordingViewModel.selectedListPosition)
         }
         // Invalidate the menu so that the search menu item is shown in
         // case the adapter contains items now.
@@ -192,7 +181,7 @@ abstract class RecordingListFragment : BaseFragment(), RecyclerViewClickCallback
     }
 
     override fun downloadRecording() {
-        DownloadRecordingManager(activity, connection, recyclerViewAdapter.getItem(selectedListPosition))
+        DownloadRecordingManager(activity, connection, recyclerViewAdapter.getItem(recordingViewModel.selectedListPosition))
     }
 
     override fun onFilterComplete(i: Int) {
@@ -203,13 +192,13 @@ abstract class RecordingListFragment : BaseFragment(), RecyclerViewClickCallback
     }
 
     override fun onSearchRequested(query: String) {
-        searchQuery = query
+        recordingViewModel.searchQuery = query
         recyclerViewAdapter.filter.filter(query, this)
     }
 
     override fun onSearchResultsCleared(): Boolean {
-        return if (searchQuery.isNotEmpty()) {
-            searchQuery = ""
+        return if (recordingViewModel.searchQuery.isNotEmpty()) {
+            recordingViewModel.searchQuery = ""
             recyclerViewAdapter.filter.filter("", this)
             true
         } else {

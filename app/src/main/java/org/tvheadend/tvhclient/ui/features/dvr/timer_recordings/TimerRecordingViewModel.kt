@@ -14,10 +14,12 @@ import java.util.*
 
 class TimerRecordingViewModel(application: Application) : BaseViewModel(application) {
 
+    var searchQuery = ""
+    var selectedListPosition = 0
     var currentId = ""
     var recording = TimerRecording()
     val recordings: LiveData<List<TimerRecording>> = appRepository.timerRecordingData.getLiveDataItems()
-    var recordingProfileNameId: Int = 0
+    var recordingProfileNameId = 0
 
     /**
      * Returns an intent with the recording data

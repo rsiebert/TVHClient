@@ -32,12 +32,9 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickCallback, ChannelTi
 
     lateinit var recyclerViewAdapter: ChannelRecyclerViewAdapter
     lateinit var viewModel: ChannelViewModel
-    lateinit var programViewModel: ProgramViewModel
+    private lateinit var programViewModel: ProgramViewModel
 
-    private var selectedTimeOffset: Int = 0
-    private var selectedListPosition: Int = 0
-    private var searchQuery: String = ""
-    private var channelCount: Int = 0
+    private var channelCount = 0
 
     // Used in the time selection dialog to show a time entry every x hours.
     private val intervalInHours = 2
@@ -56,17 +53,10 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickCallback, ChannelTi
         viewModel = ViewModelProviders.of(activity!!).get(ChannelViewModel::class.java)
         programViewModel = ViewModelProviders.of(activity!!).get(ProgramViewModel::class.java)
 
-        if (savedInstanceState != null) {
-            selectedListPosition = savedInstanceState.getInt("listPosition", 0)
-            selectedTimeOffset = savedInstanceState.getInt("timeOffset")
-            searchQuery = savedInstanceState.getString(SearchManager.QUERY) ?: ""
-        } else {
-            selectedListPosition = 0
-            selectedTimeOffset = 0
-            val bundle = arguments
-            if (bundle != null) {
-                searchQuery = bundle.getString(SearchManager.QUERY) ?: ""
-            }
+        arguments?.let {
+            viewModel.selectedListPosition = it.getInt("listPosition")
+            viewModel.selectedTimeOffset = it.getInt("timeOffset")
+            viewModel.searchQuery = it.getString(SearchManager.QUERY) ?: ""
         }
 
         recyclerViewAdapter = ChannelRecyclerViewAdapter(viewModel, isDualPane, this)
@@ -101,7 +91,7 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickCallback, ChannelTi
             showChannelTagOrChannelCountInToolbar()
 
             if (isDualPane && recyclerViewAdapter.itemCount > 0) {
-                showProgramListOfSelectedChannelInDualPane(selectedListPosition)
+                showProgramListOfSelectedChannelInDualPane(viewModel.selectedListPosition)
             }
         })
 
@@ -150,7 +140,7 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickCallback, ChannelTi
         // channel tag and the channel count in the toolbar
         context?.let {
             val toolbarTitle = viewModel.getSelectedChannelTagName(it)
-            if (searchQuery.isEmpty()) {
+            if (viewModel.searchQuery.isEmpty()) {
                 toolbarInterface.setTitle(toolbarTitle)
                 toolbarInterface.setSubtitle(it.resources.getQuantityString(R.plurals.items,
                         recyclerViewAdapter.itemCount, recyclerViewAdapter.itemCount))
@@ -160,13 +150,6 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickCallback, ChannelTi
                         recyclerViewAdapter.itemCount, recyclerViewAdapter.itemCount))
             }
         }
-    }
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        outState.putInt("listPosition", selectedListPosition)
-        outState.putInt("timeOffset", selectedTimeOffset)
-        outState.putString(SearchManager.QUERY, searchQuery)
     }
 
     override fun onResume() {
@@ -188,7 +171,7 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickCallback, ChannelTi
         val showGenreColors = sharedPreferences.getBoolean("genre_colors_for_channels_enabled", resources.getBoolean(R.bool.pref_default_genre_colors_for_channels_enabled))
         val showChannelTagMenu = sharedPreferences.getBoolean("channel_tag_menu_enabled", resources.getBoolean(R.bool.pref_default_channel_tag_menu_enabled))
 
-        if (searchQuery.isEmpty()) {
+        if (viewModel.searchQuery.isEmpty()) {
             menu.findItem(R.id.menu_genre_color_information)?.isVisible = showGenreColors
             menu.findItem(R.id.menu_program_timeframe)?.isVisible = isUnlocked
             menu.findItem(R.id.menu_search)?.isVisible = recyclerViewAdapter.itemCount > 0
@@ -211,7 +194,7 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickCallback, ChannelTi
         val ctx = context ?: return super.onOptionsItemSelected(item)
         return when (item.itemId) {
             R.id.menu_channel_tags -> showChannelTagSelectionDialog(ctx, channelTags.toMutableList(), channelCount, this)
-            R.id.menu_program_timeframe -> showProgramTimeframeSelectionDialog(ctx, selectedTimeOffset, intervalInHours, 12, this)
+            R.id.menu_program_timeframe -> showProgramTimeframeSelectionDialog(ctx, viewModel.selectedTimeOffset, intervalInHours, 12, this)
             R.id.menu_genre_color_information -> showGenreColorDialog(ctx)
             R.id.menu_channel_sort_order -> showChannelSortOrderSelectionDialog(ctx)
             R.id.menu_send_wake_on_lan_packet -> sendWakeOnLanPacket(ctx, connection)
@@ -220,7 +203,7 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickCallback, ChannelTi
     }
 
     override fun onTimeSelected(which: Int) {
-        selectedTimeOffset = which
+        viewModel.selectedTimeOffset = which
         recycler_view?.gone()
 
         // Add the selected list index as extra hours to the current time.
@@ -244,7 +227,7 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickCallback, ChannelTi
     }
 
     private fun showProgramListOfSelectedChannelInSinglePane(position: Int) {
-        selectedListPosition = position
+        viewModel.selectedListPosition = position
         recyclerViewAdapter.setPosition(position)
         val channel = recyclerViewAdapter.getItem(position)
         if (channel == null || !isVisible) {
@@ -269,7 +252,7 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickCallback, ChannelTi
     }
 
     private fun showProgramListOfSelectedChannelInDualPane(position: Int) {
-        selectedListPosition = position
+        viewModel.selectedListPosition = position
         recyclerViewAdapter.setPosition(position)
         val channel = recyclerViewAdapter.getItem(position)
         if (channel == null || !isVisible) {
@@ -353,8 +336,8 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickCallback, ChannelTi
     }
 
     override fun onSearchResultsCleared(): Boolean {
-        return if (searchQuery.isNotEmpty()) {
-            searchQuery = ""
+        return if (viewModel.searchQuery.isNotEmpty()) {
+            viewModel.searchQuery = ""
             recyclerViewAdapter.filter.filter("", this)
             true
         } else {

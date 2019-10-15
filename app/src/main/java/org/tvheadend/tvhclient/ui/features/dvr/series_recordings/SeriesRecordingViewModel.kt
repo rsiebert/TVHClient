@@ -14,10 +14,12 @@ import java.util.*
 
 class SeriesRecordingViewModel(application: Application) : BaseViewModel(application) {
 
+    var searchQuery = ""
+    var selectedListPosition = 0
     var currentId = ""
     var recording = SeriesRecording()
     val recordings: LiveData<List<SeriesRecording>> = appRepository.seriesRecordingData.getLiveDataItems()
-    var recordingProfileNameId: Int = 0
+    var recordingProfileNameId = 0
 
     /**
      * Returns an intent with the recording data

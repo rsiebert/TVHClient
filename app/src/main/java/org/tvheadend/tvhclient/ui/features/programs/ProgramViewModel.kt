@@ -14,12 +14,13 @@ import timber.log.Timber
 
 class ProgramViewModel(application: Application) : BaseViewModel(application), SharedPreferences.OnSharedPreferenceChangeListener {
 
+    var searchQuery = ""
     var selectedTime: Long = System.currentTimeMillis()
-    var eventId: Int = 0
-    var channelId: Int = 0
-    var channelName: String = ""
+    var eventId = 0
+    var channelId = 0
+    var channelName = ""
     val recordings: LiveData<List<Recording>>? = appRepository.recordingData.getLiveDataItems()
-    var showProgramChannelIcon: Boolean = false
+    var showProgramChannelIcon = false
     var showGenreColor: MutableLiveData<Boolean> = MutableLiveData()
     var showProgramSubtitles: MutableLiveData<Boolean> = MutableLiveData()
     var showProgramArtwork: MutableLiveData<Boolean> = MutableLiveData()

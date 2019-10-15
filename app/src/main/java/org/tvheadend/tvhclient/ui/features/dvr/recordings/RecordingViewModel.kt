@@ -17,14 +17,16 @@ import timber.log.Timber
 
 class RecordingViewModel(application: Application) : BaseViewModel(application), SharedPreferences.OnSharedPreferenceChangeListener {
 
-    var currentId: Int = 0
+    var searchQuery = ""
+    var selectedListPosition = 0
+    var currentId = 0
     val completedRecordings: LiveData<List<Recording>>
     val scheduledRecordings: LiveData<List<Recording>>
     val failedRecordings: LiveData<List<Recording>>
     val removedRecordings: LiveData<List<Recording>>
 
     var recording = Recording()
-    var recordingProfileNameId: Int = 0
+    var recordingProfileNameId = 0
 
     private var hideDuplicateScheduledRecordings: MutableLiveData<Boolean> = MutableLiveData()
 

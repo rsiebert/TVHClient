@@ -23,9 +23,7 @@ import java.util.concurrent.CopyOnWriteArrayList
 class TimerRecordingListFragment : BaseFragment(), RecyclerViewClickCallback, SearchRequestInterface, Filter.FilterListener {
 
     private lateinit var timerRecordingViewModel: TimerRecordingViewModel
-    private var selectedListPosition: Int = 0
     private lateinit var recyclerViewAdapter: TimerRecordingRecyclerViewAdapter
-    private var searchQuery: String = ""
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.recyclerview_fragment, container, false)
@@ -35,15 +33,12 @@ class TimerRecordingListFragment : BaseFragment(), RecyclerViewClickCallback, Se
         super.onActivityCreated(savedInstanceState)
         timerRecordingViewModel = ViewModelProviders.of(activity!!).get(TimerRecordingViewModel::class.java)
 
-        if (savedInstanceState != null) {
-            selectedListPosition = savedInstanceState.getInt("listPosition", 0)
-            searchQuery = savedInstanceState.getString(SearchManager.QUERY) ?: ""
-        } else {
-            selectedListPosition = 0
-            searchQuery = arguments?.getString(SearchManager.QUERY) ?: ""
+        arguments?.let {
+            timerRecordingViewModel.selectedListPosition = it.getInt("listPosition")
+            timerRecordingViewModel.searchQuery = it.getString(SearchManager.QUERY) ?: ""
         }
 
-        toolbarInterface.setTitle(if (searchQuery.isEmpty())
+        toolbarInterface.setTitle(if (timerRecordingViewModel.searchQuery.isEmpty())
             getString(R.string.timer_recordings)
         else
             getString(R.string.search_results))
@@ -61,25 +56,19 @@ class TimerRecordingListFragment : BaseFragment(), RecyclerViewClickCallback, Se
 
             recycler_view?.visible()
 
-            if (searchQuery.isEmpty()) {
+            if (timerRecordingViewModel.searchQuery.isEmpty()) {
                 toolbarInterface.setSubtitle(resources.getQuantityString(R.plurals.items, recyclerViewAdapter.itemCount, recyclerViewAdapter.itemCount))
             } else {
                 toolbarInterface.setSubtitle(resources.getQuantityString(R.plurals.timer_recordings, recyclerViewAdapter.itemCount, recyclerViewAdapter.itemCount))
             }
 
             if (isDualPane && recyclerViewAdapter.itemCount > 0) {
-                showRecordingDetails(selectedListPosition)
+                showRecordingDetails(timerRecordingViewModel.selectedListPosition)
             }
             // Invalidate the menu so that the search menu item is shown in
             // case the adapter contains items now.
             activity?.invalidateOptionsMenu()
         })
-    }
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        outState.putInt("listPosition", selectedListPosition)
-        outState.putString(SearchManager.QUERY, searchQuery)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -110,7 +99,7 @@ class TimerRecordingListFragment : BaseFragment(), RecyclerViewClickCallback, Se
     }
 
     private fun showRecordingDetails(position: Int) {
-        selectedListPosition = position
+        timerRecordingViewModel.selectedListPosition = position
         recyclerViewAdapter.setPosition(position)
 
         val recording = recyclerViewAdapter.getItem(position)
@@ -192,7 +181,7 @@ class TimerRecordingListFragment : BaseFragment(), RecyclerViewClickCallback, Se
 
     override fun onFilterComplete(i: Int) {
         context?.let {
-            if (searchQuery.isEmpty()) {
+            if (timerRecordingViewModel.searchQuery.isEmpty()) {
                 toolbarInterface.setSubtitle(it.resources.getQuantityString(R.plurals.items, recyclerViewAdapter.itemCount, recyclerViewAdapter.itemCount))
             } else {
                 toolbarInterface.setSubtitle(it.resources.getQuantityString(R.plurals.timer_recordings, recyclerViewAdapter.itemCount, recyclerViewAdapter.itemCount))
@@ -201,13 +190,13 @@ class TimerRecordingListFragment : BaseFragment(), RecyclerViewClickCallback, Se
     }
 
     override fun onSearchRequested(query: String) {
-        searchQuery = query
+        timerRecordingViewModel.searchQuery = query
         recyclerViewAdapter.filter.filter(query, this)
     }
 
     override fun onSearchResultsCleared(): Boolean {
-        return if (searchQuery.isNotEmpty()) {
-            searchQuery = ""
+        return if (timerRecordingViewModel.searchQuery.isNotEmpty()) {
+            timerRecordingViewModel.searchQuery = ""
             recyclerViewAdapter.filter.filter("", this)
             true
         } else {

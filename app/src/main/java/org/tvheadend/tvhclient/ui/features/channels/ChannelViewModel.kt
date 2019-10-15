@@ -12,6 +12,9 @@ import timber.log.Timber
 
 class ChannelViewModel(application: Application) : BaseChannelViewModel(application), SharedPreferences.OnSharedPreferenceChangeListener {
 
+    var searchQuery = ""
+    var selectedListPosition = 0
+    var selectedTimeOffset = 0
     val channels: LiveData<List<Channel>>
     var showGenreColor = MutableLiveData<Boolean>()
     var showNextProgramTitle = MutableLiveData<Boolean>()
