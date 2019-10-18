@@ -49,6 +49,15 @@ android {
             // Lint checks will be done manually before a release
             checkReleaseBuilds false
         }
+
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments = [
+                        "room.schemaLocation": "$projectDir/schemas".toString(),
+                        "room.incremental"   : "true"
+                ]
+            }
+        }
     }
 
     dataBinding {
