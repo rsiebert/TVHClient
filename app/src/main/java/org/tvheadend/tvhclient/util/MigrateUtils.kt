@@ -47,12 +47,25 @@ class MigrateUtils(val context: Context, val appRepository: AppRepository, val s
             if (lastInstalledApplicationVersion < VERSION_176) {
                 convertConnectionHostAndPortValuesToUrl()
             }
+            if (lastInstalledApplicationVersion < VERSION_189) {
+                convertInvalidEpgPreference()
+            }
         }
 
         // Store the current version as the last installed version
         val editor = sharedPreferences.edit()
         editor.putInt("build_version_for_migration", currentApplicationVersion)
         editor.apply()
+    }
+
+    private fun convertInvalidEpgPreference() {
+        val hours = Integer.parseInt(sharedPreferences.getString("hours_of_epg_data_per_screen", context.resources.getString(R.string.pref_default_hours_of_epg_data_per_screen))!!)
+        Timber.d("Hours per screen is $hours")
+        if (hours == 0) {
+            val editor = sharedPreferences.edit()
+            editor.putString("hours_of_epg_data_per_screen", "1")
+            editor.apply()
+        }
     }
 
     private fun setSyncRequiredForAllConnections() {
@@ -276,5 +289,6 @@ class MigrateUtils(val context: Context, val appRepository: AppRepository, val s
         private const val VERSION_143 = 143
         private const val VERSION_144 = 144
         private const val VERSION_176 = 176
+        private const val VERSION_189 = 189
     }
 }
