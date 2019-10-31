@@ -3,33 +3,60 @@ package org.tvheadend.tvhclient.ui.features.programs
 import android.app.Application
 import android.content.SharedPreferences
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Transformations
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.domain.entity.Program
 import org.tvheadend.tvhclient.domain.entity.Recording
-import org.tvheadend.tvhclient.domain.entity.SearchResultProgram
 import org.tvheadend.tvhclient.domain.entity.ServerProfile
 import org.tvheadend.tvhclient.ui.base.BaseViewModel
 import timber.log.Timber
+import java.util.*
 
 class ProgramViewModel(application: Application) : BaseViewModel(application), SharedPreferences.OnSharedPreferenceChangeListener {
 
-    var searchQuery = ""
+    val programs: LiveData<List<Program>>
+    val recordings: LiveData<List<Recording>>
+
     var selectedTime: Long = System.currentTimeMillis()
     var eventId = 0
     var channelId = 0
     var channelName = ""
-    val recordings: LiveData<List<Recording>>? = appRepository.recordingData.getLiveDataItems()
+
     var showProgramChannelIcon = false
     var showGenreColor: MutableLiveData<Boolean> = MutableLiveData()
     var showProgramSubtitles: MutableLiveData<Boolean> = MutableLiveData()
     var showProgramArtwork: MutableLiveData<Boolean> = MutableLiveData()
+
+    val channelIdLiveData = MutableLiveData(0)
+    val selectedTimeLiveData = MutableLiveData(Date().time)
 
     init {
         Timber.d("Initializing")
         onSharedPreferenceChanged(sharedPreferences, "genre_colors_for_programs_enabled")
         onSharedPreferenceChanged(sharedPreferences, "program_subtitle_enabled")
         onSharedPreferenceChanged(sharedPreferences, "program_artwork_enabled")
+
+        programs = Transformations.switchMap(ProgramLiveData(channelIdLiveData, selectedTimeLiveData)) { value ->
+            val channelId = value.first ?: 0
+            val selectedTime = value.second ?: Date().time
+
+            if (channelId == 0) {
+                return@switchMap appRepository.programData.getLiveDataItemsFromTime(selectedTime)
+            } else {
+                return@switchMap appRepository.programData.getLiveDataItemByChannelIdAndTime(channelId, selectedTime)
+            }
+        }
+
+        recordings = Transformations.switchMap(RecordingLiveData(channelIdLiveData)) { value ->
+            val channelId = value ?: 0
+            if (channelId == 0) {
+                return@switchMap appRepository.recordingData.getLiveDataItems()
+            } else {
+                return@switchMap appRepository.recordingData.getLiveDataItemsByChannelId(channelId)
+            }
+        }
 
         Timber.d("Registering shared preference change listener")
         sharedPreferences.registerOnSharedPreferenceChangeListener(this)
@@ -51,14 +78,6 @@ class ProgramViewModel(application: Application) : BaseViewModel(application), S
         }
     }
 
-    fun getProgramsFromCurrentChannelFromTime(): LiveData<List<Program>> {
-        return appRepository.programData.getLiveDataItemByChannelIdAndTime(channelId, selectedTime)
-    }
-
-    fun getProgramsFromTime(): LiveData<List<SearchResultProgram>> {
-        return appRepository.programData.getLiveDataItemsFromTime(selectedTime)
-    }
-
     fun getCurrentProgram(): Program? {
         return appRepository.programData.getItemById(eventId)
     }
@@ -73,5 +92,25 @@ class ProgramViewModel(application: Application) : BaseViewModel(application), S
 
     fun getRecordingProfileNames(): Array<String> {
         return appRepository.serverProfileData.recordingProfileNames
+    }
+
+    internal inner class ProgramLiveData(channelId: LiveData<Int>,
+                                         selectedTime: LiveData<Long>) : MediatorLiveData<Pair<Int?, Long?>>() {
+        init {
+            addSource(channelId) { id ->
+                value = Pair(id, selectedTime.value)
+            }
+            addSource(selectedTime) { time ->
+                value = Pair(channelId.value, time)
+            }
+        }
+    }
+
+    internal inner class RecordingLiveData(channelId: LiveData<Int>) : MediatorLiveData<Int?>() {
+        init {
+            addSource(channelId) { id ->
+                value = id
+            }
+        }
     }
 }

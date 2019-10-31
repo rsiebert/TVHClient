@@ -6,5 +6,5 @@ interface SearchRequestInterface {
 
     fun onSearchRequested(query: String)
 
-    fun onSearchResultsCleared(): Boolean
+    fun onSearchResultsCleared()
 }

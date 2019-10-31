@@ -46,7 +46,6 @@ open class BaseActivity(private val layoutId: Int = R.layout.misc_content_activi
 
         toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         MainApplication.component.inject(this)
 

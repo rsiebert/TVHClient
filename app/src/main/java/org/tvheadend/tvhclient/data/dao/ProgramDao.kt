@@ -4,7 +4,6 @@ import androidx.lifecycle.LiveData
 import androidx.room.*
 import org.tvheadend.tvhclient.domain.entity.EpgProgram
 import org.tvheadend.tvhclient.domain.entity.Program
-import org.tvheadend.tvhclient.domain.entity.SearchResultProgram
 
 @Dao
 interface ProgramDao {
@@ -18,13 +17,13 @@ interface ProgramDao {
     val itemCountSync: Int
 
     @Transaction
-    @Query(BASE_PROGRAM_BASE_QUERY +
+    @Query(PROGRAM_BASE_QUERY +
             " WHERE $CONNECTION_IS_ACTIVE" +
             " AND ((p.start >= :time) " +
             "  OR (p.start <= :time AND p.stop >= :time)) " +
             " GROUP BY p.id " +
             " ORDER BY p.start, p.channel_name ASC")
-    fun loadProgramsFromTime(time: Long): LiveData<List<SearchResultProgram>>
+    fun loadProgramsFromTime(time: Long): LiveData<List<Program>>
 
     @Transaction
     @Query(PROGRAM_BASE_QUERY +
@@ -103,6 +102,12 @@ interface ProgramDao {
             " WHERE $CONNECTION_IS_ACTIVE" +
             " AND p.id = :id")
     fun loadProgramByIdSync(id: Int): Program
+
+    @Query(PROGRAM_BASE_QUERY +
+            " WHERE $CONNECTION_IS_ACTIVE" +
+            " AND p.channel_id = :channelId " +
+            " ORDER BY start DESC")
+    fun loadProgramsFromChannelSync(channelId: Int): List<Program>
 
     @Query(PROGRAM_BASE_QUERY +
             " WHERE $CONNECTION_IS_ACTIVE" +

@@ -79,20 +79,16 @@ class ProgramRecyclerViewAdapter internal constructor(private val viewModel: Pro
         return object : Filter() {
             override fun performFiltering(charSequence: CharSequence): FilterResults {
                 val charString = charSequence.toString()
-                var filteredList: MutableList<ProgramInterface> = ArrayList()
-                if (charString.isEmpty()) {
-                    filteredList = programList
-                } else {
-                    // Iterate over the available program. Use a copy on write
-                    // array in case the program list changes during filtering.
+                val filteredList: MutableList<ProgramInterface> = ArrayList()
+                if (charString.isNotEmpty()) {
                     for (program in CopyOnWriteArrayList(programList)) {
-                        // name match condition. this might differ depending on your requirement
-                        // here we are looking for a channel name match
                         val title = program.title ?: ""
-                        if (title.toLowerCase().contains(charString.toLowerCase())) {
-                            filteredList.add(program)
+                        when {
+                            title.toLowerCase().contains(charString.toLowerCase()) -> filteredList.add(program)
                         }
                     }
+                } else {
+                    filteredList.addAll(programList)
                 }
 
                 val filterResults = FilterResults()
@@ -101,8 +97,9 @@ class ProgramRecyclerViewAdapter internal constructor(private val viewModel: Pro
             }
 
             override fun publishResults(charSequence: CharSequence, filterResults: FilterResults) {
+                programListFiltered.clear()
                 @Suppress("UNCHECKED_CAST")
-                programListFiltered = filterResults.values as ArrayList<ProgramInterface>
+                programListFiltered.addAll(filterResults.values as ArrayList<ProgramInterface>)
                 notifyDataSetChanged()
             }
         }

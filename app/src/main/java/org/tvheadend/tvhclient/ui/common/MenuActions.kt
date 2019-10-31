@@ -1,7 +1,6 @@
 package org.tvheadend.tvhclient.ui.common
 
 
-import android.app.SearchManager
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -9,6 +8,8 @@ import android.net.Uri
 import android.view.ActionMode
 import android.view.Menu
 import androidx.core.view.children
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
 import androidx.preference.PreferenceManager
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.list.listItemsSingleChoice
@@ -24,7 +25,7 @@ import org.tvheadend.tvhclient.ui.features.playback.external.CastRecordingActivi
 import org.tvheadend.tvhclient.ui.features.playback.external.PlayChannelActivity
 import org.tvheadend.tvhclient.ui.features.playback.external.PlayRecordingActivity
 import org.tvheadend.tvhclient.ui.features.playback.internal.PlaybackActivity
-import org.tvheadend.tvhclient.ui.features.search.SearchActivity
+import org.tvheadend.tvhclient.ui.features.programs.ProgramListFragment
 import timber.log.Timber
 import java.io.UnsupportedEncodingException
 import java.net.URLEncoder
@@ -586,15 +587,16 @@ fun searchTitleOnFileAffinityWebsite(context: Context, title: String?): Boolean 
     return true
 }
 
-fun searchTitleInTheLocalDatabase(context: Context, title: String?, channelId: Int = 0): Boolean {
-    val intent = Intent(context, SearchActivity::class.java)
-    intent.action = Intent.ACTION_SEARCH
-    intent.putExtra(SearchManager.QUERY, title)
-    intent.putExtra("type", "program_guide")
-    if (channelId > 0) {
-        intent.putExtra("channelId", channelId)
+fun searchTitleInTheLocalDatabase(activity: FragmentActivity, viewModel: BaseViewModel, title: String?, channelId: Int = 0): Boolean {
+    if (!title.isNullOrEmpty()) {
+        val newFragment: Fragment = ProgramListFragment.newInstance(channelId = channelId)
+        activity.supportFragmentManager.beginTransaction().replace(R.id.main, newFragment).let {
+            it.addToBackStack(null)
+            it.commit()
+        }
+        viewModel.removeFragmentWhenSearchIsDone = true
+        viewModel.startSearchQuery(title)
     }
-    context.startActivity(intent)
     return true
 }
 

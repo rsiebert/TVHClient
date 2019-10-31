@@ -1,6 +1,5 @@
 package org.tvheadend.tvhclient.ui.features.epg
 
-import android.app.SearchManager
 import android.content.Intent
 import android.os.Bundle
 import android.util.SparseArray
@@ -28,7 +27,6 @@ import org.tvheadend.tvhclient.ui.features.channels.ChannelTagIdsSelectedInterfa
 import org.tvheadend.tvhclient.ui.features.channels.ChannelTimeSelectedInterface
 import org.tvheadend.tvhclient.ui.features.dvr.RecordingAddEditActivity
 import org.tvheadend.tvhclient.ui.features.notification.addNotificationProgramIsAboutToStart
-import org.tvheadend.tvhclient.ui.features.search.SearchActivity
 import org.tvheadend.tvhclient.ui.features.search.SearchRequestInterface
 import org.tvheadend.tvhclient.util.extensions.gone
 import org.tvheadend.tvhclient.util.extensions.visible
@@ -56,10 +54,6 @@ class ProgramGuideFragment : BaseFragment(), EpgScrollInterface, RecyclerViewCli
 
         if (activity is LayoutInterface) {
             (activity as LayoutInterface).forceSingleScreenLayout()
-        }
-
-        if (savedInstanceState == null) {
-            epgViewModel.searchQuery = arguments?.getString(SearchManager.QUERY) ?: ""
         }
 
         channelListRecyclerViewAdapter = EpgChannelListRecyclerViewAdapter(epgViewModel, this)
@@ -173,6 +167,7 @@ class ProgramGuideFragment : BaseFragment(), EpgScrollInterface, RecyclerViewCli
         val showChannelTagMenu = sharedPreferences.getBoolean("channel_tag_menu_enabled", resources.getBoolean(R.bool.pref_default_channel_tag_menu_enabled))
 
         menu.findItem(R.id.menu_genre_color_information)?.isVisible = showGenreColors
+        menu.findItem(R.id.menu_search_channels)?.isVisible = false
 
         // Prevent the channel tag menu item from going into the overlay menu
         if (showChannelTagMenu) {
@@ -256,7 +251,7 @@ class ProgramGuideFragment : BaseFragment(), EpgScrollInterface, RecyclerViewCli
                 R.id.menu_search_fileaffinity -> return@setOnMenuItemClickListener searchTitleOnFileAffinityWebsite(ctx, program.title)
                 R.id.menu_search_youtube -> return@setOnMenuItemClickListener searchTitleOnYoutube(ctx, program.title)
                 R.id.menu_search_google -> return@setOnMenuItemClickListener searchTitleOnGoogle(ctx, program.title)
-                R.id.menu_search_epg -> return@setOnMenuItemClickListener searchTitleInTheLocalDatabase(ctx, program.title, program.channelId)
+                R.id.menu_search_epg -> return@setOnMenuItemClickListener searchTitleInTheLocalDatabase(activity!!, baseViewModel, program.title, program.channelId)
 
                 R.id.menu_add_notification -> return@setOnMenuItemClickListener addNotificationProgramIsAboutToStart(ctx, program, epgViewModel.getRecordingProfile())
                 else -> return@setOnMenuItemClickListener false
@@ -324,20 +319,15 @@ class ProgramGuideFragment : BaseFragment(), EpgScrollInterface, RecyclerViewCli
     }
 
     override fun onPageScrollStateChanged(state: Int) {
-        // TOP
+        // NOP
     }
 
     override fun onSearchRequested(query: String) {
-        // Start searching for programs on all channels
-        val searchIntent = Intent(activity, SearchActivity::class.java)
-        searchIntent.putExtra(SearchManager.QUERY, query)
-        searchIntent.action = Intent.ACTION_SEARCH
-        searchIntent.putExtra("type", "program_guide")
-        startActivity(searchIntent)
+        // NOP
     }
 
-    override fun onSearchResultsCleared(): Boolean {
-        return false
+    override fun onSearchResultsCleared() {
+        // NOP
     }
 
     override fun getQueryHint(): String {

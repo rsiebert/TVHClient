@@ -76,34 +76,29 @@ class TimerRecordingRecyclerViewAdapter internal constructor(private val isDualP
         return object : Filter() {
             override fun performFiltering(charSequence: CharSequence): FilterResults {
                 val charString = charSequence.toString()
-                if (charString.isEmpty()) {
-                    recordingListFiltered = recordingList
-                } else {
-                    val filteredList = ArrayList<TimerRecording>()
-                    // Iterate over the available channels. Use a copy on write
-                    // array in case the channel list changes during filtering.
+                val filteredList: MutableList<TimerRecording> = ArrayList()
+                if (charString.isNotEmpty()) {
                     for (recording in CopyOnWriteArrayList(recordingList)) {
-                        // name match condition. this might differ depending on your requirement
-                        // here we are looking for a channel name match
                         val title = recording.title ?: ""
                         val name = recording.name ?: ""
-                        if (title.toLowerCase().contains(charString.toLowerCase())) {
-                            filteredList.add(recording)
-                        } else if (name.toLowerCase().contains(charString.toLowerCase())) {
-                            filteredList.add(recording)
+                        when {
+                            title.toLowerCase().contains(charString.toLowerCase()) -> filteredList.add(recording)
+                            name.toLowerCase().contains(charString.toLowerCase()) -> filteredList.add(recording)
                         }
                     }
-                    recordingListFiltered = filteredList
+                } else {
+                    filteredList.addAll(recordingList)
                 }
 
                 val filterResults = FilterResults()
-                filterResults.values = recordingListFiltered
+                filterResults.values = filteredList
                 return filterResults
             }
 
             override fun publishResults(charSequence: CharSequence, filterResults: FilterResults) {
+                recordingListFiltered.clear()
                 @Suppress("UNCHECKED_CAST")
-                recordingListFiltered = filterResults.values as ArrayList<TimerRecording>
+                recordingListFiltered.addAll(filterResults.values as ArrayList<TimerRecording>)
                 notifyDataSetChanged()
             }
         }

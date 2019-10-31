@@ -87,37 +87,27 @@ class ChannelRecyclerViewAdapter internal constructor(private val viewModel: Cha
         return object : Filter() {
             override fun performFiltering(charSequence: CharSequence): FilterResults {
                 val charString = charSequence.toString()
-                if (charString.isEmpty()) {
-                    channelListFiltered = channelList
-                } else {
-                    val filteredList = ArrayList<Channel>()
-                    // Iterate over the available channels. Use a copy on write
-                    // array in case the channel list changes during filtering.
+                val filteredList: MutableList<Channel> = ArrayList()
+                if (charString.isNotEmpty()) {
                     for (channel in CopyOnWriteArrayList(channelList)) {
-                        // name match condition. this might differ depending on your requirement
-                        // here we are looking for a channel name match
                         val name = channel.name ?: ""
-                        val programTitle = channel.programTitle ?: ""
-                        val programSubtitle = channel.programSubtitle ?: ""
-                        val nextProgramTitle = channel.nextProgramTitle ?: ""
                         when {
                             name.toLowerCase().contains(charString.toLowerCase()) -> filteredList.add(channel)
-                            programTitle.toLowerCase().contains(charString.toLowerCase()) -> filteredList.add(channel)
-                            programSubtitle.toLowerCase().contains(charString.toLowerCase()) -> filteredList.add(channel)
-                            nextProgramTitle.toLowerCase().contains(charString.toLowerCase()) -> filteredList.add(channel)
                         }
                     }
-                    channelListFiltered = filteredList
+                } else {
+                    filteredList.addAll(channelList)
                 }
 
                 val filterResults = FilterResults()
-                filterResults.values = channelListFiltered
+                filterResults.values = filteredList
                 return filterResults
             }
 
             override fun publishResults(charSequence: CharSequence, filterResults: FilterResults) {
+                channelListFiltered.clear()
                 @Suppress("UNCHECKED_CAST")
-                channelListFiltered = filterResults.values as ArrayList<Channel>
+                channelListFiltered.addAll(filterResults.values as ArrayList<Channel>)
                 notifyDataSetChanged()
             }
         }

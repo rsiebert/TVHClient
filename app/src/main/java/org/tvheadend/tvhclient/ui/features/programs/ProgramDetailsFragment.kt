@@ -44,6 +44,9 @@ class ProgramDetailsFragment : BaseFragment() {
             (activity as LayoutInterface).forceSingleScreenLayout()
         }
 
+        toolbarInterface.setTitle(getString(R.string.details))
+        toolbarInterface.setSubtitle("")
+
         programViewModel.eventId = arguments?.getInt("eventId", 0) ?: 0
         programViewModel.channelId = arguments?.getInt("channelId", 0) ?: 0
 
@@ -142,7 +145,7 @@ class ProgramDetailsFragment : BaseFragment() {
             R.id.menu_search_fileaffinity -> return searchTitleOnFileAffinityWebsite(ctx, program.title)
             R.id.menu_search_youtube -> return searchTitleOnYoutube(ctx, program.title)
             R.id.menu_search_google -> return searchTitleOnGoogle(ctx, program.title)
-            R.id.menu_search_epg -> return searchTitleInTheLocalDatabase(ctx, program.title, program.channelId)
+            R.id.menu_search_epg -> return searchTitleInTheLocalDatabase(activity!!, baseViewModel, program.title, program.channelId)
 
             R.id.menu_add_notification -> return addNotificationProgramIsAboutToStart(ctx, program, programViewModel.getRecordingProfile())
             else -> return false

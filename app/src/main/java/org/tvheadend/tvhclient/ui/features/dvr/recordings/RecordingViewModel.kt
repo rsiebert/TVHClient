@@ -17,7 +17,6 @@ import timber.log.Timber
 
 class RecordingViewModel(application: Application) : BaseViewModel(application), SharedPreferences.OnSharedPreferenceChangeListener {
 
-    var searchQuery = ""
     var selectedListPosition = 0
     var currentId = 0
     val completedRecordings: LiveData<List<Recording>>

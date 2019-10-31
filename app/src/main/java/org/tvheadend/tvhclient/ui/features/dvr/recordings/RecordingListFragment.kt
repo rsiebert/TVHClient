@@ -1,11 +1,11 @@
 package org.tvheadend.tvhclient.ui.features.dvr.recordings
 
-import android.app.SearchManager
 import android.os.Bundle
 import android.view.*
 import android.widget.Filter
 import androidx.appcompat.widget.PopupMenu
 import androidx.fragment.app.FragmentTransaction
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.recyclerview_fragment.*
@@ -37,13 +37,25 @@ abstract class RecordingListFragment : BaseFragment(), RecyclerViewClickCallback
 
         arguments?.let {
             recordingViewModel.selectedListPosition = it.getInt("listPosition")
-            recordingViewModel.searchQuery = it.getString(SearchManager.QUERY) ?: ""
         }
 
         recyclerViewAdapter = RecordingRecyclerViewAdapter(isDualPane, this, htspVersion)
         recycler_view.layoutManager = LinearLayoutManager(activity)
         recycler_view.adapter = recyclerViewAdapter
         recycler_view.gone()
+    }
+
+    private fun observeSearchQuery() {
+        Timber.d("Observing search query")
+        baseViewModel.searchQuery.observe(viewLifecycleOwner, Observer { query ->
+            if (query.isNotEmpty()) {
+                Timber.d("View model returned search query '$query'")
+                onSearchRequested(query)
+            } else {
+                Timber.d("View model returned empty search query")
+                onSearchResultsCleared()
+            }
+        })
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -132,7 +144,7 @@ abstract class RecordingListFragment : BaseFragment(), RecyclerViewClickCallback
                 R.id.menu_search_fileaffinity -> return@setOnMenuItemClickListener searchTitleOnFileAffinityWebsite(ctx, recording.title)
                 R.id.menu_search_youtube -> return@setOnMenuItemClickListener searchTitleOnYoutube(ctx, recording.title)
                 R.id.menu_search_google -> return@setOnMenuItemClickListener searchTitleOnGoogle(ctx, recording.title)
-                R.id.menu_search_epg -> return@setOnMenuItemClickListener searchTitleInTheLocalDatabase(ctx, recording.title)
+                R.id.menu_search_epg -> return@setOnMenuItemClickListener searchTitleInTheLocalDatabase(activity!!, baseViewModel, recording.title)
 
                 R.id.menu_disable_recording -> return@setOnMenuItemClickListener enableScheduledRecording(recording, false)
                 R.id.menu_enable_recording -> return@setOnMenuItemClickListener enableScheduledRecording(recording, true)
@@ -158,52 +170,44 @@ abstract class RecordingListFragment : BaseFragment(), RecyclerViewClickCallback
     }
 
     override fun onLongClick(view: View, position: Int): Boolean {
-        Timber.d("Long click on item $position")
         showPopupMenu(view, position)
         return true
     }
 
-    fun updateUI(stringId: Int) {
-        recycler_view?.visible()
-
-        if (recordingViewModel.searchQuery.isEmpty()) {
-            toolbarInterface.setSubtitle(resources.getQuantityString(R.plurals.items, recyclerViewAdapter.itemCount, recyclerViewAdapter.itemCount))
-        } else {
-            toolbarInterface.setSubtitle(resources.getQuantityString(stringId, recyclerViewAdapter.itemCount, recyclerViewAdapter.itemCount))
+    fun addRecordingsAndUpdateUI(recordings: List<Recording>?) {
+        if (recordings != null) {
+            recyclerViewAdapter.addItems(recordings)
+            observeSearchQuery()
         }
+        recycler_view?.visible()
+        showStatusInToolbar()
+        activity?.invalidateOptionsMenu()
 
         if (isDualPane && recyclerViewAdapter.itemCount > 0) {
             showRecordingDetails(recordingViewModel.selectedListPosition)
         }
-        // Invalidate the menu so that the search menu item is shown in
-        // case the adapter contains items now.
-        activity?.invalidateOptionsMenu()
     }
+
+    abstract fun showStatusInToolbar()
 
     override fun downloadRecording() {
         DownloadRecordingManager(activity, connection, recyclerViewAdapter.getItem(recordingViewModel.selectedListPosition))
     }
 
     override fun onFilterComplete(i: Int) {
-        // Preselect the first result item in the details screen
+        showStatusInToolbar()
+
         if (isDualPane && recyclerViewAdapter.itemCount > 0) {
             showRecordingDetails(0)
         }
     }
 
     override fun onSearchRequested(query: String) {
-        recordingViewModel.searchQuery = query
         recyclerViewAdapter.filter.filter(query, this)
     }
 
-    override fun onSearchResultsCleared(): Boolean {
-        return if (recordingViewModel.searchQuery.isNotEmpty()) {
-            recordingViewModel.searchQuery = ""
-            recyclerViewAdapter.filter.filter("", this)
-            true
-        } else {
-            false
-        }
+    override fun onSearchResultsCleared() {
+        recyclerViewAdapter.filter.filter("", this)
     }
 
     abstract override fun getQueryHint(): String

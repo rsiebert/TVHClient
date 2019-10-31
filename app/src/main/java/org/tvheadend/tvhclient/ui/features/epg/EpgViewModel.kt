@@ -33,11 +33,10 @@ class EpgViewModel(application: Application) : BaseChannelViewModel(application)
     var verticalScrollOffset = 0
     var verticalScrollPosition = 0
     var selectedTimeOffset = 0
-    var searchQuery = ""
 
     var hoursToShow: Int
-    val daysToShow: Int
-    val fragmentCount: Int
+    var daysToShow: Int
+    var fragmentCount: Int
 
     private val startTimes = ArrayList<Long>()
     private val endTimes = ArrayList<Long>()
@@ -74,8 +73,15 @@ class EpgViewModel(application: Application) : BaseChannelViewModel(application)
         }
 
         reloadEpgData = Transformations.switchMap(EpgProgramDataLiveData(epgChannels, hoursOfEpgDataPerScreen, daysOfEpgData)) { value ->
+            Timber.d("Updating hours to show, days to show and fragment count because the settings have changed")
+            hoursToShow = value.second ?: 1
+            hoursToShow = if (hoursToShow == 0) 1 else hoursToShow
+            daysToShow = value.third ?: 7
+            fragmentCount = daysToShow * (24 / hoursToShow)
+
             val reload = MutableLiveData<Boolean>()
             reload.value = value.first != null && value.second != null && value.third != null
+            Timber.d("Reload of epg data is required $reload")
             return@switchMap reload
         }
 
@@ -90,20 +96,17 @@ class EpgViewModel(application: Application) : BaseChannelViewModel(application)
     }
 
     fun loadEpgData() {
-        Timber.d("Loading epg data via coroutine")
         viewModelScope.launch {
             val defaultChannelSortOrder = appContext.resources.getString(R.string.pref_default_channel_sort_order)
             val order = Integer.valueOf(sharedPreferences.getString("channel_sort_order", defaultChannelSortOrder) ?: defaultChannelSortOrder)
-            var hours = hoursOfEpgDataPerScreen.value!!
-            hours = if (hours == 0) 1 else hours
+            val hours = hoursOfEpgDataPerScreen.value!!
             val days = daysOfEpgData.value!!
 
-            Timber.d("Loading epg data from database with channel order $order, $hours hours per screen and for $days days")
+            Timber.d("Loading epg data via coroutine from database with channel order $order, $hours hours per screen and for $days days")
             withContext(Dispatchers.IO) {
                 epgData.postValue(loadProgramsBetweenTime(order, hours, days))
             }
         }
-        Timber.d("Done loading epg data via coroutine")
     }
 
     private suspend fun loadProgramsBetweenTime(order: Int, hours: Int, days: Int) = withContext(Dispatchers.IO) {

@@ -85,7 +85,7 @@ class SeriesRecordingDetailsFragment : BaseFragment(), RecordingRemovedCallback 
             R.id.menu_search_fileaffinity -> return searchTitleOnFileAffinityWebsite(ctx, recording.title)
             R.id.menu_search_youtube -> return searchTitleOnYoutube(ctx, recording.title)
             R.id.menu_search_google -> return searchTitleOnGoogle(ctx, recording.title)
-            R.id.menu_search_epg -> return searchTitleInTheLocalDatabase(ctx, recording.title)
+            R.id.menu_search_epg -> return searchTitleInTheLocalDatabase(activity!!, baseViewModel, recording.title)
             else -> super.onOptionsItemSelected(item)
         }
     }

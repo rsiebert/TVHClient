@@ -8,9 +8,9 @@ import kotlinx.coroutines.runBlocking
 import org.tvheadend.tvhclient.data.db.AppRoomDatabase
 import org.tvheadend.tvhclient.domain.entity.EpgProgram
 import org.tvheadend.tvhclient.domain.entity.Program
-import org.tvheadend.tvhclient.domain.entity.SearchResultProgram
 import timber.log.Timber
 import java.util.*
+import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 
 class ProgramData(private val db: AppRoomDatabase) : DataSourceInterface<Program> {
@@ -78,18 +78,12 @@ class ProgramData(private val db: AppRoomDatabase) : DataSourceInterface<Program
         return programs
     }
 
-    fun getLiveDataItemsFromTime(time: Long): LiveData<List<SearchResultProgram>> {
+    fun getLiveDataItemsFromTime(time: Long): LiveData<List<Program>> {
         return db.programDao.loadProgramsFromTime(time)
     }
 
     fun getLiveDataItemByChannelIdAndTime(channelId: Int, time: Long): LiveData<List<Program>> {
         return db.programDao.loadProgramsFromChannelFromTime(channelId, time)
-    }
-
-    suspend fun getItemByChannelIdAndBetweenTimeSuspendable(channelId: Int, startTime: Long, endTime: Long): List<EpgProgram> {
-        val programs = ArrayList<EpgProgram>()
-        programs.addAll(db.programDao.loadProgramsFromChannelBetweenTimeSuspendable(channelId, startTime, endTime))
-        return programs
     }
 
     fun getItemByChannelIdAndBetweenTime(channelId: Int, startTime: Long, endTime: Long): List<EpgProgram> {
@@ -132,5 +126,13 @@ class ProgramData(private val db: AppRoomDatabase) : DataSourceInterface<Program
             epgData[channels[i].id] = programs
         }
         return epgData
+    }
+
+    fun getItemsByChannelId(id: Int): List<Program> {
+        val programs = ArrayList<Program>()
+        runBlocking(Dispatchers.IO) {
+            programs.addAll(db.programDao.loadProgramsFromChannelSync(id))
+        }
+        return programs
     }
 }

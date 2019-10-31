@@ -71,34 +71,31 @@ class RecordingRecyclerViewAdapter internal constructor(private val isDualPane: 
         return object : Filter() {
             override fun performFiltering(charSequence: CharSequence): FilterResults {
                 val charString = charSequence.toString()
-                if (charString.isEmpty()) {
-                    recordingListFiltered = recordingList
-                } else {
-                    val filteredList = ArrayList<Recording>()
+                val filteredList: MutableList<Recording> = ArrayList()
+                if (charString.isNotEmpty()) {
                     // Iterate over the available channels. Use a copy on write
                     // array in case the channel list changes during filtering.
                     for (recording in CopyOnWriteArrayList(recordingList)) {
-                        // name match condition. this might differ depending on your requirement
-                        // here we are looking for a channel name match
                         val title = recording.title ?: ""
                         val subtitle = recording.subtitle ?: ""
-                        if (title.toLowerCase().contains(charString.toLowerCase())) {
-                            filteredList.add(recording)
-                        } else if (subtitle.toLowerCase().contains(charString.toLowerCase())) {
-                            filteredList.add(recording)
+                        when {
+                            title.toLowerCase().contains(charString.toLowerCase()) -> filteredList.add(recording)
+                            subtitle.toLowerCase().contains(charString.toLowerCase()) -> filteredList.add(recording)
                         }
                     }
-                    recordingListFiltered = filteredList
+                } else {
+                    filteredList.addAll(recordingList)
                 }
 
                 val filterResults = FilterResults()
-                filterResults.values = recordingListFiltered
+                filterResults.values = filteredList
                 return filterResults
             }
 
             override fun publishResults(charSequence: CharSequence, filterResults: FilterResults) {
+                recordingListFiltered.clear()
                 @Suppress("UNCHECKED_CAST")
-                recordingListFiltered = filterResults.values as ArrayList<Recording>
+                recordingListFiltered.addAll(filterResults.values as ArrayList<Recording>)
                 notifyDataSetChanged()
             }
         }

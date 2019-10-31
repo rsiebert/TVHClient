@@ -14,7 +14,6 @@ import java.util.*
 
 class TimerRecordingViewModel(application: Application) : BaseViewModel(application) {
 
-    var searchQuery = ""
     var selectedListPosition = 0
     var currentId = ""
     var recording = TimerRecording()

@@ -46,14 +46,6 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.features.search.SearchActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.SEARCH" />
-            </intent-filter>
-            <meta-data
-                android:name="android.app.searchable"
-                android:resource="@xml/searchable" />
-        </activity>
         <activity android:name=".ui.features.settings.SettingsActivity" />
         <activity
             android:name=".ui.features.playback.external.ExpandedControlsActivity"
@@ -68,9 +60,15 @@
         <activity
             android:name=".ui.features.MainActivity"
             android:launchMode="singleTask">
+            <intent-filter>
+                <action android:name="android.intent.action.SEARCH" />
+            </intent-filter>
             <meta-data
                 android:name="android.app.default_searchable"
-                android:value=".ui.features.search.SearchActivity" />
+                android:value=".ui.features.MainActivity" />
+            <meta-data
+                android:name="android.app.searchable"
+                android:resource="@xml/searchable" />
         </activity>
         <activity
             android:name=".ui.features.programs.ProgramDetailsActivity"

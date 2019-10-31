@@ -1,6 +1,5 @@
 package org.tvheadend.tvhclient.ui.features.dvr.timer_recordings
 
-import android.app.SearchManager
 import android.os.Bundle
 import android.view.*
 import android.widget.Filter
@@ -18,6 +17,7 @@ import org.tvheadend.tvhclient.ui.common.callbacks.RecyclerViewClickCallback
 import org.tvheadend.tvhclient.ui.features.search.SearchRequestInterface
 import org.tvheadend.tvhclient.util.extensions.gone
 import org.tvheadend.tvhclient.util.extensions.visible
+import timber.log.Timber
 import java.util.concurrent.CopyOnWriteArrayList
 
 class TimerRecordingListFragment : BaseFragment(), RecyclerViewClickCallback, SearchRequestInterface, Filter.FilterListener {
@@ -35,40 +35,52 @@ class TimerRecordingListFragment : BaseFragment(), RecyclerViewClickCallback, Se
 
         arguments?.let {
             timerRecordingViewModel.selectedListPosition = it.getInt("listPosition")
-            timerRecordingViewModel.searchQuery = it.getString(SearchManager.QUERY) ?: ""
         }
-
-        toolbarInterface.setTitle(if (timerRecordingViewModel.searchQuery.isEmpty())
-            getString(R.string.timer_recordings)
-        else
-            getString(R.string.search_results))
 
         recyclerViewAdapter = TimerRecordingRecyclerViewAdapter(isDualPane, this, htspVersion)
         recycler_view.layoutManager = LinearLayoutManager(activity)
         recycler_view.adapter = recyclerViewAdapter
-
         recycler_view.gone()
 
         timerRecordingViewModel.recordings.observe(viewLifecycleOwner, Observer { recordings ->
             if (recordings != null) {
                 recyclerViewAdapter.addItems(recordings)
+                observeSearchQuery()
             }
 
             recycler_view?.visible()
-
-            if (timerRecordingViewModel.searchQuery.isEmpty()) {
-                toolbarInterface.setSubtitle(resources.getQuantityString(R.plurals.items, recyclerViewAdapter.itemCount, recyclerViewAdapter.itemCount))
-            } else {
-                toolbarInterface.setSubtitle(resources.getQuantityString(R.plurals.timer_recordings, recyclerViewAdapter.itemCount, recyclerViewAdapter.itemCount))
-            }
+            showStatusInToolbar()
+            activity?.invalidateOptionsMenu()
 
             if (isDualPane && recyclerViewAdapter.itemCount > 0) {
                 showRecordingDetails(timerRecordingViewModel.selectedListPosition)
             }
-            // Invalidate the menu so that the search menu item is shown in
-            // case the adapter contains items now.
-            activity?.invalidateOptionsMenu()
         })
+    }
+
+    private fun observeSearchQuery() {
+        Timber.d("Observing search query")
+        baseViewModel.searchQuery.observe(viewLifecycleOwner, Observer { query ->
+            if (query.isNotEmpty()) {
+                Timber.d("View model returned search query '$query'")
+                onSearchRequested(query)
+            } else {
+                Timber.d("View model returned empty search query")
+                onSearchResultsCleared()
+            }
+        })
+    }
+
+    private fun showStatusInToolbar() {
+        context?.let {
+            if (!baseViewModel.isSearchActive) {
+                toolbarInterface.setTitle(getString(R.string.timer_recordings))
+                toolbarInterface.setSubtitle(it.resources.getQuantityString(R.plurals.items, recyclerViewAdapter.itemCount, recyclerViewAdapter.itemCount))
+            } else {
+                toolbarInterface.setTitle(getString(R.string.search_results))
+                toolbarInterface.setSubtitle(it.resources.getQuantityString(R.plurals.timer_recordings, recyclerViewAdapter.itemCount, recyclerViewAdapter.itemCount))
+            }
+        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -154,7 +166,7 @@ class TimerRecordingListFragment : BaseFragment(), RecyclerViewClickCallback, Se
                 R.id.menu_search_fileaffinity -> return@setOnMenuItemClickListener searchTitleOnFileAffinityWebsite(ctx, timerRecording.title)
                 R.id.menu_search_youtube -> return@setOnMenuItemClickListener searchTitleOnYoutube(ctx, timerRecording.title)
                 R.id.menu_search_google -> return@setOnMenuItemClickListener searchTitleOnGoogle(ctx, timerRecording.title)
-                R.id.menu_search_epg -> return@setOnMenuItemClickListener searchTitleInTheLocalDatabase(ctx, timerRecording.title)
+                R.id.menu_search_epg -> return@setOnMenuItemClickListener searchTitleInTheLocalDatabase(activity!!, baseViewModel, timerRecording.title)
                 else -> return@setOnMenuItemClickListener false
             }
         }
@@ -180,28 +192,19 @@ class TimerRecordingListFragment : BaseFragment(), RecyclerViewClickCallback, Se
     }
 
     override fun onFilterComplete(i: Int) {
-        context?.let {
-            if (timerRecordingViewModel.searchQuery.isEmpty()) {
-                toolbarInterface.setSubtitle(it.resources.getQuantityString(R.plurals.items, recyclerViewAdapter.itemCount, recyclerViewAdapter.itemCount))
-            } else {
-                toolbarInterface.setSubtitle(it.resources.getQuantityString(R.plurals.timer_recordings, recyclerViewAdapter.itemCount, recyclerViewAdapter.itemCount))
-            }
+        showStatusInToolbar()
+        // Preselect the first result item in the details screen
+        if (isDualPane && recyclerViewAdapter.itemCount > 0) {
+            showRecordingDetails(0)
         }
     }
 
     override fun onSearchRequested(query: String) {
-        timerRecordingViewModel.searchQuery = query
         recyclerViewAdapter.filter.filter(query, this)
     }
 
-    override fun onSearchResultsCleared(): Boolean {
-        return if (timerRecordingViewModel.searchQuery.isNotEmpty()) {
-            timerRecordingViewModel.searchQuery = ""
-            recyclerViewAdapter.filter.filter("", this)
-            true
-        } else {
-            false
-        }
+    override fun onSearchResultsCleared() {
+        recyclerViewAdapter.filter.filter("", this)
     }
 
     override fun getQueryHint(): String {

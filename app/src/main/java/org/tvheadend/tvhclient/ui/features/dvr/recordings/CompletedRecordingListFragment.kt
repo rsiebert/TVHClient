@@ -4,22 +4,17 @@ import android.os.Bundle
 import android.view.Menu
 import androidx.lifecycle.Observer
 import org.tvheadend.tvhclient.R
+import timber.log.Timber
 
 class CompletedRecordingListFragment : RecordingListFragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        toolbarInterface.setTitle(if (recordingViewModel.searchQuery.isEmpty())
-            getString(R.string.completed_recordings)
-        else
-            getString(R.string.search_results))
-
+        Timber.d("Observing recordings")
         recordingViewModel.completedRecordings.observe(viewLifecycleOwner, Observer { recordings ->
-            if (recordings != null) {
-                recyclerViewAdapter.addItems(recordings)
-            }
-            updateUI(R.plurals.completed_recordings)
+            Timber.d("View model returned ${recordings.size} recordings")
+            addRecordingsAndUpdateUI(recordings)
         })
     }
 
@@ -29,17 +24,19 @@ class CompletedRecordingListFragment : RecordingListFragment() {
         menu.findItem(R.id.media_route_menu_item)?.isVisible = true
     }
 
-    override fun onFilterComplete(i: Int) {
+    override fun getQueryHint(): String {
+        return getString(R.string.search_completed_recordings)
+    }
+
+    override fun showStatusInToolbar() {
         context?.let {
-            if (recordingViewModel.searchQuery.isEmpty()) {
+            if (!baseViewModel.isSearchActive) {
+                toolbarInterface.setTitle(getString(R.string.completed_recordings))
                 toolbarInterface.setSubtitle(it.resources.getQuantityString(R.plurals.items, recyclerViewAdapter.itemCount, recyclerViewAdapter.itemCount))
             } else {
+                toolbarInterface.setTitle(getString(R.string.search_results))
                 toolbarInterface.setSubtitle(it.resources.getQuantityString(R.plurals.completed_recordings, recyclerViewAdapter.itemCount, recyclerViewAdapter.itemCount))
             }
         }
-    }
-
-    override fun getQueryHint(): String {
-        return getString(R.string.search_completed_recordings)
     }
 }
