@@ -19,5 +19,8 @@
         android:id="@+id/menu_channel_sort_order"
         android:orderInCategory="8"
         android:title="@string/pref_sort_channels" />
-
+    <item
+        android:id="@+id/menu_search_channels"
+        android:orderInCategory="9"
+        android:title="@string/search_for_channels" />
 </menu>

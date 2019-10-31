@@ -398,4 +398,6 @@
     <string name="accept">Accept</string>
     <string name="reject">Reject</string>
     <string name="contact_information">Please contact me if you require support.\nEmail: rsiebert80@gmail.com\nDiscord: https://discord.gg/RbBXfG3</string>
+    <string name="search_for_channels">Search for channels</string>
+    <string name="enter_channel_name">Enter channel name</string>
 </resources>
