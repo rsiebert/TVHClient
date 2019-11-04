@@ -18,12 +18,13 @@ import timber.log.Timber
 class RecordingViewModel(application: Application) : BaseViewModel(application), SharedPreferences.OnSharedPreferenceChangeListener {
 
     var selectedListPosition = 0
-    var currentId = 0
+    val currentId = MutableLiveData(0)
     val completedRecordings: LiveData<List<Recording>>
     val scheduledRecordings: LiveData<List<Recording>>
     val failedRecordings: LiveData<List<Recording>>
     val removedRecordings: LiveData<List<Recording>>
 
+    var recordingLiveData = MediatorLiveData<Recording>()
     var recording = Recording()
     var recordingProfileNameId = 0
 
@@ -50,6 +51,12 @@ class RecordingViewModel(application: Application) : BaseViewModel(application),
 
     init {
         onSharedPreferenceChanged(sharedPreferences, "hide_duplicate_scheduled_recordings_enabled")
+
+        recordingLiveData.addSource(currentId) { value ->
+            if (value > 0) {
+                recordingLiveData.value = appRepository.recordingData.getItemById(value)
+            }
+        }
 
         val trigger = ScheduledRecordingLiveData(hideDuplicateScheduledRecordings)
         scheduledRecordings = switchMap(trigger) { value ->
@@ -83,10 +90,6 @@ class RecordingViewModel(application: Application) : BaseViewModel(application),
                 hideDuplicateScheduledRecordings.value = sharedPreferences.getBoolean(key, appContext.resources.getBoolean(R.bool.pref_default_hide_duplicate_scheduled_recordings_enabled))
             }
         }
-    }
-
-    fun getCurrentRecording(): LiveData<Recording>? {
-        return appRepository.recordingData.getLiveDataItemById(currentId)
     }
 
     fun loadRecordingByIdSync(id: Int) {

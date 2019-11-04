@@ -105,16 +105,16 @@ abstract class RecordingListFragment : BaseFragment(), RecyclerViewClickCallback
                 it.commit()
             }
         } else {
-            // Check what fragment is currently shown, replace if needed.
             var fragment = activity?.supportFragmentManager?.findFragmentById(R.id.details)
-            if (fragment !is RecordingDetailsFragment || recordingViewModel.currentId != recording.id) {
-                // Make new fragment to show this selection.
+            if (fragment !is RecordingDetailsFragment) {
                 fragment = RecordingDetailsFragment.newInstance(recording.id)
                 fm?.beginTransaction()?.also {
                     it.replace(R.id.details, fragment)
                     it.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
                     it.commit()
                 }
+            } else if (recordingViewModel.currentId.value != recording.id){
+                recordingViewModel.currentId.value = recording.id
             }
         }
     }

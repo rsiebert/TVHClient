@@ -16,8 +16,9 @@ import java.util.*
 
 class ProgramViewModel(application: Application) : BaseViewModel(application), SharedPreferences.OnSharedPreferenceChangeListener {
 
-    val programs: LiveData<List<Program>>
-    val recordings: LiveData<List<Recording>>
+    var program = MediatorLiveData<Program>()
+    var programs: LiveData<List<Program>>
+    var recordings: LiveData<List<Recording>>
 
     var selectedTime: Long = System.currentTimeMillis()
     var eventId = 0
@@ -25,10 +26,11 @@ class ProgramViewModel(application: Application) : BaseViewModel(application), S
     var channelName = ""
 
     var showProgramChannelIcon = false
-    var showGenreColor: MutableLiveData<Boolean> = MutableLiveData()
-    var showProgramSubtitles: MutableLiveData<Boolean> = MutableLiveData()
-    var showProgramArtwork: MutableLiveData<Boolean> = MutableLiveData()
+    var showGenreColor = MutableLiveData<Boolean>()
+    var showProgramSubtitles = MutableLiveData<Boolean>()
+    var showProgramArtwork = MutableLiveData<Boolean>()
 
+    val eventIdLiveData = MutableLiveData(0)
     val channelIdLiveData = MutableLiveData(0)
     val selectedTimeLiveData = MutableLiveData(Date().time)
 
@@ -37,6 +39,12 @@ class ProgramViewModel(application: Application) : BaseViewModel(application), S
         onSharedPreferenceChanged(sharedPreferences, "genre_colors_for_programs_enabled")
         onSharedPreferenceChanged(sharedPreferences, "program_subtitle_enabled")
         onSharedPreferenceChanged(sharedPreferences, "program_artwork_enabled")
+
+        program.addSource(eventIdLiveData) { value ->
+            if (value > 0) {
+                program.value = appRepository.programData.getItemById(value)
+            }
+        }
 
         programs = Transformations.switchMap(ProgramLiveData(channelIdLiveData, selectedTimeLiveData)) { value ->
             val channelId = value.first ?: 0
@@ -76,14 +84,6 @@ class ProgramViewModel(application: Application) : BaseViewModel(application), S
             "program_subtitle_enabled" -> showProgramSubtitles.value = sharedPreferences.getBoolean(key, appContext.resources.getBoolean(R.bool.pref_default_program_subtitle_enabled))
             "program_artwork_enabled" -> showProgramArtwork.value = sharedPreferences.getBoolean(key, appContext.resources.getBoolean(R.bool.pref_default_program_artwork_enabled))
         }
-    }
-
-    fun getCurrentProgram(): Program? {
-        return appRepository.programData.getItemById(eventId)
-    }
-
-    fun getRecordingsFromCurrentChannel(): LiveData<List<Recording>> {
-        return appRepository.recordingData.getLiveDataItemsByChannelId(channelId)
     }
 
     fun getRecordingProfile(): ServerProfile? {

@@ -129,16 +129,16 @@ class TimerRecordingListFragment : BaseFragment(), RecyclerViewClickCallback, Se
                 it.commit()
             }
         } else {
-            // Check what fragment is currently shown, replace if needed.
-            var fragment = activity?.supportFragmentManager?.findFragmentById(R.id.main)
-            if (fragment !is TimerRecordingDetailsFragment || timerRecordingViewModel.currentId != recording.id) {
-                // Make new fragment to show this selection.
+            var fragment = activity?.supportFragmentManager?.findFragmentById(R.id.details)
+            if (fragment !is TimerRecordingDetailsFragment) {
                 fragment = TimerRecordingDetailsFragment.newInstance(recording.id)
                 fm?.beginTransaction()?.also {
                     it.replace(R.id.details, fragment)
                     it.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
                     it.commit()
                 }
+            } else if (timerRecordingViewModel.currentId.value != recording.id){
+                timerRecordingViewModel.currentId.value = recording.id
             }
         }
     }

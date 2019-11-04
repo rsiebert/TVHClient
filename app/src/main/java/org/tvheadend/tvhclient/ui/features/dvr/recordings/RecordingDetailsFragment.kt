@@ -17,6 +17,9 @@ import org.tvheadend.tvhclient.ui.features.download.DownloadRecordingManager
 import org.tvheadend.tvhclient.ui.features.dvr.RecordingRemovedCallback
 import org.tvheadend.tvhclient.util.extensions.gone
 import org.tvheadend.tvhclient.util.extensions.visible
+import timber.log.Timber
+
+// TODO Observe the id and load the recording as livedata
 
 class RecordingDetailsFragment : BaseFragment(), RecordingRemovedCallback, DownloadPermissionGrantedInterface {
 
@@ -40,23 +43,31 @@ class RecordingDetailsFragment : BaseFragment(), RecordingRemovedCallback, Downl
 
         // Get the recording id after an orientation change has occurred
         // or when the fragment is shown for the first time
-        recordingViewModel.currentId = arguments?.getInt("id", 0) ?: 0
+        arguments?.let {
+            recordingViewModel.currentId.value = it.getInt("id", 0)
+        }
 
-        recordingViewModel.getCurrentRecording()?.observe(viewLifecycleOwner, Observer { rec ->
-            if (rec != null) {
-                recording = rec
-                itemBinding.recording = recording
-                itemBinding.htspVersion = htspVersion
-                // The toolbar is hidden as a default to prevent pressing any icons if no recording
-                // has been loaded yet. The toolbar is shown here because a recording was loaded
-                nested_toolbar.visible()
-                activity?.invalidateOptionsMenu()
-            } else {
-                scrollview.gone()
-                status.text = getString(R.string.error_loading_recording_details)
-                status.visible()
-            }
+        Timber.d("Observing recording")
+        recordingViewModel.recordingLiveData.observe(viewLifecycleOwner, Observer {
+            Timber.d("View model returned a recording")
+            recording = it
+            showRecordingDetails()
         })
+    }
+
+    private fun showRecordingDetails() {
+        if (recording != null) {
+            itemBinding.recording = recording
+            itemBinding.htspVersion = htspVersion
+            // The toolbar is hidden as a default to prevent pressing any icons if no recording
+            // has been loaded yet. The toolbar is shown here because a recording was loaded
+            nested_toolbar.visible()
+            activity?.invalidateOptionsMenu()
+        } else {
+            scrollview.gone()
+            status.text = getString(R.string.error_loading_recording_details)
+            status.visible()
+        }
     }
 
     override fun onPrepareOptionsMenu(menu: Menu) {

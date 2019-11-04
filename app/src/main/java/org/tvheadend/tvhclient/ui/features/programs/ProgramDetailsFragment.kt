@@ -21,8 +21,6 @@ import org.tvheadend.tvhclient.util.extensions.gone
 import org.tvheadend.tvhclient.util.extensions.visible
 import timber.log.Timber
 
-// TODO put event and channel Id into the viewmodel
-
 class ProgramDetailsFragment : BaseFragment() {
 
     private lateinit var programViewModel: ProgramViewModel
@@ -47,61 +45,74 @@ class ProgramDetailsFragment : BaseFragment() {
         toolbarInterface.setTitle(getString(R.string.details))
         toolbarInterface.setSubtitle("")
 
-        programViewModel.eventId = arguments?.getInt("eventId", 0) ?: 0
-        programViewModel.channelId = arguments?.getInt("channelId", 0) ?: 0
+        // In case the fragment was called from the program activity, program list or any adapter
+        arguments?.let {
+            programViewModel.eventIdLiveData.value = it.getInt("eventId", 0)
+            programViewModel.channelIdLiveData.value = it.getInt("channelId", 0)
+        }
 
-        program = programViewModel.getCurrentProgram()
-        if (program != null) {
-            program?.let {
-                Timber.d("Loaded details for program ${it.title}")
-                itemBinding.program = it
-                itemBinding.viewModel = programViewModel
-                // The toolbar is hidden as a default to prevent pressing any icons if no recording
-                // has been loaded yet. The toolbar is shown here because a recording was loaded
-                nested_toolbar.visible()
-                activity?.invalidateOptionsMenu()
+        Timber.d("Observing program")
+        programViewModel.program.observe(viewLifecycleOwner, Observer {
+            Timber.d("View model returned a program")
+            program = it
+            showProgramDetails()
+        })
+
+        Timber.d("Observing recordings")
+        programViewModel.recordings.observe(viewLifecycleOwner, Observer { recordings ->
+            if (recordings != null) {
+                Timber.d("View model returned ${recordings.size} recordings")
+                showRecordingStatusOfProgram(recordings)
             }
+        })
+    }
+
+    private fun showProgramDetails() {
+        if (program != null) {
+            itemBinding.program = program
+            itemBinding.viewModel = programViewModel
+            // The toolbar is hidden as a default to prevent pressing any icons if no recording
+            // has been loaded yet. The toolbar is shown here because a recording was loaded
+            nested_toolbar.visible()
+            activity?.invalidateOptionsMenu()
         } else {
             scrollview.gone()
             status.text = getString(R.string.error_loading_program_details)
             status.visible()
         }
+    }
 
-        programViewModel.getRecordingsFromCurrentChannel().observe(viewLifecycleOwner, Observer { recordings ->
-            Timber.d("Got recordings")
-            if (recordings != null) {
-                var recordingExists = false
-                for (rec in recordings) {
-                    // Show the edit recording screen of the scheduled recording
-                    // in case the user has selected the record and edit menu item.
-                    // Otherwise remember the recording so that the state can be updated
-                    if (rec.eventId == programIdToBeEditedWhenBeingRecorded && programIdToBeEditedWhenBeingRecorded > 0) {
-                        programIdToBeEditedWhenBeingRecorded = 0
-                        val intent = Intent(activity, RecordingAddEditActivity::class.java)
-                        intent.putExtra("id", rec.id)
-                        intent.putExtra("type", "recording")
-                        activity?.startActivity(intent)
-                        break
+    private fun showRecordingStatusOfProgram(recordings: List<Recording>) {
+        var recordingExists = false
+        for (rec in recordings) {
+            // Show the edit recording screen of the scheduled recording
+            // in case the user has selected the record and edit menu item.
+            // Otherwise remember the recording so that the state can be updated
+            if (rec.eventId == programIdToBeEditedWhenBeingRecorded && programIdToBeEditedWhenBeingRecorded > 0) {
+                programIdToBeEditedWhenBeingRecorded = 0
+                val intent = Intent(activity, RecordingAddEditActivity::class.java)
+                intent.putExtra("id", rec.id)
+                intent.putExtra("type", "recording")
+                activity?.startActivity(intent)
+                break
 
-                    } else if (program != null && rec.eventId == program?.eventId) {
-                        Timber.d("Found recording for program ${program?.title}")
-                        recording = rec
-                        recordingExists = true
-                        break
-                    }
-                }
-                // If there is no recording for the program set the
-                // recording to null so that the correct state is shown
-                if (!recordingExists) {
-                    recording = null
-                }
-                // Update the state of the recording (if there is one)
-                // and also the menu items in the nested toolbar
-                program?.recording = recording
-                itemBinding.program = program
-                activity?.invalidateOptionsMenu()
+            } else if (program != null && rec.eventId == program?.eventId) {
+                Timber.d("Found recording for program ${program?.title}")
+                recording = rec
+                recordingExists = true
+                break
             }
-        })
+        }
+        // If there is no recording for the program set the
+        // recording to null so that the correct state is shown
+        if (!recordingExists) {
+            recording = null
+        }
+        // Update the state of the recording (if there is one)
+        // and also the menu items in the nested toolbar
+        program?.recording = recording
+        itemBinding.program = program
+        activity?.invalidateOptionsMenu()
     }
 
     override fun onPrepareOptionsMenu(menu: Menu) {
@@ -154,7 +165,7 @@ class ProgramDetailsFragment : BaseFragment() {
 
     companion object {
 
-        fun newInstance(eventId: Int, channelId: Int): ProgramDetailsFragment {
+        fun newInstance(eventId: Int = 0, channelId: Int = 0): ProgramDetailsFragment {
             val f = ProgramDetailsFragment()
             val args = Bundle()
             args.putInt("eventId", eventId)

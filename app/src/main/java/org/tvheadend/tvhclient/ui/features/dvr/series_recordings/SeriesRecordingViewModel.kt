@@ -3,6 +3,8 @@ package org.tvheadend.tvhclient.ui.features.dvr.series_recordings
 import android.app.Application
 import android.content.Intent
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MediatorLiveData
+import androidx.lifecycle.MutableLiveData
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.data.service.HtspService
 import org.tvheadend.tvhclient.domain.entity.Channel
@@ -15,8 +17,9 @@ import java.util.*
 class SeriesRecordingViewModel(application: Application) : BaseViewModel(application) {
 
     var selectedListPosition = 0
-    var currentId = ""
-    var recording = SeriesRecording()
+    val currentId = MutableLiveData("")
+    var recording = SeriesRecording()   // TODO rename to editedRecording
+    var recordingLiveData = MediatorLiveData<SeriesRecording>() // TODO rename to recording
     val recordings: LiveData<List<SeriesRecording>> = appRepository.seriesRecordingData.getLiveDataItems()
     var recordingProfileNameId = 0
 
@@ -63,8 +66,12 @@ class SeriesRecordingViewModel(application: Application) : BaseViewModel(applica
             }
         }
 
-    fun getCurrentRecording(): LiveData<SeriesRecording> {
-        return appRepository.seriesRecordingData.getLiveDataItemById(currentId)
+    init {
+        recordingLiveData.addSource(currentId) { value ->
+            if (value.isNotEmpty()) {
+                recordingLiveData.value = appRepository.seriesRecordingData.getItemById(value)
+            }
+        }
     }
 
     fun loadRecordingByIdSync(id: String) {

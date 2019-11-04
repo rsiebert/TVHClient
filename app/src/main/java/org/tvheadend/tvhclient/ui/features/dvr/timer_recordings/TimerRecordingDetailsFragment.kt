@@ -36,26 +36,30 @@ class TimerRecordingDetailsFragment : BaseFragment(), RecordingRemovedCallback {
             toolbarInterface.setSubtitle("")
         }
 
-        // Get the recording id after an orientation change has occurred
-        // or when the fragment is shown for the first time
-        timerRecordingViewModel.currentId = savedInstanceState?.getString("id", "") ?: (arguments?.getString("id", "") ?: "")
+        arguments?.let {
+            timerRecordingViewModel.currentId.value = it.getString("id", "")
+        }
 
-        timerRecordingViewModel.getCurrentRecording().observe(viewLifecycleOwner, Observer { rec ->
-            if (rec != null) {
-                recording = rec
-                itemBinding.recording = recording
-                itemBinding.htspVersion = htspVersion
-                itemBinding.isDualPane = isDualPane
-                // The toolbar is hidden as a default to prevent pressing any icons if no recording
-                // has been loaded yet. The toolbar is shown here because a recording was loaded
-                nested_toolbar.visible()
-                activity?.invalidateOptionsMenu()
-            } else {
-                scrollview.gone()
-                status.text = getString(R.string.error_loading_recording_details)
-                status.visible()
-            }
+        timerRecordingViewModel.recordingLiveData.observe(viewLifecycleOwner, Observer {
+            recording = it
+            showRecordingDetails()
         })
+    }
+
+    private fun showRecordingDetails() {
+        if (recording != null) {
+            itemBinding.recording = recording
+            itemBinding.htspVersion = htspVersion
+            itemBinding.isDualPane = isDualPane
+            // The toolbar is hidden as a default to prevent pressing any icons if no recording
+            // has been loaded yet. The toolbar is shown here because a recording was loaded
+            nested_toolbar.visible()
+            activity?.invalidateOptionsMenu()
+        } else {
+            scrollview.gone()
+            status.text = getString(R.string.error_loading_recording_details)
+            status.visible()
+        }
     }
 
     override fun onPrepareOptionsMenu(menu: Menu) {

@@ -3,6 +3,8 @@ package org.tvheadend.tvhclient.ui.features.dvr.timer_recordings
 import android.app.Application
 import android.content.Intent
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MediatorLiveData
+import androidx.lifecycle.MutableLiveData
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.data.service.HtspService
 import org.tvheadend.tvhclient.domain.entity.Channel
@@ -15,8 +17,9 @@ import java.util.*
 class TimerRecordingViewModel(application: Application) : BaseViewModel(application) {
 
     var selectedListPosition = 0
-    var currentId = ""
+    val currentId = MutableLiveData("")
     var recording = TimerRecording()
+    var recordingLiveData = MediatorLiveData<TimerRecording>()
     val recordings: LiveData<List<TimerRecording>> = appRepository.timerRecordingData.getLiveDataItems()
     var recordingProfileNameId = 0
 
@@ -56,8 +59,12 @@ class TimerRecordingViewModel(application: Application) : BaseViewModel(applicat
             }
         }
 
-    fun getCurrentRecording(): LiveData<TimerRecording> {
-        return appRepository.timerRecordingData.getLiveDataItemById(currentId)
+    init {
+        recordingLiveData.addSource(currentId) { value ->
+            if (value.isNotEmpty()) {
+                recordingLiveData.value = appRepository.timerRecordingData.getItemById(value)
+            }
+        }
     }
 
     fun loadRecordingByIdSync(id: String) {

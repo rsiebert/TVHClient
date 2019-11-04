@@ -129,16 +129,16 @@ class SeriesRecordingListFragment : BaseFragment(), RecyclerViewClickCallback, S
                 it.commit()
             }
         } else {
-            // Check what fragment is currently shown, replace if needed.
             var fragment = activity?.supportFragmentManager?.findFragmentById(R.id.details)
-            if (fragment !is SeriesRecordingDetailsFragment || seriesRecordingViewModel.currentId == recording.id) {
-                // Make new fragment to show this selection.
+            if (fragment !is SeriesRecordingDetailsFragment) {
                 fragment = SeriesRecordingDetailsFragment.newInstance(recording.id)
                 fm?.beginTransaction()?.also {
                     it.replace(R.id.details, fragment)
                     it.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
                     it.commit()
                 }
+            } else if (seriesRecordingViewModel.currentId.value != recording.id){
+                seriesRecordingViewModel.currentId.value = recording.id
             }
         }
     }
