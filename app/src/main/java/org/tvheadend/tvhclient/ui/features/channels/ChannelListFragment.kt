@@ -29,6 +29,9 @@ import org.tvheadend.tvhclient.util.extensions.gone
 import org.tvheadend.tvhclient.util.extensions.visible
 import timber.log.Timber
 
+// TODO Move the variable programIdToBeEditedWhenBeingRecorded into the viewmodel
+// TODO check if the selection of a channel shows the correct program list
+
 class ChannelListFragment : BaseFragment(), RecyclerViewClickCallback, ChannelTimeSelectedInterface, ChannelTagIdsSelectedInterface, SearchRequestInterface, Filter.FilterListener {
 
     private lateinit var programViewModel: ProgramViewModel
@@ -265,15 +268,8 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickCallback, ChannelTi
         }
 
         // Show the fragment to display the program list of the selected channel.
-        val fm = activity?.supportFragmentManager
-        val bundle = Bundle()
-        bundle.putString("channelName", channel.name)
-        bundle.putInt("channelId", channel.id)
-        bundle.putLong("selectedTime", selectedTime)
-
-        val fragment = ProgramListFragment()
-        fragment.arguments = bundle
-        fm?.beginTransaction()?.also {
+        val fragment = ProgramListFragment.newInstance(channel.name ?: "", channel.id, selectedTime)
+        activity?.supportFragmentManager?.beginTransaction()?.also {
             it.replace(R.id.main, fragment)
             it.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
             it.addToBackStack(null)
