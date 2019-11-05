@@ -91,6 +91,7 @@ class HtspIntentService : JobIntentService(), HtspConnectionStateListener {
             "getMoreEvents" -> getMoreEvents(intent)
             "loadChannelIcons" -> loadAllChannelIcons()
             "getTicket" -> getTicket(intent)
+            "cleanupDatabase" -> cleanupDatabase()
         }
     }
 
@@ -211,6 +212,19 @@ class HtspIntentService : JobIntentService(), HtspConnectionStateListener {
                         Timber.e(e, "Timeout while waiting for last icon to load")
                     }
                 }
+            }
+        }
+    }
+
+    private fun cleanupDatabase() {
+        Timber.d("Cleaning database by removing duplicate programs")
+        val channels = appRepository.channelData.getItems()
+        channels.forEach { channel ->
+            Timber.d("Loading programs for channel ${channel.name}")
+            val programs = appRepository.programData.getItemsByChannelId(channel.id)
+            programs.forEach { program ->
+                Timber.d("Loaded program id: ${program.eventId}, title: ${program.title}, start: ${program.start}, stop: ${program.stop}")
+
             }
         }
     }

@@ -19,6 +19,7 @@ import org.tvheadend.htsp.*
 import org.tvheadend.tvhclient.MainApplication
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.data.repository.AppRepository
+import org.tvheadend.tvhclient.data.worker.DatabaseCleanupWorker
 import org.tvheadend.tvhclient.data.worker.EpgDataUpdateWorker
 import org.tvheadend.tvhclient.domain.entity.*
 import org.tvheadend.tvhclient.ui.features.notification.addNotificationScheduledRecordingStarts
@@ -354,14 +355,7 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
 
         getAdditionalServerData()
 
-        Timber.d("Checking if background worker should be started to load more epg data")
-        if (System.currentTimeMillis() / 1000L - connection.lastUpdate > (12 * 60 * 60)) {
-            Timber.d("Last background worker started 12 hours ago, starting one in 15s to load more epg data")
-            val updateEpgWorker = OneTimeWorkRequest.Builder(EpgDataUpdateWorker::class.java)
-                    .setInitialDelay(15, TimeUnit.SECONDS)
-                    .build()
-            WorkManager.getInstance().enqueueUniqueWork("UpdateEpg", ExistingWorkPolicy.REPLACE, updateEpgWorker)
-        }
+        startBackgroundWorkers()
 
         Timber.d("Updating connection status with full sync completed and last update time")
         connection.isSyncRequired = false
@@ -384,6 +378,23 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
         initialSyncWithServerRunning = false
 
         Timber.d("Done receiving initial data from server")
+    }
+
+    private fun startBackgroundWorkers() {
+        Timber.d("Checking if epg data worker was started at least 12 hours ago")
+        if (System.currentTimeMillis() / 1000L - connection.lastUpdate > (12 * 60 * 60)) {
+            Timber.d("Starting background worker in 15 seconds to load more epg data.")
+            val updateEpgWorker = OneTimeWorkRequest.Builder(EpgDataUpdateWorker::class.java)
+                    .setInitialDelay(15, TimeUnit.SECONDS)
+                    .build()
+            WorkManager.getInstance().enqueueUniqueWork("UpdateEpg", ExistingWorkPolicy.REPLACE, updateEpgWorker)
+        }
+
+        Timber.d("Starting background worker in 1 minute to cleanup database")
+        val databaseCleanupWorker = OneTimeWorkRequest.Builder(DatabaseCleanupWorker::class.java)
+                .setInitialDelay(1, TimeUnit.MINUTES)
+                .build()
+        WorkManager.getInstance().enqueueUniqueWork("CleanupDatabase", ExistingWorkPolicy.REPLACE, databaseCleanupWorker)
     }
 
     /**
