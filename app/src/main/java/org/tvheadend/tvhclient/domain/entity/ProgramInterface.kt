@@ -40,6 +40,8 @@ interface ProgramInterface {
     var serieslinkUri: String?      // str   optional
     var episodeUri: String?         // str   optional
 
+    var modifiedTime: Long
+
     var connectionId: Int
     var channelName: String?
     var channelIcon: String?

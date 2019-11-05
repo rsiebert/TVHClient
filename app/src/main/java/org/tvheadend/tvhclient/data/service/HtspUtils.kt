@@ -374,6 +374,7 @@ fun convertMessageToProgramModel(program: Program, msg: HtspMessage): Program {
             program.copyrightYear = msg.getInteger("copyright_year")
         }
     }
+    program.modifiedTime = System.currentTimeMillis()
     /*
     if (msg.containsKey("credits")) {
         StringBuilder sb = new StringBuilder();

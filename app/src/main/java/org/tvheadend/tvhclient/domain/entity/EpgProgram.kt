@@ -65,6 +65,8 @@ data class EpgProgram(
         override var serieslinkUri: String? = null,
         @Ignore
         override var episodeUri: String? = null,
+        @Ignore
+        override var modifiedTime: Long = 0,
 
         @ColumnInfo(name = "connection_id")
         override var connectionId: Int = 0,

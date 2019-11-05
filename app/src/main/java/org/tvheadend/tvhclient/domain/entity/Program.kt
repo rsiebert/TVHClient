@@ -64,6 +64,8 @@ data class Program(
         override var serieslinkUri: String? = null,
         @ColumnInfo(name = "episode_uri")
         override var episodeUri: String? = null,
+        @ColumnInfo(name = "modified_time")
+        override var modifiedTime: Long = 0,
 
         @ColumnInfo(name = "connection_id")
         override var connectionId: Int = 0,
