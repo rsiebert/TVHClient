@@ -33,11 +33,7 @@ import timber.log.Timber
 import javax.inject.Inject
 
 // TODO move diffutils to background thread
-// TODO Use paged loading
-// TODO Move the variable programIdToBeEditedWhenBeingRecorded into the viewmodels
 // TODO consolidate the dialog strings
-// TODO make the 12 hour check to start the epg background worker a setting
-// TODO use viewpager2 in epg
 
 class MainApplication : MultiDexApplication(), OptionsProvider, BillingUpdatesListener {
 

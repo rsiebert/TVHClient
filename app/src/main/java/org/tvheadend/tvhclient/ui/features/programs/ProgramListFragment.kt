@@ -25,6 +25,8 @@ import org.tvheadend.tvhclient.util.extensions.gone
 import org.tvheadend.tvhclient.util.extensions.visible
 import timber.log.Timber
 
+// TODO Move the variable programIdToBeEditedWhenBeingRecorded into the viewmodel
+
 class ProgramListFragment : BaseFragment(), RecyclerViewClickCallback, LastProgramVisibleListener, SearchRequestInterface, Filter.FilterListener {
 
     lateinit var recyclerViewAdapter: ProgramRecyclerViewAdapter
