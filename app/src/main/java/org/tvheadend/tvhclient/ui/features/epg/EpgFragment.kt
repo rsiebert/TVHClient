@@ -15,7 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.SCROLL_STATE_IDLE
 import androidx.viewpager.widget.ViewPager
-import kotlinx.android.synthetic.main.epg_main_fragment.*
+import kotlinx.android.synthetic.main.epg_fragment.*
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.domain.entity.ChannelTag
 import org.tvheadend.tvhclient.domain.entity.EpgProgram
@@ -36,7 +36,7 @@ import timber.log.Timber
 // TODO preload epg data in the background after startup
 // TODO prevent reloading when scrolling
 
-class ProgramGuideFragment : BaseFragment(), EpgScrollInterface, RecyclerViewClickCallback, ChannelTimeSelectedInterface, ChannelTagIdsSelectedInterface, Filter.FilterListener, ViewPager.OnPageChangeListener, SearchRequestInterface {
+class EpgFragment : BaseFragment(), EpgScrollInterface, RecyclerViewClickCallback, ChannelTimeSelectedInterface, ChannelTagIdsSelectedInterface, Filter.FilterListener, ViewPager.OnPageChangeListener, SearchRequestInterface {
 
     private lateinit var epgViewModel: EpgViewModel
     private lateinit var channelListRecyclerViewAdapter: EpgChannelListRecyclerViewAdapter
@@ -49,7 +49,7 @@ class ProgramGuideFragment : BaseFragment(), EpgScrollInterface, RecyclerViewCli
     private var channelCount = 0
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.epg_main_fragment, container, false)
+        return inflater.inflate(R.layout.epg_fragment, container, false)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -71,7 +71,7 @@ class ProgramGuideFragment : BaseFragment(), EpgScrollInterface, RecyclerViewCli
                     enableScrolling = true
                 } else if (enableScrolling) {
                     enableScrolling = false
-                    this@ProgramGuideFragment.onScrollStateChanged()
+                    this@EpgFragment.onScrollStateChanged()
                 }
             }
 

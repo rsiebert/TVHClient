@@ -29,7 +29,7 @@ import org.tvheadend.tvhclient.ui.features.dvr.recordings.RemovedRecordingListFr
 import org.tvheadend.tvhclient.ui.features.dvr.recordings.ScheduledRecordingListFragment
 import org.tvheadend.tvhclient.ui.features.dvr.series_recordings.SeriesRecordingListFragment
 import org.tvheadend.tvhclient.ui.features.dvr.timer_recordings.TimerRecordingListFragment
-import org.tvheadend.tvhclient.ui.features.epg.ProgramGuideFragment
+import org.tvheadend.tvhclient.ui.features.epg.EpgFragment
 import org.tvheadend.tvhclient.ui.features.information.HelpAndSupportFragment
 import org.tvheadend.tvhclient.ui.features.information.StatusFragment
 import org.tvheadend.tvhclient.ui.features.information.StatusViewModel
@@ -226,7 +226,7 @@ class NavigationDrawer(private val activity: AppCompatActivity,
     fun handleMenuSelection(fragment: Fragment?) {
         when (fragment) {
             is ChannelListFragment -> result.setSelection(MENU_CHANNELS.toLong(), false)
-            is ProgramGuideFragment -> result.setSelection(MENU_PROGRAM_GUIDE.toLong(), false)
+            is EpgFragment -> result.setSelection(MENU_PROGRAM_GUIDE.toLong(), false)
             is CompletedRecordingListFragment -> result.setSelection(MENU_COMPLETED_RECORDINGS.toLong(), false)
             is ScheduledRecordingListFragment -> result.setSelection(MENU_SCHEDULED_RECORDINGS.toLong(), false)
             is SeriesRecordingListFragment -> result.setSelection(MENU_SERIES_RECORDINGS.toLong(), false)
@@ -245,7 +245,7 @@ class NavigationDrawer(private val activity: AppCompatActivity,
     fun getFragmentFromSelection(position: Int): Fragment? {
         return when (position) {
             MENU_CHANNELS -> ChannelListFragment()
-            MENU_PROGRAM_GUIDE -> ProgramGuideFragment()
+            MENU_PROGRAM_GUIDE -> EpgFragment()
             MENU_COMPLETED_RECORDINGS -> CompletedRecordingListFragment()
             MENU_SCHEDULED_RECORDINGS -> ScheduledRecordingListFragment()
             MENU_SERIES_RECORDINGS -> SeriesRecordingListFragment()

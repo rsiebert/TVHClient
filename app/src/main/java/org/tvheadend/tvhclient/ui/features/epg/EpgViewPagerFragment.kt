@@ -25,7 +25,7 @@ import java.util.*
 class EpgViewPagerFragment : Fragment(), EpgScrollInterface {
 
     private lateinit var epgViewModel: EpgViewModel
-    private lateinit var recyclerViewAdapter: EpgViewPagerRecyclerViewAdapterHost
+    private lateinit var recyclerViewAdapter: EpgVerticalRecyclerViewAdapter
     private var showTimeIndication = false
 
     private lateinit var updateViewHandler: Handler
@@ -74,7 +74,7 @@ class EpgViewPagerFragment : Fragment(), EpgScrollInterface {
 
         epgViewModel.calcPixelsPerMinute(displayWidth)
 
-        recyclerViewAdapter = EpgViewPagerRecyclerViewAdapterHost(requireActivity(), epgViewModel, fragmentId)
+        recyclerViewAdapter = EpgVerticalRecyclerViewAdapter(requireActivity(), epgViewModel, fragmentId)
         recyclerViewLinearLayoutManager = LinearLayoutManager(activity, RecyclerView.VERTICAL, false)
         viewpager_recycler_view.layoutManager = recyclerViewLinearLayoutManager
         viewpager_recycler_view.setHasFixedSize(true)

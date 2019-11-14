@@ -35,7 +35,7 @@ import org.tvheadend.tvhclient.ui.features.download.DownloadPermissionGrantedInt
 import org.tvheadend.tvhclient.ui.features.dvr.recordings.RecordingDetailsFragment
 import org.tvheadend.tvhclient.ui.features.dvr.series_recordings.SeriesRecordingDetailsFragment
 import org.tvheadend.tvhclient.ui.features.dvr.timer_recordings.TimerRecordingDetailsFragment
-import org.tvheadend.tvhclient.ui.features.epg.ProgramGuideFragment
+import org.tvheadend.tvhclient.ui.features.epg.EpgFragment
 import org.tvheadend.tvhclient.ui.features.information.PrivacyPolicyFragment
 import org.tvheadend.tvhclient.ui.features.information.StatusViewModel
 import org.tvheadend.tvhclient.ui.features.navigation.NavigationDrawer
@@ -362,7 +362,7 @@ class MainActivity : BaseActivity(R.layout.main_activity), SearchView.OnQueryTex
 
         // In case the channels or epg is shown show the search results in the program list.
         val fragment = supportFragmentManager.findFragmentById(R.id.main)
-        if (fragment is ChannelListFragment || fragment is ProgramGuideFragment) {
+        if (fragment is ChannelListFragment || fragment is EpgFragment) {
             Timber.d("Adding program list fragment where the search will be done")
             val newFragment: Fragment = ProgramListFragment.newInstance()
             supportFragmentManager.beginTransaction().replace(R.id.main, newFragment).let {
@@ -381,7 +381,7 @@ class MainActivity : BaseActivity(R.layout.main_activity), SearchView.OnQueryTex
         delayedQueryTextSubmitHandler.removeCallbacks(queryTextSubmitTask)
 
         val fragment = supportFragmentManager.findFragmentById(R.id.main)
-        if (fragment !is ChannelListFragment && fragment !is ProgramGuideFragment) {
+        if (fragment !is ChannelListFragment && fragment !is EpgFragment) {
             if (newText.length >= 3) {
                 Timber.d("Search query is ${newText.length} characters long, starting timer to start searching")
                 delayedQueryTextSubmitHandler.postDelayed(queryTextSubmitTask, 2000)
