@@ -2,6 +2,7 @@ package org.tvheadend.tvhclient.ui.features.epg
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.DisplayMetrics
 import android.util.SparseArray
 import android.view.*
 import android.widget.Filter
@@ -40,10 +41,10 @@ class EpgFragment : BaseFragment(), EpgScrollInterface, RecyclerViewClickCallbac
 
     private lateinit var epgViewModel: EpgViewModel
     private lateinit var channelListRecyclerViewAdapter: EpgChannelListRecyclerViewAdapter
-
-    private lateinit var viewPagerAdapter: EpgViewPagerAdapter
-    private var enableScrolling = true
     private lateinit var channelListRecyclerViewLayoutManager: LinearLayoutManager
+    private lateinit var viewPagerAdapter: EpgViewPagerAdapter
+
+    private var enableScrolling = true
     private var programIdToBeEditedWhenBeingRecorded = 0
     private var channelTags: List<ChannelTag> = ArrayList()
     private var channelCount = 0
@@ -91,6 +92,12 @@ class EpgFragment : BaseFragment(), EpgScrollInterface, RecyclerViewClickCallbac
         program_list_viewpager.offscreenPageLimit = 2
         program_list_viewpager.addOnPageChangeListener(this)
 
+        // Calculates the available display width of one minute in pixels. This depends
+        // how wide the screen is and how many hours shall be shown in one screen.
+        val displayMetrics = DisplayMetrics()
+        requireActivity().windowManager.defaultDisplay.getMetrics(displayMetrics)
+        epgViewModel.displayWidth = displayMetrics.widthPixels
+
         Timber.d("Observing channel tags")
         epgViewModel.channelTags.observe(viewLifecycleOwner, Observer { tags ->
             if (tags != null) {
@@ -121,11 +128,14 @@ class EpgFragment : BaseFragment(), EpgScrollInterface, RecyclerViewClickCallbac
         })
 
         Timber.d("Observing trigger to reload epg data")
-        epgViewModel.reloadEpgData.observe(viewLifecycleOwner, Observer { reload ->
-            Timber.d("Trigger to reload epg data has changed to $reload")
-            if (reload) {
-                epgViewModel.loadEpgData()
-            }
+        epgViewModel.viewAndEpgDataIsInvalid.observe(viewLifecycleOwner, Observer { reload ->
+            //event.getContentIfNotHandled()?.let { reload ->
+                Timber.d("Trigger to reload epg data has changed to $reload")
+                if (reload) {
+                    epgViewModel.loadEpgData()
+                    viewPagerAdapter.notifyDataSetChanged()
+                }
+            //}
         })
 
         Timber.d("Observing epg data")
@@ -365,7 +375,7 @@ class EpgFragment : BaseFragment(), EpgScrollInterface, RecyclerViewClickCallbac
         }
 
         override fun getCount(): Int {
-            return viewModel.fragmentCount
+            return viewModel.viewPagerFragmentCount.value ?: 0
         }
     }
 }

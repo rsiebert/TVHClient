@@ -2,7 +2,6 @@ package org.tvheadend.tvhclient.ui.features.epg
 
 import android.os.Bundle
 import android.os.Handler
-import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -66,14 +65,6 @@ class EpgViewPagerFragment : Fragment(), EpgScrollInterface {
         itemBinding.startTime = epgViewModel.getStartTime(fragmentId)
         itemBinding.endTime = epgViewModel.getEndTime(fragmentId)
 
-        // Calculates the available display width of one minute in pixels. This depends
-        // how wide the screen is and how many hours shall be shown in one screen.
-        val displayMetrics = DisplayMetrics()
-        requireActivity().windowManager.defaultDisplay.getMetrics(displayMetrics)
-        val displayWidth = displayMetrics.widthPixels
-
-        epgViewModel.calcPixelsPerMinute(displayWidth)
-
         recyclerViewAdapter = EpgVerticalRecyclerViewAdapter(requireActivity(), epgViewModel, fragmentId)
         recyclerViewLinearLayoutManager = LinearLayoutManager(activity, RecyclerView.VERTICAL, false)
         viewpager_recycler_view.layoutManager = recyclerViewLinearLayoutManager
@@ -117,6 +108,13 @@ class EpgViewPagerFragment : Fragment(), EpgScrollInterface {
                 if (channels != null) {
                     recyclerViewAdapter.addItems(channels)
                 }
+            })
+            // In case the channels and hours and days to show have changed invalidate
+            // the adapter so that the UI can be updated with the new data
+            Timber.d("Observing trigger to reload epg data")
+            epgViewModel.viewAndEpgDataIsInvalid.observe(viewLifecycleOwner, Observer { reload ->
+                Timber.d("Trigger to reload epg data has changed to $reload")
+                recyclerViewAdapter.notifyDataSetChanged()
             })
         }
 
