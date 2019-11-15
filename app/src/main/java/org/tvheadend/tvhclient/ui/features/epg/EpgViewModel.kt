@@ -11,6 +11,7 @@ import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.domain.entity.EpgChannel
 import org.tvheadend.tvhclient.domain.entity.EpgProgram
 import org.tvheadend.tvhclient.domain.entity.Recording
+import org.tvheadend.tvhclient.ui.common.LiveEvent
 import org.tvheadend.tvhclient.ui.features.channels.BaseChannelViewModel
 import timber.log.Timber
 import java.util.*
@@ -18,7 +19,8 @@ import java.util.*
 class EpgViewModel(application: Application) : BaseChannelViewModel(application), SharedPreferences.OnSharedPreferenceChangeListener {
 
     val epgChannels: LiveData<List<EpgChannel>>
-    var viewAndEpgDataIsInvalid = MediatorLiveData<Boolean>()
+    private val viewAndEpgDataIsInvalidLiveEvent = LiveEvent<Boolean>()
+    val viewAndEpgDataIsInvalid: MediatorLiveData<Boolean> = viewAndEpgDataIsInvalidLiveEvent
     var epgData = MutableLiveData<HashMap<Int, List<EpgProgram>>>()
 
     private val channelSortOrder = MutableLiveData<Int>()
@@ -107,7 +109,7 @@ class EpgViewModel(application: Application) : BaseChannelViewModel(application)
             if (hours != hoursToShow) {
                 hoursToShow = hours
                 updateViewProperties()
-                viewAndEpgDataIsInvalid.value = true
+                viewAndEpgDataIsInvalidLiveEvent.value = true
             }
         }
 
@@ -118,7 +120,7 @@ class EpgViewModel(application: Application) : BaseChannelViewModel(application)
             if (days != daysToShow) {
                 daysToShow = days
                 updateViewProperties()
-                viewAndEpgDataIsInvalid.value = true
+                viewAndEpgDataIsInvalidLiveEvent.value = true
             }
         }
 
@@ -126,7 +128,7 @@ class EpgViewModel(application: Application) : BaseChannelViewModel(application)
         viewAndEpgDataIsInvalid.addSource(epgChannels) { channels ->
             if (channels != null) {
                 Timber.d("Channels count has changed to ${channels.size}")
-                viewAndEpgDataIsInvalid.value = true
+                viewAndEpgDataIsInvalidLiveEvent.value = true
             }
         }
 
