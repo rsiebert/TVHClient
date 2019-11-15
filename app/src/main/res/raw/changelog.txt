@@ -1,7 +1,8 @@
-$ 2.2.22
-  % VERSION 2.2.22
-  _ 09.10.2019
+$ 2.3.0
+  % VERSION 2.3.0
+  _ 16.11.2019
     * Minor UI changes
+    * Added toolbar menu to search for channels only
     * Fixed disable option not working for scheduled recordings
     * Fixed server name was not shown in the main menu header
     * Fixed some minor search issues
