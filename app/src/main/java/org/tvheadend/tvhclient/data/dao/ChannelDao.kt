@@ -121,7 +121,7 @@ interface ChannelDao {
                 "CASE :sortOrder WHEN 4 THEN c.name END ASC," +
                 "CASE :sortOrder WHEN 5 THEN c.name END DESC," +
                 "CASE :sortOrder WHEN 6 THEN " +
-                "   CASE (c.display_number + 0) WHEN 0 THEN 1 ELSE 0 END " +
+                "   CASE (c.display_number + 0) WHEN 0 THEN 999999999 ELSE (c.display_number + 0) END " +
                 "END ASC," +
                 "CASE :sortOrder WHEN 7 THEN (c.display_number + 0) END DESC"
 
