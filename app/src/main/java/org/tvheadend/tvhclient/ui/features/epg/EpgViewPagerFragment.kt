@@ -25,7 +25,15 @@ class EpgViewPagerFragment : Fragment(), EpgScrollInterface {
 
     private lateinit var epgViewModel: EpgViewModel
     private lateinit var recyclerViewAdapter: EpgVerticalRecyclerViewAdapter
-    private var showTimeIndication = false
+
+    /**
+     * Defines if the current time indication (vertical line) shall be shown.
+     * The indication shall only be shown for the first fragment.
+     */
+    private val showTimeIndication: Boolean
+        get() {
+            return fragmentId == 0
+        }
 
     private lateinit var updateViewHandler: Handler
     private lateinit var updateViewTask: Runnable
@@ -52,6 +60,7 @@ class EpgViewPagerFragment : Fragment(), EpgScrollInterface {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+        Timber.d("Initializing")
         epgViewModel = ViewModelProviders.of(activity as AppCompatActivity).get(EpgViewModel::class.java)
 
         // Required to show the vertical current time indication
@@ -60,7 +69,6 @@ class EpgViewPagerFragment : Fragment(), EpgScrollInterface {
 
         // Get the id that defines the position of the fragment in the viewpager
         fragmentId = arguments?.getInt("fragmentId") ?: 0
-        showTimeIndication = fragmentId == 0
 
         itemBinding.startTime = epgViewModel.getStartTime(fragmentId)
         itemBinding.endTime = epgViewModel.getEndTime(fragmentId)
@@ -102,21 +110,16 @@ class EpgViewPagerFragment : Fragment(), EpgScrollInterface {
                 }
             }
         })
-        activity?.let {
-            val viewModel = ViewModelProviders.of(it).get(EpgViewModel::class.java)
-            viewModel.epgChannels.observe(viewLifecycleOwner, Observer { channels ->
-                if (channels != null) {
-                    recyclerViewAdapter.addItems(channels)
-                }
-            })
-            // In case the channels and hours and days to show have changed invalidate
-            // the adapter so that the UI can be updated with the new data
-            Timber.d("Observing trigger to reload epg data")
-            epgViewModel.viewAndEpgDataIsInvalid.observe(viewLifecycleOwner, Observer { reload ->
-                Timber.d("Trigger to reload epg data has changed to $reload")
-                recyclerViewAdapter.notifyDataSetChanged()
-            })
-        }
+
+        // In case the channels and hours and days to show have changed invalidate
+        // the adapter so that the UI can be updated with the new data
+        Timber.d("Observing trigger to reload epg data")
+        epgViewModel.viewAndEpgDataIsInvalid.observe(viewLifecycleOwner, Observer { reload ->
+            Timber.d("Trigger to reload epg data has changed to $reload")
+            if (reload) {
+                recyclerViewAdapter.loadProgramData()
+            }
+        })
 
         current_time?.visibleOrGone(showTimeIndication)
 
@@ -143,6 +146,9 @@ class EpgViewPagerFragment : Fragment(), EpgScrollInterface {
             updateViewHandler.postDelayed(updateViewTask, 60000)
             updateTimeIndicationHandler.post(updateTimeIndicationTask)
         }
+
+        // The program data needs to be loaded when the fragment is created
+        recyclerViewAdapter.loadProgramData()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {

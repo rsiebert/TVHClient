@@ -3,14 +3,15 @@ package org.tvheadend.tvhclient.ui.features.epg
 import android.app.Application
 import android.content.SharedPreferences
 import androidx.core.util.Pair
-import androidx.lifecycle.*
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MediatorLiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Transformations
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.domain.entity.EpgChannel
 import org.tvheadend.tvhclient.domain.entity.EpgProgram
-import org.tvheadend.tvhclient.domain.entity.Recording
 import org.tvheadend.tvhclient.ui.common.LiveEvent
 import org.tvheadend.tvhclient.ui.features.channels.BaseChannelViewModel
 import timber.log.Timber
@@ -201,20 +202,6 @@ class EpgViewModel(application: Application) : BaseChannelViewModel(application)
         Timber.d("Updated pixels per minute to $pixelsPerMinute")
     }
 
-    fun loadEpgData() {
-        viewModelScope.launch {
-            val defaultChannelSortOrder = appContext.resources.getString(R.string.pref_default_channel_sort_order)
-            val order = Integer.valueOf(sharedPreferences.getString("channel_sort_order", defaultChannelSortOrder) ?: defaultChannelSortOrder)
-            val hours = hoursOfEpgDataPerScreen.value!!
-            val days = daysOfEpgData.value!!
-
-            Timber.d("Loading epg data via coroutine from database with channel order $order, $hours hours per screen and for $days days")
-            withContext(Dispatchers.IO) {
-                epgData.postValue(loadProgramsBetweenTime(order, hours, days))
-            }
-        }
-    }
-
     private suspend fun loadProgramsBetweenTime(order: Int, hours: Int, days: Int) = withContext(Dispatchers.IO) {
         appRepository.programData.getEpgItemsBetweenTime(order, hours, days)
     }
@@ -236,10 +223,6 @@ class EpgViewModel(application: Application) : BaseChannelViewModel(application)
             "hours_of_epg_data_per_screen" -> hoursOfEpgDataPerScreen.value = Integer.parseInt(sharedPreferences.getString(key, appContext.resources.getString(R.string.pref_default_hours_of_epg_data_per_screen))!!)
             "days_of_epg_data" -> daysOfEpgData.value = Integer.parseInt(sharedPreferences.getString(key, appContext.resources.getString(R.string.pref_default_days_of_epg_data))!!)
         }
-    }
-
-    fun getRecordingsByChannel(channelId: Int): LiveData<List<Recording>> {
-        return appRepository.recordingData.getLiveDataItemsByChannelId(channelId)
     }
 
     fun getProgramsByChannelAndBetweenTimeSync(channelId: Int, fragmentId: Int): List<EpgProgram> {

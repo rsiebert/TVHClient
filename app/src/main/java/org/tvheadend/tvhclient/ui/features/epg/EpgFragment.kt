@@ -129,13 +129,10 @@ class EpgFragment : BaseFragment(), EpgScrollInterface, RecyclerViewClickCallbac
 
         Timber.d("Observing trigger to reload epg data")
         epgViewModel.viewAndEpgDataIsInvalid.observe(viewLifecycleOwner, Observer { reload ->
-            //event.getContentIfNotHandled()?.let { reload ->
-                Timber.d("Trigger to reload epg data has changed to $reload")
-                if (reload) {
-                    epgViewModel.loadEpgData()
-                    viewPagerAdapter.notifyDataSetChanged()
-                }
-            //}
+            Timber.d("Trigger to reload epg data has changed to $reload")
+            if (reload) {
+                viewPagerAdapter.notifyDataSetChanged()
+            }
         })
 
         Timber.d("Observing epg data")

@@ -14,17 +14,16 @@ import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.epg_vertical_recyclerview_adapter.*
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.domain.entity.EpgChannel
+import org.tvheadend.tvhclient.domain.entity.EpgProgram
 import org.tvheadend.tvhclient.util.extensions.gone
 import org.tvheadend.tvhclient.util.extensions.invisible
 import org.tvheadend.tvhclient.util.extensions.visible
 import timber.log.Timber
-import java.util.*
-import java.util.concurrent.Executors
 
 internal class EpgVerticalRecyclerViewAdapter(private val activity: FragmentActivity, private val epgViewModel: EpgViewModel, private val fragmentId: Int) : RecyclerView.Adapter<EpgVerticalRecyclerViewAdapter.EpgViewPagerViewHolder>() {
 
     private val viewPool: RecyclerView.RecycledViewPool = RecyclerView.RecycledViewPool()
-    private val channelList = ArrayList<EpgChannel>()
+    private var channelList = ArrayList<EpgChannel>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): EpgViewPagerViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(viewType, parent, false)
@@ -33,7 +32,9 @@ internal class EpgVerticalRecyclerViewAdapter(private val activity: FragmentActi
 
     override fun onBindViewHolder(holder: EpgViewPagerViewHolder, position: Int) {
         val epgChannel = channelList[position]
-        holder.bindData(epgChannel)
+        val programs = epgViewModel.getProgramsByChannelAndBetweenTimeSync(epgChannel.id, fragmentId)
+        Timber.d("Binding ${programs.size} programs for channel ${epgChannel.name} in viewpager fragment $fragmentId")
+        holder.bindData(programs)
     }
 
     override fun getItemCount(): Int {
@@ -44,9 +45,10 @@ internal class EpgVerticalRecyclerViewAdapter(private val activity: FragmentActi
         return R.layout.epg_vertical_recyclerview_adapter
     }
 
-    fun addItems(channels: List<EpgChannel>) {
+    fun loadProgramData() {
+        Timber.d("Loading programs for viewpager fragment $fragmentId")
         channelList.clear()
-        channelList.addAll(channels)
+        channelList.addAll(epgViewModel.epgChannels.value ?: ArrayList())
         notifyDataSetChanged()
     }
 
@@ -62,13 +64,12 @@ internal class EpgVerticalRecyclerViewAdapter(private val activity: FragmentActi
 
     class EpgViewPagerViewHolder(override val containerView: View,
                                  private val activity: FragmentActivity,
-                                 private val fragmentId: Int,
+                                 fragmentId: Int,
                                  viewPool: RecyclerView.RecycledViewPool,
                                  private val epgViewModel: EpgViewModel) : RecyclerView.ViewHolder(containerView), LayoutContainer, LifecycleOwner {
 
         private val lifecycleRegistry = LifecycleRegistry(this)
         private val recyclerViewAdapter: EpgHorizontalChildRecyclerViewAdapter
-        private val execService = Executors.newScheduledThreadPool(10)
 
         init {
             horizontal_child_recycler_view.layoutManager = CustomHorizontalLayoutManager(containerView.context)
@@ -90,33 +91,24 @@ internal class EpgVerticalRecyclerViewAdapter(private val activity: FragmentActi
             return lifecycleRegistry
         }
 
-        fun bindData(epgChannel: EpgChannel) {
+        fun bindData(programs: List<EpgProgram>) {
 
             horizontal_child_recycler_view.gone()
             progress_bar.visible()
             no_programs.gone()
 
-            execService.execute {
-                val programs = epgViewModel.getProgramsByChannelAndBetweenTimeSync(epgChannel.id, fragmentId)
-                if (programs.isNotEmpty()) {
-                    Timber.d("Loaded ${programs.size} programs for channel ${epgChannel.name}")
-                    activity.runOnUiThread {
-                        recyclerViewAdapter.addItems(programs.toMutableList())
-                        horizontal_child_recycler_view.visible()
-                        progress_bar.gone()
-                        no_programs.invisible()
-                    }
-                } else {
-                    Timber.d("Loaded no programs for channel ${epgChannel.name}")
-                    activity.runOnUiThread {
-                        horizontal_child_recycler_view.invisible()
-                        progress_bar.gone()
-                        no_programs.visible()
-                    }
-                }
+            if (programs.isNotEmpty()) {
+                recyclerViewAdapter.addItems(programs.toMutableList())
+                horizontal_child_recycler_view.visible()
+                progress_bar.gone()
+                no_programs.invisible()
+            } else {
+                horizontal_child_recycler_view.invisible()
+                progress_bar.gone()
+                no_programs.visible()
             }
 
-            epgViewModel.getRecordingsByChannel(epgChannel.id).observe(activity, androidx.lifecycle.Observer { recordings ->
+            epgViewModel.recordings.observe(activity, androidx.lifecycle.Observer { recordings ->
                 if (recordings != null) {
                     recyclerViewAdapter.addRecordings(recordings)
                 }
