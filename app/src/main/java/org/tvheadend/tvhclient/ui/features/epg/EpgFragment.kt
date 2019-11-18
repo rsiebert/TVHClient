@@ -7,15 +7,15 @@ import android.util.SparseArray
 import android.view.*
 import android.widget.Filter
 import androidx.appcompat.widget.PopupMenu
+import androidx.core.util.contains
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
-import androidx.fragment.app.FragmentStatePagerAdapter
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.SCROLL_STATE_IDLE
-import androidx.viewpager.widget.ViewPager
+import androidx.viewpager2.adapter.FragmentStateAdapter
+import androidx.viewpager2.widget.ViewPager2
 import kotlinx.android.synthetic.main.epg_fragment.*
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.domain.entity.ChannelTag
@@ -37,7 +37,7 @@ import timber.log.Timber
 // TODO preload epg data in the background after startup
 // TODO prevent reloading when scrolling
 
-class EpgFragment : BaseFragment(), EpgScrollInterface, RecyclerViewClickCallback, ChannelTimeSelectedInterface, ChannelTagIdsSelectedInterface, Filter.FilterListener, ViewPager.OnPageChangeListener, SearchRequestInterface {
+class EpgFragment : BaseFragment(), EpgScrollInterface, RecyclerViewClickCallback, ChannelTimeSelectedInterface, ChannelTagIdsSelectedInterface, Filter.FilterListener, SearchRequestInterface {
 
     private lateinit var epgViewModel: EpgViewModel
     private lateinit var channelListRecyclerViewAdapter: EpgChannelListRecyclerViewAdapter
@@ -87,10 +87,20 @@ class EpgFragment : BaseFragment(), EpgScrollInterface, RecyclerViewClickCallbac
             }
         })
 
-        viewPagerAdapter = EpgViewPagerAdapter(childFragmentManager, epgViewModel)
+        viewPagerAdapter = EpgViewPagerAdapter(this, epgViewModel)
         program_list_viewpager.adapter = viewPagerAdapter
         program_list_viewpager.offscreenPageLimit = 2
-        program_list_viewpager.addOnPageChangeListener(this)
+        program_list_viewpager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+            override fun onPageSelected(position: Int) {
+                super.onPageSelected(position)
+                for (i in position - 1..position + 1) {
+                    val fragment = viewPagerAdapter.getRegisteredFragment(i)
+                    if (i != position && fragment is EpgScrollInterface) {
+                        fragment.onScroll(epgViewModel.verticalScrollPosition, epgViewModel.verticalScrollOffset)
+                    }
+                }
+            }
+        })
 
         // Calculates the available display width of one minute in pixels. This depends
         // how wide the screen is and how many hours shall be shown in one screen.
@@ -303,34 +313,12 @@ class EpgFragment : BaseFragment(), EpgScrollInterface, RecyclerViewClickCallbac
 
         channelListRecyclerViewLayoutManager.scrollToPositionWithOffset(position, offset)
 
-        for (i in 0 until viewPagerAdapter.registeredFragmentCount) {
+        for (i in 0 until viewPagerAdapter.itemCount) {
             val fragment = viewPagerAdapter.getRegisteredFragment(i)
             if (fragment is EpgScrollInterface) {
                 fragment.onScroll(position, offset)
             }
         }
-    }
-
-    override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
-        // NOP
-    }
-
-    /**
-     * When the user has selected a new fragment the view pager will create the
-     * required neighbour fragments. Inform all those fragments except the current
-     * one to scroll to the required position.
-     */
-    override fun onPageSelected(position: Int) {
-        for (i in position - 1..position + 1) {
-            val fragment = viewPagerAdapter.getRegisteredFragment(i)
-            if (i != position && fragment is EpgScrollInterface) {
-                fragment.onScroll(epgViewModel.verticalScrollPosition, epgViewModel.verticalScrollOffset)
-            }
-        }
-    }
-
-    override fun onPageScrollStateChanged(state: Int) {
-        // NOP
     }
 
     override fun onSearchRequested(query: String) {
@@ -345,33 +333,27 @@ class EpgFragment : BaseFragment(), EpgScrollInterface, RecyclerViewClickCallbac
         return getString(R.string.search_program_guide)
     }
 
-    private class EpgViewPagerAdapter internal constructor(fragmentManager: FragmentManager, private val viewModel: EpgViewModel) : FragmentStatePagerAdapter(fragmentManager, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
+    private class EpgViewPagerAdapter internal constructor(fragment: Fragment, private val viewModel: EpgViewModel) : FragmentStateAdapter(fragment) {
 
         private val registeredFragments = SparseArray<Fragment>()
 
-        internal val registeredFragmentCount: Int
-            get() = registeredFragments.size()
-
-        override fun getItem(position: Int): Fragment {
-            return EpgViewPagerFragment.newInstance(position)
-        }
-
-        override fun instantiateItem(container: ViewGroup, position: Int): Any {
-            val fragment = super.instantiateItem(container, position) as Fragment
-            registeredFragments.put(position, fragment)
-            return fragment
-        }
-
-        override fun destroyItem(container: ViewGroup, position: Int, item: Any) {
-            registeredFragments.remove(position)
-            super.destroyItem(container, position, item)
+        override fun createFragment(position: Int): Fragment {
+            return if (registeredFragments.contains(position)) {
+                Timber.d("Returning existing fragment for page $position")
+                registeredFragments.get(position)
+            } else {
+                Timber.d("Returning new fragment for page $position")
+                val fragment = EpgViewPagerFragment.newInstance(position)
+                registeredFragments.put(position, fragment)
+                return fragment
+            }
         }
 
         internal fun getRegisteredFragment(position: Int): Fragment? {
             return registeredFragments.get(position)
         }
 
-        override fun getCount(): Int {
+        override fun getItemCount(): Int {
             return viewModel.viewPagerFragmentCount.value ?: 0
         }
     }
