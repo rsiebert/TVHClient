@@ -50,25 +50,32 @@ class SettingsAdvancedFragment : BasePreferenceFragment(), Preference.OnPreferen
         findPreference<Preference>("clear_icon_cache")?.onPreferenceClickListener = this
 
         notificationsEnabledPreference = findPreference("notifications_enabled")
+        notifyRunningRecordingCountEnabledPreference = findPreference("notify_running_recording_count_enabled")
+        notifyLowStorageSpaceEnabledPreference = findPreference("notify_low_storage_space_enabled")
+
+        connectionTimeoutPreference = findPreference("connection_timeout")
+        connectionTimeoutPreference?.onPreferenceChangeListener = this
+
+        settingsViewModel.isUnlocked.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
+            initPreferenceChangeListeners()
+        })
+    }
+
+    private fun initPreferenceChangeListeners() {
         notificationsEnabledPreference?.also {
             it.onPreferenceClickListener = this
             it.isEnabled = isUnlocked
         }
 
-        notifyRunningRecordingCountEnabledPreference = findPreference("notify_running_recording_count_enabled")
         notifyRunningRecordingCountEnabledPreference?.also {
             it.onPreferenceClickListener = this
             it.isEnabled = isUnlocked
         }
 
-        notifyLowStorageSpaceEnabledPreference = findPreference("notify_low_storage_space_enabled")
         notifyLowStorageSpaceEnabledPreference?.also {
             it.onPreferenceClickListener = this
             it.isEnabled = isUnlocked
         }
-
-        connectionTimeoutPreference = findPreference("connection_timeout")
-        connectionTimeoutPreference?.onPreferenceChangeListener = this
     }
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
