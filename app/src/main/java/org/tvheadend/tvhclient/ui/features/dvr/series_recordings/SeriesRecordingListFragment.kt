@@ -13,14 +13,14 @@ import org.tvheadend.tvhclient.R
 import org.tvheadend.data.entity.SeriesRecording
 import org.tvheadend.tvhclient.ui.base.BaseFragment
 import org.tvheadend.tvhclient.ui.common.*
-import org.tvheadend.tvhclient.ui.common.callbacks.RecyclerViewClickCallback
-import org.tvheadend.tvhclient.ui.features.search.SearchRequestInterface
+import org.tvheadend.tvhclient.ui.common.interfaces.RecyclerViewClickInterface
+import org.tvheadend.tvhclient.ui.common.interfaces.SearchRequestInterface
 import org.tvheadend.tvhclient.util.extensions.gone
 import org.tvheadend.tvhclient.util.extensions.visible
 import timber.log.Timber
 import java.util.concurrent.CopyOnWriteArrayList
 
-class SeriesRecordingListFragment : BaseFragment(), RecyclerViewClickCallback, SearchRequestInterface, Filter.FilterListener {
+class SeriesRecordingListFragment : BaseFragment(), RecyclerViewClickInterface, SearchRequestInterface, Filter.FilterListener {
 
     private lateinit var seriesRecordingViewModel: SeriesRecordingViewModel
     private lateinit var recyclerViewAdapter: SeriesRecordingRecyclerViewAdapter

@@ -7,7 +7,7 @@ import android.view.MenuItem
 import androidx.preference.PreferenceManager
 import com.afollestad.materialdialogs.MaterialDialog
 import org.tvheadend.tvhclient.R
-import org.tvheadend.tvhclient.ui.common.callbacks.BackPressedInterface
+import org.tvheadend.tvhclient.ui.common.interfaces.BackPressedInterface
 import org.tvheadend.tvhclient.ui.features.settings.RemoveFragmentFromBackstackInterface
 import timber.log.Timber
 

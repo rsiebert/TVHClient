@@ -19,11 +19,13 @@ import org.tvheadend.data.entity.ChannelTag
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.ui.base.BaseFragment
 import org.tvheadend.tvhclient.ui.common.*
-import org.tvheadend.tvhclient.ui.common.callbacks.RecyclerViewClickCallback
+import org.tvheadend.tvhclient.ui.common.interfaces.ChannelTagIdsSelectedInterface
+import org.tvheadend.tvhclient.ui.common.interfaces.ChannelTimeSelectedInterface
+import org.tvheadend.tvhclient.ui.common.interfaces.RecyclerViewClickInterface
 import org.tvheadend.tvhclient.ui.features.dvr.RecordingAddEditActivity
 import org.tvheadend.tvhclient.ui.features.programs.ProgramListFragment
 import org.tvheadend.tvhclient.ui.features.programs.ProgramViewModel
-import org.tvheadend.tvhclient.ui.features.search.SearchRequestInterface
+import org.tvheadend.tvhclient.ui.common.interfaces.SearchRequestInterface
 import org.tvheadend.tvhclient.util.extensions.gone
 import org.tvheadend.tvhclient.util.extensions.visible
 import timber.log.Timber
@@ -31,7 +33,7 @@ import timber.log.Timber
 // TODO Move the variable programIdToBeEditedWhenBeingRecorded into the viewmodel
 // TODO check if the selection of a channel shows the correct program list
 
-class ChannelListFragment : BaseFragment(), RecyclerViewClickCallback, ChannelTimeSelectedInterface, ChannelTagIdsSelectedInterface, SearchRequestInterface, Filter.FilterListener {
+class ChannelListFragment : BaseFragment(), RecyclerViewClickInterface, ChannelTimeSelectedInterface, ChannelTagIdsSelectedInterface, SearchRequestInterface, Filter.FilterListener {
 
     private lateinit var programViewModel: ProgramViewModel
     private lateinit var recyclerViewAdapter: ChannelRecyclerViewAdapter

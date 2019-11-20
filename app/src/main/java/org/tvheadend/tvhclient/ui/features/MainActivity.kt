@@ -28,7 +28,7 @@ import org.tvheadend.tvhclient.service.SyncStateReceiver
 import org.tvheadend.tvhclient.ui.base.BaseActivity
 import org.tvheadend.tvhclient.ui.common.*
 import org.tvheadend.tvhclient.ui.features.channels.ChannelListFragment
-import org.tvheadend.tvhclient.ui.features.download.DownloadPermissionGrantedInterface
+import org.tvheadend.tvhclient.ui.features.dvr.recordings.download.DownloadPermissionGrantedInterface
 import org.tvheadend.tvhclient.ui.features.dvr.recordings.RecordingDetailsFragment
 import org.tvheadend.tvhclient.ui.features.dvr.series_recordings.SeriesRecordingDetailsFragment
 import org.tvheadend.tvhclient.ui.features.dvr.timer_recordings.TimerRecordingDetailsFragment
@@ -41,8 +41,8 @@ import org.tvheadend.tvhclient.ui.features.navigation.NavigationViewModel
 import org.tvheadend.tvhclient.ui.features.playback.external.CastSessionManagerListener
 import org.tvheadend.tvhclient.ui.features.programs.ProgramDetailsFragment
 import org.tvheadend.tvhclient.ui.features.programs.ProgramListFragment
-import org.tvheadend.tvhclient.ui.features.search.SearchRequestInterface
-import org.tvheadend.tvhclient.ui.features.search.SuggestionProvider
+import org.tvheadend.tvhclient.ui.common.interfaces.SearchRequestInterface
+import org.tvheadend.tvhclient.ui.common.SuggestionProvider
 import org.tvheadend.tvhclient.ui.features.settings.SettingsActivity
 import org.tvheadend.tvhclient.util.extensions.gone
 import org.tvheadend.tvhclient.util.extensions.sendSnackbarMessage

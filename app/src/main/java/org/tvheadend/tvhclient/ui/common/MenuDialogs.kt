@@ -16,8 +16,8 @@ import org.tvheadend.data.entity.ChannelTag
 import org.tvheadend.tvhclient.BR
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.databinding.GenreColorListAdapterBinding
-import org.tvheadend.tvhclient.ui.features.channels.ChannelTagIdsSelectedInterface
-import org.tvheadend.tvhclient.ui.features.channels.ChannelTimeSelectedInterface
+import org.tvheadend.tvhclient.ui.common.interfaces.ChannelTagIdsSelectedInterface
+import org.tvheadend.tvhclient.ui.common.interfaces.ChannelTimeSelectedInterface
 import timber.log.Timber
 import java.text.SimpleDateFormat
 import java.util.*

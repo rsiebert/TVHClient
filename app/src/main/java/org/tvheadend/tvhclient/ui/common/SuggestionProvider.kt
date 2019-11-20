@@ -1,4 +1,4 @@
-package org.tvheadend.tvhclient.ui.features.search
+package org.tvheadend.tvhclient.ui.common
 
 import android.content.SearchRecentSuggestionsProvider
 

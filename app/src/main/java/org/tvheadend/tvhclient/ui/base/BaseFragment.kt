@@ -10,8 +10,8 @@ import org.tvheadend.data.entity.Connection
 import org.tvheadend.tvhclient.MainApplication
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.repository.AppRepository
-import org.tvheadend.tvhclient.ui.common.callbacks.LayoutInterface
-import org.tvheadend.tvhclient.ui.common.callbacks.ToolbarInterface
+import org.tvheadend.tvhclient.ui.common.interfaces.LayoutInterface
+import org.tvheadend.tvhclient.ui.common.interfaces.ToolbarInterface
 import org.tvheadend.tvhclient.ui.common.showConfirmationToReconnectToServer
 import timber.log.Timber
 import javax.inject.Inject

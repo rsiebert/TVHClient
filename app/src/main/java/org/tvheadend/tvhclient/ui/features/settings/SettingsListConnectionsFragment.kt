@@ -12,13 +12,13 @@ import com.afollestad.materialdialogs.MaterialDialog
 import kotlinx.android.synthetic.main.recyclerview_fragment.*
 import org.tvheadend.tvhclient.R
 import org.tvheadend.data.entity.Connection
-import org.tvheadend.tvhclient.ui.common.callbacks.BackPressedInterface
-import org.tvheadend.tvhclient.ui.common.callbacks.RecyclerViewClickCallback
-import org.tvheadend.tvhclient.ui.common.callbacks.ToolbarInterface
+import org.tvheadend.tvhclient.ui.common.interfaces.BackPressedInterface
+import org.tvheadend.tvhclient.ui.common.interfaces.RecyclerViewClickInterface
+import org.tvheadend.tvhclient.ui.common.interfaces.ToolbarInterface
 import org.tvheadend.tvhclient.ui.common.sendWakeOnLanPacket
 import timber.log.Timber
 
-class SettingsListConnectionsFragment : Fragment(), BackPressedInterface, ActionMode.Callback, RecyclerViewClickCallback {
+class SettingsListConnectionsFragment : Fragment(), BackPressedInterface, ActionMode.Callback, RecyclerViewClickInterface {
 
     private var activeConnectionId: Int = -1
     private var connectionHasChanged: Boolean = false

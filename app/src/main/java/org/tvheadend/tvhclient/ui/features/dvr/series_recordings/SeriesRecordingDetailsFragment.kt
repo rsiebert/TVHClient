@@ -12,11 +12,11 @@ import org.tvheadend.tvhclient.databinding.SeriesRecordingDetailsFragmentBinding
 import org.tvheadend.data.entity.SeriesRecording
 import org.tvheadend.tvhclient.ui.base.BaseFragment
 import org.tvheadend.tvhclient.ui.common.*
-import org.tvheadend.tvhclient.ui.features.dvr.RecordingRemovedCallback
+import org.tvheadend.tvhclient.ui.common.interfaces.RecordingRemovedInterface
 import org.tvheadend.tvhclient.util.extensions.gone
 import org.tvheadend.tvhclient.util.extensions.visible
 
-class SeriesRecordingDetailsFragment : BaseFragment(), RecordingRemovedCallback {
+class SeriesRecordingDetailsFragment : BaseFragment(), RecordingRemovedInterface {
 
     private lateinit var seriesRecordingViewModel: SeriesRecordingViewModel
     private var recording: SeriesRecording? = null

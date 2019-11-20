@@ -7,8 +7,8 @@ import androidx.fragment.app.Fragment
 import kotlinx.android.synthetic.main.webview_fragment.*
 import org.tvheadend.tvhclient.BuildConfig
 import org.tvheadend.tvhclient.R
-import org.tvheadend.tvhclient.ui.common.callbacks.LayoutInterface
-import org.tvheadend.tvhclient.ui.common.callbacks.ToolbarInterface
+import org.tvheadend.tvhclient.ui.common.interfaces.LayoutInterface
+import org.tvheadend.tvhclient.ui.common.interfaces.ToolbarInterface
 import org.tvheadend.tvhclient.ui.common.tasks.HtmlFileLoaderTask
 import org.tvheadend.tvhclient.ui.features.settings.RemoveFragmentFromBackstackInterface
 import org.tvheadend.tvhclient.util.extensions.gone

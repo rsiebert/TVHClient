@@ -14,7 +14,7 @@ import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.databinding.ProgramDetailsFragmentBinding
 import org.tvheadend.tvhclient.ui.base.BaseFragment
 import org.tvheadend.tvhclient.ui.common.*
-import org.tvheadend.tvhclient.ui.common.callbacks.LayoutInterface
+import org.tvheadend.tvhclient.ui.common.interfaces.LayoutInterface
 import org.tvheadend.tvhclient.ui.features.dvr.RecordingAddEditActivity
 import org.tvheadend.tvhclient.ui.common.addNotificationProgramIsAboutToStart
 import org.tvheadend.tvhclient.util.extensions.gone

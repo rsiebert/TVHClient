@@ -19,7 +19,7 @@ import org.tvheadend.tvhclient.service.HtspService
 import org.tvheadend.tvhclient.ui.base.BaseViewModel
 import org.tvheadend.tvhclient.ui.common.tasks.WakeOnLanTask
 import org.tvheadend.tvhclient.ui.features.dvr.RecordingAddEditActivity
-import org.tvheadend.tvhclient.ui.features.dvr.RecordingRemovedCallback
+import org.tvheadend.tvhclient.ui.common.interfaces.RecordingRemovedInterface
 import org.tvheadend.tvhclient.ui.features.playback.external.CastChannelActivity
 import org.tvheadend.tvhclient.ui.features.playback.external.CastRecordingActivity
 import org.tvheadend.tvhclient.ui.features.playback.external.PlayChannelActivity
@@ -168,7 +168,7 @@ fun recordSelectedProgramAsSeriesRecording(context: Context, title: String?, pro
     return true
 }
 
-fun showConfirmationToStopSelectedRecording(context: Context, recording: Recording?, callback: RecordingRemovedCallback?): Boolean {
+fun showConfirmationToStopSelectedRecording(context: Context, recording: Recording?, callback: RecordingRemovedInterface?): Boolean {
     recording ?: return false
     Timber.d("Stopping recording ${recording.title}")
     MaterialDialog(context).show {
@@ -182,7 +182,7 @@ fun showConfirmationToStopSelectedRecording(context: Context, recording: Recordi
     return true
 }
 
-private fun stopSelectedRecording(context: Context, recording: Recording, callback: RecordingRemovedCallback?) {
+private fun stopSelectedRecording(context: Context, recording: Recording, callback: RecordingRemovedInterface?) {
     val intent = Intent(context, HtspService::class.java)
     intent.action = "stopDvrEntry"
     intent.putExtra("id", recording.id)
@@ -190,7 +190,7 @@ private fun stopSelectedRecording(context: Context, recording: Recording, callba
     callback?.onRecordingRemoved()
 }
 
-fun showConfirmationToRemoveSelectedRecording(context: Context, recording: Recording?, callback: RecordingRemovedCallback?): Boolean {
+fun showConfirmationToRemoveSelectedRecording(context: Context, recording: Recording?, callback: RecordingRemovedInterface?): Boolean {
     recording ?: return false
     Timber.d("Removing recording ${recording.title}")
     MaterialDialog(context).show {
@@ -204,7 +204,7 @@ fun showConfirmationToRemoveSelectedRecording(context: Context, recording: Recor
     return true
 }
 
-private fun removeSelectedRecording(context: Context, recording: Recording, callback: RecordingRemovedCallback?) {
+private fun removeSelectedRecording(context: Context, recording: Recording, callback: RecordingRemovedInterface?) {
     val intent = Intent(context, HtspService::class.java)
     intent.action = "deleteDvrEntry"
     intent.putExtra("id", recording.id)
@@ -212,7 +212,7 @@ private fun removeSelectedRecording(context: Context, recording: Recording, call
     callback?.onRecordingRemoved()
 }
 
-fun showConfirmationToCancelSelectedRecording(context: Context, recording: Recording?, callback: RecordingRemovedCallback?): Boolean {
+fun showConfirmationToCancelSelectedRecording(context: Context, recording: Recording?, callback: RecordingRemovedInterface?): Boolean {
     recording ?: return false
     Timber.d("Cancelling recording ${recording.title}")
     MaterialDialog(context).show {
@@ -226,7 +226,7 @@ fun showConfirmationToCancelSelectedRecording(context: Context, recording: Recor
     return true
 }
 
-private fun cancelSelectedRecording(context: Context, recording: Recording, callback: RecordingRemovedCallback?) {
+private fun cancelSelectedRecording(context: Context, recording: Recording, callback: RecordingRemovedInterface?) {
     val intent = Intent(context, HtspService::class.java)
     intent.action = "cancelDvrEntry"
     intent.putExtra("id", recording.id)
@@ -279,7 +279,7 @@ fun addNewTimerRecording(context: Context): Boolean {
     return true
 }
 
-fun showConfirmationToRemoveSelectedSeriesRecording(context: Context, recording: SeriesRecording, callback: RecordingRemovedCallback?): Boolean {
+fun showConfirmationToRemoveSelectedSeriesRecording(context: Context, recording: SeriesRecording, callback: RecordingRemovedInterface?): Boolean {
     Timber.d("Removing series recording ${recording.title}")
     MaterialDialog(context).show {
         title(R.string.record_remove)
@@ -292,7 +292,7 @@ fun showConfirmationToRemoveSelectedSeriesRecording(context: Context, recording:
     return true
 }
 
-private fun removeSelectedSeriesRecording(context: Context, recording: SeriesRecording, callback: RecordingRemovedCallback?) {
+private fun removeSelectedSeriesRecording(context: Context, recording: SeriesRecording, callback: RecordingRemovedInterface?) {
     val intent = Intent(context, HtspService::class.java)
     intent.action = "deleteAutorecEntry"
     intent.putExtra("id", recording.id)
@@ -300,7 +300,7 @@ private fun removeSelectedSeriesRecording(context: Context, recording: SeriesRec
     callback?.onRecordingRemoved()
 }
 
-fun showConfirmationToRemoveSelectedTimerRecording(context: Context, recording: TimerRecording, callback: RecordingRemovedCallback?): Boolean {
+fun showConfirmationToRemoveSelectedTimerRecording(context: Context, recording: TimerRecording, callback: RecordingRemovedInterface?): Boolean {
     val recordingName = recording.name ?: ""
     val name = if (recordingName.isNotEmpty()) recordingName else ""
     val displayTitle = if (name.isNotEmpty()) name else recording.title ?: ""
@@ -317,7 +317,7 @@ fun showConfirmationToRemoveSelectedTimerRecording(context: Context, recording: 
     return true
 }
 
-private fun removeSelectedTimerRecording(context: Context, recording: TimerRecording, callback: RecordingRemovedCallback?) {
+private fun removeSelectedTimerRecording(context: Context, recording: TimerRecording, callback: RecordingRemovedInterface?) {
     val intent = Intent(context, HtspService::class.java)
     intent.action = "deleteTimerecEntry"
     intent.putExtra("id", recording.id)

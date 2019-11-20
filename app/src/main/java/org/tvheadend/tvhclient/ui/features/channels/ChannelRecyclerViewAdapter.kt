@@ -13,12 +13,12 @@ import org.tvheadend.data.entity.Channel
 import org.tvheadend.data.entity.Recording
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.databinding.ChannelListAdapterBinding
-import org.tvheadend.tvhclient.ui.common.callbacks.RecyclerViewClickCallback
+import org.tvheadend.tvhclient.ui.common.interfaces.RecyclerViewClickInterface
 import org.tvheadend.tvhclient.util.extensions.isEqualTo
 import java.util.*
 import java.util.concurrent.CopyOnWriteArrayList
 
-class ChannelRecyclerViewAdapter internal constructor(private val viewModel: ChannelViewModel, private val isDualPane: Boolean, private val clickCallback: RecyclerViewClickCallback) : RecyclerView.Adapter<ChannelRecyclerViewAdapter.ChannelViewHolder>(), Filterable {
+class ChannelRecyclerViewAdapter internal constructor(private val viewModel: ChannelViewModel, private val isDualPane: Boolean, private val clickCallback: RecyclerViewClickInterface) : RecyclerView.Adapter<ChannelRecyclerViewAdapter.ChannelViewHolder>(), Filterable {
 
     private val recordingList = ArrayList<Recording>()
     private val channelList = ArrayList<Channel>()
@@ -189,7 +189,7 @@ class ChannelRecyclerViewAdapter internal constructor(private val viewModel: Cha
             return lifecycleRegistry
         }
 
-        fun bind(channel: Channel, position: Int, isSelected: Boolean, clickCallback: RecyclerViewClickCallback) {
+        fun bind(channel: Channel, position: Int, isSelected: Boolean, clickCallback: RecyclerViewClickInterface) {
             binding.channel = channel
             binding.position = position
             binding.isSelected = isSelected

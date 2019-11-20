@@ -1,4 +1,4 @@
-package org.tvheadend.tvhclient.ui.features.channels
+package org.tvheadend.tvhclient.ui.common.interfaces
 
 interface ChannelTimeSelectedInterface {
 

@@ -9,10 +9,10 @@ import androidx.recyclerview.widget.RecyclerView
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.databinding.EpgChannelRecyclerviewAdapterBinding
 import org.tvheadend.data.entity.EpgChannel
-import org.tvheadend.tvhclient.ui.common.callbacks.RecyclerViewClickCallback
+import org.tvheadend.tvhclient.ui.common.interfaces.RecyclerViewClickInterface
 import java.util.*
 
-class EpgChannelListRecyclerViewAdapter(private val viewModel: EpgViewModel, private val clickCallback: RecyclerViewClickCallback) : RecyclerView.Adapter<EpgChannelListRecyclerViewAdapter.EpgChannelViewHolder>() {
+class EpgChannelListRecyclerViewAdapter(private val viewModel: EpgViewModel, private val clickCallback: RecyclerViewClickInterface) : RecyclerView.Adapter<EpgChannelListRecyclerViewAdapter.EpgChannelViewHolder>() {
 
     private val channelList = ArrayList<EpgChannel>()
 
@@ -83,7 +83,7 @@ class EpgChannelListRecyclerViewAdapter(private val viewModel: EpgViewModel, pri
             return lifecycleRegistry
         }
 
-        fun bind(channel: EpgChannel, position: Int, clickCallback: RecyclerViewClickCallback) {
+        fun bind(channel: EpgChannel, position: Int, clickCallback: RecyclerViewClickInterface) {
             binding.channel = channel
             binding.position = position
             binding.callback = clickCallback

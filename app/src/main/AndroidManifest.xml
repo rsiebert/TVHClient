@@ -106,8 +106,8 @@
             android:permission="android.permission.BIND_JOB_SERVICE" />
 
         <provider
-            android:name="org.tvheadend.tvhclient.ui.features.search.SuggestionProvider"
-            android:authorities="org.tvheadend.tvhclient.ui.features.search.SuggestionProvider"
+            android:name="org.tvheadend.tvhclient.ui.common.SuggestionProvider"
+            android:authorities="org.tvheadend.tvhclient.ui.common.SuggestionProvider"
             android:exported="false" />
         <provider
             android:name="androidx.core.content.FileProvider"

@@ -1,4 +1,4 @@
-package org.tvheadend.tvhclient.ui.features.download
+package org.tvheadend.tvhclient.ui.features.dvr.recordings.download
 
 import android.Manifest
 import android.app.Activity

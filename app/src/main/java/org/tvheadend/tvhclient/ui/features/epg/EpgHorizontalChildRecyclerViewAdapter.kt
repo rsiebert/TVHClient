@@ -15,12 +15,12 @@ import org.tvheadend.data.entity.EpgProgram
 import org.tvheadend.data.entity.Recording
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.databinding.EpgHorizontalChildRecyclerviewAdapterBinding
-import org.tvheadend.tvhclient.ui.common.callbacks.RecyclerViewClickCallback
+import org.tvheadend.tvhclient.ui.common.interfaces.RecyclerViewClickInterface
 import org.tvheadend.tvhclient.ui.features.programs.ProgramDetailsFragment
 import org.tvheadend.tvhclient.util.extensions.isEqualTo
 import java.util.*
 
-internal class EpgHorizontalChildRecyclerViewAdapter(private val viewModel: EpgViewModel, private val fragmentId: Int) : RecyclerView.Adapter<EpgHorizontalChildRecyclerViewAdapter.EpgProgramListViewHolder>(), RecyclerViewClickCallback {
+internal class EpgHorizontalChildRecyclerViewAdapter(private val viewModel: EpgViewModel, private val fragmentId: Int) : RecyclerView.Adapter<EpgHorizontalChildRecyclerViewAdapter.EpgProgramListViewHolder>(), RecyclerViewClickInterface {
 
     private val programList = ArrayList<EpgProgram>()
     private val recordingList = ArrayList<Recording>()
@@ -173,7 +173,7 @@ internal class EpgHorizontalChildRecyclerViewAdapter(private val viewModel: EpgV
 
     internal class EpgProgramListViewHolder(private val binding: EpgHorizontalChildRecyclerviewAdapterBinding,
                                             private val viewModel: EpgViewModel,
-                                            private val clickCallback: RecyclerViewClickCallback) : RecyclerView.ViewHolder(binding.root), LifecycleOwner {
+                                            private val clickCallback: RecyclerViewClickInterface) : RecyclerView.ViewHolder(binding.root), LifecycleOwner {
 
         private val lifecycleRegistry = LifecycleRegistry(this)
 

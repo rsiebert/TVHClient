@@ -12,16 +12,16 @@ import org.tvheadend.tvhclient.databinding.RecordingDetailsFragmentBinding
 import org.tvheadend.data.entity.Recording
 import org.tvheadend.tvhclient.ui.base.BaseFragment
 import org.tvheadend.tvhclient.ui.common.*
-import org.tvheadend.tvhclient.ui.features.download.DownloadPermissionGrantedInterface
-import org.tvheadend.tvhclient.ui.features.download.DownloadRecordingManager
-import org.tvheadend.tvhclient.ui.features.dvr.RecordingRemovedCallback
+import org.tvheadend.tvhclient.ui.features.dvr.recordings.download.DownloadPermissionGrantedInterface
+import org.tvheadend.tvhclient.ui.features.dvr.recordings.download.DownloadRecordingManager
+import org.tvheadend.tvhclient.ui.common.interfaces.RecordingRemovedInterface
 import org.tvheadend.tvhclient.util.extensions.gone
 import org.tvheadend.tvhclient.util.extensions.visible
 import timber.log.Timber
 
 // TODO Observe the id and load the recording as livedata
 
-class RecordingDetailsFragment : BaseFragment(), RecordingRemovedCallback, DownloadPermissionGrantedInterface {
+class RecordingDetailsFragment : BaseFragment(), RecordingRemovedInterface, DownloadPermissionGrantedInterface {
 
     private lateinit var recordingViewModel: RecordingViewModel
     private var recording: Recording? = null

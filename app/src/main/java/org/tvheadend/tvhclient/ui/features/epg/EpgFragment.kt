@@ -22,13 +22,13 @@ import org.tvheadend.data.entity.EpgProgram
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.ui.base.BaseFragment
 import org.tvheadend.tvhclient.ui.common.*
-import org.tvheadend.tvhclient.ui.common.callbacks.LayoutInterface
-import org.tvheadend.tvhclient.ui.common.callbacks.RecyclerViewClickCallback
-import org.tvheadend.tvhclient.ui.features.channels.ChannelTagIdsSelectedInterface
-import org.tvheadend.tvhclient.ui.features.channels.ChannelTimeSelectedInterface
+import org.tvheadend.tvhclient.ui.common.interfaces.LayoutInterface
+import org.tvheadend.tvhclient.ui.common.interfaces.RecyclerViewClickInterface
+import org.tvheadend.tvhclient.ui.common.interfaces.ChannelTagIdsSelectedInterface
+import org.tvheadend.tvhclient.ui.common.interfaces.ChannelTimeSelectedInterface
 import org.tvheadend.tvhclient.ui.features.dvr.RecordingAddEditActivity
 import org.tvheadend.tvhclient.ui.common.addNotificationProgramIsAboutToStart
-import org.tvheadend.tvhclient.ui.features.search.SearchRequestInterface
+import org.tvheadend.tvhclient.ui.common.interfaces.SearchRequestInterface
 import org.tvheadend.tvhclient.util.extensions.gone
 import org.tvheadend.tvhclient.util.extensions.visible
 import timber.log.Timber
@@ -37,7 +37,7 @@ import timber.log.Timber
 // TODO preload epg data in the background after startup
 // TODO prevent reloading when scrolling
 
-class EpgFragment : BaseFragment(), EpgScrollInterface, RecyclerViewClickCallback, ChannelTimeSelectedInterface, ChannelTagIdsSelectedInterface, Filter.FilterListener, SearchRequestInterface {
+class EpgFragment : BaseFragment(), EpgScrollInterface, RecyclerViewClickInterface, ChannelTimeSelectedInterface, ChannelTagIdsSelectedInterface, Filter.FilterListener, SearchRequestInterface {
 
     private lateinit var epgViewModel: EpgViewModel
     private lateinit var channelListRecyclerViewAdapter: EpgChannelListRecyclerViewAdapter

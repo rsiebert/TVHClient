@@ -13,12 +13,12 @@ import org.tvheadend.data.entity.ProgramInterface
 import org.tvheadend.data.entity.Recording
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.databinding.ProgramListAdapterBinding
-import org.tvheadend.tvhclient.ui.common.callbacks.RecyclerViewClickCallback
+import org.tvheadend.tvhclient.ui.common.interfaces.RecyclerViewClickInterface
 import org.tvheadend.tvhclient.util.extensions.isEqualTo
 import java.util.*
 import java.util.concurrent.CopyOnWriteArrayList
 
-class ProgramRecyclerViewAdapter internal constructor(private val viewModel: ProgramViewModel, private val clickCallback: RecyclerViewClickCallback, private val onLastProgramVisibleListener: LastProgramVisibleListener) : RecyclerView.Adapter<ProgramRecyclerViewAdapter.ProgramViewHolder>(), Filterable {
+class ProgramRecyclerViewAdapter internal constructor(private val viewModel: ProgramViewModel, private val clickCallback: RecyclerViewClickInterface, private val onLastProgramVisibleListener: LastProgramVisibleListener) : RecyclerView.Adapter<ProgramRecyclerViewAdapter.ProgramViewHolder>(), Filterable {
 
     private val programList = ArrayList<ProgramInterface>()
     private var programListFiltered: MutableList<ProgramInterface> = ArrayList()
@@ -179,7 +179,7 @@ class ProgramRecyclerViewAdapter internal constructor(private val viewModel: Pro
             return lifecycleRegistry
         }
 
-        fun bind(program: ProgramInterface, position: Int, clickCallback: RecyclerViewClickCallback) {
+        fun bind(program: ProgramInterface, position: Int, clickCallback: RecyclerViewClickInterface) {
             binding.program = program
             binding.position = position
             binding.viewModel = viewModel

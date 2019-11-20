@@ -9,10 +9,10 @@ import androidx.recyclerview.widget.RecyclerView
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.databinding.ConnectionListAdapterBinding
 import org.tvheadend.data.entity.Connection
-import org.tvheadend.tvhclient.ui.common.callbacks.RecyclerViewClickCallback
+import org.tvheadend.tvhclient.ui.common.interfaces.RecyclerViewClickInterface
 import java.util.*
 
-class ConnectionRecyclerViewAdapter internal constructor(private val clickCallback: RecyclerViewClickCallback) : RecyclerView.Adapter<ConnectionRecyclerViewAdapter.ConnectionViewHolder>() {
+class ConnectionRecyclerViewAdapter internal constructor(private val clickCallback: RecyclerViewClickInterface) : RecyclerView.Adapter<ConnectionRecyclerViewAdapter.ConnectionViewHolder>() {
 
     private var connectionList: MutableList<Connection> = ArrayList()
     var selectedPosition = 0
@@ -95,7 +95,7 @@ class ConnectionRecyclerViewAdapter internal constructor(private val clickCallba
             return lifecycleRegistry
         }
 
-        fun bind(connection: Connection, position: Int, clickCallback: RecyclerViewClickCallback) {
+        fun bind(connection: Connection, position: Int, clickCallback: RecyclerViewClickInterface) {
             binding.connection = connection
             binding.position = position
             binding.callback = clickCallback
