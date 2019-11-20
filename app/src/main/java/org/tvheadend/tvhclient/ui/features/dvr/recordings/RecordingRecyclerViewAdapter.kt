@@ -5,9 +5,9 @@ import android.view.ViewGroup
 import android.widget.Filter
 import android.widget.Filterable
 import androidx.recyclerview.widget.RecyclerView
+import org.tvheadend.data.entity.Recording
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.databinding.RecordingListAdapterBinding
-import org.tvheadend.data.entity.Recording
 import org.tvheadend.tvhclient.ui.common.callbacks.RecyclerViewClickCallback
 import java.util.*
 import java.util.concurrent.CopyOnWriteArrayList
@@ -79,8 +79,8 @@ class RecordingRecyclerViewAdapter internal constructor(private val isDualPane: 
                         val title = recording.title ?: ""
                         val subtitle = recording.subtitle ?: ""
                         when {
-                            title.toLowerCase().contains(charString.toLowerCase()) -> filteredList.add(recording)
-                            subtitle.toLowerCase().contains(charString.toLowerCase()) -> filteredList.add(recording)
+                            title.toLowerCase(Locale.getDefault()).contains(charString.toLowerCase(Locale.getDefault())) -> filteredList.add(recording)
+                            subtitle.toLowerCase(Locale.getDefault()).contains(charString.toLowerCase(Locale.getDefault())) -> filteredList.add(recording)
                         }
                     }
                 } else {

@@ -84,7 +84,7 @@ class ProgramRecyclerViewAdapter internal constructor(private val viewModel: Pro
                     for (program in CopyOnWriteArrayList(programList)) {
                         val title = program.title ?: ""
                         when {
-                            title.toLowerCase().contains(charString.toLowerCase()) -> filteredList.add(program)
+                            title.toLowerCase(Locale.getDefault()).contains(charString.toLowerCase(Locale.getDefault())) -> filteredList.add(program)
                         }
                     }
                 } else {
