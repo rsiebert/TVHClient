@@ -16,7 +16,7 @@ import org.tvheadend.tvhclient.ui.base.BaseFragment
 import org.tvheadend.tvhclient.ui.common.*
 import org.tvheadend.tvhclient.ui.common.callbacks.LayoutInterface
 import org.tvheadend.tvhclient.ui.features.dvr.RecordingAddEditActivity
-import org.tvheadend.tvhclient.ui.features.notification.addNotificationProgramIsAboutToStart
+import org.tvheadend.tvhclient.ui.common.addNotificationProgramIsAboutToStart
 import org.tvheadend.tvhclient.util.extensions.gone
 import org.tvheadend.tvhclient.util.extensions.visible
 import timber.log.Timber

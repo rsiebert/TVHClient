@@ -21,7 +21,6 @@ import org.tvheadend.tvhclient.ui.base.BaseFragment
 import org.tvheadend.tvhclient.ui.common.*
 import org.tvheadend.tvhclient.ui.common.callbacks.RecyclerViewClickCallback
 import org.tvheadend.tvhclient.ui.features.dvr.RecordingAddEditActivity
-import org.tvheadend.tvhclient.ui.features.notification.addNotificationProgramIsAboutToStart
 import org.tvheadend.tvhclient.ui.features.programs.ProgramListFragment
 import org.tvheadend.tvhclient.ui.features.programs.ProgramViewModel
 import org.tvheadend.tvhclient.ui.features.search.SearchRequestInterface

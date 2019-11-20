@@ -20,8 +20,8 @@ import org.tvheadend.htsp.*
 import org.tvheadend.tvhclient.MainApplication
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.repository.AppRepository
-import org.tvheadend.tvhclient.ui.features.notification.addNotificationScheduledRecordingStarts
-import org.tvheadend.tvhclient.ui.features.notification.removeNotificationById
+import org.tvheadend.tvhclient.ui.common.addNotificationScheduledRecordingStarts
+import org.tvheadend.tvhclient.ui.common.removeNotificationById
 import org.tvheadend.tvhclient.util.convertUrlToHashString
 import org.tvheadend.tvhclient.util.extensions.isEqualTo
 import org.tvheadend.tvhclient.util.extensions.sendSnackbarMessage
@@ -1264,7 +1264,7 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
         }
     }
 
-    private fun loadAllChannelIcons(channels:  List<Channel> = appRepository.channelData.getItems()) {
+    private fun loadAllChannelIcons(channels: List<Channel> = appRepository.channelData.getItems()) {
         Timber.d("Downloading and saving all channel icons...")
 
         for (channel in channels) {
@@ -1279,7 +1279,7 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
         }
     }
 
-    private fun loadAllChannelTagIcons(tags:  List<ChannelTag> = appRepository.channelTagData.getItems()) {
+    private fun loadAllChannelTagIcons(tags: List<ChannelTag> = appRepository.channelTagData.getItems()) {
         Timber.d("Downloading and saving all channel tag icons...")
 
         for (tag in tags) {

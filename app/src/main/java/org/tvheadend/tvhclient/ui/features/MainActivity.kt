@@ -26,10 +26,7 @@ import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.service.HtspService
 import org.tvheadend.tvhclient.service.SyncStateReceiver
 import org.tvheadend.tvhclient.ui.base.BaseActivity
-import org.tvheadend.tvhclient.ui.common.NetworkStatus
-import org.tvheadend.tvhclient.ui.common.getCastContext
-import org.tvheadend.tvhclient.ui.common.getCastSession
-import org.tvheadend.tvhclient.ui.common.showSnackbarMessage
+import org.tvheadend.tvhclient.ui.common.*
 import org.tvheadend.tvhclient.ui.features.channels.ChannelListFragment
 import org.tvheadend.tvhclient.ui.features.download.DownloadPermissionGrantedInterface
 import org.tvheadend.tvhclient.ui.features.dvr.recordings.RecordingDetailsFragment
@@ -41,8 +38,6 @@ import org.tvheadend.tvhclient.ui.features.information.StatusViewModel
 import org.tvheadend.tvhclient.ui.features.navigation.NavigationDrawer
 import org.tvheadend.tvhclient.ui.features.navigation.NavigationDrawer.Companion.MENU_SETTINGS
 import org.tvheadend.tvhclient.ui.features.navigation.NavigationViewModel
-import org.tvheadend.tvhclient.ui.features.notification.showOrCancelNotificationDiskSpaceIsLow
-import org.tvheadend.tvhclient.ui.features.notification.showOrCancelNotificationProgramIsCurrentlyBeingRecorded
 import org.tvheadend.tvhclient.ui.features.playback.external.CastSessionManagerListener
 import org.tvheadend.tvhclient.ui.features.programs.ProgramDetailsFragment
 import org.tvheadend.tvhclient.ui.features.programs.ProgramListFragment

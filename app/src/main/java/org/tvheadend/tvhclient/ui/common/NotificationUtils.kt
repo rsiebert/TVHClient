@@ -1,4 +1,4 @@
-package org.tvheadend.tvhclient.ui.features.notification
+package org.tvheadend.tvhclient.ui.common
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -15,6 +15,8 @@ import org.tvheadend.data.entity.ProgramInterface
 import org.tvheadend.data.entity.Recording
 import org.tvheadend.data.entity.ServerProfile
 import org.tvheadend.tvhclient.R
+import org.tvheadend.tvhclient.util.worker.ProgramNotificationWorker
+import org.tvheadend.tvhclient.util.worker.RecordingNotificationWorker
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
 
