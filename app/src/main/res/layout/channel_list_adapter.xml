@@ -277,7 +277,7 @@
 
         <variable
             name="channel"
-            type="org.tvheadend.tvhclient.data.entity.Channel" />
+            type="org.tvheadend.data.entity.Channel" />
 
         <variable
             name="viewModel"

@@ -301,7 +301,7 @@
 
         <variable
             name="recording"
-            type="org.tvheadend.tvhclient.data.entity.TimerRecording" />
+            type="org.tvheadend.data.entity.TimerRecording" />
 
         <variable
             name="htspVersion"

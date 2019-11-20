@@ -1,7 +1,7 @@
 package org.tvheadend.tvhclient.ui.features.epg
 
 import androidx.recyclerview.widget.DiffUtil
-import org.tvheadend.tvhclient.data.entity.EpgProgram
+import org.tvheadend.data.entity.EpgProgram
 
 internal class EpgProgramListDiffCallback(private val oldList: List<EpgProgram>, private val newList: List<EpgProgram>) : DiffUtil.Callback() {
 

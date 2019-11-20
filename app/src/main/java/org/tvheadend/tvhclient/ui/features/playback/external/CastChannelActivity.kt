@@ -29,8 +29,9 @@ class CastChannelActivity : BasePlaybackActivity() {
         movieMetadata.putString(MediaMetadata.KEY_TITLE, channel.programTitle)
         movieMetadata.putString(MediaMetadata.KEY_SUBTITLE, channel.programSubtitle)
 
-        if (!channel.icon.isNullOrEmpty()) {
-            val iconUrl: String? = if (channel.icon?.startsWith("http") == true) {
+        val icon = channel.icon
+        if (!icon.isNullOrEmpty()) {
+            val iconUrl: String? = if (icon.startsWith("http")) {
                 channel.icon
             } else {
                 viewModel.getServerUrl() + "/" + channel.icon

@@ -21,7 +21,7 @@ import com.mikepenz.materialdrawer.model.ProfileDrawerItem
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem
 import com.mikepenz.materialdrawer.model.interfaces.IProfile
 import org.tvheadend.tvhclient.R
-import org.tvheadend.tvhclient.data.entity.Connection
+import org.tvheadend.data.entity.Connection
 import org.tvheadend.tvhclient.ui.features.channels.ChannelListFragment
 import org.tvheadend.tvhclient.ui.features.dvr.recordings.CompletedRecordingListFragment
 import org.tvheadend.tvhclient.ui.features.dvr.recordings.FailedRecordingListFragment

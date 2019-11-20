@@ -282,7 +282,7 @@
 
         <variable
             name="program"
-            type="org.tvheadend.tvhclient.data.entity.ProgramInterface" />
+            type="org.tvheadend.data.entity.ProgramInterface" />
 
         <variable
             name="viewModel"

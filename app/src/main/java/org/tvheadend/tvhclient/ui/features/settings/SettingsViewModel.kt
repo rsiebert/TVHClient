@@ -3,11 +3,12 @@ package org.tvheadend.tvhclient.ui.features.settings
 import android.app.Application
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import org.tvheadend.data.source.MiscDataSource
 import org.tvheadend.tvhclient.R
-import org.tvheadend.tvhclient.data.entity.Channel
-import org.tvheadend.tvhclient.data.entity.Connection
-import org.tvheadend.tvhclient.data.entity.ServerProfile
-import org.tvheadend.tvhclient.data.entity.ServerStatus
+import org.tvheadend.data.entity.Channel
+import org.tvheadend.data.entity.Connection
+import org.tvheadend.data.entity.ServerProfile
+import org.tvheadend.data.entity.ServerStatus
 import org.tvheadend.tvhclient.ui.base.BaseViewModel
 import org.tvheadend.tvhclient.ui.common.Event
 import timber.log.Timber
@@ -50,7 +51,7 @@ class SettingsViewModel(application: Application) : BaseViewModel(application) {
      * Clear the database contents, when done the callback
      * is triggered which will restart the application
      */
-    fun clearDatabase(callback: DatabaseClearedCallback) {
+    fun clearDatabase(callback: MiscDataSource.DatabaseClearedCallback) {
         appRepository.miscData.clearDatabase(callback)
     }
 

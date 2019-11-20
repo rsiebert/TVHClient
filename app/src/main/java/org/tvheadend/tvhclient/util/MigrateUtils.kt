@@ -4,12 +4,12 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.database.sqlite.SQLiteException
 import android.os.Environment
+import org.tvheadend.data.db.DatabaseHelperForMigration
+import org.tvheadend.data.entity.Connection
+import org.tvheadend.data.entity.ServerStatus
 import org.tvheadend.tvhclient.BuildConfig
 import org.tvheadend.tvhclient.R
-import org.tvheadend.tvhclient.data.db.DatabaseHelperForMigration
 import org.tvheadend.tvhclient.repository.AppRepository
-import org.tvheadend.tvhclient.data.entity.Connection
-import org.tvheadend.tvhclient.data.entity.ServerStatus
 import timber.log.Timber
 import java.util.*
 
@@ -166,14 +166,14 @@ class MigrateUtils(val context: Context, val appRepository: AppRepository, val s
 
     private fun copyConnectionsFromOldToNewDatabase() {
         Timber.d("Migrating existing connections to the new room database")
-        val db = DatabaseHelperForMigration.getInstance(context)?.readableDatabase
+        val db = DatabaseHelperForMigration.getInstance(context)?.readableDatabase ?: return
 
         // Save the previous connection details in a list, then delete the old database and insert the connection details into the new one
         val connectionList = ArrayList<Connection>()
         try {
-            Timber.d("Database is readable ${db?.isOpen}")
-            val cursor = db?.rawQuery("SELECT * FROM connections", null)
-            cursor?.let {
+            Timber.d("Database is readable ${db.isOpen}")
+            val cursor = db.rawQuery("SELECT * FROM connections", null)
+            cursor.let {
                 if (it.count > 0) {
                     it.moveToFirst()
                     do {
@@ -197,12 +197,12 @@ class MigrateUtils(val context: Context, val appRepository: AppRepository, val s
                     } while (it.moveToNext())
                 }
             }
-            cursor?.close()
+            cursor.close()
         } catch (e: SQLiteException) {
             Timber.e(e, "Error getting connection information from cursor")
         }
 
-        db?.close()
+        db.close()
 
         // delete the entire database so we can restart with version one in room
         Timber.d("Deleting old database")

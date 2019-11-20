@@ -10,10 +10,10 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.service.HtspService
-import org.tvheadend.tvhclient.data.entity.Channel
-import org.tvheadend.tvhclient.data.entity.Input
-import org.tvheadend.tvhclient.data.entity.ServerStatus
-import org.tvheadend.tvhclient.data.entity.Subscription
+import org.tvheadend.data.entity.Channel
+import org.tvheadend.data.entity.Input
+import org.tvheadend.data.entity.ServerStatus
+import org.tvheadend.data.entity.Subscription
 import org.tvheadend.tvhclient.ui.base.BaseViewModel
 import timber.log.Timber
 

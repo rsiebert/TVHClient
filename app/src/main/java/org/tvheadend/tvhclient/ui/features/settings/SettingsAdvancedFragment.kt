@@ -17,6 +17,7 @@ import androidx.work.WorkManager
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.list.listItemsSingleChoice
 import com.squareup.picasso.Picasso
+import org.tvheadend.data.source.MiscDataSource
 import org.tvheadend.tvhclient.BuildConfig
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.service.HtspService
@@ -31,7 +32,7 @@ import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
 
-class SettingsAdvancedFragment : BasePreferenceFragment(), Preference.OnPreferenceChangeListener, Preference.OnPreferenceClickListener, SharedPreferences.OnSharedPreferenceChangeListener, DatabaseClearedCallback {
+class SettingsAdvancedFragment : BasePreferenceFragment(), Preference.OnPreferenceChangeListener, Preference.OnPreferenceClickListener, SharedPreferences.OnSharedPreferenceChangeListener, MiscDataSource.DatabaseClearedCallback {
 
     private var notificationsEnabledPreference: SwitchPreference? = null
     private var notifyRunningRecordingCountEnabledPreference: SwitchPreference? = null

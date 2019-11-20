@@ -5,10 +5,10 @@ import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import org.tvheadend.tvhclient.R
-import org.tvheadend.tvhclient.data.entity.ChannelTag
-import org.tvheadend.tvhclient.data.entity.Program
-import org.tvheadend.tvhclient.data.entity.Recording
-import org.tvheadend.tvhclient.data.entity.ServerProfile
+import org.tvheadend.data.entity.ChannelTag
+import org.tvheadend.data.entity.Program
+import org.tvheadend.data.entity.Recording
+import org.tvheadend.data.entity.ServerProfile
 import org.tvheadend.tvhclient.ui.base.BaseViewModel
 import timber.log.Timber
 import java.util.*

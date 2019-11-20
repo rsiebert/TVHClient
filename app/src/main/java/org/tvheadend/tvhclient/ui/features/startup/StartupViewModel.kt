@@ -9,7 +9,7 @@ import androidx.lifecycle.*
 import org.tvheadend.tvhclient.MainApplication
 import org.tvheadend.tvhclient.repository.AppRepository
 import org.tvheadend.tvhclient.service.HtspService
-import org.tvheadend.tvhclient.data.entity.Connection
+import org.tvheadend.data.entity.Connection
 import timber.log.Timber
 import javax.inject.Inject
 

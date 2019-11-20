@@ -3,9 +3,9 @@ package org.tvheadend.tvhclient.di.module
 import android.content.Context
 import dagger.Module
 import dagger.Provides
-import org.tvheadend.tvhclient.data.db.AppRoomDatabase
+import org.tvheadend.data.db.AppRoomDatabase
 import org.tvheadend.tvhclient.repository.AppRepository
-import org.tvheadend.tvhclient.data.source.*
+import org.tvheadend.data.source.*
 import javax.inject.Singleton
 
 @Module

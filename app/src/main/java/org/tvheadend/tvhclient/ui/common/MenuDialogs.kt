@@ -12,10 +12,10 @@ import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.callbacks.onDismiss
 import com.afollestad.materialdialogs.list.customListAdapter
 import com.afollestad.materialdialogs.list.listItemsSingleChoice
+import org.tvheadend.data.entity.ChannelTag
 import org.tvheadend.tvhclient.BR
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.databinding.GenreColorListAdapterBinding
-import org.tvheadend.tvhclient.data.entity.ChannelTag
 import org.tvheadend.tvhclient.ui.features.channels.ChannelTagIdsSelectedInterface
 import org.tvheadend.tvhclient.ui.features.channels.ChannelTimeSelectedInterface
 import timber.log.Timber

@@ -179,7 +179,7 @@
 
         <variable
             name="recording"
-            type="org.tvheadend.tvhclient.data.entity.SeriesRecording" />
+            type="org.tvheadend.data.entity.SeriesRecording" />
 
         <variable
             name="htspVersion"

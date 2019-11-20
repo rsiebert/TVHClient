@@ -328,7 +328,7 @@
 
         <variable
             name="recording"
-            type="org.tvheadend.tvhclient.data.entity.Recording" />
+            type="org.tvheadend.data.entity.Recording" />
 
         <variable
             name="viewModel"

@@ -56,7 +56,7 @@
 
         <variable
             name="channel"
-            type="org.tvheadend.tvhclient.data.entity.EpgChannel" />
+            type="org.tvheadend.data.entity.EpgChannel" />
 
         <variable
             name="viewModel"

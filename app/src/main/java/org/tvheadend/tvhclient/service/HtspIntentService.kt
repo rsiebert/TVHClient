@@ -7,13 +7,13 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import androidx.core.app.JobIntentService
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import org.tvheadend.data.entity.Connection
+import org.tvheadend.data.entity.Program
+import org.tvheadend.data.entity.ServerStatus
 import org.tvheadend.htsp.*
 import org.tvheadend.tvhclient.MainApplication
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.repository.AppRepository
-import org.tvheadend.tvhclient.data.entity.Connection
-import org.tvheadend.tvhclient.data.entity.Program
-import org.tvheadend.tvhclient.data.entity.ServerStatus
 import org.tvheadend.tvhclient.util.convertUrlToHashString
 import timber.log.Timber
 import java.io.*

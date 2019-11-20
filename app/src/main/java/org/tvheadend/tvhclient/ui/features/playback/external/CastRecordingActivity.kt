@@ -29,8 +29,9 @@ class CastRecordingActivity : BasePlaybackActivity() {
         movieMetadata.putString(MediaMetadata.KEY_TITLE, recording.title)
         movieMetadata.putString(MediaMetadata.KEY_SUBTITLE, recording.subtitle)
 
-        if (!recording.channelIcon.isNullOrEmpty()) {
-            val iconUrl: String? = if (recording.channelIcon != null && recording.channelIcon?.startsWith("http") == true) {
+        val icon = recording.channelIcon
+        if (!icon.isNullOrEmpty()) {
+            val iconUrl: String? = if (icon.startsWith("http")) {
                 recording.channelIcon
             } else {
                 viewModel.getServerUrl() + "/" + recording.channelIcon

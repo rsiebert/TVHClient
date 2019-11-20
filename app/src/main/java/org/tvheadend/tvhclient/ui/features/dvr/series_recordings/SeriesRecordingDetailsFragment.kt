@@ -9,7 +9,7 @@ import kotlinx.android.synthetic.main.details_fragment_header.*
 import kotlinx.android.synthetic.main.series_recording_details_fragment.*
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.databinding.SeriesRecordingDetailsFragmentBinding
-import org.tvheadend.tvhclient.data.entity.SeriesRecording
+import org.tvheadend.data.entity.SeriesRecording
 import org.tvheadend.tvhclient.ui.base.BaseFragment
 import org.tvheadend.tvhclient.ui.common.*
 import org.tvheadend.tvhclient.ui.features.dvr.RecordingRemovedCallback

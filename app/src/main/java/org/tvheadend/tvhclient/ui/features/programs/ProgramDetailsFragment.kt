@@ -8,10 +8,10 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import kotlinx.android.synthetic.main.details_fragment_header.*
 import kotlinx.android.synthetic.main.program_details_fragment.*
+import org.tvheadend.data.entity.Program
+import org.tvheadend.data.entity.Recording
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.databinding.ProgramDetailsFragmentBinding
-import org.tvheadend.tvhclient.data.entity.Program
-import org.tvheadend.tvhclient.data.entity.Recording
 import org.tvheadend.tvhclient.ui.base.BaseFragment
 import org.tvheadend.tvhclient.ui.common.*
 import org.tvheadend.tvhclient.ui.common.callbacks.LayoutInterface
@@ -96,11 +96,14 @@ class ProgramDetailsFragment : BaseFragment() {
                 activity?.startActivity(intent)
                 break
 
-            } else if (program != null && rec.eventId == program?.eventId) {
-                Timber.d("Found recording for program ${program?.title}")
-                recording = rec
-                recordingExists = true
-                break
+            } else {
+                val p = program
+                if (p != null && rec.eventId == p.eventId) {
+                    Timber.d("Found recording for program ${p.title}")
+                    recording = rec
+                    recordingExists = true
+                    break
+                }
             }
         }
         // If there is no recording for the program set the

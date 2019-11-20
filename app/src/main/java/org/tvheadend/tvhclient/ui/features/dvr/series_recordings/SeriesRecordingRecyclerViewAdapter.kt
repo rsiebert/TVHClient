@@ -7,7 +7,7 @@ import android.widget.Filterable
 import androidx.recyclerview.widget.RecyclerView
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.databinding.SeriesRecordingListAdapterBinding
-import org.tvheadend.tvhclient.data.entity.SeriesRecording
+import org.tvheadend.data.entity.SeriesRecording
 import org.tvheadend.tvhclient.ui.common.callbacks.RecyclerViewClickCallback
 import java.util.*
 import java.util.concurrent.CopyOnWriteArrayList

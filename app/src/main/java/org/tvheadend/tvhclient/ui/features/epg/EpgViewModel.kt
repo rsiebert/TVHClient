@@ -10,8 +10,8 @@ import androidx.lifecycle.Transformations
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.tvheadend.tvhclient.R
-import org.tvheadend.tvhclient.data.entity.EpgChannel
-import org.tvheadend.tvhclient.data.entity.EpgProgram
+import org.tvheadend.data.entity.EpgChannel
+import org.tvheadend.data.entity.EpgProgram
 import org.tvheadend.tvhclient.ui.common.LiveEvent
 import org.tvheadend.tvhclient.ui.features.channels.BaseChannelViewModel
 import timber.log.Timber
