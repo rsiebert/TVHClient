@@ -1,4 +1,4 @@
-package org.tvheadend.tvhclient.domain.repository.data_source
+package org.tvheadend.tvhclient.data.source
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -12,7 +12,7 @@ import org.tvheadend.tvhclient.domain.entity.EpgChannel
 import timber.log.Timber
 import java.util.*
 
-class ChannelData(private val db: AppRoomDatabase) : DataSourceInterface<Channel> {
+class ChannelDataSource(private val db: AppRoomDatabase) : DataSourceInterface<Channel> {
 
     private val ioScope = CoroutineScope(Dispatchers.IO)
 

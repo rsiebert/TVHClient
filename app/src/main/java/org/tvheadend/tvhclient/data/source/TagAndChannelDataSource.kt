@@ -1,4 +1,4 @@
-package org.tvheadend.tvhclient.domain.repository.data_source
+package org.tvheadend.tvhclient.data.source
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -9,7 +9,7 @@ import org.tvheadend.tvhclient.data.db.AppRoomDatabase
 import org.tvheadend.tvhclient.domain.entity.TagAndChannel
 import java.util.*
 
-class TagAndChannelData(private val db: AppRoomDatabase) : DataSourceInterface<TagAndChannel> {
+class TagAndChannelDataSource(private val db: AppRoomDatabase) : DataSourceInterface<TagAndChannel> {
 
     private val ioScope = CoroutineScope(Dispatchers.IO)
 

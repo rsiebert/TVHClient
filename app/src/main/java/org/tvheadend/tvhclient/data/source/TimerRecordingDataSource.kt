@@ -1,4 +1,4 @@
-package org.tvheadend.tvhclient.domain.repository.data_source
+package org.tvheadend.tvhclient.data.source
 
 import androidx.lifecycle.LiveData
 import kotlinx.coroutines.CoroutineScope
@@ -9,7 +9,7 @@ import org.tvheadend.tvhclient.data.db.AppRoomDatabase
 import org.tvheadend.tvhclient.domain.entity.TimerRecording
 import java.util.*
 
-class TimerRecordingData(private val db: AppRoomDatabase) : DataSourceInterface<TimerRecording> {
+class TimerRecordingDataSource(private val db: AppRoomDatabase) : DataSourceInterface<TimerRecording> {
 
     private val ioScope = CoroutineScope(Dispatchers.IO)
 

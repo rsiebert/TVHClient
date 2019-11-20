@@ -1,4 +1,4 @@
-package org.tvheadend.tvhclient.domain.repository.data_source
+package org.tvheadend.tvhclient.data.source
 
 import androidx.lifecycle.LiveData
 import kotlinx.coroutines.CoroutineScope
@@ -10,7 +10,7 @@ import org.tvheadend.tvhclient.domain.entity.Connection
 import org.tvheadend.tvhclient.domain.entity.ServerStatus
 import java.util.*
 
-class ConnectionData(private val db: AppRoomDatabase) : DataSourceInterface<Connection> {
+class ConnectionDataSource(private val db: AppRoomDatabase) : DataSourceInterface<Connection> {
 
     private val ioScope = CoroutineScope(Dispatchers.IO)
 

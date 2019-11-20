@@ -1,4 +1,4 @@
-package org.tvheadend.tvhclient.domain.repository.data_source
+package org.tvheadend.tvhclient.data.source
 
 import androidx.lifecycle.LiveData
 import kotlinx.coroutines.CoroutineScope
@@ -13,7 +13,7 @@ import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 
-class ProgramData(private val db: AppRoomDatabase) : DataSourceInterface<Program> {
+class ProgramDataSource(private val db: AppRoomDatabase) : DataSourceInterface<Program> {
 
     private val ioScope = CoroutineScope(Dispatchers.IO)
 

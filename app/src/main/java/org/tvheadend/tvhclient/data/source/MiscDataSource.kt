@@ -1,4 +1,4 @@
-package org.tvheadend.tvhclient.domain.repository.data_source
+package org.tvheadend.tvhclient.data.source
 
 import android.annotation.SuppressLint
 import kotlinx.coroutines.CoroutineScope
@@ -9,12 +9,12 @@ import org.tvheadend.tvhclient.ui.features.settings.DatabaseClearedCallback
 import timber.log.Timber
 import java.lang.ref.WeakReference
 
-class MiscData(private val db: AppRoomDatabase) {
+class MiscDataSource(private val db: AppRoomDatabase) {
 
     private val ioScope = CoroutineScope(Dispatchers.IO)
 
     fun clearDatabase(callback: DatabaseClearedCallback) {
-        MiscData.callback = WeakReference(callback)
+        MiscDataSource.callback = WeakReference(callback)
         ioScope.launch {
             clearDatabase()
         }

@@ -3,27 +3,26 @@ package org.tvheadend.tvhclient.data.repository
 import android.content.Intent
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import org.tvheadend.tvhclient.domain.repository.RepositoryInterface
-import org.tvheadend.tvhclient.domain.repository.data_source.*
+import org.tvheadend.tvhclient.data.source.*
 import org.tvheadend.tvhclient.ui.common.Event
 import org.tvheadend.tvhclient.ui.common.NetworkStatus
 import javax.inject.Inject
 
 class AppRepository @Inject
 constructor(
-        override val channelData: ChannelData,
-        override val programData: ProgramData,
-        override val recordingData: RecordingData,
-        override val seriesRecordingData: SeriesRecordingData,
-        override val timerRecordingData: TimerRecordingData,
-        override val connectionData: ConnectionData,
-        override val channelTagData: ChannelTagData,
-        override val serverStatusData: ServerStatusData,
-        override val serverProfileData: ServerProfileData,
-        override val tagAndChannelData: TagAndChannelData,
-        override val miscData: MiscData,
-        override val subscriptionData: SubscriptionData,
-        override val inputData: InputData
+        override val channelData: ChannelDataSource,
+        override val programData: ProgramDataSource,
+        override val recordingData: RecordingDataSource,
+        override val seriesRecordingData: SeriesRecordingDataSource,
+        override val timerRecordingData: TimerRecordingDataSource,
+        override val connectionData: ConnectionDataSource,
+        override val channelTagData: ChannelTagDataSource,
+        override val serverStatusData: ServerStatusDataSource,
+        override val serverProfileData: ServerProfileDataSource,
+        override val tagAndChannelData: TagAndChannelDataSource,
+        override val miscData: MiscDataSource,
+        override val subscriptionData: SubscriptionDataSource,
+        override val inputData: InputDataSource
 ) : RepositoryInterface {
 
     private var isUnlocked = MutableLiveData<Boolean>()

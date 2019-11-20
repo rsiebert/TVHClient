@@ -1,4 +1,4 @@
-package org.tvheadend.tvhclient.domain.repository.data_source
+package org.tvheadend.tvhclient.data.source
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -10,7 +10,7 @@ import org.tvheadend.tvhclient.data.db.AppRoomDatabase
 import org.tvheadend.tvhclient.domain.entity.ServerProfile
 import java.util.*
 
-class ServerProfileData(private val db: AppRoomDatabase) : DataSourceInterface<ServerProfile> {
+class ServerProfileDataSource(private val db: AppRoomDatabase) : DataSourceInterface<ServerProfile> {
 
     private val ioScope = CoroutineScope(Dispatchers.IO)
 
