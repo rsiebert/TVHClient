@@ -3,6 +3,7 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'io.fabric'
+apply plugin: 'com.google.firebase.firebase-perf'
 
 repositories {
     maven { url "http://dl.bintray.com/kiall/exoplayer" }
@@ -79,6 +80,17 @@ android {
             buildConfigField "Boolean", "UNLOCKED", "false"
             // Enable all logging, otherwise it is suppressed
             buildConfigField "Boolean", "DEBUG_LOG", "true"
+
+            // Set this flag to 'false' to disable crashlytics
+            // in debug builds and to decrease up build times
+            ext.enableCrashlytics = false
+            ext.alwaysUpdateBuildId = false
+
+            FirebasePerformance {
+                // Set this flag to 'false' to disable @AddTrace annotation processing and
+                // automatic HTTP/S network request monitoring for a specific build variant at compile time.
+                instrumentationEnabled false
+            }
         }
         release {
             // Show all features when true
@@ -175,9 +187,10 @@ dependencies {
     implementation "com.afollestad.material-dialogs:lifecycle:${dialog_version}"
     implementation 'com.mikepenz:materialdrawer:7.0.0-rc08'
 
-    // Firebase and crash reporting
+    // Firebase Crash Reporting and Performance Monitoring
     implementation 'com.crashlytics.sdk.android:crashlytics:2.10.1'
     implementation 'com.google.firebase:firebase-core:17.2.1'
+    implementation 'com.google.firebase:firebase-perf:19.0.2'
 
     // Life cycles, LiveData and ViewModel
     def lifecycle_version = '2.1.0'
