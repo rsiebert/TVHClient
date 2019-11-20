@@ -8,7 +8,7 @@ import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations.switchMap
 import org.tvheadend.tvhclient.R
-import org.tvheadend.tvhclient.data.service.HtspService
+import org.tvheadend.tvhclient.service.HtspService
 import org.tvheadend.tvhclient.domain.entity.Channel
 import org.tvheadend.tvhclient.domain.entity.Recording
 import org.tvheadend.tvhclient.domain.entity.ServerProfile

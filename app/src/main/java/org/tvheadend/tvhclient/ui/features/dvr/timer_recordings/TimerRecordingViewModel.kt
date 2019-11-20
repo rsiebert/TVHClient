@@ -6,7 +6,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import org.tvheadend.tvhclient.R
-import org.tvheadend.tvhclient.data.service.HtspService
+import org.tvheadend.tvhclient.service.HtspService
 import org.tvheadend.tvhclient.domain.entity.Channel
 import org.tvheadend.tvhclient.domain.entity.ServerProfile
 import org.tvheadend.tvhclient.domain.entity.TimerRecording

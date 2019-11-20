@@ -98,10 +98,10 @@
             android:supportsPictureInPicture="true" />
 
         <service
-            android:name=".data.service.HtspService"
+            android:name="org.tvheadend.tvhclient.service.HtspService"
             android:exported="false" />
         <service
-            android:name=".data.service.HtspIntentService"
+            android:name="org.tvheadend.tvhclient.service.HtspIntentService"
             android:exported="false"
             android:permission="android.permission.BIND_JOB_SERVICE" />
 

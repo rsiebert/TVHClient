@@ -7,7 +7,7 @@ import androidx.core.app.NotificationManagerCompat
 import androidx.work.Worker
 import androidx.work.WorkerParameters
 import org.tvheadend.tvhclient.R
-import org.tvheadend.tvhclient.data.service.HtspService
+import org.tvheadend.tvhclient.service.HtspService
 import timber.log.Timber
 import java.text.SimpleDateFormat
 import java.util.*

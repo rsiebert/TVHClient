@@ -34,7 +34,7 @@ import org.tvheadend.htsp.HtspConnection;
 import org.tvheadend.htsp.HtspMessage;
 import org.tvheadend.htsp.HtspMessageListener;
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.data.service.HtspService;
+import org.tvheadend.tvhclient.service.HtspService;
 
 import java.io.ByteArrayOutputStream;
 import java.io.Closeable;

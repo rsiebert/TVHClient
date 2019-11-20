@@ -14,7 +14,7 @@ import androidx.preference.PreferenceManager
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.list.listItemsSingleChoice
 import org.tvheadend.tvhclient.R
-import org.tvheadend.tvhclient.data.service.HtspService
+import org.tvheadend.tvhclient.service.HtspService
 import org.tvheadend.tvhclient.domain.entity.*
 import org.tvheadend.tvhclient.ui.base.BaseViewModel
 import org.tvheadend.tvhclient.ui.common.tasks.WakeOnLanTask

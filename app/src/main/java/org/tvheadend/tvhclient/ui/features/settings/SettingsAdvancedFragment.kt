@@ -19,8 +19,8 @@ import com.afollestad.materialdialogs.list.listItemsSingleChoice
 import com.squareup.picasso.Picasso
 import org.tvheadend.tvhclient.BuildConfig
 import org.tvheadend.tvhclient.R
-import org.tvheadend.tvhclient.data.service.HtspService
-import org.tvheadend.tvhclient.data.worker.LoadChannelIconWorker
+import org.tvheadend.tvhclient.service.HtspService
+import org.tvheadend.tvhclient.util.worker.LoadChannelIconWorker
 import org.tvheadend.tvhclient.ui.features.search.SuggestionProvider
 import org.tvheadend.tvhclient.ui.features.startup.SplashActivity
 import org.tvheadend.tvhclient.util.extensions.sendSnackbarMessage

@@ -1,10 +1,10 @@
-package org.tvheadend.tvhclient.data.worker
+package org.tvheadend.tvhclient.util.worker
 
 import android.content.Context
 import android.content.Intent
 import androidx.work.Worker
 import androidx.work.WorkerParameters
-import org.tvheadend.tvhclient.data.service.HtspIntentService
+import org.tvheadend.tvhclient.service.HtspIntentService
 import timber.log.Timber
 
 class LoadChannelIconWorker(context: Context, workerParams: WorkerParameters) : Worker(context, workerParams) {

@@ -9,7 +9,7 @@ import android.os.Handler
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import org.tvheadend.tvhclient.R
-import org.tvheadend.tvhclient.data.service.HtspService
+import org.tvheadend.tvhclient.service.HtspService
 import org.tvheadend.tvhclient.domain.entity.Channel
 import org.tvheadend.tvhclient.domain.entity.Input
 import org.tvheadend.tvhclient.domain.entity.ServerStatus

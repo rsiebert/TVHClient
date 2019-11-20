@@ -2,8 +2,8 @@ package org.tvheadend.tvhclient.di.component
 
 import dagger.Component
 import org.tvheadend.tvhclient.MainApplication
-import org.tvheadend.tvhclient.data.service.HtspIntentService
-import org.tvheadend.tvhclient.data.service.HtspService
+import org.tvheadend.tvhclient.service.HtspIntentService
+import org.tvheadend.tvhclient.service.HtspService
 import org.tvheadend.tvhclient.di.module.ContextModule
 import org.tvheadend.tvhclient.di.module.RepositoryModule
 import org.tvheadend.tvhclient.di.module.SharedPreferencesModule
