@@ -1,7 +1,5 @@
 package org.tvheadend.data.entity
 
-import org.tvheadend.data.entity.Recording
-
 interface ProgramInterface {
 
     var eventId: Int                // u32   required   Event ID

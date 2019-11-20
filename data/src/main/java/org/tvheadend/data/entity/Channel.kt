@@ -3,7 +3,6 @@ package org.tvheadend.data.entity
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.Ignore
-import org.tvheadend.data.entity.Recording
 import java.util.*
 import kotlin.math.floor
 

@@ -2,8 +2,6 @@ package org.tvheadend.data.entity
 
 import androidx.room.ColumnInfo
 import androidx.room.Ignore
-import org.tvheadend.data.entity.ProgramInterface
-import org.tvheadend.data.entity.Recording
 
 data class EpgProgram(
 

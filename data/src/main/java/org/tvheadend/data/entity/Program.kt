@@ -4,8 +4,6 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.Ignore
 import androidx.room.Index
-import org.tvheadend.data.entity.ProgramInterface
-import org.tvheadend.data.entity.Recording
 import java.util.*
 import kotlin.math.floor
 
