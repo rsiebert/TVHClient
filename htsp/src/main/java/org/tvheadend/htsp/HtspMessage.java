@@ -153,7 +153,7 @@ public class HtspMessage extends HashMap<String, Object> {
 
     private static byte[] toByteArray(BigInteger big) {
         byte[] b = big.toByteArray();
-        byte b1[] = new byte[b.length];
+        byte[] b1 = new byte[b.length];
 
         for (int i = 0; i < b.length; i++) {
             b1[i] = b[b.length - 1 - i];
@@ -162,8 +162,8 @@ public class HtspMessage extends HashMap<String, Object> {
         return b1;
     }
 
-    private static BigInteger toBigInteger(byte b[]) {
-        byte b1[] = new byte[b.length + 1];
+    private static BigInteger toBigInteger(byte[] b) {
+        byte[] b1 = new byte[b.length + 1];
 
         for (int i = 0; i < b.length; i++) {
             b1[i + 1] = b[b.length - 1 - i];
