@@ -10,7 +10,7 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import org.tvheadend.htsp.*
 import org.tvheadend.tvhclient.MainApplication
 import org.tvheadend.tvhclient.R
-import org.tvheadend.tvhclient.data.repository.AppRepository
+import org.tvheadend.tvhclient.repository.AppRepository
 import org.tvheadend.tvhclient.data.entity.Connection
 import org.tvheadend.tvhclient.data.entity.Program
 import org.tvheadend.tvhclient.data.entity.ServerStatus

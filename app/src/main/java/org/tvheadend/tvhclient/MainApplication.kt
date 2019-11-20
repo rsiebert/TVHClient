@@ -13,7 +13,7 @@ import com.google.android.gms.cast.framework.media.CastMediaOptions
 import com.google.android.gms.cast.framework.media.NotificationOptions
 import com.google.firebase.analytics.FirebaseAnalytics
 import io.fabric.sdk.android.Fabric
-import org.tvheadend.tvhclient.data.repository.AppRepository
+import org.tvheadend.tvhclient.repository.AppRepository
 import org.tvheadend.tvhclient.di.component.DaggerMainApplicationComponent
 import org.tvheadend.tvhclient.di.component.MainApplicationComponent
 import org.tvheadend.tvhclient.di.module.ContextModule

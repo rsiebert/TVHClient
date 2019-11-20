@@ -7,7 +7,7 @@ import android.os.Environment
 import org.tvheadend.tvhclient.BuildConfig
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.data.db.DatabaseHelperForMigration
-import org.tvheadend.tvhclient.data.repository.AppRepository
+import org.tvheadend.tvhclient.repository.AppRepository
 import org.tvheadend.tvhclient.data.entity.Connection
 import org.tvheadend.tvhclient.data.entity.ServerStatus
 import timber.log.Timber

@@ -7,7 +7,7 @@ import android.content.SharedPreferences
 import androidx.core.util.Pair
 import androidx.lifecycle.*
 import org.tvheadend.tvhclient.MainApplication
-import org.tvheadend.tvhclient.data.repository.AppRepository
+import org.tvheadend.tvhclient.repository.AppRepository
 import org.tvheadend.tvhclient.service.HtspService
 import org.tvheadend.tvhclient.data.entity.Connection
 import timber.log.Timber

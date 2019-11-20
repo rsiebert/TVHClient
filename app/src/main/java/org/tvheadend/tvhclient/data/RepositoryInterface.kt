@@ -1,4 +1,4 @@
-package org.tvheadend.tvhclient.data.repository
+package org.tvheadend.tvhclient.data
 
 import org.tvheadend.tvhclient.data.source.*
 

@@ -3,7 +3,7 @@ package org.tvheadend.tvhclient.ui.common
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import org.tvheadend.tvhclient.data.repository.AppRepository
+import org.tvheadend.tvhclient.repository.AppRepository
 import timber.log.Timber
 
 /**

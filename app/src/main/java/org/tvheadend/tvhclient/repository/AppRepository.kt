@@ -1,8 +1,9 @@
-package org.tvheadend.tvhclient.data.repository
+package org.tvheadend.tvhclient.repository
 
 import android.content.Intent
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import org.tvheadend.tvhclient.data.RepositoryInterface
 import org.tvheadend.tvhclient.data.source.*
 import org.tvheadend.tvhclient.ui.common.Event
 import org.tvheadend.tvhclient.ui.common.NetworkStatus
