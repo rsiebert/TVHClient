@@ -61,20 +61,6 @@ interface ProgramDao {
             "  OR (start < :endTime AND stop >= :endTime)) " +
             " GROUP BY p.id " +
             " ORDER BY start ASC")
-    suspend fun loadProgramsFromChannelBetweenTimeSuspendable(channelId: Int, startTime: Long, endTime: Long): List<EpgProgram>
-
-    @Transaction
-    @Query(EPG_PROGRAM_BASE_QUERY +
-            " WHERE $CONNECTION_IS_ACTIVE" +
-            " AND channel_id = :channelId " +
-            // Program is within time slot
-            " AND ((start >= :startTime AND stop <= :endTime) " +
-            // Program is at the beginning of time slot
-            "  OR (start <= :startTime AND stop > :startTime) " +
-            // Program is at the end of the time slot
-            "  OR (start < :endTime AND stop >= :endTime)) " +
-            " GROUP BY p.id " +
-            " ORDER BY start ASC")
     suspend fun loadProgramsFromChannelBetweenTimeSyncSuspendable(channelId: Int, startTime: Long, endTime: Long): List<EpgProgram>
 
     @Transaction
@@ -147,15 +133,6 @@ interface ProgramDao {
     fun deleteAll()
 
     companion object {
-
-        const val BASE_PROGRAM_BASE_QUERY = "SELECT p.id, p.title, p.subtitle, p.summary, p.description, " +
-                "p.content_type, p.channel_id, " +
-                "p.start, p.stop, " +
-                "p.episode_on_screen, p.season_number, p.episode_number, p.part_number," +
-                "c.name AS channel_name, " +
-                "c.icon AS channel_icon " +
-                "FROM programs AS p " +
-                "LEFT JOIN channels AS c ON c.id = p.channel_id "
 
         const val PROGRAM_BASE_QUERY = "SELECT p.*," +
                 "c.name AS channel_name, " +

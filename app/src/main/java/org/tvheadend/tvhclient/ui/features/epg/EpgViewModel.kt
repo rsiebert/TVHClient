@@ -7,11 +7,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
-import org.tvheadend.tvhclient.R
 import org.tvheadend.data.entity.EpgChannel
 import org.tvheadend.data.entity.EpgProgram
+import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.ui.common.LiveEvent
 import org.tvheadend.tvhclient.ui.features.channels.BaseChannelViewModel
 import timber.log.Timber
@@ -200,10 +198,6 @@ class EpgViewModel(application: Application) : BaseChannelViewModel(application)
         val channelWidth = 221
         pixelsPerMinute = (displayWidth - channelWidth).toFloat() / (60.0f * hoursToShow.toFloat())
         Timber.d("Updated pixels per minute to $pixelsPerMinute")
-    }
-
-    private suspend fun loadProgramsBetweenTime(order: Int, hours: Int, days: Int) = withContext(Dispatchers.IO) {
-        appRepository.programData.getEpgItemsBetweenTime(order, hours, days)
     }
 
     override fun onCleared() {

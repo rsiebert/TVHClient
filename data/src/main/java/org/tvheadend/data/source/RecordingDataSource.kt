@@ -30,10 +30,6 @@ class RecordingDataSource(private val db: AppRoomDatabase) : DataSourceInterface
         scope.launch { db.recordingDao.delete(item) }
     }
 
-    fun removeItems() {
-        scope.launch { db.recordingDao.deleteAll() }
-    }
-
     override fun getLiveDataItemCount(): LiveData<Int> {
         return MutableLiveData()
     }
@@ -48,10 +44,6 @@ class RecordingDataSource(private val db: AppRoomDatabase) : DataSourceInterface
 
     fun getLiveDataItemsByChannelId(channelId: Int): LiveData<List<Recording>> {
         return db.recordingDao.loadRecordingsByChannelId(channelId)
-    }
-
-    suspend fun getItemsByChannelIdSuspendable(channelId: Int): List<Recording> {
-        return db.recordingDao.loadRecordingsByChannelIdSuspendable(channelId)
     }
 
     fun getCompletedRecordings(): LiveData<List<Recording>> {
