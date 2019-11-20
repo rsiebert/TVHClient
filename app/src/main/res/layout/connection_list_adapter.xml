@@ -60,7 +60,7 @@
 
         <variable
             name="connection"
-            type="org.tvheadend.tvhclient.domain.entity.Connection" />
+            type="org.tvheadend.tvhclient.data.entity.Connection" />
 
         <variable
             name="position"

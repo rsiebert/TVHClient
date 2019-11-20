@@ -7,7 +7,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.tvheadend.tvhclient.data.db.AppRoomDatabase
-import org.tvheadend.tvhclient.domain.entity.ServerProfile
+import org.tvheadend.tvhclient.data.entity.ServerProfile
 import java.util.*
 
 class ServerProfileDataSource(private val db: AppRoomDatabase) : DataSourceInterface<ServerProfile> {

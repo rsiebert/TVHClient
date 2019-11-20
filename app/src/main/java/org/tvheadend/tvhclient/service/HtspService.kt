@@ -18,10 +18,10 @@ import org.json.JSONObject
 import org.tvheadend.htsp.*
 import org.tvheadend.tvhclient.MainApplication
 import org.tvheadend.tvhclient.R
+import org.tvheadend.tvhclient.data.entity.*
 import org.tvheadend.tvhclient.data.repository.AppRepository
 import org.tvheadend.tvhclient.util.worker.DatabaseCleanupWorker
 import org.tvheadend.tvhclient.util.worker.EpgDataUpdateWorker
-import org.tvheadend.tvhclient.domain.entity.*
 import org.tvheadend.tvhclient.ui.features.notification.addNotificationScheduledRecordingStarts
 import org.tvheadend.tvhclient.ui.features.notification.removeNotificationById
 import org.tvheadend.tvhclient.util.convertUrlToHashString

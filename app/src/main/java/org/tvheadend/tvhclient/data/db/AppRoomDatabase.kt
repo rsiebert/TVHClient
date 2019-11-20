@@ -7,7 +7,7 @@ import androidx.room.RoomDatabase
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import org.tvheadend.tvhclient.data.dao.*
-import org.tvheadend.tvhclient.domain.entity.*
+import org.tvheadend.tvhclient.data.entity.*
 
 @Database(
         entities = [TimerRecording::class,

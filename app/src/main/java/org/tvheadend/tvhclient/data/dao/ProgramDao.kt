@@ -2,8 +2,8 @@ package org.tvheadend.tvhclient.data.dao
 
 import androidx.lifecycle.LiveData
 import androidx.room.*
-import org.tvheadend.tvhclient.domain.entity.EpgProgram
-import org.tvheadend.tvhclient.domain.entity.Program
+import org.tvheadend.tvhclient.data.entity.EpgProgram
+import org.tvheadend.tvhclient.data.entity.Program
 
 @Dao
 interface ProgramDao {

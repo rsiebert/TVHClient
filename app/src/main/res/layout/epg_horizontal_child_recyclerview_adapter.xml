@@ -116,7 +116,7 @@
 
         <variable
             name="program"
-            type="org.tvheadend.tvhclient.domain.entity.EpgProgram" />
+            type="org.tvheadend.tvhclient.data.entity.EpgProgram" />
 
         <variable
             name="viewModel"

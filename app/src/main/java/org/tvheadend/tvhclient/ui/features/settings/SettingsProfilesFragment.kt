@@ -4,7 +4,7 @@ import android.os.Bundle
 import androidx.lifecycle.Observer
 import androidx.preference.ListPreference
 import org.tvheadend.tvhclient.R
-import org.tvheadend.tvhclient.domain.entity.ServerProfile
+import org.tvheadend.tvhclient.data.entity.ServerProfile
 import org.tvheadend.tvhclient.util.extensions.sendSnackbarMessage
 import timber.log.Timber
 

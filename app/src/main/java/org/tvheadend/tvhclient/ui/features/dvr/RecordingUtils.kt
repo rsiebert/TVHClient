@@ -9,8 +9,8 @@ import com.afollestad.materialdialogs.list.customListAdapter
 import com.afollestad.materialdialogs.list.listItemsMultiChoice
 import com.afollestad.materialdialogs.list.listItemsSingleChoice
 import org.tvheadend.tvhclient.R
-import org.tvheadend.tvhclient.domain.entity.Channel
-import org.tvheadend.tvhclient.domain.entity.ServerProfile
+import org.tvheadend.tvhclient.data.entity.Channel
+import org.tvheadend.tvhclient.data.entity.ServerProfile
 import timber.log.Timber
 import java.text.SimpleDateFormat
 import java.util.*

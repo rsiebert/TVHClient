@@ -6,8 +6,8 @@ import androidx.lifecycle.ViewModelProviders
 import com.afollestad.materialdialogs.MaterialDialog
 import kotlinx.android.synthetic.main.timer_recording_add_edit_fragment.*
 import org.tvheadend.tvhclient.R
-import org.tvheadend.tvhclient.domain.entity.Channel
-import org.tvheadend.tvhclient.domain.entity.ServerProfile
+import org.tvheadend.tvhclient.data.entity.Channel
+import org.tvheadend.tvhclient.data.entity.ServerProfile
 import org.tvheadend.tvhclient.ui.base.BaseFragment
 import org.tvheadend.tvhclient.ui.common.callbacks.BackPressedInterface
 import org.tvheadend.tvhclient.ui.features.dvr.*

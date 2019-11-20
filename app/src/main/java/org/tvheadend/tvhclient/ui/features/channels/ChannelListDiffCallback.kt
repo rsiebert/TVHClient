@@ -1,7 +1,7 @@
 package org.tvheadend.tvhclient.ui.features.channels
 
 import androidx.recyclerview.widget.DiffUtil
-import org.tvheadend.tvhclient.domain.entity.Channel
+import org.tvheadend.tvhclient.data.entity.Channel
 
 internal class ChannelListDiffCallback(private val oldList: List<Channel>, private val newList: List<Channel>) : DiffUtil.Callback() {
 

@@ -7,7 +7,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.tvheadend.tvhclient.data.db.AppRoomDatabase
-import org.tvheadend.tvhclient.domain.entity.ChannelTag
+import org.tvheadend.tvhclient.data.entity.ChannelTag
 import java.util.*
 
 class ChannelTagDataSource(private val db: AppRoomDatabase) : DataSourceInterface<ChannelTag> {

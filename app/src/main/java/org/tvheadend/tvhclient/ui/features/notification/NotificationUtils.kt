@@ -12,9 +12,9 @@ import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequest
 import androidx.work.WorkManager
 import org.tvheadend.tvhclient.R
-import org.tvheadend.tvhclient.domain.entity.ProgramInterface
-import org.tvheadend.tvhclient.domain.entity.Recording
-import org.tvheadend.tvhclient.domain.entity.ServerProfile
+import org.tvheadend.tvhclient.data.entity.ProgramInterface
+import org.tvheadend.tvhclient.data.entity.Recording
+import org.tvheadend.tvhclient.data.entity.ServerProfile
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
 

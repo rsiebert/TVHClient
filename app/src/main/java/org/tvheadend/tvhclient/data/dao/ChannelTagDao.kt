@@ -2,7 +2,7 @@ package org.tvheadend.tvhclient.data.dao
 
 import androidx.lifecycle.LiveData
 import androidx.room.*
-import org.tvheadend.tvhclient.domain.entity.ChannelTag
+import org.tvheadend.tvhclient.data.entity.ChannelTag
 
 @Dao
 interface ChannelTagDao {

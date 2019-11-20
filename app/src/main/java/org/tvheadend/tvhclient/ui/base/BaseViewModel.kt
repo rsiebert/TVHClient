@@ -10,7 +10,7 @@ import androidx.lifecycle.MutableLiveData
 import org.tvheadend.tvhclient.MainApplication
 import org.tvheadend.tvhclient.data.repository.AppRepository
 import org.tvheadend.tvhclient.service.HtspService
-import org.tvheadend.tvhclient.domain.entity.Connection
+import org.tvheadend.tvhclient.data.entity.Connection
 import org.tvheadend.tvhclient.ui.common.Event
 import org.tvheadend.tvhclient.ui.common.NetworkStatus
 import org.tvheadend.tvhclient.ui.features.startup.SplashActivity

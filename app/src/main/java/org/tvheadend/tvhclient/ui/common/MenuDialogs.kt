@@ -15,7 +15,7 @@ import com.afollestad.materialdialogs.list.listItemsSingleChoice
 import org.tvheadend.tvhclient.BR
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.databinding.GenreColorListAdapterBinding
-import org.tvheadend.tvhclient.domain.entity.ChannelTag
+import org.tvheadend.tvhclient.data.entity.ChannelTag
 import org.tvheadend.tvhclient.ui.features.channels.ChannelTagIdsSelectedInterface
 import org.tvheadend.tvhclient.ui.features.channels.ChannelTimeSelectedInterface
 import timber.log.Timber

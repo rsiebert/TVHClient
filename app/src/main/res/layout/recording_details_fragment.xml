@@ -445,7 +445,7 @@
 
         <variable
             name="recording"
-            type="org.tvheadend.tvhclient.domain.entity.Recording" />
+            type="org.tvheadend.tvhclient.data.entity.Recording" />
 
         <variable
             name="viewModel"

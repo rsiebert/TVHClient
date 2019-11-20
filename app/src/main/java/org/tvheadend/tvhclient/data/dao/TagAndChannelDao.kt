@@ -1,7 +1,7 @@
 package org.tvheadend.tvhclient.data.dao
 
 import androidx.room.*
-import org.tvheadend.tvhclient.domain.entity.TagAndChannel
+import org.tvheadend.tvhclient.data.entity.TagAndChannel
 
 @Dao
 abstract class TagAndChannelDao {

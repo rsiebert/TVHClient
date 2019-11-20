@@ -7,7 +7,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.tvheadend.tvhclient.data.db.AppRoomDatabase
-import org.tvheadend.tvhclient.domain.entity.Recording
+import org.tvheadend.tvhclient.data.entity.Recording
 import java.util.*
 
 class RecordingDataSource(private val db: AppRoomDatabase) : DataSourceInterface<Recording> {

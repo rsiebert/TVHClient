@@ -1,7 +1,7 @@
 package org.tvheadend.tvhclient.data.dao
 
 import androidx.room.*
-import org.tvheadend.tvhclient.domain.entity.ServerProfile
+import org.tvheadend.tvhclient.data.entity.ServerProfile
 
 @Dao
 interface ServerProfileDao {

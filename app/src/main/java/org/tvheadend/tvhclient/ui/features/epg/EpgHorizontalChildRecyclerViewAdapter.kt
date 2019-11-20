@@ -13,8 +13,8 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.databinding.EpgHorizontalChildRecyclerviewAdapterBinding
-import org.tvheadend.tvhclient.domain.entity.EpgProgram
-import org.tvheadend.tvhclient.domain.entity.Recording
+import org.tvheadend.tvhclient.data.entity.EpgProgram
+import org.tvheadend.tvhclient.data.entity.Recording
 import org.tvheadend.tvhclient.ui.common.callbacks.RecyclerViewClickCallback
 import org.tvheadend.tvhclient.ui.features.programs.ProgramDetailsFragment
 import org.tvheadend.tvhclient.util.extensions.isEqualTo

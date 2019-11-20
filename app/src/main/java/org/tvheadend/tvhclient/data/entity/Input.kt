@@ -1,4 +1,4 @@
-package org.tvheadend.tvhclient.domain.entity
+package org.tvheadend.tvhclient.data.entity
 
 data class Input(
 

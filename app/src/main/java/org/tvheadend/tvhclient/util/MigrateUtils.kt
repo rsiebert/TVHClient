@@ -8,8 +8,8 @@ import org.tvheadend.tvhclient.BuildConfig
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.data.db.DatabaseHelperForMigration
 import org.tvheadend.tvhclient.data.repository.AppRepository
-import org.tvheadend.tvhclient.domain.entity.Connection
-import org.tvheadend.tvhclient.domain.entity.ServerStatus
+import org.tvheadend.tvhclient.data.entity.Connection
+import org.tvheadend.tvhclient.data.entity.ServerStatus
 import timber.log.Timber
 import java.util.*
 

@@ -77,7 +77,7 @@
 
         <variable
             name="channelTag"
-            type="org.tvheadend.tvhclient.domain.entity.ChannelTag" />
+            type="org.tvheadend.tvhclient.data.entity.ChannelTag" />
 
         <variable
             name="position"

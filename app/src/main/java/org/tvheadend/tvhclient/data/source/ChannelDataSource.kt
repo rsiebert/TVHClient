@@ -7,8 +7,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.tvheadend.tvhclient.data.db.AppRoomDatabase
-import org.tvheadend.tvhclient.domain.entity.Channel
-import org.tvheadend.tvhclient.domain.entity.EpgChannel
+import org.tvheadend.tvhclient.data.entity.Channel
+import org.tvheadend.tvhclient.data.entity.EpgChannel
 import timber.log.Timber
 import java.util.*
 

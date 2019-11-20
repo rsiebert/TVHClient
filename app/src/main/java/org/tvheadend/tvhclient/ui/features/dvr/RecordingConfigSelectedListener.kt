@@ -1,6 +1,6 @@
 package org.tvheadend.tvhclient.ui.features.dvr
 
-import org.tvheadend.tvhclient.domain.entity.Channel
+import org.tvheadend.tvhclient.data.entity.Channel
 
 interface RecordingConfigSelectedListener {
 

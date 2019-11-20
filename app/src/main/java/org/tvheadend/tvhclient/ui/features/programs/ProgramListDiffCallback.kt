@@ -1,7 +1,7 @@
 package org.tvheadend.tvhclient.ui.features.programs
 
 import androidx.recyclerview.widget.DiffUtil
-import org.tvheadend.tvhclient.domain.entity.ProgramInterface
+import org.tvheadend.tvhclient.data.entity.ProgramInterface
 
 internal class ProgramListDiffCallback(private val oldList: List<ProgramInterface>, private val newList: List<ProgramInterface>) : DiffUtil.Callback() {
 

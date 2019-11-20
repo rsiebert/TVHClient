@@ -18,8 +18,8 @@ import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
 import kotlinx.android.synthetic.main.epg_fragment.*
 import org.tvheadend.tvhclient.R
-import org.tvheadend.tvhclient.domain.entity.ChannelTag
-import org.tvheadend.tvhclient.domain.entity.EpgProgram
+import org.tvheadend.tvhclient.data.entity.ChannelTag
+import org.tvheadend.tvhclient.data.entity.EpgProgram
 import org.tvheadend.tvhclient.ui.base.BaseFragment
 import org.tvheadend.tvhclient.ui.common.*
 import org.tvheadend.tvhclient.ui.common.callbacks.LayoutInterface

@@ -1,7 +1,7 @@
 package org.tvheadend.tvhclient.ui.features.playback.internal
 
-import org.tvheadend.tvhclient.domain.entity.Channel
-import org.tvheadend.tvhclient.domain.entity.Recording
+import org.tvheadend.tvhclient.data.entity.Channel
+import org.tvheadend.tvhclient.data.entity.Recording
 
 class PlaybackInformation {
 

@@ -22,8 +22,8 @@ import com.squareup.picasso.Picasso
 import com.squareup.picasso.Transformation
 import org.tvheadend.tvhclient.MainApplication
 import org.tvheadend.tvhclient.R
-import org.tvheadend.tvhclient.domain.entity.ProgramInterface
-import org.tvheadend.tvhclient.domain.entity.Recording
+import org.tvheadend.tvhclient.data.entity.ProgramInterface
+import org.tvheadend.tvhclient.data.entity.Recording
 import org.tvheadend.tvhclient.util.extensions.gone
 import org.tvheadend.tvhclient.util.extensions.visible
 import org.tvheadend.tvhclient.util.extensions.visibleOrGone

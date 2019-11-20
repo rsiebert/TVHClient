@@ -10,7 +10,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
 import org.tvheadend.tvhclient.R
-import org.tvheadend.tvhclient.domain.entity.Channel
+import org.tvheadend.tvhclient.data.entity.Channel
 import org.tvheadend.tvhclient.util.getIconUrl
 import java.lang.ref.WeakReference
 

@@ -6,8 +6,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.tvheadend.tvhclient.data.db.AppRoomDatabase
-import org.tvheadend.tvhclient.domain.entity.Connection
-import org.tvheadend.tvhclient.domain.entity.ServerStatus
+import org.tvheadend.tvhclient.data.entity.Connection
+import org.tvheadend.tvhclient.data.entity.ServerStatus
 import java.util.*
 
 class ConnectionDataSource(private val db: AppRoomDatabase) : DataSourceInterface<Connection> {
