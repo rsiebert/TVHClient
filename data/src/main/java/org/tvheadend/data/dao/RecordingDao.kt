@@ -103,12 +103,6 @@ interface RecordingDao {
     @Transaction
     @Query(RECORDING_BASE_QUERY +
             " WHERE $CONNECTION_IS_ACTIVE" +
-            " AND rec.channel_id = :channelId")
-    suspend fun loadRecordingsByChannelIdSuspendable(channelId: Int): List<Recording>
-
-    @Transaction
-    @Query(RECORDING_BASE_QUERY +
-            " WHERE $CONNECTION_IS_ACTIVE" +
             " AND rec.event_id = :id")
     fun loadRecordingByEventIdSync(id: Int): Recording
 

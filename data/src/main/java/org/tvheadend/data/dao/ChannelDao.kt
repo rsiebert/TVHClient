@@ -83,11 +83,6 @@ interface ChannelDao {
 
     @Query(EPG_CHANNEL_BASE_QUERY +
             " WHERE $CONNECTION_IS_ACTIVE" +
-            ORDER_BY)
-    suspend fun loadAllEpgChannelsSync(sortOrder: Int): List<EpgChannel>
-
-    @Query(EPG_CHANNEL_BASE_QUERY +
-            " WHERE $CONNECTION_IS_ACTIVE" +
             " AND c.id IN (SELECT channel_id FROM tags_and_channels WHERE tag_id IN (:tagIds)) " +
             ORDER_BY)
     fun loadAllEpgChannelsByTag(sortOrder: Int, tagIds: List<Int>): LiveData<List<EpgChannel>>

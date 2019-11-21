@@ -8,10 +8,6 @@ import kotlinx.coroutines.runBlocking
 import org.tvheadend.data.db.AppRoomDatabase
 import org.tvheadend.data.entity.EpgProgram
 import org.tvheadend.data.entity.Program
-import timber.log.Timber
-import java.util.*
-import kotlin.collections.ArrayList
-import kotlin.collections.HashMap
 
 class ProgramDataSource(private val db: AppRoomDatabase) : DataSourceInterface<Program> {
 
@@ -100,32 +96,6 @@ class ProgramDataSource(private val db: AppRoomDatabase) : DataSourceInterface<P
             program = db.programDao.loadLastProgramFromChannelSync(channelId)
         }
         return program
-    }
-
-    suspend fun getEpgItemsBetweenTime(order: Int, hours: Int, days: Int): HashMap<Int, List<EpgProgram>> {
-        // Get the current time in milliseconds without the seconds but in 30
-        // minute slots. If the current time is later then 16:30 start from
-        // 16:30 otherwise from 16:00.
-        val minutes = if (Calendar.getInstance().get(Calendar.MINUTE) > 30) 30 else 0
-        val calendarStartTime = Calendar.getInstance()
-        calendarStartTime.set(Calendar.MINUTE, minutes)
-        calendarStartTime.set(Calendar.SECOND, 0)
-
-        // Get the offset time in milliseconds without the minutes and seconds
-        val offsetTime = (hours * 60 * 60 * 1000).toLong()
-        val startTime = calendarStartTime.timeInMillis
-        val endTime = startTime + (offsetTime * (days * (24 / hours))) - 1
-
-        val epgData: HashMap<Int, List<EpgProgram>> = HashMap()
-        val channels = db.channelDao.loadAllEpgChannelsSync(order)
-
-        Timber.d("Loading programs for ${channels.size} channels between $startTime and $endTime")
-        (channels.indices).forEach { i ->
-            val programs = db.programDao.loadProgramsFromChannelBetweenTimeSyncSuspendable(channels[i].id, startTime, endTime)
-            Timber.d("Loaded ${programs.size} programs for channel ${channels[i].name}")
-            epgData[channels[i].id] = programs
-        }
-        return epgData
     }
 
     fun getItemsByChannelId(id: Int): List<Program> {
