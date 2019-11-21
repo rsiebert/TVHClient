@@ -18,9 +18,7 @@ import com.google.android.material.snackbar.Snackbar
 import org.tvheadend.data.entity.Connection
 import org.tvheadend.data.entity.Recording
 import org.tvheadend.tvhclient.R
-import org.tvheadend.tvhclient.ui.common.SnackbarMessageReceiver.Companion.SNACKBAR_ACTION
-import org.tvheadend.tvhclient.ui.common.SnackbarMessageReceiver.Companion.SNACKBAR_CONTENT
-import org.tvheadend.tvhclient.ui.common.SnackbarMessageReceiver.Companion.SNACKBAR_DURATION
+import org.tvheadend.tvhclient.ui.common.SnackbarMessageReceiver
 import timber.log.Timber
 
 class DownloadRecordingManager(private val activity: Activity?, private val connection: Connection, recording: Recording?) {
@@ -163,9 +161,9 @@ class DownloadRecordingManager(private val activity: Activity?, private val conn
         }
 
         Timber.d("Download status of recording ${recording.title} is $msg")
-        val intent = Intent(SNACKBAR_ACTION)
-        intent.putExtra(SNACKBAR_CONTENT, msg)
-        intent.putExtra(SNACKBAR_DURATION, Snackbar.LENGTH_LONG)
+        val intent = Intent(SnackbarMessageReceiver.SNACKBAR_ACTION)
+        intent.putExtra(SnackbarMessageReceiver.SNACKBAR_CONTENT, msg)
+        intent.putExtra(SnackbarMessageReceiver.SNACKBAR_DURATION, Snackbar.LENGTH_LONG)
         LocalBroadcastManager.getInstance(activity).sendBroadcast(intent)
     }
 }
