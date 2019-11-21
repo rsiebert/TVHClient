@@ -13,19 +13,20 @@ import androidx.fragment.app.FragmentActivity
 import androidx.preference.PreferenceManager
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.list.listItemsSingleChoice
-import org.tvheadend.tvhclient.R
 import org.tvheadend.data.entity.*
+import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.service.HtspService
 import org.tvheadend.tvhclient.ui.base.BaseViewModel
+import org.tvheadend.tvhclient.ui.common.interfaces.RecordingRemovedInterface
 import org.tvheadend.tvhclient.ui.common.tasks.WakeOnLanTask
 import org.tvheadend.tvhclient.ui.features.dvr.RecordingAddEditActivity
-import org.tvheadend.tvhclient.ui.common.interfaces.RecordingRemovedInterface
 import org.tvheadend.tvhclient.ui.features.playback.external.CastChannelActivity
 import org.tvheadend.tvhclient.ui.features.playback.external.CastRecordingActivity
 import org.tvheadend.tvhclient.ui.features.playback.external.PlayChannelActivity
 import org.tvheadend.tvhclient.ui.features.playback.external.PlayRecordingActivity
 import org.tvheadend.tvhclient.ui.features.playback.internal.PlaybackActivity
 import org.tvheadend.tvhclient.ui.features.programs.ProgramListFragment
+import org.tvheadend.tvhclient.util.extensions.getCastSession
 import timber.log.Timber
 import java.io.UnsupportedEncodingException
 import java.net.URLEncoder
@@ -57,7 +58,7 @@ fun preparePopupOrToolbarRecordingMenu(context: Context,
         } else if (recording.isCompleted) {
             Timber.d("Recording is completed ")
             menu.findItem(R.id.menu_play)?.isVisible = true
-            menu.findItem(R.id.menu_cast)?.isVisible = getCastSession(context) != null
+            menu.findItem(R.id.menu_cast)?.isVisible = context.getCastSession() != null
             menu.findItem(R.id.menu_remove_recording)?.isVisible = true
             menu.findItem(R.id.menu_download_recording)?.isVisible = isUnlocked
 
@@ -71,7 +72,7 @@ fun preparePopupOrToolbarRecordingMenu(context: Context,
         } else if (recording.isRecording) {
             Timber.d("Recording is being recorded")
             menu.findItem(R.id.menu_play)?.isVisible = true
-            menu.findItem(R.id.menu_cast)?.isVisible = getCastSession(context) != null
+            menu.findItem(R.id.menu_cast)?.isVisible = context.getCastSession() != null
             menu.findItem(R.id.menu_stop_recording)?.isVisible = true
             menu.findItem(R.id.menu_edit_recording)?.isVisible = isUnlocked
 
@@ -81,7 +82,7 @@ fun preparePopupOrToolbarRecordingMenu(context: Context,
             // Allow playing a failed recording which size is not zero
             if (recording.dataSize > 0) {
                 menu.findItem(R.id.menu_play)?.isVisible = true
-                menu.findItem(R.id.menu_cast)?.isVisible = getCastSession(context) != null
+                menu.findItem(R.id.menu_cast)?.isVisible = context.getCastSession() != null
             }
         }
     }
@@ -107,7 +108,7 @@ fun preparePopupOrToolbarMiscMenu(context: Context,
                 && currentTime > program.start
                 && currentTime < program.stop) {
             menu.findItem(R.id.menu_play)?.isVisible = true
-            menu.findItem(R.id.menu_cast)?.isVisible = getCastSession(context) != null
+            menu.findItem(R.id.menu_cast)?.isVisible = context.getCastSession() != null
         }
     }
     // Show the add reminder menu only for programs and
@@ -498,7 +499,7 @@ fun playOrCastChannel(context: Context, channelId: Int, isUnlocked: Boolean): Bo
     if (channelIconAction == 1) {
         playSelectedChannel(context, channelId, isUnlocked)
     } else if (channelIconAction == 2) {
-        if (getCastSession(context) != null) {
+        if (context.getCastSession() != null) {
             castSelectedChannel(context, channelId)
         } else {
             playSelectedChannel(context, channelId, isUnlocked)
@@ -514,7 +515,7 @@ fun playOrCastRecording(context: Context, recordingId: Int, isUnlocked: Boolean)
     if (channelIconAction == 1) {
         playSelectedRecording(context, recordingId, isUnlocked)
     } else if (channelIconAction == 2) {
-        if (getCastSession(context) != null) {
+        if (context.getCastSession() != null) {
             castSelectedRecording(context, recordingId)
         } else {
             playSelectedRecording(context, recordingId, isUnlocked)
@@ -600,6 +601,7 @@ fun searchTitleInTheLocalDatabase(activity: FragmentActivity, viewModel: BaseVie
     return true
 }
 
+// TODO move to base fragment and hide menu where not needed
 fun sendWakeOnLanPacket(context: Context, connection: Connection, mode: ActionMode? = null): Boolean {
     WakeOnLanTask(context, connection).execute()
     mode?.finish()

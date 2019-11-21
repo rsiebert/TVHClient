@@ -9,7 +9,7 @@ import com.google.android.gms.cast.framework.media.RemoteMediaClient
 import com.google.android.gms.common.images.WebImage
 import kotlinx.android.synthetic.main.play_activity.*
 import org.tvheadend.tvhclient.R
-import org.tvheadend.tvhclient.ui.common.getCastSession
+import org.tvheadend.tvhclient.util.extensions.getCastSession
 import org.tvheadend.tvhclient.util.extensions.gone
 import timber.log.Timber
 
@@ -17,7 +17,7 @@ class CastRecordingActivity : BasePlaybackActivity() {
 
     override fun onTicketReceived() {
 
-        val castSession = getCastSession(this)
+        val castSession = this.getCastSession()
         if (castSession == null) {
             progress_bar.gone()
             status.text = getString(R.string.no_cast_session)

@@ -18,9 +18,9 @@ import org.tvheadend.tvhclient.service.HtspService
 import org.tvheadend.tvhclient.ui.base.BaseFragment
 import org.tvheadend.tvhclient.ui.common.*
 import org.tvheadend.tvhclient.ui.common.interfaces.RecyclerViewClickInterface
-import org.tvheadend.tvhclient.ui.features.dvr.RecordingAddEditActivity
-import org.tvheadend.tvhclient.ui.common.addNotificationProgramIsAboutToStart
 import org.tvheadend.tvhclient.ui.common.interfaces.SearchRequestInterface
+import org.tvheadend.tvhclient.ui.features.dvr.RecordingAddEditActivity
+import org.tvheadend.tvhclient.util.extensions.getCastSession
 import org.tvheadend.tvhclient.util.extensions.gone
 import org.tvheadend.tvhclient.util.extensions.visible
 import timber.log.Timber
@@ -150,7 +150,7 @@ class ProgramListFragment : BaseFragment(), RecyclerViewClickInterface, LastProg
 
         if (!baseViewModel.isSearchActive && isConnectionToServerAvailable) {
             menu.findItem(R.id.menu_play)?.isVisible = true
-            menu.findItem(R.id.menu_cast)?.isVisible = getCastSession(ctx) != null
+            menu.findItem(R.id.menu_cast)?.isVisible = ctx.getCastSession() != null
         } else {
             menu.findItem(R.id.menu_play)?.isVisible = false
             menu.findItem(R.id.menu_cast)?.isVisible = false

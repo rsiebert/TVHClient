@@ -8,11 +8,11 @@ import androidx.lifecycle.ViewModelProviders
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.ui.base.BaseActivity
 import org.tvheadend.tvhclient.ui.common.interfaces.BackPressedInterface
-import org.tvheadend.tvhclient.ui.common.showSnackbarMessage
 import org.tvheadend.tvhclient.ui.features.changelog.ChangeLogFragment
 import org.tvheadend.tvhclient.ui.features.information.InformationFragment
 import org.tvheadend.tvhclient.ui.features.information.PrivacyPolicyFragment
 import org.tvheadend.tvhclient.ui.features.unlocker.UnlockerFragment
+import org.tvheadend.tvhclient.util.extensions.showSnackbarMessage
 import timber.log.Timber
 
 class SettingsActivity : BaseActivity(), RemoveFragmentFromBackstackInterface {
@@ -43,7 +43,7 @@ class SettingsActivity : BaseActivity(), RemoveFragmentFromBackstackInterface {
 
         baseViewModel.showSnackbar.observe(this, Observer { event ->
             event.getContentIfNotHandled()?.let {
-                showSnackbarMessage(this, it)
+                this.showSnackbarMessage(it)
             }
         })
     }

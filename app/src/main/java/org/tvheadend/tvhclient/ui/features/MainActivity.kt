@@ -26,10 +26,14 @@ import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.service.HtspService
 import org.tvheadend.tvhclient.service.SyncStateReceiver
 import org.tvheadend.tvhclient.ui.base.BaseActivity
-import org.tvheadend.tvhclient.ui.common.*
+import org.tvheadend.tvhclient.ui.common.NetworkStatus
+import org.tvheadend.tvhclient.ui.common.SuggestionProvider
+import org.tvheadend.tvhclient.ui.common.interfaces.SearchRequestInterface
+import org.tvheadend.tvhclient.ui.common.showOrCancelNotificationDiskSpaceIsLow
+import org.tvheadend.tvhclient.ui.common.showOrCancelNotificationProgramIsCurrentlyBeingRecorded
 import org.tvheadend.tvhclient.ui.features.channels.ChannelListFragment
-import org.tvheadend.tvhclient.ui.features.dvr.recordings.download.DownloadPermissionGrantedInterface
 import org.tvheadend.tvhclient.ui.features.dvr.recordings.RecordingDetailsFragment
+import org.tvheadend.tvhclient.ui.features.dvr.recordings.download.DownloadPermissionGrantedInterface
 import org.tvheadend.tvhclient.ui.features.dvr.series_recordings.SeriesRecordingDetailsFragment
 import org.tvheadend.tvhclient.ui.features.dvr.timer_recordings.TimerRecordingDetailsFragment
 import org.tvheadend.tvhclient.ui.features.epg.EpgFragment
@@ -41,13 +45,8 @@ import org.tvheadend.tvhclient.ui.features.navigation.NavigationViewModel
 import org.tvheadend.tvhclient.ui.features.playback.external.CastSessionManagerListener
 import org.tvheadend.tvhclient.ui.features.programs.ProgramDetailsFragment
 import org.tvheadend.tvhclient.ui.features.programs.ProgramListFragment
-import org.tvheadend.tvhclient.ui.common.interfaces.SearchRequestInterface
-import org.tvheadend.tvhclient.ui.common.SuggestionProvider
 import org.tvheadend.tvhclient.ui.features.settings.SettingsActivity
-import org.tvheadend.tvhclient.util.extensions.gone
-import org.tvheadend.tvhclient.util.extensions.sendSnackbarMessage
-import org.tvheadend.tvhclient.util.extensions.visible
-import org.tvheadend.tvhclient.util.extensions.visibleOrGone
+import org.tvheadend.tvhclient.util.extensions.*
 import timber.log.Timber
 
 class MainActivity : BaseActivity(R.layout.main_activity), SearchView.OnQueryTextListener, SearchView.OnSuggestionListener, SyncStateReceiver.Listener {
@@ -103,7 +102,7 @@ class MainActivity : BaseActivity(R.layout.main_activity), SearchView.OnQueryTex
             navigationDrawer.handleMenuSelection(supportFragmentManager.findFragmentById(R.id.main))
         }
 
-        castContext = getCastContext(this)
+        castContext = this.getCastContext()
         if (castContext != null) {
             Timber.d("Casting is available")
             castSessionManagerListener = CastSessionManagerListener(this, castSession)
@@ -156,7 +155,7 @@ class MainActivity : BaseActivity(R.layout.main_activity), SearchView.OnQueryTex
         })
         baseViewModel.showSnackbar.observe(this, Observer { event ->
             event.getContentIfNotHandled()?.let {
-                showSnackbarMessage(this, it)
+                this.showSnackbarMessage(it)
             }
         })
         baseViewModel.isUnlocked.observe(this, Observer { unlocked ->
@@ -196,7 +195,7 @@ class MainActivity : BaseActivity(R.layout.main_activity), SearchView.OnQueryTex
 
     public override fun onResume() {
         super.onResume()
-        castSession = getCastSession(this)
+        castSession = this.getCastSession()
     }
 
     public override fun onPause() {
