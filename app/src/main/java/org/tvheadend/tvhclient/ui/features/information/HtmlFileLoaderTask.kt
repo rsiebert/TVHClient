@@ -1,4 +1,4 @@
-package org.tvheadend.tvhclient.ui.common.tasks
+package org.tvheadend.tvhclient.ui.features.information
 
 import android.content.Context
 import android.os.AsyncTask

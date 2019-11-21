@@ -3,7 +3,7 @@ package org.tvheadend.tvhclient.ui.features.changelog
 import android.content.Context
 import android.os.AsyncTask
 import org.tvheadend.tvhclient.R
-import org.tvheadend.tvhclient.ui.common.tasks.HtmlFileLoaderTask
+import org.tvheadend.tvhclient.ui.features.information.HtmlFileLoaderTask
 import org.tvheadend.tvhclient.util.getThemeId
 import timber.log.Timber
 import java.io.BufferedReader
