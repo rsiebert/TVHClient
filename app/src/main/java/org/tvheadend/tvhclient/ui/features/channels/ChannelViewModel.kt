@@ -6,8 +6,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
-import org.tvheadend.tvhclient.R
 import org.tvheadend.data.entity.Channel
+import org.tvheadend.tvhclient.R
 import timber.log.Timber
 
 class ChannelViewModel(application: Application) : BaseChannelViewModel(application), SharedPreferences.OnSharedPreferenceChangeListener {

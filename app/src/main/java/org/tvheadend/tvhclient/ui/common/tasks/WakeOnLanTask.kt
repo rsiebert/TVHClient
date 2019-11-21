@@ -3,8 +3,8 @@ package org.tvheadend.tvhclient.ui.common.tasks
 import android.content.Context
 import android.net.Uri
 import android.os.AsyncTask
-import org.tvheadend.tvhclient.R
 import org.tvheadend.data.entity.Connection
+import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.util.extensions.sendSnackbarMessage
 import timber.log.Timber
 import java.lang.ref.WeakReference
@@ -13,6 +13,7 @@ import java.net.DatagramSocket
 import java.net.InetAddress
 import java.util.regex.Pattern
 
+// TODO move somewhere else
 class WakeOnLanTask(context: Context, private val connection: Connection) : AsyncTask<String, Void, Int>() {
 
     private val context: WeakReference<Context> = WeakReference(context)

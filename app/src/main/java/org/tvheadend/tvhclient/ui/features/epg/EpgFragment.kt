@@ -22,13 +22,8 @@ import org.tvheadend.data.entity.EpgProgram
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.ui.base.BaseFragment
 import org.tvheadend.tvhclient.ui.common.*
-import org.tvheadend.tvhclient.ui.common.interfaces.LayoutInterface
-import org.tvheadend.tvhclient.ui.common.interfaces.RecyclerViewClickInterface
-import org.tvheadend.tvhclient.ui.common.interfaces.ChannelTagIdsSelectedInterface
-import org.tvheadend.tvhclient.ui.common.interfaces.ChannelTimeSelectedInterface
+import org.tvheadend.tvhclient.ui.common.interfaces.*
 import org.tvheadend.tvhclient.ui.features.dvr.RecordingAddEditActivity
-import org.tvheadend.tvhclient.ui.common.addNotificationProgramIsAboutToStart
-import org.tvheadend.tvhclient.ui.common.interfaces.SearchRequestInterface
 import org.tvheadend.tvhclient.util.extensions.gone
 import org.tvheadend.tvhclient.util.extensions.visible
 import timber.log.Timber

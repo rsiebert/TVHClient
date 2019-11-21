@@ -9,9 +9,9 @@ import android.view.*
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import kotlinx.android.synthetic.main.status_fragment.*
+import org.tvheadend.data.entity.ServerStatus
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.service.HtspService
-import org.tvheadend.data.entity.ServerStatus
 import org.tvheadend.tvhclient.ui.base.BaseFragment
 import org.tvheadend.tvhclient.ui.common.interfaces.LayoutInterface
 import org.tvheadend.tvhclient.ui.common.sendWakeOnLanPacket

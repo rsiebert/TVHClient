@@ -20,10 +20,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
 import com.squareup.picasso.Transformation
-import org.tvheadend.tvhclient.MainApplication
-import org.tvheadend.tvhclient.R
 import org.tvheadend.data.entity.ProgramInterface
 import org.tvheadend.data.entity.Recording
+import org.tvheadend.tvhclient.MainApplication
+import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.util.extensions.gone
 import org.tvheadend.tvhclient.util.extensions.visible
 import org.tvheadend.tvhclient.util.extensions.visibleOrGone

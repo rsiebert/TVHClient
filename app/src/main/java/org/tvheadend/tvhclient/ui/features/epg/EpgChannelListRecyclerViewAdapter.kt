@@ -6,9 +6,9 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LifecycleRegistry
 import androidx.recyclerview.widget.RecyclerView
+import org.tvheadend.data.entity.EpgChannel
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.databinding.EpgChannelRecyclerviewAdapterBinding
-import org.tvheadend.data.entity.EpgChannel
 import org.tvheadend.tvhclient.ui.common.interfaces.RecyclerViewClickInterface
 import java.util.*
 

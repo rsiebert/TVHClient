@@ -21,12 +21,12 @@ import org.tvheadend.data.source.MiscDataSource
 import org.tvheadend.tvhclient.BuildConfig
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.service.HtspService
-import org.tvheadend.tvhclient.util.worker.LoadChannelIconWorker
 import org.tvheadend.tvhclient.ui.common.SuggestionProvider
 import org.tvheadend.tvhclient.ui.features.startup.SplashActivity
 import org.tvheadend.tvhclient.util.extensions.sendSnackbarMessage
 import org.tvheadend.tvhclient.util.getIconUrl
 import org.tvheadend.tvhclient.util.logging.FileLoggingTree
+import org.tvheadend.tvhclient.util.worker.LoadChannelIconWorker
 import timber.log.Timber
 import java.io.File
 import java.text.SimpleDateFormat
