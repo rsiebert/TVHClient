@@ -10,8 +10,8 @@ import kotlinx.android.synthetic.main.webview_fragment.*
 import kotlinx.coroutines.*
 import org.tvheadend.tvhclient.BuildConfig
 import org.tvheadend.tvhclient.R
+import org.tvheadend.tvhclient.ui.base.LayoutControlInterface
 import org.tvheadend.tvhclient.ui.common.getLocale
-import org.tvheadend.tvhclient.ui.common.interfaces.LayoutInterface
 import org.tvheadend.tvhclient.ui.common.interfaces.ToolbarInterface
 import org.tvheadend.tvhclient.ui.features.settings.RemoveFragmentFromBackstackInterface
 import org.tvheadend.tvhclient.util.extensions.gone
@@ -36,8 +36,8 @@ open class WebViewFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        if (activity is LayoutInterface) {
-            (activity as LayoutInterface).forceSingleScreenLayout()
+        if (activity is LayoutControlInterface) {
+            (activity as LayoutControlInterface).forceSingleScreenLayout()
         }
         if (activity is ToolbarInterface) {
             toolbarInterface = activity as ToolbarInterface

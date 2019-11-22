@@ -15,7 +15,7 @@ import org.tvheadend.data.entity.ServerStatus
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.service.HtspService
 import org.tvheadend.tvhclient.ui.base.BaseFragment
-import org.tvheadend.tvhclient.ui.common.interfaces.LayoutInterface
+import org.tvheadend.tvhclient.ui.base.LayoutControlInterface
 import org.tvheadend.tvhclient.ui.features.dvr.recordings.RecordingViewModel
 import timber.log.Timber
 
@@ -33,8 +33,8 @@ class StatusFragment : BaseFragment() {
         super.onActivityCreated(savedInstanceState)
         statusViewModel = ViewModelProviders.of(activity!!).get(StatusViewModel::class.java)
 
-        if (activity is LayoutInterface) {
-            (activity as LayoutInterface).forceSingleScreenLayout()
+        if (activity is LayoutControlInterface) {
+            (activity as LayoutControlInterface).forceSingleScreenLayout()
         }
 
         toolbarInterface.setTitle(getString(R.string.status))

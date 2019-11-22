@@ -10,7 +10,6 @@ import org.tvheadend.data.entity.Connection
 import org.tvheadend.tvhclient.MainApplication
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.repository.AppRepository
-import org.tvheadend.tvhclient.ui.common.interfaces.LayoutInterface
 import org.tvheadend.tvhclient.ui.common.interfaces.ToolbarInterface
 import timber.log.Timber
 import javax.inject.Inject
@@ -57,12 +56,12 @@ abstract class BaseFragment : Fragment() {
         // it was hidden by the call to forceSingleScreenLayout()
         isDualPane = resources.getBoolean(R.bool.isDualScreen)
         if (isDualPane) {
-            if (activity is LayoutInterface) {
-                (activity as LayoutInterface).enableDualScreenLayout()
+            if (activity is LayoutControlInterface) {
+                (activity as LayoutControlInterface).enableDualScreenLayout()
             }
         } else {
-            if (activity is LayoutInterface) {
-                (activity as LayoutInterface).enableSingleScreenLayout()
+            if (activity is LayoutControlInterface) {
+                (activity as LayoutControlInterface).enableSingleScreenLayout()
             }
         }
 

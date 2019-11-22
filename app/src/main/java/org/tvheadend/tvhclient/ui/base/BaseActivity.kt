@@ -16,7 +16,6 @@ import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.repository.AppRepository
 import org.tvheadend.tvhclient.ui.common.NetworkStatusReceiver
 import org.tvheadend.tvhclient.ui.common.SnackbarMessageReceiver
-import org.tvheadend.tvhclient.ui.common.interfaces.LayoutInterface
 import org.tvheadend.tvhclient.ui.common.interfaces.ToolbarInterface
 import org.tvheadend.tvhclient.ui.common.onAttach
 import org.tvheadend.tvhclient.util.extensions.gone
@@ -25,7 +24,7 @@ import org.tvheadend.tvhclient.util.getThemeId
 import timber.log.Timber
 import javax.inject.Inject
 
-open class BaseActivity(private val layoutId: Int = R.layout.misc_content_activity) : AppCompatActivity(), ToolbarInterface, LayoutInterface {
+open class BaseActivity(private val layoutId: Int = R.layout.misc_content_activity) : AppCompatActivity(), ToolbarInterface, LayoutControlInterface {
 
     @Inject
     lateinit var appContext: Context
@@ -113,4 +112,12 @@ open class BaseActivity(private val layoutId: Int = R.layout.misc_content_activi
     override fun forceSingleScreenLayout() {
         enableSingleScreenLayout()
     }
+}
+
+interface LayoutControlInterface {
+    fun forceSingleScreenLayout()
+
+    fun enableSingleScreenLayout()
+
+    fun enableDualScreenLayout()
 }
