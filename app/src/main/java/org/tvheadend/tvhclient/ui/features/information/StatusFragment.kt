@@ -5,7 +5,9 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
-import android.view.*
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import kotlinx.android.synthetic.main.status_fragment.*
@@ -14,7 +16,6 @@ import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.service.HtspService
 import org.tvheadend.tvhclient.ui.base.BaseFragment
 import org.tvheadend.tvhclient.ui.common.interfaces.LayoutInterface
-import org.tvheadend.tvhclient.ui.common.sendWakeOnLanPacket
 import org.tvheadend.tvhclient.ui.features.dvr.recordings.RecordingViewModel
 import timber.log.Timber
 
@@ -69,24 +70,6 @@ class StatusFragment : BaseFragment() {
                 loadDataHandler.removeCallbacks(loadDataTask)
             }
         })
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        super.onCreateOptionsMenu(menu, inflater)
-        inflater.inflate(R.menu.status_options_menu, menu)
-    }
-
-    override fun onPrepareOptionsMenu(menu: Menu) {
-        super.onPrepareOptionsMenu(menu)
-        menu.findItem(R.id.menu_send_wake_on_lan_packet)?.isVisible = isUnlocked && connection.isWolEnabled
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        val ctx = context ?: return super.onOptionsItemSelected(item)
-        return when (item.itemId) {
-            R.id.menu_send_wake_on_lan_packet -> sendWakeOnLanPacket(ctx, connection)
-            else -> super.onOptionsItemSelected(item)
-        }
     }
 
     private fun showStatus() {
