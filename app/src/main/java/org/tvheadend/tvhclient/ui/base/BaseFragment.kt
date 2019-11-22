@@ -12,7 +12,6 @@ import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.repository.AppRepository
 import org.tvheadend.tvhclient.ui.common.interfaces.LayoutInterface
 import org.tvheadend.tvhclient.ui.common.interfaces.ToolbarInterface
-import org.tvheadend.tvhclient.ui.common.showConfirmationToReconnectToServer
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -71,13 +70,11 @@ abstract class BaseFragment : Fragment() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        val ctx = context ?: return super.onOptionsItemSelected(item)
         return when (item.itemId) {
             android.R.id.home -> {
                 activity?.finish()
                 true
             }
-            R.id.menu_reconnect_to_server -> showConfirmationToReconnectToServer(ctx, baseViewModel)
             else -> super.onOptionsItemSelected(item)
         }
     }

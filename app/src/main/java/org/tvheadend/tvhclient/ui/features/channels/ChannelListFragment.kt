@@ -208,8 +208,6 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickInterface, ChannelT
             menu.findItem(R.id.menu_search_channels)?.isVisible = false
             menu.findItem(R.id.menu_channel_tags)?.isVisible = false
         }
-
-        menu.findItem(R.id.menu_send_wake_on_lan_packet)?.isVisible = true
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -219,7 +217,6 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickInterface, ChannelT
             R.id.menu_program_timeframe -> showProgramTimeframeSelectionDialog(ctx, channelViewModel.selectedTimeOffset, intervalInHours, 12, this)
             R.id.menu_genre_color_information -> showGenreColorDialog(ctx)
             R.id.menu_channel_sort_order -> showChannelSortOrderSelectionDialog(ctx)
-            R.id.menu_send_wake_on_lan_packet -> sendWakeOnLanPacket(ctx, connection)
             R.id.menu_search_channels -> showSearchForChannelsDialog(ctx)
             else -> super.onOptionsItemSelected(item)
         }

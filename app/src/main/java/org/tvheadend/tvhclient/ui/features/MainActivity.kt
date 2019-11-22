@@ -26,11 +26,9 @@ import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.service.HtspService
 import org.tvheadend.tvhclient.service.SyncStateReceiver
 import org.tvheadend.tvhclient.ui.base.BaseActivity
-import org.tvheadend.tvhclient.ui.common.NetworkStatus
-import org.tvheadend.tvhclient.ui.common.SuggestionProvider
+import org.tvheadend.tvhclient.ui.common.*
 import org.tvheadend.tvhclient.ui.common.interfaces.SearchRequestInterface
-import org.tvheadend.tvhclient.ui.common.showOrCancelNotificationDiskSpaceIsLow
-import org.tvheadend.tvhclient.ui.common.showOrCancelNotificationProgramIsCurrentlyBeingRecorded
+import org.tvheadend.tvhclient.ui.common.tasks.WakeOnLanTask
 import org.tvheadend.tvhclient.ui.features.channels.ChannelListFragment
 import org.tvheadend.tvhclient.ui.features.dvr.recordings.RecordingDetailsFragment
 import org.tvheadend.tvhclient.ui.features.dvr.recordings.download.DownloadPermissionGrantedInterface
@@ -317,11 +315,18 @@ class MainActivity : BaseActivity(R.layout.main_activity), SearchView.OnQueryTex
         super.onPrepareOptionsMenu(menu)
 
         when (navigationViewModel.currentNavigationMenuId) {
-            NavigationDrawer.MENU_STATUS, NavigationDrawer.MENU_UNLOCKER, NavigationDrawer.MENU_HELP -> {
+            NavigationDrawer.MENU_UNLOCKER,
+            NavigationDrawer.MENU_HELP -> {
                 menu.findItem(R.id.media_route_menu_item)?.isVisible = false
                 menu.findItem(R.id.menu_search).isVisible = false
                 menu.findItem(R.id.menu_reconnect_to_server).isVisible = false
+                menu.findItem(R.id.menu_privacy_policy).isVisible = false
                 menu.findItem(R.id.menu_send_wake_on_lan_packet)?.isVisible = false
+            }
+            NavigationDrawer.MENU_STATUS -> {
+                menu.findItem(R.id.media_route_menu_item)?.isVisible = false
+                menu.findItem(R.id.menu_search).isVisible = false
+                menu.findItem(R.id.menu_send_wake_on_lan_packet)?.isVisible = isUnlocked && baseViewModel.connection.isWolEnabled
             }
             else -> {
                 menu.findItem(R.id.media_route_menu_item)?.isVisible = isUnlocked
@@ -340,6 +345,11 @@ class MainActivity : BaseActivity(R.layout.main_activity), SearchView.OnQueryTex
                         .replace(R.id.main, fragment)
                         .addToBackStack(null)
                         .commit()
+                true
+            }
+            R.id.menu_reconnect_to_server -> showConfirmationToReconnectToServer(this, baseViewModel)
+            R.id.menu_send_wake_on_lan_packet -> {
+                WakeOnLanTask(this, baseViewModel.connection).execute()
                 true
             }
             else -> super.onOptionsItemSelected(item)

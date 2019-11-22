@@ -15,7 +15,7 @@ import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.ui.common.interfaces.BackPressedInterface
 import org.tvheadend.tvhclient.ui.common.interfaces.RecyclerViewClickInterface
 import org.tvheadend.tvhclient.ui.common.interfaces.ToolbarInterface
-import org.tvheadend.tvhclient.ui.common.sendWakeOnLanPacket
+import org.tvheadend.tvhclient.ui.common.tasks.WakeOnLanTask
 import timber.log.Timber
 
 class SettingsListConnectionsFragment : Fragment(), BackPressedInterface, ActionMode.Callback, RecyclerViewClickInterface {
@@ -91,7 +91,11 @@ class SettingsListConnectionsFragment : Fragment(), BackPressedInterface, Action
             R.id.menu_set_connection_active -> setConnectionActiveOrInactive(connection, mode, true)
             R.id.menu_set_connection_not_active -> setConnectionActiveOrInactive(connection, mode, false)
             R.id.menu_edit_connection -> editConnection(connection, mode)
-            R.id.menu_send_wol -> sendWakeOnLanPacket(ctx, connection, mode)
+            R.id.menu_send_wol -> {
+                WakeOnLanTask(ctx, connection).execute()
+                mode.finish()
+                true
+            }
             R.id.menu_delete_connection -> deleteConnection(ctx, connection, mode)
             else -> false
         }

@@ -5,7 +5,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
-import android.view.ActionMode
 import android.view.Menu
 import androidx.core.view.children
 import androidx.fragment.app.Fragment
@@ -18,7 +17,6 @@ import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.service.HtspService
 import org.tvheadend.tvhclient.ui.base.BaseViewModel
 import org.tvheadend.tvhclient.ui.common.interfaces.RecordingRemovedInterface
-import org.tvheadend.tvhclient.ui.common.tasks.WakeOnLanTask
 import org.tvheadend.tvhclient.ui.features.dvr.RecordingAddEditActivity
 import org.tvheadend.tvhclient.ui.features.playback.external.CastChannelActivity
 import org.tvheadend.tvhclient.ui.features.playback.external.CastRecordingActivity
@@ -598,12 +596,5 @@ fun searchTitleInTheLocalDatabase(activity: FragmentActivity, viewModel: BaseVie
         viewModel.removeFragmentWhenSearchIsDone = true
         viewModel.startSearchQuery(title)
     }
-    return true
-}
-
-// TODO move to base fragment and hide menu where not needed
-fun sendWakeOnLanPacket(context: Context, connection: Connection, mode: ActionMode? = null): Boolean {
-    WakeOnLanTask(context, connection).execute()
-    mode?.finish()
     return true
 }
