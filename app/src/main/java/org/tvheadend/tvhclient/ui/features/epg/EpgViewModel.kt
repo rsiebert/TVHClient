@@ -10,7 +10,7 @@ import androidx.lifecycle.Transformations
 import org.tvheadend.data.entity.EpgChannel
 import org.tvheadend.data.entity.EpgProgram
 import org.tvheadend.tvhclient.R
-import org.tvheadend.tvhclient.ui.common.LiveEvent
+import org.tvheadend.tvhclient.util.livedata.LiveEvent
 import org.tvheadend.tvhclient.ui.features.channels.BaseChannelViewModel
 import timber.log.Timber
 import java.util.*

@@ -28,7 +28,7 @@ import org.tvheadend.tvhclient.service.SyncStateReceiver
 import org.tvheadend.tvhclient.ui.base.BaseActivity
 import org.tvheadend.tvhclient.ui.common.*
 import org.tvheadend.tvhclient.ui.common.interfaces.SearchRequestInterface
-import org.tvheadend.tvhclient.ui.common.tasks.WakeOnLanTask
+import org.tvheadend.tvhclient.ui.common.WakeOnLanTask
 import org.tvheadend.tvhclient.ui.features.channels.ChannelListFragment
 import org.tvheadend.tvhclient.ui.features.dvr.recordings.RecordingDetailsFragment
 import org.tvheadend.tvhclient.ui.features.dvr.recordings.download.DownloadPermissionGrantedInterface

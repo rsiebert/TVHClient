@@ -5,7 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import org.tvheadend.data.RepositoryInterface
 import org.tvheadend.data.source.*
-import org.tvheadend.tvhclient.ui.common.Event
+import org.tvheadend.tvhclient.util.livedata.Event
 import org.tvheadend.tvhclient.ui.common.NetworkStatus
 import javax.inject.Inject
 

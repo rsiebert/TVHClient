@@ -11,7 +11,7 @@ import org.tvheadend.data.entity.Connection
 import org.tvheadend.tvhclient.MainApplication
 import org.tvheadend.tvhclient.repository.AppRepository
 import org.tvheadend.tvhclient.service.HtspService
-import org.tvheadend.tvhclient.ui.common.Event
+import org.tvheadend.tvhclient.util.livedata.Event
 import org.tvheadend.tvhclient.ui.common.NetworkStatus
 import org.tvheadend.tvhclient.ui.features.startup.SplashActivity
 import timber.log.Timber

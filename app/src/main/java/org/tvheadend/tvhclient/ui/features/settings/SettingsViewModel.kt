@@ -10,7 +10,7 @@ import org.tvheadend.data.entity.ServerStatus
 import org.tvheadend.data.source.MiscDataSource
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.ui.base.BaseViewModel
-import org.tvheadend.tvhclient.ui.common.Event
+import org.tvheadend.tvhclient.util.livedata.Event
 import timber.log.Timber
 
 class SettingsViewModel(application: Application) : BaseViewModel(application) {

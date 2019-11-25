@@ -15,7 +15,7 @@ import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.ui.common.interfaces.BackPressedInterface
 import org.tvheadend.tvhclient.ui.common.interfaces.RecyclerViewClickInterface
 import org.tvheadend.tvhclient.ui.common.interfaces.ToolbarInterface
-import org.tvheadend.tvhclient.ui.common.tasks.WakeOnLanTask
+import org.tvheadend.tvhclient.ui.common.WakeOnLanTask
 import timber.log.Timber
 
 class SettingsListConnectionsFragment : Fragment(), BackPressedInterface, ActionMode.Callback, RecyclerViewClickInterface {

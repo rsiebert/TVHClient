@@ -1,4 +1,4 @@
-package org.tvheadend.tvhclient.ui.common
+package org.tvheadend.tvhclient.util.livedata
 
 
 /**

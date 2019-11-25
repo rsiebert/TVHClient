@@ -1,4 +1,4 @@
-package org.tvheadend.tvhclient.ui.common
+package org.tvheadend.tvhclient.util.livedata
 
 import androidx.annotation.MainThread
 import androidx.collection.ArraySet
