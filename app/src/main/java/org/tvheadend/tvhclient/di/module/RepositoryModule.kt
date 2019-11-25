@@ -8,6 +8,7 @@ import org.tvheadend.data.source.*
 import org.tvheadend.tvhclient.repository.AppRepository
 import javax.inject.Singleton
 
+@Suppress("unused")
 @Module
 class RepositoryModule {
 
