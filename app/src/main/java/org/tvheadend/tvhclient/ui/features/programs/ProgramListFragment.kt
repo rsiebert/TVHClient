@@ -293,7 +293,7 @@ class ProgramListFragment : BaseFragment(), RecyclerViewClickInterface, LastProg
 
     companion object {
 
-        fun newInstance(channelName: String = "", channelId: Int = 0, selectedTime: Long = 0): ProgramListFragment {
+        fun newInstance(channelName: String = "", channelId: Int = 0, selectedTime: Long = System.currentTimeMillis()): ProgramListFragment {
             val f = ProgramListFragment()
             val args = Bundle()
             args.putString("channelName", channelName)
