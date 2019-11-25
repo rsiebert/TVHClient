@@ -361,10 +361,12 @@ class MainActivity : BaseActivity(R.layout.main_activity), SearchView.OnQueryTex
         delayedQueryTextSubmitHandler.removeCallbacks(queryTextSubmitTask)
         searchMenuItem?.collapseActionView()
 
+        // Save the entered query so it will be shown later in the suggestion drpo down list
         val suggestions = SearchRecentSuggestions(this, SuggestionProvider.AUTHORITY, SuggestionProvider.MODE)
         suggestions.saveRecentQuery(query, null)
 
-        // In case the channels or epg is shown show the search results in the program list.
+        // In case the channels or epg is currently visible, show the program list fragment.
+        // It observes the search query and will perform the search and show the results.
         val fragment = supportFragmentManager.findFragmentById(R.id.main)
         if (fragment is ChannelListFragment || fragment is EpgFragment) {
             Timber.d("Adding program list fragment where the search will be done")
@@ -375,6 +377,7 @@ class MainActivity : BaseActivity(R.layout.main_activity), SearchView.OnQueryTex
             }
             baseViewModel.removeFragmentWhenSearchIsDone = true
         }
+
         Timber.d("Submitting search query to the view model")
         baseViewModel.startSearchQuery(query)
         return true
