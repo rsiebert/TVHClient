@@ -1,11 +1,15 @@
-<?xml version="1.0" encoding="utf-8"?>
 <resources>
-
-    <plurals name="programs">
-        <item quantity="one">%d program</item>
-        <item quantity="few">%d programy</item>
-        <item quantity="many">%d programów</item>
-        <item quantity="other">%d programów</item>
+    <plurals name="completed_recordings">
+        <item quantity="one">%d Zakończone nagranie</item>
+        <item quantity="few">%d Zakończone nagrania</item>
+        <item quantity="many">%d Zakończonych nagrań</item>
+        <item quantity="other">%d Zakończonych nagrań</item>
+    </plurals>
+    <plurals name="failed_recordings">
+        <item quantity="one">%d Nieprawidłowe nagranie</item>
+        <item quantity="few">%d Nieprawidłowe nagrania</item>
+        <item quantity="many">%d Nieprawidłowych nagrań</item>
+        <item quantity="other">%d Nieprawidłowych nagrań</item>
     </plurals>
     <plurals name="items">
         <item quantity="one">%d pozycja</item>
@@ -13,23 +17,17 @@
         <item quantity="many">%d pozycji</item>
         <item quantity="other">%d pozycji</item>
     </plurals>
-    <plurals name="completed_recordings">
-        <item quantity="one">%d Zakończone nagranie</item>
-        <item quantity="few">%d Zakończone nagrania</item>
-        <item quantity="many">%d Zakończonych nagrań</item>
-        <item quantity="other">%d Zakończonych nagrań</item>
+    <plurals name="number_of_connections">
+        <item quantity="one">%d połączenie dostępne</item>
+        <item quantity="few">%d połączenia dostępne</item>
+        <item quantity="many">%d portów dostępne</item>
+        <item quantity="other">%d połączeń dostępne</item>
     </plurals>
-    <plurals name="upcoming_recordings">
-        <item quantity="one">%d Zaplanowane nagranie</item>
-        <item quantity="few">%d Zaplanowane nagrania</item>
-        <item quantity="many">%d Zaplanowanych nagrań</item>
-        <item quantity="other">%d Zaplanowanych nagrań</item>
-    </plurals>
-    <plurals name="failed_recordings">
-        <item quantity="one">%d Nieprawidłowe nagranie</item>
-        <item quantity="few">%d Nieprawidłowe nagrania</item>
-        <item quantity="many">%d Nieprawidłowych nagrań</item>
-        <item quantity="other">%d Nieprawidłowych nagrań</item>
+    <plurals name="programs">
+        <item quantity="one">%d program</item>
+        <item quantity="few">%d programy</item>
+        <item quantity="many">%d programów</item>
+        <item quantity="other">%d programów</item>
     </plurals>
     <plurals name="removed_recordings">
         <item quantity="one">%d Usunięte nagranie</item>
@@ -43,10 +41,10 @@
         <item quantity="many">%d wyników</item>
         <item quantity="other">%d wyników</item>
     </plurals>
-    <plurals name="number_of_connections">
-        <item quantity="one">%d połączenie dostępne</item>
-        <item quantity="few">%d połączenia dostępne</item>
-        <item quantity="many">%d portów dostępne</item>
-        <item quantity="other">%d połączeń dostępne</item>
+    <plurals name="upcoming_recordings">
+        <item quantity="one">%d Zaplanowane nagranie</item>
+        <item quantity="few">%d Zaplanowane nagrania</item>
+        <item quantity="many">%d Zaplanowanych nagrań</item>
+        <item quantity="other">%d Zaplanowanych nagrań</item>
     </plurals>
 </resources>

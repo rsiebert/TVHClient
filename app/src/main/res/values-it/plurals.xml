@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <plurals name="completed_recordings">
         <item quantity="other">%d registrazioni completate</item>
@@ -20,12 +19,12 @@
         <item quantity="other">%d programmi</item>
         <item quantity="one">%d programma</item>
     </plurals>
-    <plurals name="upcoming_recordings">
-        <item quantity="other">%d registrazioni programmate</item>
-        <item quantity="one">%d registrazione programmata</item>
-    </plurals>
     <plurals name="results">
         <item quantity="other">%d risultati</item>
         <item quantity="one">%d risultato</item>
+    </plurals>
+    <plurals name="upcoming_recordings">
+        <item quantity="other">%d registrazioni programmate</item>
+        <item quantity="one">%d registrazione programmata</item>
     </plurals>
 </resources>

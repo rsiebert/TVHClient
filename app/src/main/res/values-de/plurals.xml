@@ -1,33 +1,35 @@
-<?xml version="1.0" encoding="utf-8"?>
 <resources>
-
-    <plurals name="programs">
-        <item quantity="one">%d Program</item>
-        <item quantity="other">%d Programme</item>
-    </plurals>
     <plurals name="channels">
         <item quantity="one">%d Sender</item>
         <item quantity="other">%d Sender</item>
-    </plurals>
-    <plurals name="items">
-        <item quantity="one">%d Eintrag</item>
-        <item quantity="other">%d Einträge</item>
     </plurals>
     <plurals name="completed_recordings">
         <item quantity="one">%d Abgeschlossene Aufnahme</item>
         <item quantity="other">%d Abgeschlossene Aufnahmen</item>
     </plurals>
-    <plurals name="upcoming_recordings">
-        <item quantity="one">%d Geplante Aufnahme</item>
-        <item quantity="other">%d Geplante Aufnahmen</item>
-    </plurals>
     <plurals name="failed_recordings">
         <item quantity="one">%d Fehlerhafte Aufnahme</item>
         <item quantity="other">%d Fehlerhafte Aufnahmen</item>
     </plurals>
+    <plurals name="items">
+        <item quantity="one">%d Eintrag</item>
+        <item quantity="other">%d Einträge</item>
+    </plurals>
+    <plurals name="number_of_connections">
+        <item quantity="one">%d Verbindung verfügbar</item>
+        <item quantity="other">%d Verbindungen verfügbar</item>
+    </plurals>
+    <plurals name="programs">
+        <item quantity="one">%d Program</item>
+        <item quantity="other">%d Programme</item>
+    </plurals>
     <plurals name="removed_recordings">
         <item quantity="one">%d Gelöschte Aufnahme</item>
         <item quantity="other">%d Gelöschte Aufnahmen</item>
+    </plurals>
+    <plurals name="results">
+        <item quantity="one">%d Ergebnis</item>
+        <item quantity="other">%d Ergebnisse</item>
     </plurals>
     <plurals name="series_recordings">
         <item quantity="one">%d Serienaufnahme</item>
@@ -37,12 +39,8 @@
         <item quantity="one">%d Manuelle Aufnahme</item>
         <item quantity="other">%d Manuelle Aufnahmen</item>
     </plurals>
-    <plurals name="results">
-        <item quantity="one">%d Ergebnis</item>
-        <item quantity="other">%d Ergebnisse</item>
-    </plurals>
-    <plurals name="number_of_connections">
-        <item quantity="one">%d Verbindung verfügbar</item>
-        <item quantity="other">%d Verbindungen verfügbar</item>
+    <plurals name="upcoming_recordings">
+        <item quantity="one">%d Geplante Aufnahme</item>
+        <item quantity="other">%d Geplante Aufnahmen</item>
     </plurals>
 </resources>
