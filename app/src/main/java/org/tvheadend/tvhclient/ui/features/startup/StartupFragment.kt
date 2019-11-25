@@ -104,8 +104,8 @@ class StartupFragment : Fragment() {
             R.id.menu_reconnect_to_server -> {
                 activity?.let { activity ->
                     MaterialDialog(activity).show {
-                        title(R.string.dialog_title_reconnect_to_server)
-                        message(R.string.dialog_content_reconnect_to_server)
+                        title(R.string.reconnect_to_server)
+                        message(R.string.restart_and_sync)
                         positiveButton(R.string.reconnect) {
                             Timber.d("Reconnect requested, stopping service and updating active connection to require a full sync")
                             startupViewModel.updateConnectionAndRestartApplication(context)

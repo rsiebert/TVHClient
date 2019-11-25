@@ -163,8 +163,8 @@ class SettingsListConnectionsFragment : Fragment(), BackPressedInterface, Action
         when {
             activeConnectionId < 0 -> context?.let {
                 MaterialDialog(it).show {
-                    title(R.string.dialog_title_disconnect_from_server)
-                    message(R.string.dialog_content_disconnect_from_server)
+                    title(R.string.disconnect_from_server)
+                    message(R.string.no_active_connection)
                     positiveButton(R.string.disconnect) {
                         reconnect()
                     }
@@ -172,8 +172,8 @@ class SettingsListConnectionsFragment : Fragment(), BackPressedInterface, Action
             }
             connectionHasChanged -> context?.let {
                 MaterialDialog(it).show {
-                    title(R.string.dialog_title_connection_changed)
-                    message(R.string.dialog_content_connection_changed)
+                    title(R.string.connect_to_new_server)
+                    message(R.string.connection_changed)
                     positiveButton(R.string.connect) { reconnect() }
                 }
             }

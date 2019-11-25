@@ -133,8 +133,8 @@ fun preparePopupOrToolbarSearchMenu(menu: Menu, title: String?, isConnectionToSe
 
 fun showConfirmationToReconnectToServer(context: Context, viewModel: BaseViewModel): Boolean {
     MaterialDialog(context).show {
-        title(R.string.dialog_title_reconnect_to_server)
-        message(R.string.dialog_content_reconnect_to_server)
+        title(R.string.reconnect_to_server)
+        message(R.string.restart_and_sync)
         negativeButton(R.string.cancel)
         positiveButton(R.string.reconnect) {
             viewModel.updateConnectionAndRestartApplication(context)

@@ -190,11 +190,11 @@ class NavigationDrawer(private val activity: AppCompatActivity,
         }
 
         MaterialDialog(activity).show {
-            title(R.string.dialog_title_connect_to_server)
+            title(R.string.connect_to_new_server)
             negativeButton(R.string.cancel) {
                 headerResult.setActiveProfile(navigationViewModel.connection.id.toLong())
             }
-            positiveButton(R.string.dialog_button_connect) {
+            positiveButton(R.string.connect) {
                 headerResult.setActiveProfile(profile.identifier)
                 if (navigationViewModel.setSelectedConnectionAsActive(profile.identifier.toInt())) {
                     navigationViewModel.updateConnectionAndRestartApplication(activity)

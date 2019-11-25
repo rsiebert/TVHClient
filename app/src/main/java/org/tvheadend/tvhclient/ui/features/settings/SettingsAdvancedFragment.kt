@@ -131,8 +131,8 @@ class SettingsAdvancedFragment : BasePreferenceFragment(), Preference.OnPreferen
     private fun handlePreferenceClearDatabaseSelected() {
         context?.let {
             MaterialDialog(it).show {
-                title(R.string.dialog_title_clear_database)
-                message(R.string.dialog_content_reconnect_to_server)
+                title(R.string.clear_database_contents)
+                message(R.string.restart_and_sync)
                 positiveButton(R.string.clear) {
                     Timber.d("Clear database requested")
                     context.sendSnackbarMessage("Database contents cleared, reconnecting to server")
