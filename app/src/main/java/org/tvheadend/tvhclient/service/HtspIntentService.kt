@@ -91,7 +91,10 @@ class HtspIntentService : JobIntentService(), HtspConnectionStateListener {
             "getMoreEvents" -> getMoreEvents(intent)
             "loadChannelIcons" -> loadAllChannelIcons()
             "getTicket" -> getTicket(intent)
-            "cleanupDatabase" -> cleanupDatabase()
+            "cleanupDatabase" -> {
+                removeOutdatedProgramsFromDatabase()
+                removeDuplicateProgramsFromDatabase()
+            }
         }
     }
 
@@ -216,16 +219,50 @@ class HtspIntentService : JobIntentService(), HtspConnectionStateListener {
         }
     }
 
-    private fun cleanupDatabase() {
-        Timber.d("Cleaning database by removing duplicate programs")
+    private fun removeOutdatedProgramsFromDatabase() {
+        Timber.d("Deleting programs from the database that are older than one day from now")
+        val pastTime = System.currentTimeMillis() - 24 * 60 * 60 * 1000
+        appRepository.programData.removeItemsByTime(pastTime)
+    }
+
+    private fun removeDuplicateProgramsFromDatabase() {
+        Timber.d("Removing duplicate programs from the database")
+        val duplicatePrograms = Vector<Int>()
         val channels = appRepository.channelData.getItems()
         channels.forEach { channel ->
             Timber.d("Loading programs for channel ${channel.name}")
             val programs = appRepository.programData.getItemsByChannelId(channel.id)
+            var lastProgram = Program()
             programs.forEach { program ->
-                Timber.d("Loaded program id: ${program.eventId}, title: ${program.title}, start: ${program.start}, stop: ${program.stop}")
+                Timber.d("Channel: ${channel.name}, program id: ${program.eventId}, title: ${program.title}, start: ${program.start}, stop: ${program.stop}")
 
+                if (lastProgram.title == program.title
+                        && lastProgram.subtitle == program.subtitle
+                        && lastProgram.summary == program.summary
+                        && lastProgram.description == program.description
+                        && lastProgram.contentType == program.contentType
+                        && lastProgram.seasonCount == program.seasonCount
+                        && lastProgram.seasonNumber == program.seasonNumber
+                        && lastProgram.episodeCount == program.episodeCount
+                        && lastProgram.episodeNumber == program.episodeNumber
+                        && lastProgram.channelId == program.channelId
+                        && lastProgram.modifiedTime != program.modifiedTime) {
+
+                    if (lastProgram.modifiedTime < program.modifiedTime) {
+                        Timber.d("Channel: ${channel.name}, program id: ${lastProgram.eventId}, title: ${lastProgram.title} is a duplicate")
+                        duplicatePrograms.add(lastProgram.eventId)
+                    } else {
+                        Timber.d("Channel: ${channel.name}, program id: ${program.eventId}, title: ${program.title} is a duplicate")
+                        duplicatePrograms.add(program.eventId)
+                    }
+                }
+
+                lastProgram = program
             }
+        }
+        duplicatePrograms.forEach {
+            Timber.d("Removing duplicate program id $it")
+            appRepository.programData.removeItemById(it)
         }
     }
 

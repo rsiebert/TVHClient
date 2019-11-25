@@ -369,10 +369,6 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
                     getString(R.string.loading_data_done), "")
         }
 
-        Timber.d("Deleting events in the database that are older than one day from now")
-        val pastTime = System.currentTimeMillis() - 24 * 60 * 60 * 1000
-        appRepository.programData.removeItemsByTime(pastTime)
-
         syncRequired = false
         syncEventsRequired = false
         initialSyncWithServerRunning = false
