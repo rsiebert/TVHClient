@@ -382,4 +382,21 @@ L'indirizzo deve essere nella forma '01:24:67:9a:cd:ef' e può contenere solo ci
     <string name="disable">Disattivare</string>
     <string name="network_not_available">La rete non è disponibile</string>
     <string name="disc_space_low">Lo spazio su disco sta per esaurirsi, rimanendo \'%d\' GB</string>
+    <string name="select_multiple_channel_tags">Seleziona tag a più canali o nessuno per mostrare tutti i canali.</string>
+    <string name="search_for_channels">Cerca canali</string>
+    <string name="reject">Rifiutare</string>
+    <string name="pref_streaming_url_sum">Immettere l\'URL con il nome host e la porta per lo streaming dei video dal server. Richiesto solo se viene utilizzato un lettore esterno. Esempio: http://myserver:9981</string>
+    <string name="pref_streaming_url_hint">Esempio: http://myserver:9981</string>
+    <string name="pref_server_url_hint">Esempio: http://myserver:9982</string>
+    <string name="pref_streaming_url">URL di riproduzione</string>
+    <string name="pref_server_url_sum">Immettere l\'URL con il nome host e la porta per connettersi al server. Questo è lo stesso URL utilizzato per connettersi all\'interfaccia Web del server. Esempio: http://myserver:9982</string>
+    <string name="pref_server_url">URL di connessione</string>
+    <string name="pref_notify_low_server_storage_space_threshold_sum">Definire la soglia dello spazio di archiviazione in gigabyte. Se lo spazio di archiviazione disponibile sul server è inferiore alla soglia, verrà visualizzata una notifica</string>
+    <string name="pref_notify_low_server_storage_space_threshold">Soglia dello spazio di archiviazione del server in GB</string>
+    <string name="pref_notify_low_server_storage_space">Notifica quando lo spazio di archiviazione del server si sta esaurendo</string>
+    <string name="pref_notify_about_running_recordings">Notifica di registrazioni in corso</string>
+    <string name="enter_channel_name">Inserisci il nome del canale</string>
+    <string name="contact_information">Per favore contattami se hai bisogno di supporto. Email: rsiebert80@gmail.com Discord: https://discord.gg/RbBXfG3</string>
+    <string name="contact_developer">Si prega di contattare lo sviluppatore</string>
+    <string name="accept">Accettare</string>
 </resources>

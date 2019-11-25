@@ -381,4 +381,21 @@
     <string name="network_not_available">Sieć jest niedostępna</string>
     <string name="disc_space_low">Za mało miejsca na dysku, pozostało „%d” GB</string>
     <string name="no_connection_available">Brak dostępnego połączenia. Dodaj nowe połączenie, aby połączyć się z serwerem.</string>
+    <string name="select_multiple_channel_tags">Wybierz wiele tagów kanału lub żaden, aby wyświetlić wszystkie kanały.</string>
+    <string name="search_for_channels">Wyszukaj kanały</string>
+    <string name="reject">Odrzucać</string>
+    <string name="pref_streaming_url_sum">Wpisz adres URL z nazwą hosta i portem, aby przesyłać strumieniowo filmy z serwera. Wymagane tylko, jeśli używany jest odtwarzacz zewnętrzny. Przykład: http://mójserwer:9981</string>
+    <string name="pref_server_url_hint">Przykład: http://mójserwer:9982</string>
+    <string name="pref_streaming_url_hint">Przykład: http://mójserwer:9981</string>
+    <string name="pref_streaming_url">Url odtwarzania</string>
+    <string name="pref_server_url_sum">Wpisz adres URL z nazwą hosta i portem, aby połączyć się z serwerem. Jest to ten sam adres URL, który służy do połączenia z interfejsem sieciowym serwera. Przykład: http://mójserwer:9982</string>
+    <string name="pref_server_url">Adres URL połączenia</string>
+    <string name="pref_notify_low_server_storage_space_threshold_sum">Zdefiniuj próg przestrzeni dyskowej w gigabajtach. Jeśli dostępna przestrzeń do przechowywania na serwerze jest poniżej progu, zostanie wyświetlone powiadomienie</string>
+    <string name="pref_notify_low_server_storage_space_threshold">Próg przestrzeni dyskowej serwera w GB</string>
+    <string name="pref_notify_low_server_storage_space">Powiadom, gdy kończy się miejsce na serwerze</string>
+    <string name="pref_notify_about_running_recordings">Powiadom o uruchomieniu nagrań</string>
+    <string name="enter_channel_name">Wpisz nazwę kanału</string>
+    <string name="contact_information">Proszę o kontakt, jeśli potrzebujesz wsparcia. E-mail: rsiebert80@gmail.com Discord: https://discord.gg/RbBXfG3</string>
+    <string name="contact_developer">Skontaktuj się z programistą</string>
+    <string name="accept">Zaakceptować</string>
 </resources>

@@ -381,4 +381,21 @@
     <string name="disable">Deaktivácia</string>
     <string name="network_not_available">Sieť nie je k dispozícii</string>
     <string name="disc_space_low">Diskový priestor je nízky, \'%d\' GB zostáva</string>
+    <string name="accept">Súhlasiť</string>
+    <string name="contact_developer">Kontaktujte vývojára</string>
+    <string name="contact_information">Ak potrebujete podporu, kontaktujte ma. E-mail: rsiebert80@gmail.com Spor: https://discord.gg/RbBXfG3</string>
+    <string name="enter_channel_name">Zadajte názov kanála</string>
+    <string name="pref_notify_about_running_recordings">Upozorniť na spustenie nahrávania</string>
+    <string name="pref_notify_low_server_storage_space">Upozorniť na nedostatok voľného miesta na serveri</string>
+    <string name="pref_notify_low_server_storage_space_threshold">Prah úložného priestoru servera v GB</string>
+    <string name="pref_notify_low_server_storage_space_threshold_sum">Definujte prah úložného priestoru v gigabajtoch. Ak je dostupný úložný priestor servera pod prahom, zobrazí sa upozornenie</string>
+    <string name="pref_server_url">Adresa URL pripojenia</string>
+    <string name="pref_server_url_hint">Príklad: http://myserver:9982</string>
+    <string name="pref_streaming_url_hint">Príklad: http://myserver:9981</string>
+    <string name="reject">Odmietnuť</string>
+    <string name="search_for_channels">Vyhľadajte kanály</string>
+    <string name="select_multiple_channel_tags">Ak chcete zobraziť všetky kanály, vyberte viac alebo viac značiek kanálov.</string>
+    <string name="pref_streaming_url">Adresa URL prehrávania</string>
+    <string name="pref_server_url_sum">Zadajte adresu URL s názvom hostiteľa a portom na pripojenie k serveru. Toto je rovnaká webová adresa, ktorá sa používa na pripojenie k webovému rozhraniu servera. Príklad: http://myserver:9982</string>
+    <string name="pref_streaming_url_sum">Ak chcete streamovať videá zo servera, zadajte webovú adresu s názvom hostiteľa a port. Vyžaduje sa, iba ak sa používa externý prehrávač. Príklad: http://myserver:9981</string>
 </resources>

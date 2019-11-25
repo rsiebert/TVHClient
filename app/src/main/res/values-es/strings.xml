@@ -378,4 +378,21 @@
     <string name="disable">Desactivar</string>
     <string name="network_not_available">La red no está disponible</string>
     <string name="disc_space_low">El espacio en disco se está agotando, quedan \'%d\' GB</string>
+    <string name="contact_information">Por favor contáctame si necesitas ayuda. Correo electrónico: rsiebert80@gmail.com Discordia: https://discord.gg/RbBXfG3</string>
+    <string name="enter_channel_name">Ingrese el nombre del canal</string>
+    <string name="pref_notify_about_running_recordings">Notificar sobre la ejecución de grabaciones</string>
+    <string name="pref_notify_low_server_storage_space">Notificar cuando el espacio de almacenamiento del servidor se agote</string>
+    <string name="pref_notify_low_server_storage_space_threshold">Umbral de espacio de almacenamiento del servidor en GB</string>
+    <string name="pref_notify_low_server_storage_space_threshold_sum">Defina el umbral del espacio de almacenamiento en gigabytes. Si el espacio de almacenamiento del servidor disponible está por debajo del umbral, se mostrará una notificación</string>
+    <string name="pref_server_url">URL de conexión</string>
+    <string name="pref_streaming_url_hint">Ejemplo: http://myserver:9981</string>
+    <string name="pref_server_url_hint">Ejemplo: http://myserver:9982</string>
+    <string name="reject">Rechazar</string>
+    <string name="search_for_channels">Busca canales</string>
+    <string name="select_multiple_channel_tags">Seleccione múltiples etiquetas de canal o ninguna para mostrar todos los canales.</string>
+    <string name="pref_streaming_url">URL de reproducción</string>
+    <string name="contact_developer">Por favor contacte al desarrollador</string>
+    <string name="accept">Aceptar</string>
+    <string name="pref_server_url_sum">Ingrese la url con el nombre de host y el puerto para conectarse al servidor. Esta es la misma URL utilizada para conectarse a la interfaz web del servidor. Ejemplo: http://myserver:9982</string>
+    <string name="pref_streaming_url_sum">Ingrese la url con el nombre de host y el puerto para transmitir videos desde el servidor. Solo se requiere si se usa un reproductor externo. Ejemplo: http://myserver:9981</string>
 </resources>

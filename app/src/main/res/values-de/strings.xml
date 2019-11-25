@@ -319,7 +319,7 @@
     <string name="success_updating_recording">Aufnahme wurde aktualisiert.</string>
     <string name="summary">Zusammenfassung</string>
     <string name="sunday">Sonntag</string>
-    <string name="tags">Senderliste Filtern</string>
+    <string name="tags">Senderliste filtern</string>
     <string name="thursday">Donnerstag</string>
     <string name="time">Zeit</string>
     <string name="time_window">Zeitfenster für Aufnahmestart</string>

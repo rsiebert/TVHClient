@@ -378,4 +378,21 @@
     <string name="disable">Deaktivera</string>
     <string name="network_not_available">Nätverket är inte tillgängligt</string>
     <string name="disc_space_low">Diskutrymme är lågt, \"%d\" GB kvar</string>
+    <string name="contact_information">Kontakta mig om du behöver support. E-post: rsiebert80@gmail.com Discord: https://discord.gg/RbBXfG3</string>
+    <string name="enter_channel_name">Ange kanalnamn</string>
+    <string name="pref_notify_about_running_recordings">Meddela om inspelningar som körs</string>
+    <string name="pref_notify_low_server_storage_space">Meddela när serverlagringsutrymmet blir lågt</string>
+    <string name="pref_notify_low_server_storage_space_threshold">Serverlagringsutrymme i GB</string>
+    <string name="pref_notify_low_server_storage_space_threshold_sum">Definiera lagringsutrymmet i gigabyte. Om det tillgängliga serverlagringsutrymmet ligger under tröskeln visas ett meddelande</string>
+    <string name="pref_server_url">Anslutningsadress</string>
+    <string name="pref_server_url_hint">Exempel: http://myserver:9982</string>
+    <string name="pref_streaming_url_hint">Exempel: http://myserver:9981</string>
+    <string name="reject">Avvisa</string>
+    <string name="search_for_channels">Sök efter kanaler</string>
+    <string name="select_multiple_channel_tags">Välj flera kanaltaggar eller ingen för att visa alla kanaler.</string>
+    <string name="pref_streaming_url">Uppspelningsadress</string>
+    <string name="contact_developer">Vänligen kontakta utvecklaren</string>
+    <string name="accept">Acceptera</string>
+    <string name="pref_server_url_sum">Ange url med värdnamn och port för att ansluta till servern. Detta är samma url som används för att ansluta till serverns webbgränssnitt. Exempel: http://myserver:9982</string>
+    <string name="pref_streaming_url_sum">Ange url med värdnamn och port för att strömma videor från servern. Krävs endast om en extern spelare används. Exempel: http://myserver:9981</string>
 </resources>

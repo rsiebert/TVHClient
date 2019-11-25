@@ -381,4 +381,21 @@
     <string name="disable">Kikapcsolása</string>
     <string name="network_not_available">A hálózat nem érhető el</string>
     <string name="disc_space_low">A lemezterület alacsony, a \'%d\' GB marad</string>
+    <string name="accept">Elfogad</string>
+    <string name="contact_developer">Kérjük, vegye fel a kapcsolatot a fejlesztővel</string>
+    <string name="contact_information">Kérjük, vegye fel a kapcsolatot velem, ha támogatásra van szüksége. E-mail: rsiebert80@gmail.com Ellentmondás: https://discord.gg/RbBXfG3</string>
+    <string name="enter_channel_name">Adja meg a csatorna nevét</string>
+    <string name="pref_notify_about_running_recordings">Értesítsen a futó felvételekről</string>
+    <string name="pref_notify_low_server_storage_space">Értesítse, ha a kiszolgáló tárhelyének fogyása elfogy</string>
+    <string name="pref_notify_low_server_storage_space_threshold">Szerver tárhelyének küszöbértéke GB-ben</string>
+    <string name="pref_notify_low_server_storage_space_threshold_sum">Határozza meg a tárhely küszöbét gigabájtban. Ha a rendelkezésre álló szerver tárhely nem éri el a küszöböt, akkor értesítés jelenik meg</string>
+    <string name="pref_server_url">Kapcsolat URL</string>
+    <string name="pref_server_url_hint">Példa: http://myserver:9982</string>
+    <string name="pref_server_url_sum">Írja be az URL-t a gazdagépnévvel és a porttal, hogy csatlakozzon a szerverhez. Ugyanaz az URL, amelyet a kiszolgáló webes felületéhez való csatlakozáshoz használnak. Példa: http://myserver:9982</string>
+    <string name="pref_streaming_url">Lejátszás URL-je</string>
+    <string name="pref_streaming_url_hint">Példa: http://myserver:9981</string>
+    <string name="pref_streaming_url_sum">Írja be az URL-t a gazdagépnévvel és a portnal, hogy a videókat a szerverről továbbítsa. Csak akkor szükséges, ha külső lejátszót használnak. Példa: http://myserver:9981</string>
+    <string name="reject">Elutasít</string>
+    <string name="search_for_channels">Csatornák keresése</string>
+    <string name="select_multiple_channel_tags">Az összes csatorna megjelenítéséhez válasszon több csatornacímkét, vagy semmit</string>
 </resources>
