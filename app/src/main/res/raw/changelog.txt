@@ -1,6 +1,6 @@
 $ 2.3.0
   % VERSION 2.3.0
-  _ 25.11.2019
+  _ 26.11.2019
     * Minor UI changes
     * Added toolbar menu to search for channels only
     * Added support for Kodi color tags in descriptions
@@ -12,6 +12,7 @@ $ 2.3.0
     * Handle channel number ordering with number 0 properly
     * The menu to search the epg moved into the search submenu
     * Added developer contact information to the startup screen
+    * Translated more strings
     * Improvements under the hood
 $ 2.2.21
   % VERSION 2.2.21
