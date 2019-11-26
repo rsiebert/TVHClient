@@ -32,10 +32,6 @@ import org.tvheadend.tvhclient.util.extensions.gone
 import org.tvheadend.tvhclient.util.extensions.visible
 import timber.log.Timber
 
-
-// TODO preload epg data in the background after startup
-// TODO prevent reloading when scrolling
-
 class EpgFragment : BaseFragment(), EpgScrollInterface, RecyclerViewClickInterface, ChannelTimeSelectedInterface, ChannelTagIdsSelectedInterface, Filter.FilterListener, SearchRequestInterface {
 
     private lateinit var epgViewModel: EpgViewModel

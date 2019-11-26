@@ -33,7 +33,7 @@ import timber.log.Timber
 import javax.inject.Inject
 
 // TODO move diffutils to background thread
-// TODO consolidate the dialog strings
+// TODO 2 way use databinding and viewmodel for add edit fragment
 
 class MainApplication : MultiDexApplication(), OptionsProvider, BillingUpdatesListener {
 

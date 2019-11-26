@@ -16,8 +16,6 @@ import org.tvheadend.tvhclient.util.extensions.sendSnackbarMessage
 import org.tvheadend.tvhclient.util.extensions.visibleOrGone
 import timber.log.Timber
 
-// TODO 2 way use databinding and viewmodel
-
 class TimerRecordingAddEditFragment : BaseFragment(), BackPressedInterface, RecordingConfigSelectedListener, DatePickerFragment.Listener, TimePickerFragment.Listener {
 
     private lateinit var timerRecordingViewModel: TimerRecordingViewModel

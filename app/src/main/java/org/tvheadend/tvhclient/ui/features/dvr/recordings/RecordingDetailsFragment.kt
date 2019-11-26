@@ -19,8 +19,6 @@ import org.tvheadend.tvhclient.util.extensions.gone
 import org.tvheadend.tvhclient.util.extensions.visible
 import timber.log.Timber
 
-// TODO Observe the id and load the recording as livedata
-
 class RecordingDetailsFragment : BaseFragment(), RecordingRemovedInterface, DownloadPermissionGrantedInterface {
 
     private lateinit var recordingViewModel: RecordingViewModel
