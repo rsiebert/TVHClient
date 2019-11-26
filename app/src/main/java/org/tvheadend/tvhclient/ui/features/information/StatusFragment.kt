@@ -153,21 +153,21 @@ class StatusFragment : BaseFragment() {
 
         try {
             // Get the disc space values and convert them to megabytes
-            val free = serverStatus.freeDiskSpace / 1000000
-            val total = serverStatus.totalDiskSpace / 1000000
+            val free = serverStatus.freeDiskSpace / 1024 / 1024
+            val total = serverStatus.totalDiskSpace / 1024 / 1024
 
             val freeDiscSpace: String
             val totalDiscSpace: String
 
             // Show the free amount of disc space as GB or MB
-            freeDiscSpace = if (free > 1000) {
-                (free / 1000).toString() + " GB " + getString(R.string.available)
+            freeDiscSpace = if (free > 1024) {
+                (free / 1024).toString() + " GB " + getString(R.string.available)
             } else {
                 free.toString() + " MB " + getString(R.string.available)
             }
             // Show the total amount of disc space as GB or MB
-            totalDiscSpace = if (total > 1000) {
-                (total / 1000).toString() + " GB " + getString(R.string.total)
+            totalDiscSpace = if (total > 1024) {
+                (total / 1024).toString() + " GB " + getString(R.string.total)
             } else {
                 total.toString() + " MB " + getString(R.string.total)
             }
