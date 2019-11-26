@@ -56,7 +56,7 @@ class StatusViewModel(application: Application) : BaseViewModel(application), Sh
         // notifications is disabled, set the value to false to remove any notification
         showLowStorageSpace.addSource(serverStatusLiveData) { serverStatus ->
             if (serverStatus != null) {
-                availableStorageSpace = (serverStatus.freeDiskSpace / 1000000000000).toInt()
+                availableStorageSpace = (serverStatus.freeDiskSpace / (1024 * 1024 * 1024)).toInt()
                 val enabled = sharedPreferences.getBoolean("notify_low_storage_space_enabled", appContext.resources.getBoolean(R.bool.pref_default_notify_low_storage_space_enabled))
                 val threshold = Integer.valueOf(sharedPreferences.getString("low_storage_space_threshold", appContext.resources.getString(R.string.pref_default_low_storage_space_threshold))!!)
                 Timber.d("Server status free space has changed to $availableStorageSpace, threshold is $threshold, checking if notification shall be shown")
