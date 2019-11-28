@@ -13,8 +13,6 @@
     <bool name="pref_default_timeshift_enabled">false</bool>
 
     <!-- Default connection preference values -->
-    <string name="pref_default_htsp_port" translatable="false">9982</string>
-    <string name="pref_default_streaming_port" translatable="false">9981</string>
     <bool name="pref_default_active_enabled">true</bool>
     <bool name="pref_default_wol_enabled">false</bool>
     <bool name="pref_default_wol_broadcast_enabled">false</bool>
