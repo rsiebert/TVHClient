@@ -1,7 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <!-- Colors for the program guide genres, taken from XBMC -->
+    <!--<editor-fold desc="Material components main colors">-->
+    <color name="primaryColor">#eeeeee</color>
+    <color name="primaryLightColor">#707070</color>
+    <color name="primaryDarkColor">#404040</color>
+
+    <color name="secondaryColor">#4db6ac</color>
+    <color name="secondaryDarkColor">#80cbc4</color>
+    <color name="secondaryLightColor">#80cbc4</color>
+    <!--</editor-fold>-->
+
+    <!--<editor-fold desc="Material components background color">-->
+    <color name="surfaceLightColor">#f3f3f3</color>
+    <color name="surfaceDarkColor">#202020</color>
+    <!--</editor-fold>-->
+
+    <!--<editor-fold desc="Material drawer colors">-->
+    <color name="material_drawer_background_dark">#303030</color>
+    <color name="material_drawer_background_light">#F9F9F9</color>
+    <color name="material_drawer_badge_dark">#1FAAAAAA</color>
+    <color name="material_drawer_badge_light">#0F000000</color>
+    <color name="material_drawer_selected_dark">#202020</color>
+    <color name="material_drawer_selected_light">#E8E8E8</color>
+    <!--</editor-fold>-->
+
+    <!--<editor-fold desc="Colors for the rounded edges of buttons in the startup screen">-->
+    <color name="rounded_corners_background_color_dark">#7f8c8d</color>
+    <color name="rounded_corners_background_color_light">#bdc3c7</color>
+    <!--</editor-fold>-->
+
+    <!--<editor-fold desc="Text colors">-->
+    <color name="title_text_light">#cc000000</color>
+    <color name="title_text_dark">#faffffff</color>
+    <color name="subtitle_text_light">#aa000000</color>
+    <color name="subtitle_text_dark">#ccffffff</color>
+    <color name="content_text_light">#99000000</color>
+    <color name="content_text_dark">#aaffffff</color>
+    <!--</editor-fold>-->
+
+    <!--<editor-fold desc="Scrolling and fast scroll indications">-->
+    <color name="scrollbar_track_light">#F0F0F0</color>
+    <color name="scrollbar_track_dark">#393939</color>
+    <color name="scrollbar_thumb_light">#C9C9C9</color>
+    <color name="scrollbar_thumb_dark">#777777</color>
+    <color name="scrollbar_thumb_selected_light">#AAAAAA</color>
+    <color name="scrollbar_thumb_selected_dark">#BBBBBB</color>
+    <!--</editor-fold>-->
+
+    <!--<editor-fold desc="Misc">-->
+    <color name="divider_color_light">#e0e0e0</color>
+    <color name="divider_color_dark">#404040</color>
+    <!--</editor-fold>-->
+
+    <!--<editor-fold desc="Colors for the program guide genres, taken from KODI">-->
     <!-- movie drama, orange -->
     <color name="EPG_MOVIES">#db7817</color>
     <!-- news, green -->
@@ -26,52 +78,9 @@
     <color name="EPG_SPECIAL">#1da1b1</color>
     <!-- other/unknown, dark grey -->
     <color name="EPG_OTHER">#7f8185</color>
+    <!--</editor-fold>-->
 
-    <!-- Theme colors -->
-    <color name="window_background_color_light">#f3f3f3</color>
-    <color name="window_background_color_dark">#303030</color>
-
-    <color name="divider_color_light">#e0e0e0</color>
-    <color name="divider_color_dark">#404040</color>
-
-    <!-- Material Components light mode main colors -->
-    <color name="primaryColor">#eeeeee</color>
-    <color name="primaryLightColor">#f5f5f5</color>
-    <color name="primaryDarkColor">#707070</color>
-    <color name="secondaryColor">#4db6ac</color>
-    <color name="secondaryLightColor">#80cbc4</color>
-
-    <!-- MaterialDrawer colors -->
-    <color name="material_drawer_background_dark">#303030</color>
-    <color name="material_drawer_background_light">#F9F9F9</color>
-    <color name="material_drawer_badge_dark">#1FAAAAAA</color>
-    <color name="material_drawer_badge_light">#0F000000</color>
-    <color name="material_drawer_selected_dark">#202020</color>
-    <color name="material_drawer_selected_light">#E8E8E8</color>
-
-    <!-- Colors for the rounded edges of buttons in the startup screen -->
-    <color name="rounded_corners_background_color_dark">#7f8c8d</color>
-    <color name="rounded_corners_background_color_light">#bdc3c7</color>
-
-    <!-- Text colors -->
-    <color name="header_text_light">#cc000000</color>
-    <color name="header_text_dark">#faffffff</color>
-
-    <color name="subtitle_text_light">#aa000000</color>
-    <color name="subtitle_text_dark">#ccffffff</color>
-
-    <color name="content_text_light">#99000000</color>
-    <color name="content_text_dark">#aaffffff</color>
-
-    <!-- Scrolling and fast scroll indications -->
-    <color name="scrollbar_track_light">#F0F0F0</color>
-    <color name="scrollbar_track_dark">#393939</color>
-    <color name="scrollbar_thumb_light">#C9C9C9</color>
-    <color name="scrollbar_thumb_dark">#777777</color>
-    <color name="scrollbar_thumb_selected_light">#AAAAAA</color>
-    <color name="scrollbar_thumb_selected_dark">#BBBBBB</color>
-
-    <!-- Colors for the program guide genres, taken from Kodi -->
+    <!--<editor-fold desc="Colors for color tags in the description (taken from KODI)">-->
     <color name="aliceblue">#fff0f8ff</color>
     <color name="antiquewhite">#fffaebd7</color>
     <color name="aqua">#ff00ffff</color>
@@ -219,5 +228,6 @@
     <color name="whitesmoke">#fff5f5f5</color>
     <color name="yellow">#ffffff00</color>
     <color name="yellowgreen">#ff9acd32</color>
+    <!--</editor-fold>-->
 
 </resources>
