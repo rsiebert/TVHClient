@@ -64,7 +64,7 @@ class ChannelListSelectionAdapter internal constructor(context: Context, private
         override fun onClick(view: View) {
             if (channelListAdapter?.callback != null) {
                 val channel = channelListAdapter.channelList[adapterPosition]
-                channelListAdapter.callback!!.onItemClicked(channel)
+                channelListAdapter.callback?.onItemClicked(channel)
             }
         }
     }
