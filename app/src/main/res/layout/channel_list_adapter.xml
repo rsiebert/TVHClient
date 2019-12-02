@@ -122,7 +122,7 @@
             app:layout_constraintEnd_toStartOf="@+id/state"
             app:layout_constraintStart_toStartOf="@+id/guideline"
             app:layout_constraintTop_toTopOf="@+id/guideline2"
-            tools:text="@string/channel"
+            tools:text="WDR Düsseldorf"
             tools:visibility="visible" />
 
         <TextView
@@ -142,7 +142,7 @@
 
         <TextView
             android:id="@+id/subtitle"
-            style="?attr/SubtitleFont"
+            style="?attr/ContentFont"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"

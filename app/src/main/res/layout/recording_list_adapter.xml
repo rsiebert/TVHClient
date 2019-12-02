@@ -183,7 +183,7 @@
 
         <TextView
             android:id="@+id/is_series_recording"
-            style="?attr/SubtitleFont"
+            style="?attr/ContentFont"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
@@ -196,7 +196,7 @@
 
         <TextView
             android:id="@+id/is_timer_recording"
-            style="?attr/SubtitleFont"
+            style="?attr/ContentFont"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
@@ -209,7 +209,7 @@
 
         <TextView
             android:id="@+id/failed_reason"
-            style="?attr/SubtitleFont"
+            style="?attr/ContentFont"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
