@@ -45,7 +45,7 @@
     <string name="connection_closed">Kapcsolat bezárva</string>
     <string name="connection_failed">Kapcsolódási hiba</string>
     <string name="contact_developer">Kérjük, vegye fel a kapcsolatot a fejlesztővel</string>
-    <string name="contact_information">Kérjük, vegye fel a kapcsolatot velem, ha támogatásra van szüksége. E-mail: rsiebert80@gmail.com Ellentmondás: https://discord.gg/RbBXfG3</string>
+    <string name="contact_information">Kérjük, vegye fel a kapcsolatot velem, ha támogatásra van szüksége.\nEmail: rsiebert80@gmail.com\nDiscord: https://discord.gg/RbBXfG3</string>
     <string name="content_type">Tartalom típusa</string>
     <string name="current_time">Jelenlegi idő</string>
     <string name="currently_recording">Jelenlegi felvétel</string>

@@ -45,7 +45,7 @@
     <string name="connection_closed">Conexión cerrada</string>
     <string name="connection_failed">Conexión fallida</string>
     <string name="contact_developer">Por favor contacte al desarrollador</string>
-    <string name="contact_information">Por favor contáctame si necesitas ayuda. Correo electrónico: rsiebert80@gmail.com Discordia: https://discord.gg/RbBXfG3</string>
+    <string name="contact_information">Por favor contáctame si necesitas ayuda.\nEmail: rsiebert80@gmail.com\nDiscord: https://discord.gg/RbBXfG3</string>
     <string name="content_type">Tipo de contenido</string>
     <string name="current_time">Tiempo actual</string>
     <string name="currently_recording">Actualmente grabando</string>

@@ -45,7 +45,7 @@
     <string name="connection_closed">Spojení bylo uzavřeno</string>
     <string name="connection_failed">Připojení se nezdařilo</string>
     <string name="contact_developer">Kontaktujte vývojáře</string>
-    <string name="contact_information">Pokud potřebujete podporu, kontaktujte mě. E-mail: rsiebert80@gmail.com Spor: https://discord.gg/RbBXfG3</string>
+    <string name="contact_information">Pokud potřebujete podporu, kontaktujte mě.\nEmail: rsiebert80@gmail.com\nDiscord: https://discord.gg/RbBXfG3</string>
     <string name="content_type">Typ obsahu</string>
     <string name="current_time">Aktuální čas</string>
     <string name="currently_recording">Probíhající nahrávání</string>

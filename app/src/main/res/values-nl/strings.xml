@@ -45,7 +45,7 @@
     <string name="connection_closed">Verbinding gesloten</string>
     <string name="connection_failed">Verbinding mislukt</string>
     <string name="contact_developer">Neem contact op met de ontwikkelaar</string>
-    <string name="contact_information">Neem contact met me op als je ondersteuning nodig hebt. E-mail: rsiebert80@gmail.com Discord: https://discord.gg/RbBXfG3</string>
+    <string name="contact_information">Neem contact met me op als je ondersteuning nodig hebt.\nEmail: rsiebert80@gmail.com\nDiscord: https://discord.gg/RbBXfG3</string>
     <string name="content_type">Inhoud typering</string>
     <string name="current_time">Huidig tijdstip</string>
     <string name="currently_recording">Huidige opname</string>

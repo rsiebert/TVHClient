@@ -45,7 +45,7 @@
     <string name="connection_closed">Anslutningen är stängd</string>
     <string name="connection_failed">Anslutningen misslyckades</string>
     <string name="contact_developer">Vänligen kontakta utvecklaren</string>
-    <string name="contact_information">Kontakta mig om du behöver support. E-post: rsiebert80@gmail.com Discord: https://discord.gg/RbBXfG3</string>
+    <string name="contact_information">Kontakta mig om du behöver support.\nEmail: rsiebert80@gmail.com\nDiscord: https://discord.gg/RbBXfG3</string>
     <string name="content_type">Genre</string>
     <string name="current_time">Aktuell tid</string>
     <string name="currently_recording">Pågående inspelning</string>

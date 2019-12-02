@@ -45,7 +45,7 @@
     <string name="connection_closed">Spojenie zatvorené</string>
     <string name="connection_failed">Pripojenie zlyhalo</string>
     <string name="contact_developer">Kontaktujte vývojára</string>
-    <string name="contact_information">Ak potrebujete podporu, kontaktujte ma. E-mail: rsiebert80@gmail.com Spor: https://discord.gg/RbBXfG3</string>
+    <string name="contact_information">Ak potrebujete podporu, kontaktujte ma.\nEmail: rsiebert80@gmail.com\nDiscord: https://discord.gg/RbBXfG3</string>
     <string name="content_type">Typ obsahu</string>
     <string name="current_time">Aktuálny čas</string>
     <string name="currently_recording">Prebiehajúce nahrávanie</string>
