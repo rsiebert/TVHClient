@@ -18,8 +18,8 @@ class SeriesRecordingViewModel(application: Application) : BaseViewModel(applica
 
     var selectedListPosition = 0
     val currentId = MutableLiveData("")
-    var recording = SeriesRecording()   // TODO rename to editedRecording
-    var recordingLiveData = MediatorLiveData<SeriesRecording>() // TODO rename to recording
+    var recording = SeriesRecording()
+    var recordingLiveData = MediatorLiveData<SeriesRecording>()
     val recordings: LiveData<List<SeriesRecording>> = appRepository.seriesRecordingData.getLiveDataItems()
     var recordingProfileNameId = 0
 

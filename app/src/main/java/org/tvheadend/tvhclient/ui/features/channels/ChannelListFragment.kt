@@ -31,7 +31,6 @@ import org.tvheadend.tvhclient.util.extensions.visible
 import timber.log.Timber
 
 // TODO Move the variable programIdToBeEditedWhenBeingRecorded into the viewmodel
-// TODO check if the selection of a channel shows the correct program list
 
 class ChannelListFragment : BaseFragment(), RecyclerViewClickInterface, ChannelTimeSelectedInterface, ChannelTagIdsSelectedInterface, SearchRequestInterface, Filter.FilterListener {
 
