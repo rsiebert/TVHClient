@@ -194,6 +194,8 @@
     <string name="pref_internal_player_for_channels_enabled">Play Live-TV with the internal player</string>
     <string name="pref_internal_player_for_recordings_enabled">Play recordings with the internal player</string>
     <string name="pref_internal_player_timeshift_enabled">Enable timeshift support</string>
+    <string name="pref_internal_player_timeshift_period">Timeshift period</string>
+    <string name="pref_internal_player_timeshift_period_sum">Timeshift period in seconds</string>
     <string name="pref_language">Language</string>
     <string name="pref_language_sum">Choose the language that shall be used by the application.</string>
     <string name="pref_manage_connections">Manage connections</string>

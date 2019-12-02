@@ -11,6 +11,7 @@
     <bool name="pref_default_audio_passthrough_decoder_enabled">false</bool>
     <bool name="pref_default_audio_tunneling_enabled">false</bool>
     <bool name="pref_default_timeshift_enabled">false</bool>
+    <string name="pref_default_timeshift_period">3600</string>
 
     <!-- Default connection preference values -->
     <bool name="pref_default_active_enabled">true</bool>
