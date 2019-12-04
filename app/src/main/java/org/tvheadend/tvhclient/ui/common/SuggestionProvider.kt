@@ -9,7 +9,7 @@ class SuggestionProvider : SearchRecentSuggestionsProvider() {
     }
 
     companion object {
-        const val AUTHORITY = "org.tvheadend.tvhclient.ui.features.search.SuggestionProvider"
+        const val AUTHORITY = "org.tvheadend.tvhclient.ui.common.SuggestionProvider"
         const val MODE = DATABASE_MODE_QUERIES
     }
 }
