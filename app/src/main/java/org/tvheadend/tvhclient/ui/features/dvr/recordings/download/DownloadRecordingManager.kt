@@ -40,8 +40,7 @@ class DownloadRecordingManager(private val activity: Activity?, private val conn
 
         // The path that can be specified can only be in the external storage.
         // Therefore /storage/emulated/0 is fixed, only the location within this folder can be changed
-        val downloadDirectory = PreferenceManager.getDefaultSharedPreferences(activity)
-                .getString("download_directory", Environment.DIRECTORY_DOWNLOADS)
+        val downloadDirectory = PreferenceManager.getDefaultSharedPreferences(activity).getString("download_directory", Environment.DIRECTORY_DOWNLOADS)
         val downloadUrl = "${connection.streamingUrl}/dvrfile/${recording.id}"
         // The user and password are required for authentication. They need to be encoded.
         val credentials = "Basic " + Base64.encodeToString((connection.username + ":" + connection.password).toByteArray(), Base64.NO_WRAP)
@@ -49,7 +48,8 @@ class DownloadRecordingManager(private val activity: Activity?, private val conn
         val recordingTitle = getRecordingTitle(recording)
 
         Timber.d("Download recording from serverUrl '$downloadUrl' to $downloadDirectory/$recordingTitle")
-        val request = DownloadManager.Request(Uri.parse(downloadUrl))
+        val uri = Uri.parse(downloadUrl)
+        val request = DownloadManager.Request(uri)
                 .addRequestHeader("Authorization", credentials)
                 .setTitle(recording.title)
                 .setDescription(recording.description)
