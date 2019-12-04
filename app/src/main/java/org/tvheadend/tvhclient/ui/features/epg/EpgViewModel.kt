@@ -2,7 +2,9 @@ package org.tvheadend.tvhclient.ui.features.epg
 
 import android.app.Application
 import android.content.SharedPreferences
+import android.util.SparseArray
 import androidx.core.util.Pair
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
@@ -10,13 +12,14 @@ import androidx.lifecycle.Transformations
 import org.tvheadend.data.entity.EpgChannel
 import org.tvheadend.data.entity.EpgProgram
 import org.tvheadend.tvhclient.R
-import org.tvheadend.tvhclient.util.livedata.LiveEvent
 import org.tvheadend.tvhclient.ui.features.channels.BaseChannelViewModel
+import org.tvheadend.tvhclient.util.livedata.LiveEvent
 import timber.log.Timber
 import java.util.*
 
 class EpgViewModel(application: Application) : BaseChannelViewModel(application), SharedPreferences.OnSharedPreferenceChangeListener {
 
+    val registeredEpgFragments = SparseArray<Fragment>()
     val epgChannels: LiveData<List<EpgChannel>>
     private val viewAndEpgDataIsInvalidLiveEvent = LiveEvent<Boolean>()
     val viewAndEpgDataIsInvalid: MediatorLiveData<Boolean> = viewAndEpgDataIsInvalidLiveEvent

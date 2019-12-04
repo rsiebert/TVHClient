@@ -3,7 +3,6 @@ package org.tvheadend.tvhclient.ui.features.epg
 import android.content.Intent
 import android.os.Bundle
 import android.util.DisplayMetrics
-import android.util.SparseArray
 import android.view.*
 import android.widget.Filter
 import androidx.appcompat.widget.PopupMenu
@@ -330,22 +329,20 @@ class EpgFragment : BaseFragment(), EpgScrollInterface, RecyclerViewClickInterfa
 
     private class EpgViewPagerAdapter internal constructor(fragment: Fragment, private val viewModel: EpgViewModel) : FragmentStateAdapter(fragment) {
 
-        private val registeredFragments = SparseArray<Fragment>()
-
         override fun createFragment(position: Int): Fragment {
-            return if (registeredFragments.contains(position)) {
+            return if (viewModel.registeredEpgFragments.contains(position)) {
                 Timber.d("Returning existing fragment for page $position")
-                registeredFragments.get(position)
+                viewModel.registeredEpgFragments.get(position)
             } else {
                 Timber.d("Returning new fragment for page $position")
                 val fragment = EpgViewPagerFragment.newInstance(position)
-                registeredFragments.put(position, fragment)
+                viewModel.registeredEpgFragments.put(position, fragment)
                 return fragment
             }
         }
 
         internal fun getRegisteredFragment(position: Int): Fragment? {
-            return registeredFragments.get(position)
+            return viewModel.registeredEpgFragments.get(position)
         }
 
         override fun getItemCount(): Int {
