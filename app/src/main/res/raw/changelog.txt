@@ -1,7 +1,12 @@
 $ 2.3.1
   % VERSION 2.3.1
-  _ 28.11.2019
+  _ 04.12.2019
     * Minor UI changes due to the use of a material component theme
+    * Show progress indicator when search results are being loaded
+    * Fixed epg channel scrolling out of sync when returning from a search
+    * Fixed hiding the status bar when using the internal player
+    * Fixed search suggestions not being shown
+    * Fixed crash using webview on Android 5 devices
     * Minimum Android SDK version is now 17
 $ 2.3.0
   % VERSION 2.3.0
