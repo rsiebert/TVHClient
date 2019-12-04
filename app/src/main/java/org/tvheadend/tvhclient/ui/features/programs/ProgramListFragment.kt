@@ -23,6 +23,7 @@ import org.tvheadend.tvhclient.ui.features.dvr.RecordingAddEditActivity
 import org.tvheadend.tvhclient.util.extensions.getCastSession
 import org.tvheadend.tvhclient.util.extensions.gone
 import org.tvheadend.tvhclient.util.extensions.visible
+import org.tvheadend.tvhclient.util.extensions.visibleOrGone
 import timber.log.Timber
 
 // TODO Move the variable programIdToBeEditedWhenBeingRecorded into the viewmodel
@@ -59,6 +60,7 @@ class ProgramListFragment : BaseFragment(), RecyclerViewClickInterface, LastProg
         recycler_view.layoutManager = LinearLayoutManager(activity)
         recycler_view.adapter = recyclerViewAdapter
         recycler_view.gone()
+        search_progress?.visibleOrGone(baseViewModel.isSearchActive)
 
         Timber.d("Observing programs")
         programViewModel.programs.observe(viewLifecycleOwner, Observer { progs ->
@@ -263,6 +265,7 @@ class ProgramListFragment : BaseFragment(), RecyclerViewClickInterface, LastProg
 
     override fun onFilterComplete(count: Int) {
         showStatusInToolbar()
+        search_progress?.gone()
     }
 
     private fun showStatusInToolbar() {

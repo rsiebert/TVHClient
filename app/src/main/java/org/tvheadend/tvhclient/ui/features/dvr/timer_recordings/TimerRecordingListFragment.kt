@@ -17,6 +17,7 @@ import org.tvheadend.tvhclient.ui.common.interfaces.RecyclerViewClickInterface
 import org.tvheadend.tvhclient.ui.common.interfaces.SearchRequestInterface
 import org.tvheadend.tvhclient.util.extensions.gone
 import org.tvheadend.tvhclient.util.extensions.visible
+import org.tvheadend.tvhclient.util.extensions.visibleOrGone
 import timber.log.Timber
 import java.util.concurrent.CopyOnWriteArrayList
 
@@ -41,6 +42,7 @@ class TimerRecordingListFragment : BaseFragment(), RecyclerViewClickInterface, S
         recycler_view.layoutManager = LinearLayoutManager(activity)
         recycler_view.adapter = recyclerViewAdapter
         recycler_view.gone()
+        search_progress?.visibleOrGone(baseViewModel.isSearchActive)
 
         timerRecordingViewModel.recordings.observe(viewLifecycleOwner, Observer { recordings ->
             if (recordings != null) {
@@ -192,6 +194,7 @@ class TimerRecordingListFragment : BaseFragment(), RecyclerViewClickInterface, S
     }
 
     override fun onFilterComplete(i: Int) {
+        search_progress?.gone()
         showStatusInToolbar()
         // Preselect the first result item in the details screen
         if (isDualPane && recyclerViewAdapter.itemCount > 0) {

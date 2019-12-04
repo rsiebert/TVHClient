@@ -19,6 +19,7 @@ import org.tvheadend.tvhclient.ui.features.dvr.recordings.download.DownloadPermi
 import org.tvheadend.tvhclient.ui.features.dvr.recordings.download.DownloadRecordingManager
 import org.tvheadend.tvhclient.util.extensions.gone
 import org.tvheadend.tvhclient.util.extensions.visible
+import org.tvheadend.tvhclient.util.extensions.visibleOrGone
 import timber.log.Timber
 import java.util.concurrent.CopyOnWriteArrayList
 
@@ -43,6 +44,7 @@ abstract class RecordingListFragment : BaseFragment(), RecyclerViewClickInterfac
         recycler_view.layoutManager = LinearLayoutManager(activity)
         recycler_view.adapter = recyclerViewAdapter
         recycler_view.gone()
+        search_progress?.visibleOrGone(baseViewModel.isSearchActive)
     }
 
     private fun observeSearchQuery() {
@@ -195,6 +197,7 @@ abstract class RecordingListFragment : BaseFragment(), RecyclerViewClickInterfac
     }
 
     override fun onFilterComplete(i: Int) {
+        search_progress?.gone()
         showStatusInToolbar()
 
         if (isDualPane && recyclerViewAdapter.itemCount > 0) {

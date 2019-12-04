@@ -28,6 +28,7 @@ import org.tvheadend.tvhclient.ui.features.programs.ProgramListFragment
 import org.tvheadend.tvhclient.ui.features.programs.ProgramViewModel
 import org.tvheadend.tvhclient.util.extensions.gone
 import org.tvheadend.tvhclient.util.extensions.visible
+import org.tvheadend.tvhclient.util.extensions.visibleOrGone
 import timber.log.Timber
 
 // TODO Move the variable programIdToBeEditedWhenBeingRecorded into the viewmodel
@@ -66,6 +67,7 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickInterface, ChannelT
         recycler_view.layoutManager = LinearLayoutManager(activity)
         recycler_view.adapter = recyclerViewAdapter
         recycler_view.gone()
+        search_progress?.visibleOrGone(baseViewModel.isSearchActive)
 
         Timber.d("Observing selected time")
         channelViewModel.selectedTime.observe(viewLifecycleOwner, Observer { time ->
@@ -383,6 +385,7 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickInterface, ChannelT
     }
 
     override fun onFilterComplete(count: Int) {
+        search_progress?.gone()
         showStatusInToolbar()
         // Show the first search result item in the details screen
         if (isDualPane && recyclerViewAdapter.itemCount > 0) {
