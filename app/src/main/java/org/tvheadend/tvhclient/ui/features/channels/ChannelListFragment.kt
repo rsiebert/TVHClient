@@ -9,6 +9,7 @@ import android.widget.Filter
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.view.children
 import androidx.fragment.app.FragmentTransaction
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -294,10 +295,16 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickInterface, ChannelT
                 || programViewModel.channelId != channel.id) {
             Timber.d("Channel has changed, showing new program list")
             fragment = ProgramListFragment.newInstance(channel.name ?: "", channel.id, selectedTime)
-            fm?.beginTransaction()?.also {
-                it.replace(R.id.details, fragment)
-                it.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
-                it.commit()
+
+            // Check the lifecycle state to avoid committing the transaction
+            // after the onSaveInstance method was already called which would
+            // trigger an illegal state exception.
+            if (lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED)) {
+                fm?.beginTransaction()?.also {
+                    it.replace(R.id.details, fragment)
+                    it.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+                    it.commit()
+                }
             }
         } else {
             Timber.d("Channel is the same, updating only time in the program list")
