@@ -35,9 +35,9 @@ class EpgViewPagerFragment : Fragment(), EpgScrollInterface {
             return fragmentId == 0
         }
 
-    private lateinit var updateViewHandler: Handler
+    private var updateViewHandler = Handler()
     private lateinit var updateViewTask: Runnable
-    private lateinit var updateTimeIndicationHandler: Handler
+    private var updateTimeIndicationHandler = Handler()
     private lateinit var updateTimeIndicationTask: Runnable
     private lateinit var constraintSet: ConstraintSet
     private lateinit var itemBinding: EpgViewpagerFragmentBinding
@@ -127,7 +127,6 @@ class EpgViewPagerFragment : Fragment(), EpgScrollInterface {
             // Create the handler and the timer task that will update the
             // entire view every 30 minutes if the first screen is visible.
             // This prevents the time indication from moving to far to the right
-            updateViewHandler = Handler()
             updateViewTask = object : Runnable {
                 override fun run() {
                     recyclerViewAdapter.notifyDataSetChanged()
@@ -136,7 +135,6 @@ class EpgViewPagerFragment : Fragment(), EpgScrollInterface {
             }
             // Create the handler and the timer task that will update the current
             // time indication every minute.
-            updateTimeIndicationHandler = Handler()
             updateTimeIndicationTask = object : Runnable {
                 override fun run() {
                     setCurrentTimeIndication()
