@@ -44,21 +44,23 @@ class StatusFragment : BaseFragment() {
         showSubscriptionAndInputStatus()
 
         loadDataTask = Runnable {
-            val activityManager: ActivityManager? = activity?.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
-            val runningAppProcessInfo = activityManager?.runningAppProcesses?.get(0)
+            val service = activity?.getSystemService(Context.ACTIVITY_SERVICE)
+            service?.let {
+                val activityManager = service as ActivityManager?
+                val runningAppProcessInfo = activityManager?.runningAppProcesses?.get(0)
+                if (runningAppProcessInfo != null
+                        && runningAppProcessInfo.importance <= ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND) {
 
-            if (runningAppProcessInfo != null
-                    && runningAppProcessInfo.importance <= ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND) {
-
-                Timber.d("Application is in the foreground, starting service to get updated subscriptions and input information")
-                val intent = Intent(activity, HtspService::class.java)
-                intent.action = "getSubscriptions"
-                activity?.startService(intent)
-                intent.action = "getInputs"
-                activity?.startService(intent)
+                    Timber.d("Application is in the foreground, starting service to get updated subscriptions and input information")
+                    val intent = Intent(activity, HtspService::class.java)
+                    intent.action = "getSubscriptions"
+                    activity?.startService(intent)
+                    intent.action = "getInputs"
+                    activity?.startService(intent)
+                }
+                Timber.d("Restarting additional information update handler in 60s")
+                loadDataHandler.postDelayed(loadDataTask, 60000)
             }
-            Timber.d("Restarting additional information update handler in 60s")
-            loadDataHandler.postDelayed(loadDataTask, 60000)
         }
 
         baseViewModel.connectionToServerAvailable.observe(this, Observer { connectionAvailable ->
