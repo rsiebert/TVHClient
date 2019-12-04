@@ -6,7 +6,9 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageManager
+import android.content.res.Configuration
 import android.database.Cursor
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.provider.SearchRecentSuggestions
@@ -28,7 +30,6 @@ import org.tvheadend.tvhclient.service.SyncStateReceiver
 import org.tvheadend.tvhclient.ui.base.BaseActivity
 import org.tvheadend.tvhclient.ui.common.*
 import org.tvheadend.tvhclient.ui.common.interfaces.SearchRequestInterface
-import org.tvheadend.tvhclient.ui.common.WakeOnLanTask
 import org.tvheadend.tvhclient.ui.features.channels.ChannelListFragment
 import org.tvheadend.tvhclient.ui.features.dvr.recordings.RecordingDetailsFragment
 import org.tvheadend.tvhclient.ui.features.dvr.recordings.download.DownloadPermissionGrantedInterface
@@ -524,5 +525,12 @@ class MainActivity : BaseActivity(R.layout.main_activity), SearchView.OnQueryTex
             super.onBackPressed()
             navigationViewModel.setSelectedMenuItemId(navigationDrawer.getSelectedMenu())
         }
+    }
+
+    override fun applyOverrideConfiguration(overrideConfiguration: Configuration?) {
+        if (Build.VERSION.SDK_INT in 21..25) {
+            return
+        }
+        super.applyOverrideConfiguration(overrideConfiguration)
     }
 }
