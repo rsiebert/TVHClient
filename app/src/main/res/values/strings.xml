@@ -97,6 +97,7 @@
     <string name="failed_to_resolve_address">Failed to resolve server address</string>
     <string name="feature_not_available_in_free_version">This feature is not available in the free version!</string>
     <string name="feature_not_supported_by_server">Your TVHeadend server does not support this feature. Please upgrade to newer version.</string>
+    <string name="filter_channel_list">Filter channel list</string>
     <string name="friday">Friday</string>
     <string name="full_changelog">Full Changelog</string>
     <string name="genre_color_info">Explain genre colors</string>
@@ -158,6 +159,8 @@
     <string name="pref_default_menu_sum">Choose the screen that will be shown when the application starts.</string>
     <string name="pref_download_directory">Download directory</string>
     <string name="pref_download_directory_sum">Recordings will be downloaded into the following directory: \'%s\'</string>
+    <string name="pref_empty_channel_tags_enabled">Show all channel tags</string>
+    <string name="pref_empty_channel_tags_enabled_sum">Show all available channel tags in channel filtering list even if they contain no channels.</string>
     <string name="pref_enable_crash_reports">Send anonymous crash reports</string>
     <string name="pref_enable_crash_reports_sum">The reports contain the information that help to improve the stability and user experience of the application.</string>
     <string name="pref_epg_hours_visible">Hours visible</string>

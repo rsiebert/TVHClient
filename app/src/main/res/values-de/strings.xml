@@ -97,6 +97,7 @@
     <string name="failed_to_resolve_address">Fehler beim Auflösen der Serveradresse</string>
     <string name="feature_not_available_in_free_version">Diese Funktion ist in der kostenlosen Version nicht enthalten!</string>
     <string name="feature_not_supported_by_server">Ihr TVHeadend-Server unterstützt diese Funktion nicht. Bitte aktualisieren Sie auf eine neuere Version.</string>
+    <string name="filter_channel_list">Senderliste filtern</string>
     <string name="friday">Freitag</string>
     <string name="full_changelog">Full Changelog</string>
     <string name="genre_color_info">Bedeutung der Genrefarben</string>
@@ -376,7 +377,7 @@
     <string name="success_updating_recording">Aufnahme wurde aktualisiert.</string>
     <string name="summary">Zusammenfassung</string>
     <string name="sunday">Sonntag</string>
-    <string name="tags">Senderliste filtern</string>
+    <string name="tags">Sendergruppen</string>
     <string name="thank_you">Vielen Dank!</string>
     <string name="thursday">Donnerstag</string>
     <string name="time">Zeit</string>
