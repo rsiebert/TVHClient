@@ -18,6 +18,12 @@ interface ChannelTagDao {
 
     @Query("SELECT DISTINCT * FROM channel_tags " +
             " WHERE $CONNECTION_IS_ACTIVE" +
+            " AND channel_count > 0 " +
+            " ORDER BY tag_name")
+    fun loadOnlyNonEmptyChannelTagsSync(): List<ChannelTag>
+
+    @Query("SELECT DISTINCT * FROM channel_tags " +
+            " WHERE $CONNECTION_IS_ACTIVE" +
             " ORDER BY tag_name")
     fun loadAllChannelTagsSync(): List<ChannelTag>
 

@@ -83,4 +83,12 @@ class ChannelTagDataSource(private val db: AppRoomDatabase) : DataSourceInterfac
         }
         return channelTags
     }
+
+    fun getOnlyNonEmptyItems(): List<ChannelTag> {
+        var channelTags: List<ChannelTag> = ArrayList()
+        runBlocking(Dispatchers.IO) {
+            channelTags = db.channelTagDao.loadOnlyNonEmptyChannelTagsSync()
+        }
+        return channelTags
+    }
 }

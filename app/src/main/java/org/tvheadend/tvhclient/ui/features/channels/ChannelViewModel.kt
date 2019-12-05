@@ -53,6 +53,7 @@ class ChannelViewModel(application: Application) : BaseChannelViewModel(applicat
         onSharedPreferenceChanged(sharedPreferences, "program_subtitle_enabled")
         onSharedPreferenceChanged(sharedPreferences, "next_program_title_enabled")
         onSharedPreferenceChanged(sharedPreferences, "genre_colors_for_channels_enabled")
+        onSharedPreferenceChanged(sharedPreferences, "empty_channel_tags_enabled")
 
         sharedPreferences.registerOnSharedPreferenceChangeListener(this)
     }
@@ -73,6 +74,7 @@ class ChannelViewModel(application: Application) : BaseChannelViewModel(applicat
             "program_progressbar_enabled" -> showProgressBar.value = sharedPreferences.getBoolean(key, appContext.resources.getBoolean(R.bool.pref_default_program_progressbar_enabled))
             "next_program_title_enabled" -> showNextProgramTitle.value = sharedPreferences.getBoolean(key, appContext.resources.getBoolean(R.bool.pref_default_next_program_title_enabled))
             "genre_colors_for_channels_enabled" -> showGenreColor.value = sharedPreferences.getBoolean(key, appContext.resources.getBoolean(R.bool.pref_default_genre_colors_for_channels_enabled))
+            "empty_channel_tags_enabled" -> showAllChannelTags.value = sharedPreferences.getBoolean(key, appContext.resources.getBoolean(R.bool.pref_default_empty_channel_tags_enabled))
         }
     }
 

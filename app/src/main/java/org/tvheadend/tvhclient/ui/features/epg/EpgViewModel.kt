@@ -144,6 +144,7 @@ class EpgViewModel(application: Application) : BaseChannelViewModel(application)
         onSharedPreferenceChanged(sharedPreferences, "genre_colors_for_program_guide_enabled")
         onSharedPreferenceChanged(sharedPreferences, "hours_of_epg_data_per_screen")
         onSharedPreferenceChanged(sharedPreferences, "days_of_epg_data")
+        onSharedPreferenceChanged(sharedPreferences, "empty_channel_tags_enabled")
 
         sharedPreferences.registerOnSharedPreferenceChangeListener(this)
     }
@@ -219,6 +220,7 @@ class EpgViewModel(application: Application) : BaseChannelViewModel(application)
             "genre_colors_for_program_guide_enabled" -> showGenreColor.value = sharedPreferences.getBoolean(key, appContext.resources.getBoolean(R.bool.pref_default_genre_colors_for_program_guide_enabled))
             "hours_of_epg_data_per_screen" -> hoursOfEpgDataPerScreen.value = Integer.parseInt(sharedPreferences.getString(key, appContext.resources.getString(R.string.pref_default_hours_of_epg_data_per_screen))!!)
             "days_of_epg_data" -> daysOfEpgData.value = Integer.parseInt(sharedPreferences.getString(key, appContext.resources.getString(R.string.pref_default_days_of_epg_data))!!)
+            "empty_channel_tags_enabled" -> showAllChannelTags.value = sharedPreferences.getBoolean(key, appContext.resources.getBoolean(R.bool.pref_default_empty_channel_tags_enabled))
         }
     }
 
