@@ -97,6 +97,7 @@
     <string name="failed_to_resolve_address">Nem sikerült lekérni a szerver címét</string>
     <string name="feature_not_available_in_free_version">Ez a funkció nem elérhető az ingyenes verzióban!</string>
     <string name="feature_not_supported_by_server">A TVHeadend szerver nem támogatja ezt a funkciót. Kérjük, frissítse az újabb verzióra.</string>
+    <string name="filter_channel_list">Csatornalista szűrése</string>
     <string name="friday">Péntek</string>
     <string name="full_changelog">Teljes változáslista</string>
     <string name="genre_color_info">Műfaj színek szerkesztése</string>
@@ -158,6 +159,8 @@
     <string name="pref_default_menu_sum">Válassza ki azt a képernyőt, amely megjelenik az alkalmazás elindításakor.</string>
     <string name="pref_download_directory">Letöltési mappa</string>
     <string name="pref_download_directory_sum">A felvételek a következő könyvtárba kerülnek: \'%s\'</string>
+    <string name="pref_empty_channel_tags_enabled">Az összes csatornacímke megjelenítése</string>
+    <string name="pref_empty_channel_tags_enabled_sum">Mutassa az összes elérhető csatornacímkét a csatornaszűrő listában, még akkor is, ha egyik csatornához sem rendelték őket.</string>
     <string name="pref_enable_crash_reports">Névtelen hibajelentés küldése</string>
     <string name="pref_enable_crash_reports_sum">A jelentések tartalmazzák azokat az információkat, amelyek segítik az alkalmazás stabilitásának és felhasználói élményének javítását.</string>
     <string name="pref_epg_hours_visible">Látható időtartam</string>

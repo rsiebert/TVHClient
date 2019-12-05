@@ -97,6 +97,7 @@
     <string name="failed_to_resolve_address">Nepodařilo se vyřešit adresu serveru</string>
     <string name="feature_not_available_in_free_version">Tato funkce není k dispozici ve volné verzi! Tuto funkci můžete odemknout a podpořit další vývoj zakoupením aplikace z obchodu Play.</string>
     <string name="feature_not_supported_by_server">Server TVHeadend tuto funkci nepodporuje. Přejděte na novější verzi.</string>
+    <string name="filter_channel_list">Filtrovat seznam kanálů</string>
     <string name="friday">Pátek</string>
     <string name="full_changelog">Úplný seznam změn</string>
     <string name="genre_color_info">Vysvětlit barvy žánrů</string>
@@ -157,6 +158,8 @@
     <string name="pref_default_menu_sum">Vyberte obrazovku, která se zobrazí po spuštění aplikace.</string>
     <string name="pref_download_directory">Stáhnout adresář</string>
     <string name="pref_download_directory_sum">Nahrávky budou staženy do následujícího adresáře: \'%s\'</string>
+    <string name="pref_empty_channel_tags_enabled">Zobrazit všechny značky kanálů</string>
+    <string name="pref_empty_channel_tags_enabled_sum">Zobrazit všechny dostupné značky kanálů v seznamu filtrování kanálů, i když nejsou přiřazeny k žádným kanálům.</string>
     <string name="pref_enable_crash_reports">Odeslat anonymní zprávy o selhání</string>
     <string name="pref_enable_crash_reports_sum">Zprávy obsahují informace, které pomáhají zlepšit stabilitu a uživatelský komfort aplikace.</string>
     <string name="pref_epg_hours_visible">Počet zobrazených hodin</string>

@@ -97,6 +97,7 @@
     <string name="failed_to_resolve_address">Impossibile risolvere l\'indirizzo del server</string>
     <string name="feature_not_available_in_free_version">"Questa opzione non è disponibile nella versione gratuita! Puoi sbloccare questa opzione acquistando l'applicazione dal Play Store di Google."</string>
     <string name="feature_not_supported_by_server">Il server TVHeadend non supporta questa funzione. Effettuare l\'aggiornamento alla versione più recente.</string>
+    <string name="filter_channel_list">Filtra l\'elenco dei canali</string>
     <string name="friday">Venerdì</string>
     <string name="full_changelog">Changelog completo</string>
     <string name="genre_color_info">Illustra colori generi</string>
@@ -159,6 +160,8 @@ Verifica che siano soddsifatti i requisiti descritti nelle impostazioni trasmiss
     <string name="pref_default_menu_sum">"Scegli la schermata che sarà visualizzata all'avvio dell'applicazione."</string>
     <string name="pref_download_directory">Cartella download</string>
     <string name="pref_download_directory_sum">"Le registrazioni scaricate verranno salvate in questa cartella: \'%s\'"</string>
+    <string name="pref_empty_channel_tags_enabled">Mostra tutti i tag del canale</string>
+    <string name="pref_empty_channel_tags_enabled_sum">Mostra tutti i tag dei canali disponibili nell\'elenco dei filtri dei canali anche se non sono assegnati a nessun canale.</string>
     <string name="pref_enable_crash_reports">Inviare rapporti di crash anonimi</string>
     <string name="pref_enable_crash_reports_sum">I rapporti contengono le informazioni che aiutano a migliorare la stabilità e l\'esperienza utente dell\'applicazione.</string>
     <string name="pref_epg_hours_visible">Ore visibili</string>

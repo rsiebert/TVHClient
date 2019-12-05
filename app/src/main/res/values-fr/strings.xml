@@ -97,6 +97,7 @@
     <string name="failed_to_resolve_address">Erreur lors de la résolution de l\'adresse du serveur</string>
     <string name="feature_not_available_in_free_version">Cette fonctionnalité n\'est pas disponible dans la version gratuite!</string>
     <string name="feature_not_supported_by_server">Votre serveur TVHeadend ne supporte pas cette fonctionnalité. Veuillez mettre à jour vers une version plus récente.</string>
+    <string name="filter_channel_list">Filtrer la liste des chaînes</string>
     <string name="friday">Vendredi</string>
     <string name="full_changelog">Changelog complet</string>
     <string name="genre_color_info">Explication des couleurs</string>
@@ -158,6 +159,8 @@
     <string name="pref_default_menu_sum">Choisir l\'écran de démarrage.</string>
     <string name="pref_download_directory">Répertoire de téléchargement</string>
     <string name="pref_download_directory_sum">Les enregistrements vont être récupéré dans le répertoire suivant : \'%s\'</string>
+    <string name="pref_empty_channel_tags_enabled">Afficher tous les tags de chaîne</string>
+    <string name="pref_empty_channel_tags_enabled_sum">Afficher toutes les étiquettes de canaux disponibles dans la liste de filtrage des canaux même si elles ne sont attribuées à aucun canal.</string>
     <string name="pref_enable_crash_reports">Envois un rapport de crash anonymisé</string>
     <string name="pref_enable_crash_reports_sum">Le rapport contient des informations qui nous aide a améliorer la stabilité et l\'expérience utilisateur de l\'application.</string>
     <string name="pref_epg_hours_visible">Heures visible</string>

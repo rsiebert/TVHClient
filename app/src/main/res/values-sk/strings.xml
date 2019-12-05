@@ -97,6 +97,7 @@
     <string name="failed_to_resolve_address">Nepodarilo sa vyriešiť adresu servera</string>
     <string name="feature_not_available_in_free_version">Táto funkcia nie je k dispozícii v bezplatnej verzii!</string>
     <string name="feature_not_supported_by_server">TVHeadend server nepodporuje túto funkciu. Aktualizujte server na novšiu verziu.</string>
+    <string name="filter_channel_list">Filtrovať zoznam kanálov</string>
     <string name="friday">Piatok</string>
     <string name="full_changelog">Úplný zoznam zmien</string>
     <string name="genre_color_info">Vysvetliť farby žánrov</string>
@@ -158,6 +159,8 @@
     <string name="pref_default_menu_sum">Nadefinovanie obrazovky, ktorá sa zobrazí po štarte aplikácie.</string>
     <string name="pref_download_directory">Priečinok pre sťahovanie</string>
     <string name="pref_download_directory_sum">Nahrávky budú sťahované do nasledujúceho priečinka: \'%s\'</string>
+    <string name="pref_empty_channel_tags_enabled">Zobraziť všetky značky kanálov</string>
+    <string name="pref_empty_channel_tags_enabled_sum">Zobraziť všetky dostupné značky kanálov v zozname filtrovania kanálov, aj keď nie sú priradené žiadnym kanálom.</string>
     <string name="pref_enable_crash_reports">Odoslať anonymné správy o zlyhaní</string>
     <string name="pref_enable_crash_reports_sum">Správy obsahujú informácie, ktoré pomáhajú zlepšiť stabilitu a užívateľskú skúsenosť s aplikáciou.</string>
     <string name="pref_epg_hours_visible">Počet zobrazených hodín</string>

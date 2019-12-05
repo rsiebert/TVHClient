@@ -160,7 +160,7 @@
     <string name="pref_download_directory">Download directory</string>
     <string name="pref_download_directory_sum">Recordings will be downloaded into the following directory: \'%s\'</string>
     <string name="pref_empty_channel_tags_enabled">Show all channel tags</string>
-    <string name="pref_empty_channel_tags_enabled_sum">Show all available channel tags in channel filtering list even if they contain no channels.</string>
+    <string name="pref_empty_channel_tags_enabled_sum">Show all available channel tags in the channel filtering list, even if they are not assigned to any channel.</string>
     <string name="pref_enable_crash_reports">Send anonymous crash reports</string>
     <string name="pref_enable_crash_reports_sum">The reports contain the information that help to improve the stability and user experience of the application.</string>
     <string name="pref_epg_hours_visible">Hours visible</string>

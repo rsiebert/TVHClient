@@ -97,6 +97,7 @@
     <string name="failed_to_resolve_address">Het adres van de server is niet opgelost</string>
     <string name="feature_not_available_in_free_version">Deze functie is niet beschikbaar in de gratis versie!</string>
     <string name="feature_not_supported_by_server">Uw TVHeadend server ondersteunt deze functie niet. Upgrade naar een nieuwere versie.</string>
+    <string name="filter_channel_list">Zenderlijst filteren</string>
     <string name="friday">Vrijdag</string>
     <string name="full_changelog">Volledige changelog</string>
     <string name="genre_color_info">Genre kleuren uitleg</string>
@@ -157,6 +158,8 @@
     <string name="pref_default_menu_sum">Kies het scherm dat wordt getoond wanneer de applicatie wordt gestart.</string>
     <string name="pref_download_directory">Directory downloaden</string>
     <string name="pref_download_directory_sum">Opnames worden gedownload in de volgende map: \'%s\'</string>
+    <string name="pref_empty_channel_tags_enabled">Toon alle kanaaltags</string>
+    <string name="pref_empty_channel_tags_enabled_sum">Toon alle beschikbare kanaaltags in de lijst met kanaalfilters, zelfs als ze niet aan kanalen zijn toegewezen.</string>
     <string name="pref_enable_crash_reports">Stuur anonieme crashrapporten</string>
     <string name="pref_enable_crash_reports_sum">De rapporten bevatten de informatie die helpt om de stabiliteit en gebruikerservaring van de toepassing te verbeteren.</string>
     <string name="pref_epg_hours_visible">Toon uren</string>
