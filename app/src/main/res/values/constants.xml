@@ -41,6 +41,7 @@
     <string name="pref_default_channel_sort_order" translatable="false">0</string>
     <bool name="pref_default_channel_tag_icons_enabled">false</bool>
     <bool name="pref_default_multiple_channel_tags_enabled">false</bool>
+    <bool name="pref_default_empty_channel_tags_enabled">true</bool>
     <bool name="pref_default_program_progressbar_enabled">true</bool>
     <bool name="pref_default_next_program_title_enabled">true</bool>
     <bool name="pref_default_program_subtitle_enabled">false</bool>
