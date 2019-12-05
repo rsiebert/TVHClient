@@ -49,7 +49,7 @@ fun showChannelTagSelectionDialog(context: Context, channelTags: MutableList<Cha
     // Show the dialog that shows all available channel tags. When the
     // user has selected a tag, restart the loader to loadRecordingById the updated channel list
     val dialog: MaterialDialog = MaterialDialog(context)
-            .title(R.string.tags)
+            .title(R.string.filter_channel_list)
             .customListAdapter(adapter)
 
     if (isMultipleChoice) {
