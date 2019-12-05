@@ -26,12 +26,14 @@ open class BaseChannelViewModel(application: Application) : BaseViewModel(applic
 
     init {
         showAllChannelTags.value = sharedPreferences.getBoolean("empty_channel_tags_enabled", appContext.resources.getBoolean(R.bool.pref_default_empty_channel_tags_enabled))
+        // Reload the channel tag list depending on the preference
         channelTags.addSource(showAllChannelTags) { allTags ->
-            if (allTags) {
-                channelTags.value = appRepository.channelTagData.getItems()
-            } else {
-                channelTags.value = appRepository.channelTagData.getOnlyNonEmptyItems()
-            }
+            channelTags.value = appRepository.channelTagData.getNonEmptyItems(allTags)
+        }
+        // Reload the channel tag list when the tags have changed to
+        // get the updated selection status which is saved for each tag
+        channelTags.addSource(appRepository.channelTagData.getLiveDataItems()) {
+            channelTags.value = appRepository.channelTagData.getNonEmptyItems(showAllChannelTags.value!!)
         }
     }
 
