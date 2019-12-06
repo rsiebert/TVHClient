@@ -32,8 +32,9 @@ import org.tvheadend.tvhclient.util.logging.FileLoggingTree
 import timber.log.Timber
 import javax.inject.Inject
 
-// TODO move diffutils to background thread
-// TODO 2 way use databinding and viewmodel for add edit fragment
+// TODO snackbar locale changes
+// TODO day night theme
+// TODO replace material dialog calls with native ones
 
 class MainApplication : MultiDexApplication(), OptionsProvider, BillingUpdatesListener {
 
