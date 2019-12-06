@@ -36,9 +36,9 @@ class EpgViewPagerFragment : Fragment(), EpgScrollInterface {
         }
 
     private var updateViewHandler = Handler()
-    private lateinit var updateViewTask: Runnable
+    private var updateViewTask: Runnable? = null
     private var updateTimeIndicationHandler = Handler()
-    private lateinit var updateTimeIndicationTask: Runnable
+    private var updateTimeIndicationTask: Runnable? = null
     private lateinit var constraintSet: ConstraintSet
     private lateinit var itemBinding: EpgViewpagerFragmentBinding
     private var recyclerViewLinearLayoutManager: LinearLayoutManager? = null
@@ -53,8 +53,12 @@ class EpgViewPagerFragment : Fragment(), EpgScrollInterface {
     override fun onDestroy() {
         super.onDestroy()
         if (showTimeIndication) {
-            updateViewHandler.removeCallbacks(updateViewTask)
-            updateTimeIndicationHandler.removeCallbacks(updateTimeIndicationTask)
+            updateViewTask?.let {
+                updateViewHandler.removeCallbacks(it)
+            }
+            updateTimeIndicationTask?.let {
+                updateTimeIndicationHandler.removeCallbacks(it)
+            }
         }
     }
 
@@ -141,8 +145,12 @@ class EpgViewPagerFragment : Fragment(), EpgScrollInterface {
                     updateTimeIndicationHandler.postDelayed(this, 60000)
                 }
             }
-            updateViewHandler.postDelayed(updateViewTask, 60000)
-            updateTimeIndicationHandler.post(updateTimeIndicationTask)
+            updateViewTask?.let {
+                updateViewHandler.postDelayed(it, 60000)
+            }
+            updateTimeIndicationTask?.let {
+                updateTimeIndicationHandler.post(it)
+            }
         }
 
         // The program data needs to be loaded when the fragment is created
