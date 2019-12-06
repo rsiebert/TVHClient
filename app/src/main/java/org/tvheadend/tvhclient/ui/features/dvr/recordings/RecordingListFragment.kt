@@ -5,6 +5,7 @@ import android.view.*
 import android.widget.Filter
 import androidx.appcompat.widget.PopupMenu
 import androidx.fragment.app.FragmentTransaction
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -110,10 +111,16 @@ abstract class RecordingListFragment : BaseFragment(), RecyclerViewClickInterfac
             var fragment = activity?.supportFragmentManager?.findFragmentById(R.id.details)
             if (fragment !is RecordingDetailsFragment) {
                 fragment = RecordingDetailsFragment.newInstance(recording.id)
-                fm?.beginTransaction()?.also {
-                    it.replace(R.id.details, fragment)
-                    it.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
-                    it.commit()
+
+                // Check the lifecycle state to avoid committing the transaction
+                // after the onSaveInstance method was already called which would
+                // trigger an illegal state exception.
+                if (lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED)) {
+                    fm?.beginTransaction()?.also {
+                        it.replace(R.id.details, fragment)
+                        it.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+                        it.commit()
+                    }
                 }
             } else if (recordingViewModel.currentId.value != recording.id){
                 recordingViewModel.currentId.value = recording.id
