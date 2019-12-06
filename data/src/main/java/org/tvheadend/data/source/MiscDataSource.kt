@@ -5,6 +5,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.tvheadend.data.db.AppRoomDatabase
+import org.tvheadend.data.entity.ServerStatus
 import timber.log.Timber
 import java.lang.ref.WeakReference
 
@@ -45,12 +46,16 @@ class MiscDataSource(private val db: AppRoomDatabase) {
             connection.isSyncRequired = true
             db.connectionDao.update(connection)
 
-            val serverStatus = db.serverStatusDao.loadServerStatusByIdSync(connection.id)
-            serverStatus.htspPlaybackServerProfileId = 0
-            serverStatus.httpPlaybackServerProfileId = 0
-            serverStatus.castingServerProfileId = 0
-            serverStatus.recordingServerProfileId = 0
-            db.serverStatusDao.update(serverStatus)
+            val serverStatus: ServerStatus? = db.serverStatusDao.loadServerStatusByIdSync(connection.id)
+            // Crashlytics reported that the server status was null, even though this should
+            // not happen because the server status is always added with a new connection.
+            if (serverStatus != null) {
+                serverStatus.htspPlaybackServerProfileId = 0
+                serverStatus.httpPlaybackServerProfileId = 0
+                serverStatus.castingServerProfileId = 0
+                serverStatus.recordingServerProfileId = 0
+                db.serverStatusDao.update(serverStatus)
+            }
         }
 
         Timber.d("Deleting of database contents done.\n" +
