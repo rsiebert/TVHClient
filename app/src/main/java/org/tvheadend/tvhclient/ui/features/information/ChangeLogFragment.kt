@@ -2,6 +2,7 @@ package org.tvheadend.tvhclient.ui.features.information
 
 import android.content.Context
 import android.graphics.Color
+import android.os.Build
 import android.os.Bundle
 import android.view.*
 import androidx.fragment.app.Fragment
@@ -29,7 +30,11 @@ class ChangeLogFragment : Fragment(), BackPressedInterface {
     private var versionName: String = ""
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.webview_fragment, null)
+        return if (Build.VERSION.SDK_INT in 21..25) {
+            inflater.inflate(R.layout.webview_fragment_for_lollipop, container, false)
+        } else {
+            inflater.inflate(R.layout.webview_fragment, container, false)
+        }
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
