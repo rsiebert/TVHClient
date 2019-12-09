@@ -1,3 +1,7 @@
+$ 2.3.3
+  % VERSION 2.3.3
+  _ 09.12.2019
+    * Bug fix when showing the changelog on Android 5 devices
 $ 2.3.2
   % VERSION 2.3.2
   _ 06.12.2019
