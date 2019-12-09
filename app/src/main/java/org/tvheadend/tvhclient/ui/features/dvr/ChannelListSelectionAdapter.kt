@@ -14,8 +14,6 @@ import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.util.getIconUrl
 import java.lang.ref.WeakReference
 
-// TODO convert to data binding
-
 class ChannelListSelectionAdapter internal constructor(context: Context, private val channelList: List<Channel>) : RecyclerView.Adapter<ChannelListSelectionAdapter.ViewHolder>() {
 
     private val context: WeakReference<Context> = WeakReference(context)
