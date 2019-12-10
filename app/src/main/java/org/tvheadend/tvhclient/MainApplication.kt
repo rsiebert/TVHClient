@@ -35,6 +35,8 @@ import javax.inject.Inject
 // TODO snackbar locale changes
 // TODO day night theme
 // TODO replace material dialog calls with native ones
+// TODO when a notification is dismissed, it reappears when the recording gets updated,
+//  save the dismissed id in the viewmodel and dont add another notification if the id was already dismissed
 
 class MainApplication : MultiDexApplication(), OptionsProvider, BillingUpdatesListener {
 
