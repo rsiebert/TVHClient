@@ -5,7 +5,6 @@ import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
@@ -65,7 +64,7 @@ class EpgViewPagerFragment : Fragment(), EpgScrollInterface {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         Timber.d("Initializing")
-        epgViewModel = ViewModelProviders.of(activity as AppCompatActivity).get(EpgViewModel::class.java)
+        epgViewModel = ViewModelProviders.of(activity!!).get(EpgViewModel::class.java)
 
         // Required to show the vertical current time indication
         constraintSet = ConstraintSet()
