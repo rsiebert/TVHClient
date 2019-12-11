@@ -1,3 +1,8 @@
+$ 2.3.4
+  % VERSION 2.3.4
+  _ 11.12.2019
+    * Clear the search results when selecting a new navigation menu item
+    * Fixed crash in the epg screen
 $ 2.3.3
   % VERSION 2.3.3
   _ 10.12.2019
