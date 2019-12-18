@@ -43,19 +43,9 @@ class ChangeLogFragment : Fragment(), BackPressedInterface {
         if (activity is ToolbarInterface) {
             (activity as ToolbarInterface).setTitle(getString(R.string.pref_changelog))
         }
-
+        showFullChangeLog = arguments?.getBoolean("showFullChangelog", true) ?: true
+        versionName = arguments?.getString("versionNameForChangelog", BuildConfig.VERSION_NAME) ?: BuildConfig.VERSION_NAME
         setHasOptionsMenu(true)
-
-        if (savedInstanceState != null) {
-            showFullChangeLog = savedInstanceState.getBoolean("showFullChangelog", true)
-            versionName = savedInstanceState.getString("versionNameForChangelog", "")
-        } else {
-            val bundle = arguments
-            if (bundle != null) {
-                showFullChangeLog = bundle.getBoolean("showFullChangelog", true)
-                versionName = bundle.getString("versionNameForChangelog", BuildConfig.VERSION_NAME)
-            }
-        }
     }
 
     override fun onResume() {
@@ -75,22 +65,32 @@ class ChangeLogFragment : Fragment(), BackPressedInterface {
     }
 
     private fun showChangelog(showFullChangeLog: Boolean) {
+        Timber.d("Showing changelog, show full changelog: $showFullChangeLog")
         // Make the background transparent to remove flickering. This avoids
         // seeing the default theme background color before the stylesheets are loaded.
         webview.setBackgroundColor(Color.argb(0, 0, 0, 0))
         webview.gone()
         loading_view.visible()
 
-        scope.launch { loadChangeLogContents(context!!, versionName, showFullChangeLog) }
+        Timber.d("About to launch coroutine to load contents")
+        activity?.let {
+            Timber.d("Activity is present, launching coroutine")
+            scope.launch { loadChangeLogContents(it, versionName, showFullChangeLog) }
+        }
     }
 
     private suspend fun loadChangeLogContents(context: Context, versionName: String, showFullChangeLog: Boolean) {
+        Timber.d("Loading data in background via suspend function")
         val deferredLoader = scope.async {
+            Timber.d("Invoking ChangeLogLoader")
             return@async ChangeLogLoader(context, versionName).getChangeLogFromFile(showFullChangeLog)
         }
         // Switch the context to the main thread to call the following method
         withContext(Dispatchers.Main) {
-            onFileContentsLoaded((deferredLoader.await()))
+            Timber.d("Waiting until contents have been loaded")
+            val contents = deferredLoader.await()
+            Timber.d("Contents have been loaded")
+            onFileContentsLoaded(contents)
         }
     }
 
@@ -132,7 +132,9 @@ class ChangeLogFragment : Fragment(), BackPressedInterface {
     }
 
     private fun onFileContentsLoaded(fileContent: String) {
+        Timber.d("Changelog data was loaded")
         if (fileContent.isNotEmpty() && isVisible) {
+            Timber.d("Changelog data is available, showing contents in webview")
             webview.loadDataWithBaseURL("file:///android_asset/", fileContent, "text/html", "utf-8", null)
             webview.visible()
             loading_view.gone()
@@ -266,6 +268,18 @@ class ChangeLogFragment : Fragment(), BackPressedInterface {
                 stringBuffer.append("</ul>\n")
             }
             listMode = ListMode.NONE
+        }
+    }
+
+    companion object {
+
+        fun newInstance(versionName: String = BuildConfig.VERSION_NAME, showFullChangelog: Boolean = true): ChangeLogFragment {
+            val f = ChangeLogFragment()
+            val args = Bundle()
+            args.putBoolean("showFullChangelog", showFullChangelog)
+            args.putString("versionNameForChangelog", versionName)
+            f.arguments = args
+            return f
         }
     }
 }
