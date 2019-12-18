@@ -113,20 +113,20 @@ class WakeOnLanTask(context: Context, private val connection: Connection) : Asyn
             val message: String
             when (result) {
                 WOL_SEND -> {
-                    Timber.d("Successfully sent WOL packet to ${connection.serverUrl}")
-                    message = ctx.getString(R.string.wol_send, connection.serverUrl)
+                    Timber.d("Successfully sent WOL packet to ${connection.wolMacAddress}:${connection.port}")
+                    message = ctx.getString(R.string.wol_send, "${connection.wolMacAddress}:${connection.port}")
                 }
                 WOL_SEND_BROADCAST -> {
-                    Timber.d("Successfully sent WOL packet as a broadcast to ${connection.serverUrl}")
-                    message = ctx.getString(R.string.wol_send_broadcast, connection.serverUrl)
+                    Timber.d("Successfully sent WOL packet as a broadcast to ${connection.wolMacAddress}")
+                    message = ctx.getString(R.string.wol_send_broadcast, connection.wolMacAddress)
                 }
                 WOL_INVALID_MAC -> {
                     Timber.d("Can't send WOL packet, the MAC-address is not valid")
                     message = ctx.getString(R.string.wol_address_invalid)
                 }
                 else -> {
-                    Timber.d("Error sending WOL packet to ${connection.serverUrl}")
-                    message = ctx.getString(R.string.wol_error, connection.serverUrl, exception?.localizedMessage)
+                    Timber.d("Error sending WOL packet to ${connection.wolMacAddress}:${connection.port}")
+                    message = ctx.getString(R.string.wol_error, "${connection.wolMacAddress}:${connection.port}", exception?.localizedMessage)
                 }
             }
             ctx.sendSnackbarMessage(message)

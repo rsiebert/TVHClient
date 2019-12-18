@@ -230,12 +230,9 @@ class HtspIntentService : JobIntentService(), HtspConnectionStateListener {
         val duplicatePrograms = Vector<Int>()
         val channels = appRepository.channelData.getItems()
         channels.forEach { channel ->
-            Timber.d("Loading programs for channel ${channel.name}")
             val programs = appRepository.programData.getItemsByChannelId(channel.id)
             var lastProgram = Program()
             programs.forEach { program ->
-                Timber.d("Channel: ${channel.name}, program id: ${program.eventId}, title: ${program.title}, start: ${program.start}, stop: ${program.stop}")
-
                 if (lastProgram.title == program.title
                         && lastProgram.subtitle == program.subtitle
                         && lastProgram.summary == program.summary
@@ -260,8 +257,9 @@ class HtspIntentService : JobIntentService(), HtspConnectionStateListener {
                 lastProgram = program
             }
         }
+
+        Timber.d("Removing ${duplicatePrograms.size} duplicate programs")
         duplicatePrograms.forEach {
-            Timber.d("Removing duplicate program id $it")
             appRepository.programData.removeItemById(it)
         }
     }
