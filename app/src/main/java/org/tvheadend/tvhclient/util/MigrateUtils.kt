@@ -78,7 +78,7 @@ class MigrateUtils(val context: Context, val appRepository: AppRepository, val s
         } catch (e: NumberFormatException) {
             Timber.d("Low space threshold contains an invalid number, setting default of 1")
         }
-        Timber.d("Hours per screen is $hours")
+        Timber.d("ow space threshold is $hours")
         if (hours == 0) {
             val editor = sharedPreferences.edit()
             editor.putString("low_storage_space_threshold", "1")
