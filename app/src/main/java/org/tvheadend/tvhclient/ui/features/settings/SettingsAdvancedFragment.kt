@@ -236,6 +236,18 @@ class SettingsAdvancedFragment : BasePreferenceFragment(), Preference.OnPreferen
                     context?.sendSnackbarMessage("The value must be an integer between 1 and 24")
                     return false
                 }
+            "low_storage_space_threshold" ->
+                try {
+                    val value = Integer.valueOf(newValue as String)
+                    if (value < 1) {
+                        context?.sendSnackbarMessage("The value must be an integer greater 0")
+                        return false
+                    }
+                    return true
+                } catch (ex: NumberFormatException) {
+                    context?.sendSnackbarMessage("The value must be an integer greater 0")
+                    return false
+                }
             else -> return true
         }
     }
