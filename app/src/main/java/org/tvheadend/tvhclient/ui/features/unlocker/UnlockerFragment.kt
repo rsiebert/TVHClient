@@ -7,7 +7,6 @@ import android.view.MenuItem
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.afollestad.materialdialogs.MaterialDialog
-import com.android.billingclient.api.BillingClient
 import com.android.billingclient.api.Purchase
 import org.tvheadend.tvhclient.MainApplication
 import org.tvheadend.tvhclient.R
@@ -16,7 +15,7 @@ import org.tvheadend.tvhclient.ui.base.BaseViewModel
 import org.tvheadend.tvhclient.ui.features.information.WebViewFragment
 import org.tvheadend.tvhclient.util.billing.BillingHandler
 import org.tvheadend.tvhclient.util.billing.BillingManager
-import org.tvheadend.tvhclient.util.billing.BillingManager.UNLOCKER
+import org.tvheadend.tvhclient.util.billing.BillingManager.Companion.UNLOCKER
 import org.tvheadend.tvhclient.util.billing.BillingUpdatesListener
 import timber.log.Timber
 
@@ -64,7 +63,7 @@ class UnlockerFragment : WebViewFragment(), BillingUpdatesListener {
             R.id.menu_purchase -> {
                 if (!isUnlocked) {
                     Timber.d("Unlocker not purchased")
-                    billingManager.initiatePurchaseFlow(activity, UNLOCKER, null, BillingClient.SkuType.INAPP)
+                    billingManager.initiatePurchaseFlow(activity, UNLOCKER)
                 } else {
                     Timber.d("Unlocker already purchased")
                     showPurchasedAlreadyMadeDialog()
@@ -123,7 +122,7 @@ class UnlockerFragment : WebViewFragment(), BillingUpdatesListener {
         Timber.d("Token $token has been consumed with result $result")
     }
 
-    override fun onPurchaseSuccessful(purchases: List<Purchase>?) {
+    override fun onPurchaseSuccessful(purchases: List<Purchase>) {
         Timber.d("Purchase was successful")
         showPurchaseSuccessfulDialog()
     }

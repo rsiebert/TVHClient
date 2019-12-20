@@ -39,7 +39,7 @@ class BillingHandler : BillingUpdatesListener {
         }
     }
 
-    override fun onPurchaseSuccessful(purchases: List<Purchase>?) {
+    override fun onPurchaseSuccessful(purchases: List<Purchase>) {
         for (listener in listeners) {
             listener.onPurchaseSuccessful(purchases)
         }
