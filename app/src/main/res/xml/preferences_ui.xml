@@ -52,6 +52,11 @@
             android:summary="@string/pref_tag_icon_sum"
             android:title="@string/pref_tag_icon" />
         <SwitchPreference
+            android:defaultValue="@bool/pref_default_empty_channel_tags_enabled"
+            android:key="empty_channel_tags_enabled"
+            android:summary="@string/pref_empty_channel_tags_enabled_sum"
+            android:title="@string/pref_empty_channel_tags_enabled" />
+        <SwitchPreference
             android:defaultValue="@bool/pref_default_multiple_channel_tags_enabled"
             android:key="multiple_channel_tags_enabled"
             android:summary="@string/pref_multiple_channel_tags_enabled_sum"

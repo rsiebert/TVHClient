@@ -1,33 +1,33 @@
 package org.tvheadend.tvhclient.ui.common
 
 
-import android.app.SearchManager
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
-import android.view.ActionMode
 import android.view.Menu
+import androidx.core.view.children
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
 import androidx.preference.PreferenceManager
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.list.listItemsSingleChoice
+import org.tvheadend.data.entity.*
 import org.tvheadend.tvhclient.R
-import org.tvheadend.tvhclient.data.service.HtspService
-import org.tvheadend.tvhclient.domain.entity.*
+import org.tvheadend.tvhclient.service.HtspService
 import org.tvheadend.tvhclient.ui.base.BaseViewModel
-import org.tvheadend.tvhclient.ui.common.tasks.WakeOnLanTask
+import org.tvheadend.tvhclient.ui.common.interfaces.RecordingRemovedInterface
 import org.tvheadend.tvhclient.ui.features.dvr.RecordingAddEditActivity
-import org.tvheadend.tvhclient.ui.features.dvr.RecordingRemovedCallback
 import org.tvheadend.tvhclient.ui.features.playback.external.CastChannelActivity
 import org.tvheadend.tvhclient.ui.features.playback.external.CastRecordingActivity
 import org.tvheadend.tvhclient.ui.features.playback.external.PlayChannelActivity
 import org.tvheadend.tvhclient.ui.features.playback.external.PlayRecordingActivity
 import org.tvheadend.tvhclient.ui.features.playback.internal.PlaybackActivity
-import org.tvheadend.tvhclient.ui.features.search.SearchActivity
+import org.tvheadend.tvhclient.ui.features.programs.ProgramListFragment
+import org.tvheadend.tvhclient.util.extensions.getCastSession
 import timber.log.Timber
 import java.io.UnsupportedEncodingException
 import java.net.URLEncoder
-
 
 fun preparePopupOrToolbarRecordingMenu(context: Context,
                                        menu: Menu,
@@ -37,9 +37,7 @@ fun preparePopupOrToolbarRecordingMenu(context: Context,
                                        isUnlocked: Boolean) {
 
     // Hide the menus because the ones in the toolbar are not hidden when set in the xml
-    for (i in 0 until menu.size()) {
-        menu.getItem(i)?.isVisible = false
-    }
+    menu.children.forEach { it.isVisible = false }
 
     if (isConnectionToServerAvailable) {
         if (recording == null || (!recording.isRecording
@@ -58,7 +56,7 @@ fun preparePopupOrToolbarRecordingMenu(context: Context,
         } else if (recording.isCompleted) {
             Timber.d("Recording is completed ")
             menu.findItem(R.id.menu_play)?.isVisible = true
-            menu.findItem(R.id.menu_cast)?.isVisible = getCastSession(context) != null
+            menu.findItem(R.id.menu_cast)?.isVisible = context.getCastSession() != null
             menu.findItem(R.id.menu_remove_recording)?.isVisible = true
             menu.findItem(R.id.menu_download_recording)?.isVisible = isUnlocked
 
@@ -72,7 +70,7 @@ fun preparePopupOrToolbarRecordingMenu(context: Context,
         } else if (recording.isRecording) {
             Timber.d("Recording is being recorded")
             menu.findItem(R.id.menu_play)?.isVisible = true
-            menu.findItem(R.id.menu_cast)?.isVisible = getCastSession(context) != null
+            menu.findItem(R.id.menu_cast)?.isVisible = context.getCastSession() != null
             menu.findItem(R.id.menu_stop_recording)?.isVisible = true
             menu.findItem(R.id.menu_edit_recording)?.isVisible = isUnlocked
 
@@ -82,7 +80,7 @@ fun preparePopupOrToolbarRecordingMenu(context: Context,
             // Allow playing a failed recording which size is not zero
             if (recording.dataSize > 0) {
                 menu.findItem(R.id.menu_play)?.isVisible = true
-                menu.findItem(R.id.menu_cast)?.isVisible = getCastSession(context) != null
+                menu.findItem(R.id.menu_cast)?.isVisible = context.getCastSession() != null
             }
         }
     }
@@ -108,7 +106,7 @@ fun preparePopupOrToolbarMiscMenu(context: Context,
                 && currentTime > program.start
                 && currentTime < program.stop) {
             menu.findItem(R.id.menu_play)?.isVisible = true
-            menu.findItem(R.id.menu_cast)?.isVisible = getCastSession(context) != null
+            menu.findItem(R.id.menu_cast)?.isVisible = context.getCastSession() != null
         }
     }
     // Show the add reminder menu only for programs and
@@ -135,8 +133,8 @@ fun preparePopupOrToolbarSearchMenu(menu: Menu, title: String?, isConnectionToSe
 
 fun showConfirmationToReconnectToServer(context: Context, viewModel: BaseViewModel): Boolean {
     MaterialDialog(context).show {
-        title(R.string.dialog_title_reconnect_to_server)
-        message(R.string.dialog_content_reconnect_to_server)
+        title(R.string.reconnect_to_server)
+        message(R.string.restart_and_sync)
         negativeButton(R.string.cancel)
         positiveButton(R.string.reconnect) {
             viewModel.updateConnectionAndRestartApplication(context)
@@ -169,7 +167,7 @@ fun recordSelectedProgramAsSeriesRecording(context: Context, title: String?, pro
     return true
 }
 
-fun showConfirmationToStopSelectedRecording(context: Context, recording: Recording?, callback: RecordingRemovedCallback?): Boolean {
+fun showConfirmationToStopSelectedRecording(context: Context, recording: Recording?, callback: RecordingRemovedInterface?): Boolean {
     recording ?: return false
     Timber.d("Stopping recording ${recording.title}")
     MaterialDialog(context).show {
@@ -183,7 +181,7 @@ fun showConfirmationToStopSelectedRecording(context: Context, recording: Recordi
     return true
 }
 
-private fun stopSelectedRecording(context: Context, recording: Recording, callback: RecordingRemovedCallback?) {
+private fun stopSelectedRecording(context: Context, recording: Recording, callback: RecordingRemovedInterface?) {
     val intent = Intent(context, HtspService::class.java)
     intent.action = "stopDvrEntry"
     intent.putExtra("id", recording.id)
@@ -191,7 +189,7 @@ private fun stopSelectedRecording(context: Context, recording: Recording, callba
     callback?.onRecordingRemoved()
 }
 
-fun showConfirmationToRemoveSelectedRecording(context: Context, recording: Recording?, callback: RecordingRemovedCallback?): Boolean {
+fun showConfirmationToRemoveSelectedRecording(context: Context, recording: Recording?, callback: RecordingRemovedInterface?): Boolean {
     recording ?: return false
     Timber.d("Removing recording ${recording.title}")
     MaterialDialog(context).show {
@@ -205,7 +203,7 @@ fun showConfirmationToRemoveSelectedRecording(context: Context, recording: Recor
     return true
 }
 
-private fun removeSelectedRecording(context: Context, recording: Recording, callback: RecordingRemovedCallback?) {
+private fun removeSelectedRecording(context: Context, recording: Recording, callback: RecordingRemovedInterface?) {
     val intent = Intent(context, HtspService::class.java)
     intent.action = "deleteDvrEntry"
     intent.putExtra("id", recording.id)
@@ -213,7 +211,7 @@ private fun removeSelectedRecording(context: Context, recording: Recording, call
     callback?.onRecordingRemoved()
 }
 
-fun showConfirmationToCancelSelectedRecording(context: Context, recording: Recording?, callback: RecordingRemovedCallback?): Boolean {
+fun showConfirmationToCancelSelectedRecording(context: Context, recording: Recording?, callback: RecordingRemovedInterface?): Boolean {
     recording ?: return false
     Timber.d("Cancelling recording ${recording.title}")
     MaterialDialog(context).show {
@@ -227,7 +225,7 @@ fun showConfirmationToCancelSelectedRecording(context: Context, recording: Recor
     return true
 }
 
-private fun cancelSelectedRecording(context: Context, recording: Recording, callback: RecordingRemovedCallback?) {
+private fun cancelSelectedRecording(context: Context, recording: Recording, callback: RecordingRemovedInterface?) {
     val intent = Intent(context, HtspService::class.java)
     intent.action = "cancelDvrEntry"
     intent.putExtra("id", recording.id)
@@ -280,7 +278,7 @@ fun addNewTimerRecording(context: Context): Boolean {
     return true
 }
 
-fun showConfirmationToRemoveSelectedSeriesRecording(context: Context, recording: SeriesRecording, callback: RecordingRemovedCallback?): Boolean {
+fun showConfirmationToRemoveSelectedSeriesRecording(context: Context, recording: SeriesRecording, callback: RecordingRemovedInterface?): Boolean {
     Timber.d("Removing series recording ${recording.title}")
     MaterialDialog(context).show {
         title(R.string.record_remove)
@@ -293,7 +291,7 @@ fun showConfirmationToRemoveSelectedSeriesRecording(context: Context, recording:
     return true
 }
 
-private fun removeSelectedSeriesRecording(context: Context, recording: SeriesRecording, callback: RecordingRemovedCallback?) {
+private fun removeSelectedSeriesRecording(context: Context, recording: SeriesRecording, callback: RecordingRemovedInterface?) {
     val intent = Intent(context, HtspService::class.java)
     intent.action = "deleteAutorecEntry"
     intent.putExtra("id", recording.id)
@@ -301,7 +299,7 @@ private fun removeSelectedSeriesRecording(context: Context, recording: SeriesRec
     callback?.onRecordingRemoved()
 }
 
-fun showConfirmationToRemoveSelectedTimerRecording(context: Context, recording: TimerRecording, callback: RecordingRemovedCallback?): Boolean {
+fun showConfirmationToRemoveSelectedTimerRecording(context: Context, recording: TimerRecording, callback: RecordingRemovedInterface?): Boolean {
     val recordingName = recording.name ?: ""
     val name = if (recordingName.isNotEmpty()) recordingName else ""
     val displayTitle = if (name.isNotEmpty()) name else recording.title ?: ""
@@ -318,7 +316,7 @@ fun showConfirmationToRemoveSelectedTimerRecording(context: Context, recording: 
     return true
 }
 
-private fun removeSelectedTimerRecording(context: Context, recording: TimerRecording, callback: RecordingRemovedCallback?) {
+private fun removeSelectedTimerRecording(context: Context, recording: TimerRecording, callback: RecordingRemovedInterface?) {
     val intent = Intent(context, HtspService::class.java)
     intent.action = "deleteTimerecEntry"
     intent.putExtra("id", recording.id)
@@ -499,7 +497,7 @@ fun playOrCastChannel(context: Context, channelId: Int, isUnlocked: Boolean): Bo
     if (channelIconAction == 1) {
         playSelectedChannel(context, channelId, isUnlocked)
     } else if (channelIconAction == 2) {
-        if (getCastSession(context) != null) {
+        if (context.getCastSession() != null) {
             castSelectedChannel(context, channelId)
         } else {
             playSelectedChannel(context, channelId, isUnlocked)
@@ -515,7 +513,7 @@ fun playOrCastRecording(context: Context, recordingId: Int, isUnlocked: Boolean)
     if (channelIconAction == 1) {
         playSelectedRecording(context, recordingId, isUnlocked)
     } else if (channelIconAction == 2) {
-        if (getCastSession(context) != null) {
+        if (context.getCastSession() != null) {
             castSelectedRecording(context, recordingId)
         } else {
             playSelectedRecording(context, recordingId, isUnlocked)
@@ -588,20 +586,15 @@ fun searchTitleOnFileAffinityWebsite(context: Context, title: String?): Boolean 
     return true
 }
 
-fun searchTitleInTheLocalDatabase(context: Context, title: String?, channelId: Int = 0): Boolean {
-    val intent = Intent(context, SearchActivity::class.java)
-    intent.action = Intent.ACTION_SEARCH
-    intent.putExtra(SearchManager.QUERY, title)
-    intent.putExtra("type", "program_guide")
-    if (channelId > 0) {
-        intent.putExtra("channelId", channelId)
+fun searchTitleInTheLocalDatabase(activity: FragmentActivity, viewModel: BaseViewModel, title: String?, channelId: Int = 0): Boolean {
+    if (!title.isNullOrEmpty()) {
+        val newFragment: Fragment = ProgramListFragment.newInstance(channelId = channelId)
+        activity.supportFragmentManager.beginTransaction().replace(R.id.main, newFragment).let {
+            it.addToBackStack(null)
+            it.commit()
+        }
+        viewModel.removeFragmentWhenSearchIsDone = true
+        viewModel.startSearchQuery(title)
     }
-    context.startActivity(intent)
-    return true
-}
-
-fun sendWakeOnLanPacket(context: Context, connection: Connection, mode: ActionMode? = null): Boolean {
-    WakeOnLanTask(context, connection).execute()
-    mode?.finish()
     return true
 }

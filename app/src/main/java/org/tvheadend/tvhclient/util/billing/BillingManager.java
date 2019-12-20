@@ -121,7 +121,7 @@ public class BillingManager implements PurchasesUpdatedListener {
     private boolean areSubscriptionsSupported() {
         int responseCode = billingClient.isFeatureSupported(BillingClient.FeatureType.SUBSCRIPTIONS);
         if (responseCode != BillingClient.BillingResponse.OK) {
-            Timber.w("Got an error response: " + responseCode);
+            Timber.w("Got an error response: %s", responseCode);
         }
         return responseCode == BillingClient.BillingResponse.OK;
     }

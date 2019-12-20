@@ -11,10 +11,9 @@
     <bool name="pref_default_audio_passthrough_decoder_enabled">false</bool>
     <bool name="pref_default_audio_tunneling_enabled">false</bool>
     <bool name="pref_default_timeshift_enabled">false</bool>
+    <string name="pref_default_timeshift_period" translatable="false">3600</string>
 
     <!-- Default connection preference values -->
-    <string name="pref_default_htsp_port" translatable="false">9982</string>
-    <string name="pref_default_streaming_port" translatable="false">9981</string>
     <bool name="pref_default_active_enabled">true</bool>
     <bool name="pref_default_wol_enabled">false</bool>
     <bool name="pref_default_wol_broadcast_enabled">false</bool>
@@ -42,6 +41,7 @@
     <string name="pref_default_channel_sort_order" translatable="false">0</string>
     <bool name="pref_default_channel_tag_icons_enabled">false</bool>
     <bool name="pref_default_multiple_channel_tags_enabled">false</bool>
+    <bool name="pref_default_empty_channel_tags_enabled">true</bool>
     <bool name="pref_default_program_progressbar_enabled">true</bool>
     <bool name="pref_default_next_program_title_enabled">true</bool>
     <bool name="pref_default_program_subtitle_enabled">false</bool>

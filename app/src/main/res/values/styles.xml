@@ -1,28 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <!-- Font for the title texts in various screens -->
-    <style name="TitleFont.Light" parent="TextAppearance.AppCompat.Title">
+    <!--<editor-fold desc="Font for title texts in various screens">-->
+    <style name="TitleFont.Light" parent="TextAppearance.MaterialComponents.Headline5">
         <item name="android:textSize">16sp</item>
-        <item name="android:textColor">@color/header_text_light</item>
+        <item name="android:textColor">@color/title_text_light</item>
     </style>
 
     <style name="TitleFont.Dark" parent="TitleFont.Light">
-        <item name="android:textColor">@color/header_text_dark</item>
+        <item name="android:textColor">@color/title_text_dark</item>
     </style>
+    <!--</editor-fold>-->
 
-    <!-- Font for the subtitles in various screens -->
-    <style name="SubtitleFont.Light" parent="TextAppearance.AppCompat.Subhead">
-        <item name="android:textSize">14sp</item>
+    <!--<editor-fold desc="Font for subtitles in various screens">-->
+    <style name="SubtitleFont.Light" parent="TextAppearance.MaterialComponents.Subtitle1">
+        <item name="android:textSize">15sp</item>
         <item name="android:textColor">@color/subtitle_text_light</item>
     </style>
 
     <style name="SubtitleFont.Dark" parent="SubtitleFont.Light">
         <item name="android:textColor">@color/subtitle_text_dark</item>
     </style>
+    <!--</editor-fold>-->
 
-    <!-- Font for the content in various screens -->
-    <style name="ContentFont.Light" parent="TextAppearance.AppCompat.Body1">
+    <!--<editor-fold desc="Font for content in various screens">-->
+    <style name="ContentFont.Light" parent="TextAppearance.MaterialComponents.Subtitle1">
         <item name="android:textSize">14sp</item>
         <item name="android:textColor">@color/content_text_light</item>
     </style>
@@ -30,37 +32,42 @@
     <style name="ContentFont.Dark" parent="ContentFont.Light">
         <item name="android:textColor">@color/content_text_dark</item>
     </style>
+    <!--</editor-fold>-->
 
-    <!-- Font for the program title in the program guide screen -->
-    <style name="ProgramGuideTitleFont.Light" parent="TextAppearance.AppCompat.Caption" />
+    <!--<editor-fold desc="Font for the program guide screen">-->
+    <style name="ProgramGuideTitleFont.Light" parent="TextAppearance.MaterialComponents.Subtitle1">
+        <item name="android:textSize">12sp</item>
+    </style>
 
     <style name="ProgramGuideTitleFont.Dark" parent="ProgramGuideTitleFont.Light" />
 
-    <!-- Font for the additional information in the program guide screen -->
-    <style name="ProgramGuideContentFont.Light" parent="TextAppearance.AppCompat.Caption">
+    <style name="ProgramGuideContentFont.Light" parent="TextAppearance.MaterialComponents.Subtitle1">
         <item name="android:textSize">11sp</item>
     </style>
 
     <style name="ProgramGuideContentFont.Dark" parent="ProgramGuideContentFont.Light" />
+    <!--</editor-fold>-->
 
-    <!-- Font for the title texts in various screens -->
+    <!--<editor-fold desc="Fonts for the internal player screen. The background is always dark">-->
     <style name="PlayerTitleFont" parent="TextAppearance.MaterialComponents.Headline6">
-        <item name="android:textColor">@color/header_text_dark</item>
+        <item name="android:textColor">@color/title_text_dark</item>
     </style>
-
-    <!-- Font for the subtitles in various screens -->
     <style name="PlayerSubtitleFont" parent="TextAppearance.MaterialComponents.Subtitle1">
         <item name="android:textColor">@color/subtitle_text_dark</item>
     </style>
+    <!--</editor-fold>-->
 
     <!-- Styles that will be used for the dark holo theme -->
-    <style name="CustomTheme" parent="Theme.AppCompat">
+    <style name="CustomTheme" parent="Theme.MaterialComponents">
+
         <item name="windowActionModeOverlay">true</item>
         <item name="android:actionModeBackground">@android:color/background_dark</item>
         <item name="actionModeBackground">@android:color/background_dark</item>
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
+        <item name="android:colorBackground">@color/surfaceDarkColor</item>
 
+        <!--<editor-fold desc="Icons">-->
         <item name="ic_menu_search">@drawable/ic_menu_search_dark</item>
         <item name="ic_menu_save">@drawable/ic_menu_save_dark</item>
         <item name="ic_menu_cancel">@drawable/ic_menu_cancel_dark</item>
@@ -98,53 +105,67 @@
         <item name="ic_menu_status">@drawable/ic_menu_status_dark</item>
         <item name="ic_menu_information">@drawable/ic_menu_info_dark</item>
         <item name="ic_menu_extras">@drawable/ic_menu_extras_dark</item>
+        <item name="ic_arrow_drop_down_like_spinner">@drawable/ic_arrow_drop_down_like_spinner_dark</item>
+        <!--</editor-fold>-->
 
-        <item name="ic_arrow_drop_down_like_spinner">
-            @drawable/ic_arrow_drop_down_like_spinner_dark
-        </item>
-
+        <!--<editor-fold desc="Fonts">-->
         <item name="TitleFont">@style/TitleFont.Dark</item>
         <item name="SubtitleFont">@style/SubtitleFont.Dark</item>
         <item name="ContentFont">@style/ContentFont.Dark</item>
         <item name="ProgramGuideTitleFont">@style/ProgramGuideTitleFont.Dark</item>
         <item name="ProgramGuideContentFont">@style/ProgramGuideContentFont.Dark</item>
+        <!--</editor-fold>-->
 
-        <item name="rounded_corners">@drawable/rounded_corners_dark</item>
+        <!--<editor-fold desc="Toolbar color">-->
+        <item name="colorPrimary">@color/primaryColor</item>
+        <!--</editor-fold>-->
 
-        <!-- MaterialDrawer specific values -->
+        <!--<editor-fold desc="Status bar color">-->
+        <item name="colorPrimaryDark">@color/primaryDarkColor</item>
+        <!--</editor-fold>-->
+
+        <!--<editor-fold desc="Progressbar color">-->
+        <item name="colorSecondary">@color/secondaryColor</item>
+        <!--</editor-fold>-->
+
+        <!--<editor-fold desc="Material drawer colors">-->
         <item name="material_drawer_badge">@color/material_drawer_badge_dark</item>
         <item name="material_drawer_background">@color/material_drawer_background_dark</item>
         <item name="material_drawer_primary_text">@color/material_drawer_dark_primary_text</item>
         <item name="material_drawer_primary_icon">@color/material_drawer_dark_primary_icon</item>
-        <item name="material_drawer_header_selection_text">
-            @color/material_drawer_dark_primary_text
-        </item>
-        <item name="material_drawer_header_selection_subtext">
-            @color/material_drawer_dark_secondary_text
-        </item>
+        <item name="material_drawer_header_selection_text">@color/material_drawer_dark_primary_text</item>
+        <item name="material_drawer_header_selection_subtext">@color/material_drawer_dark_secondary_text</item>
         <item name="material_drawer_selected">@color/material_drawer_selected_dark</item>
+        <!--</editor-fold>-->
 
-        <item name="divider_color">@color/divider_color_dark</item>
-
-        <!-- Fast scrollbar styles -->
+        <!--<editor-fold desc="Fast scrollbar styles">-->
         <item name="fast_scroll_track">@drawable/fast_scroll_track_dark</item>
         <item name="fast_scroll_thumb">@drawable/fast_scroll_thumb_dark</item>
+        <!--</editor-fold>-->
 
-        <!-- Material dialog colors -->
-        <item name="md_color_title">@color/header_text_dark</item>
+        <!--<editor-fold desc="Material dialog colors">-->
+        <item name="md_color_title">@color/title_text_dark</item>
         <item name="md_color_content">@color/content_text_dark</item>
-        <item name="md_color_button_text">@color/header_text_dark</item>
+        <item name="md_color_button_text">@color/title_text_dark</item>
         <item name="md_corner_radius">@dimen/md_corner_radius</item>
+        <!--</editor-fold>-->
+
+        <!--<editor-fold desc="Misc">-->
+        <item name="divider_color">@color/divider_color_dark</item>
+        <item name="rounded_corners">@drawable/rounded_corners_dark</item>
+        <!--</editor-fold>-->
     </style>
 
     <!-- Styles that will be used for the light holo theme -->
-    <style name="CustomTheme.Light" parent="Theme.AppCompat.Light">
+    <style name="CustomTheme.Light" parent="Theme.MaterialComponents.Light">
+
         <item name="windowActionModeOverlay">true</item>
         <item name="android:actionModeBackground">@android:color/background_light</item>
         <item name="actionModeBackground">@android:color/background_light</item>
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
 
+        <!--<editor-fold desc="Icons">-->
         <item name="ic_menu_search">@drawable/ic_menu_search_light</item>
         <item name="ic_menu_save">@drawable/ic_menu_save_light</item>
         <item name="ic_menu_cancel">@drawable/ic_menu_cancel_light</item>
@@ -154,8 +175,7 @@
         <item name="ic_menu_tags">@drawable/ic_menu_tag_light</item>
         <item name="ic_menu_record_once">@drawable/ic_menu_record_light</item>
         <item name="ic_menu_record_once_and_edit">@drawable/ic_menu_record_and_edit_light</item>
-        <item name="ic_menu_record_once_custom_profile">@drawable/ic_menu_record_profile_light
-        </item>
+        <item name="ic_menu_record_once_custom_profile">@drawable/ic_menu_record_profile_light</item>
         <item name="ic_menu_record_series">@drawable/ic_menu_record_series_light</item>
         <item name="ic_menu_record_cancel">@drawable/ic_menu_cancel_light</item>
         <item name="ic_menu_record_remove">@drawable/ic_menu_delete_light</item>
@@ -174,10 +194,8 @@
         <item name="ic_item_not_active">@drawable/item_not_active_light</item>
         <item name="ic_menu_channels">@drawable/ic_menu_channels_light</item>
         <item name="ic_menu_program_guide">@drawable/ic_menu_program_guide_light</item>
-        <item name="ic_menu_completed_recordings">@drawable/ic_menu_completed_recordings_light
-        </item>
-        <item name="ic_menu_scheduled_recordings">@drawable/ic_menu_scheduled_recordings_light
-        </item>
+        <item name="ic_menu_completed_recordings">@drawable/ic_menu_completed_recordings_light</item>
+        <item name="ic_menu_scheduled_recordings">@drawable/ic_menu_scheduled_recordings_light</item>
         <item name="ic_menu_series_recordings">@drawable/ic_menu_scheduled_recordings_light</item>
         <item name="ic_menu_timer_recordings">@drawable/ic_menu_scheduled_recordings_light</item>
         <item name="ic_menu_failed_recordings">@drawable/ic_menu_failed_recordings_light</item>
@@ -185,51 +203,56 @@
         <item name="ic_menu_status">@drawable/ic_menu_status_light</item>
         <item name="ic_menu_information">@drawable/ic_menu_info_light</item>
         <item name="ic_menu_extras">@drawable/ic_menu_extras_light</item>
+        <item name="ic_arrow_drop_down_like_spinner">@drawable/ic_arrow_drop_down_like_spinner_light</item>
+        <!--</editor-fold>-->
 
-        <item name="ic_arrow_drop_down_like_spinner">
-            @drawable/ic_arrow_drop_down_like_spinner_light
-        </item>
-
+        <!--<editor-fold desc="Fonts">-->
         <item name="TitleFont">@style/TitleFont.Light</item>
         <item name="SubtitleFont">@style/SubtitleFont.Light</item>
         <item name="ContentFont">@style/ContentFont.Light</item>
         <item name="ProgramGuideTitleFont">@style/ProgramGuideTitleFont.Light</item>
         <item name="ProgramGuideContentFont">@style/ProgramGuideContentFont.Light</item>
+        <!--</editor-fold>-->
 
-        <item name="rounded_corners">@drawable/rounded_corners_light</item>
-
-        <!-- Material Components light mode main colors -->
+        <!--<editor-fold desc="Toolbar color">-->
         <item name="colorPrimary">@color/primaryColor</item>
-        <item name="colorPrimaryVariant">@color/primaryLightColor</item>
-        <item name="colorPrimaryDark">@color/primaryDarkColor</item>
-        <item name="colorSecondary">@color/secondaryColor</item>
-        <item name="colorSecondaryVariant">@color/secondaryLightColor</item>
+        <!--</editor-fold>-->
 
-        <!-- MaterialDrawer specific values -->
+        <!--<editor-fold desc="Status bar color">-->
+        <item name="colorPrimaryDark">@color/primaryDarkColor</item>
+        <!--</editor-fold>-->
+
+        <!--<editor-fold desc="Progressbar color">-->
+        <item name="colorSecondary">@color/secondaryColor</item>
+        <!--</editor-fold>-->
+
+        <!--<editor-fold desc="Material drawer colors">-->
         <item name="material_drawer_badge">@color/material_drawer_badge_light</item>
         <item name="material_drawer_background">@color/material_drawer_background_light</item>
-        <item name="material_drawer_header_selection_text">
-            @color/material_drawer_dark_primary_text
-        </item>
-        <item name="material_drawer_header_selection_subtext">
-            @color/material_drawer_dark_secondary_text
-        </item>
+        <item name="material_drawer_header_selection_text">@color/material_drawer_dark_primary_text</item>
+        <item name="material_drawer_header_selection_subtext">@color/material_drawer_dark_secondary_text</item>
         <item name="material_drawer_selected">@color/material_drawer_selected_light</item>
+        <!--</editor-fold>-->
 
-        <item name="divider_color">@color/divider_color_light</item>
-
-        <!-- Fast scrollbar styles -->
+        <!--<editor-fold desc="Fast scrollbar styles">-->
         <item name="fast_scroll_track">@drawable/fast_scroll_track_light</item>
         <item name="fast_scroll_thumb">@drawable/fast_scroll_thumb_light</item>
+        <!--</editor-fold>-->
 
-        <!-- Material dialog colors -->
-        <item name="md_color_title">@color/header_text_light</item>
+        <!--<editor-fold desc="Material dialog colors">-->
+        <item name="md_color_title">@color/title_text_light</item>
         <item name="md_color_content">@color/content_text_light</item>
-        <item name="md_color_button_text">@color/header_text_light</item>
+        <item name="md_color_button_text">@color/title_text_light</item>
         <item name="md_corner_radius">@dimen/md_corner_radius</item>
+        <!--</editor-fold>-->
+
+        <!--<editor-fold desc="Misc">-->
+        <item name="rounded_corners">@drawable/rounded_corners_light</item>
+        <item name="divider_color">@color/divider_color_light</item>
+        <!--</editor-fold>-->
     </style>
 
-    <style name="SplashTheme" parent="Theme.AppCompat.NoActionBar">
+    <style name="SplashTheme" parent="Theme.MaterialComponents.NoActionBar">
         <item name="android:windowBackground">@drawable/background_splash</item>
     </style>
 

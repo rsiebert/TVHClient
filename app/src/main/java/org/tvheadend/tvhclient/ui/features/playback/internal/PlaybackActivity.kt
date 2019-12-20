@@ -24,7 +24,6 @@ import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.list.listItemsSingleChoice
 import com.google.android.exoplayer2.C
 import com.google.android.exoplayer2.Player
-import com.google.android.exoplayer2.ui.PlayerControlView
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.exo_player_control_view.*
@@ -40,7 +39,7 @@ import org.tvheadend.tvhclient.util.getIconUrl
 import org.tvheadend.tvhclient.util.getThemeId
 import timber.log.Timber
 
-class PlaybackActivity : AppCompatActivity(), PlayerControlView.VisibilityListener {
+class PlaybackActivity : AppCompatActivity() {
 
     private var timeshiftSupported: Boolean = false
     private lateinit var viewModel: PlayerViewModel
@@ -225,11 +224,9 @@ class PlaybackActivity : AppCompatActivity(), PlayerControlView.VisibilityListen
             next_program_title?.visibleOrGone(nextTitle.isNotEmpty())
         })
         viewModel.elapsedTime.observe(this, Observer { elapsedTime ->
-            Timber.d("Received elapsed time $elapsedTime")
             elapsed_time?.text = elapsedTime
         })
         viewModel.remainingTime.observe(this, Observer { remainingTime ->
-            Timber.d("Received remaining time $remainingTime")
             remaining_time?.text = remainingTime
         })
     }
@@ -440,12 +437,12 @@ class PlaybackActivity : AppCompatActivity(), PlayerControlView.VisibilityListen
         viewModel.playNextChannel()
     }
 
-    override fun onVisibilityChange(visibility: Int) {
-        Timber.d("Visibility changed to $visibility")
-        if (visibility != View.VISIBLE) {
+    override fun onWindowFocusChanged(hasFocus: Boolean) {
+        super.onWindowFocusChanged(hasFocus)
+        Timber.d("Window focus changed to $hasFocus")
+        if (hasFocus) {
             if (Build.VERSION.SDK_INT >= 19) {
-                val decorView = window.decorView
-                decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_IMMERSIVE
+                window.decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
                         // Set the content to appear under the system bars so that the
                         // content doesn't resize when the system bars hide and show.
                         or View.SYSTEM_UI_FLAG_LAYOUT_STABLE

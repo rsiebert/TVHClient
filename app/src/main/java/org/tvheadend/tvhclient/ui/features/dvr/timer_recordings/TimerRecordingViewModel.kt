@@ -3,20 +3,25 @@ package org.tvheadend.tvhclient.ui.features.dvr.timer_recordings
 import android.app.Application
 import android.content.Intent
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MediatorLiveData
+import androidx.lifecycle.MutableLiveData
+import org.tvheadend.data.entity.Channel
+import org.tvheadend.data.entity.ServerProfile
+import org.tvheadend.data.entity.TimerRecording
 import org.tvheadend.tvhclient.R
-import org.tvheadend.tvhclient.data.service.HtspService
-import org.tvheadend.tvhclient.domain.entity.Channel
-import org.tvheadend.tvhclient.domain.entity.ServerProfile
-import org.tvheadend.tvhclient.domain.entity.TimerRecording
+import org.tvheadend.tvhclient.service.HtspService
 import org.tvheadend.tvhclient.ui.base.BaseViewModel
 import timber.log.Timber
 import java.util.*
 
 class TimerRecordingViewModel(application: Application) : BaseViewModel(application) {
 
+    var selectedListPosition = 0
+    val currentId = MutableLiveData("")
     var recording = TimerRecording()
+    var recordingLiveData = MediatorLiveData<TimerRecording>()
     val recordings: LiveData<List<TimerRecording>> = appRepository.timerRecordingData.getLiveDataItems()
-    var recordingProfileNameId: Int = 0
+    var recordingProfileNameId = 0
 
     /**
      * Returns an intent with the recording data
@@ -54,8 +59,12 @@ class TimerRecordingViewModel(application: Application) : BaseViewModel(applicat
             }
         }
 
-    fun getRecordingById(id: String): LiveData<TimerRecording> {
-        return appRepository.timerRecordingData.getLiveDataItemById(id)
+    init {
+        recordingLiveData.addSource(currentId) { value ->
+            if (value.isNotEmpty()) {
+                recordingLiveData.value = appRepository.timerRecordingData.getItemById(value)
+            }
+        }
     }
 
     fun loadRecordingByIdSync(id: String) {

@@ -3,11 +3,12 @@ package org.tvheadend.tvhclient.di.module
 import android.content.Context
 import dagger.Module
 import dagger.Provides
-import org.tvheadend.tvhclient.data.db.AppRoomDatabase
-import org.tvheadend.tvhclient.data.repository.AppRepository
-import org.tvheadend.tvhclient.domain.repository.data_source.*
+import org.tvheadend.data.db.AppRoomDatabase
+import org.tvheadend.data.source.*
+import org.tvheadend.tvhclient.repository.AppRepository
 import javax.inject.Singleton
 
+@Suppress("unused")
 @Module
 class RepositoryModule {
 
@@ -21,18 +22,18 @@ class RepositoryModule {
     @Provides
     internal fun providesAppRepository(db: AppRoomDatabase): AppRepository {
         return AppRepository(
-                ChannelData(db),
-                ProgramData(db),
-                RecordingData(db),
-                SeriesRecordingData(db),
-                TimerRecordingData(db),
-                ConnectionData(db),
-                ChannelTagData(db),
-                ServerStatusData(db),
-                ServerProfileData(db),
-                TagAndChannelData(db),
-                MiscData(db),
-                SubscriptionData(db),
-                InputData(db))
+                ChannelDataSource(db),
+                ProgramDataSource(db),
+                RecordingDataSource(db),
+                SeriesRecordingDataSource(db),
+                TimerRecordingDataSource(db),
+                ConnectionDataSource(db),
+                ChannelTagDataSource(db),
+                ServerStatusDataSource(db),
+                ServerProfileDataSource(db),
+                TagAndChannelDataSource(db),
+                MiscDataSource(db),
+                SubscriptionDataSource(db),
+                InputDataSource(db))
     }
 }

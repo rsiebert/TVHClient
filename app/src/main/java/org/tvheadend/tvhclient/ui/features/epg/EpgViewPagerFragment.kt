@@ -2,7 +2,6 @@ package org.tvheadend.tvhclient.ui.features.epg
 
 import android.os.Bundle
 import android.os.Handler
-import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -25,17 +24,25 @@ import java.util.*
 class EpgViewPagerFragment : Fragment(), EpgScrollInterface {
 
     private lateinit var epgViewModel: EpgViewModel
-    private lateinit var recyclerViewAdapter: EpgViewPagerRecyclerViewAdapterHost
-    private var showTimeIndication: Boolean = false
+    private lateinit var recyclerViewAdapter: EpgVerticalRecyclerViewAdapter
 
-    private lateinit var updateViewHandler: Handler
-    private lateinit var updateViewTask: Runnable
-    private lateinit var updateTimeIndicationHandler: Handler
-    private lateinit var updateTimeIndicationTask: Runnable
+    /**
+     * Defines if the current time indication (vertical line) shall be shown.
+     * The indication shall only be shown for the first fragment.
+     */
+    private val showTimeIndication: Boolean
+        get() {
+            return fragmentId == 0
+        }
+
+    private var updateViewHandler = Handler()
+    private var updateViewTask: Runnable? = null
+    private var updateTimeIndicationHandler = Handler()
+    private var updateTimeIndicationTask: Runnable? = null
     private lateinit var constraintSet: ConstraintSet
     private lateinit var itemBinding: EpgViewpagerFragmentBinding
     private var recyclerViewLinearLayoutManager: LinearLayoutManager? = null
-    private var enableScrolling: Boolean = false
+    private var enableScrolling = false
     private var fragmentId = 0
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -46,13 +53,18 @@ class EpgViewPagerFragment : Fragment(), EpgScrollInterface {
     override fun onDestroy() {
         super.onDestroy()
         if (showTimeIndication) {
-            updateViewHandler.removeCallbacks(updateViewTask)
-            updateTimeIndicationHandler.removeCallbacks(updateTimeIndicationTask)
+            updateViewTask?.let {
+                updateViewHandler.removeCallbacks(it)
+            }
+            updateTimeIndicationTask?.let {
+                updateTimeIndicationHandler.removeCallbacks(it)
+            }
         }
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+        Timber.d("Initializing")
         epgViewModel = ViewModelProviders.of(activity as AppCompatActivity).get(EpgViewModel::class.java)
 
         // Required to show the vertical current time indication
@@ -61,20 +73,11 @@ class EpgViewPagerFragment : Fragment(), EpgScrollInterface {
 
         // Get the id that defines the position of the fragment in the viewpager
         fragmentId = arguments?.getInt("fragmentId") ?: 0
-        showTimeIndication = fragmentId == 0
 
         itemBinding.startTime = epgViewModel.getStartTime(fragmentId)
         itemBinding.endTime = epgViewModel.getEndTime(fragmentId)
 
-        // Calculates the available display width of one minute in pixels. This depends
-        // how wide the screen is and how many hours shall be shown in one screen.
-        val displayMetrics = DisplayMetrics()
-        requireActivity().windowManager.defaultDisplay.getMetrics(displayMetrics)
-        val displayWidth = displayMetrics.widthPixels
-
-        epgViewModel.calcPixelsPerMinute(displayWidth)
-
-        recyclerViewAdapter = EpgViewPagerRecyclerViewAdapterHost(requireActivity(), epgViewModel, fragmentId)
+        recyclerViewAdapter = EpgVerticalRecyclerViewAdapter(requireActivity(), epgViewModel, fragmentId)
         recyclerViewLinearLayoutManager = LinearLayoutManager(activity, RecyclerView.VERTICAL, false)
         viewpager_recycler_view.layoutManager = recyclerViewLinearLayoutManager
         viewpager_recycler_view.setHasFixedSize(true)
@@ -111,14 +114,16 @@ class EpgViewPagerFragment : Fragment(), EpgScrollInterface {
                 }
             }
         })
-        activity?.let {
-            val viewModel = ViewModelProviders.of(it).get(EpgViewModel::class.java)
-            viewModel.epgChannels.observe(viewLifecycleOwner, Observer { channels ->
-                if (channels != null) {
-                    recyclerViewAdapter.addItems(channels)
-                }
-            })
-        }
+
+        // In case the channels and hours and days to show have changed invalidate
+        // the adapter so that the UI can be updated with the new data
+        Timber.d("Observing trigger to reload epg data")
+        epgViewModel.viewAndEpgDataIsInvalid.observe(viewLifecycleOwner, Observer { reload ->
+            Timber.d("Trigger to reload epg data has changed to $reload")
+            if (reload) {
+                recyclerViewAdapter.loadProgramData()
+            }
+        })
 
         current_time?.visibleOrGone(showTimeIndication)
 
@@ -126,7 +131,6 @@ class EpgViewPagerFragment : Fragment(), EpgScrollInterface {
             // Create the handler and the timer task that will update the
             // entire view every 30 minutes if the first screen is visible.
             // This prevents the time indication from moving to far to the right
-            updateViewHandler = Handler()
             updateViewTask = object : Runnable {
                 override fun run() {
                     recyclerViewAdapter.notifyDataSetChanged()
@@ -135,16 +139,22 @@ class EpgViewPagerFragment : Fragment(), EpgScrollInterface {
             }
             // Create the handler and the timer task that will update the current
             // time indication every minute.
-            updateTimeIndicationHandler = Handler()
             updateTimeIndicationTask = object : Runnable {
                 override fun run() {
                     setCurrentTimeIndication()
                     updateTimeIndicationHandler.postDelayed(this, 60000)
                 }
             }
-            updateViewHandler.postDelayed(updateViewTask, 60000)
-            updateTimeIndicationHandler.post(updateTimeIndicationTask)
+            updateViewTask?.let {
+                updateViewHandler.postDelayed(it, 60000)
+            }
+            updateTimeIndicationTask?.let {
+                updateTimeIndicationHandler.post(it)
+            }
         }
+
+        // The program data needs to be loaded when the fragment is created
+        recyclerViewAdapter.loadProgramData()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {

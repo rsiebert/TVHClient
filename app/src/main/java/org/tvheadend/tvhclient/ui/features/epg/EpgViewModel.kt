@@ -2,23 +2,27 @@ package org.tvheadend.tvhclient.ui.features.epg
 
 import android.app.Application
 import android.content.SharedPreferences
+import android.util.SparseArray
 import androidx.core.util.Pair
-import androidx.lifecycle.*
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MediatorLiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Transformations
+import org.tvheadend.data.entity.EpgChannel
+import org.tvheadend.data.entity.EpgProgram
 import org.tvheadend.tvhclient.R
-import org.tvheadend.tvhclient.domain.entity.EpgChannel
-import org.tvheadend.tvhclient.domain.entity.EpgProgram
-import org.tvheadend.tvhclient.domain.entity.Recording
 import org.tvheadend.tvhclient.ui.features.channels.BaseChannelViewModel
+import org.tvheadend.tvhclient.util.livedata.LiveEvent
 import timber.log.Timber
 import java.util.*
 
 class EpgViewModel(application: Application) : BaseChannelViewModel(application), SharedPreferences.OnSharedPreferenceChangeListener {
 
+    val registeredEpgFragments = SparseArray<Fragment>()
     val epgChannels: LiveData<List<EpgChannel>>
-    var reloadEpgData: LiveData<Boolean> = MutableLiveData()
+    private val viewAndEpgDataIsInvalidLiveEvent = LiveEvent<Boolean>()
+    val viewAndEpgDataIsInvalid: MediatorLiveData<Boolean> = viewAndEpgDataIsInvalidLiveEvent
     var epgData = MutableLiveData<HashMap<Int, List<EpgProgram>>>()
 
     private val channelSortOrder = MutableLiveData<Int>()
@@ -29,15 +33,48 @@ class EpgViewModel(application: Application) : BaseChannelViewModel(application)
     private var hoursOfEpgDataPerScreen = MutableLiveData<Int>()
     private var daysOfEpgData = MutableLiveData<Int>()
 
+    /**
+     * Whenever the display width is set, update the pixels per minute variable
+     * to have an up to date value. The calculation must be done in the view model
+     * because the required hours and days values are stored here.
+     */
+    var displayWidth: Int = 0
+        set(width) {
+            field = width
+            updatePixelsPerMinute()
+        }
+    /**
+     * Defines how wide in terms of pixels a minute is in the epg view.
+     * This is required to calculate the correct width of the shown programs
+     */
     var pixelsPerMinute: Float = 0f
+
     var verticalScrollOffset = 0
     var verticalScrollPosition = 0
     var selectedTimeOffset = 0
-    var searchQuery = ""
 
-    var hoursToShow: Int
-    val daysToShow: Int
-    val fragmentCount: Int
+    /**
+     * The number of hours of program data that shall be shown in the view pager screen.
+     * The getter is overridden just in case to prevent returning the invalid value zero
+     */
+    var hoursToShow = 1
+        get() {
+            return if (field == 0) 1 else field
+        }
+
+    /**
+     * Defines how many days of program data shall be shown in total
+     * The getter is overridden just in case to prevent returning the invalid value zero
+     */
+    var daysToShow = 1
+        get() {
+            return if (field == 0) 1 else field
+        }
+
+    /**
+     * The number of screens that the view pager contains
+     */
+    var viewPagerFragmentCount = MutableLiveData(0)
 
     private val startTimes = ArrayList<Long>()
     private val endTimes = ArrayList<Long>()
@@ -48,14 +85,8 @@ class EpgViewModel(application: Application) : BaseChannelViewModel(application)
         daysToShow = Integer.parseInt(sharedPreferences.getString("days_of_epg_data", appContext.resources.getString(R.string.pref_default_days_of_epg_data))!!)
         hoursToShow = Integer.parseInt(sharedPreferences.getString("hours_of_epg_data_per_screen", appContext.resources.getString(R.string.pref_default_hours_of_epg_data_per_screen))!!)
 
-        // The defined value should not be zero due to checking the value
-        // in the settings. Check it anyway to prevent a divide by zero.
-        hoursToShow = if (hoursToShow == 0) 1 else hoursToShow
-
-        // Calculates the number of fragments in the view pager. This depends on how many days
-        // shall be shown of the program guide and how many hours shall be visible per fragment.
-        fragmentCount = daysToShow * (24 / hoursToShow)
-        calculateViewPagerFragmentStartAndEndTimes()
+        daysOfEpgData.value = daysToShow
+        hoursOfEpgDataPerScreen.value = hoursToShow
 
         epgChannels = Transformations.switchMap(EpgChannelLiveData(channelSortOrder, selectedChannelTagIds)) { value ->
             val sortOrder = value.first
@@ -73,11 +104,39 @@ class EpgViewModel(application: Application) : BaseChannelViewModel(application)
             return@switchMap appRepository.channelData.getAllEpgChannels(sortOrder, tagIds)
         }
 
-        reloadEpgData = Transformations.switchMap(EpgProgramDataLiveData(epgChannels, hoursOfEpgDataPerScreen, daysOfEpgData)) { value ->
-            val reload = MutableLiveData<Boolean>()
-            reload.value = value.first != null && value.second != null && value.third != null
-            return@switchMap reload
+        // In case the live data hours to show has changed due to a shared preference change
+        // the properties that depend on that value need to be updated
+        viewAndEpgDataIsInvalid.addSource(hoursOfEpgDataPerScreen) { hours ->
+            Timber.d("Hours to show have changed from $hoursToShow to $hours")
+            if (hours != hoursToShow) {
+                hoursToShow = hours
+                updateViewProperties()
+                viewAndEpgDataIsInvalidLiveEvent.value = true
+            }
         }
+
+        // In case the live data days to show has changed due to a shared preference change
+        // the properties that depend on that value need to be updated.
+        viewAndEpgDataIsInvalid.addSource(daysOfEpgData) { days ->
+            Timber.d("Days to show have changed from $daysToShow to $days")
+            if (days != daysToShow) {
+                daysToShow = days
+                updateViewProperties()
+                viewAndEpgDataIsInvalidLiveEvent.value = true
+            }
+        }
+
+        // In case the loaded channels have changed (order or amount) update the cache.
+        viewAndEpgDataIsInvalid.addSource(epgChannels) { channels ->
+            if (channels != null) {
+                Timber.d("Channels count has changed to ${channels.size}")
+                viewAndEpgDataIsInvalidLiveEvent.value = true
+            }
+        }
+
+        // For the first time initialize the required
+        // view properties and create an empty cache
+        updateViewProperties()
 
         onSharedPreferenceChanged(sharedPreferences, "channel_sort_order")
         onSharedPreferenceChanged(sharedPreferences, "channel_number_enabled")
@@ -85,29 +144,64 @@ class EpgViewModel(application: Application) : BaseChannelViewModel(application)
         onSharedPreferenceChanged(sharedPreferences, "genre_colors_for_program_guide_enabled")
         onSharedPreferenceChanged(sharedPreferences, "hours_of_epg_data_per_screen")
         onSharedPreferenceChanged(sharedPreferences, "days_of_epg_data")
+        onSharedPreferenceChanged(sharedPreferences, "empty_channel_tags_enabled")
 
         sharedPreferences.registerOnSharedPreferenceChangeListener(this)
     }
 
-    fun loadEpgData() {
-        Timber.d("Loading epg data via coroutine")
-        viewModelScope.launch {
-            val defaultChannelSortOrder = appContext.resources.getString(R.string.pref_default_channel_sort_order)
-            val order = Integer.valueOf(sharedPreferences.getString("channel_sort_order", defaultChannelSortOrder) ?: defaultChannelSortOrder)
-            var hours = hoursOfEpgDataPerScreen.value!!
-            hours = if (hours == 0) 1 else hours
-            val days = daysOfEpgData.value!!
-
-            Timber.d("Loading epg data from database with channel order $order, $hours hours per screen and for $days days")
-            withContext(Dispatchers.IO) {
-                epgData.postValue(loadProgramsBetweenTime(order, hours, days))
-            }
-        }
-        Timber.d("Done loading epg data via coroutine")
+    private fun updateViewProperties() {
+        Timber.d("Updating view pager related properties")
+        updateViewPagerFragmentCount()
+        updateStartAndEndTimes()
+        updatePixelsPerMinute()
     }
 
-    private suspend fun loadProgramsBetweenTime(order: Int, hours: Int, days: Int) = withContext(Dispatchers.IO) {
-        appRepository.programData.getEpgItemsBetweenTime(order, hours, days)
+    /**
+     * Defines how many items the view pager shall contain.
+     */
+    private fun updateViewPagerFragmentCount() {
+        val fragmentCount = daysToShow * (24 / hoursToShow)
+        Timber.d("View pager fragment count has changed to $fragmentCount")
+        viewPagerFragmentCount.value = fragmentCount
+    }
+
+    /**
+     * Calculates the start and end times that will be show in each view pager screen.
+     * This is done here once to avoid recalculating it every time when scrolling horizontally.
+     */
+    private fun updateStartAndEndTimes() {
+        Timber.d("Updating start and end time arrays")
+        startTimes.clear()
+        endTimes.clear()
+
+        // Get the current time in milliseconds without the seconds but in 30 minute slots.
+        // If the current time is later then 16:30 start from 16:30 otherwise from 16:00.
+        val minutes = if (Calendar.getInstance().get(Calendar.MINUTE) > 30) 30 else 0
+        val calendar = Calendar.getInstance()
+        calendar.set(Calendar.MINUTE, minutes)
+        calendar.set(Calendar.SECOND, 0)
+        var startTime = calendar.timeInMillis
+
+        // Get the offset time in milliseconds without the minutes and seconds
+        val offsetTime = (hoursToShow * 60 * 60 * 1000).toLong()
+
+        // Set the start and end times for each page in the view pager
+        val pageCount = viewPagerFragmentCount.value ?: 0
+        for (i in 0 until pageCount) {
+            startTimes.add(startTime)
+            endTimes.add(startTime + offsetTime - 1)
+            startTime += offsetTime
+        }
+    }
+
+    /**
+     * Defines how many pixels one minute represents on the current screen.
+     * This needs to be updated when the hours to show shared preference has changed
+     */
+    private fun updatePixelsPerMinute() {
+        val channelWidth = 221
+        pixelsPerMinute = (displayWidth - channelWidth).toFloat() / (60.0f * hoursToShow.toFloat())
+        Timber.d("Updated pixels per minute to $pixelsPerMinute")
     }
 
     override fun onCleared() {
@@ -126,32 +220,12 @@ class EpgViewModel(application: Application) : BaseChannelViewModel(application)
             "genre_colors_for_program_guide_enabled" -> showGenreColor.value = sharedPreferences.getBoolean(key, appContext.resources.getBoolean(R.bool.pref_default_genre_colors_for_program_guide_enabled))
             "hours_of_epg_data_per_screen" -> hoursOfEpgDataPerScreen.value = Integer.parseInt(sharedPreferences.getString(key, appContext.resources.getString(R.string.pref_default_hours_of_epg_data_per_screen))!!)
             "days_of_epg_data" -> daysOfEpgData.value = Integer.parseInt(sharedPreferences.getString(key, appContext.resources.getString(R.string.pref_default_days_of_epg_data))!!)
+            "empty_channel_tags_enabled" -> showAllChannelTags.value = sharedPreferences.getBoolean(key, appContext.resources.getBoolean(R.bool.pref_default_empty_channel_tags_enabled))
         }
-    }
-
-    fun getRecordingsByChannel(channelId: Int): LiveData<List<Recording>> {
-        return appRepository.recordingData.getLiveDataItemsByChannelId(channelId)
     }
 
     fun getProgramsByChannelAndBetweenTimeSync(channelId: Int, fragmentId: Int): List<EpgProgram> {
         return appRepository.programData.getItemByChannelIdAndBetweenTime(channelId, startTimes[fragmentId], endTimes[fragmentId])
-    }
-
-    internal inner class EpgProgramDataLiveData(channelList: LiveData<List<EpgChannel>>,
-                                                hoursOfEpgDataPerScreen: LiveData<Int>,
-                                                daysOfEpgData: LiveData<Int>) : MediatorLiveData<Triple<List<EpgChannel>?, Int?, Int?>>() {
-
-        init {
-            addSource(channelList) { channels ->
-                value = Triple(channels, hoursOfEpgDataPerScreen.value, daysOfEpgData.value)
-            }
-            addSource(hoursOfEpgDataPerScreen) { hours ->
-                value = Triple(channelList.value, hours, daysOfEpgData.value)
-            }
-            addSource(daysOfEpgData) { days ->
-                value = Triple(channelList.value, hoursOfEpgDataPerScreen.value, days)
-            }
-        }
     }
 
     internal inner class EpgChannelLiveData(selectedChannelSortOrder: LiveData<Int>,
@@ -165,42 +239,6 @@ class EpgViewModel(application: Application) : BaseChannelViewModel(application)
                 value = Pair.create(selectedChannelSortOrder.value, integers)
             }
         }
-    }
-
-    /**
-     * Calculates the day, start and end hours that are valid for the fragment
-     * at the given position. This will be saved in the lists to avoid
-     * calculating this for every fragment again and so we can update the data
-     * when the settings have changed.
-     */
-    private fun calculateViewPagerFragmentStartAndEndTimes() {
-        // Clear the old arrays and initialize
-        // the variables to start fresh
-        startTimes.clear()
-        endTimes.clear()
-
-        // Get the current time in milliseconds without the seconds but in 30
-        // minute slots. If the current time is later then 16:30 start from
-        // 16:30 otherwise from 16:00.
-        val minutes = if (Calendar.getInstance().get(Calendar.MINUTE) > 30) 30 else 0
-        val calendarStartTime = Calendar.getInstance()
-        calendarStartTime.set(Calendar.MINUTE, minutes)
-        calendarStartTime.set(Calendar.SECOND, 0)
-        var startTime = calendarStartTime.timeInMillis
-
-        // Get the offset time in milliseconds without the minutes and seconds
-        val offsetTime = (hoursToShow * 60 * 60 * 1000).toLong()
-
-        // Set the start and end times for each fragment
-        for (i in 0 until fragmentCount) {
-            startTimes.add(startTime)
-            endTimes.add(startTime + offsetTime - 1)
-            startTime += offsetTime
-        }
-    }
-
-    fun calcPixelsPerMinute(displayWidth: Int) {
-        pixelsPerMinute = (displayWidth - 221).toFloat() / (60.0f * hoursToShow.toFloat())
     }
 
     fun getStartTime(fragmentId: Int): Long {

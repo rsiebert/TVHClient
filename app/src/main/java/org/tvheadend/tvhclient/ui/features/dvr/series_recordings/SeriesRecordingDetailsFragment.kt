@@ -7,23 +7,19 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import kotlinx.android.synthetic.main.details_fragment_header.*
 import kotlinx.android.synthetic.main.series_recording_details_fragment.*
+import org.tvheadend.data.entity.SeriesRecording
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.databinding.SeriesRecordingDetailsFragmentBinding
-import org.tvheadend.tvhclient.domain.entity.SeriesRecording
 import org.tvheadend.tvhclient.ui.base.BaseFragment
 import org.tvheadend.tvhclient.ui.common.*
+import org.tvheadend.tvhclient.ui.common.interfaces.RecordingRemovedInterface
 import org.tvheadend.tvhclient.util.extensions.gone
 import org.tvheadend.tvhclient.util.extensions.visible
-import org.tvheadend.tvhclient.ui.features.dvr.RecordingRemovedCallback
 
-// TODO put recording into the viewmodel
-// TODO put shownId into the viewmodel
-
-class SeriesRecordingDetailsFragment : BaseFragment(), RecordingRemovedCallback {
+class SeriesRecordingDetailsFragment : BaseFragment(), RecordingRemovedInterface {
 
     private lateinit var seriesRecordingViewModel: SeriesRecordingViewModel
     private var recording: SeriesRecording? = null
-    var shownId: String = ""
     private lateinit var itemBinding: SeriesRecordingDetailsFragmentBinding
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -40,26 +36,30 @@ class SeriesRecordingDetailsFragment : BaseFragment(), RecordingRemovedCallback 
             toolbarInterface.setSubtitle("")
         }
 
-        // Get the recording id after an orientation change has occurred
-        // or when the fragment is shown for the first time
-        shownId = savedInstanceState?.getString("id", "") ?: (arguments?.getString("id", "") ?: "")
+        arguments?.let {
+            seriesRecordingViewModel.currentId.value = it.getString("id", "")
+        }
 
-        seriesRecordingViewModel.getRecordingById(shownId).observe(viewLifecycleOwner, Observer { rec ->
-            if (rec != null) {
-                recording = rec
-                itemBinding.recording = recording
-                itemBinding.htspVersion = htspVersion
-                itemBinding.isDualPane = isDualPane
-                // The toolbar is hidden as a default to prevent pressing any icons if no recording
-                // has been loaded yet. The toolbar is shown here because a recording was loaded
-                nested_toolbar.visible()
-                activity?.invalidateOptionsMenu()
-            } else {
-                scrollview.gone()
-                status.text = getString(R.string.error_loading_recording_details)
-                status.visible()
-            }
+        seriesRecordingViewModel.recordingLiveData.observe(viewLifecycleOwner, Observer {
+            recording = it
+            showRecordingDetails()
         })
+    }
+
+    private fun showRecordingDetails() {
+        if (recording != null) {
+            itemBinding.recording = recording
+            itemBinding.htspVersion = htspVersion
+            itemBinding.isDualPane = isDualPane
+            // The toolbar is hidden as a default to prevent pressing any icons if no recording
+            // has been loaded yet. The toolbar is shown here because a recording was loaded
+            nested_toolbar.visible()
+            activity?.invalidateOptionsMenu()
+        } else {
+            scrollview.gone()
+            status.text = getString(R.string.error_loading_recording_details)
+            status.visible()
+        }
     }
 
     override fun onPrepareOptionsMenu(menu: Menu) {
@@ -68,11 +68,6 @@ class SeriesRecordingDetailsFragment : BaseFragment(), RecordingRemovedCallback 
 
         nested_toolbar.menu.findItem(R.id.menu_edit_recording)?.isVisible = true
         nested_toolbar.menu.findItem(R.id.menu_remove_recording)?.isVisible = true
-    }
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        outState.putString("id", shownId)
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -94,7 +89,7 @@ class SeriesRecordingDetailsFragment : BaseFragment(), RecordingRemovedCallback 
             R.id.menu_search_fileaffinity -> return searchTitleOnFileAffinityWebsite(ctx, recording.title)
             R.id.menu_search_youtube -> return searchTitleOnYoutube(ctx, recording.title)
             R.id.menu_search_google -> return searchTitleOnGoogle(ctx, recording.title)
-            R.id.menu_search_epg -> return searchTitleInTheLocalDatabase(ctx, recording.title)
+            R.id.menu_search_epg -> return searchTitleInTheLocalDatabase(activity!!, baseViewModel, recording.title)
             else -> super.onOptionsItemSelected(item)
         }
     }

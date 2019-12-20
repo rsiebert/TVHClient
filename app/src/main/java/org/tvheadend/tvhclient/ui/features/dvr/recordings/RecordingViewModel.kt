@@ -7,23 +7,26 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations.switchMap
+import org.tvheadend.data.entity.Channel
+import org.tvheadend.data.entity.Recording
+import org.tvheadend.data.entity.ServerProfile
 import org.tvheadend.tvhclient.R
-import org.tvheadend.tvhclient.data.service.HtspService
-import org.tvheadend.tvhclient.domain.entity.Channel
-import org.tvheadend.tvhclient.domain.entity.Recording
-import org.tvheadend.tvhclient.domain.entity.ServerProfile
+import org.tvheadend.tvhclient.service.HtspService
 import org.tvheadend.tvhclient.ui.base.BaseViewModel
 import timber.log.Timber
 
 class RecordingViewModel(application: Application) : BaseViewModel(application), SharedPreferences.OnSharedPreferenceChangeListener {
 
+    var selectedListPosition = 0
+    val currentId = MutableLiveData(0)
     val completedRecordings: LiveData<List<Recording>>
     val scheduledRecordings: LiveData<List<Recording>>
     val failedRecordings: LiveData<List<Recording>>
     val removedRecordings: LiveData<List<Recording>>
 
+    var recordingLiveData = MediatorLiveData<Recording>()
     var recording = Recording()
-    var recordingProfileNameId: Int = 0
+    var recordingProfileNameId = 0
 
     private var hideDuplicateScheduledRecordings: MutableLiveData<Boolean> = MutableLiveData()
 
@@ -48,6 +51,12 @@ class RecordingViewModel(application: Application) : BaseViewModel(application),
 
     init {
         onSharedPreferenceChanged(sharedPreferences, "hide_duplicate_scheduled_recordings_enabled")
+
+        recordingLiveData.addSource(currentId) { value ->
+            if (value > 0) {
+                recordingLiveData.value = appRepository.recordingData.getItemById(value)
+            }
+        }
 
         val trigger = ScheduledRecordingLiveData(hideDuplicateScheduledRecordings)
         scheduledRecordings = switchMap(trigger) { value ->
@@ -81,10 +90,6 @@ class RecordingViewModel(application: Application) : BaseViewModel(application),
                 hideDuplicateScheduledRecordings.value = sharedPreferences.getBoolean(key, appContext.resources.getBoolean(R.bool.pref_default_hide_duplicate_scheduled_recordings_enabled))
             }
         }
-    }
-
-    fun getRecordingById(id: Int): LiveData<Recording>? {
-        return appRepository.recordingData.getLiveDataItemById(id)
     }
 
     fun loadRecordingByIdSync(id: Int) {

@@ -1,31 +1,31 @@
 package org.tvheadend.tvhclient.ui.features.dvr.series_recordings
 
-import android.app.SearchManager
 import android.os.Bundle
 import android.view.*
 import android.widget.Filter
 import androidx.appcompat.widget.PopupMenu
 import androidx.fragment.app.FragmentTransaction
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.recyclerview_fragment.*
+import org.tvheadend.data.entity.SeriesRecording
 import org.tvheadend.tvhclient.R
-import org.tvheadend.tvhclient.domain.entity.SeriesRecording
 import org.tvheadend.tvhclient.ui.base.BaseFragment
 import org.tvheadend.tvhclient.ui.common.*
-import org.tvheadend.tvhclient.ui.common.callbacks.RecyclerViewClickCallback
-import org.tvheadend.tvhclient.ui.features.search.SearchRequestInterface
+import org.tvheadend.tvhclient.ui.common.interfaces.RecyclerViewClickInterface
+import org.tvheadend.tvhclient.ui.common.interfaces.SearchRequestInterface
 import org.tvheadend.tvhclient.util.extensions.gone
 import org.tvheadend.tvhclient.util.extensions.visible
+import org.tvheadend.tvhclient.util.extensions.visibleOrGone
+import timber.log.Timber
 import java.util.concurrent.CopyOnWriteArrayList
 
-class SeriesRecordingListFragment : BaseFragment(), RecyclerViewClickCallback, SearchRequestInterface, Filter.FilterListener {
+class SeriesRecordingListFragment : BaseFragment(), RecyclerViewClickInterface, SearchRequestInterface, Filter.FilterListener {
 
     private lateinit var seriesRecordingViewModel: SeriesRecordingViewModel
-    private var selectedListPosition: Int = 0
     private lateinit var recyclerViewAdapter: SeriesRecordingRecyclerViewAdapter
-    private var searchQuery: String = ""
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.recyclerview_fragment, container, false)
@@ -35,49 +35,54 @@ class SeriesRecordingListFragment : BaseFragment(), RecyclerViewClickCallback, S
         super.onActivityCreated(savedInstanceState)
         seriesRecordingViewModel = ViewModelProviders.of(activity!!).get(SeriesRecordingViewModel::class.java)
 
-        if (savedInstanceState != null) {
-            selectedListPosition = savedInstanceState.getInt("listPosition", 0)
-            searchQuery = savedInstanceState.getString(SearchManager.QUERY) ?: ""
-        } else {
-            selectedListPosition = 0
-            searchQuery = arguments?.getString(SearchManager.QUERY) ?: ""
+        arguments?.let {
+            seriesRecordingViewModel.selectedListPosition = it.getInt("listPosition")
         }
-
-        toolbarInterface.setTitle(if (searchQuery.isEmpty())
-            getString(R.string.series_recordings)
-        else
-            getString(R.string.search_results))
 
         recyclerViewAdapter = SeriesRecordingRecyclerViewAdapter(isDualPane, this, htspVersion)
         recycler_view.layoutManager = LinearLayoutManager(activity)
         recycler_view.adapter = recyclerViewAdapter
         recycler_view.gone()
+        search_progress?.visibleOrGone(baseViewModel.isSearchActive)
 
         seriesRecordingViewModel.recordings.observe(viewLifecycleOwner, Observer { recordings ->
             if (recordings != null) {
                 recyclerViewAdapter.addItems(recordings)
+                observeSearchQuery()
             }
             recycler_view?.visible()
-
-            if (searchQuery.isEmpty()) {
-                toolbarInterface.setSubtitle(resources.getQuantityString(R.plurals.items, recyclerViewAdapter.itemCount, recyclerViewAdapter.itemCount))
-            } else {
-                toolbarInterface.setSubtitle(resources.getQuantityString(R.plurals.series_recordings, recyclerViewAdapter.itemCount, recyclerViewAdapter.itemCount))
-            }
+            showStatusInToolbar()
+            activity?.invalidateOptionsMenu()
 
             if (isDualPane && recyclerViewAdapter.itemCount > 0) {
-                showRecordingDetails(selectedListPosition)
+                showRecordingDetails(seriesRecordingViewModel.selectedListPosition)
             }
-            // Invalidate the menu so that the search menu item is shown in
-            // case the adapter contains items now.
-            activity?.invalidateOptionsMenu()
         })
     }
 
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        outState.putInt("listPosition", selectedListPosition)
-        outState.putString(SearchManager.QUERY, searchQuery)
+    private fun observeSearchQuery() {
+        Timber.d("Observing search query")
+        baseViewModel.searchQuery.observe(viewLifecycleOwner, Observer { query ->
+            if (query.isNotEmpty()) {
+                Timber.d("View model returned search query '$query'")
+                onSearchRequested(query)
+            } else {
+                Timber.d("View model returned empty search query")
+                onSearchResultsCleared()
+            }
+        })
+    }
+
+    private fun showStatusInToolbar() {
+        context?.let {
+            if (!baseViewModel.isSearchActive) {
+                toolbarInterface.setTitle(getString(R.string.series_recordings))
+                toolbarInterface.setSubtitle(it.resources.getQuantityString(R.plurals.items, recyclerViewAdapter.itemCount, recyclerViewAdapter.itemCount))
+            } else {
+                toolbarInterface.setTitle(getString(R.string.search_results))
+                toolbarInterface.setSubtitle(it.resources.getQuantityString(R.plurals.series_recordings, recyclerViewAdapter.itemCount, recyclerViewAdapter.itemCount))
+            }
+        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -109,7 +114,7 @@ class SeriesRecordingListFragment : BaseFragment(), RecyclerViewClickCallback, S
     }
 
     private fun showRecordingDetails(position: Int) {
-        selectedListPosition = position
+        seriesRecordingViewModel.selectedListPosition = position
         recyclerViewAdapter.setPosition(position)
 
         val recording = recyclerViewAdapter.getItem(position)
@@ -127,16 +132,22 @@ class SeriesRecordingListFragment : BaseFragment(), RecyclerViewClickCallback, S
                 it.commit()
             }
         } else {
-            // Check what fragment is currently shown, replace if needed.
             var fragment = activity?.supportFragmentManager?.findFragmentById(R.id.details)
-            if (fragment !is SeriesRecordingDetailsFragment || fragment.shownId == recording.id) {
-                // Make new fragment to show this selection.
+            if (fragment !is SeriesRecordingDetailsFragment) {
                 fragment = SeriesRecordingDetailsFragment.newInstance(recording.id)
-                fm?.beginTransaction()?.also {
-                    it.replace(R.id.details, fragment)
-                    it.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
-                    it.commit()
+
+                // Check the lifecycle state to avoid committing the transaction
+                // after the onSaveInstance method was already called which would
+                // trigger an illegal state exception.
+                if (lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED)) {
+                    fm?.beginTransaction()?.also {
+                        it.replace(R.id.details, fragment)
+                        it.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+                        it.commit()
+                    }
                 }
+            } else if (seriesRecordingViewModel.currentId.value != recording.id){
+                seriesRecordingViewModel.currentId.value = recording.id
             }
         }
     }
@@ -165,7 +176,7 @@ class SeriesRecordingListFragment : BaseFragment(), RecyclerViewClickCallback, S
                 R.id.menu_search_fileaffinity -> return@setOnMenuItemClickListener searchTitleOnFileAffinityWebsite(ctx, seriesRecording.title)
                 R.id.menu_search_youtube -> return@setOnMenuItemClickListener searchTitleOnYoutube(ctx, seriesRecording.title)
                 R.id.menu_search_google -> return@setOnMenuItemClickListener searchTitleOnGoogle(ctx, seriesRecording.title)
-                R.id.menu_search_epg -> return@setOnMenuItemClickListener searchTitleInTheLocalDatabase(ctx, seriesRecording.title)
+                R.id.menu_search_epg -> return@setOnMenuItemClickListener searchTitleInTheLocalDatabase(activity!!, baseViewModel, seriesRecording.title)
                 else -> return@setOnMenuItemClickListener false
             }
         }
@@ -191,28 +202,20 @@ class SeriesRecordingListFragment : BaseFragment(), RecyclerViewClickCallback, S
     }
 
     override fun onFilterComplete(i: Int) {
-        context?.let {
-            if (searchQuery.isEmpty()) {
-                toolbarInterface.setSubtitle(it.resources.getQuantityString(R.plurals.items, recyclerViewAdapter.itemCount, recyclerViewAdapter.itemCount))
-            } else {
-                toolbarInterface.setSubtitle(it.resources.getQuantityString(R.plurals.series_recordings, recyclerViewAdapter.itemCount, recyclerViewAdapter.itemCount))
-            }
+        search_progress?.gone()
+        showStatusInToolbar()
+        // Preselect the first result item in the details screen
+        if (isDualPane && recyclerViewAdapter.itemCount > 0) {
+            showRecordingDetails(0)
         }
     }
 
     override fun onSearchRequested(query: String) {
-        searchQuery = query
         recyclerViewAdapter.filter.filter(query, this)
     }
 
-    override fun onSearchResultsCleared(): Boolean {
-        return if (searchQuery.isNotEmpty()) {
-            searchQuery = ""
-            recyclerViewAdapter.filter.filter("", this)
-            true
-        } else {
-            false
-        }
+    override fun onSearchResultsCleared() {
+        recyclerViewAdapter.filter.filter("", this)
     }
 
     override fun getQueryHint(): String {

@@ -14,10 +14,10 @@ import com.google.android.exoplayer2.trackselection.TrackSelectionArray
 import com.google.android.exoplayer2.upstream.DefaultAllocator
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter
 import com.google.android.exoplayer2.video.VideoListener
+import org.tvheadend.data.entity.Channel
 import org.tvheadend.htsp.HtspConnection
 import org.tvheadend.htsp.HtspConnectionStateListener
 import org.tvheadend.tvhclient.R
-import org.tvheadend.tvhclient.domain.entity.Channel
 import org.tvheadend.tvhclient.ui.base.BaseViewModel
 import org.tvheadend.tvhclient.ui.features.playback.internal.utils.Rational
 import timber.log.Timber

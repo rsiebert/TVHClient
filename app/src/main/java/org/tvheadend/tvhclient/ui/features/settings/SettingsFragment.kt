@@ -158,7 +158,7 @@ class SettingsFragment : BasePreferenceFragment(), Preference.OnPreferenceClickL
     }
 
     private fun onFolderSelected(file: File) {
-        Timber.d("Folder ${file.name} was selected")
+        Timber.d("Folder ${file.absolutePath}, ${file.name} was selected")
         val strippedPath = file.absolutePath.replace(Environment.getExternalStorageDirectory().absolutePath, "")
         val prefs = PreferenceManager.getDefaultSharedPreferences(activity)
         prefs.edit().putString("download_directory", strippedPath).apply()

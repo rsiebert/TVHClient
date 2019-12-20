@@ -46,14 +46,6 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.features.search.SearchActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.SEARCH" />
-            </intent-filter>
-            <meta-data
-                android:name="android.app.searchable"
-                android:resource="@xml/searchable" />
-        </activity>
         <activity android:name=".ui.features.settings.SettingsActivity" />
         <activity
             android:name=".ui.features.playback.external.ExpandedControlsActivity"
@@ -68,9 +60,15 @@
         <activity
             android:name=".ui.features.MainActivity"
             android:launchMode="singleTask">
+            <intent-filter>
+                <action android:name="android.intent.action.SEARCH" />
+            </intent-filter>
             <meta-data
                 android:name="android.app.default_searchable"
-                android:value=".ui.features.search.SearchActivity" />
+                android:value=".ui.features.MainActivity" />
+            <meta-data
+                android:name="android.app.searchable"
+                android:resource="@xml/searchable" />
         </activity>
         <activity
             android:name=".ui.features.programs.ProgramDetailsActivity"
@@ -100,16 +98,16 @@
             android:supportsPictureInPicture="true" />
 
         <service
-            android:name=".data.service.HtspService"
+            android:name="org.tvheadend.tvhclient.service.HtspService"
             android:exported="false" />
         <service
-            android:name=".data.service.HtspIntentService"
+            android:name="org.tvheadend.tvhclient.service.HtspIntentService"
             android:exported="false"
             android:permission="android.permission.BIND_JOB_SERVICE" />
 
         <provider
-            android:name="org.tvheadend.tvhclient.ui.features.search.SuggestionProvider"
-            android:authorities="org.tvheadend.tvhclient.ui.features.search.SuggestionProvider"
+            android:name="org.tvheadend.tvhclient.ui.common.SuggestionProvider"
+            android:authorities="org.tvheadend.tvhclient.ui.common.SuggestionProvider"
             android:exported="false" />
         <provider
             android:name="androidx.core.content.FileProvider"

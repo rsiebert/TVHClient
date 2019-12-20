@@ -1,36 +1,48 @@
 package org.tvheadend.tvhclient.ui.features.information
 
+import android.content.Context
 import android.graphics.Color
+import android.os.Build
 import android.os.Bundle
 import android.view.*
 import androidx.fragment.app.Fragment
+import androidx.preference.PreferenceManager
 import kotlinx.android.synthetic.main.webview_fragment.*
+import kotlinx.coroutines.*
 import org.tvheadend.tvhclient.BuildConfig
 import org.tvheadend.tvhclient.R
-import org.tvheadend.tvhclient.ui.common.callbacks.LayoutInterface
-import org.tvheadend.tvhclient.ui.common.callbacks.ToolbarInterface
-import org.tvheadend.tvhclient.ui.common.tasks.HtmlFileLoaderTask
+import org.tvheadend.tvhclient.ui.base.LayoutControlInterface
+import org.tvheadend.tvhclient.ui.common.getLocale
+import org.tvheadend.tvhclient.ui.common.interfaces.ToolbarInterface
 import org.tvheadend.tvhclient.ui.features.settings.RemoveFragmentFromBackstackInterface
 import org.tvheadend.tvhclient.util.extensions.gone
 import org.tvheadend.tvhclient.util.extensions.visible
 import org.tvheadend.tvhclient.util.getThemeId
+import timber.log.Timber
+import java.io.InputStream
 import java.util.regex.Pattern
 
-open class WebViewFragment : Fragment(), HtmlFileLoaderTask.Listener {
+open class WebViewFragment : Fragment() {
 
-    private lateinit var htmlFileLoaderTask: HtmlFileLoaderTask
+    private val job = Job()
+    private val scope = CoroutineScope(Dispatchers.IO + job)
+
     protected lateinit var toolbarInterface: ToolbarInterface
     var website: String = ""
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.webview_fragment, container, false)
+        return if (Build.VERSION.SDK_INT in 21..25) {
+            inflater.inflate(R.layout.webview_fragment_for_lollipop, container, false)
+        } else {
+            inflater.inflate(R.layout.webview_fragment, container, false)
+        }
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        if (activity is LayoutInterface) {
-            (activity as LayoutInterface).forceSingleScreenLayout()
+        if (activity is LayoutControlInterface) {
+            (activity as LayoutControlInterface).forceSingleScreenLayout()
         }
         if (activity is ToolbarInterface) {
             toolbarInterface = activity as ToolbarInterface
@@ -45,15 +57,49 @@ open class WebViewFragment : Fragment(), HtmlFileLoaderTask.Listener {
         webview.gone()
     }
 
+    /**
+     * Reads the contents of the HTML file of the defined language.
+     * The language is determined by the locale. If the file could
+     * not be loaded, then a default file (English) will be loaded.
+     */
+    private suspend fun loadFileContents(context: Context, filename: String, defaultLocale: String) {
+        val deferredLoader = scope.async {
+            val languageCode = PreferenceManager.getDefaultSharedPreferences(context).getString("language", getLocale(context).language)!!.substring(0, 2)
+            val htmlFile = "html/" + filename + "_" + languageCode.substring(0, 2) + ".html"
+            val defaultHtmlFile = "html/" + filename + "_" + defaultLocale + ".html"
+
+            var contents = loadContentsFromAssetFile(context, htmlFile)
+            if (contents.isEmpty()) {
+                contents = loadContentsFromAssetFile(context, defaultHtmlFile)
+            }
+            return@async contents
+        }
+        // Switch the context to the main thread to call the following method
+        withContext(Dispatchers.Main) {
+            onFileContentsLoaded((deferredLoader.await()))
+        }
+    }
+
+    private fun loadContentsFromAssetFile(context: Context, filename: String): String {
+        var contents = ""
+        try {
+            Timber.d("Reading contents of file $filename")
+            val inputStream: InputStream = context.assets.open(filename)
+            contents = inputStream.bufferedReader().use { it.readText() }
+        } catch (e: Exception) {
+            Timber.d("Could not open or read contents of file $filename")
+        }
+        return contents
+    }
+
     override fun onResume() {
         super.onResume()
-        htmlFileLoaderTask = HtmlFileLoaderTask(context!!, website, "en", this)
-        htmlFileLoaderTask.execute()
+        scope.launch { loadFileContents(context!!, website, "en") }
     }
 
     override fun onPause() {
         super.onPause()
-        htmlFileLoaderTask.cancel(true)
+        job.cancel()
     }
 
     override fun onPrepareOptionsMenu(menu: Menu) {
@@ -79,7 +125,8 @@ open class WebViewFragment : Fragment(), HtmlFileLoaderTask.Listener {
         }
     }
 
-    override fun onFileContentsLoaded(fileContent: String) {
+    private fun onFileContentsLoaded(fileContent: String) {
+        Timber.d("File contents loaded")
         val ctx = context ?: return
         var content = fileContent
         if (content.isNotEmpty()) {

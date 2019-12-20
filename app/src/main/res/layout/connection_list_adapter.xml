@@ -60,7 +60,7 @@
 
         <variable
             name="connection"
-            type="org.tvheadend.tvhclient.domain.entity.Connection" />
+            type="org.tvheadend.data.entity.Connection" />
 
         <variable
             name="position"
@@ -68,6 +68,6 @@
 
         <variable
             name="callback"
-            type="org.tvheadend.tvhclient.ui.common.callbacks.RecyclerViewClickCallback" />
+            type="org.tvheadend.tvhclient.ui.common.interfaces.RecyclerViewClickInterface" />
     </data>
 </layout>

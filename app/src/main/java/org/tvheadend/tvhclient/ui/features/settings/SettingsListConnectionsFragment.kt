@@ -10,15 +10,15 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.afollestad.materialdialogs.MaterialDialog
 import kotlinx.android.synthetic.main.recyclerview_fragment.*
+import org.tvheadend.data.entity.Connection
 import org.tvheadend.tvhclient.R
-import org.tvheadend.tvhclient.domain.entity.Connection
-import org.tvheadend.tvhclient.ui.common.callbacks.BackPressedInterface
-import org.tvheadend.tvhclient.ui.common.callbacks.RecyclerViewClickCallback
-import org.tvheadend.tvhclient.ui.common.callbacks.ToolbarInterface
-import org.tvheadend.tvhclient.ui.common.sendWakeOnLanPacket
+import org.tvheadend.tvhclient.ui.common.interfaces.BackPressedInterface
+import org.tvheadend.tvhclient.ui.common.interfaces.RecyclerViewClickInterface
+import org.tvheadend.tvhclient.ui.common.interfaces.ToolbarInterface
+import org.tvheadend.tvhclient.ui.common.WakeOnLanTask
 import timber.log.Timber
 
-class SettingsListConnectionsFragment : Fragment(), BackPressedInterface, ActionMode.Callback, RecyclerViewClickCallback {
+class SettingsListConnectionsFragment : Fragment(), BackPressedInterface, ActionMode.Callback, RecyclerViewClickInterface {
 
     private var activeConnectionId: Int = -1
     private var connectionHasChanged: Boolean = false
@@ -91,7 +91,11 @@ class SettingsListConnectionsFragment : Fragment(), BackPressedInterface, Action
             R.id.menu_set_connection_active -> setConnectionActiveOrInactive(connection, mode, true)
             R.id.menu_set_connection_not_active -> setConnectionActiveOrInactive(connection, mode, false)
             R.id.menu_edit_connection -> editConnection(connection, mode)
-            R.id.menu_send_wol -> sendWakeOnLanPacket(ctx, connection, mode)
+            R.id.menu_send_wol -> {
+                WakeOnLanTask(ctx, connection).execute()
+                mode.finish()
+                true
+            }
             R.id.menu_delete_connection -> deleteConnection(ctx, connection, mode)
             else -> false
         }
@@ -159,8 +163,8 @@ class SettingsListConnectionsFragment : Fragment(), BackPressedInterface, Action
         when {
             activeConnectionId < 0 -> context?.let {
                 MaterialDialog(it).show {
-                    title(R.string.dialog_title_disconnect_from_server)
-                    message(R.string.dialog_content_disconnect_from_server)
+                    title(R.string.disconnect_from_server)
+                    message(R.string.no_active_connection)
                     positiveButton(R.string.disconnect) {
                         reconnect()
                     }
@@ -168,8 +172,8 @@ class SettingsListConnectionsFragment : Fragment(), BackPressedInterface, Action
             }
             connectionHasChanged -> context?.let {
                 MaterialDialog(it).show {
-                    title(R.string.dialog_title_connection_changed)
-                    message(R.string.dialog_content_connection_changed)
+                    title(R.string.connect_to_new_server)
+                    message(R.string.connection_changed)
                     positiveButton(R.string.connect) { reconnect() }
                 }
             }

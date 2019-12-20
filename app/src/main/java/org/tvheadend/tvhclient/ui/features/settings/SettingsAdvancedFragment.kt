@@ -17,21 +17,22 @@ import androidx.work.WorkManager
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.list.listItemsSingleChoice
 import com.squareup.picasso.Picasso
+import org.tvheadend.data.source.MiscDataSource
 import org.tvheadend.tvhclient.BuildConfig
 import org.tvheadend.tvhclient.R
-import org.tvheadend.tvhclient.data.service.HtspService
-import org.tvheadend.tvhclient.data.worker.LoadChannelIconWorker
-import org.tvheadend.tvhclient.ui.features.search.SuggestionProvider
+import org.tvheadend.tvhclient.service.HtspService
+import org.tvheadend.tvhclient.ui.common.SuggestionProvider
 import org.tvheadend.tvhclient.ui.features.startup.SplashActivity
 import org.tvheadend.tvhclient.util.extensions.sendSnackbarMessage
 import org.tvheadend.tvhclient.util.getIconUrl
 import org.tvheadend.tvhclient.util.logging.FileLoggingTree
+import org.tvheadend.tvhclient.util.worker.LoadChannelIconWorker
 import timber.log.Timber
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
 
-class SettingsAdvancedFragment : BasePreferenceFragment(), Preference.OnPreferenceChangeListener, Preference.OnPreferenceClickListener, SharedPreferences.OnSharedPreferenceChangeListener, DatabaseClearedCallback {
+class SettingsAdvancedFragment : BasePreferenceFragment(), Preference.OnPreferenceChangeListener, Preference.OnPreferenceClickListener, SharedPreferences.OnSharedPreferenceChangeListener, MiscDataSource.DatabaseClearedCallback {
 
     private var notificationsEnabledPreference: SwitchPreference? = null
     private var notifyRunningRecordingCountEnabledPreference: SwitchPreference? = null
@@ -50,25 +51,32 @@ class SettingsAdvancedFragment : BasePreferenceFragment(), Preference.OnPreferen
         findPreference<Preference>("clear_icon_cache")?.onPreferenceClickListener = this
 
         notificationsEnabledPreference = findPreference("notifications_enabled")
+        notifyRunningRecordingCountEnabledPreference = findPreference("notify_running_recording_count_enabled")
+        notifyLowStorageSpaceEnabledPreference = findPreference("notify_low_storage_space_enabled")
+
+        connectionTimeoutPreference = findPreference("connection_timeout")
+        connectionTimeoutPreference?.onPreferenceChangeListener = this
+
+        settingsViewModel.isUnlocked.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
+            initPreferenceChangeListeners()
+        })
+    }
+
+    private fun initPreferenceChangeListeners() {
         notificationsEnabledPreference?.also {
             it.onPreferenceClickListener = this
             it.isEnabled = isUnlocked
         }
 
-        notifyRunningRecordingCountEnabledPreference = findPreference("notify_running_recording_count_enabled")
         notifyRunningRecordingCountEnabledPreference?.also {
             it.onPreferenceClickListener = this
             it.isEnabled = isUnlocked
         }
 
-        notifyLowStorageSpaceEnabledPreference = findPreference("notify_low_storage_space_enabled")
         notifyLowStorageSpaceEnabledPreference?.also {
             it.onPreferenceClickListener = this
             it.isEnabled = isUnlocked
         }
-
-        connectionTimeoutPreference = findPreference("connection_timeout")
-        connectionTimeoutPreference?.onPreferenceChangeListener = this
     }
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
@@ -123,8 +131,8 @@ class SettingsAdvancedFragment : BasePreferenceFragment(), Preference.OnPreferen
     private fun handlePreferenceClearDatabaseSelected() {
         context?.let {
             MaterialDialog(it).show {
-                title(R.string.dialog_title_clear_database)
-                message(R.string.dialog_content_reconnect_to_server)
+                title(R.string.clear_database_contents)
+                message(R.string.restart_and_sync)
                 positiveButton(R.string.clear) {
                     Timber.d("Clear database requested")
                     context.sendSnackbarMessage("Database contents cleared, reconnecting to server")

@@ -10,8 +10,9 @@ class ProgramDetailsActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
 
         if (savedInstanceState == null) {
-            val fragment = ProgramDetailsFragment()
-            fragment.arguments = intent.extras
+            val fragment = ProgramDetailsFragment.newInstance(
+                    intent.getIntExtra("eventId", 0),
+                    intent.getIntExtra("channelId", 0))
             supportFragmentManager.beginTransaction().add(R.id.main, fragment).commit()
         }
     }

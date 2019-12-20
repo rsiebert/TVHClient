@@ -8,12 +8,12 @@ import android.content.SharedPreferences
 import android.os.Handler
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
+import org.tvheadend.data.entity.Channel
+import org.tvheadend.data.entity.Input
+import org.tvheadend.data.entity.ServerStatus
+import org.tvheadend.data.entity.Subscription
 import org.tvheadend.tvhclient.R
-import org.tvheadend.tvhclient.data.service.HtspService
-import org.tvheadend.tvhclient.domain.entity.Channel
-import org.tvheadend.tvhclient.domain.entity.Input
-import org.tvheadend.tvhclient.domain.entity.ServerStatus
-import org.tvheadend.tvhclient.domain.entity.Subscription
+import org.tvheadend.tvhclient.service.HtspService
 import org.tvheadend.tvhclient.ui.base.BaseViewModel
 import timber.log.Timber
 
@@ -56,7 +56,7 @@ class StatusViewModel(application: Application) : BaseViewModel(application), Sh
         // notifications is disabled, set the value to false to remove any notification
         showLowStorageSpace.addSource(serverStatusLiveData) { serverStatus ->
             if (serverStatus != null) {
-                availableStorageSpace = (serverStatus.freeDiskSpace / 1000000000000).toInt()
+                availableStorageSpace = (serverStatus.freeDiskSpace / (1024 * 1024 * 1024)).toInt()
                 val enabled = sharedPreferences.getBoolean("notify_low_storage_space_enabled", appContext.resources.getBoolean(R.bool.pref_default_notify_low_storage_space_enabled))
                 val threshold = Integer.valueOf(sharedPreferences.getString("low_storage_space_threshold", appContext.resources.getString(R.string.pref_default_low_storage_space_threshold))!!)
                 Timber.d("Server status free space has changed to $availableStorageSpace, threshold is $threshold, checking if notification shall be shown")

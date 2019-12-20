@@ -1,35 +1,38 @@
-<?xml version="1.0" encoding="utf-8"?>
 <resources>
-
-    <plurals name="programs">
-        <item quantity="one">%d program</item>
-        <item quantity="few">%d programy</item>
-        <item quantity="other">%d programov</item>
-    </plurals>
-    <plurals name="items">
-        <item quantity="one">%d položka</item>
-        <item quantity="few">%d položky</item>
-        <item quantity="other">%d položiek</item>
-    </plurals>
     <plurals name="completed_recordings">
         <item quantity="one">%d dokončená nahrávka</item>
         <item quantity="few">%d dokončené nahrávky</item>
         <item quantity="other">%d dokončených nahráviek</item>
-    </plurals>
-    <plurals name="upcoming_recordings">
-        <item quantity="one">%d naplánovaná nahrávka</item>
-        <item quantity="few">%d naplánované nahrávky</item>
-        <item quantity="other">%d naplánovaných nahráviek</item>
     </plurals>
     <plurals name="failed_recordings">
         <item quantity="one">%d neúspešná nahrávka</item>
         <item quantity="few">%d neúspešné nahrávky</item>
         <item quantity="other">%d neúspešných nahráviek</item>
     </plurals>
+    <plurals name="items">
+        <item quantity="one">%d položka</item>
+        <item quantity="few">%d položky</item>
+        <item quantity="other">%d položiek</item>
+    </plurals>
+    <plurals name="number_of_connections">
+        <item quantity="one">%d dostupné pripojenie</item>
+        <item quantity="few">%d dostupné pripojenia</item>
+        <item quantity="other">%d dostupných pripojení</item>
+    </plurals>
+    <plurals name="programs">
+        <item quantity="one">%d program</item>
+        <item quantity="few">%d programy</item>
+        <item quantity="other">%d programov</item>
+    </plurals>
     <plurals name="removed_recordings">
         <item quantity="one">%d vymazaná nahrávka</item>
         <item quantity="few">%d vymazané nahrávky</item>
         <item quantity="other">%d vymazaných nahrávok</item>
+    </plurals>
+    <plurals name="results">
+        <item quantity="one">%d výsledok</item>
+        <item quantity="few">%d výsledky</item>
+        <item quantity="other">%d výsledkov</item>
     </plurals>
     <plurals name="series_recordings">
         <item quantity="one">%d sériová nahrávka</item>
@@ -41,14 +44,9 @@
         <item quantity="few">%d ručné nahrávky</item>
         <item quantity="other">%d ručných nahrávok</item>
     </plurals>
-    <plurals name="results">
-        <item quantity="one">%d výsledok</item>
-        <item quantity="few">%d výsledky</item>
-        <item quantity="other">%d výsledkov</item>
-    </plurals>
-    <plurals name="number_of_connections">
-        <item quantity="one">%d dostupné pripojenie</item>
-        <item quantity="few">%d dostupné pripojenia</item>
-        <item quantity="other">%d dostupných pripojení</item>
+    <plurals name="upcoming_recordings">
+        <item quantity="one">%d naplánovaná nahrávka</item>
+        <item quantity="few">%d naplánované nahrávky</item>
+        <item quantity="other">%d naplánovaných nahráviek</item>
     </plurals>
 </resources>

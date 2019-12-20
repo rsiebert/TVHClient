@@ -1,9 +1,9 @@
 package org.tvheadend.tvhclient.ui.features.settings
 
 import android.os.Bundle
-import androidx.preference.SwitchPreference
 import androidx.preference.EditTextPreference
 import androidx.preference.Preference
+import androidx.preference.SwitchPreference
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.util.extensions.sendSnackbarMessage
 import timber.log.Timber

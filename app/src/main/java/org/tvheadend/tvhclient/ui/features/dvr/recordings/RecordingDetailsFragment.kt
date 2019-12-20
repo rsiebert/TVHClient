@@ -7,25 +7,22 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import kotlinx.android.synthetic.main.details_fragment_header.*
 import kotlinx.android.synthetic.main.recording_details_fragment.*
+import org.tvheadend.data.entity.Recording
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.databinding.RecordingDetailsFragmentBinding
-import org.tvheadend.tvhclient.domain.entity.Recording
 import org.tvheadend.tvhclient.ui.base.BaseFragment
 import org.tvheadend.tvhclient.ui.common.*
-import org.tvheadend.tvhclient.ui.features.download.DownloadPermissionGrantedInterface
-import org.tvheadend.tvhclient.ui.features.download.DownloadRecordingManager
-import org.tvheadend.tvhclient.ui.features.dvr.RecordingRemovedCallback
+import org.tvheadend.tvhclient.ui.common.interfaces.RecordingRemovedInterface
+import org.tvheadend.tvhclient.ui.features.dvr.recordings.download.DownloadPermissionGrantedInterface
+import org.tvheadend.tvhclient.ui.features.dvr.recordings.download.DownloadRecordingManager
 import org.tvheadend.tvhclient.util.extensions.gone
 import org.tvheadend.tvhclient.util.extensions.visible
+import timber.log.Timber
 
-// TODO put recording into the viewmodel
-// TODO put shownId into the viewmodel
-
-class RecordingDetailsFragment : BaseFragment(), RecordingRemovedCallback, DownloadPermissionGrantedInterface {
+class RecordingDetailsFragment : BaseFragment(), RecordingRemovedInterface, DownloadPermissionGrantedInterface {
 
     private lateinit var recordingViewModel: RecordingViewModel
     private var recording: Recording? = null
-    var shownDvrId: Int = 0
     private lateinit var itemBinding: RecordingDetailsFragmentBinding
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -44,24 +41,31 @@ class RecordingDetailsFragment : BaseFragment(), RecordingRemovedCallback, Downl
 
         // Get the recording id after an orientation change has occurred
         // or when the fragment is shown for the first time
-        shownDvrId = savedInstanceState?.getInt("id", 0) ?: (arguments?.getInt("id", 0) ?: 0)
+        arguments?.let {
+            recordingViewModel.currentId.value = it.getInt("id", 0)
+        }
 
-
-        recordingViewModel.getRecordingById(shownDvrId)?.observe(viewLifecycleOwner, Observer { rec ->
-            if (rec != null) {
-                recording = rec
-                itemBinding.recording = recording
-                itemBinding.htspVersion = htspVersion
-                // The toolbar is hidden as a default to prevent pressing any icons if no recording
-                // has been loaded yet. The toolbar is shown here because a recording was loaded
-                nested_toolbar.visible()
-                activity?.invalidateOptionsMenu()
-            } else {
-                scrollview.gone()
-                status.text = getString(R.string.error_loading_recording_details)
-                status.visible()
-            }
+        Timber.d("Observing recording")
+        recordingViewModel.recordingLiveData.observe(viewLifecycleOwner, Observer {
+            Timber.d("View model returned a recording")
+            recording = it
+            showRecordingDetails()
         })
+    }
+
+    private fun showRecordingDetails() {
+        if (recording != null) {
+            itemBinding.recording = recording
+            itemBinding.htspVersion = htspVersion
+            // The toolbar is hidden as a default to prevent pressing any icons if no recording
+            // has been loaded yet. The toolbar is shown here because a recording was loaded
+            nested_toolbar.visible()
+            activity?.invalidateOptionsMenu()
+        } else {
+            scrollview.gone()
+            status.text = getString(R.string.error_loading_recording_details)
+            status.visible()
+        }
     }
 
     override fun onPrepareOptionsMenu(menu: Menu) {
@@ -70,11 +74,6 @@ class RecordingDetailsFragment : BaseFragment(), RecordingRemovedCallback, Downl
         preparePopupOrToolbarMiscMenu(ctx, nested_toolbar.menu, null, isConnectionToServerAvailable, isUnlocked)
         preparePopupOrToolbarRecordingMenu(ctx, nested_toolbar.menu, recording, isConnectionToServerAvailable, htspVersion, isUnlocked)
         preparePopupOrToolbarSearchMenu(menu, recording.title, isConnectionToServerAvailable)
-    }
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        outState.putInt("id", shownDvrId)
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -100,7 +99,7 @@ class RecordingDetailsFragment : BaseFragment(), RecordingRemovedCallback, Downl
             R.id.menu_search_fileaffinity -> return searchTitleOnFileAffinityWebsite(ctx, recording.title)
             R.id.menu_search_youtube -> return searchTitleOnYoutube(ctx, recording.title)
             R.id.menu_search_google -> return searchTitleOnGoogle(ctx, recording.title)
-            R.id.menu_search_epg -> return searchTitleInTheLocalDatabase(ctx, recording.title)
+            R.id.menu_search_epg -> return searchTitleInTheLocalDatabase(activity!!, baseViewModel, recording.title)
 
             R.id.menu_download_recording -> {
                 DownloadRecordingManager(activity, connection, recording)

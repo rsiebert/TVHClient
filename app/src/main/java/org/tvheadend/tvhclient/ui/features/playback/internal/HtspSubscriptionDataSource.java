@@ -34,7 +34,7 @@ import org.tvheadend.htsp.HtspConnection;
 import org.tvheadend.htsp.HtspMessage;
 import org.tvheadend.htsp.HtspMessageListener;
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.data.service.HtspService;
+import org.tvheadend.tvhclient.service.HtspService;
 
 import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
@@ -111,8 +111,7 @@ public class HtspSubscriptionDataSource implements DataSource, Closeable, HtspMe
         SharedPreferences mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         boolean timeshiftEnabled = mSharedPreferences.getBoolean("timeshift_enabled", context.getResources().getBoolean(R.bool.pref_default_timeshift_enabled));
         if (timeshiftEnabled) {
-            // TODO: Eventually, this should be a preference.
-            timeshiftPeriod = 3600;
+            timeshiftPeriod = Integer.valueOf(mSharedPreferences.getString("timeshift_period", context.getResources().getString(R.string.pref_default_timeshift_period)));
         }
 
         dataSourceNumber = dataSourceCount.incrementAndGet();

@@ -1,28 +1,26 @@
-<?xml version="1.0" encoding="utf-8"?>
 <resources>
-
-    <plurals name="programs">
-        <item quantity="one">%d Program</item>
-        <item quantity="other">%d Program</item>
-    </plurals>
-    <plurals name="items">
-        <item quantity="one">%d Elementet</item>
-        <item quantity="other">%d Element</item>
-    </plurals>
     <plurals name="completed_recordings">
         <item quantity="one">%d Färdiga</item>
         <item quantity="other">%d Färdiga</item>
-    </plurals>
-    <plurals name="upcoming_recordings">
-        <item quantity="one">%d Kommande</item>
-        <item quantity="other">%d Kommande</item>
     </plurals>
     <plurals name="failed_recordings">
         <item quantity="one">%d Misslyckade</item>
         <item quantity="other">%d Misslyckade</item>
     </plurals>
+    <plurals name="items">
+        <item quantity="one">%d Elementet</item>
+        <item quantity="other">%d Element</item>
+    </plurals>
     <plurals name="number_of_connections">
         <item quantity="one">%d anslutning tillgängliga</item>
         <item quantity="other">%d anslutningar tillgängliga</item>
+    </plurals>
+    <plurals name="programs">
+        <item quantity="one">%d Program</item>
+        <item quantity="other">%d Program</item>
+    </plurals>
+    <plurals name="upcoming_recordings">
+        <item quantity="one">%d Kommande</item>
+        <item quantity="other">%d Kommande</item>
     </plurals>
 </resources>

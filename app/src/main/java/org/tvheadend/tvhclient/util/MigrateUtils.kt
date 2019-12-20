@@ -4,12 +4,12 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.database.sqlite.SQLiteException
 import android.os.Environment
+import org.tvheadend.data.db.DatabaseHelperForMigration
+import org.tvheadend.data.entity.Connection
+import org.tvheadend.data.entity.ServerStatus
 import org.tvheadend.tvhclient.BuildConfig
 import org.tvheadend.tvhclient.R
-import org.tvheadend.tvhclient.data.db.DatabaseHelperForMigration
-import org.tvheadend.tvhclient.data.repository.AppRepository
-import org.tvheadend.tvhclient.domain.entity.Connection
-import org.tvheadend.tvhclient.domain.entity.ServerStatus
+import org.tvheadend.tvhclient.repository.AppRepository
 import timber.log.Timber
 import java.util.*
 
@@ -47,12 +47,25 @@ class MigrateUtils(val context: Context, val appRepository: AppRepository, val s
             if (lastInstalledApplicationVersion < VERSION_176) {
                 convertConnectionHostAndPortValuesToUrl()
             }
+            if (lastInstalledApplicationVersion < VERSION_189) {
+                convertInvalidEpgPreference()
+            }
         }
 
         // Store the current version as the last installed version
         val editor = sharedPreferences.edit()
         editor.putInt("build_version_for_migration", currentApplicationVersion)
         editor.apply()
+    }
+
+    private fun convertInvalidEpgPreference() {
+        val hours = Integer.parseInt(sharedPreferences.getString("hours_of_epg_data_per_screen", context.resources.getString(R.string.pref_default_hours_of_epg_data_per_screen))!!)
+        Timber.d("Hours per screen is $hours")
+        if (hours == 0) {
+            val editor = sharedPreferences.edit()
+            editor.putString("hours_of_epg_data_per_screen", "1")
+            editor.apply()
+        }
     }
 
     private fun setSyncRequiredForAllConnections() {
@@ -153,14 +166,14 @@ class MigrateUtils(val context: Context, val appRepository: AppRepository, val s
 
     private fun copyConnectionsFromOldToNewDatabase() {
         Timber.d("Migrating existing connections to the new room database")
-        val db = DatabaseHelperForMigration.getInstance(context)?.readableDatabase
+        val db = DatabaseHelperForMigration.getInstance(context)?.readableDatabase ?: return
 
         // Save the previous connection details in a list, then delete the old database and insert the connection details into the new one
         val connectionList = ArrayList<Connection>()
         try {
-            Timber.d("Database is readable ${db?.isOpen}")
-            val cursor = db?.rawQuery("SELECT * FROM connections", null)
-            cursor?.let {
+            Timber.d("Database is readable ${db.isOpen}")
+            val cursor = db.rawQuery("SELECT * FROM connections", null)
+            cursor.let {
                 if (it.count > 0) {
                     it.moveToFirst()
                     do {
@@ -184,12 +197,12 @@ class MigrateUtils(val context: Context, val appRepository: AppRepository, val s
                     } while (it.moveToNext())
                 }
             }
-            cursor?.close()
+            cursor.close()
         } catch (e: SQLiteException) {
             Timber.e(e, "Error getting connection information from cursor")
         }
 
-        db?.close()
+        db.close()
 
         // delete the entire database so we can restart with version one in room
         Timber.d("Deleting old database")
@@ -276,5 +289,6 @@ class MigrateUtils(val context: Context, val appRepository: AppRepository, val s
         private const val VERSION_143 = 143
         private const val VERSION_144 = 144
         private const val VERSION_176 = 176
+        private const val VERSION_189 = 189
     }
 }

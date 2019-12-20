@@ -6,13 +6,11 @@ import android.view.MenuItem
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import org.tvheadend.data.entity.Connection
 import org.tvheadend.tvhclient.MainApplication
 import org.tvheadend.tvhclient.R
-import org.tvheadend.tvhclient.data.repository.AppRepository
-import org.tvheadend.tvhclient.domain.entity.Connection
-import org.tvheadend.tvhclient.ui.common.callbacks.LayoutInterface
-import org.tvheadend.tvhclient.ui.common.callbacks.ToolbarInterface
-import org.tvheadend.tvhclient.ui.common.showConfirmationToReconnectToServer
+import org.tvheadend.tvhclient.repository.AppRepository
+import org.tvheadend.tvhclient.ui.common.interfaces.ToolbarInterface
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -58,12 +56,12 @@ abstract class BaseFragment : Fragment() {
         // it was hidden by the call to forceSingleScreenLayout()
         isDualPane = resources.getBoolean(R.bool.isDualScreen)
         if (isDualPane) {
-            if (activity is LayoutInterface) {
-                (activity as LayoutInterface).enableDualScreenLayout()
+            if (activity is LayoutControlInterface) {
+                (activity as LayoutControlInterface).enableDualScreenLayout()
             }
         } else {
-            if (activity is LayoutInterface) {
-                (activity as LayoutInterface).enableSingleScreenLayout()
+            if (activity is LayoutControlInterface) {
+                (activity as LayoutControlInterface).enableSingleScreenLayout()
             }
         }
 
@@ -71,13 +69,11 @@ abstract class BaseFragment : Fragment() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        val ctx = context ?: return super.onOptionsItemSelected(item)
         return when (item.itemId) {
             android.R.id.home -> {
                 activity?.finish()
                 true
             }
-            R.id.menu_reconnect_to_server -> showConfirmationToReconnectToServer(ctx, baseViewModel)
             else -> super.onOptionsItemSelected(item)
         }
     }

@@ -79,8 +79,8 @@ class UnlockerFragment : WebViewFragment(), BillingUpdatesListener {
         Timber.d("Unlocker purchase not successful")
         context?.let {
             MaterialDialog(it).show {
-                title(R.string.dialog_title_purchase_not_successful)
-                message(R.string.dialog_content_purchase_not_successful)
+                title(R.string.purchase_not_successful)
+                message(R.string.contact_developer)
                 cancelOnTouchOutside(false)
                 positiveButton(android.R.string.ok) { dismiss() }
             }
@@ -91,10 +91,10 @@ class UnlockerFragment : WebViewFragment(), BillingUpdatesListener {
         Timber.d("Unlocker purchase successful")
         context?.let {
             MaterialDialog(it).show {
-                title(R.string.dialog_title_purchase_successful)
-                message(R.string.dialog_content_purchase_successful)
+                title(R.string.purchase_successful)
+                message(R.string.thank_you)
                 cancelOnTouchOutside(false)
-                positiveButton(R.string.dialog_button_restart) {
+                positiveButton(R.string.restart) {
                     baseViewModel.updateConnectionAndRestartApplication(context, false)
                 }
             }
@@ -105,8 +105,8 @@ class UnlockerFragment : WebViewFragment(), BillingUpdatesListener {
         Timber.d("Unlocker already purchased")
         context?.let {
             MaterialDialog(it).show {
-                title(R.string.dialog_title_purchase_already_made)
-                message(R.string.dialog_content_purchase_already_made)
+                title(R.string.thank_you)
+                message(R.string.purchase_already_made)
                 cancelOnTouchOutside(false)
                 positiveButton(android.R.string.ok) {
                     dismiss()

@@ -1,28 +1,26 @@
-<?xml version="1.0" encoding="utf-8"?>
 <resources>
-
-    <plurals name="programs">
-        <item quantity="one">%d Programma</item>
-        <item quantity="other">%d Programma\'s</item>
-    </plurals>
-    <plurals name="items">
-        <item quantity="one">%d Element</item>
-        <item quantity="other">%d Elementen</item>
-    </plurals>
     <plurals name="completed_recordings">
         <item quantity="one">%d Voltooid</item>
         <item quantity="other">%d Voltooid</item>
-    </plurals>
-    <plurals name="upcoming_recordings">
-        <item quantity="one">%d Toekomstig</item>
-        <item quantity="other">%d Toekomstig</item>
     </plurals>
     <plurals name="failed_recordings">
         <item quantity="one">%d Mislukt</item>
         <item quantity="other">%d Mislukt</item>
     </plurals>
+    <plurals name="items">
+        <item quantity="one">%d Element</item>
+        <item quantity="other">%d Elementen</item>
+    </plurals>
     <plurals name="number_of_connections">
         <item quantity="one">%d verbinding beschikbaar</item>
         <item quantity="other">%d verbindingen beschikbaar</item>
+    </plurals>
+    <plurals name="programs">
+        <item quantity="one">%d Programma</item>
+        <item quantity="other">%d Programma\'s</item>
+    </plurals>
+    <plurals name="upcoming_recordings">
+        <item quantity="one">%d Toekomstig</item>
+        <item quantity="other">%d Toekomstig</item>
     </plurals>
 </resources>

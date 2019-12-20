@@ -20,8 +20,8 @@ import com.mikepenz.materialdrawer.model.PrimaryDrawerItem
 import com.mikepenz.materialdrawer.model.ProfileDrawerItem
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem
 import com.mikepenz.materialdrawer.model.interfaces.IProfile
+import org.tvheadend.data.entity.Connection
 import org.tvheadend.tvhclient.R
-import org.tvheadend.tvhclient.domain.entity.Connection
 import org.tvheadend.tvhclient.ui.features.channels.ChannelListFragment
 import org.tvheadend.tvhclient.ui.features.dvr.recordings.CompletedRecordingListFragment
 import org.tvheadend.tvhclient.ui.features.dvr.recordings.FailedRecordingListFragment
@@ -29,7 +29,7 @@ import org.tvheadend.tvhclient.ui.features.dvr.recordings.RemovedRecordingListFr
 import org.tvheadend.tvhclient.ui.features.dvr.recordings.ScheduledRecordingListFragment
 import org.tvheadend.tvhclient.ui.features.dvr.series_recordings.SeriesRecordingListFragment
 import org.tvheadend.tvhclient.ui.features.dvr.timer_recordings.TimerRecordingListFragment
-import org.tvheadend.tvhclient.ui.features.epg.ProgramGuideFragment
+import org.tvheadend.tvhclient.ui.features.epg.EpgFragment
 import org.tvheadend.tvhclient.ui.features.information.HelpAndSupportFragment
 import org.tvheadend.tvhclient.ui.features.information.StatusFragment
 import org.tvheadend.tvhclient.ui.features.information.StatusViewModel
@@ -190,11 +190,11 @@ class NavigationDrawer(private val activity: AppCompatActivity,
         }
 
         MaterialDialog(activity).show {
-            title(R.string.dialog_title_connect_to_server)
+            title(R.string.connect_to_new_server)
             negativeButton(R.string.cancel) {
                 headerResult.setActiveProfile(navigationViewModel.connection.id.toLong())
             }
-            positiveButton(R.string.dialog_button_connect) {
+            positiveButton(R.string.connect) {
                 headerResult.setActiveProfile(profile.identifier)
                 if (navigationViewModel.setSelectedConnectionAsActive(profile.identifier.toInt())) {
                     navigationViewModel.updateConnectionAndRestartApplication(activity)
@@ -226,7 +226,7 @@ class NavigationDrawer(private val activity: AppCompatActivity,
     fun handleMenuSelection(fragment: Fragment?) {
         when (fragment) {
             is ChannelListFragment -> result.setSelection(MENU_CHANNELS.toLong(), false)
-            is ProgramGuideFragment -> result.setSelection(MENU_PROGRAM_GUIDE.toLong(), false)
+            is EpgFragment -> result.setSelection(MENU_PROGRAM_GUIDE.toLong(), false)
             is CompletedRecordingListFragment -> result.setSelection(MENU_COMPLETED_RECORDINGS.toLong(), false)
             is ScheduledRecordingListFragment -> result.setSelection(MENU_SCHEDULED_RECORDINGS.toLong(), false)
             is SeriesRecordingListFragment -> result.setSelection(MENU_SERIES_RECORDINGS.toLong(), false)
@@ -245,7 +245,7 @@ class NavigationDrawer(private val activity: AppCompatActivity,
     fun getFragmentFromSelection(position: Int): Fragment? {
         return when (position) {
             MENU_CHANNELS -> ChannelListFragment()
-            MENU_PROGRAM_GUIDE -> ProgramGuideFragment()
+            MENU_PROGRAM_GUIDE -> EpgFragment()
             MENU_COMPLETED_RECORDINGS -> CompletedRecordingListFragment()
             MENU_SCHEDULED_RECORDINGS -> ScheduledRecordingListFragment()
             MENU_SERIES_RECORDINGS -> SeriesRecordingListFragment()

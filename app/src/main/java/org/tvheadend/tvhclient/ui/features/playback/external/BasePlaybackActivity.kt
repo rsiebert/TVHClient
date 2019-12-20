@@ -2,6 +2,8 @@ package org.tvheadend.tvhclient.ui.features.playback.external
 
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.content.pm.ResolveInfo
 import android.net.Uri
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
@@ -65,11 +67,13 @@ abstract class BasePlaybackActivity : AppCompatActivity() {
     internal fun startExternalPlayer(intent: Intent) {
         // Start playing the video in the UI thread
         this.runOnUiThread {
-            try {
+
+            val activities: List<ResolveInfo> = packageManager.queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY)
+            if (activities.isNotEmpty()) {
                 Timber.d("Starting external player")
                 startActivity(intent)
                 finish()
-            } catch (t: Throwable) {
+            } else {
                 Timber.d("Can't execute external media player")
                 status.setText(R.string.no_media_player)
 

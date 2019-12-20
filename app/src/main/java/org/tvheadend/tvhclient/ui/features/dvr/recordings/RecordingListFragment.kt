@@ -1,33 +1,33 @@
 package org.tvheadend.tvhclient.ui.features.dvr.recordings
 
-import android.app.SearchManager
 import android.os.Bundle
 import android.view.*
 import android.widget.Filter
 import androidx.appcompat.widget.PopupMenu
 import androidx.fragment.app.FragmentTransaction
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.recyclerview_fragment.*
+import org.tvheadend.data.entity.Recording
 import org.tvheadend.tvhclient.R
-import org.tvheadend.tvhclient.domain.entity.Recording
 import org.tvheadend.tvhclient.ui.base.BaseFragment
 import org.tvheadend.tvhclient.ui.common.*
-import org.tvheadend.tvhclient.ui.common.callbacks.RecyclerViewClickCallback
-import org.tvheadend.tvhclient.ui.features.download.DownloadPermissionGrantedInterface
-import org.tvheadend.tvhclient.ui.features.download.DownloadRecordingManager
-import org.tvheadend.tvhclient.ui.features.search.SearchRequestInterface
+import org.tvheadend.tvhclient.ui.common.interfaces.RecyclerViewClickInterface
+import org.tvheadend.tvhclient.ui.common.interfaces.SearchRequestInterface
+import org.tvheadend.tvhclient.ui.features.dvr.recordings.download.DownloadPermissionGrantedInterface
+import org.tvheadend.tvhclient.ui.features.dvr.recordings.download.DownloadRecordingManager
 import org.tvheadend.tvhclient.util.extensions.gone
 import org.tvheadend.tvhclient.util.extensions.visible
+import org.tvheadend.tvhclient.util.extensions.visibleOrGone
 import timber.log.Timber
 import java.util.concurrent.CopyOnWriteArrayList
 
-abstract class RecordingListFragment : BaseFragment(), RecyclerViewClickCallback, SearchRequestInterface, DownloadPermissionGrantedInterface, Filter.FilterListener {
+abstract class RecordingListFragment : BaseFragment(), RecyclerViewClickInterface, SearchRequestInterface, DownloadPermissionGrantedInterface, Filter.FilterListener {
 
     lateinit var recordingViewModel: RecordingViewModel
     lateinit var recyclerViewAdapter: RecordingRecyclerViewAdapter
-    private var selectedListPosition: Int = 0
-    var searchQuery: String = ""
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.recyclerview_fragment, container, false)
@@ -37,24 +37,28 @@ abstract class RecordingListFragment : BaseFragment(), RecyclerViewClickCallback
         super.onActivityCreated(savedInstanceState)
         recordingViewModel = ViewModelProviders.of(activity!!).get(RecordingViewModel::class.java)
 
-        if (savedInstanceState != null) {
-            selectedListPosition = savedInstanceState.getInt("listPosition", 0)
-            searchQuery = savedInstanceState.getString(SearchManager.QUERY) ?: ""
-        } else {
-            selectedListPosition = 0
-            searchQuery = arguments?.getString(SearchManager.QUERY) ?: ""
+        arguments?.let {
+            recordingViewModel.selectedListPosition = it.getInt("listPosition")
         }
 
         recyclerViewAdapter = RecordingRecyclerViewAdapter(isDualPane, this, htspVersion)
         recycler_view.layoutManager = LinearLayoutManager(activity)
         recycler_view.adapter = recyclerViewAdapter
         recycler_view.gone()
+        search_progress?.visibleOrGone(baseViewModel.isSearchActive)
     }
 
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        outState.putInt("listPosition", selectedListPosition)
-        outState.putString(SearchManager.QUERY, searchQuery)
+    private fun observeSearchQuery() {
+        Timber.d("Observing search query")
+        baseViewModel.searchQuery.observe(viewLifecycleOwner, Observer { query ->
+            if (query.isNotEmpty()) {
+                Timber.d("View model returned search query '$query'")
+                onSearchRequested(query)
+            } else {
+                Timber.d("View model returned empty search query")
+                onSearchResultsCleared()
+            }
+        })
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -86,7 +90,7 @@ abstract class RecordingListFragment : BaseFragment(), RecyclerViewClickCallback
     }
 
     private fun showRecordingDetails(position: Int) {
-        selectedListPosition = position
+        recordingViewModel.selectedListPosition = position
         recyclerViewAdapter.setPosition(position)
 
         val recording = recyclerViewAdapter.getItem(position)
@@ -104,16 +108,22 @@ abstract class RecordingListFragment : BaseFragment(), RecyclerViewClickCallback
                 it.commit()
             }
         } else {
-            // Check what fragment is currently shown, replace if needed.
             var fragment = activity?.supportFragmentManager?.findFragmentById(R.id.details)
-            if (fragment !is RecordingDetailsFragment || fragment.shownDvrId != recording.id) {
-                // Make new fragment to show this selection.
+            if (fragment !is RecordingDetailsFragment) {
                 fragment = RecordingDetailsFragment.newInstance(recording.id)
-                fm?.beginTransaction()?.also {
-                    it.replace(R.id.details, fragment)
-                    it.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
-                    it.commit()
+
+                // Check the lifecycle state to avoid committing the transaction
+                // after the onSaveInstance method was already called which would
+                // trigger an illegal state exception.
+                if (lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED)) {
+                    fm?.beginTransaction()?.also {
+                        it.replace(R.id.details, fragment)
+                        it.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+                        it.commit()
+                    }
                 }
+            } else if (recordingViewModel.currentId.value != recording.id){
+                recordingViewModel.currentId.value = recording.id
             }
         }
     }
@@ -143,7 +153,7 @@ abstract class RecordingListFragment : BaseFragment(), RecyclerViewClickCallback
                 R.id.menu_search_fileaffinity -> return@setOnMenuItemClickListener searchTitleOnFileAffinityWebsite(ctx, recording.title)
                 R.id.menu_search_youtube -> return@setOnMenuItemClickListener searchTitleOnYoutube(ctx, recording.title)
                 R.id.menu_search_google -> return@setOnMenuItemClickListener searchTitleOnGoogle(ctx, recording.title)
-                R.id.menu_search_epg -> return@setOnMenuItemClickListener searchTitleInTheLocalDatabase(ctx, recording.title)
+                R.id.menu_search_epg -> return@setOnMenuItemClickListener searchTitleInTheLocalDatabase(activity!!, baseViewModel, recording.title)
 
                 R.id.menu_disable_recording -> return@setOnMenuItemClickListener enableScheduledRecording(recording, false)
                 R.id.menu_enable_recording -> return@setOnMenuItemClickListener enableScheduledRecording(recording, true)
@@ -158,7 +168,7 @@ abstract class RecordingListFragment : BaseFragment(), RecyclerViewClickCallback
     }
 
     override fun onClick(view: View, position: Int) {
-        selectedListPosition = position
+        recordingViewModel.selectedListPosition = position
         if (view.id == R.id.icon || view.id == R.id.icon_text) {
             recyclerViewAdapter.getItem(position)?.let {
                 playOrCastRecording(view.context, it.id, isUnlocked)
@@ -169,52 +179,45 @@ abstract class RecordingListFragment : BaseFragment(), RecyclerViewClickCallback
     }
 
     override fun onLongClick(view: View, position: Int): Boolean {
-        Timber.d("Long click on item $position")
         showPopupMenu(view, position)
         return true
     }
 
-    fun updateUI(stringId: Int) {
-        recycler_view?.visible()
-
-        if (searchQuery.isEmpty()) {
-            toolbarInterface.setSubtitle(resources.getQuantityString(R.plurals.items, recyclerViewAdapter.itemCount, recyclerViewAdapter.itemCount))
-        } else {
-            toolbarInterface.setSubtitle(resources.getQuantityString(stringId, recyclerViewAdapter.itemCount, recyclerViewAdapter.itemCount))
+    fun addRecordingsAndUpdateUI(recordings: List<Recording>?) {
+        if (recordings != null) {
+            recyclerViewAdapter.addItems(recordings)
+            observeSearchQuery()
         }
+        recycler_view?.visible()
+        showStatusInToolbar()
+        activity?.invalidateOptionsMenu()
 
         if (isDualPane && recyclerViewAdapter.itemCount > 0) {
-            showRecordingDetails(selectedListPosition)
+            showRecordingDetails(recordingViewModel.selectedListPosition)
         }
-        // Invalidate the menu so that the search menu item is shown in
-        // case the adapter contains items now.
-        activity?.invalidateOptionsMenu()
     }
 
+    abstract fun showStatusInToolbar()
+
     override fun downloadRecording() {
-        DownloadRecordingManager(activity, connection, recyclerViewAdapter.getItem(selectedListPosition))
+        DownloadRecordingManager(activity, connection, recyclerViewAdapter.getItem(recordingViewModel.selectedListPosition))
     }
 
     override fun onFilterComplete(i: Int) {
-        // Preselect the first result item in the details screen
+        search_progress?.gone()
+        showStatusInToolbar()
+
         if (isDualPane && recyclerViewAdapter.itemCount > 0) {
             showRecordingDetails(0)
         }
     }
 
     override fun onSearchRequested(query: String) {
-        searchQuery = query
         recyclerViewAdapter.filter.filter(query, this)
     }
 
-    override fun onSearchResultsCleared(): Boolean {
-        return if (searchQuery.isNotEmpty()) {
-            searchQuery = ""
-            recyclerViewAdapter.filter.filter("", this)
-            true
-        } else {
-            false
-        }
+    override fun onSearchResultsCleared() {
+        recyclerViewAdapter.filter.filter("", this)
     }
 
     abstract override fun getQueryHint(): String

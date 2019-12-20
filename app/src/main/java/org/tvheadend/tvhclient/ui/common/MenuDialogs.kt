@@ -12,12 +12,12 @@ import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.callbacks.onDismiss
 import com.afollestad.materialdialogs.list.customListAdapter
 import com.afollestad.materialdialogs.list.listItemsSingleChoice
+import org.tvheadend.data.entity.ChannelTag
 import org.tvheadend.tvhclient.BR
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.databinding.GenreColorListAdapterBinding
-import org.tvheadend.tvhclient.domain.entity.ChannelTag
-import org.tvheadend.tvhclient.ui.features.channels.ChannelTagIdsSelectedInterface
-import org.tvheadend.tvhclient.ui.features.channels.ChannelTimeSelectedInterface
+import org.tvheadend.tvhclient.ui.common.interfaces.ChannelTagIdsSelectedInterface
+import org.tvheadend.tvhclient.ui.common.interfaces.ChannelTimeSelectedInterface
 import timber.log.Timber
 import java.text.SimpleDateFormat
 import java.util.*
@@ -49,7 +49,7 @@ fun showChannelTagSelectionDialog(context: Context, channelTags: MutableList<Cha
     // Show the dialog that shows all available channel tags. When the
     // user has selected a tag, restart the loader to loadRecordingById the updated channel list
     val dialog: MaterialDialog = MaterialDialog(context)
-            .title(R.string.tags)
+            .title(R.string.filter_channel_list)
             .customListAdapter(adapter)
 
     if (isMultipleChoice) {

@@ -55,7 +55,8 @@
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toEndOf="@+id/icon"
             app:layout_constraintTop_toTopOf="parent"
-            tools:text="@string/title" />
+            tools:text="@string/title"
+            android:layout_marginRight="16dp" />
 
         <TextView
             android:id="@+id/count"
@@ -78,7 +79,7 @@
 
         <variable
             name="channelTag"
-            type="org.tvheadend.tvhclient.domain.entity.ChannelTag" />
+            type="org.tvheadend.data.entity.ChannelTag" />
 
         <variable
             name="position"

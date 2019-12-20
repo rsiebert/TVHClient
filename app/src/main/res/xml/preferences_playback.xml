@@ -36,5 +36,13 @@
             android:defaultValue="@bool/pref_default_timeshift_enabled"
             android:key="timeshift_enabled"
             android:title="@string/pref_internal_player_timeshift_enabled" />
+        <EditTextPreference
+            android:name="@string/pref_internal_player_timeshift_period"
+            android:defaultValue="@string/pref_default_timeshift_period"
+            android:key="timeshift_period"
+            android:inputType="number"
+            android:dependency="timeshift_enabled"
+            android:summary="@string/pref_internal_player_timeshift_period_sum"
+            android:title="@string/pref_internal_player_timeshift_period" />
     </PreferenceCategory>
 </PreferenceScreen>

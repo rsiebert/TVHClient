@@ -5,16 +5,17 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
-import android.view.*
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import kotlinx.android.synthetic.main.status_fragment.*
+import org.tvheadend.data.entity.ServerStatus
 import org.tvheadend.tvhclient.R
-import org.tvheadend.tvhclient.data.service.HtspService
-import org.tvheadend.tvhclient.domain.entity.ServerStatus
+import org.tvheadend.tvhclient.service.HtspService
 import org.tvheadend.tvhclient.ui.base.BaseFragment
-import org.tvheadend.tvhclient.ui.common.callbacks.LayoutInterface
-import org.tvheadend.tvhclient.ui.common.sendWakeOnLanPacket
+import org.tvheadend.tvhclient.ui.base.LayoutControlInterface
 import org.tvheadend.tvhclient.ui.features.dvr.recordings.RecordingViewModel
 import timber.log.Timber
 
@@ -32,8 +33,8 @@ class StatusFragment : BaseFragment() {
         super.onActivityCreated(savedInstanceState)
         statusViewModel = ViewModelProviders.of(activity!!).get(StatusViewModel::class.java)
 
-        if (activity is LayoutInterface) {
-            (activity as LayoutInterface).forceSingleScreenLayout()
+        if (activity is LayoutControlInterface) {
+            (activity as LayoutControlInterface).forceSingleScreenLayout()
         }
 
         toolbarInterface.setTitle(getString(R.string.status))
@@ -43,21 +44,23 @@ class StatusFragment : BaseFragment() {
         showSubscriptionAndInputStatus()
 
         loadDataTask = Runnable {
-            val activityManager: ActivityManager? = activity?.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
-            val runningAppProcessInfo = activityManager?.runningAppProcesses?.get(0)
+            val service = activity?.getSystemService(Context.ACTIVITY_SERVICE)
+            service?.let {
+                val activityManager = service as ActivityManager?
+                val runningAppProcessInfo = activityManager?.runningAppProcesses?.get(0)
+                if (runningAppProcessInfo != null
+                        && runningAppProcessInfo.importance <= ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND) {
 
-            if (runningAppProcessInfo != null
-                    && runningAppProcessInfo.importance <= ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND) {
-
-                Timber.d("Application is in the foreground, starting service to get updated subscriptions and input information")
-                val intent = Intent(activity, HtspService::class.java)
-                intent.action = "getSubscriptions"
-                activity?.startService(intent)
-                intent.action = "getInputs"
-                activity?.startService(intent)
+                    Timber.d("Application is in the foreground, starting service to get updated subscriptions and input information")
+                    val intent = Intent(activity, HtspService::class.java)
+                    intent.action = "getSubscriptions"
+                    activity?.startService(intent)
+                    intent.action = "getInputs"
+                    activity?.startService(intent)
+                }
+                Timber.d("Restarting additional information update handler in 60s")
+                loadDataHandler.postDelayed(loadDataTask, 60000)
             }
-            Timber.d("Restarting additional information update handler in 60s")
-            loadDataHandler.postDelayed(loadDataTask, 60000)
         }
 
         baseViewModel.connectionToServerAvailable.observe(this, Observer { connectionAvailable ->
@@ -69,24 +72,6 @@ class StatusFragment : BaseFragment() {
                 loadDataHandler.removeCallbacks(loadDataTask)
             }
         })
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        super.onCreateOptionsMenu(menu, inflater)
-        inflater.inflate(R.menu.status_options_menu, menu)
-    }
-
-    override fun onPrepareOptionsMenu(menu: Menu) {
-        super.onPrepareOptionsMenu(menu)
-        menu.findItem(R.id.menu_send_wake_on_lan_packet)?.isVisible = isUnlocked && connection.isWolEnabled
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        val ctx = context ?: return super.onOptionsItemSelected(item)
-        return when (item.itemId) {
-            R.id.menu_send_wake_on_lan_packet -> sendWakeOnLanPacket(ctx, connection)
-            else -> super.onOptionsItemSelected(item)
-        }
     }
 
     private fun showStatus() {
@@ -170,21 +155,21 @@ class StatusFragment : BaseFragment() {
 
         try {
             // Get the disc space values and convert them to megabytes
-            val free = serverStatus.freeDiskSpace / 1000000
-            val total = serverStatus.totalDiskSpace / 1000000
+            val free = serverStatus.freeDiskSpace / 1024 / 1024
+            val total = serverStatus.totalDiskSpace / 1024 / 1024
 
             val freeDiscSpace: String
             val totalDiscSpace: String
 
             // Show the free amount of disc space as GB or MB
-            freeDiscSpace = if (free > 1000) {
-                (free / 1000).toString() + " GB " + getString(R.string.available)
+            freeDiscSpace = if (free > 1024) {
+                (free / 1024).toString() + " GB " + getString(R.string.available)
             } else {
                 free.toString() + " MB " + getString(R.string.available)
             }
             // Show the total amount of disc space as GB or MB
-            totalDiscSpace = if (total > 1000) {
-                (total / 1000).toString() + " GB " + getString(R.string.total)
+            totalDiscSpace = if (total > 1024) {
+                (total / 1024).toString() + " GB " + getString(R.string.total)
             } else {
                 total.toString() + " MB " + getString(R.string.total)
             }

@@ -7,36 +7,23 @@
     android:layout_height="match_parent"
     android:background="?android:attr/selectableItemBackground">
 
-    <ImageView
-        android:id="@+id/status_background"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:scaleType="fitXY"
-        android:src="@drawable/ic_launcher_splash"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.44"
-        tools:ignore="ContentDescription" />
-
     <TextView
         android:id="@+id/startup_status"
         style="?attr/ContentFont"
-        android:layout_width="350dp"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginRight="16dp"
-        android:gravity="start"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="32dp"
+        android:gravity="center"
         android:text="@string/status"
         android:textAlignment="center"
         android:visibility="invisible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/horizontal_guideline" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="@string/no_connection_available"
+        tools:visibility="visible" />
 
     <ImageButton
         android:id="@+id/add_connection_button"
@@ -44,7 +31,7 @@
         android:layout_height="40dp"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
-        android:layout_marginTop="17dp"
+        android:layout_marginTop="16dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
         android:background="?attr/rounded_corners"
@@ -53,7 +40,8 @@
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/startup_status" />
+        app:layout_constraintTop_toBottomOf="@+id/startup_status"
+        tools:visibility="visible" />
 
     <ImageButton
         android:id="@+id/list_connections_button"
@@ -70,13 +58,26 @@
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/add_connection_button" />
+        app:layout_constraintTop_toBottomOf="@+id/add_connection_button"
+        tools:visibility="visible" />
 
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/horizontal_guideline"
-        android:layout_width="wrap_content"
+    <TextView
+        android:id="@+id/startup_contact"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_begin="402dp" />
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginBottom="32dp"
+        android:autoLink="web|email"
+        android:gravity="center"
+        android:text="@string/contact_information"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/list_connections_button"
+        app:layout_constraintVertical_bias="1.0"
+        tools:text="@string/contact_information" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

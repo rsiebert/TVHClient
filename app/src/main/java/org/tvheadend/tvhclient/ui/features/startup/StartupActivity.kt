@@ -7,9 +7,9 @@ import androidx.appcompat.widget.Toolbar
 import org.tvheadend.tvhclient.BuildConfig
 import org.tvheadend.tvhclient.MainApplication
 import org.tvheadend.tvhclient.R
-import org.tvheadend.tvhclient.ui.common.callbacks.BackPressedInterface
-import org.tvheadend.tvhclient.ui.common.callbacks.ToolbarInterface
-import org.tvheadend.tvhclient.ui.features.changelog.ChangeLogFragment
+import org.tvheadend.tvhclient.ui.common.interfaces.BackPressedInterface
+import org.tvheadend.tvhclient.ui.common.interfaces.ToolbarInterface
+import org.tvheadend.tvhclient.ui.features.information.ChangeLogFragment
 import org.tvheadend.tvhclient.ui.features.information.StartupPrivacyPolicyFragment
 import org.tvheadend.tvhclient.ui.features.settings.RemoveFragmentFromBackstackInterface
 import org.tvheadend.tvhclient.util.getThemeId

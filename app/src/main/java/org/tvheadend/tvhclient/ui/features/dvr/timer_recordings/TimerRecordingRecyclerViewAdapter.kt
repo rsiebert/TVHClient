@@ -5,20 +5,20 @@ import android.view.ViewGroup
 import android.widget.Filter
 import android.widget.Filterable
 import androidx.recyclerview.widget.RecyclerView
+import org.tvheadend.data.entity.TimerRecording
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.databinding.TimerRecordingListAdapterBinding
-import org.tvheadend.tvhclient.domain.entity.TimerRecording
-import org.tvheadend.tvhclient.ui.common.callbacks.RecyclerViewClickCallback
+import org.tvheadend.tvhclient.ui.common.interfaces.RecyclerViewClickInterface
 import java.util.*
 import java.util.concurrent.CopyOnWriteArrayList
 
-class TimerRecordingRecyclerViewAdapter internal constructor(private val isDualPane: Boolean, private val clickCallback: RecyclerViewClickCallback, private val htspVersion: Int) : RecyclerView.Adapter<TimerRecordingRecyclerViewAdapter.TimerRecordingViewHolder>(), Filterable {
+class TimerRecordingRecyclerViewAdapter internal constructor(private val isDualPane: Boolean, private val clickCallback: RecyclerViewClickInterface, private val htspVersion: Int) : RecyclerView.Adapter<TimerRecordingRecyclerViewAdapter.TimerRecordingViewHolder>(), Filterable {
 
     private val recordingList = ArrayList<TimerRecording>()
     private var recordingListFiltered: MutableList<TimerRecording> = ArrayList()
     private var selectedPosition = 0
 
-    val items: List<TimerRecording>?
+    val items: List<TimerRecording>
         get() = recordingListFiltered
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TimerRecordingViewHolder {
@@ -76,34 +76,29 @@ class TimerRecordingRecyclerViewAdapter internal constructor(private val isDualP
         return object : Filter() {
             override fun performFiltering(charSequence: CharSequence): FilterResults {
                 val charString = charSequence.toString()
-                if (charString.isEmpty()) {
-                    recordingListFiltered = recordingList
-                } else {
-                    val filteredList = ArrayList<TimerRecording>()
-                    // Iterate over the available channels. Use a copy on write
-                    // array in case the channel list changes during filtering.
+                val filteredList: MutableList<TimerRecording> = ArrayList()
+                if (charString.isNotEmpty()) {
                     for (recording in CopyOnWriteArrayList(recordingList)) {
-                        // name match condition. this might differ depending on your requirement
-                        // here we are looking for a channel name match
                         val title = recording.title ?: ""
                         val name = recording.name ?: ""
-                        if (title.toLowerCase().contains(charString.toLowerCase())) {
-                            filteredList.add(recording)
-                        } else if (name.toLowerCase().contains(charString.toLowerCase())) {
-                            filteredList.add(recording)
+                        when {
+                            title.toLowerCase(Locale.getDefault()).contains(charString.toLowerCase(Locale.getDefault())) -> filteredList.add(recording)
+                            name.toLowerCase(Locale.getDefault()).contains(charString.toLowerCase(Locale.getDefault())) -> filteredList.add(recording)
                         }
                     }
-                    recordingListFiltered = filteredList
+                } else {
+                    filteredList.addAll(recordingList)
                 }
 
                 val filterResults = FilterResults()
-                filterResults.values = recordingListFiltered
+                filterResults.values = filteredList
                 return filterResults
             }
 
             override fun publishResults(charSequence: CharSequence, filterResults: FilterResults) {
+                recordingListFiltered.clear()
                 @Suppress("UNCHECKED_CAST")
-                recordingListFiltered = filterResults.values as ArrayList<TimerRecording>
+                recordingListFiltered.addAll(filterResults.values as ArrayList<TimerRecording>)
                 notifyDataSetChanged()
             }
         }
@@ -111,7 +106,7 @@ class TimerRecordingRecyclerViewAdapter internal constructor(private val isDualP
 
     class TimerRecordingViewHolder(private val binding: TimerRecordingListAdapterBinding, private val isDualPane: Boolean) : RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(recording: TimerRecording, position: Int, isSelected: Boolean, htspVersion: Int, clickCallback: RecyclerViewClickCallback) {
+        fun bind(recording: TimerRecording, position: Int, isSelected: Boolean, htspVersion: Int, clickCallback: RecyclerViewClickInterface) {
             binding.recording = recording
             binding.position = position
             binding.htspVersion = htspVersion

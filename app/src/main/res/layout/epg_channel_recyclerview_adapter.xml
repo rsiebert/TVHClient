@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:background="?android:attr/selectableItemBackground">
+
+        <ImageView
+            android:id="@+id/channel_icon"
+            android:layout_width="56dp"
+            android:layout_height="40dp"
+            android:contentDescription="@null"
+            android:onClick="@{(view) -> callback.onClick(view, position)}"
+            android:scaleType="fitStart"
+            app:iconUrl="@{channel.icon}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/channel_icon_text"
+            style="?attr/ContentFont"
+            android:layout_width="56dp"
+            android:layout_height="40dp"
+            android:onClick="@{(view) -> callback.onClick(view, position)}"
+            app:iconName="@{channel.name}"
+            app:iconUrl="@{channel.icon}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/channel_number"
+            style="?attr/ProgramGuideContentFont"
+            android:layout_width="56dp"
+            android:layout_height="20dp"
+            android:ellipsize="end"
+            android:gravity="bottom|center"
+            android:singleLine="true"
+            android:text="@{channel.displayNumber}"
+            android:visibility="@{safeUnbox(viewModel.showChannelNumber) ? View.VISIBLE : View.GONE}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/channel_icon_text" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <data>
+
+        <import type="android.view.View" />
+
+        <variable
+            name="channel"
+            type="org.tvheadend.data.entity.EpgChannel" />
+
+        <variable
+            name="viewModel"
+            type="org.tvheadend.tvhclient.ui.features.epg.EpgViewModel" />
+
+        <variable
+            name="position"
+            type="int" />
+
+        <variable
+            name="callback"
+            type="org.tvheadend.tvhclient.ui.common.interfaces.RecyclerViewClickInterface" />
+    </data>
+</layout>

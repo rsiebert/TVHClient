@@ -6,9 +6,12 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageManager
+import android.content.res.Configuration
 import android.database.Cursor
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
+import android.provider.SearchRecentSuggestions
 import android.view.KeyEvent
 import android.view.Menu
 import android.view.MenuItem
@@ -22,34 +25,27 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.preference.PreferenceManager
 import com.google.android.gms.cast.framework.*
 import org.tvheadend.tvhclient.R
-import org.tvheadend.tvhclient.data.service.HtspService
-import org.tvheadend.tvhclient.data.service.SyncStateReceiver
+import org.tvheadend.tvhclient.service.HtspService
+import org.tvheadend.tvhclient.service.SyncStateReceiver
 import org.tvheadend.tvhclient.ui.base.BaseActivity
-import org.tvheadend.tvhclient.ui.common.NetworkStatus
-import org.tvheadend.tvhclient.ui.common.getCastContext
-import org.tvheadend.tvhclient.ui.common.getCastSession
-import org.tvheadend.tvhclient.ui.common.showSnackbarMessage
-import org.tvheadend.tvhclient.ui.features.download.DownloadPermissionGrantedInterface
+import org.tvheadend.tvhclient.ui.common.*
+import org.tvheadend.tvhclient.ui.common.interfaces.SearchRequestInterface
+import org.tvheadend.tvhclient.ui.features.channels.ChannelListFragment
 import org.tvheadend.tvhclient.ui.features.dvr.recordings.RecordingDetailsFragment
+import org.tvheadend.tvhclient.ui.features.dvr.recordings.download.DownloadPermissionGrantedInterface
 import org.tvheadend.tvhclient.ui.features.dvr.series_recordings.SeriesRecordingDetailsFragment
 import org.tvheadend.tvhclient.ui.features.dvr.timer_recordings.TimerRecordingDetailsFragment
-import org.tvheadend.tvhclient.ui.features.epg.ProgramGuideFragment
+import org.tvheadend.tvhclient.ui.features.epg.EpgFragment
 import org.tvheadend.tvhclient.ui.features.information.PrivacyPolicyFragment
 import org.tvheadend.tvhclient.ui.features.information.StatusViewModel
 import org.tvheadend.tvhclient.ui.features.navigation.NavigationDrawer
 import org.tvheadend.tvhclient.ui.features.navigation.NavigationDrawer.Companion.MENU_SETTINGS
 import org.tvheadend.tvhclient.ui.features.navigation.NavigationViewModel
-import org.tvheadend.tvhclient.ui.features.notification.showOrCancelNotificationDiskSpaceIsLow
-import org.tvheadend.tvhclient.ui.features.notification.showOrCancelNotificationProgramIsCurrentlyBeingRecorded
 import org.tvheadend.tvhclient.ui.features.playback.external.CastSessionManagerListener
 import org.tvheadend.tvhclient.ui.features.programs.ProgramDetailsFragment
 import org.tvheadend.tvhclient.ui.features.programs.ProgramListFragment
-import org.tvheadend.tvhclient.ui.features.search.SearchRequestInterface
 import org.tvheadend.tvhclient.ui.features.settings.SettingsActivity
-import org.tvheadend.tvhclient.util.extensions.gone
-import org.tvheadend.tvhclient.util.extensions.sendSnackbarMessage
-import org.tvheadend.tvhclient.util.extensions.visible
-import org.tvheadend.tvhclient.util.extensions.visibleOrGone
+import org.tvheadend.tvhclient.util.extensions.*
 import timber.log.Timber
 
 class MainActivity : BaseActivity(R.layout.main_activity), SearchView.OnQueryTextListener, SearchView.OnSuggestionListener, SyncStateReceiver.Listener {
@@ -74,20 +70,23 @@ class MainActivity : BaseActivity(R.layout.main_activity), SearchView.OnQueryTex
     private var isUnlocked: Boolean = false
     private var isDualPane: Boolean = false
 
-    private var searchQuery: String = ""
     private lateinit var queryTextSubmitTask: Runnable
-    private val queryTextSubmitHandler = Handler()
+    private val delayedQueryTextSubmitHandler = Handler()
 
     private lateinit var miniController: View
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        Timber.d("Initializing")
-        supportActionBar?.setHomeButtonEnabled(true)
-
         navigationViewModel = ViewModelProviders.of(this).get(NavigationViewModel::class.java)
         statusViewModel = ViewModelProviders.of(this).get(StatusViewModel::class.java)
+
+        // Reset the search in case the main activity was called for the first
+        // time or when we came back from another like the search activity
+        if (savedInstanceState == null) {
+            baseViewModel.clearSearchQuery()
+            baseViewModel.removeFragmentWhenSearchIsDone = false
+        }
 
         syncProgress = findViewById(R.id.sync_progress)
         syncStateReceiver = SyncStateReceiver(this)
@@ -98,13 +97,11 @@ class MainActivity : BaseActivity(R.layout.main_activity), SearchView.OnQueryTex
 
         navigationDrawer = NavigationDrawer(this, savedInstanceState, toolbar, navigationViewModel, statusViewModel)
 
-        searchQuery = savedInstanceState?.getString(SearchManager.QUERY) ?: ""
-
         supportFragmentManager.addOnBackStackChangedListener {
             navigationDrawer.handleMenuSelection(supportFragmentManager.findFragmentById(R.id.main))
         }
 
-        castContext = getCastContext(this)
+        castContext = this.getCastContext()
         if (castContext != null) {
             Timber.d("Casting is available")
             castSessionManagerListener = CastSessionManagerListener(this, castSession)
@@ -122,12 +119,7 @@ class MainActivity : BaseActivity(R.layout.main_activity), SearchView.OnQueryTex
         // Disable search as you type in the epg because the results
         // will be shown in a separate fragment program list.
         queryTextSubmitTask = Runnable {
-            val fragment = supportFragmentManager.findFragmentById(R.id.main)
-            if (fragment is SearchRequestInterface
-                    && fragment.isVisible
-                    && fragment !is ProgramGuideFragment) {
-                fragment.onSearchRequested(searchQuery)
-            }
+            Timber.d("Delayed search timer elapsed, starting search")
         }
 
         // Observe any changes in the network availability. If the app is in the background
@@ -162,7 +154,7 @@ class MainActivity : BaseActivity(R.layout.main_activity), SearchView.OnQueryTex
         })
         baseViewModel.showSnackbar.observe(this, Observer { event ->
             event.getContentIfNotHandled()?.let {
-                showSnackbarMessage(this, it)
+                this.showSnackbarMessage(it)
             }
         })
         baseViewModel.isUnlocked.observe(this, Observer { unlocked ->
@@ -179,7 +171,6 @@ class MainActivity : BaseActivity(R.layout.main_activity), SearchView.OnQueryTex
         var out = outState
         // add the values which need to be saved from the drawer and header to the bundle
         out = navigationDrawer.saveInstanceState(out)
-        out.putString(SearchManager.QUERY, searchQuery)
         super.onSaveInstanceState(out)
     }
 
@@ -203,7 +194,7 @@ class MainActivity : BaseActivity(R.layout.main_activity), SearchView.OnQueryTex
 
     public override fun onResume() {
         super.onResume()
-        castSession = getCastSession(this)
+        castSession = this.getCastSession()
     }
 
     public override fun onPause() {
@@ -215,7 +206,7 @@ class MainActivity : BaseActivity(R.layout.main_activity), SearchView.OnQueryTex
                 Timber.e(e, "Could not remove cast state listener or get cast session manager")
             }
         }
-        queryTextSubmitHandler.removeCallbacks(queryTextSubmitTask)
+        delayedQueryTextSubmitHandler.removeCallbacks(queryTextSubmitTask)
         super.onPause()
     }
 
@@ -325,11 +316,18 @@ class MainActivity : BaseActivity(R.layout.main_activity), SearchView.OnQueryTex
         super.onPrepareOptionsMenu(menu)
 
         when (navigationViewModel.currentNavigationMenuId) {
-            NavigationDrawer.MENU_STATUS, NavigationDrawer.MENU_UNLOCKER, NavigationDrawer.MENU_HELP -> {
+            NavigationDrawer.MENU_UNLOCKER,
+            NavigationDrawer.MENU_HELP -> {
                 menu.findItem(R.id.media_route_menu_item)?.isVisible = false
                 menu.findItem(R.id.menu_search).isVisible = false
                 menu.findItem(R.id.menu_reconnect_to_server).isVisible = false
+                menu.findItem(R.id.menu_privacy_policy).isVisible = false
                 menu.findItem(R.id.menu_send_wake_on_lan_packet)?.isVisible = false
+            }
+            NavigationDrawer.MENU_STATUS -> {
+                menu.findItem(R.id.media_route_menu_item)?.isVisible = false
+                menu.findItem(R.id.menu_search).isVisible = false
+                menu.findItem(R.id.menu_send_wake_on_lan_packet)?.isVisible = isUnlocked && baseViewModel.connection.isWolEnabled
             }
             else -> {
                 menu.findItem(R.id.media_route_menu_item)?.isVisible = isUnlocked
@@ -350,26 +348,52 @@ class MainActivity : BaseActivity(R.layout.main_activity), SearchView.OnQueryTex
                         .commit()
                 true
             }
+            R.id.menu_reconnect_to_server -> showConfirmationToReconnectToServer(this, baseViewModel)
+            R.id.menu_send_wake_on_lan_packet -> {
+                WakeOnLanTask(this, baseViewModel.connection).execute()
+                true
+            }
             else -> super.onOptionsItemSelected(item)
         }
     }
 
     override fun onQueryTextSubmit(query: String): Boolean {
-        queryTextSubmitHandler.removeCallbacks(queryTextSubmitTask)
+        Timber.d("Search string $query was entered")
+        delayedQueryTextSubmitHandler.removeCallbacks(queryTextSubmitTask)
         searchMenuItem?.collapseActionView()
+
+        // Save the entered query so it will be shown later in the suggestion drpo down list
+        val suggestions = SearchRecentSuggestions(this, SuggestionProvider.AUTHORITY, SuggestionProvider.MODE)
+        suggestions.saveRecentQuery(query, null)
+
+        // In case the channels or epg is currently visible, show the program list fragment.
+        // It observes the search query and will perform the search and show the results.
         val fragment = supportFragmentManager.findFragmentById(R.id.main)
-        if (fragment is SearchRequestInterface && fragment.isVisible) {
-            fragment.onSearchRequested(query)
+        if (fragment is ChannelListFragment || fragment is EpgFragment) {
+            Timber.d("Adding program list fragment where the search will be done")
+            val newFragment: Fragment = ProgramListFragment.newInstance()
+            supportFragmentManager.beginTransaction().replace(R.id.main, newFragment).let {
+                it.addToBackStack(null)
+                it.commit()
+            }
+            baseViewModel.removeFragmentWhenSearchIsDone = true
         }
+
+        Timber.d("Submitting search query to the view model")
+        baseViewModel.startSearchQuery(query)
         return true
     }
 
     override fun onQueryTextChange(newText: String): Boolean {
-        searchQuery = newText
-        if (newText.length >= 3) {
-            Timber.d("Search query is ${newText.length} characters long, starting timer to start searching")
-            queryTextSubmitHandler.removeCallbacks(queryTextSubmitTask)
-            queryTextSubmitHandler.postDelayed(queryTextSubmitTask, 2000)
+        Timber.d("Search query changed to $newText")
+        delayedQueryTextSubmitHandler.removeCallbacks(queryTextSubmitTask)
+
+        val fragment = supportFragmentManager.findFragmentById(R.id.main)
+        if (fragment !is ChannelListFragment && fragment !is EpgFragment) {
+            if (newText.length >= 3) {
+                Timber.d("Search query is ${newText.length} characters long, starting timer to start searching")
+                delayedQueryTextSubmitHandler.postDelayed(queryTextSubmitTask, 2000)
+            }
         }
         return true
     }
@@ -379,9 +403,9 @@ class MainActivity : BaseActivity(R.layout.main_activity), SearchView.OnQueryTex
     }
 
     override fun onSuggestionClick(position: Int): Boolean {
+        delayedQueryTextSubmitHandler.removeCallbacks(queryTextSubmitTask)
         searchMenuItem?.collapseActionView()
-        // Set the search query and return true so that the onQueryTextSubmit
-        // is called. This is required to pass additional data to the search activity
+
         val cursor = searchView?.suggestionsAdapter?.getItem(position) as Cursor?
         cursor?.let {
             val suggestion = cursor.getString(cursor.getColumnIndex(SearchManager.SUGGEST_COLUMN_TEXT_1))
@@ -459,23 +483,22 @@ class MainActivity : BaseActivity(R.layout.main_activity), SearchView.OnQueryTex
     override fun onBackPressed() {
         val navigationHistoryEnabled = PreferenceManager.getDefaultSharedPreferences(this).getBoolean("navigation_history_enabled", resources.getBoolean(R.bool.pref_default_navigation_history_enabled))
         if (!navigationHistoryEnabled) {
-            val fragment = supportFragmentManager.findFragmentById(R.id.main)
-            if (fragment is ProgramListFragment
-                    || fragment is ProgramDetailsFragment
-                    || fragment is RecordingDetailsFragment
-                    || fragment is SeriesRecordingDetailsFragment
-                    || fragment is TimerRecordingDetailsFragment) {
-                // Do not finish the activity in case any of these fragments
-                // are visible which were called from the channel list fragment.
-                clearSearchResultsOrPopBackStack()
-            } else {
-                finish()
+            // The following fragments can be called from the channel list fragment.
+            // So do not finish the activity in case any of these fragments are visible
+            // but pop the back stack so that the channel list is shown again.
+            when (supportFragmentManager.findFragmentById(R.id.main)) {
+                is ProgramListFragment -> clearSearchResultsOrPopBackStack()
+                is ProgramDetailsFragment -> clearSearchResultsOrPopBackStack()
+                is RecordingDetailsFragment -> clearSearchResultsOrPopBackStack()
+                is SeriesRecordingDetailsFragment -> clearSearchResultsOrPopBackStack()
+                is TimerRecordingDetailsFragment -> clearSearchResultsOrPopBackStack()
+                else -> finish()
             }
         } else {
+            // Only finish the activity when the last fragment is visible
             if (supportFragmentManager.backStackEntryCount <= 1) {
                 finish()
             } else {
-                // The last fragment on the stack is visible
                 clearSearchResultsOrPopBackStack()
             }
         }
@@ -487,16 +510,27 @@ class MainActivity : BaseActivity(R.layout.main_activity), SearchView.OnQueryTex
      * After that a new back press can finish the activity.
      */
     private fun clearSearchResultsOrPopBackStack() {
-        Timber.d("Popping back stack or finishing")
-        val fragment = supportFragmentManager.findFragmentById(R.id.main)
-        if (fragment is SearchRequestInterface && fragment.isVisible) {
-            if (!fragment.onSearchResultsCleared()) {
+        if (baseViewModel.isSearchActive) {
+            Timber.d("Clearing search result")
+            baseViewModel.clearSearchQuery()
+
+            if (baseViewModel.removeFragmentWhenSearchIsDone) {
+                Timber.d("Removing current fragment because flag was set")
+                baseViewModel.removeFragmentWhenSearchIsDone = false
                 super.onBackPressed()
                 navigationViewModel.setSelectedMenuItemId(navigationDrawer.getSelectedMenu())
             }
         } else {
+            Timber.d("Removing current fragment")
             super.onBackPressed()
             navigationViewModel.setSelectedMenuItemId(navigationDrawer.getSelectedMenu())
         }
+    }
+
+    override fun applyOverrideConfiguration(overrideConfiguration: Configuration?) {
+        if (Build.VERSION.SDK_INT in 21..25) {
+            return
+        }
+        super.applyOverrideConfiguration(overrideConfiguration)
     }
 }

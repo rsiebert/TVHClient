@@ -5,14 +5,14 @@ import android.view.ViewGroup
 import android.widget.Filter
 import android.widget.Filterable
 import androidx.recyclerview.widget.RecyclerView
+import org.tvheadend.data.entity.Recording
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.databinding.RecordingListAdapterBinding
-import org.tvheadend.tvhclient.domain.entity.Recording
-import org.tvheadend.tvhclient.ui.common.callbacks.RecyclerViewClickCallback
+import org.tvheadend.tvhclient.ui.common.interfaces.RecyclerViewClickInterface
 import java.util.*
 import java.util.concurrent.CopyOnWriteArrayList
 
-class RecordingRecyclerViewAdapter internal constructor(private val isDualPane: Boolean, private val clickCallback: RecyclerViewClickCallback, private val htspVersion: Int) : RecyclerView.Adapter<RecordingRecyclerViewAdapter.RecordingViewHolder>(), Filterable {
+class RecordingRecyclerViewAdapter internal constructor(private val isDualPane: Boolean, private val clickCallback: RecyclerViewClickInterface, private val htspVersion: Int) : RecyclerView.Adapter<RecordingRecyclerViewAdapter.RecordingViewHolder>(), Filterable {
 
     private val recordingList = ArrayList<Recording>()
     private var recordingListFiltered: MutableList<Recording> = ArrayList()
@@ -71,34 +71,31 @@ class RecordingRecyclerViewAdapter internal constructor(private val isDualPane: 
         return object : Filter() {
             override fun performFiltering(charSequence: CharSequence): FilterResults {
                 val charString = charSequence.toString()
-                if (charString.isEmpty()) {
-                    recordingListFiltered = recordingList
-                } else {
-                    val filteredList = ArrayList<Recording>()
+                val filteredList: MutableList<Recording> = ArrayList()
+                if (charString.isNotEmpty()) {
                     // Iterate over the available channels. Use a copy on write
                     // array in case the channel list changes during filtering.
                     for (recording in CopyOnWriteArrayList(recordingList)) {
-                        // name match condition. this might differ depending on your requirement
-                        // here we are looking for a channel name match
                         val title = recording.title ?: ""
                         val subtitle = recording.subtitle ?: ""
-                        if (title.toLowerCase().contains(charString.toLowerCase())) {
-                            filteredList.add(recording)
-                        } else if (subtitle.toLowerCase().contains(charString.toLowerCase())) {
-                            filteredList.add(recording)
+                        when {
+                            title.toLowerCase(Locale.getDefault()).contains(charString.toLowerCase(Locale.getDefault())) -> filteredList.add(recording)
+                            subtitle.toLowerCase(Locale.getDefault()).contains(charString.toLowerCase(Locale.getDefault())) -> filteredList.add(recording)
                         }
                     }
-                    recordingListFiltered = filteredList
+                } else {
+                    filteredList.addAll(recordingList)
                 }
 
                 val filterResults = FilterResults()
-                filterResults.values = recordingListFiltered
+                filterResults.values = filteredList
                 return filterResults
             }
 
             override fun publishResults(charSequence: CharSequence, filterResults: FilterResults) {
+                recordingListFiltered.clear()
                 @Suppress("UNCHECKED_CAST")
-                recordingListFiltered = filterResults.values as ArrayList<Recording>
+                recordingListFiltered.addAll(filterResults.values as ArrayList<Recording>)
                 notifyDataSetChanged()
             }
         }
@@ -106,7 +103,7 @@ class RecordingRecyclerViewAdapter internal constructor(private val isDualPane: 
 
     class RecordingViewHolder(private val binding: RecordingListAdapterBinding, private val isDualPane: Boolean) : RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(recording: Recording, position: Int, isSelected: Boolean, htspVersion: Int, clickCallback: RecyclerViewClickCallback) {
+        fun bind(recording: Recording, position: Int, isSelected: Boolean, htspVersion: Int, clickCallback: RecyclerViewClickInterface) {
             binding.recording = recording
             binding.position = position
             binding.htspVersion = htspVersion

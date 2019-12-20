@@ -13,12 +13,12 @@ import com.google.android.gms.cast.framework.media.CastMediaOptions
 import com.google.android.gms.cast.framework.media.NotificationOptions
 import com.google.firebase.analytics.FirebaseAnalytics
 import io.fabric.sdk.android.Fabric
-import org.tvheadend.tvhclient.data.repository.AppRepository
 import org.tvheadend.tvhclient.di.component.DaggerMainApplicationComponent
 import org.tvheadend.tvhclient.di.component.MainApplicationComponent
 import org.tvheadend.tvhclient.di.module.ContextModule
 import org.tvheadend.tvhclient.di.module.RepositoryModule
 import org.tvheadend.tvhclient.di.module.SharedPreferencesModule
+import org.tvheadend.tvhclient.repository.AppRepository
 import org.tvheadend.tvhclient.ui.common.onAttach
 import org.tvheadend.tvhclient.ui.features.playback.external.ExpandedControlsActivity
 import org.tvheadend.tvhclient.util.MigrateUtils
@@ -32,12 +32,9 @@ import org.tvheadend.tvhclient.util.logging.FileLoggingTree
 import timber.log.Timber
 import javax.inject.Inject
 
-// TODO move diffutils to background thread
-// TODO Use paged loading
-// TODO Move the variable programIdToBeEditedWhenBeingRecorded into the viewmodels
-// TODO consolidate the dialog strings
-// TODO make the 12 hour check to start the epg background worker a setting
-// TODO use viewpager2 in epg
+// TODO snackbar locale changes
+// TODO day night theme
+// TODO replace material dialog calls with native ones
 
 class MainApplication : MultiDexApplication(), OptionsProvider, BillingUpdatesListener {
 

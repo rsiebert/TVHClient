@@ -194,7 +194,7 @@
 
         <TextView
             android:id="@+id/is_series_recording"
-            style="?attr/SubtitleFont"
+            style="?attr/ContentFont"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
@@ -208,7 +208,7 @@
 
         <TextView
             android:id="@+id/is_timer_recording"
-            style="?attr/SubtitleFont"
+            style="?attr/ContentFont"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
@@ -222,7 +222,7 @@
 
         <TextView
             android:id="@+id/failed_reason"
-            style="?attr/SubtitleFont"
+            style="?attr/ContentFont"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
@@ -328,7 +328,7 @@
 
         <variable
             name="recording"
-            type="org.tvheadend.tvhclient.domain.entity.Recording" />
+            type="org.tvheadend.data.entity.Recording" />
 
         <variable
             name="viewModel"
@@ -352,6 +352,6 @@
 
         <variable
             name="callback"
-            type="org.tvheadend.tvhclient.ui.common.callbacks.RecyclerViewClickCallback" />
+            type="org.tvheadend.tvhclient.ui.common.interfaces.RecyclerViewClickInterface" />
     </data>
 </layout>

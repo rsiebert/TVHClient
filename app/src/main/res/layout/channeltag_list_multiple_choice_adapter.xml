@@ -46,6 +46,7 @@
             android:layout_marginLeft="8dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="16dp"
+            android:layout_marginRight="16dp"
             android:layout_marginBottom="8dp"
             android:gravity="center_vertical"
             android:text="@{channelTag.tagName}"
@@ -77,7 +78,7 @@
 
         <variable
             name="channelTag"
-            type="org.tvheadend.tvhclient.domain.entity.ChannelTag" />
+            type="org.tvheadend.data.entity.ChannelTag" />
 
         <variable
             name="position"

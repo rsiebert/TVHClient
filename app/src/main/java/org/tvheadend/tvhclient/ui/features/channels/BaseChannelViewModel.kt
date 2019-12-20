@@ -3,24 +3,39 @@ package org.tvheadend.tvhclient.ui.features.channels
 import android.app.Application
 import android.content.Context
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
+import org.tvheadend.data.entity.ChannelTag
+import org.tvheadend.data.entity.Program
+import org.tvheadend.data.entity.Recording
+import org.tvheadend.data.entity.ServerProfile
 import org.tvheadend.tvhclient.R
-import org.tvheadend.tvhclient.domain.entity.ChannelTag
-import org.tvheadend.tvhclient.domain.entity.Program
-import org.tvheadend.tvhclient.domain.entity.Recording
-import org.tvheadend.tvhclient.domain.entity.ServerProfile
 import org.tvheadend.tvhclient.ui.base.BaseViewModel
 import timber.log.Timber
 import java.util.*
 
 open class BaseChannelViewModel(application: Application) : BaseViewModel(application) {
 
-    val channelTags: LiveData<List<ChannelTag>> = appRepository.channelTagData.getLiveDataItems()
+    var showAllChannelTags = MutableLiveData<Boolean>()
+    val channelTags = MediatorLiveData<List<ChannelTag>>()
     val recordings: LiveData<List<Recording>> = appRepository.recordingData.getLiveDataItems()
     val selectedChannelTagIds: LiveData<List<Int>?> = appRepository.channelTagData.liveDataSelectedItemIds
     val channelCount: LiveData<Int> = appRepository.channelData.getLiveDataItemCount()
     val selectedTime = MutableLiveData(Date().time)
     val defaultChannelSortOrder: String = appContext.resources.getString(R.string.pref_default_channel_sort_order)
+
+    init {
+        showAllChannelTags.value = sharedPreferences.getBoolean("empty_channel_tags_enabled", appContext.resources.getBoolean(R.bool.pref_default_empty_channel_tags_enabled))
+        // Reload the channel tag list depending on the preference
+        channelTags.addSource(showAllChannelTags) { allTags ->
+            channelTags.value = appRepository.channelTagData.getNonEmptyItems(allTags)
+        }
+        // Reload the channel tag list when the tags have changed to
+        // get the updated selection status which is saved for each tag
+        channelTags.addSource(appRepository.channelTagData.getLiveDataItems()) {
+            channelTags.value = appRepository.channelTagData.getNonEmptyItems(showAllChannelTags.value!!)
+        }
+    }
 
     fun setSelectedTime(time: Long) {
         if (selectedTime.value != time) {

@@ -13,11 +13,10 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import org.tvheadend.tvhclient.MainApplication
 import org.tvheadend.tvhclient.R
-import org.tvheadend.tvhclient.data.repository.AppRepository
+import org.tvheadend.tvhclient.repository.AppRepository
 import org.tvheadend.tvhclient.ui.common.NetworkStatusReceiver
 import org.tvheadend.tvhclient.ui.common.SnackbarMessageReceiver
-import org.tvheadend.tvhclient.ui.common.callbacks.LayoutInterface
-import org.tvheadend.tvhclient.ui.common.callbacks.ToolbarInterface
+import org.tvheadend.tvhclient.ui.common.interfaces.ToolbarInterface
 import org.tvheadend.tvhclient.ui.common.onAttach
 import org.tvheadend.tvhclient.util.extensions.gone
 import org.tvheadend.tvhclient.util.extensions.visible
@@ -25,7 +24,7 @@ import org.tvheadend.tvhclient.util.getThemeId
 import timber.log.Timber
 import javax.inject.Inject
 
-open class BaseActivity(private val layoutId: Int = R.layout.misc_content_activity) : AppCompatActivity(), ToolbarInterface, LayoutInterface {
+open class BaseActivity(private val layoutId: Int = R.layout.misc_content_activity) : AppCompatActivity(), ToolbarInterface, LayoutControlInterface {
 
     @Inject
     lateinit var appContext: Context
@@ -46,7 +45,6 @@ open class BaseActivity(private val layoutId: Int = R.layout.misc_content_activi
 
         toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         MainApplication.component.inject(this)
 
@@ -114,4 +112,12 @@ open class BaseActivity(private val layoutId: Int = R.layout.misc_content_activi
     override fun forceSingleScreenLayout() {
         enableSingleScreenLayout()
     }
+}
+
+interface LayoutControlInterface {
+    fun forceSingleScreenLayout()
+
+    fun enableSingleScreenLayout()
+
+    fun enableDualScreenLayout()
 }

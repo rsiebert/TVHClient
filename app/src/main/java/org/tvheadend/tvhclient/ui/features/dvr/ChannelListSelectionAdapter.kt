@@ -9,8 +9,8 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
+import org.tvheadend.data.entity.Channel
 import org.tvheadend.tvhclient.R
-import org.tvheadend.tvhclient.domain.entity.Channel
 import org.tvheadend.tvhclient.util.getIconUrl
 import java.lang.ref.WeakReference
 
@@ -64,7 +64,7 @@ class ChannelListSelectionAdapter internal constructor(context: Context, private
         override fun onClick(view: View) {
             if (channelListAdapter?.callback != null) {
                 val channel = channelListAdapter.channelList[adapterPosition]
-                channelListAdapter.callback!!.onItemClicked(channel)
+                channelListAdapter.callback?.onItemClicked(channel)
             }
         }
     }

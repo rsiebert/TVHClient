@@ -6,12 +6,14 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
+import org.tvheadend.data.entity.Channel
 import org.tvheadend.tvhclient.R
-import org.tvheadend.tvhclient.domain.entity.Channel
 import timber.log.Timber
 
 class ChannelViewModel(application: Application) : BaseChannelViewModel(application), SharedPreferences.OnSharedPreferenceChangeListener {
 
+    var selectedListPosition = 0
+    var selectedTimeOffset = 0
     val channels: LiveData<List<Channel>>
     var showGenreColor = MutableLiveData<Boolean>()
     var showNextProgramTitle = MutableLiveData<Boolean>()
@@ -51,6 +53,7 @@ class ChannelViewModel(application: Application) : BaseChannelViewModel(applicat
         onSharedPreferenceChanged(sharedPreferences, "program_subtitle_enabled")
         onSharedPreferenceChanged(sharedPreferences, "next_program_title_enabled")
         onSharedPreferenceChanged(sharedPreferences, "genre_colors_for_channels_enabled")
+        onSharedPreferenceChanged(sharedPreferences, "empty_channel_tags_enabled")
 
         sharedPreferences.registerOnSharedPreferenceChangeListener(this)
     }
@@ -71,6 +74,7 @@ class ChannelViewModel(application: Application) : BaseChannelViewModel(applicat
             "program_progressbar_enabled" -> showProgressBar.value = sharedPreferences.getBoolean(key, appContext.resources.getBoolean(R.bool.pref_default_program_progressbar_enabled))
             "next_program_title_enabled" -> showNextProgramTitle.value = sharedPreferences.getBoolean(key, appContext.resources.getBoolean(R.bool.pref_default_next_program_title_enabled))
             "genre_colors_for_channels_enabled" -> showGenreColor.value = sharedPreferences.getBoolean(key, appContext.resources.getBoolean(R.bool.pref_default_genre_colors_for_channels_enabled))
+            "empty_channel_tags_enabled" -> showAllChannelTags.value = sharedPreferences.getBoolean(key, appContext.resources.getBoolean(R.bool.pref_default_empty_channel_tags_enabled))
         }
     }
 

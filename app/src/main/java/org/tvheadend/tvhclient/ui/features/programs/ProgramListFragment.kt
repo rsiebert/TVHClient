@@ -1,6 +1,5 @@
 package org.tvheadend.tvhclient.ui.features.programs
 
-import android.app.SearchManager
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
@@ -13,39 +12,32 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.recyclerview_fragment.*
+import org.tvheadend.data.entity.Recording
 import org.tvheadend.tvhclient.R
-import org.tvheadend.tvhclient.data.service.HtspService
-import org.tvheadend.tvhclient.domain.entity.Program
-import org.tvheadend.tvhclient.domain.entity.ProgramInterface
-import org.tvheadend.tvhclient.domain.entity.Recording
+import org.tvheadend.tvhclient.service.HtspService
 import org.tvheadend.tvhclient.ui.base.BaseFragment
 import org.tvheadend.tvhclient.ui.common.*
-import org.tvheadend.tvhclient.ui.common.callbacks.RecyclerViewClickCallback
+import org.tvheadend.tvhclient.ui.common.interfaces.RecyclerViewClickInterface
+import org.tvheadend.tvhclient.ui.common.interfaces.SearchRequestInterface
 import org.tvheadend.tvhclient.ui.features.dvr.RecordingAddEditActivity
-import org.tvheadend.tvhclient.ui.features.notification.addNotificationProgramIsAboutToStart
-import org.tvheadend.tvhclient.ui.features.search.SearchRequestInterface
-import org.tvheadend.tvhclient.ui.features.search.StartSearchInterface
+import org.tvheadend.tvhclient.util.extensions.getCastSession
 import org.tvheadend.tvhclient.util.extensions.gone
 import org.tvheadend.tvhclient.util.extensions.visible
+import org.tvheadend.tvhclient.util.extensions.visibleOrGone
 import timber.log.Timber
 
-class ProgramListFragment : BaseFragment(), RecyclerViewClickCallback, LastProgramVisibleListener, SearchRequestInterface, Filter.FilterListener {
+// TODO Move the variable programIdToBeEditedWhenBeingRecorded into the viewmodel
+
+class ProgramListFragment : BaseFragment(), RecyclerViewClickInterface, LastProgramVisibleListener, SearchRequestInterface, Filter.FilterListener {
 
     lateinit var recyclerViewAdapter: ProgramRecyclerViewAdapter
     private lateinit var programViewModel: ProgramViewModel
-
-    private var selectedTime: Long = 0
-    private var selectedListPosition: Int = 0
-    var shownChannelId: Int = 0
-
-    var channelName: String = ""
-    var searchQuery: String = ""
-
     private var loadingMoreProgramAllowed: Boolean = false
-    private var loadingProgramsAllowedTask: Runnable? = null
-    private val loadingProgramAllowedHandler = Handler()
+
+    private lateinit var loadingProgramsAllowedTask: Runnable
+    private var loadingProgramAllowedHandler: Handler? = null
     private var programIdToBeEditedWhenBeingRecorded = 0
-    private var isSearchActive: Boolean = false
+    private var channelId = 0
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.recyclerview_fragment, container, false)
@@ -55,78 +47,70 @@ class ProgramListFragment : BaseFragment(), RecyclerViewClickCallback, LastProgr
         super.onActivityCreated(savedInstanceState)
         programViewModel = ViewModelProviders.of(activity!!).get(ProgramViewModel::class.java)
 
-        if (savedInstanceState != null) {
-            shownChannelId = savedInstanceState.getInt("channelId", 0)
-            channelName = savedInstanceState.getString("channelName", "")
-            selectedTime = savedInstanceState.getLong("selectedTime")
-            selectedListPosition = savedInstanceState.getInt("listPosition", 0)
-            searchQuery = savedInstanceState.getString(SearchManager.QUERY, "")
-        } else {
-            selectedListPosition = 0
-            shownChannelId = arguments?.getInt("channelId", 0) ?: 0
-            channelName = arguments?.getString("channelName", "") ?: ""
-            selectedTime = arguments?.getLong("selectedTime", System.currentTimeMillis())
-                    ?: System.currentTimeMillis()
-            searchQuery = arguments?.getString(SearchManager.QUERY) ?: ""
-        }
-
-        isSearchActive = searchQuery.isNotEmpty()
-
-        if (!isDualPane) {
-            toolbarInterface.setTitle(if (isSearchActive) getString(R.string.search_results) else channelName)
+        arguments?.let {
+            programViewModel.channelIdLiveData.value = it.getInt("channelId", 0)
+            programViewModel.selectedTimeLiveData.value = it.getLong("selectedTime", System.currentTimeMillis())
+            programViewModel.channelName = it.getString("channelName", "")
         }
 
         // Show the channel icons when a search is active and all channels shall be searched
-        programViewModel.showProgramChannelIcon = isSearchActive && shownChannelId == 0
+        programViewModel.showProgramChannelIcon = baseViewModel.isSearchActive && channelId == 0
 
         recyclerViewAdapter = ProgramRecyclerViewAdapter(programViewModel, this, this)
         recycler_view.layoutManager = LinearLayoutManager(activity)
         recycler_view.adapter = recyclerViewAdapter
         recycler_view.gone()
+        search_progress?.visibleOrGone(baseViewModel.isSearchActive)
 
-        if (!isSearchActive) {
-            Timber.d("Search is not active, loading programs for channel $channelName from time $selectedTime")
-            // A channel id and a channel name was given, load only the programs for the
-            // specific channel and from the current time. Also load only those recordings
-            // that belong to the given channel
-            programViewModel.getProgramsByChannelFromTime(shownChannelId, selectedTime).observe(viewLifecycleOwner, Observer { this.handleObservedPrograms(it) })
-            programViewModel.getRecordingsByChannelId(shownChannelId).observe(viewLifecycleOwner, Observer { this.handleObservedRecordings(it) })
+        Timber.d("Observing programs")
+        programViewModel.programs.observe(viewLifecycleOwner, Observer { progs ->
+            if (progs != null) {
+                Timber.d("View model returned ${progs.size} programs")
+                recyclerViewAdapter.addItems(progs.toMutableList())
+                observeSearchQuery()
+                observeRecordings()
+            }
 
-            loadingMoreProgramAllowed = true
-            loadingProgramsAllowedTask = Runnable { loadingMoreProgramAllowed = true }
+            recycler_view?.visible()
+            showStatusInToolbar()
+            activity?.invalidateOptionsMenu()
+        })
 
-        } else {
-            Timber.d("Search is active, loading programs from current time $selectedTime")
-            // No channel and channel name was given, load all programs
-            // from the current time and all recordings from all channels
-            programViewModel.getProgramsFromTime(selectedTime).observe(viewLifecycleOwner, Observer { this.handleObservedPrograms(it) })
-            programViewModel.recordings?.observe(viewLifecycleOwner, Observer { this.handleObservedRecordings(it) })
-
-            loadingMoreProgramAllowed = false
-        }
+        Timber.d("Observing channel id")
+        programViewModel.channelIdLiveData.observe(viewLifecycleOwner, Observer { id ->
+            if (id != null) {
+                Timber.d("View model returned channel id $id")
+                channelId = id
+            }
+        })
     }
 
-    private fun handleObservedPrograms(programs: List<ProgramInterface>?) {
-        if (programs != null) {
-            recyclerViewAdapter.addItems(programs.toMutableList())
-        }
-        if (isSearchActive) {
-            if (activity is StartSearchInterface) {
-                (activity as StartSearchInterface).startSearch()
+    private fun observeRecordings() {
+        Timber.d("Observing recordings")
+        programViewModel.recordings.observe(viewLifecycleOwner, Observer { recs ->
+            if (recs != null) {
+                Timber.d("View model returned ${recs.size} recordings")
+                handleObservedRecordings(recs)
             }
-        }
-        recycler_view?.visible()
+        })
+    }
 
-        if (!isDualPane) {
-            if (!isSearchActive) {
-                toolbarInterface.setSubtitle(resources.getQuantityString(R.plurals.items, recyclerViewAdapter.itemCount, recyclerViewAdapter.itemCount))
+    private fun observeSearchQuery() {
+        Timber.d("Observing search query")
+        baseViewModel.searchQuery.observe(viewLifecycleOwner, Observer { query ->
+            if (query.isNotEmpty()) {
+                Timber.d("View model returned search query '$query'")
+                onSearchRequested(query)
+                loadingMoreProgramAllowed = false
+
             } else {
-                toolbarInterface.setSubtitle(resources.getQuantityString(R.plurals.programs, recyclerViewAdapter.itemCount, recyclerViewAdapter.itemCount))
+                Timber.d("View model returned empty search query")
+                onSearchResultsCleared()
+                loadingMoreProgramAllowed = true
+                loadingProgramAllowedHandler = Handler()
+                loadingProgramsAllowedTask = Runnable { loadingMoreProgramAllowed = true }
             }
-        }
-        // Invalidate the menu so that the search menu item is shown in
-        // case the adapter contains items now.
-        activity?.invalidateOptionsMenu()
+        })
     }
 
     /**
@@ -136,34 +120,23 @@ class ProgramListFragment : BaseFragment(), RecyclerViewClickCallback, LastProgr
      *
      * @param recordings The list of recordings
      */
-    private fun handleObservedRecordings(recordings: List<Recording>?) {
-        if (recordings != null) {
-            recyclerViewAdapter.addRecordings(recordings)
-            for (recording in recordings) {
-                if (recording.eventId == programIdToBeEditedWhenBeingRecorded && programIdToBeEditedWhenBeingRecorded > 0) {
-                    programIdToBeEditedWhenBeingRecorded = 0
-                    val intent = Intent(activity, RecordingAddEditActivity::class.java)
-                    intent.putExtra("id", recording.id)
-                    intent.putExtra("type", "recording")
-                    activity?.startActivity(intent)
-                    break
-                }
+    private fun handleObservedRecordings(recordings: List<Recording>) {
+        recyclerViewAdapter.addRecordings(recordings)
+        for (recording in recordings) {
+            if (recording.eventId == programIdToBeEditedWhenBeingRecorded && programIdToBeEditedWhenBeingRecorded > 0) {
+                programIdToBeEditedWhenBeingRecorded = 0
+                val intent = Intent(activity, RecordingAddEditActivity::class.java)
+                intent.putExtra("id", recording.id)
+                intent.putExtra("type", "recording")
+                activity?.startActivity(intent)
+                break
             }
         }
     }
 
     override fun onPause() {
         super.onPause()
-        loadingProgramAllowedHandler.removeCallbacks(loadingProgramsAllowedTask)
-    }
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        outState.putInt("channelId", shownChannelId)
-        outState.putString("channelName", channelName)
-        outState.putLong("selectedTime", selectedTime)
-        outState.putInt("listPosition", selectedListPosition)
-        outState.putString(SearchManager.QUERY, searchQuery)
+        loadingProgramAllowedHandler?.removeCallbacks(loadingProgramsAllowedTask)
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -177,9 +150,9 @@ class ProgramListFragment : BaseFragment(), RecyclerViewClickCallback, LastProgr
         // Hide the genre color menu in dual pane mode or if no genre colors shall be shown
         menu.findItem(R.id.menu_genre_color_information)?.isVisible = !isDualPane && showGenreColors
 
-        if (!isSearchActive && isConnectionToServerAvailable) {
+        if (!baseViewModel.isSearchActive && isConnectionToServerAvailable) {
             menu.findItem(R.id.menu_play)?.isVisible = true
-            menu.findItem(R.id.menu_cast)?.isVisible = getCastSession(ctx) != null
+            menu.findItem(R.id.menu_cast)?.isVisible = ctx.getCastSession() != null
         } else {
             menu.findItem(R.id.menu_play)?.isVisible = false
             menu.findItem(R.id.menu_cast)?.isVisible = false
@@ -189,15 +162,14 @@ class ProgramListFragment : BaseFragment(), RecyclerViewClickCallback, LastProgr
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         val ctx = context ?: return super.onOptionsItemSelected(item)
         return when (item.itemId) {
-            R.id.menu_play -> playSelectedChannel(ctx, shownChannelId, isUnlocked)
-            R.id.menu_cast -> castSelectedChannel(ctx, shownChannelId)
+            R.id.menu_play -> playSelectedChannel(ctx, channelId, isUnlocked)
+            R.id.menu_cast -> castSelectedChannel(ctx, channelId)
             R.id.menu_genre_color_information -> showGenreColorDialog(ctx)
             else -> super.onOptionsItemSelected(item)
         }
     }
 
     private fun showProgramDetails(position: Int) {
-        selectedListPosition = position
         val program = recyclerViewAdapter.getItem(position)
         if (program == null
                 || !isVisible
@@ -236,16 +208,16 @@ class ProgramListFragment : BaseFragment(), RecyclerViewClickCallback, LastProgr
                     programIdToBeEditedWhenBeingRecorded = program.eventId
                     return@setOnMenuItemClickListener recordSelectedProgram(ctx, program.eventId, programViewModel.getRecordingProfile(), htspVersion)
                 }
-                R.id.menu_record_program_with_custom_profile -> return@setOnMenuItemClickListener recordSelectedProgramWithCustomProfile(ctx, program.eventId, shownChannelId, programViewModel.getRecordingProfileNames(), programViewModel.getRecordingProfile())
+                R.id.menu_record_program_with_custom_profile -> return@setOnMenuItemClickListener recordSelectedProgramWithCustomProfile(ctx, program.eventId, program.channelId, programViewModel.getRecordingProfileNames(), programViewModel.getRecordingProfile())
                 R.id.menu_record_program_as_series_recording -> return@setOnMenuItemClickListener recordSelectedProgramAsSeriesRecording(ctx, program.title, programViewModel.getRecordingProfile(), htspVersion)
-                R.id.menu_play -> return@setOnMenuItemClickListener playSelectedChannel(ctx, shownChannelId, isUnlocked)
-                R.id.menu_cast -> return@setOnMenuItemClickListener castSelectedChannel(ctx, shownChannelId)
+                R.id.menu_play -> return@setOnMenuItemClickListener playSelectedChannel(ctx, channelId, isUnlocked)
+                R.id.menu_cast -> return@setOnMenuItemClickListener castSelectedChannel(ctx, channelId)
 
                 R.id.menu_search_imdb -> return@setOnMenuItemClickListener searchTitleOnImdbWebsite(ctx, program.title)
                 R.id.menu_search_fileaffinity -> return@setOnMenuItemClickListener searchTitleOnFileAffinityWebsite(ctx, program.title)
                 R.id.menu_search_youtube -> return@setOnMenuItemClickListener searchTitleOnYoutube(ctx, program.title)
                 R.id.menu_search_google -> return@setOnMenuItemClickListener searchTitleOnGoogle(ctx, program.title)
-                R.id.menu_search_epg -> return@setOnMenuItemClickListener searchTitleInTheLocalDatabase(ctx, program.title, program.channelId)
+                R.id.menu_search_epg -> return@setOnMenuItemClickListener searchTitleInTheLocalDatabase(activity!!, baseViewModel, program.title, program.channelId)
 
                 R.id.menu_add_notification -> return@setOnMenuItemClickListener addNotificationProgramIsAboutToStart(ctx, program, programViewModel.getRecordingProfile())
                 else -> return@setOnMenuItemClickListener false
@@ -258,14 +230,8 @@ class ProgramListFragment : BaseFragment(), RecyclerViewClickCallback, LastProgr
         recyclerViewAdapter.filter.filter(query, this)
     }
 
-    override fun onSearchResultsCleared(): Boolean {
-        return if (searchQuery.isNotEmpty()) {
-            searchQuery = ""
-            recyclerViewAdapter.filter.filter("", this)
-            true
-        } else {
-            false
-        }
+    override fun onSearchResultsCleared() {
+        recyclerViewAdapter.filter.filter("", this)
     }
 
     override fun getQueryHint(): String {
@@ -274,12 +240,12 @@ class ProgramListFragment : BaseFragment(), RecyclerViewClickCallback, LastProgr
 
     override fun onLastProgramVisible(position: Int) {
         // Do not load more programs when a search query was given or all programs were loaded.
-        if (isSearchActive || !loadingMoreProgramAllowed || !isConnectionToServerAvailable) {
+        if (baseViewModel.isSearchActive || !loadingMoreProgramAllowed || !isConnectionToServerAvailable) {
             return
         }
 
         loadingMoreProgramAllowed = false
-        loadingProgramAllowedHandler.postDelayed(loadingProgramsAllowedTask, 2000)
+        loadingProgramAllowedHandler?.postDelayed(loadingProgramsAllowedTask, 2000)
 
         val lastProgram = recyclerViewAdapter.getItem(position)
         lastProgram?.let {
@@ -289,7 +255,7 @@ class ProgramListFragment : BaseFragment(), RecyclerViewClickCallback, LastProgr
             intent.action = "getEvents"
             intent.putExtra("eventId", lastProgram.nextEventId)
             intent.putExtra("channelId", lastProgram.channelId)
-            intent.putExtra("channelName", channelName)
+            intent.putExtra("channelName", programViewModel.channelName)
             intent.putExtra("numFollowing", 25)
             intent.putExtra("showMessage", true)
 
@@ -298,13 +264,23 @@ class ProgramListFragment : BaseFragment(), RecyclerViewClickCallback, LastProgr
     }
 
     override fun onFilterComplete(count: Int) {
-        if (!isDualPane) {
-            context?.let {
-                if (!isSearchActive) {
-                    toolbarInterface.setSubtitle(it.resources.getQuantityString(R.plurals.items, recyclerViewAdapter.itemCount, recyclerViewAdapter.itemCount))
+        showStatusInToolbar()
+        search_progress?.gone()
+    }
+
+    private fun showStatusInToolbar() {
+        context?.let {
+            if (!isDualPane) {
+                if (!baseViewModel.isSearchActive) {
+                    toolbarInterface.setTitle(programViewModel.channelName)
+                    toolbarInterface.setSubtitle(it.resources.getQuantityString(R.plurals.programs, recyclerViewAdapter.itemCount, recyclerViewAdapter.itemCount))
                 } else {
+                    toolbarInterface.setTitle(getString(R.string.search_results))
                     toolbarInterface.setSubtitle(it.resources.getQuantityString(R.plurals.programs, recyclerViewAdapter.itemCount, recyclerViewAdapter.itemCount))
                 }
+            } else {
+                val toolbarTitle = "${programViewModel.channelName}: ${it.resources.getQuantityString(R.plurals.items, recyclerViewAdapter.itemCount, recyclerViewAdapter.itemCount)}"
+                toolbarInterface.setSubtitle(toolbarTitle)
             }
         }
     }
@@ -318,14 +294,9 @@ class ProgramListFragment : BaseFragment(), RecyclerViewClickCallback, LastProgr
         return true
     }
 
-    fun updatePrograms(selectedTime: Long) {
-        this.selectedTime = selectedTime
-        programViewModel.getProgramsByChannelFromTime(shownChannelId, selectedTime).observe(viewLifecycleOwner, Observer<List<Program>> { this.handleObservedPrograms(it) })
-    }
-
     companion object {
 
-        fun newInstance(channelName: String, channelId: Int, selectedTime: Long): ProgramListFragment {
+        fun newInstance(channelName: String = "", channelId: Int = 0, selectedTime: Long = System.currentTimeMillis()): ProgramListFragment {
             val f = ProgramListFragment()
             val args = Bundle()
             args.putString("channelName", channelName)

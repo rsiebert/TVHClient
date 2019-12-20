@@ -1,11 +1,32 @@
-$ 2.2.22
-  % VERSION 2.2.22
-  _ 19.09.2019
+$ 2.3.2
+  % VERSION 2.3.2
+  _ 06.12.2019
+    * Bug fixes
+$ 2.3.1
+  % VERSION 2.3.1
+  _ 05.12.2019
+    * Minor UI changes due to the use of a material component theme
+    * Show progress indicator when search results are being loaded
+    * Added option to hide channel tags in the filter channel list that are not assigned to channels
+    * Fixed epg channel scrolling out of sync when returning from a search
+    * Fixed hiding the status bar when using the internal player
+    * Fixed search suggestions not being shown
+    * Fixed crash using webview on Android 5 devices
+$ 2.3.0
+  % VERSION 2.3.0
+  _ 26.11.2019
     * Minor UI changes
+    * Added toolbar menu to search for channels only
+    * Added support for Kodi color tags in descriptions
     * Fixed disable option not working for scheduled recordings
     * Fixed server name was not shown in the main menu header
+    * Fixed some minor search issues
+    * Duplicate programs will be removed from the database
     * The filename of a downloaded recording is now created from the title, subtitle and episode
     * Handle channel number ordering with number 0 properly
+    * The menu to search the epg moved into the search submenu
+    * Added developer contact information to the startup screen
+    * Translated more strings
     * Improvements under the hood
 $ 2.2.21
   % VERSION 2.2.21
