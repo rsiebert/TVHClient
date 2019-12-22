@@ -218,7 +218,7 @@ fun showChannelSortOrderSelectionDialog(context: Context): Boolean {
 
     val channelSortOrder = Integer.valueOf(PreferenceManager.getDefaultSharedPreferences(context).getString("channel_sort_order", context.resources.getString(R.string.pref_default_channel_sort_order))!!)
     MaterialDialog(context).show {
-        title(R.string.select_dvr_config)
+        title(R.string.pref_sort_channels)
         listItemsSingleChoice(R.array.pref_sort_channels_names, initialSelection = channelSortOrder) { _, index, _ ->
             Timber.d("New selected channel sort order changed from $channelSortOrder to $index")
             val editor = PreferenceManager.getDefaultSharedPreferences(context).edit()
