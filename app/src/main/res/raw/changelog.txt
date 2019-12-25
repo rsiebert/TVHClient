@@ -1,3 +1,14 @@
+$ 2.3.4
+  % VERSION 2.3.4
+  _ 11.12.2019
+    * Clear the search results when selecting a new navigation menu item
+    * Fixed crash in the epg screen
+$ 2.3.3
+  % VERSION 2.3.3
+  _ 10.12.2019
+    * Bug fix when showing the changelog on Android 5 devices
+    * Improved the validation when entering a connection url
+    * Notifications about running recordings can be dismissed again
 $ 2.3.2
   % VERSION 2.3.2
   _ 06.12.2019

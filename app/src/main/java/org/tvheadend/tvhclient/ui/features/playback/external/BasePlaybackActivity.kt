@@ -65,16 +65,17 @@ abstract class BasePlaybackActivity : AppCompatActivity() {
     protected abstract fun onTicketReceived()
 
     internal fun startExternalPlayer(intent: Intent) {
+        Timber.d("Starting external player for given intent")
         // Start playing the video in the UI thread
         this.runOnUiThread {
-
+            Timber.d("Getting list of activities that can play the intent")
             val activities: List<ResolveInfo> = packageManager.queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY)
             if (activities.isNotEmpty()) {
-                Timber.d("Starting external player")
+                Timber.d("Found activities, starting external player")
                 startActivity(intent)
                 finish()
             } else {
-                Timber.d("Can't execute external media player")
+                Timber.d("List of available activities is empty, can't start external media player")
                 status.setText(R.string.no_media_player)
 
                 // Show a confirmation dialog before deleting the recording

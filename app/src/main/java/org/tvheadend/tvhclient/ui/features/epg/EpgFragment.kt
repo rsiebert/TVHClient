@@ -6,7 +6,6 @@ import android.util.DisplayMetrics
 import android.view.*
 import android.widget.Filter
 import androidx.appcompat.widget.PopupMenu
-import androidx.core.util.contains
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
@@ -330,15 +329,9 @@ class EpgFragment : BaseFragment(), EpgScrollInterface, RecyclerViewClickInterfa
     private class EpgViewPagerAdapter internal constructor(fragment: Fragment, private val viewModel: EpgViewModel) : FragmentStateAdapter(fragment) {
 
         override fun createFragment(position: Int): Fragment {
-            return if (viewModel.registeredEpgFragments.contains(position)) {
-                Timber.d("Returning existing fragment for page $position")
-                viewModel.registeredEpgFragments.get(position)
-            } else {
-                Timber.d("Returning new fragment for page $position")
-                val fragment = EpgViewPagerFragment.newInstance(position)
-                viewModel.registeredEpgFragments.put(position, fragment)
-                return fragment
-            }
+            val fragment = EpgViewPagerFragment.newInstance(position)
+            viewModel.registeredEpgFragments.put(position, fragment)
+            return fragment
         }
 
         internal fun getRegisteredFragment(position: Int): Fragment? {

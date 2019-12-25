@@ -61,13 +61,7 @@ class SettingsActivity : BaseActivity(), RemoveFragmentFromBackstackInterface {
             "unlocker" -> UnlockerFragment()
             "information" -> InformationFragment()
             "privacy_policy" -> PrivacyPolicyFragment()
-            "changelog" -> {
-                val bundle = Bundle()
-                bundle.putBoolean("showFullChangelog", true)
-                ChangeLogFragment().also {
-                    it.arguments = bundle
-                }
-            }
+            "changelog" -> ChangeLogFragment.newInstance(showFullChangelog = true)
             else -> {
                 SettingsFragment().also { it.arguments = intent.extras }
             }

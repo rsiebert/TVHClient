@@ -18,8 +18,8 @@ android {
         minSdkVersion 16
         targetSdkVersion 29
 
-        versionCode 192
-        versionName "2.3.2"
+        versionCode 195
+        versionName "2.3.4"
 
         // Define the apk naming convention
         applicationId "org.tvheadend.tvhclient"
@@ -150,20 +150,20 @@ dependencies {
     implementation 'androidx.annotation:annotation:1.1.0'
     implementation 'androidx.preference:preference:1.1.0'
     implementation 'com.google.android.material:material:1.2.0-alpha02'
-    implementation 'androidx.constraintlayout:constraintlayout:2.0.0-beta3'
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.0-beta4'
     implementation 'androidx.viewpager2:viewpager2:1.0.0'
 
     // Kotlin
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.2'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.3'
     implementation 'androidx.core:core-ktx:1.1.0'
 
     // Casting
-    implementation 'com.google.android.gms:play-services-cast-framework:17.1.0'
+    implementation 'com.google.android.gms:play-services-cast-framework:18.0.0'
     implementation 'androidx.mediarouter:mediarouter:1.1.0'
 
     // Billing
-    implementation 'com.android.billingclient:billing:1.2'
+    implementation 'com.android.billingclient:billing:2.1.0'
 
     // Material navigation drawer and dialogs
     def dialog_version = '3.1.1'
@@ -177,7 +177,7 @@ dependencies {
     // Firebase Crash Reporting and Performance Monitoring
     implementation 'com.crashlytics.sdk.android:crashlytics:2.10.1'
     implementation 'com.google.firebase:firebase-core:17.2.1'
-    implementation 'com.google.firebase:firebase-perf:19.0.2'
+    implementation 'com.google.firebase:firebase-perf:19.0.3'
 
     // Life cycles, LiveData and ViewModel
     def lifecycle_version = '2.1.0'
@@ -190,7 +190,7 @@ dependencies {
     implementation 'android.arch.work:work-runtime:1.0.1'
 
     // Dependency injection
-    def dagger_version = '2.25.2'
+    def dagger_version = '2.25.3'
     implementation "com.google.dagger:dagger:$dagger_version"
     kapt "com.google.dagger:dagger-compiler:$dagger_version"
 

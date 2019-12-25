@@ -51,21 +51,15 @@ class StartupActivity : AppCompatActivity(), ToolbarInterface, RemoveFragmentFro
             // Show the full changelog if the changelog was never shown before (app version
             // name is empty) or if it was already shown and the version name is the same as
             // the one in the preferences. Otherwise show the changelog of the newest app version.
-            val versionName = sharedPreferences.getString("versionNameForChangelog", "")
+            val versionName = sharedPreferences.getString("versionNameForChangelog", "") ?: ""
             val showChangeLogRequired = BuildConfig.VERSION_NAME != versionName
             Timber.d("Version name from prefs is $versionName, build version from gradle is ${BuildConfig.VERSION_NAME}")
 
             if (showChangeLogRequired) {
                 Timber.d("Showing changelog")
                 supportActionBar?.setDisplayHomeAsUpEnabled(true)
-
-                val bundle = Bundle()
-                bundle.putString("versionNameForChangelog", versionName)
-                val fragment = ChangeLogFragment()
-                fragment.arguments = bundle
-
                 supportFragmentManager.beginTransaction()
-                        .replace(R.id.main, fragment)
+                        .replace(R.id.main, ChangeLogFragment.newInstance(versionName, false))
                         .addToBackStack(null)
                         .commit()
             }

@@ -157,7 +157,7 @@ fun showOrCancelNotificationProgramIsCurrentlyBeingRecorded(context: Context, co
             builder.setContentTitle(context.getString(R.string.currently_recording))
                     .setContentText("$count recording are running")
                     .setSmallIcon(R.drawable.ic_menu_record_dark)
-                    .setOngoing(true)
+                    .setOngoing(false)
             NotificationManagerCompat.from(context).notify(NOTIFICATION_ID_PROGRAM_CURRENTLY_BEING_RECORDED, builder.build())
         }
     } else {

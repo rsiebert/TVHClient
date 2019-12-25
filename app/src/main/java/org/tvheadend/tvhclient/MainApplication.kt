@@ -24,7 +24,6 @@ import org.tvheadend.tvhclient.ui.features.playback.external.ExpandedControlsAct
 import org.tvheadend.tvhclient.util.MigrateUtils
 import org.tvheadend.tvhclient.util.billing.BillingHandler
 import org.tvheadend.tvhclient.util.billing.BillingManager
-import org.tvheadend.tvhclient.util.billing.BillingManager.UNLOCKER
 import org.tvheadend.tvhclient.util.billing.BillingUpdatesListener
 import org.tvheadend.tvhclient.util.logging.CrashlyticsTree
 import org.tvheadend.tvhclient.util.logging.DebugTree
@@ -35,6 +34,8 @@ import javax.inject.Inject
 // TODO snackbar locale changes
 // TODO day night theme
 // TODO replace material dialog calls with native ones
+// TODO when a notification is dismissed, it reappears when the recording gets updated,
+//  save the dismissed id in the viewmodel and dont add another notification if the id was already dismissed
 
 class MainApplication : MultiDexApplication(), OptionsProvider, BillingUpdatesListener {
 
@@ -88,7 +89,7 @@ class MainApplication : MultiDexApplication(), OptionsProvider, BillingUpdatesLi
 
         billingHandler = BillingHandler()
         billingHandler.addListener(this)
-        billingManager = BillingManager(applicationContext, billingHandler)
+        billingManager = BillingManager(applicationContext, billingHandler, appRepository)
         billingManager.queryPurchases()
 
         Timber.d("Application build time is ${BuildConfig.BUILD_TIME}, git commit hash is ${BuildConfig.GIT_SHA}")
@@ -141,16 +142,8 @@ class MainApplication : MultiDexApplication(), OptionsProvider, BillingUpdatesLi
         Timber.d("Token $token has been consumed with result $result")
     }
 
-    override fun onPurchaseSuccessful(purchases: List<Purchase>?) {
+    override fun onPurchaseSuccessful(purchases: List<Purchase>) {
         Timber.d("Purchase was successful")
-        if (purchases != null) {
-            for (purchase in purchases) {
-                if (purchase.sku == UNLOCKER) {
-                    Timber.d("Received purchase item $UNLOCKER")
-                    appRepository.setIsUnlocked(true)
-                }
-            }
-        }
     }
 
     override fun onPurchaseCancelled() {

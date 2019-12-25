@@ -50,6 +50,9 @@ class MigrateUtils(val context: Context, val appRepository: AppRepository, val s
             if (lastInstalledApplicationVersion < VERSION_189) {
                 convertInvalidEpgPreference()
             }
+            if (lastInstalledApplicationVersion < VERSION_196) {
+                convertInvalidLowSpaceThresholdPreference()
+            }
         }
 
         // Store the current version as the last installed version
@@ -64,6 +67,21 @@ class MigrateUtils(val context: Context, val appRepository: AppRepository, val s
         if (hours == 0) {
             val editor = sharedPreferences.edit()
             editor.putString("hours_of_epg_data_per_screen", "1")
+            editor.apply()
+        }
+    }
+
+    private fun convertInvalidLowSpaceThresholdPreference() {
+        var hours = 0
+        try {
+            hours = Integer.parseInt(sharedPreferences.getString("low_storage_space_threshold", context.resources.getString(R.string.pref_default_low_storage_space_threshold))!!)
+        } catch (e: NumberFormatException) {
+            Timber.d("Low space threshold contains an invalid number, setting default of 1")
+        }
+        Timber.d("ow space threshold is $hours")
+        if (hours == 0) {
+            val editor = sharedPreferences.edit()
+            editor.putString("low_storage_space_threshold", "1")
             editor.apply()
         }
     }
@@ -290,5 +308,6 @@ class MigrateUtils(val context: Context, val appRepository: AppRepository, val s
         private const val VERSION_144 = 144
         private const val VERSION_176 = 176
         private const val VERSION_189 = 189
+        private const val VERSION_196 = 196
     }
 }

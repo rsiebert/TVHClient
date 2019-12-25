@@ -306,13 +306,23 @@ abstract class SettingsConnectionBaseFragment : PreferenceFragmentCompat(), Back
         }
 
         val uri = Uri.parse(value)
+        if (uri.scheme.isNullOrEmpty()) {
+            context?.sendSnackbarMessage("The url must start with http://", Snackbar.LENGTH_LONG)
+            return false
+        }
+
         if (uri.host.isNullOrEmpty()) {
             context?.sendSnackbarMessage("The url is missing a hostname", Snackbar.LENGTH_LONG)
             return false
         }
 
-        if (value.contains(":") && uri.port == -1) {
-            context?.sendSnackbarMessage("The url must contain a port", Snackbar.LENGTH_LONG)
+        if (uri.port == -1) {
+            context?.sendSnackbarMessage("The url is missing a port number", Snackbar.LENGTH_LONG)
+            return false
+        }
+
+        if (uri.port > 65535) {
+            context?.sendSnackbarMessage("The port number must be between 0 and 65535", Snackbar.LENGTH_LONG)
             return false
         }
 

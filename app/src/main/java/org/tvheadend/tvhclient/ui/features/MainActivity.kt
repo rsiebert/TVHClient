@@ -143,6 +143,7 @@ class MainActivity : BaseActivity(R.layout.main_activity), SearchView.OnQueryTex
         navigationViewModel.getNavigationMenuId().observe(this, Observer { event ->
             event.getContentIfNotHandled()?.let {
                 Timber.d("Navigation menu id changed to $it")
+                baseViewModel.clearSearchQuery()
                 handleDrawerItemSelected(it)
             }
         })
