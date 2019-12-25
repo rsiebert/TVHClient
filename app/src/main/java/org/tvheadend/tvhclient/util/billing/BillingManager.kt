@@ -12,6 +12,7 @@ class BillingManager(context: Context, private val billingUpdatesListener: Billi
 
     private var billingClient: BillingClient = BillingClient.newBuilder(context).enablePendingPurchases().setListener(this).build()
     private var isServiceConnected = false
+    private var skuDetailsList = HashMap<String, SkuDetails>()
 
     init {
         startServiceConnection(Runnable { billingUpdatesListener.onBillingClientSetupFinished() })
@@ -120,7 +121,8 @@ class BillingManager(context: Context, private val billingUpdatesListener: Billi
             return
         }
         Timber.d("Query inventory was successful.")
-        // Update the UI and purchases inventory with new list of purchases mPurchases.clear();
+        querySkuDetails()
+        // Update the UI and purchases inventory with new list of purchases
         onPurchasesUpdated(result.billingResult, result.purchasesList)
     }
 
@@ -146,8 +148,8 @@ class BillingManager(context: Context, private val billingUpdatesListener: Billi
         }
     }
 
-    private fun querySkuDetailsOfUnlockerItem(): SkuDetails? {
-        Timber.d("Loading sku details for $UNLOCKER")
+    private fun querySkuDetails() {
+        Timber.d("Loading sku details")
         val skuList = ArrayList<String>()
         skuList.add(UNLOCKER)
 
@@ -156,34 +158,25 @@ class BillingManager(context: Context, private val billingUpdatesListener: Billi
                 .setType(SkuType.INAPP)
                 .build()
 
-        var skuDetailsResult: SkuDetails? = null
-
-
-        billingClient.querySkuDetailsAsync(params) { billingResult, skuDetailsList ->
+        billingClient.querySkuDetailsAsync(params) { billingResult, list ->
             when (billingResult.responseCode) {
                 BillingClient.BillingResponseCode.OK -> {
-                    Timber.d("Received details of purchase item $UNLOCKER")
-                    if (skuDetailsList.orEmpty().isNotEmpty()) {
-                        skuDetailsList.forEach {
-                            if (it.sku == UNLOCKER) skuDetailsResult = it
-                        }
+                    Timber.d("Received details of ${list.size} purchase items")
+                    list.forEach {
+                        Timber.d("Received details of purchase item ${it.sku}")
+                        skuDetailsList[it.sku] = it
                     }
                 }
                 else -> Timber.e(billingResult.debugMessage)
             }
         }
-
-        Timber.d("Returning sku details for $UNLOCKER")
-        return skuDetailsResult
     }
 
     fun initiatePurchaseFlow(activity: Activity?, skuId: String?) {
         Timber.d("Initiating purchase flow for $skuId")
-
-        val skuDetails = querySkuDetailsOfUnlockerItem()
         val purchaseFlowRequest = Runnable {
             val mParams: BillingFlowParams = BillingFlowParams.newBuilder()
-                    .setSkuDetails(skuDetails)
+                    .setSkuDetails(skuDetailsList[skuId])
                     .build()
             billingClient.launchBillingFlow(activity, mParams)
         }
