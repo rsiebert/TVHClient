@@ -177,7 +177,7 @@ dependencies {
     // Firebase Crash Reporting and Performance Monitoring
     implementation 'com.crashlytics.sdk.android:crashlytics:2.10.1'
     implementation 'com.google.firebase:firebase-core:17.2.1'
-    implementation 'com.google.firebase:firebase-perf:19.0.3'
+    implementation 'com.google.firebase:firebase-perf:19.0.4'
 
     // Life cycles, LiveData and ViewModel
     def lifecycle_version = '2.1.0'
