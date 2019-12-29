@@ -155,7 +155,7 @@ fun showOrCancelNotificationProgramIsCurrentlyBeingRecorded(context: Context, co
 
             val builder = getNotificationBuilder(context)
             builder.setContentTitle(context.getString(R.string.currently_recording))
-                    .setContentText(context.resources.getQuantityString(R.plurals.running_recordings, count))
+                    .setContentText(context.resources.getQuantityString(R.plurals.running_recordings, count, count))
                     .setSmallIcon(R.drawable.ic_menu_record_dark)
                     .setOngoing(false)
             NotificationManagerCompat.from(context).notify(NOTIFICATION_ID_PROGRAM_CURRENTLY_BEING_RECORDED, builder.build())
