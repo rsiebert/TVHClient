@@ -10,7 +10,7 @@ class PlayChannelActivity : BasePlaybackActivity() {
         val url = viewModel.getPlaybackUrl()
         Timber.d("Playing channel from server with url $url")
 
-        val intent = Intent(Intent.ACTION_VIEW)
+        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
         intent.setDataAndType(Uri.parse(url), "video/*")
 
         if (!viewModel.channel?.name.isNullOrEmpty()) {
