@@ -18,8 +18,8 @@ android {
         minSdkVersion 16
         targetSdkVersion 29
 
-        versionCode 195
-        versionName "2.3.4"
+        versionCode 196
+        versionName "2.3.5"
 
         // Define the apk naming convention
         applicationId "org.tvheadend.tvhclient"
@@ -204,9 +204,14 @@ dependencies {
     implementation 'com.facebook.stetho:stetho:1.5.1'
 
     // Internal player
-    implementation 'com.google.android.exoplayer:exoplayer-core:2.7.1k1'
-    implementation 'com.google.android.exoplayer:exoplayer-ui:2.7.1k1'
-    implementation 'com.google.android.exoplayer:extension-ffmpeg:2.7.1k1'
+    implementation project(':exoplayer-library-core')
+    implementation project(':exoplayer-library-dash')
+    implementation project(':exoplayer-library-ui')
+    implementation project(':exoplayer-extension-ffmpeg')
+
+    //implementation 'com.google.android.exoplayer:exoplayer-core:2.7.1k1'
+    //implementation 'com.google.android.exoplayer:exoplayer-ui:2.7.1k1'
+    //implementation 'com.google.android.exoplayer:extension-ffmpeg:2.7.1k1'
 
     // Use multidex because the method count is over 64k
     implementation 'androidx.multidex:multidex:2.0.1'
