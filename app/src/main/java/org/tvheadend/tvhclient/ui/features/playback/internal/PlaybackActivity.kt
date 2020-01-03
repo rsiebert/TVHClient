@@ -2,6 +2,7 @@ package org.tvheadend.tvhclient.ui.features.playback.internal
 
 import android.app.PictureInPictureParams
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
@@ -16,13 +17,11 @@ import android.os.Bundle
 import android.view.Surface
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.PopupMenu
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.preference.PreferenceManager
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.list.listItemsSingleChoice
-import com.google.android.exoplayer2.C
 import com.google.android.exoplayer2.Player
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
@@ -33,14 +32,15 @@ import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.ui.common.onAttach
 import org.tvheadend.tvhclient.ui.features.MainActivity
 import org.tvheadend.tvhclient.ui.features.playback.internal.utils.Rational
-import org.tvheadend.tvhclient.ui.features.playback.internal.utils.TrackSelectionHelper
+import org.tvheadend.tvhclient.ui.features.playback.internal.utils.TrackSelectionDialog
 import org.tvheadend.tvhclient.util.extensions.*
 import org.tvheadend.tvhclient.util.getIconUrl
 import org.tvheadend.tvhclient.util.getThemeId
 import timber.log.Timber
 
-class PlaybackActivity : AppCompatActivity() {
+class PlaybackActivity : AppCompatActivity(), DialogInterface.OnDismissListener {
 
+    private var isShowingTrackSelectionDialog = false
     private var timeshiftSupported: Boolean = false
     private lateinit var viewModel: PlayerViewModel
 
@@ -121,9 +121,9 @@ class PlaybackActivity : AppCompatActivity() {
         player_pause?.setOnClickListener { onPauseButtonSelected() }
         player_rewind?.setOnClickListener { onRewindButtonSelected() }
         player_forward?.setOnClickListener { onForwardButtonSelected() }
-        player_menu?.setOnClickListener { onMenuButtonSelected() }
-        player_menu_aspect_ratio?.setOnClickListener { onChangeAspectRatioSelected() }
-        player_menu_fullscreen?.setOnClickListener { onMenuFullscreenSelected() }
+        player_settings?.setOnClickListener { onSettingsButtonSelected() }
+        player_aspect_ratio?.setOnClickListener { onChangeAspectRatioSelected() }
+        player_toggle_fullscreen?.setOnClickListener { onToggleFullscreenSelected() }
         play_next_channel?.setOnClickListener { onPlayNextChannelButtonSelected() }
         play_previous_channel?.setOnClickListener { onPlayPreviousChannelButtonSelected() }
 
@@ -283,11 +283,11 @@ class PlaybackActivity : AppCompatActivity() {
         when (newConfig.orientation) {
             Configuration.ORIENTATION_PORTRAIT -> {
                 Timber.d("Player is in portrait mode")
-                player_menu_fullscreen?.setImageResource(R.drawable.ic_player_fullscreen)
+                player_toggle_fullscreen?.setImageResource(R.drawable.ic_player_fullscreen)
             }
             Configuration.ORIENTATION_LANDSCAPE -> {
                 Timber.d("Player is in landscape mode")
-                player_menu_fullscreen?.setImageResource(R.drawable.ic_player_fullscreen_exit)
+                player_toggle_fullscreen?.setImageResource(R.drawable.ic_player_fullscreen_exit)
             }
         }
 
@@ -341,55 +341,13 @@ class PlaybackActivity : AppCompatActivity() {
         viewModel.play()
     }
 
-    private fun onMenuButtonSelected() {
+    private fun onSettingsButtonSelected() {
         Timber.d("Menu button selected")
-
-        var popupMenu: PopupMenu? = null
-        player_menu?.let {
-            popupMenu = PopupMenu(this, it)
-            popupMenu?.menuInflater?.inflate(R.menu.player_popup_menu, popupMenu?.menu)
-        }
-
-        val mappedTrackInfo = viewModel.trackSelector.currentMappedTrackInfo
-        if (mappedTrackInfo != null) {
-            for (i in 0 until mappedTrackInfo.length) {
-                val trackGroups = mappedTrackInfo.getTrackGroups(i)
-                if (trackGroups.length != 0) {
-                    when (viewModel.player.getRendererType(i)) {
-                        C.TRACK_TYPE_AUDIO -> {
-                            Timber.d("Track renderer type for index $i is audio, showing audio menu")
-                            popupMenu?.menu?.findItem(R.id.menu_audio)?.isVisible = true
-                        }
-                        C.TRACK_TYPE_VIDEO -> {
-                            Timber.d("Track renderer type for index $i is video")
-                            //popupMenu?.menu?.findItem(R.id.menu_video)?.isVisible = true
-                        }
-                        C.TRACK_TYPE_TEXT -> {
-                            Timber.d("Track renderer type for index $i is text, showing subtitle menu")
-                            popupMenu?.menu?.findItem(R.id.menu_subtitle)?.isVisible = true
-                        }
-                    }
-                }
-            }
-
-            Timber.d("Adding popup menu listener")
-            popupMenu?.setOnMenuItemClickListener { item ->
-                val trackSelectionHelper = TrackSelectionHelper(viewModel.trackSelector, viewModel.adaptiveTrackSelectionFactory)
-                when (item.itemId) {
-                    R.id.menu_audio -> {
-                        trackSelectionHelper.showSelectionDialog(this, "Audio", mappedTrackInfo, C.TRACK_TYPE_AUDIO)
-                        return@setOnMenuItemClickListener true
-                    }
-                    R.id.menu_subtitle -> {
-                        trackSelectionHelper.showSelectionDialog(this, "Subtitles", mappedTrackInfo, C.TRACK_TYPE_TEXT)
-                        return@setOnMenuItemClickListener true
-                    }
-                    else -> {
-                        return@setOnMenuItemClickListener false
-                    }
-                }
-            }
-            popupMenu?.show()
+        if (!isShowingTrackSelectionDialog
+                && TrackSelectionDialog.willHaveContent(viewModel.trackSelector)) {
+            isShowingTrackSelectionDialog = true
+            val trackSelectionDialog = TrackSelectionDialog.createForTrackSelector(viewModel.trackSelector, this)
+            trackSelectionDialog.show(supportFragmentManager, null)
         }
     }
 
@@ -404,7 +362,7 @@ class PlaybackActivity : AppCompatActivity() {
         }
     }
 
-    private fun onMenuFullscreenSelected() {
+    private fun onToggleFullscreenSelected() {
         when (resources.configuration.orientation) {
             Configuration.ORIENTATION_PORTRAIT -> {
                 forceOrientation = true
@@ -484,5 +442,9 @@ class PlaybackActivity : AppCompatActivity() {
         Timber.d("Finishing")
         startActivity(Intent(this, MainActivity::class.java)
                 .addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT))
+    }
+
+    override fun onDismiss(p0: DialogInterface?) {
+        isShowingTrackSelectionDialog = false
     }
 }

@@ -4,6 +4,7 @@ import android.net.Uri;
 
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DataSpec;
+import com.google.android.exoplayer2.upstream.TransferListener;
 
 import org.jetbrains.annotations.NotNull;
 import org.tvheadend.htsp.HtspConnection;
@@ -13,6 +14,9 @@ import org.tvheadend.htsp.HtspResponseListener;
 
 import java.io.Closeable;
 import java.nio.ByteBuffer;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import timber.log.Timber;
@@ -105,6 +109,11 @@ public class HtspFileInputStreamDataSource implements DataSource, Closeable, Hts
         Timber.d("Finalizing file input data source");
         release();
         super.finalize();
+    }
+
+    @Override
+    public void addTransferListener(TransferListener transferListener) {
+
     }
 
     @Override
@@ -204,6 +213,12 @@ public class HtspFileInputStreamDataSource implements DataSource, Closeable, Hts
             return dataSpec.uri;
         }
         return null;
+    }
+
+    @Override
+    public Map<String, List<String>> getResponseHeaders() {
+        Timber.d("Returning response headers");
+        return Collections.emptyMap();
     }
 
     @Override

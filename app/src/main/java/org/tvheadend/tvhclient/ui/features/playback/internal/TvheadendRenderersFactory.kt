@@ -37,27 +37,17 @@ import org.tvheadend.tvhclient.R
 import timber.log.Timber
 import java.util.*
 
-internal class TvheadendRenderersFactory(context: Context) : DefaultRenderersFactory(context, null, EXTENSION_RENDERER_MODE_PREFER, DEFAULT_ALLOWED_VIDEO_JOINING_TIME_MS) {
+internal class TvheadendRenderersFactory(context: Context) : DefaultRenderersFactory(context) {
 
-    /**
-     * Builds video renderers for use by the player.
-     *
-     * @param context                   The [Context] associated with the player.
-     * @param drmSessionManager         An optional [DrmSessionManager]. May be null if the player
-     * will not be used for DRM protected playbacks.
-     * @param allowedVideoJoiningTimeMs The maximum duration in milliseconds for which video
-     * renderers can attempt to seamlessly join an ongoing playback.
-     * @param eventHandler              A handler associated with the main thread's looper.
-     * @param eventListener             An event listener.
-     * @param extensionRendererMode     The extension renderer mode.
-     * @param out                       An array to which the built renderers should be appended.
-     */
     override fun buildVideoRenderers(context: Context,
+                                     extensionRendererMode: Int,
+                                     mediaCodecSelector: MediaCodecSelector,
                                      drmSessionManager: DrmSessionManager<FrameworkMediaCrypto>?,
-                                     allowedVideoJoiningTimeMs: Long,
+                                     playClearSamplesWithoutKeys: Boolean,
+                                     enableDecoderFallback: Boolean,
                                      eventHandler: Handler,
                                      eventListener: VideoRendererEventListener,
-                                     @ExtensionRendererMode extensionRendererMode: Int,
+                                     allowedVideoJoiningTimeMs: Long,
                                      out: ArrayList<Renderer>) {
 
         Timber.d("Adding MediaCodecVideoRenderer")
@@ -65,32 +55,21 @@ internal class TvheadendRenderersFactory(context: Context) : DefaultRenderersFac
                 context,
                 MediaCodecSelector.DEFAULT,
                 allowedVideoJoiningTimeMs,
-                drmSessionManager,
                 false,
                 eventHandler,
                 eventListener,
                 MAX_DROPPED_VIDEO_FRAME_COUNT_TO_NOTIFY))
     }
 
-    /**
-     * Builds audio renderers for use by the player.
-     *
-     * @param context               The [Context] associated with the player.
-     * @param drmSessionManager     An optional [DrmSessionManager]. May be null if the player
-     * will not be used for DRM protected playbacks.
-     * @param audioProcessors       An array of [AudioProcessor]s that will process PCM audio
-     * buffers before output. May be empty.
-     * @param eventHandler          A handler to use when invoking event listeners and outputs.
-     * @param eventListener         An event listener.
-     * @param extensionRendererMode The extension renderer mode.
-     * @param out                   An array to which the built renderers should be appended.
-     */
     override fun buildAudioRenderers(context: Context,
+                                     extensionRendererMode: Int,
+                                     mediaCodecSelector: MediaCodecSelector,
                                      drmSessionManager: DrmSessionManager<FrameworkMediaCrypto>?,
-                                     audioProcessors: Array<AudioProcessor>,
+                                     playClearSamplesWithoutKeys: Boolean,
+                                     enableDecoderFallback: Boolean,
+                                     audioProcessors: Array<out AudioProcessor>,
                                      eventHandler: Handler,
                                      eventListener: AudioRendererEventListener,
-                                     @ExtensionRendererMode extensionRendererMode: Int,
                                      out: ArrayList<Renderer>) {
 
         val audioCapabilities = AudioCapabilities.getCapabilities(context)
@@ -102,8 +81,8 @@ internal class TvheadendRenderersFactory(context: Context) : DefaultRenderersFac
 
         // Native Audio Decoders
         Timber.d("Adding MediaCodecAudioRenderer")
-        val mediaCodecSelector = buildMediaCodecSelector(enablePassthroughDecoder)
-        out.add(MediaCodecAudioRenderer(mediaCodecSelector, drmSessionManager,
+        val customMediaCodecSelector = buildMediaCodecSelector(enablePassthroughDecoder)
+        out.add(MediaCodecAudioRenderer(context, customMediaCodecSelector, drmSessionManager,
                 true, eventHandler, eventListener, audioCapabilities))
 
         // FFMpeg Audio Decoder
@@ -119,15 +98,18 @@ internal class TvheadendRenderersFactory(context: Context) : DefaultRenderersFac
      */
     private fun buildMediaCodecSelector(enablePassthroughDecoder: Boolean): MediaCodecSelector {
         return object : MediaCodecSelector {
+
             @Throws(MediaCodecUtil.DecoderQueryException::class)
-            override fun getDecoderInfo(mimeType: String, requiresSecureDecoder: Boolean): MediaCodecInfo? {
-                return MediaCodecUtil.getDecoderInfo(mimeType, requiresSecureDecoder)
+            override fun getDecoderInfos(mimeType: String, requiresSecureDecoder: Boolean, requiresTunnelingDecoder: Boolean): MutableList<MediaCodecInfo> {
+                return MediaCodecUtil.getDecoderInfos(mimeType, requiresSecureDecoder, requiresTunnelingDecoder)
             }
 
             override fun getPassthroughDecoderInfo(): MediaCodecInfo? {
                 return if (enablePassthroughDecoder) {
                     MediaCodecUtil.getPassthroughDecoderInfo()
-                } else null
+                } else {
+                    null
+                }
             }
         }
     }

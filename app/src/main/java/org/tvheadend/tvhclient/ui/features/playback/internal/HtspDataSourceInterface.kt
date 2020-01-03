@@ -13,4 +13,6 @@ interface HtspDataSourceInterface {
     fun resume()
 
     fun pause()
+
+    fun getResponseHeaders(): Map<String, List<String>>?
 }

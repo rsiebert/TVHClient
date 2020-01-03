@@ -400,4 +400,5 @@
     <string name="wol_send">Successfully sent wake on LAN packet to \'%s\'</string>
     <string name="wol_send_broadcast">Successfully sent wake on LAN packet as a broadcast to \'%s\'</string>
     <string name="yesterday">Yesterday</string>
+    <string name="track_selection_title">Select tracks</string>
 </resources>
