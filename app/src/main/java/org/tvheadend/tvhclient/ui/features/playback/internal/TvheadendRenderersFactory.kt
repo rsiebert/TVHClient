@@ -21,13 +21,11 @@ import android.os.Handler
 import androidx.preference.PreferenceManager
 import com.google.android.exoplayer2.DefaultRenderersFactory
 import com.google.android.exoplayer2.Renderer
-import com.google.android.exoplayer2.audio.AudioCapabilities
-import com.google.android.exoplayer2.audio.AudioProcessor
-import com.google.android.exoplayer2.audio.AudioRendererEventListener
-import com.google.android.exoplayer2.audio.MediaCodecAudioRenderer
+import com.google.android.exoplayer2.audio.*
 import com.google.android.exoplayer2.drm.DrmSessionManager
 import com.google.android.exoplayer2.drm.FrameworkMediaCrypto
 import com.google.android.exoplayer2.ext.ffmpeg.FfmpegAudioRenderer
+import com.google.android.exoplayer2.ext.flac.LibflacAudioRenderer
 import com.google.android.exoplayer2.mediacodec.MediaCodecInfo
 import com.google.android.exoplayer2.mediacodec.MediaCodecSelector
 import com.google.android.exoplayer2.mediacodec.MediaCodecUtil
@@ -82,12 +80,16 @@ internal class TvheadendRenderersFactory(context: Context) : DefaultRenderersFac
         // Native Audio Decoders
         Timber.d("Adding MediaCodecAudioRenderer")
         val customMediaCodecSelector = buildMediaCodecSelector(enablePassthroughDecoder)
-        out.add(MediaCodecAudioRenderer(context, customMediaCodecSelector, drmSessionManager,
-                true, eventHandler, eventListener, audioCapabilities))
+        out.add(MediaCodecAudioRenderer(context, customMediaCodecSelector,
+                true, eventHandler, eventListener, DefaultAudioSink(audioCapabilities, audioProcessors)))
 
         // FFMpeg Audio Decoder
         Timber.d("Adding FfmpegAudioRenderer")
         out.add(FfmpegAudioRenderer(eventHandler, eventListener, *audioProcessors))
+
+        // Flac Audio Decoder
+        Timber.d("Adding FlacAudioRenderer")
+        out.add(LibflacAudioRenderer(eventHandler, eventListener, *audioProcessors))
     }
 
     /**

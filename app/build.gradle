@@ -207,11 +207,8 @@ dependencies {
     implementation project(':exoplayer-library-core')
     implementation project(':exoplayer-library-dash')
     implementation project(':exoplayer-library-ui')
+    implementation project(':exoplayer-extension-flac')
     implementation project(':exoplayer-extension-ffmpeg')
-
-    //implementation 'com.google.android.exoplayer:exoplayer-core:2.7.1k1'
-    //implementation 'com.google.android.exoplayer:exoplayer-ui:2.7.1k1'
-    //implementation 'com.google.android.exoplayer:extension-ffmpeg:2.7.1k1'
 
     // Use multidex because the method count is over 64k
     implementation 'androidx.multidex:multidex:2.0.1'
