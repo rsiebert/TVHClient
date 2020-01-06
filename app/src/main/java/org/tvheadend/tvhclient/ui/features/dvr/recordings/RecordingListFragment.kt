@@ -207,8 +207,20 @@ abstract class RecordingListFragment : BaseFragment(), RecyclerViewClickInterfac
         search_progress?.gone()
         showStatusInToolbar()
 
-        if (isDualPane && recyclerViewAdapter.itemCount > 0) {
-            showRecordingDetails(0)
+        if (isDualPane) {
+            if (recyclerViewAdapter.itemCount > 0) {
+                showRecordingDetails(0)
+            } else {
+                // If no recordings are available in dual pane mode, remove any details fragment from the view
+                val fragment = activity?.supportFragmentManager?.findFragmentById(R.id.details)
+                if (fragment is RecordingDetailsFragment) {
+                    activity?.supportFragmentManager?.beginTransaction()?.also {
+                        it.remove(fragment)
+                        it.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+                        it.commit()
+                    }
+                }
+            }
         }
     }
 
