@@ -6,10 +6,12 @@ import android.os.Bundle
 import android.os.Handler
 import androidx.lifecycle.MutableLiveData
 import com.google.android.exoplayer2.*
+import com.google.android.exoplayer2.ExoPlaybackException
 import com.google.android.exoplayer2.source.ProgressiveMediaSource
 import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
 import com.google.android.exoplayer2.upstream.DefaultAllocator
+import com.google.android.exoplayer2.util.EventLogger
 import com.google.android.exoplayer2.video.VideoListener
 import org.tvheadend.data.entity.Channel
 import org.tvheadend.htsp.HtspConnection
@@ -18,10 +20,12 @@ import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.ui.base.BaseViewModel
 import org.tvheadend.tvhclient.ui.features.playback.internal.utils.Rational
 import timber.log.Timber
+import java.io.IOException
 import java.util.*
 import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledExecutorService
 import kotlin.math.max
+
 
 class PlayerViewModel(application: Application) : BaseViewModel(application), HtspConnectionStateListener, VideoListener, Player.EventListener {
 
@@ -115,6 +119,7 @@ class PlayerViewModel(application: Application) : BaseViewModel(application), Ht
 
         player.addVideoListener(this)
         player.addListener(this)
+        player.addAnalyticsListener(EventLogger(trackSelector))
 
         timeUpdateRunnable = Runnable {
             Timber.d("Updating elapsed and remaining times")
@@ -390,5 +395,12 @@ class PlayerViewModel(application: Application) : BaseViewModel(application), Ht
         val bundle = Bundle()
         bundle.putInt("channelId", newChannelId)
         loadMediaSource(bundle)
+    }
+
+    override fun onPlayerError(error: ExoPlaybackException) {
+        if (error.type == ExoPlaybackException.TYPE_SOURCE) {
+            val cause: IOException = error.sourceException
+            Timber.d("Player error occurred, cause is $cause")
+        }
     }
 }
