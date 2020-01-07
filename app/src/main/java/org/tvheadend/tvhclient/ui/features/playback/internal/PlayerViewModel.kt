@@ -11,13 +11,13 @@ import com.google.android.exoplayer2.source.ProgressiveMediaSource
 import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
 import com.google.android.exoplayer2.upstream.DefaultAllocator
-import com.google.android.exoplayer2.util.EventLogger
 import com.google.android.exoplayer2.video.VideoListener
 import org.tvheadend.data.entity.Channel
 import org.tvheadend.htsp.HtspConnection
 import org.tvheadend.htsp.HtspConnectionStateListener
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.ui.base.BaseViewModel
+import org.tvheadend.tvhclient.ui.features.playback.internal.utils.CustomEventLogger
 import org.tvheadend.tvhclient.ui.features.playback.internal.utils.Rational
 import timber.log.Timber
 import java.io.IOException
@@ -119,7 +119,7 @@ class PlayerViewModel(application: Application) : BaseViewModel(application), Ht
 
         player.addVideoListener(this)
         player.addListener(this)
-        player.addAnalyticsListener(EventLogger(trackSelector))
+        player.addAnalyticsListener(CustomEventLogger(trackSelector))
 
         timeUpdateRunnable = Runnable {
             Timber.d("Updating elapsed and remaining times")
@@ -397,10 +397,24 @@ class PlayerViewModel(application: Application) : BaseViewModel(application), Ht
         loadMediaSource(bundle)
     }
 
-    override fun onPlayerError(error: ExoPlaybackException) {
-        if (error.type == ExoPlaybackException.TYPE_SOURCE) {
-            val cause: IOException = error.sourceException
-            Timber.d("Player error occurred, cause is $cause")
+    override fun onPlayerError(playbackException: ExoPlaybackException) {
+        val error: IOException = playbackException.sourceException
+        when (playbackException.type) {
+            ExoPlaybackException.TYPE_SOURCE -> {
+                Timber.d("Player error occurred while loading media source: $error")
+            }
+            ExoPlaybackException.TYPE_RENDERER -> {
+                Timber.d("Player error occurred in the renderer: $error")
+            }
+            ExoPlaybackException.TYPE_REMOTE -> {
+                Timber.d("Player error occurred in a remote component: $error")
+            }
+            ExoPlaybackException.TYPE_OUT_OF_MEMORY -> {
+                Timber.d("Player error out of memory: $error")
+            }
+            ExoPlaybackException.TYPE_UNEXPECTED -> {
+                Timber.d("Player error unexpected runtime exception: $error")
+            }
         }
     }
 }
