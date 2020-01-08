@@ -44,9 +44,10 @@ class PlaybackActivity : AppCompatActivity(), DialogInterface.OnDismissListener 
     private var timeshiftSupported: Boolean = false
     private lateinit var viewModel: PlayerViewModel
 
-    private val videoAspectRatioNameList = listOf("5:4 (1.25:1)", "4:3 (1.3:1)", "16:9 (1.7:1)", "16:10 (1.6:1)")
+    private val videoAspectRatioNameList = listOf("5:4", "4:3", "16:9", "16:10")
     private val videoAspectRatioList = listOf(Rational(5, 4), Rational(4, 3), Rational(16, 9), Rational(16, 10))
     private var selectedVideoAspectRatio: Rational? = null
+    private var selectedVideoAspectIndex = -1
 
     private var orientationSensorListener: SensorEventListener? = null
     private var sensorManager: SensorManager? = null
@@ -307,6 +308,8 @@ class PlaybackActivity : AppCompatActivity(), DialogInterface.OnDismissListener 
         val ratio = width.toFloat() / height.toFloat()
         val orientation = resources.configuration.orientation
 
+        Timber.d("Current video dimensions are $width:$height, ratio: $ratio")
+
         if (orientation == Configuration.ORIENTATION_PORTRAIT) {
             if (width != screenWidth) {
                 width = screenWidth
@@ -353,10 +356,26 @@ class PlaybackActivity : AppCompatActivity(), DialogInterface.OnDismissListener 
 
     private fun onChangeAspectRatioSelected() {
         Timber.d("Change aspect ratio button selected")
+        val width = selectedVideoAspectRatio?.numerator ?: 0
+        val height = selectedVideoAspectRatio?.denominator ?: 1
+        val currentRatio = (width.toFloat() / height.toFloat()).toString().subStringUntilOrLess(4)
+
+        Timber.d("Current video dimensions are $width:$height, current ratio: $currentRatio:1, selected index $selectedVideoAspectIndex")
+        if (selectedVideoAspectIndex == -1) {
+            videoAspectRatioList.forEachIndexed { index, value ->
+                val ratio = (value.numerator.toFloat() / value.denominator.toFloat()).toString().subStringUntilOrLess(4)
+                Timber.d("Current ratio: $currentRatio, ratio: $ratio")
+                if (currentRatio == ratio) {
+                    selectedVideoAspectIndex = index
+                }
+            }
+        }
+
         MaterialDialog(this).show {
             title(text = "Select the video aspect ratio")
-            listItemsSingleChoice(items = videoAspectRatioNameList.toList(), initialSelection = -1) { _, which, _ ->
+            listItemsSingleChoice(items = videoAspectRatioNameList.toList(), initialSelection = selectedVideoAspectIndex) { _, which, _ ->
                 Timber.d("Selected aspect ratio index is $which")
+                selectedVideoAspectIndex = which
                 viewModel.setVideoAspectRatio(videoAspectRatioList[which])
             }
         }
