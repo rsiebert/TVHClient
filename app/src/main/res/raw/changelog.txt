@@ -1,9 +1,11 @@
 $ 2.3.5
   % VERSION 2.3.5
-  _ 03.01.2020
+  _ 08.01.2020
     * Fixed crash when entering an invalid number in the low disc space setting
     * Fixed bug where the changelog was not shown after an update of the app
-    * Changed the exoplayer library for the internal player from 2.7 to 2.11
+    * Updated the internal player library version from 2.7 to 2.11.1
+    * Added support for flac audio to the internal player
+    * Try to preselect the correct value in the video aspect ratio dialog for the internal player
 $ 2.3.4
   % VERSION 2.3.4
   _ 11.12.2019
