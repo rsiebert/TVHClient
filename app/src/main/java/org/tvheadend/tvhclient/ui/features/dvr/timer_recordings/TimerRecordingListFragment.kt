@@ -204,8 +204,18 @@ class TimerRecordingListFragment : BaseFragment(), RecyclerViewClickInterface, S
         search_progress?.gone()
         showStatusInToolbar()
         // Preselect the first result item in the details screen
-        if (isDualPane && recyclerViewAdapter.itemCount > 0) {
-            showRecordingDetails(0)
+        if (isDualPane) {
+            when {
+                recyclerViewAdapter.itemCount > timerRecordingViewModel.selectedListPosition -> {
+                    showRecordingDetails(timerRecordingViewModel.selectedListPosition)
+                }
+                recyclerViewAdapter.itemCount <= timerRecordingViewModel.selectedListPosition -> {
+                    showRecordingDetails(0)
+                }
+                recyclerViewAdapter.itemCount == 0 -> {
+                    removeDetailsFragment()
+                }
+            }
         }
     }
 

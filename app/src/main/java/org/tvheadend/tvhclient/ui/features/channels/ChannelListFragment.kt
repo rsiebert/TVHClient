@@ -393,8 +393,18 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickInterface, ChannelT
         search_progress?.gone()
         showStatusInToolbar()
         // Show the first search result item in the details screen
-        if (isDualPane && recyclerViewAdapter.itemCount > 0) {
-            showChannelDetails(0)
+        if (isDualPane) {
+            when {
+                recyclerViewAdapter.itemCount > channelViewModel.selectedListPosition -> {
+                    showChannelDetails(channelViewModel.selectedListPosition)
+                }
+                recyclerViewAdapter.itemCount <= channelViewModel.selectedListPosition -> {
+                    showChannelDetails(0)
+                }
+                recyclerViewAdapter.itemCount == 0 -> {
+                    removeDetailsFragment()
+                }
+            }
         }
     }
 }

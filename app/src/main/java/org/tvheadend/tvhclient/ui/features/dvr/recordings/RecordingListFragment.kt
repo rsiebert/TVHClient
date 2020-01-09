@@ -122,7 +122,7 @@ abstract class RecordingListFragment : BaseFragment(), RecyclerViewClickInterfac
                         it.commit()
                     }
                 }
-            } else if (recordingViewModel.currentId.value != recording.id){
+            } else if (recordingViewModel.currentId.value != recording.id) {
                 recordingViewModel.currentId.value = recording.id
             }
         }
@@ -208,17 +208,15 @@ abstract class RecordingListFragment : BaseFragment(), RecyclerViewClickInterfac
         showStatusInToolbar()
 
         if (isDualPane) {
-            if (recyclerViewAdapter.itemCount > 0) {
-                showRecordingDetails(0)
-            } else {
-                // If no recordings are available in dual pane mode, remove any details fragment from the view
-                val fragment = activity?.supportFragmentManager?.findFragmentById(R.id.details)
-                if (fragment is RecordingDetailsFragment) {
-                    activity?.supportFragmentManager?.beginTransaction()?.also {
-                        it.remove(fragment)
-                        it.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
-                        it.commit()
-                    }
+            when {
+                recyclerViewAdapter.itemCount > recordingViewModel.selectedListPosition -> {
+                    showRecordingDetails(recordingViewModel.selectedListPosition)
+                }
+                recyclerViewAdapter.itemCount <= recordingViewModel.selectedListPosition -> {
+                    showRecordingDetails(0)
+                }
+                recyclerViewAdapter.itemCount == 0 -> {
+                    removeDetailsFragment()
                 }
             }
         }

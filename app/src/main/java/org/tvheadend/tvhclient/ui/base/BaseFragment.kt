@@ -4,6 +4,7 @@ import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.MenuItem
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import org.tvheadend.data.entity.Connection
@@ -75,6 +76,17 @@ abstract class BaseFragment : Fragment() {
                 true
             }
             else -> super.onOptionsItemSelected(item)
+        }
+    }
+
+    fun removeDetailsFragment() {
+        val fragment = activity?.supportFragmentManager?.findFragmentById(R.id.details)
+        if (fragment != null) {
+            activity?.supportFragmentManager?.beginTransaction()?.also {
+                it.remove(fragment)
+                it.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+                it.commit()
+            }
         }
     }
 }

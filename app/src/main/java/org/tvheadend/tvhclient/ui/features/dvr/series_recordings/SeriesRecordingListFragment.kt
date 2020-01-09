@@ -205,8 +205,18 @@ class SeriesRecordingListFragment : BaseFragment(), RecyclerViewClickInterface, 
         search_progress?.gone()
         showStatusInToolbar()
         // Preselect the first result item in the details screen
-        if (isDualPane && recyclerViewAdapter.itemCount > 0) {
-            showRecordingDetails(0)
+        if (isDualPane) {
+            when {
+                recyclerViewAdapter.itemCount > seriesRecordingViewModel.selectedListPosition -> {
+                    showRecordingDetails(seriesRecordingViewModel.selectedListPosition)
+                }
+                recyclerViewAdapter.itemCount <= seriesRecordingViewModel.selectedListPosition -> {
+                    showRecordingDetails(0)
+                }
+                recyclerViewAdapter.itemCount == 0 -> {
+                    removeDetailsFragment()
+                }
+            }
         }
     }
 
