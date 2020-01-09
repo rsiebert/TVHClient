@@ -37,8 +37,8 @@ class TimerRecordingViewModel(application: Application) : BaseViewModel(applicat
             intent.putExtra("start", recording.start)
             intent.putExtra("stop", recording.stop)
         } else {
-            intent.putExtra("start", (-1).toLong())
-            intent.putExtra("stop", (-1).toLong())
+            intent.putExtra("start", (0).toLong())
+            intent.putExtra("stop", (0).toLong())
         }
         intent.putExtra("daysOfWeek", recording.daysOfWeek)
         intent.putExtra("priority", recording.priority)
@@ -69,6 +69,7 @@ class TimerRecordingViewModel(application: Application) : BaseViewModel(applicat
 
     fun loadRecordingByIdSync(id: String) {
         recording = appRepository.timerRecordingData.getItemById(id) ?: TimerRecording()
+        isTimeEnabled = recording.start > 0 && recording.stop > 0
     }
 
     var startTimeInMillis: Long = 0
