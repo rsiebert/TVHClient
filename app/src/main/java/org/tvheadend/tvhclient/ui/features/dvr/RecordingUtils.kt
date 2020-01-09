@@ -59,14 +59,10 @@ fun handleDayOfWeekSelection(context: Context, daysOfWeek: Int, callback: Record
             list.add(i)
         }
     }
-    val selectedIndices = arrayOfNulls<Int>(list.size)
-    for (i in selectedIndices.indices) {
-        selectedIndices[i] = list[i]
-    }
     MaterialDialog(context).show {
         title(R.string.days_of_week)
         positiveButton(R.string.select)
-        listItemsMultiChoice(R.array.day_long_names) { _, index, _ ->
+        listItemsMultiChoice(R.array.day_long_names, initialSelection = list.toMutableList().toIntArray()) { _, index, _ ->
             var selectedDays = 0
             for (i in index) {
                 selectedDays += 1 shl i
