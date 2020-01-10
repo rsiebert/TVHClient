@@ -121,8 +121,8 @@ class ChangeLogFragment : Fragment(), BackPressedInterface {
     }
 
     private fun onFileContentsLoaded(fileContent: String) {
-        Timber.d("Changelog data was loaded, file contents is not empty ${fileContent.isNotEmpty()}, fragment is visible $isVisible")
-        if (fileContent.isNotEmpty() && isVisible) {
+        Timber.d("Changelog data was loaded, file contents is not empty ${fileContent.isNotEmpty()}, fragment is added $isAdded and is visible $isVisible")
+        if (fileContent.isNotEmpty() && isAdded) {
             Timber.d("Changelog data is available, showing contents in webview")
             webview.loadDataWithBaseURL("file:///android_asset/", fileContent, "text/html", "utf-8", null)
             webview.visible()
