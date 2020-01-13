@@ -32,7 +32,6 @@ class TimerRecordingViewModel(application: Application) : BaseViewModel(applicat
         intent.putExtra("title", recording.title)
         intent.putExtra("name", recording.name)
 
-        // Assume no start time is specified if 0:00 is selected
         if (isTimeEnabled) {
             intent.putExtra("start", recording.start)
             intent.putExtra("stop", recording.stop)
