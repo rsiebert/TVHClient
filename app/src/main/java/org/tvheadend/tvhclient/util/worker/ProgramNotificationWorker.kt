@@ -17,7 +17,6 @@ import java.util.*
 class ProgramNotificationWorker(val context: Context, workerParams: WorkerParameters) : Worker(context, workerParams) {
 
     override fun doWork(): Result {
-        Timber.d("Loading more event data from server")
 
         val eventTitle = inputData.getString("eventTitle")
         val eventId = inputData.getInt("eventId", 0)
@@ -46,9 +45,11 @@ class ProgramNotificationWorker(val context: Context, workerParams: WorkerParame
         // The text below the title will be the program name
         val currentTime = Date().time
         val title = if (startTime < currentTime)
+        // TODO use translatable strings
             "Program has already started."
         else {
             val sdf = SimpleDateFormat("HH:mm", Locale.US)
+            // TODO use translatable strings
             "Program starts at ${sdf.format(startTime)} in ${(startTime - currentTime) / 1000 / 60} minutes."
         }
 

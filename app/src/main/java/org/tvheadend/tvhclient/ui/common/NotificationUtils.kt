@@ -15,6 +15,7 @@ import org.tvheadend.data.entity.ProgramInterface
 import org.tvheadend.data.entity.Recording
 import org.tvheadend.data.entity.ServerProfile
 import org.tvheadend.tvhclient.R
+import org.tvheadend.tvhclient.util.extensions.sendSnackbarMessage
 import org.tvheadend.tvhclient.util.worker.ProgramNotificationWorker
 import org.tvheadend.tvhclient.util.worker.RecordingNotificationWorker
 import timber.log.Timber
@@ -137,6 +138,8 @@ fun addNotificationProgramIsAboutToStart(context: Context, program: ProgramInter
                 .build()
         val uniqueWorkName = "Notification_" + program.eventId.toString()
         WorkManager.getInstance().enqueueUniqueWork(uniqueWorkName, ExistingWorkPolicy.REPLACE, workRequest)
+        // TODO use translatable strings
+        context.sendSnackbarMessage("Notification was added")
     }
     return true
 }
