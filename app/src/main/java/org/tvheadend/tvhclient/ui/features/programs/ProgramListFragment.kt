@@ -2,7 +2,6 @@ package org.tvheadend.tvhclient.ui.features.programs
 
 import android.content.Intent
 import android.os.Bundle
-import android.os.Handler
 import android.view.*
 import android.widget.Filter
 import androidx.appcompat.widget.PopupMenu
@@ -31,10 +30,8 @@ class ProgramListFragment : BaseFragment(), RecyclerViewClickInterface, LastProg
     lateinit var recyclerViewAdapter: ProgramRecyclerViewAdapter
     private lateinit var programViewModel: ProgramViewModel
     private var loadingMoreProgramAllowed: Boolean = false
-
-    private lateinit var loadingProgramsAllowedTask: Runnable
-    private var loadingProgramAllowedHandler: Handler? = null
     private var programIdToBeEditedWhenBeingRecorded = 0
+    private var lastProgramItemCount = 0
     private var channelId = 0
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -96,17 +93,15 @@ class ProgramListFragment : BaseFragment(), RecyclerViewClickInterface, LastProg
     private fun observeSearchQuery() {
         Timber.d("Observing search query")
         baseViewModel.searchQuery.observe(viewLifecycleOwner, Observer { query ->
-            if (query.isNotEmpty()) {
+            loadingMoreProgramAllowed = if (query.isNotEmpty()) {
                 Timber.d("View model returned search query '$query'")
                 onSearchRequested(query)
-                loadingMoreProgramAllowed = false
+                false
 
             } else {
                 Timber.d("View model returned empty search query")
                 onSearchResultsCleared()
-                loadingMoreProgramAllowed = true
-                loadingProgramAllowedHandler = Handler()
-                loadingProgramsAllowedTask = Runnable { loadingMoreProgramAllowed = true }
+                true
             }
         })
     }
@@ -130,11 +125,6 @@ class ProgramListFragment : BaseFragment(), RecyclerViewClickInterface, LastProg
                 break
             }
         }
-    }
-
-    override fun onPause() {
-        super.onPause()
-        loadingProgramAllowedHandler?.removeCallbacks(loadingProgramsAllowedTask)
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -238,12 +228,13 @@ class ProgramListFragment : BaseFragment(), RecyclerViewClickInterface, LastProg
 
     override fun onLastProgramVisible(position: Int) {
         // Do not load more programs when a search query was given or all programs were loaded.
-        if (baseViewModel.isSearchActive || !loadingMoreProgramAllowed || !isConnectionToServerAvailable) {
+        if (baseViewModel.isSearchActive
+                || !loadingMoreProgramAllowed
+                || !isConnectionToServerAvailable
+                || recyclerViewAdapter.itemCount == lastProgramItemCount) {
             return
         }
-
-        loadingMoreProgramAllowed = false
-        loadingProgramAllowedHandler?.postDelayed(loadingProgramsAllowedTask, 2000)
+        lastProgramItemCount = recyclerViewAdapter.itemCount
 
         val lastProgram = recyclerViewAdapter.getItem(position)
         lastProgram?.let {
