@@ -133,10 +133,9 @@ class MainActivity : BaseActivity(R.layout.main_activity), SearchView.OnQueryTex
         baseViewModel.connectionToServerAvailable.observe(this, Observer { isAvailable ->
             Timber.d("Connection to server availability changed to $isAvailable")
             invalidateOptionsMenu()
+            statusViewModel.stopDiskSpaceUpdateHandler()
             if (isAvailable) {
                 statusViewModel.startDiskSpaceUpdateHandler()
-            } else {
-                statusViewModel.stopDiskSpaceUpdateHandler()
             }
         })
 
