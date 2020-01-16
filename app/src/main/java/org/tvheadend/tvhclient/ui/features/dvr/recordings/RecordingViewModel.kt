@@ -27,7 +27,8 @@ class RecordingViewModel(application: Application) : BaseViewModel(application),
     var recordingLiveData = MediatorLiveData<Recording>()
     var recording = Recording()
     var recordingProfileNameId = 0
-
+    private val completedRecordingSortOrder = MutableLiveData<Int>()
+    private val defaultCompletedRecordingSortOrder: String = appContext.resources.getString(R.string.pref_default_completed_recording_sort_order)
     private var hideDuplicateScheduledRecordings: MutableLiveData<Boolean> = MutableLiveData()
 
     fun getIntentData(recording: Recording): Intent {
@@ -58,8 +59,7 @@ class RecordingViewModel(application: Application) : BaseViewModel(application),
             }
         }
 
-        val trigger = ScheduledRecordingLiveData(hideDuplicateScheduledRecordings)
-        scheduledRecordings = switchMap(trigger) { value ->
+        scheduledRecordings = switchMap(ScheduledRecordingLiveData(hideDuplicateScheduledRecordings)) { value ->
             Timber.d("Loading scheduled recordings because the duplicate setting has changed")
             if (value == null) {
                 Timber.d("Skipping loading of scheduled recordings because the duplicate setting is not set")
@@ -68,9 +68,18 @@ class RecordingViewModel(application: Application) : BaseViewModel(application),
             return@switchMap appRepository.recordingData.getScheduledRecordings(value)
         }
 
-        completedRecordings = appRepository.recordingData.getCompletedRecordings()
+        completedRecordings = switchMap(CompletedRecordingLiveData(completedRecordingSortOrder)) { value ->
+            if (value == null) {
+                Timber.d("Not loading of completed recordings because no recording sort order is set")
+                return@switchMap null
+            }
+            return@switchMap appRepository.recordingData.getCompletedRecordings(value)
+        }
+
         failedRecordings = appRepository.recordingData.getFailedRecordings()
         removedRecordings = appRepository.recordingData.getRemovedRecordings()
+
+        onSharedPreferenceChanged(sharedPreferences, "completed_recording_sort_order")
 
         Timber.d("Registering shared preference change listener")
         sharedPreferences.registerOnSharedPreferenceChangeListener(this)
@@ -86,9 +95,8 @@ class RecordingViewModel(application: Application) : BaseViewModel(application),
         Timber.d("Shared preference $key has changed")
         if (sharedPreferences == null) return
         when (key) {
-            "hide_duplicate_scheduled_recordings_enabled" -> {
-                hideDuplicateScheduledRecordings.value = sharedPreferences.getBoolean(key, appContext.resources.getBoolean(R.bool.pref_default_hide_duplicate_scheduled_recordings_enabled))
-            }
+            "completed_recording_sort_order" -> completedRecordingSortOrder.value = Integer.valueOf(sharedPreferences.getString("completed_recording_sort_order", defaultCompletedRecordingSortOrder) ?: defaultCompletedRecordingSortOrder)
+            "hide_duplicate_scheduled_recordings_enabled" -> hideDuplicateScheduledRecordings.value = sharedPreferences.getBoolean(key, appContext.resources.getBoolean(R.bool.pref_default_hide_duplicate_scheduled_recordings_enabled))
         }
     }
 
@@ -115,6 +123,14 @@ class RecordingViewModel(application: Application) : BaseViewModel(application),
         init {
             addSource(hideDuplicates) { hide ->
                 value = hide
+            }
+        }
+    }
+
+    internal inner class CompletedRecordingLiveData(selectedChannelSortOrder: LiveData<Int>) : MediatorLiveData<Int?>() {
+        init {
+            addSource(selectedChannelSortOrder) { order ->
+                value = order
             }
         }
     }

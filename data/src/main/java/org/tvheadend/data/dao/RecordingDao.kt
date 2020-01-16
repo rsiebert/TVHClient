@@ -47,9 +47,9 @@ interface RecordingDao {
     @Transaction
     @Query(RECORDING_BASE_QUERY +
             " WHERE $CONNECTION_IS_ACTIVE" +
-            " AND rec.error IS NULL AND rec.state = 'completed'" +
-            " ORDER BY rec.start DESC")
-    fun loadCompletedRecordings(): LiveData<List<Recording>>
+            " AND rec.error IS NULL AND rec.state = 'completed' " +
+            ORDER_BY)
+    fun loadCompletedRecordings(sortOrder: Int): LiveData<List<Recording>>
 
     @Transaction
     @Query(RECORDING_BASE_QUERY +
@@ -137,6 +137,14 @@ interface RecordingDao {
                 "c.icon AS channel_icon " +
                 "FROM recordings AS rec " +
                 "LEFT JOIN channels AS c ON c.id = rec.channel_id "
+
+        const val ORDER_BY = " ORDER BY " +
+                "CASE :sortOrder WHEN 0 THEN rec.start END ASC," +
+                "CASE :sortOrder WHEN 1 THEN rec.start END DESC," +
+                "CASE :sortOrder WHEN 2 THEN rec.title END ASC," +
+                "CASE :sortOrder WHEN 3 THEN rec.title END DESC," +
+                "CASE :sortOrder WHEN 4 THEN rec.content_type END ASC," +
+                "CASE :sortOrder WHEN 5 THEN rec.content_type END DESC"
 
         const val CONNECTION_IS_ACTIVE = " rec.connection_id IN (SELECT id FROM connections WHERE active = 1) "
     }

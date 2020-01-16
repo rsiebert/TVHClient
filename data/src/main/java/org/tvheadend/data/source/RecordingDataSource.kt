@@ -46,8 +46,8 @@ class RecordingDataSource(private val db: AppRoomDatabase) : DataSourceInterface
         return db.recordingDao.loadRecordingsByChannelId(channelId)
     }
 
-    fun getCompletedRecordings(): LiveData<List<Recording>> {
-        return db.recordingDao.loadCompletedRecordings()
+    fun getCompletedRecordings(sortOrder: Int): LiveData<List<Recording>> {
+        return db.recordingDao.loadCompletedRecordings(sortOrder)
     }
 
     fun getScheduledRecordings(hideDuplicates: Boolean): LiveData<List<Recording>> {
