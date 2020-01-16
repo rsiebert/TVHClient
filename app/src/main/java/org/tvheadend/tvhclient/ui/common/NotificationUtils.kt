@@ -138,8 +138,7 @@ fun addNotificationProgramIsAboutToStart(context: Context, program: ProgramInter
                 .build()
         val uniqueWorkName = "Notification_" + program.eventId.toString()
         WorkManager.getInstance().enqueueUniqueWork(uniqueWorkName, ExistingWorkPolicy.REPLACE, workRequest)
-        // TODO use translatable strings
-        context.sendSnackbarMessage("Notification was added")
+        context.sendSnackbarMessage(context.resources.getString(R.string.notification_added))
     }
     return true
 }

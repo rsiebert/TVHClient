@@ -45,12 +45,10 @@ class ProgramNotificationWorker(val context: Context, workerParams: WorkerParame
         // The text below the title will be the program name
         val currentTime = Date().time
         val title = if (startTime < currentTime)
-        // TODO use translatable strings
-            "Program has already started."
+            context.resources.getString(R.string.program_has_already_started)
         else {
             val sdf = SimpleDateFormat("HH:mm", Locale.US)
-            // TODO use translatable strings
-            "Program starts at ${sdf.format(startTime)} in ${(startTime - currentTime) / 1000 / 60} minutes."
+            context.resources.getString(R.string.program_starts_soon, sdf.format(startTime), (startTime - currentTime) / 1000 / 60)
         }
 
         val builder = getNotificationBuilder(context)
