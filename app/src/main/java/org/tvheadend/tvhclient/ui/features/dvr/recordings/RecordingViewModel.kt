@@ -24,9 +24,11 @@ class RecordingViewModel(application: Application) : BaseViewModel(application),
     val failedRecordings: LiveData<List<Recording>>
     val removedRecordings: LiveData<List<Recording>>
 
+    var showGenreColor = MutableLiveData<Boolean>()
     var recordingLiveData = MediatorLiveData<Recording>()
     var recording = Recording()
     var recordingProfileNameId = 0
+
     private val completedRecordingSortOrder = MutableLiveData<Int>()
     private val defaultCompletedRecordingSortOrder: String = appContext.resources.getString(R.string.pref_default_completed_recording_sort_order)
     private var hideDuplicateScheduledRecordings: MutableLiveData<Boolean> = MutableLiveData()
@@ -80,6 +82,7 @@ class RecordingViewModel(application: Application) : BaseViewModel(application),
         removedRecordings = appRepository.recordingData.getRemovedRecordings()
 
         onSharedPreferenceChanged(sharedPreferences, "completed_recording_sort_order")
+        onSharedPreferenceChanged(sharedPreferences, "genre_colors_for_recordings_enabled")
 
         Timber.d("Registering shared preference change listener")
         sharedPreferences.registerOnSharedPreferenceChangeListener(this)
@@ -95,6 +98,7 @@ class RecordingViewModel(application: Application) : BaseViewModel(application),
         Timber.d("Shared preference $key has changed")
         if (sharedPreferences == null) return
         when (key) {
+            "genre_colors_for_recordings_enabled" -> showGenreColor.value = sharedPreferences.getBoolean(key, appContext.resources.getBoolean(R.bool.pref_default_genre_colors_for_recordings_enabled))
             "completed_recording_sort_order" -> completedRecordingSortOrder.value = Integer.valueOf(sharedPreferences.getString("completed_recording_sort_order", defaultCompletedRecordingSortOrder) ?: defaultCompletedRecordingSortOrder)
             "hide_duplicate_scheduled_recordings_enabled" -> hideDuplicateScheduledRecordings.value = sharedPreferences.getBoolean(key, appContext.resources.getBoolean(R.bool.pref_default_hide_duplicate_scheduled_recordings_enabled))
         }

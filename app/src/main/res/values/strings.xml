@@ -177,6 +177,8 @@
     <string name="pref_genre_colors_epg_sum">Shows the genre color in the background of each program guide item.</string>
     <string name="pref_genre_colors_programs">Programs</string>
     <string name="pref_genre_colors_programs_sum">The genre color will be shown as a vertical line on the left side of the program lists and the program details screen.</string>
+    <string name="pref_genre_colors_recordings">Recordings</string>
+    <string name="pref_genre_colors_recordings_sum">The genre color will be shown as a vertical line on the left side of the different recording list screens.</string>
     <string name="pref_genre_colors_sum">Specify on which screens the genre color shall be shown.</string>
     <string name="pref_genre_colors_visibility">Genre color visibility</string>
     <string name="pref_genre_colors_visibility_message">Set the visibility of the colors. Higher values mean stronger colors.</string>

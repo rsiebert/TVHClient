@@ -20,7 +20,7 @@
             android:contentDescription="@null"
             android:scaleType="fitStart"
             app:iconUrl="@{recording.channelIcon}"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/genre"
             app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
@@ -36,6 +36,21 @@
             android:visibility="@{recording.isRecording ? View.VISIBLE : View.GONE}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/genre"
+            android:layout_width="8dp"
+            android:layout_height="0dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            app:genreColor="@{recording.contentType}"
+            app:genreColorAlphaOffset="@{0}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:showGenreColor="@{safeUnbox(viewModel.showGenreColor)}" />
 
         <ImageView
             android:id="@+id/dual_pane_list_item_selection"
@@ -61,7 +76,7 @@
             android:layout_marginTop="16dp"
             app:iconName="@{recording.channelName}"
             app:iconUrl="@{recording.channelIcon}"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/genre"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
@@ -78,7 +93,7 @@
             android:ellipsize="end"
             android:text="@{recording.title}"
             app:layout_constraintEnd_toStartOf="@+id/state"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/genre"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="@string/title" />
 
@@ -317,7 +332,7 @@
             android:background="?attr/divider_color"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/genre"
             app:layout_constraintTop_toBottomOf="@+id/stream_errors" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

@@ -151,6 +151,11 @@
             android:key="genre_colors_for_program_guide_enabled"
             android:summary="@string/pref_genre_colors_epg_sum"
             android:title="@string/pref_genre_colors_epg" />
+        <SwitchPreference
+            android:defaultValue="@bool/pref_default_genre_colors_for_recordings_enabled"
+            android:key="genre_colors_for_recordings_enabled"
+            android:summary="@string/pref_genre_colors_recordings_sum"
+            android:title="@string/pref_genre_colors_recordings" />
 
         <SeekBarPreference
             android:defaultValue="@string/pref_default_genre_color_transparency"
