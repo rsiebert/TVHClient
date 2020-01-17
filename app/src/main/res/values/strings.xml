@@ -265,6 +265,9 @@
     <string name="pref_show_progressbar_sum">Indicates in the channel list how much of the current program has already been shown.</string>
     <string name="pref_show_recording_file_status">Show recording file status</string>
     <string name="pref_show_recording_file_status_sum">The file size and number of data errors of each recording will be shown in the recording lists.</string>
+    <string name="pref_sort_recordings">Recording Order</string>
+    <string name="pref_sort_completed_recordings">Completed Recording Order</string>
+    <string name="pref_sort_completed_recordings_sum">Choose in which order the completed recordings will be displayed.</string>
     <string name="pref_sort_channels">Channel Order</string>
     <string name="pref_sort_channels_sum">Choose in which order the channels will be displayed.</string>
     <string name="pref_streaming_url">Playback Url</string>
