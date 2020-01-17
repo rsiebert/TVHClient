@@ -621,8 +621,8 @@ fun setLocalizedDate(view: TextView, date: Long) {
  * @param showGenreColors True to show the color, false otherwise
  * @param offset          Positive offset from 0 to 100 to increase the transparency of the color
  */
-@BindingAdapter("genreColor", "showGenreColor", "genreColorAlphaOffset")
-fun setGenreColor(view: TextView, contentType: Int, showGenreColors: Boolean, offset: Int) {
+@BindingAdapter("genreColor", "showGenreColor", "genreColorAlphaOffset", "genreColorItemName")
+fun setGenreColor(view: TextView, contentType: Int, showGenreColors: Boolean, offset: Int, itemName: String) {
     val context = view.context
     val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
 
@@ -631,7 +631,11 @@ fun setGenreColor(view: TextView, contentType: Int, showGenreColors: Boolean, of
         if (contentType >= 0) {
             // Get the genre color from the content type
             color = R.color.EPG_OTHER
-            when (contentType / 16) {
+            var type = contentType / 16 - 1
+            type = if (type < 0) 0 else type
+
+            Timber.d("Received content type $contentType for $itemName, final color id is ${contentType / 16}")
+            when (type) {
                 0 -> color = ContextCompat.getColor(view.context, R.color.EPG_MOVIES)
                 1 -> color = ContextCompat.getColor(view.context, R.color.EPG_NEWS)
                 2 -> color = ContextCompat.getColor(view.context, R.color.EPG_SHOWS)
