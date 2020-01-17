@@ -16,7 +16,6 @@
 
 package org.tvheadend.tvhclient.ui.features.playback.internal
 
-import com.google.android.exoplayer2.ext.flac.FlacExtractor
 import com.google.android.exoplayer2.extractor.Extractor
 import com.google.android.exoplayer2.extractor.ExtractorsFactory
 import com.google.android.exoplayer2.extractor.flv.FlvExtractor
@@ -46,7 +45,6 @@ internal class TvheadendExtractorsFactory : ExtractorsFactory {
                 FlvExtractor(),
                 OggExtractor(),
                 PsExtractor(),
-                FlacExtractor(),
                 WavExtractor())
     }
 }

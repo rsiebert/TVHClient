@@ -109,7 +109,7 @@ class PlayerViewModel(application: Application) : BaseViewModel(application), Ht
                 .createDefaultLoadControl()
 
         Timber.d("Creating player instance")
-        val rendererFactory = TvheadendRenderersFactory(appContext)
+        val rendererFactory = DefaultRenderersFactory(appContext)
                 .setExtensionRendererMode(DefaultRenderersFactory.EXTENSION_RENDERER_MODE_PREFER)
                 .setAllowedVideoJoiningTimeMs(DefaultRenderersFactory.DEFAULT_ALLOWED_VIDEO_JOINING_TIME_MS)
 
