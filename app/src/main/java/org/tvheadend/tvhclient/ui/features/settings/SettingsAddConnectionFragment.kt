@@ -3,6 +3,7 @@ package org.tvheadend.tvhclient.ui.features.settings
 import android.os.Bundle
 import androidx.lifecycle.Observer
 import org.tvheadend.tvhclient.R
+import org.tvheadend.tvhclient.util.extensions.sendSnackbarMessage
 import timber.log.Timber
 
 class SettingsAddConnectionFragment : SettingsConnectionBaseFragment() {
@@ -24,13 +25,16 @@ class SettingsAddConnectionFragment : SettingsConnectionBaseFragment() {
     }
 
     override fun save() {
-        if (isConnectionInputValid(settingsViewModel.connection)) {
+        val status = connectionValidator.isConnectionInputValid(settingsViewModel.connection)
+        if (status == ConnectionValidator.ValidationStatus.SUCCESS) {
             settingsViewModel.addConnection()
             activity.let {
                 if (it is RemoveFragmentFromBackstackInterface) {
                     it.removeFragmentFromBackstack()
                 }
             }
+        } else {
+            context?.sendSnackbarMessage(getErrorDescription(status))
         }
     }
 }
