@@ -41,7 +41,7 @@ abstract class RecordingListFragment : BaseFragment(), RecyclerViewClickInterfac
             recordingViewModel.selectedListPosition = it.getInt("listPosition")
         }
 
-        recyclerViewAdapter = RecordingRecyclerViewAdapter(isDualPane, this, htspVersion)
+        recyclerViewAdapter = RecordingRecyclerViewAdapter(recordingViewModel, isDualPane, this, htspVersion)
         recycler_view.layoutManager = LinearLayoutManager(activity)
         recycler_view.adapter = recyclerViewAdapter
         recycler_view.gone()
@@ -66,6 +66,7 @@ abstract class RecordingListFragment : BaseFragment(), RecyclerViewClickInterfac
         return when (item.itemId) {
             R.id.menu_add_recording -> addNewRecording(ctx)
             R.id.menu_remove_all_recordings -> showConfirmationToRemoveAllRecordings(ctx, CopyOnWriteArrayList(recyclerViewAdapter.items))
+            R.id.menu_genre_color_information -> showGenreColorDialog(ctx)
             else -> super.onOptionsItemSelected(item)
         }
     }
@@ -87,6 +88,11 @@ abstract class RecordingListFragment : BaseFragment(), RecyclerViewClickInterfac
         menu.findItem(R.id.media_route_menu_item)?.isVisible = false
         // Do not show the search menu when no recordings are available
         menu.findItem(R.id.menu_search)?.isVisible = recyclerViewAdapter.itemCount > 0
+
+        val showGenreColors = sharedPreferences.getBoolean("genre_colors_for_recordings_enabled", resources.getBoolean(R.bool.pref_default_genre_colors_for_recordings_enabled))
+        if (!baseViewModel.isSearchActive) {
+            menu.findItem(R.id.menu_genre_color_information)?.isVisible = showGenreColors
+        }
     }
 
     private fun showRecordingDetails(position: Int) {
