@@ -90,6 +90,24 @@
         <item>Channel number (descending)</item>
     </string-array>
 
+    <string-array name="pref_sort_completed_recordings_ids" translatable="false">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+    </string-array>
+
+    <string-array name="pref_sort_completed_recordings_names">
+        <item>Start time (ascending)</item>
+        <item>Start time (descending)</item>
+        <item>Recording title (ascending)</item>
+        <item>Recording title (descending)</item>
+        <item>Recording genre (ascending)</item>
+        <item>Recording genre (descending)</item>
+    </string-array>
+
     <string-array name="day_short_names">
         <item>Mon</item>
         <item>Tue</item>
