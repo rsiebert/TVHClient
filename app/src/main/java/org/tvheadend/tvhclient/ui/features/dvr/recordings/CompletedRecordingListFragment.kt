@@ -2,8 +2,10 @@ package org.tvheadend.tvhclient.ui.features.dvr.recordings
 
 import android.os.Bundle
 import android.view.Menu
+import android.view.MenuItem
 import androidx.lifecycle.Observer
 import org.tvheadend.tvhclient.R
+import org.tvheadend.tvhclient.ui.common.showCompletedRecordingSortOrderSelectionDialog
 import timber.log.Timber
 
 class CompletedRecordingListFragment : RecordingListFragment() {
@@ -37,6 +39,14 @@ class CompletedRecordingListFragment : RecordingListFragment() {
                 toolbarInterface.setTitle(getString(R.string.search_results))
                 toolbarInterface.setSubtitle(it.resources.getQuantityString(R.plurals.completed_recordings, recyclerViewAdapter.itemCount, recyclerViewAdapter.itemCount))
             }
+        }
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        val ctx = context ?: return super.onOptionsItemSelected(item)
+        return when (item.itemId) {
+            R.id.menu_recording_sort_order -> showCompletedRecordingSortOrderSelectionDialog(ctx)
+            else -> super.onOptionsItemSelected(item)
         }
     }
 }
