@@ -52,6 +52,7 @@
     <string name="pref_default_days_of_epg_data" translatable="false">7</string>
     <bool name="pref_default_casting_minicontroller_enabled">false</bool>
     <bool name="pref_default_genre_colors_for_channels_enabled">false</bool>
+    <bool name="pref_default_genre_colors_for_recordings_enabled">false</bool>
     <bool name="pref_default_genre_colors_for_programs_enabled">false</bool>
     <bool name="pref_default_genre_colors_for_program_guide_enabled">false</bool>
     <string name="pref_default_genre_color_transparency" translatable="false">70</string>
