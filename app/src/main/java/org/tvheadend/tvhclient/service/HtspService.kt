@@ -1544,46 +1544,33 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
         notificationManager.cancel(intent.getIntExtra("id", 0))
     }
 
-    private fun addAutorecEntry(intent: Intent) {
+    private fun addAutorecEntry(intent: Intent,
+                                successMessage: Int = R.string.success_adding_recording,
+                                errorMessage: Int = R.string.error_adding_recording) {
         val request = convertIntentToAutorecMessage(intent, htspVersion)
         request["method"] = "addAutorecEntry"
 
         htspConnection?.sendMessage(request, object : HtspResponseListener {
             override fun handleResponse(response: HtspMessage) {
                 if (response.getInteger("success", 0) == 1) {
-                    applicationContext?.sendSnackbarMessage(getString(R.string.success_adding_recording))
+                    applicationContext?.sendSnackbarMessage(getString(successMessage))
                 } else {
-                    applicationContext?.sendSnackbarMessage(getString(R.string.error_adding_recording, response.getString("error", "")))
+                    applicationContext?.sendSnackbarMessage(getString(errorMessage, response.getString("error", "")))
                 }
             }
         })
     }
 
     private fun updateAutorecEntry(intent: Intent) {
-        var request = HtspMessage()
-        if (htspVersion >= 25) {
-            request = convertIntentToAutorecMessage(intent, htspVersion)
-            request["method"] = "updateAutorecEntry"
-        } else {
-            request["method"] = "deleteAutorecEntry"
-        }
+        val request = HtspMessage()
+        request["method"] = "deleteAutorecEntry"
         request["id"] = intent.getStringExtra("id")
 
         htspConnection?.sendMessage(request, object : HtspResponseListener {
             override fun handleResponse(response: HtspMessage) {
-                // Handle the response here because the "updateAutorecEntry" call does
-                // not exist on the server. First delete the entry and if this was
-                // successful add a new entry with the new values.
-                val success = response.getInteger("success", 0) == 1
-                if (htspVersion < 25 && success) {
-                    addAutorecEntry(intent)
-                } else {
-                    if (success) {
-                        applicationContext?.sendSnackbarMessage(getString(R.string.success_updating_recording))
-                    } else {
-                        applicationContext?.sendSnackbarMessage(getString(R.string.error_updating_recording, response.getString("error", "")))
-                    }
-                }
+                addAutorecEntry(intent,
+                        R.string.success_updating_recording,
+                        R.string.error_updating_recording)
             }
         })
     }
