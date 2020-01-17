@@ -228,3 +228,18 @@ fun showChannelSortOrderSelectionDialog(context: Context): Boolean {
     }
     return false
 }
+
+fun showCompletedRecordingSortOrderSelectionDialog(context: Context): Boolean {
+
+    val sortOrder = Integer.valueOf(PreferenceManager.getDefaultSharedPreferences(context).getString("completed_recording_sort_order", context.resources.getString(R.string.pref_default_completed_recording_sort_order))!!)
+    MaterialDialog(context).show {
+        title(R.string.pref_sort_completed_recordings)
+        listItemsSingleChoice(R.array.pref_sort_completed_recordings_names, initialSelection = sortOrder) { _, index, _ ->
+            Timber.d("New selected completed recording sort order changed from $sortOrder to $index")
+            val editor = PreferenceManager.getDefaultSharedPreferences(context).edit()
+            editor.putString("completed_recording_sort_order", index.toString())
+            editor.apply()
+        }
+    }
+    return false
+}
