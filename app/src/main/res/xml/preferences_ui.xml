@@ -46,6 +46,15 @@
             android:key="channel_sort_order"
             android:summary="@string/pref_sort_channels_sum"
             android:title="@string/pref_sort_channels" />
+        <ListPreference
+            android:name="@string/pref_sort_completed_recordings"
+            android:defaultValue="@string/pref_default_completed_recording_sort_order"
+            android:dialogTitle="@string/pref_sort_completed_recordings"
+            android:entries="@array/pref_sort_completed_recordings_names"
+            android:entryValues="@array/pref_sort_completed_recordings_ids"
+            android:key="completed_recording_sort_order"
+            android:summary="@string/pref_sort_completed_recordings_sum"
+            android:title="@string/pref_sort_completed_recordings" />
         <SwitchPreference
             android:defaultValue="@bool/pref_default_channel_tag_icons_enabled"
             android:key="channel_tag_icons_enabled"
