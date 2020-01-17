@@ -1,13 +1,17 @@
 $ 2.3.5
   % VERSION 2.3.5
-  _ 10.01.2020
+  _ 17.01.2020
+    * Added options to sort completed recordings
+    * Added option to show genre color for recordings
+    * Show confirmation message that a reminder was added
+    * Updated the internal player library version from 2.7 to 2.11.1
+    * Preselect the correct list item in the video aspect ratio dialog for the internal player
     * Fixed crash when entering an invalid number in the low disc space setting
     * Fixed bug where the changelog was not shown after an update of the app
-    * Fixed the initial selection in the day of week dialog
-    * Fixed disabling the start and stop time for timer recordings
-    * Updated the internal player library version from 2.7 to 2.11.1
-    * Added support for flac audio to the internal player
-    * Try to preselect the correct value in the video aspect ratio dialog for the internal player
+    * Fixed the initial selection in the day of week dialog when editing recordings
+    * Fixed disabling the start and stop time for series and timer recordings
+    * Fixed programs were always being loaded when the end of the program list was reached
+    * Fixed bug where the request to get the free disk space from the server was called too many times
 $ 2.3.4
   % VERSION 2.3.4
   _ 11.12.2019
