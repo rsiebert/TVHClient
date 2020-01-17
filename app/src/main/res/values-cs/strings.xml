@@ -186,8 +186,6 @@
     <string name="pref_http_playback_profiles_sum">Vyberte profil, který používá externí přehrávač k přehrávání nahraného programu pomocí externího přehrávače.</string>
     <string name="pref_information">Informace</string>
     <string name="pref_information_sum">Zobrazte seznam použitých knihoven a lidí, kteří se na vývoji podíleli.</string>
-    <string name="pref_internal_player_audio_passthrough_enabled">Povolit průchod zvuku</string>
-    <string name="pref_internal_player_audio_passthrough_enabled_sum">Musíte také zajistit, že nastavení zvuku systému umožňuje průchod</string>
     <string name="pref_internal_player_audio_tunneling_enabled">Povolit zvukové tunelování</string>
     <string name="pref_internal_player_audio_tunneling_enabled_sum">Povolit podporu pro DSP audio tunelování</string>
     <string name="pref_internal_player_buffer_duration">Doba trvání vyrovnávací paměti</string>

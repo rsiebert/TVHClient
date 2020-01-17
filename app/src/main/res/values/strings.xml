@@ -189,8 +189,6 @@
     <string name="pref_http_playback_profiles_sum">Select a profile that is used by an external player to play a recorded program using an external player.</string>
     <string name="pref_information">Information</string>
     <string name="pref_information_sum">Show a list of used libraries and the people that contributed to the development.</string>
-    <string name="pref_internal_player_audio_passthrough_enabled">Enable Audio Passthrough</string>
-    <string name="pref_internal_player_audio_passthrough_enabled_sum">You must also ensure the system audio settings allows passthrough</string>
     <string name="pref_internal_player_audio_tunneling_enabled">Enable Audio Tunneling</string>
     <string name="pref_internal_player_audio_tunneling_enabled_sum">Enable support for DSP audio tunneling</string>
     <string name="pref_internal_player_buffer_duration">Buffer duration</string>

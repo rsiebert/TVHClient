@@ -186,8 +186,6 @@
     <string name="pref_http_playback_profiles_sum">Wählen Sie ein Profil aus, das von einem externen Player verwendet wird, um ein aufgenommenes Programm mit einem externen Player abzuspielen.</string>
     <string name="pref_information">Informationen</string>
     <string name="pref_information_sum">Zeige eine Liste der verwendeten Bibliotheken und der Personen, die an der Entwicklung beteiligt waren.</string>
-    <string name="pref_internal_player_audio_passthrough_enabled">Aktiviere Audio-Passthrough</string>
-    <string name="pref_internal_player_audio_passthrough_enabled_sum">Sie müssen auch sicherstellen, dass die Audioeinstellungen des Systems Audio-Passthrough zulassen.</string>
     <string name="pref_internal_player_audio_tunneling_enabled">Audio-Tunneling aktivieren</string>
     <string name="pref_internal_player_audio_tunneling_enabled_sum">Unterstützung für DSP-Audio-Tunneling aktivieren</string>
     <string name="pref_internal_player_buffer_duration">Pufferdauer</string>
