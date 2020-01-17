@@ -54,6 +54,8 @@ class RecordingViewModel(application: Application) : BaseViewModel(application),
 
     init {
         onSharedPreferenceChanged(sharedPreferences, "hide_duplicate_scheduled_recordings_enabled")
+        onSharedPreferenceChanged(sharedPreferences, "completed_recording_sort_order")
+        onSharedPreferenceChanged(sharedPreferences, "genre_colors_for_recordings_enabled")
 
         recordingLiveData.addSource(currentId) { value ->
             if (value > 0) {
@@ -69,7 +71,6 @@ class RecordingViewModel(application: Application) : BaseViewModel(application),
             }
             return@switchMap appRepository.recordingData.getScheduledRecordings(value)
         }
-
         completedRecordings = switchMap(CompletedRecordingLiveData(completedRecordingSortOrder)) { value ->
             if (value == null) {
                 Timber.d("Not loading of completed recordings because no recording sort order is set")
@@ -77,12 +78,8 @@ class RecordingViewModel(application: Application) : BaseViewModel(application),
             }
             return@switchMap appRepository.recordingData.getCompletedRecordings(value)
         }
-
         failedRecordings = appRepository.recordingData.getFailedRecordings()
         removedRecordings = appRepository.recordingData.getRemovedRecordings()
-
-        onSharedPreferenceChanged(sharedPreferences, "completed_recording_sort_order")
-        onSharedPreferenceChanged(sharedPreferences, "genre_colors_for_recordings_enabled")
 
         Timber.d("Registering shared preference change listener")
         sharedPreferences.registerOnSharedPreferenceChangeListener(this)
