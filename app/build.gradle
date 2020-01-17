@@ -65,6 +65,10 @@ android {
         targetCompatibility = '1.8'
     }
 
+    testOptions {
+        unitTests.includeAndroidResources = true
+    }
+
     buildTypes {
         debug {
             // Show all features when true
@@ -207,11 +211,16 @@ dependencies {
     implementation project(':exoplayer-library-core')
     implementation project(':exoplayer-library-dash')
     implementation project(':exoplayer-library-ui')
-    implementation project(':exoplayer-extension-flac')
     implementation project(':exoplayer-extension-ffmpeg')
 
     // Use multidex because the method count is over 64k
     implementation 'androidx.multidex:multidex:2.0.1'
+
+    // Unit testing, required -- JUnit 4 framework
+    testImplementation 'junit:junit:4.12'
+    // Unit testing, optional -- Roboelectric environment
+    testImplementation 'androidx.test:core:1.2.0'
+    testImplementation 'org.robolectric:robolectric:4.3'
 
     // Required internal libraries for the application
     implementation project(path: ':htsp')
