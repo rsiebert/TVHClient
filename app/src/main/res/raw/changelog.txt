@@ -1,8 +1,9 @@
 $ 2.3.5
   % VERSION 2.3.5
-  _ 17.01.2020
+  _ 20.01.2020
     * Added options to sort completed recordings
     * Added option to show genre color for recordings
+    * Added menu to the internal player to show the video and audio details
     * Show confirmation message that a reminder was added
     * Updated the internal player library version from 2.7 to 2.11.1
     * Preselect the correct list item in the video aspect ratio dialog for the internal player
