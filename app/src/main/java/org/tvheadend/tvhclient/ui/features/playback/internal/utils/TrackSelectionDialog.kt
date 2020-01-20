@@ -30,16 +30,13 @@ class TrackSelectionDialog : DialogFragment() {
     private val tabTrackTypes: ArrayList<Int> = ArrayList()
     private var titleId = 0
     private lateinit var onClickListener: DialogInterface.OnClickListener
-    private lateinit var onDismissListener: DialogInterface.OnDismissListener
 
     private fun init(mappedTrackInfo: MappedTrackInfo,
                      initialParameters: DefaultTrackSelector.Parameters,
-                     onClickListener: DialogInterface.OnClickListener,
-                     onDismissListener: DialogInterface.OnDismissListener) {
+                     onClickListener: DialogInterface.OnClickListener) {
 
         this.titleId = R.string.track_selection_title
         this.onClickListener = onClickListener
-        this.onDismissListener = onDismissListener
 
         for (i in 0 until mappedTrackInfo.rendererCount) {
             if (showTabForRenderer(mappedTrackInfo, i)) {
@@ -79,11 +76,6 @@ class TrackSelectionDialog : DialogFragment() {
         val dialog = AppCompatDialog(activity, R.style.TrackSelectionDialogThemeOverlay)
         dialog.setTitle(titleId)
         return dialog
-    }
-
-    override fun onDismiss(dialog: DialogInterface) {
-        super.onDismiss(dialog)
-        onDismissListener.onDismiss(dialog)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -147,9 +139,8 @@ class TrackSelectionDialog : DialogFragment() {
          * will be automatically updated when tracks are selected.
          *
          * @param trackSelector     The [DefaultTrackSelector].
-         * @param onDismissListener A [DialogInterface.OnDismissListener] to call when the dialog is dismissed.
          */
-        fun createForTrackSelector(trackSelector: DefaultTrackSelector, onDismissListener: DialogInterface.OnDismissListener): TrackSelectionDialog {
+        fun createForTrackSelector(trackSelector: DefaultTrackSelector): TrackSelectionDialog {
             val mappedTrackInfo = Assertions.checkNotNull(trackSelector.currentMappedTrackInfo)
             val parameters = trackSelector.parameters
             val trackSelectionDialog = TrackSelectionDialog()
@@ -164,7 +155,7 @@ class TrackSelectionDialog : DialogFragment() {
                     }
                 }
                 trackSelector.setParameters(builder)
-            }, onDismissListener = onDismissListener)
+            })
             return trackSelectionDialog
         }
 
@@ -189,7 +180,7 @@ class TrackSelectionDialog : DialogFragment() {
                 C.TRACK_TYPE_VIDEO -> resources.getString(R.string.exo_track_selection_title_video)
                 C.TRACK_TYPE_AUDIO -> resources.getString(R.string.exo_track_selection_title_audio)
                 C.TRACK_TYPE_TEXT -> resources.getString(R.string.exo_track_selection_title_text)
-                else -> throw IllegalArgumentException()
+                else -> "unknown"
             }
         }
     }

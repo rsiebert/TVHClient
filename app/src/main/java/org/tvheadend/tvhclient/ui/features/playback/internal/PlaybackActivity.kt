@@ -2,7 +2,6 @@ package org.tvheadend.tvhclient.ui.features.playback.internal
 
 import android.app.PictureInPictureParams
 import android.content.Context
-import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
@@ -32,15 +31,15 @@ import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.ui.common.onAttach
 import org.tvheadend.tvhclient.ui.features.MainActivity
 import org.tvheadend.tvhclient.ui.features.playback.internal.utils.Rational
+import org.tvheadend.tvhclient.ui.features.playback.internal.utils.TrackInformationDialog
 import org.tvheadend.tvhclient.ui.features.playback.internal.utils.TrackSelectionDialog
 import org.tvheadend.tvhclient.util.extensions.*
 import org.tvheadend.tvhclient.util.getIconUrl
 import org.tvheadend.tvhclient.util.getThemeId
 import timber.log.Timber
 
-class PlaybackActivity : AppCompatActivity(), DialogInterface.OnDismissListener {
+class PlaybackActivity : AppCompatActivity() {
 
-    private var isShowingTrackSelectionDialog = false
     private var timeshiftSupported: Boolean = false
     private lateinit var viewModel: PlayerViewModel
 
@@ -123,6 +122,7 @@ class PlaybackActivity : AppCompatActivity(), DialogInterface.OnDismissListener 
         player_rewind?.setOnClickListener { onRewindButtonSelected() }
         player_forward?.setOnClickListener { onForwardButtonSelected() }
         player_settings?.setOnClickListener { onSettingsButtonSelected() }
+        player_information?.setOnClickListener { onInformationButtonSelected() }
         player_aspect_ratio?.setOnClickListener { onChangeAspectRatioSelected() }
         player_toggle_fullscreen?.setOnClickListener { onToggleFullscreenSelected() }
         play_next_channel?.setOnClickListener { onPlayNextChannelButtonSelected() }
@@ -345,13 +345,17 @@ class PlaybackActivity : AppCompatActivity(), DialogInterface.OnDismissListener 
     }
 
     private fun onSettingsButtonSelected() {
-        Timber.d("Menu button selected")
-        if (!isShowingTrackSelectionDialog
-                && TrackSelectionDialog.willHaveContent(viewModel.trackSelector)) {
-            isShowingTrackSelectionDialog = true
-            val trackSelectionDialog = TrackSelectionDialog.createForTrackSelector(viewModel.trackSelector, this)
+        Timber.d("Settings button selected")
+        if (TrackSelectionDialog.willHaveContent(viewModel.trackSelector)) {
+            val trackSelectionDialog = TrackSelectionDialog.createForTrackSelector(viewModel.trackSelector)
             trackSelectionDialog.show(supportFragmentManager, null)
         }
+    }
+
+    private fun onInformationButtonSelected() {
+        Timber.d("Information button selected")
+        val trackInformationDialog = TrackInformationDialog.createForTrackSelector(viewModel.player)
+        trackInformationDialog.show(supportFragmentManager, null)
     }
 
     private fun onChangeAspectRatioSelected() {
@@ -461,9 +465,5 @@ class PlaybackActivity : AppCompatActivity(), DialogInterface.OnDismissListener 
         Timber.d("Finishing")
         startActivity(Intent(this, MainActivity::class.java)
                 .addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT))
-    }
-
-    override fun onDismiss(p0: DialogInterface?) {
-        isShowingTrackSelectionDialog = false
     }
 }

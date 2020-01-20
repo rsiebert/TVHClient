@@ -74,9 +74,21 @@
         android:layout_height="wrap_content"
         android:contentDescription="@null"
         android:src="@drawable/ic_menu_settings_dark"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintEnd_toStartOf="@+id/player_information"
+        app:layout_constraintStart_toEndOf="@+id/player_toggle_fullscreen"
+        app:layout_constraintTop_toTopOf="@+id/player_rewind" />
+
+    <ImageButton
+        android:id="@+id/player_information"
+        style="?android:attr/actionOverflowButtonStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@null"
+        android:src="@drawable/ic_menu_info_dark"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/player_toggle_fullscreen"
+        app:layout_constraintStart_toEndOf="@+id/player_settings"
         app:layout_constraintTop_toTopOf="@+id/player_rewind" />
 
     <ImageButton
