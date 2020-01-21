@@ -1,3 +1,7 @@
+$ 2.3.6
+  % VERSION 2.3.6
+  _ 21.01.2020
+    * Some internal improvements
 $ 2.3.5
   % VERSION 2.3.5
   _ 20.01.2020
