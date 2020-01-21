@@ -207,6 +207,7 @@ dependencies {
     // App data access via browser
     implementation 'com.facebook.stetho:stetho:1.5.1'
 
+
     // Internal player
     implementation project(':exoplayer-library-core')
     implementation project(':exoplayer-library-dash')
@@ -223,7 +224,9 @@ dependencies {
     testImplementation 'org.robolectric:robolectric:4.3'
 
     // Required internal libraries for the application
-    implementation project(path: ':htsp')
+    releaseImplementation project(':htsp-release')
+    debugImplementation project(':htsp-release')
+    devImplementation project(':htsp-release')
     implementation project(path: ':data')
 }
 
