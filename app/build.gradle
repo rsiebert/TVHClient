@@ -5,10 +5,6 @@ apply plugin: 'kotlin-android-extensions'
 apply plugin: 'io.fabric'
 apply plugin: 'com.google.firebase.firebase-perf'
 
-repositories {
-    maven { url "http://dl.bintray.com/kiall/exoplayer" }
-}
-
 apply from: '../signing.gradle'
 
 android {
@@ -206,7 +202,6 @@ dependencies {
 
     // App data access via browser
     implementation 'com.facebook.stetho:stetho:1.5.1'
-
 
     // Internal player
     implementation project(':exoplayer-library-core')
