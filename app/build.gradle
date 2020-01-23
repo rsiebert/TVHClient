@@ -219,10 +219,9 @@ dependencies {
     testImplementation 'org.robolectric:robolectric:4.3'
 
     // Required internal libraries for the application
-    releaseImplementation project(':htsp-release')
-    debugImplementation project(':htsp-release')
-    devImplementation project(':htsp-release')
-    implementation project(path: ':data')
+    //implementation 'org.tvheadend.tvhclient:htsp:1.0.0'
+    implementation project(':htsp')
+    implementation project(':data')
 }
 
 apply plugin: 'com.google.gms.google-services'
