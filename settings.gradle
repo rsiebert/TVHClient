@@ -1,4 +1,4 @@
-include ':app', ':data', ':htsp-release'
+include ':app', ':data', ':htsp'
 
 gradle.ext.exoplayerRoot = '../ExoPlayer'
 gradle.ext.exoplayerModulePrefix = 'exoplayer-'
