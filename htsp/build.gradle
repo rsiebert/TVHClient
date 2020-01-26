@@ -1,30 +1,5 @@
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
-apply plugin: 'com.jfrog.bintray'
-apply plugin: 'com.github.dcendents.android-maven'
-
-ext {
-    bintrayRepo = "TVHClient"                           // The repository name in the Bintray dashboard
-    bintrayName = "htsp"                                // The package name of the Bintray repository
-    libraryName = 'htsp'                                // The module name in your Android Studio project
-    
-    // Artifact information
-    // For example: "org.tvheadend.tvhclient:htsp:1.0.0"
-    
-    publishedGroupId = 'org.tvheadend.tvhclient'        // The ID you want to add in 'implementation' line
-    artifact = 'htsp'                                   // The artifact you want to add in the 'implementation' line
-    libraryVersion = '1.0.0'
-    
-    libraryDescription = 'Android HTSP Library used by TVHClient to communicate with TVHeadend'
-    siteUrl = 'https://github.com/rsiebert/TVHClient'
-    gitUrl = 'https://github.com/rsiebert/TVHClient.git'
-    developerId = 'rsiebert'
-    developerName = 'Robert Siebert'
-    developerEmail = 'rsiebert80@gmail.com'
-    licenseName = 'GNU General Public License version 3'
-    licenseUrl = 'https://www.gnu.org/licenses/gpl-3.0.en.html'
-    allLicenses = ["GPL-3.0"]
-}
 
 android {
     compileSdkVersion 29
@@ -56,11 +31,18 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-
     implementation 'androidx.appcompat:appcompat:1.1.0'
-
-    // Logging library
     implementation 'com.jakewharton.timber:timber:4.7.1'
 }
 
-apply from: 'bintray.gradle'
+ext {
+    javadocTitle = 'Android HTSP Library used by TVHClient to communicate with TVHeadend'
+}
+apply from: '../javadoc_library.gradle'
+
+ext {
+    releaseVersion = '1.0.1'
+    releaseArtifact = 'htsp'
+    releaseDescription = 'Android HTSP Library used by TVHClient to communicate with TVHeadend'
+}
+apply from: '../publish.gradle'

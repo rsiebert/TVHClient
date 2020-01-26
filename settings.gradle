@@ -1,19 +1,1 @@
 include ':app', ':data', ':htsp'
-
-gradle.ext.exoplayerRoot = '../ExoPlayer'
-gradle.ext.exoplayerModulePrefix = 'exoplayer-'
-
-include ':exoplayer-testutils'
-project(':exoplayer-testutils').projectDir = new File('../ExoPlayer/testutils')
-
-include ':exoplayer-library-core'
-project(':exoplayer-library-core').projectDir = new File('../ExoPlayer/library/core')
-
-include ':exoplayer-library-dash'
-project(':exoplayer-library-dash').projectDir = new File('../ExoPlayer/library/dash')
-
-include ':exoplayer-library-ui'
-project(':exoplayer-library-ui').projectDir = new File('../ExoPlayer/library/ui')
-
-include ':exoplayer-extension-ffmpeg'
-project(':exoplayer-extension-ffmpeg').projectDir = new File('../ExoPlayer/extensions/ffmpeg')

@@ -7,6 +7,11 @@ apply plugin: 'com.google.firebase.firebase-perf'
 
 apply from: '../signing.gradle'
 
+repositories {
+    maven { url 'https://dl.bintray.com/rsiebert/TVHClient' }
+    maven { url 'https://dl.bintray.com/rsiebert/ExoPlayer' }
+}
+
 android {
     compileSdkVersion 29
     defaultConfig {
@@ -203,12 +208,6 @@ dependencies {
     // App data access via browser
     implementation 'com.facebook.stetho:stetho:1.5.1'
 
-    // Internal player
-    implementation project(':exoplayer-library-core')
-    implementation project(':exoplayer-library-dash')
-    implementation project(':exoplayer-library-ui')
-    implementation project(':exoplayer-extension-ffmpeg')
-
     // Use multidex because the method count is over 64k
     implementation 'androidx.multidex:multidex:2.0.1'
 
@@ -219,8 +218,12 @@ dependencies {
     testImplementation 'org.robolectric:robolectric:4.3'
 
     // Required internal libraries for the application
-    //implementation 'org.tvheadend.tvhclient:htsp:1.0.0'
-    implementation project(':htsp')
+    implementation 'org.tvheadend.tvhclient.htsp:htsp:1.0.1'
+    implementation 'org.tvheadend.tvhclient.exoplayer:exoplayer-core:2.11.1'
+    implementation 'org.tvheadend.tvhclient.exoplayer:exoplayer-ui:2.11.1'
+    implementation 'org.tvheadend.tvhclient.exoplayer:exoplayer-dash:2.11.1'
+    implementation 'org.tvheadend.tvhclient.exoplayer:exoplayer-testutils:2.11.1'
+    implementation 'org.tvheadend.tvhclient.exoplayer:extension-ffmpeg:2.11.1'
     implementation project(':data')
 }
 
