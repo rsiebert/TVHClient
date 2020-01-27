@@ -25,7 +25,7 @@ publish {
     publishVersion = releaseVersion
     repoName = 'TVHClient'
     userOrg = 'rsiebert'
-    groupId = 'org.tvheadend.tvhclient.htsp'
+    groupId = releaseGroupId
     website = 'https://github.com/rsiebert/TVHClient'
     dryRun = false
     override = true
