@@ -43,6 +43,7 @@ class ProgramListFragment : BaseFragment(), RecyclerViewClickInterface, LastProg
         programViewModel = ViewModelProviders.of(activity!!).get(ProgramViewModel::class.java)
 
         arguments?.let {
+            programViewModel.channelId = it.getInt("channelId", 0)
             programViewModel.channelIdLiveData.value = it.getInt("channelId", 0)
             programViewModel.selectedTimeLiveData.value = it.getLong("selectedTime", System.currentTimeMillis())
             programViewModel.channelName = it.getString("channelName", "")
