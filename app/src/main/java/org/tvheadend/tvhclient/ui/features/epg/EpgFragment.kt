@@ -193,7 +193,7 @@ class EpgFragment : BaseFragment(), EpgScrollInterface, RecyclerViewClickInterfa
         val ctx = context ?: return super.onOptionsItemSelected(item)
         return when (item.itemId) {
             R.id.menu_channel_tags -> showChannelTagSelectionDialog(ctx, channelTags.toMutableList(), channelCount, this)
-            R.id.menu_program_timeframe -> showProgramTimeframeSelectionDialog(ctx, epgViewModel.selectedTimeOffset, epgViewModel.hoursToShow, epgViewModel.hoursToShow * epgViewModel.daysToShow, this)
+            R.id.menu_program_timeframe -> showProgramTimeframeSelectionDialog(ctx, epgViewModel.selectedTimeOffset, epgViewModel.hoursToShow, (24 / epgViewModel.hoursToShow) * epgViewModel.daysToShow, this)
             R.id.menu_genre_color_information -> showGenreColorDialog(ctx)
             R.id.menu_channel_sort_order -> showChannelSortOrderSelectionDialog(ctx)
             else -> super.onOptionsItemSelected(item)
