@@ -30,6 +30,17 @@
         <item>Sendernummer (absteigend)</item>
     </string-array>
 
+    <string-array name="pref_sort_completed_recordings_names">
+        <item>Start time (aufsteigend)</item>
+        <item>Start time (absteigend)</item>
+        <item>Titel (aufsteigend)</item>
+        <item>Titel (absteigend)</item>
+        <item>Genre (aufsteigend)</item>
+        <item>Genre (absteigend)</item>
+        <item>Dauer (aufsteigend)</item>
+        <item>Dauer (absteigend)</item>
+    </string-array>
+
     <string-array name="day_short_names">
         <item>Mo</item>
         <item>Di</item>

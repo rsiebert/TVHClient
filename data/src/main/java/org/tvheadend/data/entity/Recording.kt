@@ -69,7 +69,9 @@ data class Recording(
         @ColumnInfo(name = "channel_name")
         var channelName: String? = null,
         @ColumnInfo(name = "channel_icon")
-        var channelIcon: String? = null
+        var channelIcon: String? = null,
+
+        var duration: Int = 0
 ) {
 
     val isCompleted: Boolean
@@ -92,9 +94,6 @@ data class Recording(
 
     val isFileMissing: Boolean
         get() = error.isEqualTo("File missing") && state.isEqualTo("completed")
-
-    val duration: Int
-        get() = ((stop - start) / 1000 / 60).toInt()
 
     private fun CharSequence?.isEqualTo(s: String?): Boolean {
         return if (this == null && s == null) {

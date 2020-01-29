@@ -144,7 +144,9 @@ interface RecordingDao {
                 "CASE :sortOrder WHEN 2 THEN rec.title END ASC," +
                 "CASE :sortOrder WHEN 3 THEN rec.title END DESC," +
                 "CASE :sortOrder WHEN 4 THEN rec.content_type END ASC," +
-                "CASE :sortOrder WHEN 5 THEN rec.content_type END DESC"
+                "CASE :sortOrder WHEN 5 THEN rec.content_type END DESC," +
+                "CASE :sortOrder WHEN 6 THEN rec.duration END ASC," +
+                "CASE :sortOrder WHEN 7 THEN rec.duration END DESC"
 
         const val CONNECTION_IS_ACTIVE = " rec.connection_id IN (SELECT id FROM connections WHERE active = 1) "
     }

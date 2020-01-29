@@ -226,6 +226,13 @@ fun convertMessageToRecordingModel(recording: Recording, msg: HtspMessage): Reco
             recording.removal = msg.getInteger("removal")
         }
     }
+
+    if (msg.containsKey("start") && msg.containsKey("stop")) {
+        val start = msg.getLong("start")
+        val stop = msg.getLong("stop")
+        recording.duration = ((stop - start) / 60).toInt()
+    }
+
     return recording
 }
 
