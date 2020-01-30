@@ -20,7 +20,6 @@ import org.tvheadend.tvhclient.ui.base.BaseViewModel
 import org.tvheadend.tvhclient.ui.features.playback.internal.utils.CustomEventLogger
 import org.tvheadend.tvhclient.ui.features.playback.internal.utils.Rational
 import timber.log.Timber
-import java.io.IOException
 import java.util.*
 import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledExecutorService
@@ -398,22 +397,21 @@ class PlayerViewModel(application: Application) : BaseViewModel(application), Ht
     }
 
     override fun onPlayerError(playbackException: ExoPlaybackException) {
-        val error: IOException = playbackException.sourceException
         when (playbackException.type) {
             ExoPlaybackException.TYPE_SOURCE -> {
-                Timber.d("Player error occurred while loading media source: $error")
+                Timber.d("Player error occurred while loading media source: ${playbackException.sourceException}")
             }
             ExoPlaybackException.TYPE_RENDERER -> {
-                Timber.d("Player error occurred in the renderer: $error")
+                Timber.d("Player error occurred in the renderer")
             }
             ExoPlaybackException.TYPE_REMOTE -> {
-                Timber.d("Player error occurred in a remote component: $error")
+                Timber.d("Player error occurred in a remote component")
             }
             ExoPlaybackException.TYPE_OUT_OF_MEMORY -> {
-                Timber.d("Player error out of memory: $error")
+                Timber.d("Player error out of memory")
             }
             ExoPlaybackException.TYPE_UNEXPECTED -> {
-                Timber.d("Player error unexpected runtime exception: $error")
+                Timber.d("Player error unexpected runtime exception")
             }
         }
     }
