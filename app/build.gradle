@@ -7,11 +7,6 @@ apply plugin: 'com.google.firebase.firebase-perf'
 
 apply from: '../signing.gradle'
 
-repositories {
-    maven { url 'https://dl.bintray.com/rsiebert/TVHClient' }
-    maven { url 'https://dl.bintray.com/rsiebert/ExoPlayer' }
-}
-
 android {
     compileSdkVersion 29
     defaultConfig {
