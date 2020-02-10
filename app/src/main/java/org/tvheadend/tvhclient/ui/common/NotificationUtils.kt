@@ -79,6 +79,8 @@ fun addNotificationScheduledRecordingStarts(context: Context, recording: Recordi
             && recording.start > System.currentTimeMillis()
             && !recording.title.isNullOrEmpty()) {
 
+        Timber.d("Adding of notification for recording ${recording.title}, it starts at ${recording.start}")
+
         val data = Data.Builder()
                 .putString("dvrTitle", recording.title)
                 .putInt("dvrId", recording.eventId)
@@ -132,6 +134,8 @@ fun addNotificationProgramIsAboutToStart(context: Context, program: ProgramInter
                 .putString("configName", if (profile != null) profile.name else "")
                 .build()
 
+        Timber.d("Adding notification for program ${program.title}, it starts at ${program.start}")
+
         val workRequest = OneTimeWorkRequest.Builder(ProgramNotificationWorker::class.java)
                 .setInitialDelay(getNotificationTime(context, program.start), TimeUnit.MILLISECONDS)
                 .setInputData(data)
@@ -144,7 +148,7 @@ fun addNotificationProgramIsAboutToStart(context: Context, program: ProgramInter
 }
 
 fun showOrCancelNotificationProgramIsCurrentlyBeingRecorded(context: Context, count: Int, showNotification: Boolean) {
-    Timber.d("Notification of running recording count of $count shall be shown $showNotification")
+    Timber.d("Notification of $count running recording(s) shall be shown $showNotification")
     val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
     if (showNotification) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -168,7 +172,7 @@ fun showOrCancelNotificationProgramIsCurrentlyBeingRecorded(context: Context, co
 }
 
 fun showOrCancelNotificationDiskSpaceIsLow(context: Context, gigabytes: Int, showNotification: Boolean) {
-    Timber.d("Notification of free disk space $gigabytes gigabytes shall be shown $showNotification")
+    Timber.d("Notification $gigabytes gigabytes of free disk space shall be shown $showNotification")
     val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
     if (showNotification) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
