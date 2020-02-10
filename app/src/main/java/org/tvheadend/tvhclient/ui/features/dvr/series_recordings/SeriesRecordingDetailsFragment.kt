@@ -47,15 +47,16 @@ class SeriesRecordingDetailsFragment : BaseFragment(), RecordingRemovedInterface
     }
 
     private fun showRecordingDetails() {
-        if (recording != null) {
-            itemBinding.recording = recording
+        recording?.let {
+            itemBinding.recording = it
             itemBinding.htspVersion = htspVersion
             itemBinding.isDualPane = isDualPane
+            itemBinding.duplicateDetectionText = seriesRecordingViewModel.duplicateDetectionList[it.dupDetect]
             // The toolbar is hidden as a default to prevent pressing any icons if no recording
             // has been loaded yet. The toolbar is shown here because a recording was loaded
             nested_toolbar.visible()
             activity?.invalidateOptionsMenu()
-        } else {
+        } ?: run {
             scrollview.gone()
             status.text = getString(R.string.error_loading_recording_details)
             status.visible()
