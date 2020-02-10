@@ -48,7 +48,7 @@ import org.tvheadend.tvhclient.ui.features.settings.SettingsActivity
 import org.tvheadend.tvhclient.util.extensions.*
 import timber.log.Timber
 
-class MainActivity : BaseActivity(R.layout.main_activity), SearchView.OnQueryTextListener, SearchView.OnSuggestionListener, SyncStateReceiver.Listener {
+class MainActivity : BaseActivity(R.layout.main_activity), SearchView.OnQueryTextListener, SearchView.OnSuggestionListener, SyncStateReceiver.Listener, View.OnFocusChangeListener {
 
     private lateinit var navigationViewModel: NavigationViewModel
     private lateinit var statusViewModel: StatusViewModel
@@ -230,6 +230,7 @@ class MainActivity : BaseActivity(R.layout.main_activity), SearchView.OnQueryTex
             it.setIconifiedByDefault(true)
             it.setOnQueryTextListener(this)
             it.setOnSuggestionListener(this)
+            it.setOnQueryTextFocusChangeListener(this)
 
             val fragment = supportFragmentManager.findFragmentById(R.id.main)
             if (fragment is SearchRequestInterface && fragment.isVisible) {
@@ -532,5 +533,9 @@ class MainActivity : BaseActivity(R.layout.main_activity), SearchView.OnQueryTex
             return
         }
         super.applyOverrideConfiguration(overrideConfiguration)
+    }
+
+    override fun onFocusChange(v: View?, hasFocus: Boolean) {
+        baseViewModel.searchViewHasFocus = hasFocus
     }
 }
