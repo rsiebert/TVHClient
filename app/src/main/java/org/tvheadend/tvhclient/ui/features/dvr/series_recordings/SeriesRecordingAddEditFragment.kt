@@ -21,7 +21,6 @@ class SeriesRecordingAddEditFragment : BaseFragment(), BackPressedInterface, Rec
 
     private lateinit var seriesRecordingViewModel: SeriesRecordingViewModel
     private lateinit var recordingProfilesList: Array<String>
-    private lateinit var duplicateDetectionList: Array<String>
     private var profile: ServerProfile? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -33,7 +32,6 @@ class SeriesRecordingAddEditFragment : BaseFragment(), BackPressedInterface, Rec
 
         seriesRecordingViewModel = ViewModelProviders.of(activity!!).get(SeriesRecordingViewModel::class.java)
 
-        duplicateDetectionList = resources.getStringArray(R.array.duplicate_detection_list)
         recordingProfilesList = seriesRecordingViewModel.getRecordingProfileNames()
         profile = seriesRecordingViewModel.getRecordingProfile()
         seriesRecordingViewModel.recordingProfileNameId = getSelectedProfileId(profile, recordingProfilesList)
@@ -116,10 +114,10 @@ class SeriesRecordingAddEditFragment : BaseFragment(), BackPressedInterface, Rec
 
         duplicate_detection_label.visibleOrGone(htspVersion >= 20)
         duplicate_detection.visibleOrGone(htspVersion >= 20)
-        duplicate_detection.text = duplicateDetectionList[seriesRecordingViewModel.recording.dupDetect]
+        duplicate_detection.text = seriesRecordingViewModel.duplicateDetectionList[seriesRecordingViewModel.recording.dupDetect]
 
         duplicate_detection.setOnClickListener {
-            handleDuplicateDetectionSelection(duplicateDetectionList, seriesRecordingViewModel.recording.dupDetect)
+            handleDuplicateDetectionSelection(seriesRecordingViewModel.duplicateDetectionList, seriesRecordingViewModel.recording.dupDetect)
         }
 
         title.afterTextChanged { seriesRecordingViewModel.recording.title = it }
@@ -295,7 +293,7 @@ class SeriesRecordingAddEditFragment : BaseFragment(), BackPressedInterface, Rec
 
     private fun onDuplicateDetectionValueSelected(which: Int) {
         seriesRecordingViewModel.recording.dupDetect = which
-        duplicate_detection.text = duplicateDetectionList[which]
+        duplicate_detection.text = seriesRecordingViewModel.duplicateDetectionList[which]
     }
 
     private fun handleDuplicateDetectionSelection(duplicateDetectionList: Array<String>, duplicateDetectionId: Int) {
