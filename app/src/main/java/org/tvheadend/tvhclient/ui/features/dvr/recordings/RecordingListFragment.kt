@@ -86,6 +86,8 @@ abstract class RecordingListFragment : BaseFragment(), RecyclerViewClickInterfac
         }
         // Hide the casting icon as a default.
         menu.findItem(R.id.media_route_menu_item)?.isVisible = false
+        // Hide the sorting menu by default, only the completed recordings can be sorted
+        menu.findItem(R.id.menu_recording_sort_order)?.isVisible = false
         // Do not show the search menu when no recordings are available
         menu.findItem(R.id.menu_search)?.isVisible = recyclerViewAdapter.itemCount > 0
 

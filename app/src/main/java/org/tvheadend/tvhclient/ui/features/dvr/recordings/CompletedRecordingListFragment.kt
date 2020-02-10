@@ -24,6 +24,7 @@ class CompletedRecordingListFragment : RecordingListFragment() {
         super.onPrepareOptionsMenu(menu)
         // Show the casting icon when finished recordings are available.
         menu.findItem(R.id.media_route_menu_item)?.isVisible = true
+        menu.findItem(R.id.menu_recording_sort_order)?.isVisible = true
     }
 
     override fun getQueryHint(): String {
