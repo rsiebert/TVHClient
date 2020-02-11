@@ -31,6 +31,7 @@ import org.tvheadend.tvhclient.util.worker.EpgDataUpdateWorker
 import timber.log.Timber
 import java.io.*
 import java.net.URL
+import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledExecutorService
@@ -357,9 +358,12 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
 
         startBackgroundWorkers()
 
-        Timber.d("Updating connection status with full sync completed and last update time")
+        Timber.d("Updating connection status that initial sync is completed")
         connection.isSyncRequired = false
-        connection.lastUpdate = System.currentTimeMillis() / 1000L
+        if (syncEventsRequired) {
+            Timber.d("Updating last update time of full sync")
+            connection.lastUpdate = System.currentTimeMillis() / 1000L
+        }
         appRepository.connectionData.updateItem(connection)
 
         // The initial sync is considered to be done at this point.
@@ -383,14 +387,17 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
             val updateEpgWorker = OneTimeWorkRequest.Builder(EpgDataUpdateWorker::class.java)
                     .setInitialDelay(15, TimeUnit.SECONDS)
                     .build()
-            WorkManager.getInstance().enqueueUniqueWork("UpdateEpg", ExistingWorkPolicy.REPLACE, updateEpgWorker)
+            WorkManager.getInstance().enqueueUniqueWork("UpdateEpg", ExistingWorkPolicy.APPEND, updateEpgWorker)
+        } else {
+            val sdf = SimpleDateFormat("dd.MM.yyyy HH.mm", Locale.US)
+            Timber.d("Last loading of epg data was at ${sdf.format(connection.lastUpdate * 1000L)}")
         }
 
         Timber.d("Starting background worker in 1 minute to cleanup database")
         val databaseCleanupWorker = OneTimeWorkRequest.Builder(DatabaseCleanupWorker::class.java)
                 .setInitialDelay(1, TimeUnit.MINUTES)
                 .build()
-        WorkManager.getInstance().enqueueUniqueWork("CleanupDatabase", ExistingWorkPolicy.REPLACE, databaseCleanupWorker)
+        WorkManager.getInstance().enqueueUniqueWork("CleanupDatabase", ExistingWorkPolicy.KEEP, databaseCleanupWorker)
     }
 
     /**
