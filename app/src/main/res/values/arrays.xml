@@ -159,20 +159,20 @@
 
     <string-array name="duplicate_detection_list">
         <item>Record all</item>
-        <item>All: Record if EPG indicates it is a unique program</item>
         <item>All: Record if different episode number</item>
         <item>All: Record if different subtitle</item>
         <item>All: Record if different description</item>
-        <item>All: Record once per month</item>
         <item>All: Record once per week</item>
         <item>All: Record once per day</item>
         <item>Local: Record if different episode number</item>
         <item>Local: Record if different title</item>
         <item>Local: Record if different subtitle</item>
         <item>Local: Record if different description</item>
-        <item>Local: Record once per month</item>
         <item>Local: Record once per week</item>
         <item>Local: Record once per day</item>
+        <item>All: Record once per month</item>
+        <item>Local: Record once per month</item>
+        <item>All: Record if EPG indicates it is a unique program</item>
     </string-array>
 
     <string-array name="pr_content_type0">
