@@ -1,8 +1,11 @@
 $ 2.3.6
   % VERSION 2.3.6
-  _ 30.01.2020
+  _ 11.02.2020
     * Fixed time selection in the program guide screen
     * Fixed reloading of the program list of the same channel in dual pane mode
+    * Fixed the order of the duplicate detection list
+    * Show the duplicate detection value in the series recording details screen
+    * Added option in the advanced settings to load more epg data
     * Some internal improvements
 $ 2.3.5
   % VERSION 2.3.5
