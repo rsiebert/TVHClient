@@ -92,7 +92,7 @@ fun addNotificationScheduledRecordingStarts(context: Context, recording: Recordi
                 .setInputData(data)
                 .build()
         val uniqueWorkName = "Notification_" + recording.id.toString()
-        WorkManager.getInstance().enqueueUniqueWork(uniqueWorkName, ExistingWorkPolicy.REPLACE, workRequest)
+        WorkManager.getInstance().enqueueUniqueWork(uniqueWorkName, ExistingWorkPolicy.KEEP, workRequest)
     }
 }
 
@@ -141,7 +141,7 @@ fun addNotificationProgramIsAboutToStart(context: Context, program: ProgramInter
                 .setInputData(data)
                 .build()
         val uniqueWorkName = "Notification_" + program.eventId.toString()
-        WorkManager.getInstance().enqueueUniqueWork(uniqueWorkName, ExistingWorkPolicy.REPLACE, workRequest)
+        WorkManager.getInstance().enqueueUniqueWork(uniqueWorkName, ExistingWorkPolicy.KEEP, workRequest)
         context.sendSnackbarMessage(context.resources.getString(R.string.notification_added))
     }
     return true
