@@ -192,6 +192,14 @@ abstract class RecordingListFragment : BaseFragment(), RecyclerViewClickInterfac
     }
 
     fun addRecordingsAndUpdateUI(recordings: List<Recording>?) {
+        // Prevent updating the recording list and any calls to the filter in the adapter.
+        // Without this the active search view would be closed before the user has a chance
+        // to enter a complete search term or submit the query.
+        if (baseViewModel.searchViewHasFocus || baseViewModel.isSearchActive) {
+            Timber.d("Skipping updating UI, search view has focus or search results are already being shown")
+            return
+        }
+
         if (recordings != null) {
             recyclerViewAdapter.addItems(recordings)
             observeSearchQuery()
