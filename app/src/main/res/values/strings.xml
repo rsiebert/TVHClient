@@ -407,4 +407,5 @@
     <string name="notification_added">Notification was added</string>
     <string name="program_has_already_started">Program has already started</string>
     <string name="program_starts_soon">Program %1$s starts in %2$d minutes</string>
+    <string name="pref_load_more_epg_data">Load more epg data</string>
 </resources>

@@ -397,4 +397,5 @@
     <string name="wol_send">Wake on LAN Paket erfolgreich an \'%s\' gesendet.</string>
     <string name="wol_send_broadcast">Wake on LAN Paket als Broadcast erfolgreich an \'%s\' gesendet.</string>
     <string name="yesterday">Gestern</string>
+    <string name="pref_load_more_epg_data">Weitere Programme laden</string>
 </resources>

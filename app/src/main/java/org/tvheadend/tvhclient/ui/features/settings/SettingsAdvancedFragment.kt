@@ -20,6 +20,7 @@ import com.squareup.picasso.Picasso
 import org.tvheadend.data.source.MiscDataSource
 import org.tvheadend.tvhclient.BuildConfig
 import org.tvheadend.tvhclient.R
+import org.tvheadend.tvhclient.service.HtspIntentService
 import org.tvheadend.tvhclient.service.HtspService
 import org.tvheadend.tvhclient.ui.common.SuggestionProvider
 import org.tvheadend.tvhclient.ui.features.startup.SplashActivity
@@ -49,6 +50,7 @@ class SettingsAdvancedFragment : BasePreferenceFragment(), Preference.OnPreferen
         findPreference<Preference>("clear_database")?.onPreferenceClickListener = this
         findPreference<Preference>("clear_search_history")?.onPreferenceClickListener = this
         findPreference<Preference>("clear_icon_cache")?.onPreferenceClickListener = this
+        findPreference<Preference>("load_more_epg_data")?.onPreferenceClickListener = this
 
         notificationsEnabledPreference = findPreference("notifications_enabled")
         notifyRunningRecordingCountEnabledPreference = findPreference("notify_running_recording_count_enabled")
@@ -103,8 +105,19 @@ class SettingsAdvancedFragment : BasePreferenceFragment(), Preference.OnPreferen
             "notifications_enabled" -> handlePreferenceNotificationsSelected()
             "notify_running_recording_count_enabled" -> handlePreferenceNotifyRunningRecordingEnabledSelected()
             "notify_low_storage_space_enabled" -> handlePreferenceNotifyLowStorageSpaceSelected()
+            "load_more_epg_data" -> handlePreferenceLoadMoreEpgData()
         }
         return true
+    }
+
+    private fun handlePreferenceLoadMoreEpgData() {
+        Timber.d("Load more epg data.")
+        context?.let {
+            val intent = Intent()
+            intent.action = "getMoreEvents"
+            intent.putExtra("numFollowing", 250)
+            HtspIntentService.enqueueWork(it, intent)
+        }
     }
 
     private fun handlePreferenceNotificationsSelected() {
@@ -305,7 +318,7 @@ class SettingsAdvancedFragment : BasePreferenceFragment(), Preference.OnPreferen
                     it.sendSnackbarMessage(R.string.clear_icon_cache_done)
 
                     val loadChannelIcons = OneTimeWorkRequest.Builder(LoadChannelIconWorker::class.java).build()
-                    WorkManager.getInstance().enqueueUniqueWork("LoadChannelIcons", ExistingWorkPolicy.REPLACE, loadChannelIcons)
+                    WorkManager.getInstance().enqueueUniqueWork("LoadChannelIcons", ExistingWorkPolicy.APPEND, loadChannelIcons)
                 }
                 negativeButton(R.string.cancel)
             }

@@ -103,5 +103,8 @@
             android:key="copy_playback_url_to_clipboard_enabled"
             android:summary="@string/pref_copy_playback_url_to_clipboard_enabled_sum"
             android:title="@string/pref_copy_playback_url_to_clipboard_enabled" />
+        <Preference
+            android:key="load_more_epg_data"
+            android:title="@string/pref_load_more_epg_data" />
     </PreferenceCategory>
 </PreferenceScreen>
