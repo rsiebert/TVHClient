@@ -7,7 +7,7 @@ import androidx.appcompat.widget.PopupMenu
 import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.recyclerview_fragment.*
 import org.tvheadend.data.entity.SeriesRecording
@@ -33,7 +33,7 @@ class SeriesRecordingListFragment : BaseFragment(), RecyclerViewClickInterface, 
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        seriesRecordingViewModel = ViewModelProvider(activity!!).get(SeriesRecordingViewModel::class.java)
+        seriesRecordingViewModel = ViewModelProviders.of(activity!!).get(SeriesRecordingViewModel::class.java)
 
         arguments?.let {
             seriesRecordingViewModel.selectedListPosition = it.getInt("listPosition")
@@ -146,7 +146,7 @@ class SeriesRecordingListFragment : BaseFragment(), RecyclerViewClickInterface, 
                         it.commit()
                     }
                 }
-            } else if (seriesRecordingViewModel.currentId.value != recording.id) {
+            } else if (seriesRecordingViewModel.currentId.value != recording.id){
                 seriesRecordingViewModel.currentId.value = recording.id
             }
         }

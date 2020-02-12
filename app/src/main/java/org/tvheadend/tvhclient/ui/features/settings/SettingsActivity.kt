@@ -4,7 +4,7 @@ package org.tvheadend.tvhclient.ui.features.settings
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProviders
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.ui.base.BaseActivity
 import org.tvheadend.tvhclient.ui.common.interfaces.BackPressedInterface
@@ -21,7 +21,7 @@ class SettingsActivity : BaseActivity(), RemoveFragmentFromBackstackInterface {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        settingsViewModel = ViewModelProvider(this).get(SettingsViewModel::class.java)
+        settingsViewModel = ViewModelProviders.of(this).get(SettingsViewModel::class.java)
 
         // If the user wants to go directly to a sub setting screen like the connections
         // and not the main settings screen the setting type can be passed here

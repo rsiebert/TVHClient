@@ -7,7 +7,7 @@ import androidx.appcompat.widget.PopupMenu
 import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.recyclerview_fragment.*
 import org.tvheadend.data.entity.Recording
@@ -35,7 +35,7 @@ abstract class RecordingListFragment : BaseFragment(), RecyclerViewClickInterfac
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        recordingViewModel = ViewModelProvider(activity!!).get(RecordingViewModel::class.java)
+        recordingViewModel = ViewModelProviders.of(activity!!).get(RecordingViewModel::class.java)
 
         arguments?.let {
             recordingViewModel.selectedListPosition = it.getInt("listPosition")

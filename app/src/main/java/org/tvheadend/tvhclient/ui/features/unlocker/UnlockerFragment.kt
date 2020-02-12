@@ -5,7 +5,7 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProviders
 import com.afollestad.materialdialogs.MaterialDialog
 import com.android.billingclient.api.Purchase
 import org.tvheadend.tvhclient.MainApplication
@@ -34,7 +34,7 @@ class UnlockerFragment : WebViewFragment(), BillingUpdatesListener {
         billingManager = MainApplication.billingManager
         billingHandler = MainApplication.billingHandler
 
-        baseViewModel = ViewModelProvider(activity as BaseActivity).get(BaseViewModel::class.java)
+        baseViewModel = ViewModelProviders.of(activity as BaseActivity).get(BaseViewModel::class.java)
         baseViewModel.isUnlocked.observe(viewLifecycleOwner, Observer { unlocked ->
             Timber.d("Received live data, unlocked changed to $unlocked")
             isUnlocked = unlocked

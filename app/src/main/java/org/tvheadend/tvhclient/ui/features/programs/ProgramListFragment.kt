@@ -8,7 +8,7 @@ import androidx.appcompat.widget.PopupMenu
 import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.recyclerview_fragment.*
 import org.tvheadend.data.entity.Recording
@@ -40,7 +40,7 @@ class ProgramListFragment : BaseFragment(), RecyclerViewClickInterface, LastProg
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        programViewModel = ViewModelProvider(activity!!).get(ProgramViewModel::class.java)
+        programViewModel = ViewModelProviders.of(activity!!).get(ProgramViewModel::class.java)
 
         arguments?.let {
             programViewModel.channelId = it.getInt("channelId", 0)

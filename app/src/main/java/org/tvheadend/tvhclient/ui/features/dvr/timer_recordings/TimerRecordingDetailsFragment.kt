@@ -4,7 +4,7 @@ import android.os.Bundle
 import android.view.*
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProviders
 import kotlinx.android.synthetic.main.details_fragment_header.*
 import kotlinx.android.synthetic.main.timer_recording_details_fragment.*
 import org.tvheadend.data.entity.TimerRecording
@@ -29,7 +29,7 @@ class TimerRecordingDetailsFragment : BaseFragment(), RecordingRemovedInterface 
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        timerRecordingViewModel = ViewModelProvider(activity!!).get(TimerRecordingViewModel::class.java)
+        timerRecordingViewModel = ViewModelProviders.of(activity!!).get(TimerRecordingViewModel::class.java)
 
         if (!isDualPane) {
             toolbarInterface.setTitle(getString(R.string.details))

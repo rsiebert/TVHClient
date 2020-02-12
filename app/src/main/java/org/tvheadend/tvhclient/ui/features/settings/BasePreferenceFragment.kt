@@ -3,7 +3,7 @@ package org.tvheadend.tvhclient.ui.features.settings
 import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProviders
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceManager
 import org.tvheadend.tvhclient.ui.common.interfaces.ToolbarInterface
@@ -25,7 +25,7 @@ abstract class BasePreferenceFragment : PreferenceFragmentCompat() {
         }
 
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(activity)
-        settingsViewModel = ViewModelProvider(activity as SettingsActivity).get(SettingsViewModel::class.java)
+        settingsViewModel = ViewModelProviders.of(activity as SettingsActivity).get(SettingsViewModel::class.java)
 
         settingsViewModel.isUnlocked.observe(viewLifecycleOwner, Observer { unlocked ->
             Timber.d("Received live data, unlocked changed to $unlocked")
