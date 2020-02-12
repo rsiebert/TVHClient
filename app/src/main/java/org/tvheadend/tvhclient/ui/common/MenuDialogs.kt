@@ -185,11 +185,10 @@ class GenreColorListAdapter internal constructor(private val contentInfo: Array<
     }
 }
 
-
 fun showProgramTimeframeSelectionDialog(context: Context, currentSelection: Int, intervalInHours: Int, maxIntervalsToShow: Int, callback: ChannelTimeSelectedInterface?): Boolean {
 
-    val startDateFormat = SimpleDateFormat("dd.MM.yyyy - HH.00", Locale.US)
-    val endDateFormat = SimpleDateFormat("HH.00", Locale.US)
+    val startDateFormat = SimpleDateFormat("dd.MM.yyyy - HH:00", Locale.US)
+    val endDateFormat = SimpleDateFormat("HH:00", Locale.US)
 
     val times = ArrayList<String>()
     times.add(context.getString(R.string.current_time))
