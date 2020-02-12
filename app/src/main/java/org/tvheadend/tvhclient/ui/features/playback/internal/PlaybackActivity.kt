@@ -17,7 +17,7 @@ import android.view.Surface
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import androidx.preference.PreferenceManager
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.list.listItemsSingleChoice
@@ -129,7 +129,7 @@ class PlaybackActivity : AppCompatActivity() {
         play_previous_channel?.setOnClickListener { onPlayPreviousChannelButtonSelected() }
 
         Timber.d("Getting view model")
-        viewModel = ViewModelProviders.of(this).get(PlayerViewModel::class.java)
+        viewModel = ViewModelProvider(this).get(PlayerViewModel::class.java)
         viewModel.player.setVideoSurfaceView(exo_player_surface_view)
         player_view.player = viewModel.player
 

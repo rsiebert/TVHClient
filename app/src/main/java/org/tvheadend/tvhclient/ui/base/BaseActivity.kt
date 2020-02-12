@@ -9,7 +9,7 @@ import android.widget.FrameLayout
 import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import org.tvheadend.tvhclient.MainApplication
 import org.tvheadend.tvhclient.R
@@ -48,7 +48,7 @@ open class BaseActivity(private val layoutId: Int = R.layout.misc_content_activi
 
         MainApplication.component.inject(this)
 
-        baseViewModel = ViewModelProviders.of(this).get(BaseViewModel::class.java)
+        baseViewModel = ViewModelProvider(this).get(BaseViewModel::class.java)
         snackbarMessageReceiver = SnackbarMessageReceiver(appRepository)
         networkStatusReceiver = NetworkStatusReceiver(appRepository)
     }

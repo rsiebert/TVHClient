@@ -8,7 +8,7 @@ import android.net.Uri
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import com.afollestad.materialdialogs.MaterialDialog
 import kotlinx.android.synthetic.main.play_activity.*
 import org.tvheadend.tvhclient.R
@@ -29,7 +29,7 @@ abstract class BasePlaybackActivity : AppCompatActivity() {
 
         status.setText(R.string.connecting_to_server)
 
-        viewModel = ViewModelProviders.of(this).get(ExternalPlayerViewModel::class.java)
+        viewModel = ViewModelProvider(this).get(ExternalPlayerViewModel::class.java)
 
         viewModel.isConnected.observe(this, Observer { isConnected ->
             if (isConnected) {

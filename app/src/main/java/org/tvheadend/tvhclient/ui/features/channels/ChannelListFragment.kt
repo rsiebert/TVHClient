@@ -11,7 +11,7 @@ import androidx.core.view.children
 import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.input.input
@@ -54,8 +54,8 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickInterface, ChannelT
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        channelViewModel = ViewModelProviders.of(activity!!).get(ChannelViewModel::class.java)
-        programViewModel = ViewModelProviders.of(activity!!).get(ProgramViewModel::class.java)
+        channelViewModel = ViewModelProvider(activity!!).get(ChannelViewModel::class.java)
+        programViewModel = ViewModelProvider(activity!!).get(ProgramViewModel::class.java)
 
         arguments?.let {
             channelViewModel.selectedListPosition = it.getInt("listPosition")

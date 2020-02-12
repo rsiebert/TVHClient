@@ -6,7 +6,7 @@ import android.view.MenuItem
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import org.tvheadend.data.entity.Connection
 import org.tvheadend.tvhclient.MainApplication
 import org.tvheadend.tvhclient.R
@@ -38,7 +38,7 @@ abstract class BaseFragment : Fragment() {
             toolbarInterface = activity as ToolbarInterface
         }
 
-        baseViewModel = ViewModelProviders.of(activity as BaseActivity).get(BaseViewModel::class.java)
+        baseViewModel = ViewModelProvider(activity as BaseActivity).get(BaseViewModel::class.java)
         baseViewModel.connectionToServerAvailable.observe(viewLifecycleOwner, Observer { isAvailable ->
             Timber.d("Received live data, connection to server availability changed to $isAvailable")
             isConnectionToServerAvailable = isAvailable
