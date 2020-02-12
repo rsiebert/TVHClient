@@ -14,7 +14,7 @@ android {
         minSdkVersion 16
         targetSdkVersion 29
 
-        versionCode 202
+        versionCode 203
         versionName "2.3.6"
 
         // Define the apk naming convention
@@ -59,6 +59,10 @@ android {
     compileOptions {
         sourceCompatibility = '1.8'
         targetCompatibility = '1.8'
+    }
+
+    kotlinOptions {
+        jvmTarget = JavaVersion.VERSION_1_8.toString()
     }
 
     testOptions {
@@ -149,14 +153,14 @@ dependencies {
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
     implementation 'androidx.annotation:annotation:1.1.0'
     implementation 'androidx.preference:preference:1.1.0'
-    implementation 'com.google.android.material:material:1.2.0-alpha02'
+    implementation 'com.google.android.material:material:1.2.0-alpha04'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.0-beta4'
     implementation 'androidx.viewpager2:viewpager2:1.0.0'
 
     // Kotlin
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.3'
-    implementation 'androidx.core:core-ktx:1.1.0'
+    implementation 'androidx.core:core-ktx:1.2.0'
 
     // Casting
     implementation 'com.google.android.gms:play-services-cast-framework:18.0.0'
@@ -187,7 +191,7 @@ dependencies {
     kapt "androidx.lifecycle:lifecycle-common-java8:$lifecycle_version"
 
     // Workmanager
-    implementation 'android.arch.work:work-runtime:1.0.1'
+    implementation 'androidx.work:work-runtime-ktx:2.3.1'
 
     // Dependency injection
     def dagger_version = '2.25.3'
