@@ -20,7 +20,7 @@ import android.widget.ProgressBar
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.preference.PreferenceManager
 import com.google.android.gms.cast.framework.*
@@ -78,8 +78,8 @@ class MainActivity : BaseActivity(R.layout.main_activity), SearchView.OnQueryTex
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        navigationViewModel = ViewModelProviders.of(this).get(NavigationViewModel::class.java)
-        statusViewModel = ViewModelProviders.of(this).get(StatusViewModel::class.java)
+        navigationViewModel = ViewModelProvider(this).get(NavigationViewModel::class.java)
+        statusViewModel = ViewModelProvider(this).get(StatusViewModel::class.java)
 
         // Reset the search in case the main activity was called for the first
         // time or when we came back from another like the search activity
