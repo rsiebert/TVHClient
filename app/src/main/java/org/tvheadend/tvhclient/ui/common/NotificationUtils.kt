@@ -9,7 +9,7 @@ import androidx.core.app.NotificationManagerCompat
 import androidx.preference.PreferenceManager
 import androidx.work.Data
 import androidx.work.ExistingWorkPolicy
-import androidx.work.OneTimeWorkRequest
+import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import org.tvheadend.data.entity.ProgramInterface
 import org.tvheadend.data.entity.Recording
@@ -87,12 +87,12 @@ fun addNotificationScheduledRecordingStarts(context: Context, recording: Recordi
                 .putLong("start", recording.start)
                 .build()
 
-        val workRequest = OneTimeWorkRequest.Builder(RecordingNotificationWorker::class.java)
+        val workRequest = OneTimeWorkRequestBuilder<RecordingNotificationWorker>()
                 .setInitialDelay(getNotificationTime(context, recording.start), TimeUnit.MILLISECONDS)
                 .setInputData(data)
                 .build()
-        val uniqueWorkName = "Notification_" + recording.id.toString()
-        WorkManager.getInstance().enqueueUniqueWork(uniqueWorkName, ExistingWorkPolicy.KEEP, workRequest)
+        val uniqueWorkName = "${RecordingNotificationWorker.WORK_NAME}_Notification_${recording.id}"
+        WorkManager.getInstance(context).enqueueUniqueWork(uniqueWorkName, ExistingWorkPolicy.KEEP, workRequest)
     }
 }
 
@@ -106,8 +106,8 @@ fun removeNotificationById(context: Context, id: Int) {
     if (PreferenceManager.getDefaultSharedPreferences(context).getBoolean("notifications_enabled", context.resources.getBoolean(R.bool.pref_default_notifications_enabled))) {
         Timber.d("Removing notification for id $id")
 
-        val uniqueWorkName = "Notification_$id"
-        WorkManager.getInstance().cancelUniqueWork(uniqueWorkName)
+        val uniqueWorkName = "${RecordingNotificationWorker.WORK_NAME}_Notification_$id"
+        WorkManager.getInstance(context).cancelUniqueWork(uniqueWorkName)
         (context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager).cancel(id)
     }
 }
@@ -136,12 +136,13 @@ fun addNotificationProgramIsAboutToStart(context: Context, program: ProgramInter
 
         Timber.d("Adding notification for program ${program.title}, it starts at ${program.start}")
 
-        val workRequest = OneTimeWorkRequest.Builder(ProgramNotificationWorker::class.java)
+        val workRequest = OneTimeWorkRequestBuilder<ProgramNotificationWorker>()
                 .setInitialDelay(getNotificationTime(context, program.start), TimeUnit.MILLISECONDS)
                 .setInputData(data)
                 .build()
-        val uniqueWorkName = "Notification_" + program.eventId.toString()
-        WorkManager.getInstance().enqueueUniqueWork(uniqueWorkName, ExistingWorkPolicy.KEEP, workRequest)
+
+        val uniqueWorkName = "${ProgramNotificationWorker.WORK_NAME}_Notification_${program.eventId}"
+        WorkManager.getInstance(context).enqueueUniqueWork(uniqueWorkName, ExistingWorkPolicy.KEEP, workRequest)
         context.sendSnackbarMessage(context.resources.getString(R.string.notification_added))
     }
     return true
