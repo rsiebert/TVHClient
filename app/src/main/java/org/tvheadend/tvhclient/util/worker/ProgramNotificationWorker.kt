@@ -16,6 +16,10 @@ import java.util.*
 
 class ProgramNotificationWorker(val context: Context, workerParams: WorkerParameters) : Worker(context, workerParams) {
 
+    companion object {
+        const val WORK_NAME = "ProgramNotificationWorker"
+    }
+
     override fun doWork(): Result {
 
         val eventTitle = inputData.getString("eventTitle")
