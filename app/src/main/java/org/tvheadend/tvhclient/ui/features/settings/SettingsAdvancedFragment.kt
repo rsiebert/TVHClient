@@ -12,7 +12,7 @@ import androidx.preference.EditTextPreference
 import androidx.preference.Preference
 import androidx.preference.SwitchPreference
 import androidx.work.ExistingWorkPolicy
-import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.OneTimeWorkRequest
 import androidx.work.WorkManager
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.list.listItemsSingleChoice
@@ -317,8 +317,8 @@ class SettingsAdvancedFragment : BasePreferenceFragment(), Preference.OnPreferen
                     clearIconsFromCache(it)
                     it.sendSnackbarMessage(R.string.clear_icon_cache_done)
 
-                    val loadChannelIcons = OneTimeWorkRequestBuilder<LoadChannelIconWorker>().build()
-                    WorkManager.getInstance().enqueueUniqueWork(LoadChannelIconWorker.WORK_NAME, ExistingWorkPolicy.APPEND, loadChannelIcons)
+                    val loadChannelIcons = OneTimeWorkRequest.Builder(LoadChannelIconWorker::class.java).build()
+                    WorkManager.getInstance(context.applicationContext).enqueueUniqueWork(LoadChannelIconWorker.WORK_NAME, ExistingWorkPolicy.APPEND, loadChannelIcons)
                 }
                 negativeButton(R.string.cancel)
             }

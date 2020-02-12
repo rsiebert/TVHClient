@@ -387,7 +387,7 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
             val updateEpgWorker = OneTimeWorkRequest.Builder(EpgDataUpdateWorker::class.java)
                     .setInitialDelay(15, TimeUnit.SECONDS)
                     .build()
-            WorkManager.getInstance().enqueueUniqueWork("UpdateEpg", ExistingWorkPolicy.APPEND, updateEpgWorker)
+            WorkManager.getInstance(this.applicationContext).enqueueUniqueWork(EpgDataUpdateWorker.WORK_NAME, ExistingWorkPolicy.APPEND, updateEpgWorker)
         } else {
             val sdf = SimpleDateFormat("dd.MM.yyyy HH.mm", Locale.US)
             Timber.d("Last loading of epg data was at ${sdf.format(connection.lastUpdate * 1000L)}")
@@ -397,7 +397,7 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
         val databaseCleanupWorker = OneTimeWorkRequest.Builder(DatabaseCleanupWorker::class.java)
                 .setInitialDelay(1, TimeUnit.MINUTES)
                 .build()
-        WorkManager.getInstance().enqueueUniqueWork("CleanupDatabase", ExistingWorkPolicy.KEEP, databaseCleanupWorker)
+        WorkManager.getInstance(this.applicationContext).enqueueUniqueWork(DatabaseCleanupWorker.WORK_NAME, ExistingWorkPolicy.KEEP, databaseCleanupWorker)
     }
 
     /**
@@ -509,7 +509,7 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
         }
     }
 
-    private fun addMissingHtspPlaybackProfileIfNotExists(name: String) {
+    private fun addMissingHtspPlaybackProfileIfNotExists(@Suppress("SameParameterValue") name: String) {
         var profileExists = false
 
         val profileNames = appRepository.serverProfileData.htspPlaybackProfileNames

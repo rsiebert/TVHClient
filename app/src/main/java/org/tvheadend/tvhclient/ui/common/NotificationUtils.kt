@@ -9,7 +9,7 @@ import androidx.core.app.NotificationManagerCompat
 import androidx.preference.PreferenceManager
 import androidx.work.Data
 import androidx.work.ExistingWorkPolicy
-import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.OneTimeWorkRequest
 import androidx.work.WorkManager
 import org.tvheadend.data.entity.ProgramInterface
 import org.tvheadend.data.entity.Recording
@@ -87,7 +87,7 @@ fun addNotificationScheduledRecordingStarts(context: Context, recording: Recordi
                 .putLong("start", recording.start)
                 .build()
 
-        val workRequest = OneTimeWorkRequestBuilder<RecordingNotificationWorker>()
+        val workRequest = OneTimeWorkRequest.Builder(RecordingNotificationWorker::class.java)
                 .setInitialDelay(getNotificationTime(context, recording.start), TimeUnit.MILLISECONDS)
                 .setInputData(data)
                 .build()
@@ -136,7 +136,7 @@ fun addNotificationProgramIsAboutToStart(context: Context, program: ProgramInter
 
         Timber.d("Adding notification for program ${program.title}, it starts at ${program.start}")
 
-        val workRequest = OneTimeWorkRequestBuilder<ProgramNotificationWorker>()
+        val workRequest = OneTimeWorkRequest.Builder(ProgramNotificationWorker::class.java)
                 .setInitialDelay(getNotificationTime(context, program.start), TimeUnit.MILLISECONDS)
                 .setInputData(data)
                 .build()

@@ -61,10 +61,6 @@ android {
         targetCompatibility = '1.8'
     }
 
-    kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_1_8.toString()
-    }
-
     testOptions {
         unitTests.includeAndroidResources = true
     }
@@ -203,7 +199,7 @@ dependencies {
     kapt "androidx.lifecycle:lifecycle-common-java8:$lifecycle_version"
 
     // Workmanager
-    implementation 'androidx.work:work-runtime-ktx:2.3.1'
+    implementation 'androidx.work:work-runtime:2.3.1'
 
     // Dependency injection
     def dagger_version = '2.25.3'
@@ -236,6 +232,10 @@ dependencies {
     implementation 'org.tvheadend.tvhclient.exoplayer:exoplayer-testutils:2.11.1'
     implementation 'org.tvheadend.tvhclient.exoplayer:extension-ffmpeg:2.11.1'
     implementation project(':data')
+
+    def room_version = '2.2.3'
+    implementation "androidx.room:room-runtime:$room_version"
+    kapt "androidx.room:room-compiler:$room_version"
 }
 
 apply plugin: 'com.google.gms.google-services'
