@@ -1,12 +1,15 @@
 package org.tvheadend.tvhclient.repository
 
+import android.content.Context
 import android.content.Intent
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import org.tvheadend.data.RepositoryInterface
 import org.tvheadend.data.source.*
-import org.tvheadend.tvhclient.util.livedata.Event
+import org.tvheadend.tvhclient.service.HtspService
 import org.tvheadend.tvhclient.ui.common.NetworkStatus
+import org.tvheadend.tvhclient.ui.features.startup.SplashActivity
+import org.tvheadend.tvhclient.util.livedata.Event
 import javax.inject.Inject
 
 class AppRepository @Inject
@@ -49,7 +52,7 @@ constructor(
         networkStatus.value = status
     }
 
-    fun getIsUnlocked(): LiveData<Boolean> = isUnlocked
+    fun getIsUnlockedLiveData(): LiveData<Boolean> = isUnlocked
 
     fun setIsUnlocked(unlocked: Boolean) {
         isUnlocked.value = unlocked
@@ -59,5 +62,21 @@ constructor(
 
     fun setConnectionToServerAvailable(available: Boolean) {
         connectionToServerAvailable.value = available
+    }
+
+    /**
+     * Saves the information that a new sync is required in the next start of the app.
+     * Then the service is stopped to close all connections to the server before the application is restarted.
+     */
+    fun updateConnectionAndRestartApplication(context: Context?, isSyncRequired: Boolean = true) {
+        context?.let {
+            if (isSyncRequired) {
+                connectionData.setSyncRequiredForActiveConnection()
+            }
+            context.stopService(Intent(context, HtspService::class.java))
+            val intent = Intent(context, SplashActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            context.startActivity(intent)
+        }
     }
 }

@@ -10,9 +10,7 @@ import androidx.lifecycle.MutableLiveData
 import org.tvheadend.data.entity.Connection
 import org.tvheadend.tvhclient.MainApplication
 import org.tvheadend.tvhclient.repository.AppRepository
-import org.tvheadend.tvhclient.service.HtspService
 import org.tvheadend.tvhclient.ui.common.NetworkStatus
-import org.tvheadend.tvhclient.ui.features.startup.SplashActivity
 import org.tvheadend.tvhclient.util.livedata.Event
 import timber.log.Timber
 import javax.inject.Inject
@@ -48,7 +46,7 @@ open class BaseViewModel(application: Application) : AndroidViewModel(applicatio
         connection = appRepository.connectionData.activeItem
         networkStatus = appRepository.getNetworkStatus()
         showSnackbar = appRepository.getSnackbarMessage()
-        isUnlocked = appRepository.getIsUnlocked()
+        isUnlocked = appRepository.getIsUnlockedLiveData()
         htspVersion = appRepository.serverStatusData.activeItem.htspVersion
 
         connectionToServerAvailable = appRepository.getConnectionToServerAvailable()
@@ -67,16 +65,7 @@ open class BaseViewModel(application: Application) : AndroidViewModel(applicatio
     }
 
     fun updateConnectionAndRestartApplication(context: Context?, isSyncRequired: Boolean = true) {
-        Timber.d("Restart of application requested")
-        context?.let {
-            if (isSyncRequired) {
-                appRepository.connectionData.setSyncRequiredForActiveConnection()
-            }
-            context.stopService(Intent(context, HtspService::class.java))
-            val intent = Intent(context, SplashActivity::class.java)
-            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-            context.startActivity(intent)
-        }
+        appRepository.updateConnectionAndRestartApplication(context, isSyncRequired)
     }
 
     fun startSearchQuery(query: String) {
