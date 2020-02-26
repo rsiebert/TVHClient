@@ -5,9 +5,10 @@ import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.view.*
+import android.webkit.WebView
+import android.widget.ProgressBar
 import androidx.fragment.app.Fragment
 import androidx.preference.PreferenceManager
-import kotlinx.android.synthetic.main.webview_fragment.*
 import kotlinx.coroutines.*
 import org.tvheadend.tvhclient.BuildConfig
 import org.tvheadend.tvhclient.R
@@ -29,27 +30,33 @@ class ChangeLogFragment : Fragment(), BackPressedInterface {
     private var showFullChangeLog = false
     private var versionName: String = ""
 
+    private var webView: WebView? = null
+    private var loadingView: ProgressBar? = null
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return if (Build.VERSION.SDK_INT in 21..25) {
+        val view = if (Build.VERSION.SDK_INT in 21..25) {
             inflater.inflate(R.layout.webview_fragment_for_lollipop, container, false)
         } else {
             inflater.inflate(R.layout.webview_fragment, container, false)
         }
+        webView = view.findViewById(R.id.webview)
+        loadingView = view.findViewById(R.id.loading_view)
+        return view
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-
         if (activity is ToolbarInterface) {
             (activity as ToolbarInterface).setTitle(getString(R.string.pref_changelog))
         }
+
         showFullChangeLog = arguments?.getBoolean("showFullChangelog", true) ?: true
         versionName = arguments?.getString("versionNameForChangelog", BuildConfig.VERSION_NAME) ?: BuildConfig.VERSION_NAME
         setHasOptionsMenu(true)
 
         // Make the background transparent to remove flickering. This avoids
         // seeing the default theme background color before the stylesheets are loaded.
-        webview.setBackgroundColor(Color.argb(0, 0, 0, 0))
+        webView?.setBackgroundColor(Color.argb(0, 0, 0, 0))
 
         Timber.d("Showing changelog, show full changelog: $showFullChangeLog")
         activity?.let {
@@ -124,9 +131,9 @@ class ChangeLogFragment : Fragment(), BackPressedInterface {
         Timber.d("Changelog data was loaded, file contents is not empty ${fileContent.isNotEmpty()}, fragment is added $isAdded and is visible $isVisible")
         if (fileContent.isNotEmpty() && isAdded) {
             Timber.d("Changelog data is available, showing contents in webview")
-            webview.loadDataWithBaseURL("file:///android_asset/", fileContent, "text/html", "utf-8", null)
-            webview.visible()
-            loading_view.gone()
+            webView?.loadDataWithBaseURL("file:///android_asset/", fileContent, "text/html", "utf-8", null)
+            webView?.visible()
+            loadingView?.gone()
         }
     }
 
