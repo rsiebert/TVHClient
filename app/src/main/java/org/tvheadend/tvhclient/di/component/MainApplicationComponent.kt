@@ -10,6 +10,8 @@ import org.tvheadend.tvhclient.service.HtspService
 import org.tvheadend.tvhclient.ui.base.BaseActivity
 import org.tvheadend.tvhclient.ui.base.BaseFragment
 import org.tvheadend.tvhclient.ui.base.BaseViewModel
+import org.tvheadend.tvhclient.ui.features.settings.SettingsActivity
+import org.tvheadend.tvhclient.ui.features.settings.SettingsViewModel
 import org.tvheadend.tvhclient.ui.features.startup.StartupActivity
 import org.tvheadend.tvhclient.ui.features.startup.StartupViewModel
 import javax.inject.Singleton
@@ -25,8 +27,10 @@ interface MainApplicationComponent {
     fun inject(htspService: HtspService)
     fun inject(htspIntentService: HtspIntentService)
     fun inject(baseActivity: BaseActivity)
+    fun inject(settingsActivity: SettingsActivity)
     fun inject(baseFragment: BaseFragment)
     fun inject(baseViewModel: BaseViewModel)
+    fun inject(settingsViewModel: SettingsViewModel)
     fun inject(startupActivity: StartupActivity)
     fun inject(startupViewModel: StartupViewModel)
 
