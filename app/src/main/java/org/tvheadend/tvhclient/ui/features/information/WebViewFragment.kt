@@ -11,6 +11,7 @@ import androidx.fragment.app.Fragment
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.ui.base.LayoutControlInterface
 import org.tvheadend.tvhclient.ui.common.interfaces.FileContentsLoadedInterface
+import org.tvheadend.tvhclient.ui.common.interfaces.ToolbarInterface
 import org.tvheadend.tvhclient.ui.features.settings.RemoveFragmentFromBackstackInterface
 import org.tvheadend.tvhclient.util.extensions.gone
 import org.tvheadend.tvhclient.util.extensions.visible
@@ -24,6 +25,7 @@ open class WebViewFragment : Fragment(), FileContentsLoadedInterface {
     private var loadingView: ProgressBar? = null
     private var errorTextView: TextView? = null
     private lateinit var fileContentLoader: FileContentLoader
+    lateinit var toolbarInterface: ToolbarInterface
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(if (Build.VERSION.SDK_INT in 21..25) R.layout.webview_fragment_for_lollipop else R.layout.webview_fragment, container, false)
@@ -34,6 +36,10 @@ open class WebViewFragment : Fragment(), FileContentsLoadedInterface {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+
+        if (activity is ToolbarInterface) {
+            toolbarInterface = activity as ToolbarInterface
+        }
         if (activity is LayoutControlInterface) {
             (activity as LayoutControlInterface).forceSingleScreenLayout()
         }
