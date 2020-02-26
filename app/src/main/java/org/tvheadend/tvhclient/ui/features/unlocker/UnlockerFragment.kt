@@ -1,18 +1,17 @@
 package org.tvheadend.tvhclient.ui.features.unlocker
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
 import com.afollestad.materialdialogs.MaterialDialog
 import com.android.billingclient.api.Purchase
 import org.tvheadend.tvhclient.MainApplication
 import org.tvheadend.tvhclient.R
-import org.tvheadend.tvhclient.ui.base.BaseActivity
-import org.tvheadend.tvhclient.ui.base.BaseViewModel
+import org.tvheadend.tvhclient.service.HtspService
 import org.tvheadend.tvhclient.ui.features.information.WebViewFragment
+import org.tvheadend.tvhclient.ui.features.startup.SplashActivity
 import org.tvheadend.tvhclient.util.billing.BillingHandler
 import org.tvheadend.tvhclient.util.billing.BillingManager
 import org.tvheadend.tvhclient.util.billing.BillingManager.Companion.UNLOCKER
@@ -23,23 +22,18 @@ class UnlockerFragment : WebViewFragment(), BillingUpdatesListener {
 
     private lateinit var billingManager: BillingManager
     private lateinit var billingHandler: BillingHandler
-    private lateinit var baseViewModel: BaseViewModel
     private var isUnlocked: Boolean = false
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+
         toolbarInterface.setTitle(getString(R.string.pref_unlocker))
         toolbarInterface.setSubtitle("")
 
         billingManager = MainApplication.billingManager
         billingHandler = MainApplication.billingHandler
 
-        baseViewModel = ViewModelProviders.of(activity as BaseActivity).get(BaseViewModel::class.java)
-        baseViewModel.isUnlocked.observe(viewLifecycleOwner, Observer { unlocked ->
-            Timber.d("Received live data, unlocked changed to $unlocked")
-            isUnlocked = unlocked
-        })
-
+        isUnlocked = arguments?.getBoolean("isUnlocked") ?: false
         website = "features"
     }
 
@@ -94,9 +88,18 @@ class UnlockerFragment : WebViewFragment(), BillingUpdatesListener {
                 message(R.string.thank_you)
                 cancelOnTouchOutside(false)
                 positiveButton(R.string.restart) {
-                    baseViewModel.updateConnectionAndRestartApplication(context, false)
+                    restartApplication()
                 }
             }
+        }
+    }
+
+    private fun restartApplication() {
+        context?.let {
+            it.stopService(Intent(it, HtspService::class.java))
+            val intent = Intent(it, SplashActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            it.startActivity(intent)
         }
     }
 
@@ -134,5 +137,16 @@ class UnlockerFragment : WebViewFragment(), BillingUpdatesListener {
     override fun onPurchaseError(errorCode: Int) {
         Timber.d("Purchase was not successful")
         showPurchaseNotSuccessfulDialog()
+    }
+
+    companion object {
+
+        fun newInstance(isUnlocked: Boolean): UnlockerFragment {
+            val f = UnlockerFragment()
+            val args = Bundle()
+            args.putBoolean("isUnlocked", isUnlocked)
+            f.arguments = args
+            return f
+        }
     }
 }
