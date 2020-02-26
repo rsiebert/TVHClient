@@ -1,28 +1,86 @@
 package org.tvheadend.tvhclient.ui.features.settings
 
-import android.app.Application
+import android.content.Context
+import android.content.Intent
+import android.content.SharedPreferences
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import org.tvheadend.data.entity.Channel
 import org.tvheadend.data.entity.Connection
 import org.tvheadend.data.entity.ServerProfile
 import org.tvheadend.data.entity.ServerStatus
 import org.tvheadend.data.source.MiscDataSource
+import org.tvheadend.tvhclient.MainApplication
 import org.tvheadend.tvhclient.R
-import org.tvheadend.tvhclient.ui.base.BaseViewModel
+import org.tvheadend.tvhclient.repository.AppRepository
 import org.tvheadend.tvhclient.util.livedata.Event
 import timber.log.Timber
+import javax.inject.Inject
 
-class SettingsViewModel(application: Application) : BaseViewModel(application) {
+class SettingsViewModel : ViewModel() {
 
+    @Inject
+    lateinit var appContext: Context
+    @Inject
+    lateinit var appRepository: AppRepository
+    @Inject
+    lateinit var sharedPreferences: SharedPreferences
+
+    var connection: Connection
     var connectionIdToBeEdited: Int = -1
-    val allConnections: LiveData<List<Connection>> = appRepository.connectionData.getLiveDataItems()
-    var currentServerStatus = appRepository.serverStatusData.activeItem
-    val currentServerStatusLiveData = appRepository.serverStatusData.liveDataActiveItem
-    private val navigationMenuId = MutableLiveData<Event<String>>()
+
+    /**
+     * The number of available connections as live data
+     */
+    var connectionCount: LiveData<Int>
+
+    /**
+     * Currently active connection as live data
+     */
+    var connectionLiveData:  LiveData<Connection>
+
+    /**
+     * Contains the list of all available connections as live data
+     */
+    var allConnectionsLiveData: LiveData<List<Connection>>
+
+    /**
+     *  The active server status. Contains some server information
+     *  and the selected playback and recording profile ids
+     */
+    var currentServerStatus: ServerStatus
+
+    /**
+     *  Live data status of the active server status. Observing this is required to get updated
+     *  about any changes to the profile name or ids e.g. in case the database has been cleared.
+     */
+    var currentServerStatusLiveData: LiveData<ServerStatus>
+
+    /**
+     * Used to monitor changes to the unlocked status. Required in case the user purchases the
+     * unlocker from the settings screen. The live data value is stored in the isUnlocked variable
+     */
+    var isUnlockedLiveData: LiveData<Boolean>
+
+    var isUnlocked = false
+    var showSnackbarLiveData: LiveData<Event<Intent>>
+    private val navigationMenuId = MutableLiveData<Event<String>>(Event("default"))
 
     init {
-        navigationMenuId.value = Event("default")
+        inject()
+        connection = appRepository.connectionData.activeItem
+        connectionCount = appRepository.connectionData.getLiveDataItemCount()
+        connectionLiveData = appRepository.connectionData.liveDataActiveItem
+        allConnectionsLiveData = appRepository.connectionData.getLiveDataItems()
+        currentServerStatus = appRepository.serverStatusData.activeItem
+        currentServerStatusLiveData = appRepository.serverStatusData.liveDataActiveItem
+        showSnackbarLiveData = appRepository.getSnackbarMessage()
+        isUnlockedLiveData = appRepository.getIsUnlockedLiveData()
+    }
+
+    private fun inject() {
+        MainApplication.component.inject(this)
     }
 
     fun getNavigationMenuId(): LiveData<Event<String>> = navigationMenuId
@@ -115,5 +173,9 @@ class SettingsViewModel(application: Application) : BaseViewModel(application) {
 
     fun removeConnection(connection: Connection) {
         appRepository.connectionData.removeItem(connection)
+    }
+
+    fun updateConnectionAndRestartApplication(context: Context?) {
+        appRepository.updateConnectionAndRestartApplication(context)
     }
 }

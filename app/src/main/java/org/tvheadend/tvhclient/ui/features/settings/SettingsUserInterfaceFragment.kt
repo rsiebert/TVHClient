@@ -1,14 +1,17 @@
 package org.tvheadend.tvhclient.ui.features.settings
 
 import android.os.Bundle
+import androidx.lifecycle.ViewModelProviders
 import androidx.preference.EditTextPreference
 import androidx.preference.Preference
+import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.SwitchPreference
 import org.tvheadend.tvhclient.R
+import org.tvheadend.tvhclient.ui.common.interfaces.ToolbarInterface
 import org.tvheadend.tvhclient.util.extensions.sendSnackbarMessage
 import timber.log.Timber
 
-class SettingsUserInterfaceFragment : BasePreferenceFragment(), Preference.OnPreferenceChangeListener, Preference.OnPreferenceClickListener {
+class SettingsUserInterfaceFragment : PreferenceFragmentCompat(), Preference.OnPreferenceChangeListener, Preference.OnPreferenceClickListener {
 
     private var programArtworkEnabledPreference: SwitchPreference? = null
     private var castMiniControllerPreference: SwitchPreference? = null
@@ -16,11 +19,16 @@ class SettingsUserInterfaceFragment : BasePreferenceFragment(), Preference.OnPre
     private var hoursOfEpgDataPreference: EditTextPreference? = null
     private var daysOfEpgDataPreference: EditTextPreference? = null
 
+    lateinit var settingsViewModel: SettingsViewModel
+
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+        settingsViewModel = ViewModelProviders.of(activity as SettingsActivity).get(SettingsViewModel::class.java)
 
-        toolbarInterface.setTitle(getString(R.string.pref_user_interface))
-        toolbarInterface.setSubtitle("")
+        (activity as ToolbarInterface).let {
+            it.setTitle(getString(R.string.pref_user_interface))
+            it.setSubtitle("")
+        }
 
         programArtworkEnabledPreference = findPreference("program_artwork_enabled")
         programArtworkEnabledPreference?.onPreferenceClickListener = this
@@ -49,14 +57,14 @@ class SettingsUserInterfaceFragment : BasePreferenceFragment(), Preference.OnPre
     }
 
     private fun handlePreferenceMultipleChannelTagsSelected() {
-        if (!isUnlocked) {
+        if (!settingsViewModel.isUnlocked) {
             context?.sendSnackbarMessage(R.string.feature_not_available_in_free_version)
             multipleChannelTagsPreference?.isChecked = false
         }
     }
 
     private fun handlePreferenceShowArtworkSelected() {
-        if (!isUnlocked) {
+        if (!settingsViewModel.isUnlocked) {
             context?.sendSnackbarMessage(R.string.feature_not_available_in_free_version)
             programArtworkEnabledPreference?.isChecked = false
         }
@@ -66,7 +74,7 @@ class SettingsUserInterfaceFragment : BasePreferenceFragment(), Preference.OnPre
         if (settingsViewModel.currentServerStatus.htspVersion < 16) {
             context?.sendSnackbarMessage(R.string.feature_not_supported_by_server)
             castMiniControllerPreference?.isChecked = false
-        } else if (!isUnlocked) {
+        } else if (!settingsViewModel.isUnlocked) {
             context?.sendSnackbarMessage(R.string.feature_not_available_in_free_version)
             castMiniControllerPreference?.isChecked = false
         }

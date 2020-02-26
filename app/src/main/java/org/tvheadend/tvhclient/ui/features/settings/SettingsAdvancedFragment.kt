@@ -8,9 +8,8 @@ import android.net.Uri
 import android.os.Bundle
 import android.provider.SearchRecentSuggestions
 import androidx.core.content.FileProvider
-import androidx.preference.EditTextPreference
-import androidx.preference.Preference
-import androidx.preference.SwitchPreference
+import androidx.lifecycle.ViewModelProviders
+import androidx.preference.*
 import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequest
 import androidx.work.WorkManager
@@ -23,6 +22,7 @@ import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.service.HtspIntentService
 import org.tvheadend.tvhclient.service.HtspService
 import org.tvheadend.tvhclient.ui.common.SuggestionProvider
+import org.tvheadend.tvhclient.ui.common.interfaces.ToolbarInterface
 import org.tvheadend.tvhclient.ui.features.startup.SplashActivity
 import org.tvheadend.tvhclient.util.extensions.sendSnackbarMessage
 import org.tvheadend.tvhclient.util.getIconUrl
@@ -32,18 +32,26 @@ import timber.log.Timber
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.collections.ArrayList
 
-class SettingsAdvancedFragment : BasePreferenceFragment(), Preference.OnPreferenceChangeListener, Preference.OnPreferenceClickListener, SharedPreferences.OnSharedPreferenceChangeListener, MiscDataSource.DatabaseClearedCallback {
+class SettingsAdvancedFragment : PreferenceFragmentCompat(), Preference.OnPreferenceChangeListener, Preference.OnPreferenceClickListener, SharedPreferences.OnSharedPreferenceChangeListener, MiscDataSource.DatabaseClearedCallback {
 
     private var notificationsEnabledPreference: SwitchPreference? = null
     private var notifyRunningRecordingCountEnabledPreference: SwitchPreference? = null
     private var notifyLowStorageSpaceEnabledPreference: SwitchPreference? = null
     private var connectionTimeoutPreference: EditTextPreference? = null
+    lateinit var sharedPreferences: SharedPreferences
+    lateinit var settingsViewModel: SettingsViewModel
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+        settingsViewModel = ViewModelProviders.of(activity as SettingsActivity).get(SettingsViewModel::class.java)
 
-        toolbarInterface.setTitle(getString(R.string.pref_advanced_settings))
+        (activity as ToolbarInterface).let {
+            it.setTitle(getString(R.string.pref_advanced_settings))
+        }
+
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(activity)
 
         findPreference<Preference>("debug_mode_enabled")?.onPreferenceClickListener = this
         findPreference<Preference>("send_debug_logfile_enabled")?.onPreferenceClickListener = this
@@ -59,7 +67,7 @@ class SettingsAdvancedFragment : BasePreferenceFragment(), Preference.OnPreferen
         connectionTimeoutPreference = findPreference("connection_timeout")
         connectionTimeoutPreference?.onPreferenceChangeListener = this
 
-        settingsViewModel.isUnlocked.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
+        settingsViewModel.isUnlockedLiveData.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
             initPreferenceChangeListeners()
         })
     }
@@ -67,17 +75,17 @@ class SettingsAdvancedFragment : BasePreferenceFragment(), Preference.OnPreferen
     private fun initPreferenceChangeListeners() {
         notificationsEnabledPreference?.also {
             it.onPreferenceClickListener = this
-            it.isEnabled = isUnlocked
+            it.isEnabled = settingsViewModel.isUnlocked
         }
 
         notifyRunningRecordingCountEnabledPreference?.also {
             it.onPreferenceClickListener = this
-            it.isEnabled = isUnlocked
+            it.isEnabled = settingsViewModel.isUnlocked
         }
 
         notifyLowStorageSpaceEnabledPreference?.also {
             it.onPreferenceClickListener = this
-            it.isEnabled = isUnlocked
+            it.isEnabled = settingsViewModel.isUnlocked
         }
     }
 
@@ -121,21 +129,21 @@ class SettingsAdvancedFragment : BasePreferenceFragment(), Preference.OnPreferen
     }
 
     private fun handlePreferenceNotificationsSelected() {
-        if (!isUnlocked) {
+        if (!settingsViewModel.isUnlocked) {
             context?.sendSnackbarMessage(R.string.feature_not_available_in_free_version)
             notificationsEnabledPreference?.isChecked = false
         }
     }
 
     private fun handlePreferenceNotifyRunningRecordingEnabledSelected() {
-        if (!isUnlocked) {
+        if (!settingsViewModel.isUnlocked) {
             context?.sendSnackbarMessage(R.string.feature_not_available_in_free_version)
             notifyRunningRecordingCountEnabledPreference?.isChecked = false
         }
     }
 
     private fun handlePreferenceNotifyLowStorageSpaceSelected() {
-        if (!isUnlocked) {
+        if (!settingsViewModel.isUnlocked) {
             context?.sendSnackbarMessage(R.string.feature_not_available_in_free_version)
             notifyRunningRecordingCountEnabledPreference?.isChecked = false
         }

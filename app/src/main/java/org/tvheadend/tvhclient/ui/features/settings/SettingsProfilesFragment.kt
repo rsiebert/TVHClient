@@ -2,24 +2,31 @@ package org.tvheadend.tvhclient.ui.features.settings
 
 import android.os.Bundle
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
 import androidx.preference.ListPreference
+import androidx.preference.PreferenceFragmentCompat
 import org.tvheadend.data.entity.ServerProfile
 import org.tvheadend.tvhclient.R
+import org.tvheadend.tvhclient.ui.common.interfaces.ToolbarInterface
 import org.tvheadend.tvhclient.util.extensions.sendSnackbarMessage
 import timber.log.Timber
 
-class SettingsProfilesFragment : BasePreferenceFragment() {
+class SettingsProfilesFragment : PreferenceFragmentCompat() {
 
     private lateinit var recordingProfilesPreference: ListPreference
     private lateinit var htspPlaybackProfilesPreference: ListPreference
     private lateinit var httpPlaybackProfilesPreference: ListPreference
     private lateinit var castingProfilesPreference: ListPreference
+    lateinit var settingsViewModel: SettingsViewModel
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+        settingsViewModel = ViewModelProviders.of(activity as SettingsActivity).get(SettingsViewModel::class.java)
 
-        toolbarInterface.setTitle(getString(R.string.pref_profiles))
-        toolbarInterface.setSubtitle(settingsViewModel.connection.name ?: "")
+        (activity as ToolbarInterface).let {
+            it.setTitle(getString(R.string.pref_profiles))
+            it.setSubtitle(settingsViewModel.connection.name ?: "")
+        }
 
         htspPlaybackProfilesPreference = findPreference("htsp_playback_profiles")!!
         httpPlaybackProfilesPreference = findPreference("http_playback_profiles")!!
@@ -31,7 +38,7 @@ class SettingsProfilesFragment : BasePreferenceFragment() {
         addProfileValuesToListPreference(recordingProfilesPreference, settingsViewModel.getRecordingProfiles(), settingsViewModel.currentServerStatus.recordingServerProfileId)
         addProfileValuesToListPreference(castingProfilesPreference, settingsViewModel.getHttpProfiles(), settingsViewModel.currentServerStatus.castingServerProfileId)
 
-        settingsViewModel.isUnlocked.observe(viewLifecycleOwner, Observer {
+        settingsViewModel.isUnlockedLiveData.observe(viewLifecycleOwner, Observer {
             initProfileChangeListeners()
         })
 
@@ -67,7 +74,7 @@ class SettingsProfilesFragment : BasePreferenceFragment() {
             true
         }
 
-        if (isUnlocked) {
+        if (settingsViewModel.isUnlocked) {
             castingProfilesPreference.onPreferenceClickListener = null
             castingProfilesPreference.setOnPreferenceChangeListener { _, o ->
                 settingsViewModel.currentServerStatus.let {

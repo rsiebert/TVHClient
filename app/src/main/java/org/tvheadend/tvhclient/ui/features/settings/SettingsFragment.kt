@@ -11,26 +11,36 @@ import android.os.Handler
 import androidx.core.app.ActivityCompat
 import androidx.core.app.TaskStackBuilder
 import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.ViewModelProviders
 import androidx.preference.Preference
+import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceManager
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.files.folderChooser
 import org.tvheadend.tvhclient.R
+import org.tvheadend.tvhclient.ui.common.interfaces.ToolbarInterface
 import org.tvheadend.tvhclient.ui.features.MainActivity
 import org.tvheadend.tvhclient.util.extensions.sendSnackbarMessage
 import timber.log.Timber
 import java.io.File
 
-class SettingsFragment : BasePreferenceFragment(), Preference.OnPreferenceClickListener, SharedPreferences.OnSharedPreferenceChangeListener, ActivityCompat.OnRequestPermissionsResultCallback {
+class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceClickListener, SharedPreferences.OnSharedPreferenceChangeListener, ActivityCompat.OnRequestPermissionsResultCallback {
 
     private var downloadDirectoryPreference: Preference? = null
+    lateinit var sharedPreferences: SharedPreferences
+    lateinit var settingsViewModel: SettingsViewModel
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         PreferenceManager.setDefaultValues(activity, R.xml.preferences, false)
+        settingsViewModel = ViewModelProviders.of(activity as SettingsActivity).get(SettingsViewModel::class.java)
 
-        toolbarInterface.setTitle(getString(R.string.settings))
-        toolbarInterface.setSubtitle("")
+        (activity as ToolbarInterface).let {
+            it.setTitle(getString(R.string.settings))
+            it.setSubtitle("")
+        }
+
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(activity)
 
         findPreference<Preference>("list_connections")?.onPreferenceClickListener = this
         findPreference<Preference>("user_interface")?.onPreferenceClickListener = this
@@ -133,7 +143,7 @@ class SettingsFragment : BasePreferenceFragment(), Preference.OnPreferenceClickL
     }
 
     private fun handlePreferencePlaybackSelected() {
-        if (!isUnlocked) {
+        if (!settingsViewModel.isUnlocked) {
             context?.sendSnackbarMessage(R.string.feature_not_available_in_free_version)
         } else {
             settingsViewModel.setNavigationMenuId("playback")
@@ -141,7 +151,7 @@ class SettingsFragment : BasePreferenceFragment(), Preference.OnPreferenceClickL
     }
 
     private fun handlePreferenceDownloadDirectorySelected() {
-        if (!isUnlocked) {
+        if (!settingsViewModel.isUnlocked) {
             context?.sendSnackbarMessage(R.string.feature_not_available_in_free_version)
         } else {
             activity?.let {

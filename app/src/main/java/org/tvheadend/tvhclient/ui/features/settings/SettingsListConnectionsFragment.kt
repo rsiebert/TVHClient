@@ -12,11 +12,10 @@ import com.afollestad.materialdialogs.MaterialDialog
 import kotlinx.android.synthetic.main.recyclerview_fragment.*
 import org.tvheadend.data.entity.Connection
 import org.tvheadend.tvhclient.R
+import org.tvheadend.tvhclient.ui.common.WakeOnLanTask
 import org.tvheadend.tvhclient.ui.common.interfaces.BackPressedInterface
 import org.tvheadend.tvhclient.ui.common.interfaces.RecyclerViewClickInterface
 import org.tvheadend.tvhclient.ui.common.interfaces.ToolbarInterface
-import org.tvheadend.tvhclient.ui.common.WakeOnLanTask
-import timber.log.Timber
 
 class SettingsListConnectionsFragment : Fragment(), BackPressedInterface, ActionMode.Callback, RecyclerViewClickInterface {
 
@@ -38,15 +37,14 @@ class SettingsListConnectionsFragment : Fragment(), BackPressedInterface, Action
 
         if (activity is ToolbarInterface) {
             toolbarInterface = activity as ToolbarInterface
-            toolbarInterface.setTitle(getString(R.string.settings))
+            toolbarInterface.setTitle(getString(R.string.pref_connections))
         }
 
         recyclerViewAdapter = ConnectionRecyclerViewAdapter(this)
         recycler_view.layoutManager = LinearLayoutManager(activity)
         recycler_view.adapter = recyclerViewAdapter
-        setHasOptionsMenu(true)
 
-        settingsViewModel.allConnections.observe(viewLifecycleOwner, Observer { connections ->
+        settingsViewModel.allConnectionsLiveData.observe(viewLifecycleOwner, Observer { connections ->
             if (connections != null) {
                 recyclerViewAdapter.addItems(connections)
                 context?.let {
@@ -57,11 +55,12 @@ class SettingsListConnectionsFragment : Fragment(), BackPressedInterface, Action
                 }
             }
         })
-
         settingsViewModel.connectionLiveData.observe(viewLifecycleOwner, Observer { connection ->
             connectionHasChanged = connection != null && connection.id != settingsViewModel.connection.id
             activeConnectionId = connection?.id ?: -1
         })
+
+        setHasOptionsMenu(true)
     }
 
     private fun startActionMode() {
@@ -166,7 +165,7 @@ class SettingsListConnectionsFragment : Fragment(), BackPressedInterface, Action
                     title(R.string.disconnect_from_server)
                     message(R.string.no_active_connection)
                     positiveButton(R.string.disconnect) {
-                        reconnect()
+                        settingsViewModel.updateConnectionAndRestartApplication(context)
                     }
                 }
             }
@@ -174,23 +173,15 @@ class SettingsListConnectionsFragment : Fragment(), BackPressedInterface, Action
                 MaterialDialog(it).show {
                     title(R.string.connect_to_new_server)
                     message(R.string.connection_changed)
-                    positiveButton(R.string.connect) { reconnect() }
+                    positiveButton(R.string.connect) {
+                        settingsViewModel.updateConnectionAndRestartApplication(context)
+                    }
                 }
             }
             else -> {
                 (activity as RemoveFragmentFromBackstackInterface).removeFragmentFromBackstack()
             }
         }
-    }
-
-    /**
-     * Save the information that a new sync is required and stop
-     * the service so it can refresh the active connection.
-     * Then restart the application to show the startup fragment
-     */
-    private fun reconnect() {
-        Timber.d("Reconnecting to server, new initial sync will be done")
-        settingsViewModel.updateConnectionAndRestartApplication(context)
     }
 
     override fun onClick(view: View, position: Int) {
