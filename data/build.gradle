@@ -44,6 +44,7 @@ dependencies {
 
     // Support library basics
     implementation 'androidx.appcompat:appcompat:1.1.0'
+    implementation 'androidx.preference:preference:1.1.0'
 
     // Android Room
     def room_version = '2.2.3'
@@ -53,4 +54,9 @@ dependencies {
 
     // Logging library
     implementation 'com.jakewharton.timber:timber:4.7.1'
+
+    // Dependency injection
+    def dagger_version = '2.26'
+    implementation "com.google.dagger:dagger:$dagger_version"
+    kapt "com.google.dagger:dagger-compiler:$dagger_version"
 }
