@@ -13,12 +13,13 @@ import com.google.android.gms.cast.framework.media.CastMediaOptions
 import com.google.android.gms.cast.framework.media.NotificationOptions
 import com.google.firebase.analytics.FirebaseAnalytics
 import io.fabric.sdk.android.Fabric
-import org.tvheadend.tvhclient.di.component.DaggerMainApplicationComponent
-import org.tvheadend.tvhclient.di.component.MainApplicationComponent
+import org.tvheadend.data.AppRepository
+import org.tvheadend.data.di.DaggerRepositoryComponent
+import org.tvheadend.data.di.RepositoryModule
+import org.tvheadend.tvhclient.di.component.DaggerMainComponent
+import org.tvheadend.tvhclient.di.component.MainComponent
 import org.tvheadend.tvhclient.di.module.ContextModule
-import org.tvheadend.tvhclient.di.module.RepositoryModule
 import org.tvheadend.tvhclient.di.module.SharedPreferencesModule
-import org.tvheadend.tvhclient.repository.AppRepository
 import org.tvheadend.tvhclient.ui.common.onAttach
 import org.tvheadend.tvhclient.ui.features.playback.external.ExpandedControlsActivity
 import org.tvheadend.tvhclient.util.MigrateUtils
@@ -49,11 +50,17 @@ class MainApplication : MultiDexApplication(), OptionsProvider, BillingUpdatesLi
     override fun onCreate() {
         super.onCreate()
 
+        val repositoryComponent = DaggerRepositoryComponent
+                .builder()
+                .repositoryModule(RepositoryModule(applicationContext))
+                .build()
+
         // Setup the required dependencies for injection
-        component = DaggerMainApplicationComponent.builder()
-                .contextModule(ContextModule(this))
+        component = DaggerMainComponent
+                .builder()
+                .contextModule(ContextModule(applicationContext))
                 .sharedPreferencesModule(SharedPreferencesModule())
-                .repositoryModule(RepositoryModule())
+                .repositoryComponent(repositoryComponent)
                 .build()
         component.inject(this)
 
@@ -89,7 +96,7 @@ class MainApplication : MultiDexApplication(), OptionsProvider, BillingUpdatesLi
 
         billingHandler = BillingHandler()
         billingHandler.addListener(this)
-        billingManager = BillingManager(applicationContext, billingHandler, appRepository)
+        billingManager = BillingManager(billingHandler)
         billingManager.queryPurchases()
 
         Timber.d("Application build time is ${BuildConfig.BUILD_TIME}, git commit hash is ${BuildConfig.GIT_SHA}")
@@ -157,7 +164,7 @@ class MainApplication : MultiDexApplication(), OptionsProvider, BillingUpdatesLi
     companion object {
 
         lateinit var instance: MainApplication
-        lateinit var component: MainApplicationComponent
+        lateinit var component: MainComponent
         lateinit var billingManager: BillingManager
         lateinit var billingHandler: BillingHandler
     }

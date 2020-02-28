@@ -1,9 +1,9 @@
 package org.tvheadend.tvhclient.di.component
 
 import dagger.Component
+import org.tvheadend.data.di.FeatureScope
 import org.tvheadend.tvhclient.MainApplication
 import org.tvheadend.tvhclient.di.module.ContextModule
-import org.tvheadend.tvhclient.di.module.RepositoryModule
 import org.tvheadend.tvhclient.di.module.SharedPreferencesModule
 import org.tvheadend.tvhclient.service.HtspIntentService
 import org.tvheadend.tvhclient.service.HtspService
@@ -14,14 +14,14 @@ import org.tvheadend.tvhclient.ui.features.settings.SettingsActivity
 import org.tvheadend.tvhclient.ui.features.settings.SettingsViewModel
 import org.tvheadend.tvhclient.ui.features.startup.StartupActivity
 import org.tvheadend.tvhclient.ui.features.startup.StartupViewModel
-import javax.inject.Singleton
+import org.tvheadend.tvhclient.util.billing.BillingManager
 
-@Singleton
-@Component(modules = [
-    ContextModule::class,
-    SharedPreferencesModule::class,
-    RepositoryModule::class])
-interface MainApplicationComponent {
+
+@Component(
+        modules = [ContextModule::class, SharedPreferencesModule::class],
+        dependencies = [org.tvheadend.data.di.RepositoryComponent::class])
+@FeatureScope
+interface MainComponent {
 
     fun inject(mainApplication: MainApplication)
     fun inject(htspService: HtspService)
@@ -33,7 +33,9 @@ interface MainApplicationComponent {
     fun inject(settingsViewModel: SettingsViewModel)
     fun inject(startupActivity: StartupActivity)
     fun inject(startupViewModel: StartupViewModel)
+    fun inject(billingManager: BillingManager)
 
+/*
     @Component.Builder
     interface Builder {
 
@@ -45,4 +47,6 @@ interface MainApplicationComponent {
 
         fun contextModule(contextModule: ContextModule): Builder
     }
+
+ */
 }

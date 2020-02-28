@@ -1,26 +1,25 @@
-package org.tvheadend.tvhclient.di.module
+package org.tvheadend.data.di
 
 import android.content.Context
 import dagger.Module
 import dagger.Provides
+import org.tvheadend.data.AppRepository
 import org.tvheadend.data.db.AppRoomDatabase
 import org.tvheadend.data.source.*
-import org.tvheadend.tvhclient.repository.AppRepository
 import javax.inject.Singleton
 
-@Suppress("unused")
 @Module
-class RepositoryModule {
+class RepositoryModule(private val appContext: Context) {
 
     @Singleton
     @Provides
-    internal fun providesAppRoomDatabase(context: Context): AppRoomDatabase {
-        return AppRoomDatabase.getInstance(context)!!
+    fun providesAppRoomDatabase(): AppRoomDatabase {
+        return AppRoomDatabase.getInstance(appContext)!!
     }
 
     @Singleton
     @Provides
-    internal fun providesAppRepository(db: AppRoomDatabase): AppRepository {
+    fun providesAppRepository(db: AppRoomDatabase): AppRepository {
         return AppRepository(
                 ChannelDataSource(db),
                 ProgramDataSource(db),
