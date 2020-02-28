@@ -7,7 +7,7 @@ import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.net.wifi.WifiManager
 import android.os.Build
-import org.tvheadend.tvhclient.repository.AppRepository
+import org.tvheadend.tvhclient.ui.common.interfaces.NetworkStatusInterface
 import timber.log.Timber
 import java.lang.reflect.InvocationTargetException
 
@@ -19,13 +19,13 @@ enum class NetworkStatus {
     NETWORK_IS_STILL_UP
 }
 
-class NetworkStatusReceiver(private val appRepository: AppRepository) : BroadcastReceiver() {
+class NetworkStatusReceiver(private val viewModel: NetworkStatusInterface) : BroadcastReceiver() {
 
     override fun onReceive(context: Context, intent: Intent) {
         val isAvailable = isNetworkAvailable(context) || isWifiApEnabled(context)
         Timber.d("Network availability is $isAvailable")
-        val networkIsAvailable = getNetworkStatus(appRepository.getNetworkStatus().value, isAvailable)
-        appRepository.setNetworkStatus(networkIsAvailable)
+        val networkIsAvailable = getNetworkStatus(viewModel.getNetworkStatus().value, isAvailable)
+        viewModel.setNetworkStatus(networkIsAvailable)
     }
 
     @Suppress("DEPRECATION")
