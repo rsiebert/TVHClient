@@ -13,7 +13,6 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import org.tvheadend.tvhclient.MainApplication
 import org.tvheadend.tvhclient.R
-import org.tvheadend.tvhclient.repository.AppRepository
 import org.tvheadend.tvhclient.ui.common.NetworkStatusReceiver
 import org.tvheadend.tvhclient.ui.common.SnackbarMessageReceiver
 import org.tvheadend.tvhclient.ui.common.interfaces.ToolbarInterface
@@ -26,10 +25,6 @@ import javax.inject.Inject
 
 open class BaseActivity(private val layoutId: Int = R.layout.misc_content_activity) : AppCompatActivity(), ToolbarInterface, LayoutControlInterface {
 
-    @Inject
-    lateinit var appContext: Context
-    @Inject
-    lateinit var appRepository: AppRepository
     @Inject
     lateinit var sharedPreferences: SharedPreferences
 
@@ -49,8 +44,8 @@ open class BaseActivity(private val layoutId: Int = R.layout.misc_content_activi
         MainApplication.component.inject(this)
 
         baseViewModel = ViewModelProviders.of(this).get(BaseViewModel::class.java)
-        snackbarMessageReceiver = SnackbarMessageReceiver(appRepository)
-        networkStatusReceiver = NetworkStatusReceiver(appRepository)
+        snackbarMessageReceiver = SnackbarMessageReceiver(baseViewModel)
+        networkStatusReceiver = NetworkStatusReceiver(baseViewModel)
     }
 
     public override fun onStart() {
