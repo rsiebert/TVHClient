@@ -4,12 +4,12 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.database.sqlite.SQLiteException
 import android.os.Environment
+import org.tvheadend.data.AppRepository
 import org.tvheadend.data.db.DatabaseHelperForMigration
 import org.tvheadend.data.entity.Connection
 import org.tvheadend.data.entity.ServerStatus
 import org.tvheadend.tvhclient.BuildConfig
 import org.tvheadend.tvhclient.R
-import org.tvheadend.tvhclient.repository.AppRepository
 import timber.log.Timber
 import java.util.*
 

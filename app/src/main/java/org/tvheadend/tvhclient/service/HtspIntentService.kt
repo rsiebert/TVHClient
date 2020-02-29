@@ -13,7 +13,7 @@ import org.tvheadend.data.entity.ServerStatus
 import org.tvheadend.htsp.*
 import org.tvheadend.tvhclient.MainApplication
 import org.tvheadend.tvhclient.R
-import org.tvheadend.tvhclient.repository.AppRepository
+import org.tvheadend.data.AppRepository
 import org.tvheadend.tvhclient.util.convertUrlToHashString
 import timber.log.Timber
 import java.io.*

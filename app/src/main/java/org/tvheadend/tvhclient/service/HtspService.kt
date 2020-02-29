@@ -15,11 +15,11 @@ import androidx.work.OneTimeWorkRequest
 import androidx.work.WorkManager
 import org.json.JSONException
 import org.json.JSONObject
+import org.tvheadend.data.AppRepository
 import org.tvheadend.data.entity.*
 import org.tvheadend.htsp.*
 import org.tvheadend.tvhclient.MainApplication
 import org.tvheadend.tvhclient.R
-import org.tvheadend.tvhclient.repository.AppRepository
 import org.tvheadend.tvhclient.ui.common.addNotificationScheduledRecordingStarts
 import org.tvheadend.tvhclient.ui.common.removeNotificationById
 import org.tvheadend.tvhclient.util.convertUrlToHashString
