@@ -5,16 +5,25 @@ import android.content.Context
 import com.android.billingclient.api.*
 import com.android.billingclient.api.BillingClient.SkuType
 import com.android.billingclient.api.Purchase.PurchasesResult
-import org.tvheadend.tvhclient.repository.AppRepository
+import org.tvheadend.data.AppRepository
+import org.tvheadend.tvhclient.MainApplication
 import timber.log.Timber
+import javax.inject.Inject
 
-class BillingManager(context: Context, private val billingUpdatesListener: BillingUpdatesListener, val appRepository: AppRepository) : PurchasesUpdatedListener {
+class BillingManager(private val billingUpdatesListener: BillingUpdatesListener) : PurchasesUpdatedListener {
 
-    private var billingClient: BillingClient = BillingClient.newBuilder(context).enablePendingPurchases().setListener(this).build()
+    @Inject
+    lateinit var context: Context
+    @Inject
+    lateinit var repository: AppRepository
+
+    private var billingClient: BillingClient
     private var isServiceConnected = false
     private var skuDetailsList = HashMap<String, SkuDetails>()
 
     init {
+        MainApplication.component.inject(this)
+        billingClient = BillingClient.newBuilder(context).enablePendingPurchases().setListener(this).build()
         startServiceConnection(Runnable { billingUpdatesListener.onBillingClientSetupFinished() })
     }
 
@@ -49,7 +58,7 @@ class BillingManager(context: Context, private val billingUpdatesListener: Billi
 
             if (purchase.sku == UNLOCKER) {
                 Timber.d("Activating purchased item $UNLOCKER")
-                appRepository.setIsUnlocked(true)
+                repository.setIsUnlocked(true)
             }
 
             // Acknowledge the purchase if it hasn't already been acknowledged.
