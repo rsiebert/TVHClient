@@ -20,7 +20,6 @@ import timber.log.Timber
 abstract class BasePlaybackActivity : AppCompatActivity() {
 
     lateinit var viewModel: ExternalPlayerViewModel
-    protected var isUnlocked: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         setTheme(getThemeId(this))
@@ -50,11 +49,6 @@ abstract class BasePlaybackActivity : AppCompatActivity() {
                 status.text = getString(R.string.starting_playback)
                 onTicketReceived()
             }
-        })
-
-        viewModel.isUnlocked.observe(this, Observer { unlocked ->
-            Timber.d("Received live data, unlocked changed to $unlocked")
-            isUnlocked = unlocked
         })
     }
 
