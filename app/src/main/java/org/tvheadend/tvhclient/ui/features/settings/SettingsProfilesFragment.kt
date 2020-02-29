@@ -23,10 +23,8 @@ class SettingsProfilesFragment : PreferenceFragmentCompat() {
         super.onActivityCreated(savedInstanceState)
         settingsViewModel = ViewModelProviders.of(activity as SettingsActivity).get(SettingsViewModel::class.java)
 
-        (activity as ToolbarInterface).let {
-            it.setTitle(getString(R.string.pref_profiles))
-            it.setSubtitle(settingsViewModel.connection.name ?: "")
-        }
+        val toolbarInterface = (activity as ToolbarInterface)
+        toolbarInterface.setTitle(getString(R.string.pref_profiles))
 
         htspPlaybackProfilesPreference = findPreference("htsp_playback_profiles")!!
         httpPlaybackProfilesPreference = findPreference("http_playback_profiles")!!
@@ -37,6 +35,10 @@ class SettingsProfilesFragment : PreferenceFragmentCompat() {
         addProfileValuesToListPreference(httpPlaybackProfilesPreference, settingsViewModel.getHttpProfiles(), settingsViewModel.currentServerStatus.httpPlaybackServerProfileId)
         addProfileValuesToListPreference(recordingProfilesPreference, settingsViewModel.getRecordingProfiles(), settingsViewModel.currentServerStatus.recordingServerProfileId)
         addProfileValuesToListPreference(castingProfilesPreference, settingsViewModel.getHttpProfiles(), settingsViewModel.currentServerStatus.castingServerProfileId)
+
+        settingsViewModel.activeConnectionLiveData.observe(viewLifecycleOwner, Observer { connection ->
+            toolbarInterface.setSubtitle(connection.name ?: "")
+        })
 
         settingsViewModel.isUnlockedLiveData.observe(viewLifecycleOwner, Observer {
             initProfileChangeListeners()

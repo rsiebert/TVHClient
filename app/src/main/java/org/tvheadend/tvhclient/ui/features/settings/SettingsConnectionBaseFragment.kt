@@ -76,38 +76,38 @@ abstract class SettingsConnectionBaseFragment : PreferenceFragmentCompat(), Back
     }
 
     private fun setPreferenceDefaultValues() {
-        val name = settingsViewModel.connection.name
+        val name = settingsViewModel.connectionToEdit.name
         namePreference.text = name
         namePreference.summary = if (name.isNullOrEmpty()) getString(R.string.pref_name_sum) else name
 
-        val serverUrl = settingsViewModel.connection.serverUrl
+        val serverUrl = settingsViewModel.connectionToEdit.serverUrl
         serverUrlPreference.text = serverUrl
         serverUrlPreference.summary = if (serverUrl.isNullOrEmpty()) getString(R.string.pref_server_url_sum) else serverUrl
 
-        val streamingUrl = settingsViewModel.connection.streamingUrl
+        val streamingUrl = settingsViewModel.connectionToEdit.streamingUrl
         streamingUrlPreference.text = streamingUrl
         streamingUrlPreference.summary = if (streamingUrl.isNullOrEmpty()) getString(R.string.pref_streaming_url_sum) else streamingUrl
 
-        val username = settingsViewModel.connection.username
+        val username = settingsViewModel.connectionToEdit.username
         usernamePreference.text = username
         usernamePreference.summary = if (username.isNullOrEmpty()) getString(R.string.pref_user_sum) else username
 
-        val password = settingsViewModel.connection.password
+        val password = settingsViewModel.connectionToEdit.password
         passwordPreference.text = password
         passwordPreference.summary = if (password.isNullOrEmpty()) getString(R.string.pref_pass_sum) else getString(R.string.pref_pass_set_sum)
 
-        activeEnabledPreference.isChecked = settingsViewModel.connection.isActive
-        wolEnabledPreference.isChecked = settingsViewModel.connection.isWolEnabled
+        activeEnabledPreference.isChecked = settingsViewModel.connectionToEdit.isActive
+        wolEnabledPreference.isChecked = settingsViewModel.connectionToEdit.isWolEnabled
 
-        if (!settingsViewModel.connection.isWolEnabled) {
-            val wolPort = settingsViewModel.connection.wolPort
-            val wolMacAddress = settingsViewModel.connection.wolMacAddress
+        if (!settingsViewModel.connectionToEdit.isWolEnabled) {
+            val wolPort = settingsViewModel.connectionToEdit.wolPort
+            val wolMacAddress = settingsViewModel.connectionToEdit.wolMacAddress
 
             wolMacAddressPreference.text = wolMacAddress
             wolMacAddressPreference.summary = if (wolMacAddress.isNullOrEmpty()) getString(R.string.pref_wol_address_sum) else wolMacAddress
             wolPortPreference.text = wolPort.toString()
             wolPortPreference.summary = getString(R.string.pref_wol_port_sum, wolPort)
-            wolUseBroadcastEnabled.isChecked = settingsViewModel.connection.isWolUseBroadcast
+            wolUseBroadcastEnabled.isChecked = settingsViewModel.connectionToEdit.isWolUseBroadcast
         }
     }
 
@@ -194,11 +194,11 @@ abstract class SettingsConnectionBaseFragment : PreferenceFragmentCompat(), Back
     private fun preferenceNameChanged(value: String) {
         val status = connectionValidator.isConnectionNameValid(value)
         if (status == ConnectionValidator.ValidationStatus.SUCCESS) {
-            settingsViewModel.connection.name = value
+            settingsViewModel.connectionToEdit.name = value
             namePreference.text = value
             namePreference.summary = if (value.isEmpty()) getString(R.string.pref_name_sum) else value
         } else {
-            namePreference.text = settingsViewModel.connection.name
+            namePreference.text = settingsViewModel.connectionToEdit.name
             context?.sendSnackbarMessage(getErrorDescription(status))
         }
     }
@@ -206,11 +206,11 @@ abstract class SettingsConnectionBaseFragment : PreferenceFragmentCompat(), Back
     private fun preferenceUrlChanged(value: String) {
         val status = connectionValidator.isConnectionUrlValid(value)
         if (status == ConnectionValidator.ValidationStatus.SUCCESS) {
-            settingsViewModel.connection.serverUrl = value
+            settingsViewModel.connectionToEdit.serverUrl = value
             serverUrlPreference.text = value
             serverUrlPreference.summary = if (value.isEmpty()) getString(R.string.pref_server_url_sum) else value
         } else {
-            serverUrlPreference.text = settingsViewModel.connection.serverUrl
+            serverUrlPreference.text = settingsViewModel.connectionToEdit.serverUrl
             context?.sendSnackbarMessage(getErrorDescription(status))
         }
     }
@@ -218,23 +218,23 @@ abstract class SettingsConnectionBaseFragment : PreferenceFragmentCompat(), Back
     private fun preferenceStreamingUrlChanged(value: String) {
         val status = connectionValidator.isConnectionUrlValid(value)
         if (status == ConnectionValidator.ValidationStatus.SUCCESS) {
-            settingsViewModel.connection.streamingUrl = value
+            settingsViewModel.connectionToEdit.streamingUrl = value
             streamingUrlPreference.text = value
             streamingUrlPreference.summary = if (value.isEmpty()) getString(R.string.pref_streaming_url_sum) else value
         } else {
-            streamingUrlPreference.text = settingsViewModel.connection.streamingUrl
+            streamingUrlPreference.text = settingsViewModel.connectionToEdit.streamingUrl
             context?.sendSnackbarMessage(getErrorDescription(status))
         }
     }
 
     private fun preferenceUsernameChanged(value: String) {
-        settingsViewModel.connection.username = value
+        settingsViewModel.connectionToEdit.username = value
         usernamePreference.text = value
         usernamePreference.summary = if (value.isEmpty()) getString(R.string.pref_user_sum) else value
     }
 
     private fun preferencePasswordChanged(value: String) {
-        settingsViewModel.connection.password = value
+        settingsViewModel.connectionToEdit.password = value
         passwordPreference.text = value
         passwordPreference.summary = if (value.isEmpty()) getString(R.string.pref_pass_sum) else getString(R.string.pref_pass_set_sum)
     }
@@ -243,25 +243,25 @@ abstract class SettingsConnectionBaseFragment : PreferenceFragmentCompat(), Back
         // When the connection was set as the new active
         // connection, an initial sync is required
         val isActive = java.lang.Boolean.valueOf(value)
-        if (!settingsViewModel.connection.isActive && isActive) {
-            settingsViewModel.connection.isSyncRequired = true
-            settingsViewModel.connection.lastUpdate = 0
+        if (!settingsViewModel.connectionToEdit.isActive && isActive) {
+            settingsViewModel.connectionToEdit.isSyncRequired = true
+            settingsViewModel.connectionToEdit.lastUpdate = 0
         }
-        settingsViewModel.connection.isActive = java.lang.Boolean.valueOf(value)
+        settingsViewModel.connectionToEdit.isActive = java.lang.Boolean.valueOf(value)
     }
 
     private fun preferenceWolEnabledChanged(value: String) {
-        settingsViewModel.connection.isWolEnabled = java.lang.Boolean.valueOf(value)
+        settingsViewModel.connectionToEdit.isWolEnabled = java.lang.Boolean.valueOf(value)
     }
 
     private fun preferenceWolMacAddressChanged(value: String) {
         val status = connectionValidator.isConnectionWolMacAddressValid(value)
         if (status == ConnectionValidator.ValidationStatus.SUCCESS) {
-            settingsViewModel.connection.wolMacAddress = value
+            settingsViewModel.connectionToEdit.wolMacAddress = value
             wolMacAddressPreference.text = value
             wolMacAddressPreference.summary = if (value.isEmpty()) getString(R.string.pref_wol_address_sum) else value
         } else {
-            wolMacAddressPreference.text = settingsViewModel.connection.wolMacAddress
+            wolMacAddressPreference.text = settingsViewModel.connectionToEdit.wolMacAddress
             context?.sendSnackbarMessage(getErrorDescription(status))
         }
     }
@@ -271,11 +271,11 @@ abstract class SettingsConnectionBaseFragment : PreferenceFragmentCompat(), Back
             val port = Integer.parseInt(value)
             val status = connectionValidator.isConnectionWolPortValid(port)
             if (status == ConnectionValidator.ValidationStatus.SUCCESS) {
-                settingsViewModel.connection.wolPort = port
+                settingsViewModel.connectionToEdit.wolPort = port
                 wolPortPreference.text = value
                 wolPortPreference.summary = getString(R.string.pref_wol_port_sum, port)
             } else {
-                wolPortPreference.text = settingsViewModel.connection.wolPort.toString()
+                wolPortPreference.text = settingsViewModel.connectionToEdit.wolPort.toString()
                 context?.sendSnackbarMessage(getErrorDescription(status))
             }
         } catch (e: NumberFormatException) {
@@ -284,6 +284,6 @@ abstract class SettingsConnectionBaseFragment : PreferenceFragmentCompat(), Back
     }
 
     private fun preferenceWolBroadcastChanged(value: String) {
-        settingsViewModel.connection.isWolUseBroadcast = java.lang.Boolean.valueOf(value)
+        settingsViewModel.connectionToEdit.isWolUseBroadcast = java.lang.Boolean.valueOf(value)
     }
 }

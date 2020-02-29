@@ -14,9 +14,7 @@ import org.tvheadend.data.entity.ServerStatus
 import org.tvheadend.data.source.MiscDataSource
 import org.tvheadend.tvhclient.MainApplication
 import org.tvheadend.tvhclient.R
-import org.tvheadend.tvhclient.service.HtspService
 import org.tvheadend.tvhclient.ui.common.interfaces.SnackbarMessageInterface
-import org.tvheadend.tvhclient.ui.features.startup.SplashActivity
 import org.tvheadend.tvhclient.util.livedata.Event
 import timber.log.Timber
 import javax.inject.Inject
@@ -24,50 +22,61 @@ import javax.inject.Inject
 class SettingsViewModel : ViewModel(), SnackbarMessageInterface {
 
     @Inject
-    lateinit var appContext: Context // TODO rename
+    lateinit var context: Context
     @Inject
-    lateinit var appRepository: AppRepository // TODO rename
+    lateinit var appRepository: AppRepository
     @Inject
     lateinit var sharedPreferences: SharedPreferences
 
-    var connection: Connection
+    private val defaultChannelSortOrder = context.resources.getString(R.string.pref_default_channel_sort_order)
+
+    /**
+     * The currently active connection. It is also used to hold the current
+     * data when a new connection is added or an existing is edited
+     */
+    var connectionToEdit: Connection
+
+    /**
+     * Contains the id of the connection that shall be edited otherwise -1.
+     */
     var connectionIdToBeEdited: Int = -1
 
     /**
      * The number of available connections as live data
      */
-    var connectionCount: LiveData<Int>  // TODO rename
+    var connectionCountLiveData: LiveData<Int>
 
     /**
      * Currently active connection as live data
      */
-    var connectionLiveData:  LiveData<Connection>
+    var activeConnectionLiveData: LiveData<Connection>
 
     /**
      * Contains the list of all available connections as live data
      */
-    var allConnectionsLiveData: LiveData<List<Connection>>
+    var connectionListLiveData: LiveData<List<Connection>>
 
     /**
-     *  The active server status. Contains some server information
-     *  and the selected playback and recording profile ids
+     *  Contains the currently active server information like the selected playback and recording profile ids or the name and disc space information.
+     *  This variable should be updated whenever the @{link currentServerStatusLiveData} variable changes to have the latest values
      */
     var currentServerStatus: ServerStatus
 
     /**
-     *  Live data status of the active server status. Observing this is required to get updated
-     *  about any changes to the profile name or ids e.g. in case the database has been cleared.
+     *  Live data status of the active server status. The activity need to observe it so that whenever the user changes
+     *  the profile or clears the database the {@see currentServerStatus} variable can be updated.
+     *  In this way the other setting screens will always have access to the latest values.
      */
     var currentServerStatusLiveData: LiveData<ServerStatus>
 
     /**
-     * Contains the live data information that the application is unlocked or not
+     * Contains the live data information if the application is unlocked or not.
      */
     var isUnlockedLiveData = appRepository.getIsUnlockedLiveData()
         private set
 
     /**
-     * Contains the information that the application is unlocked or not
+     * Contains the information if the application is unlocked or not
      */
     var isUnlocked = appRepository.getIsUnlocked()
         private set
@@ -86,10 +95,10 @@ class SettingsViewModel : ViewModel(), SnackbarMessageInterface {
 
     init {
         inject()
-        connection = appRepository.connectionData.activeItem
-        connectionCount = appRepository.connectionData.getLiveDataItemCount()
-        connectionLiveData = appRepository.connectionData.liveDataActiveItem
-        allConnectionsLiveData = appRepository.connectionData.getLiveDataItems()
+        connectionToEdit = appRepository.connectionData.activeItem
+        activeConnectionLiveData = appRepository.connectionData.liveDataActiveItem
+        connectionCountLiveData = appRepository.connectionData.getLiveDataItemCount()
+        connectionListLiveData = appRepository.connectionData.getLiveDataItems()
         currentServerStatus = appRepository.serverStatusData.activeItem
         currentServerStatusLiveData = appRepository.serverStatusData.liveDataActiveItem
     }
@@ -106,7 +115,6 @@ class SettingsViewModel : ViewModel(), SnackbarMessageInterface {
     }
 
     fun getChannelList(): List<Channel> {
-        val defaultChannelSortOrder = appContext.resources.getString(R.string.pref_default_channel_sort_order)
         val channelSortOrder = Integer.valueOf(sharedPreferences.getString("channel_sort_order", defaultChannelSortOrder)
                 ?: defaultChannelSortOrder)
         return appRepository.channelData.getChannels(channelSortOrder)
@@ -167,15 +175,11 @@ class SettingsViewModel : ViewModel(), SnackbarMessageInterface {
     }
 
     fun addConnection() {
-        appRepository.connectionData.addItem(connection)
+        appRepository.connectionData.addItem(connectionToEdit)
     }
 
     fun loadConnectionById(id: Int) {
-        connection = appRepository.connectionData.getItemById(id) ?: Connection()
-    }
-
-    fun createNewConnection() {
-        connection = Connection()
+        connectionToEdit = appRepository.connectionData.getItemById(id) ?: Connection()
     }
 
     fun updateConnection(connection: Connection) {
@@ -183,23 +187,11 @@ class SettingsViewModel : ViewModel(), SnackbarMessageInterface {
     }
 
     fun updateConnection() {
-        appRepository.connectionData.updateItem(connection)
+        appRepository.connectionData.updateItem(connectionToEdit)
     }
 
     fun removeConnection(connection: Connection) {
         appRepository.connectionData.removeItem(connection)
-    }
-
-    fun updateConnectionAndRestartApplication(context: Context?, isSyncRequired: Boolean = true) {
-        context?.let {
-            if (isSyncRequired) {
-                appRepository.connectionData.setSyncRequiredForActiveConnection()
-            }
-            context.stopService(Intent(context, HtspService::class.java))
-            val intent = Intent(context, SplashActivity::class.java)
-            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-            context.startActivity(intent)
-        }
     }
 
     override fun setSnackbarMessage(intent: Intent) {

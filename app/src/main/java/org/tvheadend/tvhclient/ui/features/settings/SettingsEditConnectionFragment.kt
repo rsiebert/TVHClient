@@ -12,12 +12,12 @@ class SettingsEditConnectionFragment : SettingsConnectionBaseFragment() {
 
         if (savedInstanceState == null) {
             settingsViewModel.loadConnectionById(settingsViewModel.connectionIdToBeEdited)
-            toolbarInterface.setSubtitle(settingsViewModel.connection.name ?: "")
+            toolbarInterface.setSubtitle(settingsViewModel.connectionToEdit.name ?: "")
         }
     }
 
     override fun save() {
-        val status = connectionValidator.isConnectionInputValid(settingsViewModel.connection)
+        val status = connectionValidator.isConnectionInputValid(settingsViewModel.connectionToEdit)
         if (status == ConnectionValidator.ValidationStatus.SUCCESS) {
             settingsViewModel.updateConnection()
             activity.let {

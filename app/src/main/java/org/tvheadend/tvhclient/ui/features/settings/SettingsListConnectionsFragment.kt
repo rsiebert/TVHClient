@@ -2,6 +2,7 @@ package org.tvheadend.tvhclient.ui.features.settings
 
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.view.*
 import androidx.fragment.app.Fragment
@@ -12,10 +13,12 @@ import com.afollestad.materialdialogs.MaterialDialog
 import kotlinx.android.synthetic.main.recyclerview_fragment.*
 import org.tvheadend.data.entity.Connection
 import org.tvheadend.tvhclient.R
+import org.tvheadend.tvhclient.service.HtspService
 import org.tvheadend.tvhclient.ui.common.WakeOnLanTask
 import org.tvheadend.tvhclient.ui.common.interfaces.BackPressedInterface
 import org.tvheadend.tvhclient.ui.common.interfaces.RecyclerViewClickInterface
 import org.tvheadend.tvhclient.ui.common.interfaces.ToolbarInterface
+import org.tvheadend.tvhclient.ui.features.startup.SplashActivity
 
 class SettingsListConnectionsFragment : Fragment(), BackPressedInterface, ActionMode.Callback, RecyclerViewClickInterface {
 
@@ -44,7 +47,7 @@ class SettingsListConnectionsFragment : Fragment(), BackPressedInterface, Action
         recycler_view.layoutManager = LinearLayoutManager(activity)
         recycler_view.adapter = recyclerViewAdapter
 
-        settingsViewModel.allConnectionsLiveData.observe(viewLifecycleOwner, Observer { connections ->
+        settingsViewModel.connectionListLiveData.observe(viewLifecycleOwner, Observer { connections ->
             if (connections != null) {
                 recyclerViewAdapter.addItems(connections)
                 context?.let {
@@ -55,8 +58,8 @@ class SettingsListConnectionsFragment : Fragment(), BackPressedInterface, Action
                 }
             }
         })
-        settingsViewModel.connectionLiveData.observe(viewLifecycleOwner, Observer { connection ->
-            connectionHasChanged = connection != null && connection.id != settingsViewModel.connection.id
+        settingsViewModel.activeConnectionLiveData.observe(viewLifecycleOwner, Observer { connection ->
+            connectionHasChanged = connection != null && connection.id != settingsViewModel.connectionToEdit.id
             activeConnectionId = connection?.id ?: -1
         })
 
@@ -165,7 +168,7 @@ class SettingsListConnectionsFragment : Fragment(), BackPressedInterface, Action
                     title(R.string.disconnect_from_server)
                     message(R.string.no_active_connection)
                     positiveButton(R.string.disconnect) {
-                        settingsViewModel.updateConnectionAndRestartApplication(context)
+                        updateConnectionAndRestartApplication()
                     }
                 }
             }
@@ -174,7 +177,7 @@ class SettingsListConnectionsFragment : Fragment(), BackPressedInterface, Action
                     title(R.string.connect_to_new_server)
                     message(R.string.connection_changed)
                     positiveButton(R.string.connect) {
-                        settingsViewModel.updateConnectionAndRestartApplication(context)
+                        updateConnectionAndRestartApplication()
                     }
                 }
             }
@@ -182,6 +185,13 @@ class SettingsListConnectionsFragment : Fragment(), BackPressedInterface, Action
                 (activity as RemoveFragmentFromBackstackInterface).removeFragmentFromBackstack()
             }
         }
+    }
+
+    private fun updateConnectionAndRestartApplication() {
+        context?.stopService(Intent(context, HtspService::class.java))
+        val intent = Intent(context, SplashActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        context?.startActivity(intent)
     }
 
     override fun onClick(view: View, position: Int) {
