@@ -1,5 +1,6 @@
 package org.tvheadend.data
 
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import org.tvheadend.data.source.*
 import javax.inject.Inject
@@ -21,12 +22,15 @@ constructor(
         override val inputData: InputDataSource
 ) : RepositoryInterface {
 
-    var isUnlockedLiveData = MutableLiveData<Boolean>()
-        private set
+    private var isUnlockedLiveData = MutableLiveData<Boolean>()
 
     init {
         isUnlockedLiveData.value = false
     }
+
+    fun getIsUnlockedLiveData(): LiveData<Boolean> = isUnlockedLiveData
+
+    fun getIsUnlocked(): Boolean = isUnlockedLiveData.value ?: false
 
     fun setIsUnlocked(unlocked: Boolean) {
         isUnlockedLiveData.value = unlocked
