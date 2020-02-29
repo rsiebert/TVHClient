@@ -63,7 +63,7 @@ class StatusFragment : BaseFragment() {
             }
         }
 
-        baseViewModel.connectionToServerAvailable.observe(this, Observer { connectionAvailable ->
+        baseViewModel.connectionToServerAvailableLiveData.observe(this, Observer { connectionAvailable ->
             Timber.d("Connection to server availability changed to $connectionAvailable")
             if (connectionAvailable) {
                 Timber.d("Starting additional information update handler")

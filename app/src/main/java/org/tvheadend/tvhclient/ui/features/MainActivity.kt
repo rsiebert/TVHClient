@@ -125,12 +125,12 @@ class MainActivity : BaseActivity(R.layout.main_activity), SearchView.OnQueryTex
         // Observe any changes in the network availability. If the app is in the background
         // and is resumed and the network is still available the lambda function is not
         // called and nothing will be done.
-        baseViewModel.networkStatus.observe(this, Observer { status ->
+        baseViewModel.networkStatusLiveData.observe(this, Observer { status ->
             Timber.d("Network status changed to $status")
             connectToServer(status)
         })
 
-        baseViewModel.connectionToServerAvailable.observe(this, Observer { isAvailable ->
+        baseViewModel.connectionToServerAvailableLiveData.observe(this, Observer { isAvailable ->
             Timber.d("Connection to server availability changed to $isAvailable")
             invalidateOptionsMenu()
             statusViewModel.stopDiskSpaceUpdateHandler()
@@ -152,14 +152,13 @@ class MainActivity : BaseActivity(R.layout.main_activity), SearchView.OnQueryTex
         statusViewModel.showLowStorageSpace.observe(this, Observer { show ->
             showOrCancelNotificationDiskSpaceIsLow(this, statusViewModel.availableStorageSpace, show)
         })
-        baseViewModel.showSnackbar.observe(this, Observer { event ->
+        baseViewModel.snackbarMessageLiveData.observe(this, Observer { event ->
             event.getContentIfNotHandled()?.let {
                 this.showSnackbarMessage(it)
             }
         })
-        baseViewModel.isUnlocked.observe(this, Observer { unlocked ->
+        baseViewModel.isUnlockedLiveData.observe(this, Observer { unlocked ->
             Timber.d("Received live data, unlocked changed to $unlocked")
-            isUnlocked = unlocked
             invalidateOptionsMenu()
             miniController.visibleOrGone(isUnlocked && sharedPreferences.getBoolean("casting_minicontroller_enabled", resources.getBoolean(R.bool.pref_default_casting_minicontroller_enabled)))
         })
@@ -328,11 +327,11 @@ class MainActivity : BaseActivity(R.layout.main_activity), SearchView.OnQueryTex
             NavigationDrawer.MENU_STATUS -> {
                 menu.findItem(R.id.media_route_menu_item)?.isVisible = false
                 menu.findItem(R.id.menu_search).isVisible = false
-                menu.findItem(R.id.menu_send_wake_on_lan_packet)?.isVisible = isUnlocked && baseViewModel.connection.isWolEnabled
+                menu.findItem(R.id.menu_send_wake_on_lan_packet)?.isVisible = baseViewModel.isUnlocked && baseViewModel.connection.isWolEnabled
             }
             else -> {
-                menu.findItem(R.id.media_route_menu_item)?.isVisible = isUnlocked
-                menu.findItem(R.id.menu_send_wake_on_lan_packet)?.isVisible = isUnlocked && baseViewModel.connection.isWolEnabled
+                menu.findItem(R.id.media_route_menu_item)?.isVisible = baseViewModel.isUnlocked
+                menu.findItem(R.id.menu_send_wake_on_lan_packet)?.isVisible = baseViewModel.isUnlocked && baseViewModel.connection.isWolEnabled
             }
         }
         return true
@@ -421,7 +420,7 @@ class MainActivity : BaseActivity(R.layout.main_activity), SearchView.OnQueryTex
                 Timber.d("Connection failed or closed")
                 sendSnackbarMessage(message)
                 Timber.d("Setting connection to server not available")
-                appRepository.setConnectionToServerAvailable(false)
+                baseViewModel.setConnectionToServerAvailable(false)
             }
             SyncStateReceiver.State.CONNECTING -> {
                 Timber.d("Connecting")
@@ -430,7 +429,7 @@ class MainActivity : BaseActivity(R.layout.main_activity), SearchView.OnQueryTex
             SyncStateReceiver.State.CONNECTED -> {
                 Timber.d("Connected")
                 sendSnackbarMessage(message)
-                appRepository.setConnectionToServerAvailable(true)
+                baseViewModel.setConnectionToServerAvailable(true)
             }
             SyncStateReceiver.State.SYNC_STARTED -> {
                 Timber.d("Sync started, showing progress bar")
@@ -472,7 +471,7 @@ class MainActivity : BaseActivity(R.layout.main_activity), SearchView.OnQueryTex
                     Timber.d("Disconnecting from server because network is down")
                     stopService(intent)
                     Timber.d("Setting connection to server not available")
-                    appRepository.setConnectionToServerAvailable(false)
+                    baseViewModel.setConnectionToServerAvailable(false)
                 }
                 else -> {
                     Timber.d("Network status is $status, doing nothing")

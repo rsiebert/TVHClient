@@ -12,7 +12,6 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import org.tvheadend.tvhclient.MainApplication
 import org.tvheadend.tvhclient.R
-import org.tvheadend.tvhclient.repository.AppRepository
 import org.tvheadend.tvhclient.ui.common.SnackbarMessageReceiver
 import org.tvheadend.tvhclient.ui.common.interfaces.BackPressedInterface
 import org.tvheadend.tvhclient.ui.common.interfaces.ToolbarInterface
@@ -24,12 +23,8 @@ import org.tvheadend.tvhclient.ui.features.unlocker.UnlockerFragment
 import org.tvheadend.tvhclient.util.extensions.showSnackbarMessage
 import org.tvheadend.tvhclient.util.getThemeId
 import timber.log.Timber
-import javax.inject.Inject
 
 class SettingsActivity : AppCompatActivity(), RemoveFragmentFromBackstackInterface, ToolbarInterface {
-
-    @Inject
-    lateinit var appRepository: AppRepository
 
     private lateinit var settingsViewModel: SettingsViewModel
     private lateinit var snackbarMessageReceiver: SnackbarMessageReceiver
@@ -44,7 +39,7 @@ class SettingsActivity : AppCompatActivity(), RemoveFragmentFromBackstackInterfa
         setSupportActionBar(findViewById(R.id.toolbar))
 
         settingsViewModel = ViewModelProviders.of(this).get(SettingsViewModel::class.java)
-        snackbarMessageReceiver = SnackbarMessageReceiver(appRepository)
+        snackbarMessageReceiver = SnackbarMessageReceiver(settingsViewModel)
 
         // If the user wants to go directly to a sub setting screen like the connections
         // and not the main settings screen the setting type can be passed here
@@ -63,11 +58,6 @@ class SettingsActivity : AppCompatActivity(), RemoveFragmentFromBackstackInterfa
             }
         })
 
-        settingsViewModel.isUnlockedLiveData.observe(this, Observer { unlocked ->
-            Timber.d("Received live data, unlocked changed to $unlocked")
-            settingsViewModel.isUnlocked = unlocked
-        })
-
         settingsViewModel.currentServerStatusLiveData.observe(this, Observer { serverStatus ->
             Timber.d("Received live data, server status has changed and is ${if (serverStatus != null) "" else "not"} available")
             if (serverStatus != null) {
@@ -75,7 +65,7 @@ class SettingsActivity : AppCompatActivity(), RemoveFragmentFromBackstackInterfa
             }
         })
 
-        settingsViewModel.showSnackbarLiveData.observe(this, Observer { event ->
+        settingsViewModel.snackbarMessageLiveData.observe(this, Observer { event ->
             event.getContentIfNotHandled()?.let {
                 this.showSnackbarMessage(it)
             }

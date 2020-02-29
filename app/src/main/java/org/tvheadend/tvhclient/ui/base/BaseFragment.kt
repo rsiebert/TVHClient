@@ -7,10 +7,10 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import org.tvheadend.data.AppRepository
 import org.tvheadend.data.entity.Connection
 import org.tvheadend.tvhclient.MainApplication
 import org.tvheadend.tvhclient.R
-import org.tvheadend.tvhclient.repository.AppRepository
 import org.tvheadend.tvhclient.ui.common.interfaces.ToolbarInterface
 import timber.log.Timber
 import javax.inject.Inject
@@ -39,12 +39,12 @@ abstract class BaseFragment : Fragment() {
         }
 
         baseViewModel = ViewModelProviders.of(activity as BaseActivity).get(BaseViewModel::class.java)
-        baseViewModel.connectionToServerAvailable.observe(viewLifecycleOwner, Observer { isAvailable ->
+        baseViewModel.connectionToServerAvailableLiveData.observe(viewLifecycleOwner, Observer { isAvailable ->
             Timber.d("Received live data, connection to server availability changed to $isAvailable")
             isConnectionToServerAvailable = isAvailable
         })
 
-        baseViewModel.isUnlocked.observe(viewLifecycleOwner, Observer { unlocked ->
+        baseViewModel.isUnlockedLiveData.observe(viewLifecycleOwner, Observer { unlocked ->
             Timber.d("Received live data, unlocked changed to $unlocked")
             isUnlocked = unlocked
         })

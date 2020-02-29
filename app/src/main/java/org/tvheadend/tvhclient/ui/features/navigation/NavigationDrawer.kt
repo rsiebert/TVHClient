@@ -51,7 +51,7 @@ class NavigationDrawer(private val activity: AppCompatActivity,
         createHeader()
         createMenu()
 
-        navigationViewModel.isUnlocked.observe(activity, Observer { result.removeItem(MENU_UNLOCKER.toLong()) })
+        navigationViewModel.isUnlockedLiveData.observe(activity, Observer { result.removeItem(MENU_UNLOCKER.toLong()) })
         navigationViewModel.connections.observe(activity, Observer { this.showConnectionsInDrawerHeader(it) })
 
         statusViewModel.channelCount.observe(activity, Observer { count -> result.updateBadge(MENU_CHANNELS.toLong(), StringHolder(count.toString())) })
