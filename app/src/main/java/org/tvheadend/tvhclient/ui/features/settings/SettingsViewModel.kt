@@ -6,6 +6,7 @@ import android.content.SharedPreferences
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import org.tvheadend.data.AppRepository
 import org.tvheadend.data.entity.Channel
 import org.tvheadend.data.entity.Connection
 import org.tvheadend.data.entity.ServerProfile
@@ -13,17 +14,19 @@ import org.tvheadend.data.entity.ServerStatus
 import org.tvheadend.data.source.MiscDataSource
 import org.tvheadend.tvhclient.MainApplication
 import org.tvheadend.tvhclient.R
-import org.tvheadend.tvhclient.repository.AppRepository
+import org.tvheadend.tvhclient.service.HtspService
+import org.tvheadend.tvhclient.ui.common.interfaces.SnackbarMessageInterface
+import org.tvheadend.tvhclient.ui.features.startup.SplashActivity
 import org.tvheadend.tvhclient.util.livedata.Event
 import timber.log.Timber
 import javax.inject.Inject
 
-class SettingsViewModel : ViewModel() {
+class SettingsViewModel : ViewModel(), SnackbarMessageInterface {
 
     @Inject
-    lateinit var appContext: Context
+    lateinit var appContext: Context // TODO rename
     @Inject
-    lateinit var appRepository: AppRepository
+    lateinit var appRepository: AppRepository // TODO rename
     @Inject
     lateinit var sharedPreferences: SharedPreferences
 
@@ -33,7 +36,7 @@ class SettingsViewModel : ViewModel() {
     /**
      * The number of available connections as live data
      */
-    var connectionCount: LiveData<Int>
+    var connectionCount: LiveData<Int>  // TODO rename
 
     /**
      * Currently active connection as live data
@@ -58,14 +61,28 @@ class SettingsViewModel : ViewModel() {
     var currentServerStatusLiveData: LiveData<ServerStatus>
 
     /**
-     * Used to monitor changes to the unlocked status. Required in case the user purchases the
-     * unlocker from the settings screen. The live data value is stored in the isUnlocked variable
+     * Contains the live data information that the application is unlocked or not
      */
-    var isUnlockedLiveData: LiveData<Boolean>
+    var isUnlockedLiveData = appRepository.getIsUnlockedLiveData()
+        private set
 
-    var isUnlocked = false
-    var showSnackbarLiveData: LiveData<Event<Intent>>
-    private val navigationMenuId = MutableLiveData<Event<String>>(Event("default"))
+    /**
+     * Contains the information that the application is unlocked or not
+     */
+    var isUnlocked = appRepository.getIsUnlocked()
+        private set
+
+    /**
+     * Contains a string with the name of the fragment that shall be shown
+     */
+    private val navigationMenuIdLiveData = MutableLiveData<Event<String>>(Event("default"))
+
+    /**
+     * Contains an intent with the snackbar message and other information.
+     * The value gets set by the {@link SnackbarMessageReceiver}
+     */
+    var snackbarMessageLiveData = MutableLiveData<Event<Intent>>()
+        private set
 
     init {
         inject()
@@ -75,19 +92,17 @@ class SettingsViewModel : ViewModel() {
         allConnectionsLiveData = appRepository.connectionData.getLiveDataItems()
         currentServerStatus = appRepository.serverStatusData.activeItem
         currentServerStatusLiveData = appRepository.serverStatusData.liveDataActiveItem
-        showSnackbarLiveData = appRepository.getSnackbarMessage()
-        isUnlockedLiveData = appRepository.getIsUnlockedLiveData()
     }
 
     private fun inject() {
         MainApplication.component.inject(this)
     }
 
-    fun getNavigationMenuId(): LiveData<Event<String>> = navigationMenuId
+    fun getNavigationMenuId(): LiveData<Event<String>> = navigationMenuIdLiveData
 
     fun setNavigationMenuId(id: String) {
         Timber.d("Received new navigation id $id")
-        navigationMenuId.value = Event(id)
+        navigationMenuIdLiveData.value = Event(id)
     }
 
     fun getChannelList(): List<Channel> {
@@ -175,7 +190,19 @@ class SettingsViewModel : ViewModel() {
         appRepository.connectionData.removeItem(connection)
     }
 
-    fun updateConnectionAndRestartApplication(context: Context?) {
-        appRepository.updateConnectionAndRestartApplication(context)
+    fun updateConnectionAndRestartApplication(context: Context?, isSyncRequired: Boolean = true) {
+        context?.let {
+            if (isSyncRequired) {
+                appRepository.connectionData.setSyncRequiredForActiveConnection()
+            }
+            context.stopService(Intent(context, HtspService::class.java))
+            val intent = Intent(context, SplashActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            context.startActivity(intent)
+        }
+    }
+
+    override fun setSnackbarMessage(intent: Intent) {
+        snackbarMessageLiveData.value = Event(intent)
     }
 }
