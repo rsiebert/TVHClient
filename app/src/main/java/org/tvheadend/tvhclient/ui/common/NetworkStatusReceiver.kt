@@ -24,7 +24,7 @@ class NetworkStatusReceiver(private val viewModel: NetworkStatusInterface) : Bro
     override fun onReceive(context: Context, intent: Intent) {
         val isAvailable = isNetworkAvailable(context) || isWifiApEnabled(context)
         Timber.d("Network availability is $isAvailable")
-        val networkIsAvailable = getNetworkStatus(viewModel.getNetworkStatus().value, isAvailable)
+        val networkIsAvailable = getNetworkStatus(viewModel.getNetworkStatus(), isAvailable)
         viewModel.setNetworkStatus(networkIsAvailable)
     }
 
