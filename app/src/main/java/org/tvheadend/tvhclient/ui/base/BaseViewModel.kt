@@ -27,7 +27,7 @@ open class BaseViewModel(application: Application) : AndroidViewModel(applicatio
     @Inject
     lateinit var sharedPreferences: SharedPreferences
 
-    var connectionToServerAvailableLiveData = MutableLiveData<Boolean>() // TODO rename
+    var connectionToServerAvailableLiveData = MutableLiveData<Boolean>()
         private set
 
     /**
@@ -45,19 +45,18 @@ open class BaseViewModel(application: Application) : AndroidViewModel(applicatio
         private set
 
     var connection: Connection
-    var connectionCount: LiveData<Int>  // TODO rename
     var connectionLiveData: LiveData<Connection>
 
     /**
      * Contains the live data information that the application is unlocked or not
      */
-    var isUnlockedLiveData = appRepository.getIsUnlockedLiveData()
+    var isUnlockedLiveData: LiveData<Boolean>
         private set
 
     /**
      * Contains the information that the application is unlocked or not
      */
-    var isUnlocked = appRepository.getIsUnlocked()
+    var isUnlocked = false
         private set
 
     var htspVersion: Int
@@ -71,14 +70,15 @@ open class BaseViewModel(application: Application) : AndroidViewModel(applicatio
 
     init {
         inject()
+        isUnlocked = appRepository.getIsUnlocked()
+        isUnlockedLiveData = appRepository.getIsUnlockedLiveData()
         connection = appRepository.connectionData.activeItem
         htspVersion = appRepository.serverStatusData.activeItem.htspVersion
 
-        networkStatusLiveData.value = NetworkStatus.NETWORK_UNKNOWN
+        connectionLiveData = appRepository.connectionData.liveDataActiveItem
         connectionToServerAvailableLiveData.value = false
 
-        connectionCount = appRepository.connectionData.getLiveDataItemCount()
-        connectionLiveData = appRepository.connectionData.liveDataActiveItem
+        networkStatusLiveData.value = NetworkStatus.NETWORK_UNKNOWN
     }
 
     private fun inject() {

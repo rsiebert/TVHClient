@@ -28,8 +28,6 @@ class SettingsViewModel : ViewModel(), SnackbarMessageInterface {
     @Inject
     lateinit var sharedPreferences: SharedPreferences
 
-    private val defaultChannelSortOrder = context.resources.getString(R.string.pref_default_channel_sort_order)
-
     /**
      * The currently active connection. It is also used to hold the current
      * data when a new connection is added or an existing is edited
@@ -72,13 +70,13 @@ class SettingsViewModel : ViewModel(), SnackbarMessageInterface {
     /**
      * Contains the live data information if the application is unlocked or not.
      */
-    var isUnlockedLiveData = appRepository.getIsUnlockedLiveData()
+    var isUnlockedLiveData: LiveData<Boolean>
         private set
 
     /**
      * Contains the information if the application is unlocked or not
      */
-    var isUnlocked = appRepository.getIsUnlocked()
+    var isUnlocked = false
         private set
 
     /**
@@ -95,6 +93,8 @@ class SettingsViewModel : ViewModel(), SnackbarMessageInterface {
 
     init {
         inject()
+        isUnlocked = appRepository.getIsUnlocked()
+        isUnlockedLiveData = appRepository.getIsUnlockedLiveData()
         connectionToEdit = appRepository.connectionData.activeItem
         activeConnectionLiveData = appRepository.connectionData.liveDataActiveItem
         connectionCountLiveData = appRepository.connectionData.getLiveDataItemCount()
@@ -115,6 +115,7 @@ class SettingsViewModel : ViewModel(), SnackbarMessageInterface {
     }
 
     fun getChannelList(): List<Channel> {
+        val defaultChannelSortOrder = context.resources.getString(R.string.pref_default_channel_sort_order)
         val channelSortOrder = Integer.valueOf(sharedPreferences.getString("channel_sort_order", defaultChannelSortOrder)
                 ?: defaultChannelSortOrder)
         return appRepository.channelData.getChannels(channelSortOrder)
