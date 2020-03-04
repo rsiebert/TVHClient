@@ -30,6 +30,7 @@ import org.tvheadend.tvhclient.service.SyncStateReceiver
 import org.tvheadend.tvhclient.ui.base.BaseActivity
 import org.tvheadend.tvhclient.ui.common.*
 import org.tvheadend.tvhclient.ui.common.interfaces.AddEditFragmentInterface
+import org.tvheadend.tvhclient.ui.common.interfaces.BackPressedInterface
 import org.tvheadend.tvhclient.ui.common.interfaces.SearchRequestInterface
 import org.tvheadend.tvhclient.ui.features.channels.ChannelListFragment
 import org.tvheadend.tvhclient.ui.features.dvr.recordings.RecordingDetailsFragment
@@ -504,6 +505,13 @@ class MainActivity : BaseActivity(R.layout.main_activity), SearchView.OnQueryTex
     }
 
     override fun onBackPressed() {
+
+        val fragment = supportFragmentManager.findFragmentById(R.id.main)
+        if (fragment is BackPressedInterface) {
+            fragment.onBackPressed()
+            return
+        }
+
         val navigationHistoryEnabled = PreferenceManager.getDefaultSharedPreferences(this).getBoolean("navigation_history_enabled", resources.getBoolean(R.bool.pref_default_navigation_history_enabled))
         if (!navigationHistoryEnabled) {
             // The following fragments can be called from the channel list fragment.
