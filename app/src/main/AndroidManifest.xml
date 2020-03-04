@@ -86,7 +86,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.base.BaseActivity" />
         <activity
             android:name=".ui.features.playback.internal.PlaybackActivity"
             android:autoRemoveFromRecents="true"

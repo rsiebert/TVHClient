@@ -5,6 +5,7 @@ import android.app.SearchManager
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.database.Cursor
@@ -16,8 +17,12 @@ import android.view.KeyEvent
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.widget.FrameLayout
+import android.widget.LinearLayout
 import android.widget.ProgressBar
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
+import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
@@ -27,11 +32,9 @@ import com.google.android.gms.cast.framework.*
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.service.HtspService
 import org.tvheadend.tvhclient.service.SyncStateReceiver
-import org.tvheadend.tvhclient.ui.base.BaseActivity
+import org.tvheadend.tvhclient.ui.base.BaseViewModel
 import org.tvheadend.tvhclient.ui.common.*
-import org.tvheadend.tvhclient.ui.common.interfaces.AddEditFragmentInterface
-import org.tvheadend.tvhclient.ui.common.interfaces.BackPressedInterface
-import org.tvheadend.tvhclient.ui.common.interfaces.SearchRequestInterface
+import org.tvheadend.tvhclient.ui.common.interfaces.*
 import org.tvheadend.tvhclient.ui.features.channels.ChannelListFragment
 import org.tvheadend.tvhclient.ui.features.dvr.recordings.RecordingDetailsFragment
 import org.tvheadend.tvhclient.ui.features.dvr.recordings.download.DownloadPermissionGrantedInterface
@@ -48,12 +51,19 @@ import org.tvheadend.tvhclient.ui.features.programs.ProgramDetailsFragment
 import org.tvheadend.tvhclient.ui.features.programs.ProgramListFragment
 import org.tvheadend.tvhclient.ui.features.settings.SettingsActivity
 import org.tvheadend.tvhclient.util.extensions.*
+import org.tvheadend.tvhclient.util.getThemeId
 import timber.log.Timber
 
-class MainActivity : BaseActivity(R.layout.main_activity), SearchView.OnQueryTextListener, SearchView.OnSuggestionListener, SyncStateReceiver.Listener, View.OnFocusChangeListener {
+class MainActivity : AppCompatActivity(), ToolbarInterface, LayoutControlInterface, SearchView.OnQueryTextListener, SearchView.OnSuggestionListener, SyncStateReceiver.Listener, View.OnFocusChangeListener {
 
+    private lateinit var sharedPreferences: SharedPreferences
     private lateinit var navigationViewModel: NavigationViewModel
     private lateinit var statusViewModel: StatusViewModel
+    private lateinit var baseViewModel: BaseViewModel
+
+    private lateinit var snackbarMessageReceiver: SnackbarMessageReceiver
+    private lateinit var networkStatusReceiver: NetworkStatusReceiver
+    private lateinit var toolbar: Toolbar
 
     private lateinit var syncProgress: ProgressBar
 
@@ -66,7 +76,7 @@ class MainActivity : BaseActivity(R.layout.main_activity), SearchView.OnQueryTex
     private var castStateListener: CastStateListener? = null
     private var castSessionManagerListener: SessionManagerListener<CastSession>? = null
 
-    lateinit var navigationDrawer: NavigationDrawer
+    private lateinit var navigationDrawer: NavigationDrawer
     private lateinit var syncStateReceiver: SyncStateReceiver
 
     private var isUnlocked: Boolean = false
@@ -78,10 +88,20 @@ class MainActivity : BaseActivity(R.layout.main_activity), SearchView.OnQueryTex
     private lateinit var miniController: View
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        setTheme(getThemeId(this))
         super.onCreate(savedInstanceState)
+        setContentView(R.layout.main_activity)
 
+        toolbar = findViewById(R.id.toolbar)
+        setSupportActionBar(toolbar)
+
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
+        baseViewModel = ViewModelProviders.of(this).get(BaseViewModel::class.java)
         navigationViewModel = ViewModelProviders.of(this).get(NavigationViewModel::class.java)
         statusViewModel = ViewModelProviders.of(this).get(StatusViewModel::class.java)
+
+        snackbarMessageReceiver = SnackbarMessageReceiver(baseViewModel)
+        networkStatusReceiver = NetworkStatusReceiver(baseViewModel)
 
         // Reset the search in case the main activity was called for the first
         // time or when we came back from another like the search activity
@@ -117,9 +137,6 @@ class MainActivity : BaseActivity(R.layout.main_activity), SearchView.OnQueryTex
                 navigationDrawer.enableDrawerIndicator(true)
 
                 invalidateOptionsMenu()
-                //if (fragment is ToolbarStatusInterface) {
-                //    fragment.showStatusInToolbar()
-                //}
             }
 
             navigationDrawer.handleMenuSelection(supportFragmentManager.findFragmentById(R.id.main))
@@ -197,14 +214,30 @@ class MainActivity : BaseActivity(R.layout.main_activity), SearchView.OnQueryTex
         super.onSaveInstanceState(out)
     }
 
-    override fun onStart() {
+    public override fun onStart() {
         super.onStart()
         LocalBroadcastManager.getInstance(this).registerReceiver(syncStateReceiver, IntentFilter(SyncStateReceiver.ACTION))
+        LocalBroadcastManager.getInstance(this).registerReceiver(snackbarMessageReceiver, IntentFilter(SnackbarMessageReceiver.SNACKBAR_ACTION))
+        registerReceiver(networkStatusReceiver, IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"))
     }
 
-    override fun onStop() {
+    public override fun onStop() {
         super.onStop()
         LocalBroadcastManager.getInstance(this).unregisterReceiver(syncStateReceiver)
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(snackbarMessageReceiver)
+        unregisterReceiver(networkStatusReceiver)
+    }
+
+    override fun attachBaseContext(context: Context) {
+        super.attachBaseContext(onAttach(context))
+    }
+
+    override fun setTitle(title: String) {
+        supportActionBar?.title = title
+    }
+
+    override fun setSubtitle(subtitle: String) {
+        supportActionBar?.subtitle = subtitle
     }
 
     override fun dispatchKeyEvent(event: KeyEvent): Boolean {
@@ -363,6 +396,10 @@ class MainActivity : BaseActivity(R.layout.main_activity), SearchView.OnQueryTex
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
+            android.R.id.home -> {
+                onBackPressed()
+                true
+            }
             R.id.menu_privacy_policy -> {
                 Timber.d("Showing privacy policy fragment")
                 val fragment: Fragment = PrivacyPolicyFragment()
@@ -567,5 +604,31 @@ class MainActivity : BaseActivity(R.layout.main_activity), SearchView.OnQueryTex
 
     override fun onFocusChange(v: View?, hasFocus: Boolean) {
         baseViewModel.searchViewHasFocus = hasFocus
+    }
+
+    override fun enableSingleScreenLayout() {
+        Timber.d("Dual pane is not active, hiding details layout")
+        val mainFrameLayout: FrameLayout = findViewById(R.id.main)
+        val detailsFrameLayout: FrameLayout? = findViewById(R.id.details)
+        detailsFrameLayout?.gone()
+        mainFrameLayout.layoutParams = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                1.0f)
+    }
+
+    override fun enableDualScreenLayout() {
+        Timber.d("Dual pane is active, showing details layout")
+        val mainFrameLayout: FrameLayout = findViewById(R.id.main)
+        val detailsFrameLayout: FrameLayout? = findViewById(R.id.details)
+        detailsFrameLayout?.visible()
+        mainFrameLayout.layoutParams = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                0.65f)
+    }
+
+    override fun forceSingleScreenLayout() {
+        enableSingleScreenLayout()
     }
 }

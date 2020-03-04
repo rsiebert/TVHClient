@@ -7,7 +7,6 @@ import org.tvheadend.tvhclient.di.module.ContextModule
 import org.tvheadend.tvhclient.di.module.SharedPreferencesModule
 import org.tvheadend.tvhclient.service.HtspIntentService
 import org.tvheadend.tvhclient.service.HtspService
-import org.tvheadend.tvhclient.ui.base.BaseActivity
 import org.tvheadend.tvhclient.ui.base.BaseFragment
 import org.tvheadend.tvhclient.ui.base.BaseViewModel
 import org.tvheadend.tvhclient.ui.features.settings.SettingsActivity
@@ -26,7 +25,6 @@ interface MainComponent {
     fun inject(mainApplication: MainApplication)
     fun inject(htspService: HtspService)
     fun inject(htspIntentService: HtspIntentService)
-    fun inject(baseActivity: BaseActivity)
     fun inject(settingsActivity: SettingsActivity)
     fun inject(baseFragment: BaseFragment)
     fun inject(baseViewModel: BaseViewModel)
