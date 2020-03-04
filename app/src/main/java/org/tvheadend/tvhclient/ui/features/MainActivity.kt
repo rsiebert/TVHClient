@@ -29,6 +29,7 @@ import org.tvheadend.tvhclient.service.HtspService
 import org.tvheadend.tvhclient.service.SyncStateReceiver
 import org.tvheadend.tvhclient.ui.base.BaseActivity
 import org.tvheadend.tvhclient.ui.common.*
+import org.tvheadend.tvhclient.ui.common.interfaces.AddEditFragmentInterface
 import org.tvheadend.tvhclient.ui.common.interfaces.SearchRequestInterface
 import org.tvheadend.tvhclient.ui.features.channels.ChannelListFragment
 import org.tvheadend.tvhclient.ui.features.dvr.recordings.RecordingDetailsFragment
@@ -64,7 +65,7 @@ class MainActivity : BaseActivity(R.layout.main_activity), SearchView.OnQueryTex
     private var castStateListener: CastStateListener? = null
     private var castSessionManagerListener: SessionManagerListener<CastSession>? = null
 
-    private lateinit var navigationDrawer: NavigationDrawer
+    lateinit var navigationDrawer: NavigationDrawer
     private lateinit var syncStateReceiver: SyncStateReceiver
 
     private var isUnlocked: Boolean = false
@@ -97,7 +98,29 @@ class MainActivity : BaseActivity(R.layout.main_activity), SearchView.OnQueryTex
 
         navigationDrawer = NavigationDrawer(this, savedInstanceState, toolbar, navigationViewModel, statusViewModel)
 
+        // Listen to changes in the back stack so certain action can be
+        // taken depending on the currently shown fragment type
         supportFragmentManager.addOnBackStackChangedListener {
+
+            val fragment = supportFragmentManager.findFragmentById(R.id.main)
+            if (fragment is AddEditFragmentInterface) {
+                // Hide the navigation menu and show an arrow icon to allow going back
+                navigationDrawer.enableDrawerIndicator(false)
+                supportActionBar?.setDisplayHomeAsUpEnabled(true)
+            } else {
+
+                // Show the navigation menu again and invalidate any menus and update the toolbar.
+                // When the previous fragment from the back stack is shown again the toolbar and
+                // menus are not updated automatically.
+                supportActionBar?.setDisplayHomeAsUpEnabled(false)
+                navigationDrawer.enableDrawerIndicator(true)
+
+                invalidateOptionsMenu()
+                //if (fragment is ToolbarStatusInterface) {
+                //    fragment.showStatusInToolbar()
+                //}
+            }
+
             navigationDrawer.handleMenuSelection(supportFragmentManager.findFragmentById(R.id.main))
         }
 
