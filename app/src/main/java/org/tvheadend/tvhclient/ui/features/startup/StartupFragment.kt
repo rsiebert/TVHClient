@@ -11,7 +11,7 @@ import com.afollestad.materialdialogs.MaterialDialog
 import kotlinx.android.synthetic.main.startup_fragment.*
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.ui.base.BaseViewModel
-import org.tvheadend.tvhclient.ui.common.interfaces.AddEditFragmentInterface
+import org.tvheadend.tvhclient.ui.common.interfaces.HideNavigationDrawerInterface
 import org.tvheadend.tvhclient.ui.common.interfaces.LayoutControlInterface
 import org.tvheadend.tvhclient.ui.common.interfaces.ToolbarInterface
 import org.tvheadend.tvhclient.ui.features.settings.SettingsActivity
@@ -19,7 +19,7 @@ import org.tvheadend.tvhclient.util.extensions.gone
 import org.tvheadend.tvhclient.util.extensions.visible
 import timber.log.Timber
 
-class StartupFragment : Fragment(), AddEditFragmentInterface {
+class StartupFragment : Fragment(), HideNavigationDrawerInterface {
 
     private lateinit var startupViewModel: StartupViewModel
     private lateinit var baseViewModel: BaseViewModel

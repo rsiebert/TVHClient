@@ -13,7 +13,7 @@ import androidx.preference.PreferenceManager
 import kotlinx.coroutines.*
 import org.tvheadend.tvhclient.BuildConfig
 import org.tvheadend.tvhclient.R
-import org.tvheadend.tvhclient.ui.common.interfaces.AddEditFragmentInterface
+import org.tvheadend.tvhclient.ui.common.interfaces.HideNavigationDrawerInterface
 import org.tvheadend.tvhclient.ui.common.interfaces.BackPressedInterface
 import org.tvheadend.tvhclient.ui.common.interfaces.LayoutControlInterface
 import org.tvheadend.tvhclient.ui.common.interfaces.ToolbarInterface
@@ -25,7 +25,7 @@ import java.io.BufferedReader
 import java.io.InputStream
 import java.io.InputStreamReader
 
-class ChangeLogFragment : Fragment(), BackPressedInterface, AddEditFragmentInterface {
+class ChangeLogFragment : Fragment(), BackPressedInterface, HideNavigationDrawerInterface {
 
     private val job = Job()
     private val scope = CoroutineScope(Dispatchers.IO + job)

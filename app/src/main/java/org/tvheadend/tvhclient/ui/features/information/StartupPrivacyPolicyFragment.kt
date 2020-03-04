@@ -8,12 +8,12 @@ import androidx.core.view.forEach
 import androidx.preference.PreferenceManager
 import com.afollestad.materialdialogs.MaterialDialog
 import org.tvheadend.tvhclient.R
-import org.tvheadend.tvhclient.ui.common.interfaces.AddEditFragmentInterface
+import org.tvheadend.tvhclient.ui.common.interfaces.HideNavigationDrawerInterface
 import org.tvheadend.tvhclient.ui.common.interfaces.BackPressedInterface
 import org.tvheadend.tvhclient.ui.common.interfaces.LayoutControlInterface
 import timber.log.Timber
 
-class StartupPrivacyPolicyFragment : WebViewFragment(), BackPressedInterface, AddEditFragmentInterface {
+class StartupPrivacyPolicyFragment : WebViewFragment(), BackPressedInterface, HideNavigationDrawerInterface {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)

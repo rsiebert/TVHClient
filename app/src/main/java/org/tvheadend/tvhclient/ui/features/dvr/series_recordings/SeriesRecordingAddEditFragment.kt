@@ -11,7 +11,7 @@ import org.tvheadend.data.entity.Channel
 import org.tvheadend.data.entity.ServerProfile
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.ui.base.BaseFragment
-import org.tvheadend.tvhclient.ui.common.interfaces.AddEditFragmentInterface
+import org.tvheadend.tvhclient.ui.common.interfaces.HideNavigationDrawerInterface
 import org.tvheadend.tvhclient.ui.common.interfaces.BackPressedInterface
 import org.tvheadend.tvhclient.ui.common.interfaces.LayoutControlInterface
 import org.tvheadend.tvhclient.ui.features.dvr.*
@@ -20,7 +20,7 @@ import org.tvheadend.tvhclient.util.extensions.sendSnackbarMessage
 import org.tvheadend.tvhclient.util.extensions.visibleOrGone
 import timber.log.Timber
 
-class SeriesRecordingAddEditFragment : BaseFragment(), BackPressedInterface, RecordingConfigSelectedListener, DatePickerFragment.Listener, TimePickerFragment.Listener, AddEditFragmentInterface {
+class SeriesRecordingAddEditFragment : BaseFragment(), BackPressedInterface, RecordingConfigSelectedListener, DatePickerFragment.Listener, TimePickerFragment.Listener, HideNavigationDrawerInterface {
 
     private lateinit var seriesRecordingViewModel: SeriesRecordingViewModel
     private lateinit var recordingProfilesList: Array<String>

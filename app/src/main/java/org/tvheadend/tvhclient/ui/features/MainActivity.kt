@@ -161,7 +161,7 @@ class MainActivity : AppCompatActivity(), ToolbarInterface, LayoutControlInterfa
         supportFragmentManager.addOnBackStackChangedListener {
 
             val fragment = supportFragmentManager.findFragmentById(R.id.main)
-            if (fragment is AddEditFragmentInterface) {
+            if (fragment is HideNavigationDrawerInterface) {
                 // Hide the navigation menu and show an arrow icon to allow going back
                 navigationDrawer.enableDrawerIndicator(false)
                 supportActionBar?.setDisplayHomeAsUpEnabled(true)
