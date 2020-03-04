@@ -147,6 +147,16 @@ class NavigationDrawer(private val activity: AppCompatActivity,
                 helpItem,
                 statusItem)
 
+        drawerBuilder.withOnDrawerNavigationListener(object : Drawer.OnDrawerNavigationListener {
+            override fun onNavigationClickListener(clickedView: View): Boolean {
+                // this method is only called if the Arrow icon is shown.
+                // The hamburger is automatically managed by the MaterialDrawer
+                activity.onBackPressed()
+                // return true if we have consumed the event
+                return true
+            }
+        })
+
         result = drawerBuilder.build()
     }
 
@@ -257,6 +267,10 @@ class NavigationDrawer(private val activity: AppCompatActivity,
             MENU_STATUS -> StatusFragment()
             else -> null
         }
+    }
+
+    fun enableDrawerIndicator(isEnabled: Boolean) {
+        result.actionBarDrawerToggle?.isDrawerIndicatorEnabled = isEnabled
     }
 
     companion object {
