@@ -39,7 +39,7 @@ class ProgramListFragment : BaseFragment(), RecyclerViewClickInterface, LastProg
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        programViewModel = ViewModelProviders.of(activity!!).get(ProgramViewModel::class.java)
+        programViewModel = ViewModelProviders.of(requireActivity()).get(ProgramViewModel::class.java)
 
         arguments?.let {
             programViewModel.channelId = it.getInt("channelId", 0)
@@ -118,7 +118,7 @@ class ProgramListFragment : BaseFragment(), RecyclerViewClickInterface, LastProg
         for (recording in recordings) {
             if (recording.eventId == programIdToBeEditedWhenBeingRecorded && programIdToBeEditedWhenBeingRecorded > 0) {
                 programIdToBeEditedWhenBeingRecorded = 0
-                editSelectedRecording(activity!!, recording.id)
+                editSelectedRecording(requireActivity(), recording.id)
                 break
             }
         }
@@ -202,7 +202,7 @@ class ProgramListFragment : BaseFragment(), RecyclerViewClickInterface, LastProg
                 R.id.menu_search_fileaffinity -> return@setOnMenuItemClickListener searchTitleOnFileAffinityWebsite(ctx, program.title)
                 R.id.menu_search_youtube -> return@setOnMenuItemClickListener searchTitleOnYoutube(ctx, program.title)
                 R.id.menu_search_google -> return@setOnMenuItemClickListener searchTitleOnGoogle(ctx, program.title)
-                R.id.menu_search_epg -> return@setOnMenuItemClickListener searchTitleInTheLocalDatabase(activity!!, baseViewModel, program.title, program.channelId)
+                R.id.menu_search_epg -> return@setOnMenuItemClickListener searchTitleInTheLocalDatabase(requireActivity(), baseViewModel, program.title, program.channelId)
 
                 R.id.menu_add_notification -> return@setOnMenuItemClickListener addNotificationProgramIsAboutToStart(ctx, program, programViewModel.getRecordingProfile())
                 else -> return@setOnMenuItemClickListener false

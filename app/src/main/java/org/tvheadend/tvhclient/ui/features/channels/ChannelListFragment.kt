@@ -52,8 +52,8 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickInterface, ChannelT
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        channelViewModel = ViewModelProviders.of(activity!!).get(ChannelViewModel::class.java)
-        programViewModel = ViewModelProviders.of(activity!!).get(ProgramViewModel::class.java)
+        channelViewModel = ViewModelProviders.of(requireActivity()).get(ChannelViewModel::class.java)
+        programViewModel = ViewModelProviders.of(requireActivity()).get(ProgramViewModel::class.java)
 
         arguments?.let {
             channelViewModel.selectedListPosition = it.getInt("listPosition")
@@ -131,7 +131,7 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickInterface, ChannelT
                     // in case the user has selected the record and edit menu item.
                     if (recording.eventId == programIdToBeEditedWhenBeingRecorded && programIdToBeEditedWhenBeingRecorded > 0) {
                         programIdToBeEditedWhenBeingRecorded = 0
-                        editSelectedRecording(activity!!, recording.id)
+                        editSelectedRecording(requireActivity(), recording.id)
                         break
                     }
                 }
@@ -346,7 +346,7 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickInterface, ChannelT
                 R.id.menu_search_fileaffinity -> return@setOnMenuItemClickListener searchTitleOnFileAffinityWebsite(ctx, channel.programTitle)
                 R.id.menu_search_youtube -> return@setOnMenuItemClickListener searchTitleOnYoutube(ctx, channel.programTitle)
                 R.id.menu_search_google -> return@setOnMenuItemClickListener searchTitleOnGoogle(ctx, channel.programTitle)
-                R.id.menu_search_epg -> return@setOnMenuItemClickListener searchTitleInTheLocalDatabase(activity!!, baseViewModel, channel.programTitle, channel.id)
+                R.id.menu_search_epg -> return@setOnMenuItemClickListener searchTitleInTheLocalDatabase(requireActivity(), baseViewModel, channel.programTitle, channel.id)
 
                 R.id.menu_add_notification -> return@setOnMenuItemClickListener addNotificationProgramIsAboutToStart(ctx, program, channelViewModel.getRecordingProfile())
                 else -> return@setOnMenuItemClickListener false

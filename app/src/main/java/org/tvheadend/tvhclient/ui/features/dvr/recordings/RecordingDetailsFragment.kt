@@ -32,7 +32,7 @@ class RecordingDetailsFragment : BaseFragment(), RecordingRemovedInterface, Down
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        recordingViewModel = ViewModelProviders.of(activity!!).get(RecordingViewModel::class.java)
+        recordingViewModel = ViewModelProviders.of(requireActivity()).get(RecordingViewModel::class.java)
 
         if (!isDualPane) {
             toolbarInterface.setTitle(getString(R.string.details))
@@ -91,7 +91,7 @@ class RecordingDetailsFragment : BaseFragment(), RecordingRemovedInterface, Down
             R.id.menu_stop_recording -> return showConfirmationToStopSelectedRecording(ctx, recording, this)
             R.id.menu_cancel_recording -> return showConfirmationToCancelSelectedRecording(ctx, recording, this)
             R.id.menu_remove_recording -> return showConfirmationToRemoveSelectedRecording(ctx, recording, this)
-            R.id.menu_edit_recording -> return editSelectedRecording(activity!!, recording.id)
+            R.id.menu_edit_recording -> return editSelectedRecording(requireActivity(), recording.id)
             R.id.menu_play -> return playSelectedRecording(ctx, recording.id, isUnlocked)
             R.id.menu_cast -> return castSelectedRecording(ctx, recording.id)
 
@@ -99,7 +99,7 @@ class RecordingDetailsFragment : BaseFragment(), RecordingRemovedInterface, Down
             R.id.menu_search_fileaffinity -> return searchTitleOnFileAffinityWebsite(ctx, recording.title)
             R.id.menu_search_youtube -> return searchTitleOnYoutube(ctx, recording.title)
             R.id.menu_search_google -> return searchTitleOnGoogle(ctx, recording.title)
-            R.id.menu_search_epg -> return searchTitleInTheLocalDatabase(activity!!, baseViewModel, recording.title)
+            R.id.menu_search_epg -> return searchTitleInTheLocalDatabase(requireActivity(), baseViewModel, recording.title)
 
             R.id.menu_download_recording -> {
                 DownloadRecordingManager(activity, connection, recording)

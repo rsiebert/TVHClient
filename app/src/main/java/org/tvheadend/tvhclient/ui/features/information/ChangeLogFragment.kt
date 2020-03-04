@@ -106,7 +106,7 @@ class ChangeLogFragment : Fragment(), BackPressedInterface {
                 return true
             }
             R.id.menu_show_full_changelog -> {
-                scope.launch { loadChangeLogContents(context!!, versionName, true) }
+                scope.launch { loadChangeLogContents(requireContext(), versionName, true) }
                 return true
             }
         }

@@ -11,6 +11,7 @@ import org.tvheadend.data.AppRepository
 import org.tvheadend.data.entity.Connection
 import org.tvheadend.tvhclient.MainApplication
 import org.tvheadend.tvhclient.R
+import org.tvheadend.tvhclient.ui.common.interfaces.LayoutControlInterface
 import org.tvheadend.tvhclient.ui.common.interfaces.ToolbarInterface
 import timber.log.Timber
 import javax.inject.Inject
@@ -38,7 +39,7 @@ abstract class BaseFragment : Fragment() {
             toolbarInterface = activity as ToolbarInterface
         }
 
-        baseViewModel = ViewModelProviders.of(activity as BaseActivity).get(BaseViewModel::class.java)
+        baseViewModel = ViewModelProviders.of(requireActivity()).get(BaseViewModel::class.java)
         baseViewModel.connectionToServerAvailableLiveData.observe(viewLifecycleOwner, Observer { isAvailable ->
             Timber.d("Received live data, connection to server availability changed to $isAvailable")
             isConnectionToServerAvailable = isAvailable

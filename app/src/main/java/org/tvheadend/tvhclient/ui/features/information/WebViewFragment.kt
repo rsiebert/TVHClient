@@ -9,8 +9,8 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import org.tvheadend.tvhclient.R
-import org.tvheadend.tvhclient.ui.base.LayoutControlInterface
 import org.tvheadend.tvhclient.ui.common.interfaces.FileContentsLoadedInterface
+import org.tvheadend.tvhclient.ui.common.interfaces.LayoutControlInterface
 import org.tvheadend.tvhclient.ui.common.interfaces.ToolbarInterface
 import org.tvheadend.tvhclient.ui.features.settings.RemoveFragmentFromBackstackInterface
 import org.tvheadend.tvhclient.util.extensions.gone
@@ -44,7 +44,7 @@ open class WebViewFragment : Fragment(), FileContentsLoadedInterface {
             (activity as LayoutControlInterface).forceSingleScreenLayout()
         }
 
-        fileContentLoader = FileContentLoader(context!!, "en", this)
+        fileContentLoader = FileContentLoader(requireContext(), "en", this)
         // Make the background transparent to remove flickering. This avoids seeing
         // the default theme background color before the stylesheets are loaded.
         webView?.setBackgroundColor(Color.argb(0, 0, 0, 0))

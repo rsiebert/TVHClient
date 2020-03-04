@@ -29,7 +29,7 @@ class StartupFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        startupViewModel = ViewModelProviders.of(activity!!).get(StartupViewModel::class.java)
+        startupViewModel = ViewModelProviders.of(requireActivity()).get(StartupViewModel::class.java)
 
         if (activity is ToolbarInterface) {
             (activity as ToolbarInterface).setTitle(getString(R.string.status))
