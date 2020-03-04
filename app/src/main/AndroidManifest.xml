@@ -56,7 +56,6 @@
                 <action android:name="android.intent.action.MAIN" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.features.dvr.RecordingAddEditActivity" />
         <activity
             android:name=".ui.features.MainActivity"
             android:launchMode="singleTask">
