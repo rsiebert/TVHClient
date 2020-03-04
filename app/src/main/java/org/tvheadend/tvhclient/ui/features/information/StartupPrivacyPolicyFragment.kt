@@ -4,21 +4,34 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
+import androidx.core.view.forEach
 import androidx.preference.PreferenceManager
 import com.afollestad.materialdialogs.MaterialDialog
 import org.tvheadend.tvhclient.R
+import org.tvheadend.tvhclient.ui.common.interfaces.AddEditFragmentInterface
 import org.tvheadend.tvhclient.ui.common.interfaces.BackPressedInterface
-import org.tvheadend.tvhclient.ui.features.settings.RemoveFragmentFromBackstackInterface
+import org.tvheadend.tvhclient.ui.common.interfaces.LayoutControlInterface
 import timber.log.Timber
 
-class StartupPrivacyPolicyFragment : WebViewFragment(), BackPressedInterface {
+class StartupPrivacyPolicyFragment : WebViewFragment(), BackPressedInterface, AddEditFragmentInterface {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         website = "privacy_policy"
 
+        if (activity is LayoutControlInterface) {
+            (activity as LayoutControlInterface).forceSingleScreenLayout()
+        }
+
         toolbarInterface.setTitle(getString(R.string.pref_privacy_policy))
         toolbarInterface.setSubtitle("")
+    }
+
+    override fun onPrepareOptionsMenu(menu: Menu) {
+        super.onPrepareOptionsMenu(menu)
+        menu.forEach { it.isVisible = false }
+        menu.findItem(R.id.menu_accept)?.isVisible = true
+        menu.findItem(R.id.menu_reject)?.isVisible = true
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -53,11 +66,7 @@ class StartupPrivacyPolicyFragment : WebViewFragment(), BackPressedInterface {
         editor.putBoolean("showPrivacyPolicy", false)
         editor.apply()
 
-        activity.let {
-            if (it is RemoveFragmentFromBackstackInterface) {
-                it.removeFragmentFromBackstack()
-            }
-        }
+        activity?.supportFragmentManager?.popBackStack()
     }
 
     override fun onBackPressed() {

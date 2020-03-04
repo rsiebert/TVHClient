@@ -29,6 +29,7 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.preference.PreferenceManager
 import com.google.android.gms.cast.framework.*
+import org.tvheadend.tvhclient.BuildConfig
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.service.HtspService
 import org.tvheadend.tvhclient.service.SyncStateReceiver
@@ -41,7 +42,9 @@ import org.tvheadend.tvhclient.ui.features.dvr.recordings.download.DownloadPermi
 import org.tvheadend.tvhclient.ui.features.dvr.series_recordings.SeriesRecordingDetailsFragment
 import org.tvheadend.tvhclient.ui.features.dvr.timer_recordings.TimerRecordingDetailsFragment
 import org.tvheadend.tvhclient.ui.features.epg.EpgFragment
+import org.tvheadend.tvhclient.ui.features.information.ChangeLogFragment
 import org.tvheadend.tvhclient.ui.features.information.PrivacyPolicyFragment
+import org.tvheadend.tvhclient.ui.features.information.StartupPrivacyPolicyFragment
 import org.tvheadend.tvhclient.ui.features.information.StatusViewModel
 import org.tvheadend.tvhclient.ui.features.navigation.NavigationDrawer
 import org.tvheadend.tvhclient.ui.features.navigation.NavigationDrawer.Companion.MENU_SETTINGS
@@ -50,6 +53,7 @@ import org.tvheadend.tvhclient.ui.features.playback.external.CastSessionManagerL
 import org.tvheadend.tvhclient.ui.features.programs.ProgramDetailsFragment
 import org.tvheadend.tvhclient.ui.features.programs.ProgramListFragment
 import org.tvheadend.tvhclient.ui.features.settings.SettingsActivity
+import org.tvheadend.tvhclient.ui.features.startup.StartupFragment
 import org.tvheadend.tvhclient.util.extensions.*
 import org.tvheadend.tvhclient.util.getThemeId
 import timber.log.Timber
@@ -106,8 +110,41 @@ class MainActivity : AppCompatActivity(), ToolbarInterface, LayoutControlInterfa
         // Reset the search in case the main activity was called for the first
         // time or when we came back from another like the search activity
         if (savedInstanceState == null) {
+            Timber.d("Saved instance is null")
             baseViewModel.clearSearchQuery()
             baseViewModel.removeFragmentWhenSearchIsDone = false
+
+            Timber.d("Showing startup fragment")
+            supportFragmentManager.beginTransaction()
+                    .replace(R.id.main, StartupFragment())
+                    .addToBackStack(null)
+                    .commit()
+
+            val showPrivacyPolicyRequired = sharedPreferences.getBoolean("showPrivacyPolicy", true)
+            Timber.d("Privacy policy needs to be displayed $showPrivacyPolicyRequired")
+            if (showPrivacyPolicyRequired) {
+                supportFragmentManager.beginTransaction()
+                        .replace(R.id.main, StartupPrivacyPolicyFragment())
+                        .addToBackStack(null)
+                        .commit()
+                supportActionBar?.setDisplayHomeAsUpEnabled(false)
+            }
+
+            // Show the full changelog if the changelog was never shown before (app version
+            // name is empty) or if it was already shown and the version name is the same as
+            // the one in the preferences. Otherwise show the changelog of the newest app version.
+            val versionName = sharedPreferences.getString("versionNameForChangelog", "") ?: ""
+            val showChangeLogRequired = BuildConfig.VERSION_NAME != versionName
+            Timber.d("Version name from prefs is $versionName, build version from gradle is ${BuildConfig.VERSION_NAME}")
+
+            if (true) {
+                Timber.d("Showing changelog")
+                supportActionBar?.setDisplayHomeAsUpEnabled(true)
+                supportFragmentManager.beginTransaction()
+                        .replace(R.id.main, ChangeLogFragment.newInstance(versionName, false))
+                        .addToBackStack(null)
+                        .commit()
+            }
         }
 
         syncProgress = findViewById(R.id.sync_progress)
@@ -163,6 +200,18 @@ class MainActivity : AppCompatActivity(), ToolbarInterface, LayoutControlInterfa
             Timber.d("Delayed search timer elapsed, starting search")
         }
 
+        if (savedInstanceState != null) startupIsCompleteObserveMainLiveData()
+
+        baseViewModel.startupCompleteLiveData.observe(this, Observer { isComplete ->
+            Timber.d("Received live data, startup complete changed to $isComplete")
+            if (isComplete) {
+                startupIsCompleteObserveMainLiveData()
+            }
+        })
+    }
+
+    private fun startupIsCompleteObserveMainLiveData() {
+        Timber.d("initializeObservers")
         // Observe any changes in the network availability. If the app is in the background
         // and is resumed and the network is still available the lambda function is not
         // called and nothing will be done.

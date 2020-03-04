@@ -3,22 +3,26 @@ package org.tvheadend.tvhclient.ui.features.startup
 import android.content.Intent
 import android.os.Bundle
 import android.view.*
+import androidx.core.view.forEach
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.afollestad.materialdialogs.MaterialDialog
 import kotlinx.android.synthetic.main.startup_fragment.*
 import org.tvheadend.tvhclient.R
+import org.tvheadend.tvhclient.ui.base.BaseViewModel
+import org.tvheadend.tvhclient.ui.common.interfaces.AddEditFragmentInterface
+import org.tvheadend.tvhclient.ui.common.interfaces.LayoutControlInterface
 import org.tvheadend.tvhclient.ui.common.interfaces.ToolbarInterface
-import org.tvheadend.tvhclient.ui.features.MainActivity
 import org.tvheadend.tvhclient.ui.features.settings.SettingsActivity
 import org.tvheadend.tvhclient.util.extensions.gone
 import org.tvheadend.tvhclient.util.extensions.visible
 import timber.log.Timber
 
-class StartupFragment : Fragment() {
+class StartupFragment : Fragment(), AddEditFragmentInterface {
 
     private lateinit var startupViewModel: StartupViewModel
+    private lateinit var baseViewModel: BaseViewModel
     private var loadingDone = false
     private var connectionCount: Int = 0
     private var isConnectionActive = false
@@ -30,6 +34,11 @@ class StartupFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         startupViewModel = ViewModelProviders.of(requireActivity()).get(StartupViewModel::class.java)
+        baseViewModel = ViewModelProviders.of(requireActivity()).get(BaseViewModel::class.java)
+
+        if (activity is LayoutControlInterface) {
+            (activity as LayoutControlInterface).forceSingleScreenLayout()
+        }
 
         if (activity is ToolbarInterface) {
             (activity as ToolbarInterface).setTitle(getString(R.string.status))
@@ -78,13 +87,17 @@ class StartupFragment : Fragment() {
 
             } else {
                 Timber.d("Connection is available and active, showing contents")
-                showContentScreen()
+                startup_status.gone()
+                add_connection_button.gone()
+                list_connections_button.gone()
+                baseViewModel.setStartupComplete(true)
             }
         }
     }
 
     override fun onPrepareOptionsMenu(menu: Menu) {
         super.onPrepareOptionsMenu(menu)
+        menu.forEach { it.isVisible = false }
         // Do not show the reconnect menu in case no connections are available or none is active
         menu.findItem(R.id.menu_settings)?.isVisible = loadingDone
         menu.findItem(R.id.menu_reconnect_to_server)?.isVisible = loadingDone && isConnectionActive
@@ -108,7 +121,7 @@ class StartupFragment : Fragment() {
                         message(R.string.restart_and_sync)
                         positiveButton(R.string.reconnect) {
                             Timber.d("Reconnect requested, stopping service and updating active connection to require a full sync")
-                            startupViewModel.updateConnectionAndRestartApplication(context)
+                            baseViewModel.updateConnectionAndRestartApplication(context)
                         }
                         negativeButton(R.string.cancel)
                     }
@@ -134,18 +147,5 @@ class StartupFragment : Fragment() {
     private fun showMainSettings() {
         val intent = Intent(context, SettingsActivity::class.java)
         startActivity(intent)
-    }
-
-    /**
-     * Shows the main fragment like the channel list when the startup is complete.
-     * Which fragment shall be shown is determined by a preference.
-     * The connection to the server will be established by the network status
-     * which is monitored in the base activity which the main activity inherits.
-     */
-    private fun showContentScreen() {
-        val intent = Intent(context, MainActivity::class.java)
-        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-        activity?.startActivity(intent)
-        activity?.finish()
     }
 }

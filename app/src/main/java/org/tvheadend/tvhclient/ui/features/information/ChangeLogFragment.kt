@@ -7,14 +7,16 @@ import android.os.Bundle
 import android.view.*
 import android.webkit.WebView
 import android.widget.ProgressBar
+import androidx.core.view.forEach
 import androidx.fragment.app.Fragment
 import androidx.preference.PreferenceManager
 import kotlinx.coroutines.*
 import org.tvheadend.tvhclient.BuildConfig
 import org.tvheadend.tvhclient.R
+import org.tvheadend.tvhclient.ui.common.interfaces.AddEditFragmentInterface
 import org.tvheadend.tvhclient.ui.common.interfaces.BackPressedInterface
+import org.tvheadend.tvhclient.ui.common.interfaces.LayoutControlInterface
 import org.tvheadend.tvhclient.ui.common.interfaces.ToolbarInterface
-import org.tvheadend.tvhclient.ui.features.settings.RemoveFragmentFromBackstackInterface
 import org.tvheadend.tvhclient.util.extensions.gone
 import org.tvheadend.tvhclient.util.extensions.visible
 import org.tvheadend.tvhclient.util.getThemeId
@@ -23,7 +25,7 @@ import java.io.BufferedReader
 import java.io.InputStream
 import java.io.InputStreamReader
 
-class ChangeLogFragment : Fragment(), BackPressedInterface {
+class ChangeLogFragment : Fragment(), BackPressedInterface, AddEditFragmentInterface {
 
     private val job = Job()
     private val scope = CoroutineScope(Dispatchers.IO + job)
@@ -46,8 +48,13 @@ class ChangeLogFragment : Fragment(), BackPressedInterface {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+
         if (activity is ToolbarInterface) {
             (activity as ToolbarInterface).setTitle(getString(R.string.pref_changelog))
+        }
+
+        if (activity is LayoutControlInterface) {
+            (activity as LayoutControlInterface).forceSingleScreenLayout()
         }
 
         showFullChangeLog = arguments?.getBoolean("showFullChangelog", true) ?: true
@@ -91,6 +98,7 @@ class ChangeLogFragment : Fragment(), BackPressedInterface {
     }
 
     override fun onPrepareOptionsMenu(menu: Menu) {
+        menu.forEach { it.isVisible = false }
         menu.findItem(R.id.menu_show_full_changelog)?.isVisible = !showFullChangeLog
     }
 
@@ -120,11 +128,7 @@ class ChangeLogFragment : Fragment(), BackPressedInterface {
         editor.putString("versionNameForChangelog", BuildConfig.VERSION_NAME)
         editor.apply()
 
-        activity.let {
-            if (it is RemoveFragmentFromBackstackInterface) {
-                it.removeFragmentFromBackstack()
-            }
-        }
+        activity?.supportFragmentManager?.popBackStack()
     }
 
     private fun onFileContentsLoaded(fileContent: String) {
