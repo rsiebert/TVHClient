@@ -2,6 +2,7 @@ package org.tvheadend.tvhclient.ui.features.dvr.timer_recordings
 
 import android.os.Bundle
 import android.view.*
+import androidx.core.view.forEach
 import androidx.lifecycle.ViewModelProviders
 import com.afollestad.materialdialogs.MaterialDialog
 import kotlinx.android.synthetic.main.timer_recording_add_edit_fragment.*
@@ -9,6 +10,8 @@ import org.tvheadend.data.entity.Channel
 import org.tvheadend.data.entity.ServerProfile
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.ui.base.BaseFragment
+import org.tvheadend.tvhclient.ui.base.LayoutControlInterface
+import org.tvheadend.tvhclient.ui.common.interfaces.AddEditFragmentInterface
 import org.tvheadend.tvhclient.ui.common.interfaces.BackPressedInterface
 import org.tvheadend.tvhclient.ui.features.dvr.*
 import org.tvheadend.tvhclient.util.extensions.afterTextChanged
@@ -16,7 +19,7 @@ import org.tvheadend.tvhclient.util.extensions.sendSnackbarMessage
 import org.tvheadend.tvhclient.util.extensions.visibleOrGone
 import timber.log.Timber
 
-class TimerRecordingAddEditFragment : BaseFragment(), BackPressedInterface, RecordingConfigSelectedListener, DatePickerFragment.Listener, TimePickerFragment.Listener {
+class TimerRecordingAddEditFragment : BaseFragment(), BackPressedInterface, RecordingConfigSelectedListener, DatePickerFragment.Listener, TimePickerFragment.Listener, AddEditFragmentInterface {
 
     private lateinit var timerRecordingViewModel: TimerRecordingViewModel
     private lateinit var recordingProfilesList: Array<String>
@@ -29,8 +32,11 @@ class TimerRecordingAddEditFragment : BaseFragment(), BackPressedInterface, Reco
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-
         timerRecordingViewModel = ViewModelProviders.of(activity!!).get(TimerRecordingViewModel::class.java)
+
+        if (activity is LayoutControlInterface) {
+           (activity as LayoutControlInterface).forceSingleScreenLayout()
+        }
 
         recordingProfilesList = timerRecordingViewModel.getRecordingProfileNames()
         profile = timerRecordingViewModel.getRecordingProfile()
@@ -126,6 +132,13 @@ class TimerRecordingAddEditFragment : BaseFragment(), BackPressedInterface, Reco
         stop_time.isEnabled = checked
     }
 
+    override fun onPrepareOptionsMenu(menu: Menu) {
+        super.onPrepareOptionsMenu(menu)
+        menu.forEach { it.isVisible = false }
+        menu.findItem(R.id.menu_save)?.isVisible = true
+        menu.findItem(R.id.menu_cancel)?.isVisible = true
+    }
+
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
         inflater.inflate(R.menu.save_cancel_options_menu, menu)
@@ -171,16 +184,25 @@ class TimerRecordingAddEditFragment : BaseFragment(), BackPressedInterface, Reco
             intent.action = "addTimerecEntry"
         }
         activity?.startService(intent)
-        activity?.finish()
+        //activity?.finish()
+        activity?.supportFragmentManager?.popBackStack()
     }
 
     private fun cancel() {
+        Timber.d("cancel")
         // Show confirmation dialog to cancel
         context?.let {
             MaterialDialog(it).show {
                 message(R.string.cancel_add_recording)
-                positiveButton(R.string.discard) { activity?.finish() }
-                negativeButton(R.string.cancel) { cancel() }
+                positiveButton(R.string.discard) {
+                    //activity?.finish()
+                    Timber.d("discarding popping back stack")
+                    activity?.supportFragmentManager?.popBackStack()
+                }
+                negativeButton(R.string.cancel) {
+                    Timber.d("dismissing dialog")
+                    dismiss()
+                }
             }
         }
     }
@@ -233,6 +255,17 @@ class TimerRecordingAddEditFragment : BaseFragment(), BackPressedInterface, Reco
     }
 
     override fun onBackPressed() {
+        Timber.d("onBackPressed")
         cancel()
+    }
+
+    companion object {
+        fun newInstance(id: String = ""): TimerRecordingAddEditFragment {
+            val f = TimerRecordingAddEditFragment()
+            if (id.isNotEmpty()) {
+                f.arguments = Bundle().also { it.putString("id", id) }
+            }
+            return f
+        }
     }
 }

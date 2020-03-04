@@ -2,6 +2,7 @@ package org.tvheadend.tvhclient.ui.features.dvr.series_recordings
 
 import android.os.Bundle
 import android.view.*
+import androidx.core.view.forEach
 import androidx.lifecycle.ViewModelProviders
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.list.listItemsSingleChoice
@@ -10,6 +11,8 @@ import org.tvheadend.data.entity.Channel
 import org.tvheadend.data.entity.ServerProfile
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.ui.base.BaseFragment
+import org.tvheadend.tvhclient.ui.base.LayoutControlInterface
+import org.tvheadend.tvhclient.ui.common.interfaces.AddEditFragmentInterface
 import org.tvheadend.tvhclient.ui.common.interfaces.BackPressedInterface
 import org.tvheadend.tvhclient.ui.features.dvr.*
 import org.tvheadend.tvhclient.util.extensions.afterTextChanged
@@ -17,7 +20,7 @@ import org.tvheadend.tvhclient.util.extensions.sendSnackbarMessage
 import org.tvheadend.tvhclient.util.extensions.visibleOrGone
 import timber.log.Timber
 
-class SeriesRecordingAddEditFragment : BaseFragment(), BackPressedInterface, RecordingConfigSelectedListener, DatePickerFragment.Listener, TimePickerFragment.Listener {
+class SeriesRecordingAddEditFragment : BaseFragment(), BackPressedInterface, RecordingConfigSelectedListener, DatePickerFragment.Listener, TimePickerFragment.Listener, AddEditFragmentInterface {
 
     private lateinit var seriesRecordingViewModel: SeriesRecordingViewModel
     private lateinit var recordingProfilesList: Array<String>
@@ -29,8 +32,11 @@ class SeriesRecordingAddEditFragment : BaseFragment(), BackPressedInterface, Rec
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-
         seriesRecordingViewModel = ViewModelProviders.of(activity!!).get(SeriesRecordingViewModel::class.java)
+
+        if (activity is LayoutControlInterface) {
+            (activity as LayoutControlInterface).forceSingleScreenLayout()
+        }
 
         recordingProfilesList = seriesRecordingViewModel.getRecordingProfileNames()
         profile = seriesRecordingViewModel.getRecordingProfile()
@@ -169,6 +175,13 @@ class SeriesRecordingAddEditFragment : BaseFragment(), BackPressedInterface, Rec
         start_window_time.isEnabled = checked
     }
 
+    override fun onPrepareOptionsMenu(menu: Menu) {
+        super.onPrepareOptionsMenu(menu)
+        menu.forEach { it.isVisible = false }
+        menu.findItem(R.id.menu_save)?.isVisible = true
+        menu.findItem(R.id.menu_cancel)?.isVisible = true
+    }
+
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
         inflater.inflate(R.menu.save_cancel_options_menu, menu)
@@ -226,7 +239,7 @@ class SeriesRecordingAddEditFragment : BaseFragment(), BackPressedInterface, Rec
             intent.action = "addAutorecEntry"
         }
         activity?.startService(intent)
-        activity?.finish()
+        activity?.supportFragmentManager?.popBackStack()
     }
 
     /**
@@ -238,8 +251,8 @@ class SeriesRecordingAddEditFragment : BaseFragment(), BackPressedInterface, Rec
         context?.let {
             MaterialDialog(it).show {
                 message(R.string.cancel_add_recording)
-                positiveButton(R.string.discard) { activity?.finish() }
-                negativeButton(R.string.cancel) { cancel() }
+                positiveButton(R.string.discard) { activity?.supportFragmentManager?.popBackStack() }
+                negativeButton(R.string.cancel) { dismiss() }
             }
         }
     }
@@ -309,5 +322,15 @@ class SeriesRecordingAddEditFragment : BaseFragment(), BackPressedInterface, Rec
 
     override fun onBackPressed() {
         cancel()
+    }
+
+    companion object {
+        fun newInstance(id: String = ""): SeriesRecordingAddEditFragment {
+            val f = SeriesRecordingAddEditFragment()
+            if (id.isNotEmpty()) {
+                f.arguments = Bundle().also { it.putString("id", id) }
+            }
+            return f
+        }
     }
 }
