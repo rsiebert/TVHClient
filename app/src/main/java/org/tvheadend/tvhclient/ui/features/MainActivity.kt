@@ -137,7 +137,7 @@ class MainActivity : AppCompatActivity(), ToolbarInterface, LayoutControlInterfa
             val showChangeLogRequired = BuildConfig.VERSION_NAME != versionName
             Timber.d("Version name from prefs is $versionName, build version from gradle is ${BuildConfig.VERSION_NAME}")
 
-            if (true) {
+            if (showChangeLogRequired) {
                 Timber.d("Showing changelog")
                 supportActionBar?.setDisplayHomeAsUpEnabled(true)
                 supportFragmentManager.beginTransaction()
