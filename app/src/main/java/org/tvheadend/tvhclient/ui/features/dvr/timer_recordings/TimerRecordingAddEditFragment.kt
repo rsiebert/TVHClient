@@ -48,6 +48,7 @@ class TimerRecordingAddEditFragment : BaseFragment(), BackPressedInterface, Reco
 
         updateUI()
 
+        toolbarInterface.setSubtitle("")
         toolbarInterface.setTitle(if (timerRecordingViewModel.recording.id.isNotEmpty())
             getString(R.string.edit_recording)
         else
