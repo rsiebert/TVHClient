@@ -1,7 +1,9 @@
 $ 2.4.0
   % VERSION 2.4.0
-  _ 28.02.2020
-    * Some internal improvements
+  _ 04.03.2020
+    * Removed the white screen flickering during startup
+    * Added episode information to the recording screens
+    * Many internal improvements
 $ 2.3.6
   % VERSION 2.3.6
   _ 11.02.2020
