@@ -11,7 +11,6 @@ import org.tvheadend.tvhclient.ui.base.BaseFragment
 import org.tvheadend.tvhclient.ui.base.BaseViewModel
 import org.tvheadend.tvhclient.ui.features.settings.SettingsActivity
 import org.tvheadend.tvhclient.ui.features.settings.SettingsViewModel
-import org.tvheadend.tvhclient.ui.features.startup.StartupActivity
 import org.tvheadend.tvhclient.ui.features.startup.StartupViewModel
 import org.tvheadend.tvhclient.util.billing.BillingManager
 
@@ -29,22 +28,6 @@ interface MainComponent {
     fun inject(baseFragment: BaseFragment)
     fun inject(baseViewModel: BaseViewModel)
     fun inject(settingsViewModel: SettingsViewModel)
-    fun inject(startupActivity: StartupActivity)
     fun inject(startupViewModel: StartupViewModel)
     fun inject(billingManager: BillingManager)
-
-/*
-    @Component.Builder
-    interface Builder {
-
-        fun build(): MainApplicationComponent
-
-        fun sharedPreferencesModule(sharedPreferencesModule: SharedPreferencesModule): Builder
-
-        fun repositoryModule(repositoryModule: RepositoryModule): Builder
-
-        fun contextModule(contextModule: ContextModule): Builder
-    }
-
- */
 }
