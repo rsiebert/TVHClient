@@ -27,6 +27,9 @@ open class BaseViewModel(application: Application) : AndroidViewModel(applicatio
     @Inject
     lateinit var sharedPreferences: SharedPreferences
 
+    var startupCompleteLiveData = MutableLiveData<Boolean>()
+        private set
+
     var connectionToServerAvailableLiveData = MutableLiveData<Boolean>()
         private set
 
@@ -70,6 +73,8 @@ open class BaseViewModel(application: Application) : AndroidViewModel(applicatio
 
     init {
         inject()
+        startupCompleteLiveData.value = false
+
         isUnlocked = appRepository.getIsUnlocked()
         isUnlockedLiveData = appRepository.getIsUnlockedLiveData()
         connection = appRepository.connectionData.activeItem
@@ -117,5 +122,9 @@ open class BaseViewModel(application: Application) : AndroidViewModel(applicatio
 
     fun setConnectionToServerAvailable(available: Boolean) {
         connectionToServerAvailableLiveData.value = available
+    }
+
+    fun setStartupComplete(isComplete: Boolean) {
+        startupCompleteLiveData.value = isComplete
     }
 }
