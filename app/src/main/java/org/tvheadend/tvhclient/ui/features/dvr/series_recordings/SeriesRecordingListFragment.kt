@@ -16,6 +16,7 @@ import org.tvheadend.tvhclient.ui.base.BaseFragment
 import org.tvheadend.tvhclient.ui.common.*
 import org.tvheadend.tvhclient.ui.common.interfaces.RecyclerViewClickInterface
 import org.tvheadend.tvhclient.ui.common.interfaces.SearchRequestInterface
+import org.tvheadend.tvhclient.ui.common.interfaces.ToolbarStatusInterface
 import org.tvheadend.tvhclient.util.extensions.gone
 import org.tvheadend.tvhclient.util.extensions.visible
 import org.tvheadend.tvhclient.util.extensions.visibleOrGone
@@ -88,7 +89,7 @@ class SeriesRecordingListFragment : BaseFragment(), RecyclerViewClickInterface, 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         val ctx = context ?: return super.onOptionsItemSelected(item)
         return when (item.itemId) {
-            R.id.menu_add_recording -> addNewSeriesRecording(ctx)
+            R.id.menu_add_recording -> return addNewSeriesRecording(activity!!)
             R.id.menu_remove_all_recordings -> showConfirmationToRemoveAllSeriesRecordings(ctx, CopyOnWriteArrayList(recyclerViewAdapter.items))
             else -> super.onOptionsItemSelected(item)
         }
@@ -146,7 +147,7 @@ class SeriesRecordingListFragment : BaseFragment(), RecyclerViewClickInterface, 
                         it.commit()
                     }
                 }
-            } else if (seriesRecordingViewModel.currentId.value != recording.id){
+            } else if (seriesRecordingViewModel.currentId.value != recording.id) {
                 seriesRecordingViewModel.currentId.value = recording.id
             }
         }
@@ -167,7 +168,7 @@ class SeriesRecordingListFragment : BaseFragment(), RecyclerViewClickInterface, 
 
         popupMenu.setOnMenuItemClickListener { item ->
             when (item.itemId) {
-                R.id.menu_edit_recording -> return@setOnMenuItemClickListener editSelectedSeriesRecording(ctx, seriesRecording.id)
+                R.id.menu_edit_recording -> return@setOnMenuItemClickListener editSelectedSeriesRecording(activity!!, seriesRecording.id)
                 R.id.menu_remove_recording -> return@setOnMenuItemClickListener showConfirmationToRemoveSelectedSeriesRecording(ctx, seriesRecording, null)
                 R.id.menu_disable_recording -> return@setOnMenuItemClickListener enableSeriesRecording(seriesRecording, false)
                 R.id.menu_enable_recording -> return@setOnMenuItemClickListener enableSeriesRecording(seriesRecording, true)

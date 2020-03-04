@@ -83,7 +83,7 @@ class SeriesRecordingDetailsFragment : BaseFragment(), RecordingRemovedInterface
         val recording = this.recording ?: return super.onOptionsItemSelected(item)
 
         return when (item.itemId) {
-            R.id.menu_edit_recording -> return editSelectedSeriesRecording(ctx, recording.id)
+            R.id.menu_edit_recording -> editSelectedSeriesRecording(activity!!, recording.id)
             R.id.menu_remove_recording -> showConfirmationToRemoveSelectedSeriesRecording(ctx, recording, this)
 
             R.id.menu_search_imdb -> return searchTitleOnImdbWebsite(ctx, recording.title)

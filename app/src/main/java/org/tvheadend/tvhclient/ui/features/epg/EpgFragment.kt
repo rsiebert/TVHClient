@@ -1,6 +1,5 @@
 package org.tvheadend.tvhclient.ui.features.epg
 
-import android.content.Intent
 import android.os.Bundle
 import android.util.DisplayMetrics
 import android.view.*
@@ -25,7 +24,6 @@ import org.tvheadend.tvhclient.ui.common.interfaces.ChannelTagIdsSelectedInterfa
 import org.tvheadend.tvhclient.ui.common.interfaces.ChannelTimeSelectedInterface
 import org.tvheadend.tvhclient.ui.common.interfaces.RecyclerViewClickInterface
 import org.tvheadend.tvhclient.ui.common.interfaces.SearchRequestInterface
-import org.tvheadend.tvhclient.ui.features.dvr.RecordingAddEditActivity
 import org.tvheadend.tvhclient.util.extensions.gone
 import org.tvheadend.tvhclient.util.extensions.visible
 import timber.log.Timber
@@ -156,10 +154,7 @@ class EpgFragment : BaseFragment(), EpgScrollInterface, RecyclerViewClickInterfa
                     // in case the user has selected the record and edit menu item.
                     if (recording.eventId == programIdToBeEditedWhenBeingRecorded && programIdToBeEditedWhenBeingRecorded > 0) {
                         programIdToBeEditedWhenBeingRecorded = 0
-                        val intent = Intent(activity, RecordingAddEditActivity::class.java)
-                        intent.putExtra("id", recording.id)
-                        intent.putExtra("type", "recording")
-                        activity?.startActivity(intent)
+                        editSelectedRecording(activity!!, recording.id)
                         break
                     }
                 }

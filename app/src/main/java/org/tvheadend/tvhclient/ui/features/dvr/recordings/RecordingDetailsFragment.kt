@@ -91,7 +91,7 @@ class RecordingDetailsFragment : BaseFragment(), RecordingRemovedInterface, Down
             R.id.menu_stop_recording -> return showConfirmationToStopSelectedRecording(ctx, recording, this)
             R.id.menu_cancel_recording -> return showConfirmationToCancelSelectedRecording(ctx, recording, this)
             R.id.menu_remove_recording -> return showConfirmationToRemoveSelectedRecording(ctx, recording, this)
-            R.id.menu_edit_recording -> return editSelectedRecording(ctx, recording.id)
+            R.id.menu_edit_recording -> return editSelectedRecording(activity!!, recording.id)
             R.id.menu_play -> return playSelectedRecording(ctx, recording.id, isUnlocked)
             R.id.menu_cast -> return castSelectedRecording(ctx, recording.id)
 

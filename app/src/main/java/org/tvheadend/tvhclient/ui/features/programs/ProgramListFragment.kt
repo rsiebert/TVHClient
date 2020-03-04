@@ -18,7 +18,6 @@ import org.tvheadend.tvhclient.ui.base.BaseFragment
 import org.tvheadend.tvhclient.ui.common.*
 import org.tvheadend.tvhclient.ui.common.interfaces.RecyclerViewClickInterface
 import org.tvheadend.tvhclient.ui.common.interfaces.SearchRequestInterface
-import org.tvheadend.tvhclient.ui.features.dvr.RecordingAddEditActivity
 import org.tvheadend.tvhclient.util.extensions.getCastSession
 import org.tvheadend.tvhclient.util.extensions.gone
 import org.tvheadend.tvhclient.util.extensions.visible
@@ -119,10 +118,7 @@ class ProgramListFragment : BaseFragment(), RecyclerViewClickInterface, LastProg
         for (recording in recordings) {
             if (recording.eventId == programIdToBeEditedWhenBeingRecorded && programIdToBeEditedWhenBeingRecorded > 0) {
                 programIdToBeEditedWhenBeingRecorded = 0
-                val intent = Intent(activity, RecordingAddEditActivity::class.java)
-                intent.putExtra("id", recording.id)
-                intent.putExtra("type", "recording")
-                activity?.startActivity(intent)
+                editSelectedRecording(activity!!, recording.id)
                 break
             }
         }

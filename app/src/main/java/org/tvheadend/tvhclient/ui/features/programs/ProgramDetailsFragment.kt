@@ -1,6 +1,5 @@
 package org.tvheadend.tvhclient.ui.features.programs
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.*
 import androidx.databinding.DataBindingUtil
@@ -15,7 +14,6 @@ import org.tvheadend.tvhclient.databinding.ProgramDetailsFragmentBinding
 import org.tvheadend.tvhclient.ui.base.BaseFragment
 import org.tvheadend.tvhclient.ui.base.LayoutControlInterface
 import org.tvheadend.tvhclient.ui.common.*
-import org.tvheadend.tvhclient.ui.features.dvr.RecordingAddEditActivity
 import org.tvheadend.tvhclient.util.extensions.gone
 import org.tvheadend.tvhclient.util.extensions.visible
 import timber.log.Timber
@@ -89,10 +87,7 @@ class ProgramDetailsFragment : BaseFragment() {
             // Otherwise remember the recording so that the state can be updated
             if (rec.eventId == programIdToBeEditedWhenBeingRecorded && programIdToBeEditedWhenBeingRecorded > 0) {
                 programIdToBeEditedWhenBeingRecorded = 0
-                val intent = Intent(activity, RecordingAddEditActivity::class.java)
-                intent.putExtra("id", rec.id)
-                intent.putExtra("type", "recording")
-                activity?.startActivity(intent)
+                editSelectedRecording(activity!!, rec.id)
                 break
 
             } else {

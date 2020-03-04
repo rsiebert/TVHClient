@@ -1,7 +1,6 @@
 package org.tvheadend.tvhclient.ui.features.channels
 
 import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.view.*
@@ -24,7 +23,6 @@ import org.tvheadend.tvhclient.ui.common.interfaces.ChannelTagIdsSelectedInterfa
 import org.tvheadend.tvhclient.ui.common.interfaces.ChannelTimeSelectedInterface
 import org.tvheadend.tvhclient.ui.common.interfaces.RecyclerViewClickInterface
 import org.tvheadend.tvhclient.ui.common.interfaces.SearchRequestInterface
-import org.tvheadend.tvhclient.ui.features.dvr.RecordingAddEditActivity
 import org.tvheadend.tvhclient.ui.features.programs.ProgramListFragment
 import org.tvheadend.tvhclient.ui.features.programs.ProgramViewModel
 import org.tvheadend.tvhclient.util.extensions.gone
@@ -133,10 +131,7 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickInterface, ChannelT
                     // in case the user has selected the record and edit menu item.
                     if (recording.eventId == programIdToBeEditedWhenBeingRecorded && programIdToBeEditedWhenBeingRecorded > 0) {
                         programIdToBeEditedWhenBeingRecorded = 0
-                        val intent = Intent(activity, RecordingAddEditActivity::class.java)
-                        intent.putExtra("id", recording.id)
-                        intent.putExtra("type", "recording")
-                        activity?.startActivity(intent)
+                        editSelectedRecording(activity!!, recording.id)
                         break
                     }
                 }

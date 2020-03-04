@@ -16,6 +16,7 @@ import org.tvheadend.tvhclient.ui.base.BaseFragment
 import org.tvheadend.tvhclient.ui.common.*
 import org.tvheadend.tvhclient.ui.common.interfaces.RecyclerViewClickInterface
 import org.tvheadend.tvhclient.ui.common.interfaces.SearchRequestInterface
+import org.tvheadend.tvhclient.ui.common.interfaces.ToolbarStatusInterface
 import org.tvheadend.tvhclient.util.extensions.gone
 import org.tvheadend.tvhclient.util.extensions.visible
 import org.tvheadend.tvhclient.util.extensions.visibleOrGone
@@ -89,7 +90,7 @@ class TimerRecordingListFragment : BaseFragment(), RecyclerViewClickInterface, S
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         val ctx = context ?: return super.onOptionsItemSelected(item)
         return when (item.itemId) {
-            R.id.menu_add_recording -> addNewTimerRecording(ctx)
+            R.id.menu_add_recording -> return addNewTimerRecording(activity!!)
             R.id.menu_remove_all_recordings -> showConfirmationToRemoveAllTimerRecordings(ctx, CopyOnWriteArrayList(recyclerViewAdapter.items))
             else -> super.onOptionsItemSelected(item)
         }
@@ -146,7 +147,7 @@ class TimerRecordingListFragment : BaseFragment(), RecyclerViewClickInterface, S
                         it.commit()
                     }
                 }
-            } else if (timerRecordingViewModel.currentId.value != recording.id){
+            } else if (timerRecordingViewModel.currentId.value != recording.id) {
                 timerRecordingViewModel.currentId.value = recording.id
             }
         }
@@ -166,7 +167,7 @@ class TimerRecordingListFragment : BaseFragment(), RecyclerViewClickInterface, S
 
         popupMenu.setOnMenuItemClickListener { item ->
             when (item.itemId) {
-                R.id.menu_edit_recording -> return@setOnMenuItemClickListener editSelectedTimerRecording(ctx, timerRecording.id)
+                R.id.menu_edit_recording -> return@setOnMenuItemClickListener editSelectedTimerRecording(activity!!, timerRecording.id)
                 R.id.menu_remove_recording -> return@setOnMenuItemClickListener showConfirmationToRemoveSelectedTimerRecording(ctx, timerRecording, null)
                 R.id.menu_disable_recording -> return@setOnMenuItemClickListener enableTimerRecording(timerRecording, false)
                 R.id.menu_enable_recording -> return@setOnMenuItemClickListener enableTimerRecording(timerRecording, true)
