@@ -38,11 +38,12 @@ class MigrateUtils(val context: Context, val appRepository: AppRepository, val s
                 clearAllPlaybackProfiles()
             }
             if (lastInstalledApplicationVersion < VERSION_143) {
-                convertInternalPlayerAndChannelOrderSettings()
+                duplicateInternalPlayerSettingForRecordings()
+                convertChannelSortOrderPreferenceBecauseDescendingOrderWasAdded()
             }
             if (lastInstalledApplicationVersion < VERSION_144) {
                 setSyncRequiredForAllConnections()
-                convertChannelSortOrderPreference()
+                increaseChannelSortOrderPreferenceValue()
             }
             if (lastInstalledApplicationVersion < VERSION_176) {
                 convertConnectionHostAndPortValuesToUrl()
@@ -86,11 +87,13 @@ class MigrateUtils(val context: Context, val appRepository: AppRepository, val s
         }
     }
 
+    /**
+     * Set the sync required flag for every connection because the connection table has changed.
+     * The channel order from the server was introduced. This information needs to be saved during
+     * the initial connection to the server.
+     */
     private fun setSyncRequiredForAllConnections() {
-        // Set the sync required flag for every connection because in this version
-        // the server defined channel order was introduced. This information needs
-        // to be saved during the initial connection with the server where
-        // channel and tags would not be saved.
+        //
         for (connection in appRepository.connectionData.getItems()) {
             Timber.d("Setting sync required for connection ${connection.name} to save server defined channel order")
             connection.isSyncRequired = true
@@ -98,9 +101,11 @@ class MigrateUtils(val context: Context, val appRepository: AppRepository, val s
         }
     }
 
-    private fun convertChannelSortOrderPreference() {
-        // Two new channel sorting options were introduced in this version.
-        // They are now the first to options so all other values need to be moved up by two.
+    /**
+     * Migrates the value of the channel order because two new order options were introduced.
+     * The two new options are now the first ones so all other values need to be moved by two.
+     */
+    private fun increaseChannelSortOrderPreferenceValue() {
         val editor = sharedPreferences.edit()
         var channelSortOrder = Integer.valueOf(sharedPreferences.getString("channel_sort_order", context.resources.getString(R.string.pref_default_channel_sort_order))!!)
         if (channelSortOrder >= 2) {
@@ -110,8 +115,10 @@ class MigrateUtils(val context: Context, val appRepository: AppRepository, val s
         editor.apply()
     }
 
+    /**
+     * Convert the previous boolean channel icon action to the corresponding list entry
+     */
     private fun convertChannelIconActionPreference() {
-        // Convert the previous boolean channel icon action to the corresponding list entry
         val editor = sharedPreferences.edit()
         val enabled = sharedPreferences.getBoolean("channel_icon_starts_playback_enabled", true)
         editor.putString("channel_icon_action", if (enabled) "2" else "0")
@@ -131,20 +138,26 @@ class MigrateUtils(val context: Context, val appRepository: AppRepository, val s
         }
     }
 
-    private fun convertInternalPlayerAndChannelOrderSettings() {
-        // Convert the previous internal player settings to the
-        // new one that differentiates between channels and recordings
+    /**
+     * Convert the previous internal player settings to the new one that differentiates between channels and recordings
+     */
+    private fun duplicateInternalPlayerSettingForRecordings() {
         val editor = sharedPreferences.edit()
         val enabled = sharedPreferences.getBoolean("internal_player_enabled", context.resources.getBoolean(R.bool.pref_default_internal_player_enabled))
         editor.putBoolean("internal_player_for_channels_enabled", enabled)
         editor.putBoolean("internal_player_for_recordings_enabled", enabled)
+        editor.apply()
+    }
 
-        // The previous three channel sort options defined only an ascending order of
-        // the channel id, name and number. Now convert the value because a descending
-        // order has been added after the ascending one.
-
+    /**
+     * The previous three channel sort options defined only an ascending order of
+     * the channel id, name and number. Now convert the value because a descending
+     * order has been added after the ascending one.
+     */
+    private fun convertChannelSortOrderPreferenceBecauseDescendingOrderWasAdded() {
         var channelSortOrder = Integer.valueOf(sharedPreferences.getString("channel_sort_order", context.resources.getString(R.string.pref_default_channel_sort_order))!!)
         channelSortOrder = channelSortOrder * 2 + 1
+        val editor = sharedPreferences.edit()
         editor.putString("channel_sort_order", channelSortOrder.toString())
         editor.apply()
     }
@@ -182,11 +195,13 @@ class MigrateUtils(val context: Context, val appRepository: AppRepository, val s
         }
     }
 
+    /**
+     * Save the previous connection details in a list, then deletes the
+     * old database and insert the connection details into the new room database
+     */
     private fun copyConnectionsFromOldToNewDatabase() {
         Timber.d("Migrating existing connections to the new room database")
         val db = DatabaseHelperForMigration.getInstance(context)?.readableDatabase ?: return
-
-        // Save the previous connection details in a list, then delete the old database and insert the connection details into the new one
         val connectionList = ArrayList<Connection>()
         try {
             Timber.d("Database is readable ${db.isOpen}")
@@ -219,10 +234,8 @@ class MigrateUtils(val context: Context, val appRepository: AppRepository, val s
         } catch (e: SQLiteException) {
             Timber.e(e, "Error getting connection information from cursor")
         }
-
         db.close()
 
-        // delete the entire database so we can restart with version one in room
         Timber.d("Deleting old database")
         context.deleteDatabase("tvhclient")
 
@@ -232,9 +245,11 @@ class MigrateUtils(val context: Context, val appRepository: AppRepository, val s
         }
     }
 
+    /**
+     * Updates the start screen preference because the order of the screens have changed in the main menu
+     * Additionally the preferences name will be updated to the new one to have a consistent naming scheme afterwards
+     */
     private fun convertStartScreenPreference() {
-        // migrate preferences from old names to new
-        // names to have a consistent naming scheme afterwards
         try {
             var value = Integer.valueOf(sharedPreferences.getString("defaultMenuPositionPref", "0")!!)
             when {
@@ -248,7 +263,6 @@ class MigrateUtils(val context: Context, val appRepository: AppRepository, val s
                 // program guide moved to position 2
                 value != 0 -> value++
             }
-
             val editor = sharedPreferences.edit()
             editor.putString("start_screen", value.toString())
             editor.remove("defaultMenuPositionPref")
@@ -256,7 +270,6 @@ class MigrateUtils(val context: Context, val appRepository: AppRepository, val s
         } catch (e: NumberFormatException) {
             // NOP
         }
-
     }
 
     /**
