@@ -2,11 +2,11 @@ package org.tvheadend.data.dao
 
 import androidx.lifecycle.LiveData
 import androidx.room.*
-import org.tvheadend.data.entity.EpgProgram
-import org.tvheadend.data.entity.Program
+import org.tvheadend.data.entity.EpgProgramEntity
+import org.tvheadend.data.entity.ProgramEntity
 
 @Dao
-interface ProgramDao {
+internal interface ProgramDao {
 
     @get:Query("SELECT COUNT (*) FROM programs AS p " +
             " WHERE $CONNECTION_IS_ACTIVE")
@@ -23,7 +23,7 @@ interface ProgramDao {
             "  OR (p.start <= :time AND p.stop >= :time)) " +
             " GROUP BY p.id " +
             " ORDER BY p.start, p.channel_name ASC")
-    fun loadProgramsFromTime(time: Long): LiveData<List<Program>>
+    fun loadProgramsFromTime(time: Long): LiveData<List<ProgramEntity>>
 
     @Transaction
     @Query(PROGRAM_BASE_QUERY +
@@ -33,7 +33,7 @@ interface ProgramDao {
             "  OR (p.start <= :time AND p.stop >= :time)) " +
             " GROUP BY p.id " +
             " ORDER BY p.start ASC")
-    fun loadProgramsFromChannelFromTime(channelId: Int, time: Long): LiveData<List<Program>>
+    fun loadProgramsFromChannelFromTime(channelId: Int, time: Long): LiveData<List<ProgramEntity>>
 
     @Transaction
     @Query(EPG_PROGRAM_BASE_QUERY +
@@ -47,68 +47,68 @@ interface ProgramDao {
             "  OR (start < :endTime AND stop >= :endTime)) " +
             " GROUP BY p.id " +
             " ORDER BY start ASC")
-    fun loadProgramsFromChannelBetweenTimeSync(channelId: Int, startTime: Long, endTime: Long): List<EpgProgram>
+    fun loadProgramsFromChannelBetweenTimeSync(channelId: Int, startTime: Long, endTime: Long): List<EpgProgramEntity>
 
     @Transaction
     @Query(PROGRAM_BASE_QUERY +
             " WHERE $CONNECTION_IS_ACTIVE" +
             " GROUP BY p.id " +
             " ORDER BY p.start, p.channel_name ASC")
-    fun loadPrograms(): LiveData<List<Program>>
+    fun loadPrograms(): LiveData<List<ProgramEntity>>
 
     @Transaction
     @Query(PROGRAM_BASE_QUERY +
             " WHERE $CONNECTION_IS_ACTIVE" +
             " GROUP BY p.id " +
             " ORDER BY p.start, p.channel_name ASC")
-    fun loadProgramsSync(): List<Program>
+    fun loadProgramsSync(): List<ProgramEntity>
 
     @Transaction
     @Query(PROGRAM_BASE_QUERY +
             " WHERE $CONNECTION_IS_ACTIVE" +
             " AND p.id = :id")
-    fun loadProgramById(id: Int): LiveData<Program>
+    fun loadProgramById(id: Int): LiveData<ProgramEntity>
 
     @Transaction
     @Query(PROGRAM_BASE_QUERY +
             " WHERE $CONNECTION_IS_ACTIVE" +
             " AND p.id = :id")
-    fun loadProgramByIdSync(id: Int): Program
+    fun loadProgramByIdSync(id: Int): ProgramEntity
 
     @Query(PROGRAM_BASE_QUERY +
             " WHERE $CONNECTION_IS_ACTIVE" +
             " AND p.channel_id = :channelId " +
             " ORDER BY start DESC")
-    fun loadProgramsFromChannelSync(channelId: Int): List<Program>
+    fun loadProgramsFromChannelSync(channelId: Int): List<ProgramEntity>
 
     @Query(PROGRAM_BASE_QUERY +
             " WHERE $CONNECTION_IS_ACTIVE" +
             " AND p.channel_id = :channelId " +
             " ORDER BY start DESC LIMIT 1")
-    fun loadLastProgramFromChannelSync(channelId: Int): Program
+    fun loadLastProgramFromChannelSync(channelId: Int): ProgramEntity
 
     @Query("DELETE FROM programs " + "WHERE stop < :time")
     fun deleteProgramsByTime(time: Long)
 
     @Transaction
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(programs: List<Program>)
+    fun insert(programs: List<ProgramEntity>)
 
     @Transaction
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(program: Program)
+    fun insert(program: ProgramEntity)
 
     @Update
-    fun update(programs: List<Program>)
+    fun update(programs: List<ProgramEntity>)
 
     @Update
-    fun update(vararg program: Program)
+    fun update(vararg program: ProgramEntity)
 
     @Delete
-    fun delete(programs: List<Program>)
+    fun delete(programs: List<ProgramEntity>)
 
     @Delete
-    fun delete(program: Program)
+    fun delete(program: ProgramEntity)
 
     @Query("DELETE FROM programs " +
             "WHERE connection_id IN (SELECT id FROM connections WHERE active = 1) " +

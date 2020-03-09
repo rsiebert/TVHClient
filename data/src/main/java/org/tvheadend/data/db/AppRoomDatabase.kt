@@ -10,39 +10,39 @@ import org.tvheadend.data.dao.*
 import org.tvheadend.data.entity.*
 
 @Database(
-        entities = [TimerRecording::class,
-            SeriesRecording::class,
-            Recording::class,
-            Program::class,
-            Channel::class,
-            ChannelTag::class,
-            TagAndChannel::class,
-            Connection::class,
-            ServerProfile::class,
-            ServerStatus::class],
+        entities = [TimerRecordingEntity::class,
+            SeriesRecordingEntity::class,
+            RecordingEntity::class,
+            ProgramEntity::class,
+            ChannelEntity::class,
+            ChannelTagEntity::class,
+            TagAndChannelEntity::class,
+            ConnectionEntity::class,
+            ServerProfileEntity::class,
+            ServerStatusEntity::class],
         exportSchema = false,
         version = 13)
 abstract class AppRoomDatabase : RoomDatabase() {
 
-    abstract val timerRecordingDao: TimerRecordingDao
+    internal abstract val timerRecordingDao: TimerRecordingDao
 
-    abstract val seriesRecordingDao: SeriesRecordingDao
+    internal abstract val seriesRecordingDao: SeriesRecordingDao
 
-    abstract val recordingDao: RecordingDao
+    internal abstract val recordingDao: RecordingDao
 
-    abstract val channelDao: ChannelDao
+    internal abstract val channelDao: ChannelDao
 
-    abstract val channelTagDao: ChannelTagDao
+    internal abstract val channelTagDao: ChannelTagDao
 
-    abstract val tagAndChannelDao: TagAndChannelDao
+    internal abstract val tagAndChannelDao: TagAndChannelDao
 
-    abstract val programDao: ProgramDao
+    internal abstract val programDao: ProgramDao
 
-    abstract val connectionDao: ConnectionDao
+    internal abstract val connectionDao: ConnectionDao
 
-    abstract val serverProfileDao: ServerProfileDao
+    internal abstract val serverProfileDao: ServerProfileDao
 
-    abstract val serverStatusDao: ServerStatusDao
+    internal abstract val serverStatusDao: ServerStatusDao
 
     companion object {
 

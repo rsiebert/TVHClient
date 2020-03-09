@@ -1,6 +1,7 @@
 package org.tvheadend.data.source
 
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.Transformations
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -8,6 +9,7 @@ import kotlinx.coroutines.runBlocking
 import org.tvheadend.data.db.AppRoomDatabase
 import org.tvheadend.data.entity.EpgProgram
 import org.tvheadend.data.entity.Program
+import org.tvheadend.data.entity.ProgramEntity
 
 class ProgramDataSource(private val db: AppRoomDatabase) : DataSourceInterface<Program> {
 
@@ -23,19 +25,19 @@ class ProgramDataSource(private val db: AppRoomDatabase) : DataSourceInterface<P
         }
 
     override fun addItem(item: Program) {
-        ioScope.launch { db.programDao.insert(item) }
+        ioScope.launch { db.programDao.insert(ProgramEntity.from(item)) }
     }
 
     fun addItems(items: List<Program>) {
-        ioScope.launch { db.programDao.insert(ArrayList(items)) }
+        ioScope.launch { db.programDao.insert(ArrayList(items).map { ProgramEntity.from(it) }) }
     }
 
     override fun updateItem(item: Program) {
-        ioScope.launch { db.programDao.update(item) }
+        ioScope.launch { db.programDao.update(ProgramEntity.from(item)) }
     }
 
     override fun removeItem(item: Program) {
-        ioScope.launch { db.programDao.delete(item) }
+        ioScope.launch { db.programDao.delete(ProgramEntity.from(item)) }
     }
 
     fun removeItemsByTime(time: Long) {
@@ -51,17 +53,21 @@ class ProgramDataSource(private val db: AppRoomDatabase) : DataSourceInterface<P
     }
 
     override fun getLiveDataItems(): LiveData<List<Program>> {
-        return db.programDao.loadPrograms()
+        return Transformations.map(db.programDao.loadPrograms()) { entities ->
+            entities.map { it.toProgram() }
+        }
     }
 
     override fun getLiveDataItemById(id: Any): LiveData<Program> {
-        return db.programDao.loadProgramById(id as Int)
+        return Transformations.map(db.programDao.loadProgramById(id as Int)) { entity ->
+            entity.toProgram()
+        }
     }
 
     override fun getItemById(id: Any): Program? {
         var program: Program? = null
         runBlocking(Dispatchers.IO) {
-            program = db.programDao.loadProgramByIdSync(id as Int)
+            program = db.programDao.loadProgramByIdSync(id as Int).toProgram()
         }
         return program
     }
@@ -69,23 +75,27 @@ class ProgramDataSource(private val db: AppRoomDatabase) : DataSourceInterface<P
     override fun getItems(): List<Program> {
         val programs = ArrayList<Program>()
         runBlocking(Dispatchers.IO) {
-            programs.addAll(db.programDao.loadProgramsSync())
+            programs.addAll(db.programDao.loadProgramsSync().map { it.toProgram() })
         }
         return programs
     }
 
     fun getLiveDataItemsFromTime(time: Long): LiveData<List<Program>> {
-        return db.programDao.loadProgramsFromTime(time)
+        return Transformations.map(db.programDao.loadProgramsFromTime(time)) { entities ->
+            entities.map { it.toProgram() }
+        }
     }
 
     fun getLiveDataItemByChannelIdAndTime(channelId: Int, time: Long): LiveData<List<Program>> {
-        return db.programDao.loadProgramsFromChannelFromTime(channelId, time)
+        return Transformations.map(db.programDao.loadProgramsFromChannelFromTime(channelId, time)) { entities ->
+            entities.map { it.toProgram() }
+        }
     }
 
     fun getItemByChannelIdAndBetweenTime(channelId: Int, startTime: Long, endTime: Long): List<EpgProgram> {
         val programs = ArrayList<EpgProgram>()
         runBlocking(Dispatchers.IO) {
-            programs.addAll(db.programDao.loadProgramsFromChannelBetweenTimeSync(channelId, startTime, endTime))
+            programs.addAll(db.programDao.loadProgramsFromChannelBetweenTimeSync(channelId, startTime, endTime).map { it.toEpgProgram() })
         }
         return programs
     }
@@ -93,7 +103,7 @@ class ProgramDataSource(private val db: AppRoomDatabase) : DataSourceInterface<P
     fun getLastItemByChannelId(channelId: Int): Program? {
         var program: Program? = null
         runBlocking(Dispatchers.IO) {
-            program = db.programDao.loadLastProgramFromChannelSync(channelId)
+            program = db.programDao.loadLastProgramFromChannelSync(channelId).toProgram()
         }
         return program
     }
@@ -101,7 +111,7 @@ class ProgramDataSource(private val db: AppRoomDatabase) : DataSourceInterface<P
     fun getItemsByChannelId(id: Int): List<Program> {
         val programs = ArrayList<Program>()
         runBlocking(Dispatchers.IO) {
-            programs.addAll(db.programDao.loadProgramsFromChannelSync(id))
+            programs.addAll(db.programDao.loadProgramsFromChannelSync(id).map { it.toProgram() })
         }
         return programs
     }

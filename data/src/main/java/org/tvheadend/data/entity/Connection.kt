@@ -5,8 +5,28 @@ import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
 
-@Entity(tableName = "connections", indices = [Index(value = ["id"], unique = true)])
 data class Connection(
+
+        var id: Int = 0,
+        var name: String? = "",
+        var hostname: String? = "",
+        var port: Int = 9982,
+        var username: String? = "",
+        var password: String? = "",
+        var isActive: Boolean = false,
+        var streamingPort: Int = 9981,
+        var isWolEnabled: Boolean = false,
+        var wolMacAddress: String? = "",
+        var wolPort: Int = 9,
+        var isWolUseBroadcast: Boolean = false,
+        var lastUpdate: Long = 0,
+        var isSyncRequired: Boolean = true,
+        var serverUrl: String? = "",
+        var streamingUrl: String? = ""
+)
+
+@Entity(tableName = "connections", indices = [Index(value = ["id"], unique = true)])
+internal data class ConnectionEntity(
 
         @PrimaryKey(autoGenerate = true)
         var id: Int = 0,
@@ -35,4 +55,30 @@ data class Connection(
         var serverUrl: String? = "",
         @ColumnInfo(name = "streaming_url")
         var streamingUrl: String? = ""
-)
+) {
+    companion object {
+        fun from(connection: Connection): ConnectionEntity {
+            return ConnectionEntity(
+                    connection.id,
+                    connection.name,
+                    connection.hostname,
+                    connection.port,
+                    connection.username,
+                    connection.password,
+                    connection.isActive,
+                    connection.streamingPort,
+                    connection.isWolEnabled,
+                    connection.wolMacAddress,
+                    connection.wolPort,
+                    connection.isWolUseBroadcast,
+                    connection.lastUpdate,
+                    connection.isSyncRequired,
+                    connection.serverUrl,
+                    connection.streamingUrl)
+        }
+    }
+
+    fun toConnection(): Connection {
+        return Connection(id, name, hostname, port, username, password, isActive, streamingPort, isWolEnabled, wolMacAddress, wolPort, isWolUseBroadcast, lastUpdate, isSyncRequired, serverUrl, streamingUrl)
+    }
+}

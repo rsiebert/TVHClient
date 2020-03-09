@@ -7,6 +7,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.tvheadend.data.db.AppRoomDatabase
 import org.tvheadend.data.entity.TagAndChannel
+import org.tvheadend.data.entity.TagAndChannelEntity
 import java.util.*
 
 class TagAndChannelDataSource(private val db: AppRoomDatabase) : DataSourceInterface<TagAndChannel> {
@@ -14,22 +15,22 @@ class TagAndChannelDataSource(private val db: AppRoomDatabase) : DataSourceInter
     private val ioScope = CoroutineScope(Dispatchers.IO)
 
     override fun addItem(item: TagAndChannel) {
-        ioScope.launch { db.tagAndChannelDao.insert(item) }
+        ioScope.launch { db.tagAndChannelDao.insert(TagAndChannelEntity.from(item)) }
     }
 
     override fun updateItem(item: TagAndChannel) {
-        ioScope.launch { db.tagAndChannelDao.update(item) }
+        ioScope.launch { db.tagAndChannelDao.update(TagAndChannelEntity.from(item)) }
     }
 
     override fun removeItem(item: TagAndChannel) {
-        ioScope.launch { db.tagAndChannelDao.delete(item) }
+        ioScope.launch { db.tagAndChannelDao.delete(TagAndChannelEntity.from(item)) }
     }
 
     fun addAndRemoveItems(newItems: List<TagAndChannel>, oldItems: List<TagAndChannel>) {
         ioScope.launch {
             db.tagAndChannelDao.insertAndDelete(
-                    ArrayList(newItems),
-                    ArrayList(oldItems))
+                    ArrayList(newItems.map { TagAndChannelEntity.from(it) }),
+                    ArrayList(oldItems.map { TagAndChannelEntity.from(it) }))
         }
     }
 
