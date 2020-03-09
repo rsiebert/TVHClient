@@ -164,7 +164,6 @@ dependencies {
 
     def fragment_version = '1.2.2'
     def lifecycle_version = '2.1.0'
-    def room_version = '2.2.3'
     def material_dialogs_version = '3.1.1'
     def dagger_version = '2.26'
 
@@ -181,8 +180,6 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version"
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version"
     kapt "androidx.lifecycle:lifecycle-common-java8:$lifecycle_version"
-    implementation "androidx.room:room-runtime:$room_version"
-    kapt "androidx.room:room-compiler:$room_version"
     implementation "androidx.fragment:fragment:$fragment_version"
     debugImplementation "androidx.fragment:fragment-testing:$fragment_version"
 
