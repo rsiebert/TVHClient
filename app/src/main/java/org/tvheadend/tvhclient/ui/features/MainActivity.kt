@@ -156,27 +156,21 @@ class MainActivity : AppCompatActivity(), ToolbarInterface, LayoutControlInterfa
 
         navigationDrawer = NavigationDrawer(this, savedInstanceState, toolbar, navigationViewModel, statusViewModel)
 
-        // Listen to changes in the back stack so certain action can be
-        // taken depending on the currently shown fragment type
         supportFragmentManager.addOnBackStackChangedListener {
 
+            // Hide the navigation menu and show an arrow icon to allow going back for certain fragments
+            // Otherwise show the navigation menu again and invalidate any menus and update the toolbar.
             val fragment = supportFragmentManager.findFragmentById(R.id.main)
             if (fragment is HideNavigationDrawerInterface) {
-                // Hide the navigation menu and show an arrow icon to allow going back
                 navigationDrawer.enableDrawerIndicator(false)
                 supportActionBar?.setDisplayHomeAsUpEnabled(true)
             } else {
-
-                // Show the navigation menu again and invalidate any menus and update the toolbar.
-                // When the previous fragment from the back stack is shown again the toolbar and
-                // menus are not updated automatically.
                 supportActionBar?.setDisplayHomeAsUpEnabled(false)
                 navigationDrawer.enableDrawerIndicator(true)
-
                 invalidateOptionsMenu()
             }
 
-            navigationDrawer.handleMenuSelection(supportFragmentManager.findFragmentById(R.id.main))
+            navigationDrawer.setSelectedNavigationDrawerMenuFromFragmentType(supportFragmentManager.findFragmentById(R.id.main))
         }
 
         castContext = this.getCastContext()
@@ -200,11 +194,10 @@ class MainActivity : AppCompatActivity(), ToolbarInterface, LayoutControlInterfa
             Timber.d("Delayed search timer elapsed, starting search")
         }
 
-        if (savedInstanceState != null) startupIsCompleteObserveMainLiveData()
-
         baseViewModel.startupCompleteLiveData.observe(this, Observer { isComplete ->
             Timber.d("Received live data, startup complete changed to $isComplete")
-            if (isComplete) {
+            // TODO prevent double init when rotating the device
+            if (isComplete && savedInstanceState == null) {
                 startupIsCompleteObserveMainLiveData()
             }
         })
@@ -403,7 +396,7 @@ class MainActivity : AppCompatActivity(), ToolbarInterface, LayoutControlInterfa
         // dual pane mode is active to prevent showing wrong details data.
         // Finally show the new main fragment and add it to the back stack
         // only if it is a new fragment and not an existing one.
-        val fragment = navigationDrawer.getFragmentFromSelection(id)
+        val fragment = navigationDrawer.getFragmentFromSelectedNavigationDrawerMenu(id)
         if (fragment != null) {
             if (isDualPane) {
                 val detailsFragment = supportFragmentManager.findFragmentById(R.id.details)

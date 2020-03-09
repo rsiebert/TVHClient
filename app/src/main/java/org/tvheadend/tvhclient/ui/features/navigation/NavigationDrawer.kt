@@ -233,7 +233,7 @@ class NavigationDrawer(private val activity: AppCompatActivity,
         return out
     }
 
-    fun handleMenuSelection(fragment: Fragment?) {
+    fun setSelectedNavigationDrawerMenuFromFragmentType(fragment: Fragment?) {
         when (fragment) {
             is ChannelListFragment -> result.setSelection(MENU_CHANNELS.toLong(), false)
             is EpgFragment -> result.setSelection(MENU_PROGRAM_GUIDE.toLong(), false)
@@ -252,7 +252,7 @@ class NavigationDrawer(private val activity: AppCompatActivity,
     /**
      * Creates and returns a new fragment that is associated with the given menu
      */
-    fun getFragmentFromSelection(position: Int): Fragment? {
+    fun getFragmentFromSelectedNavigationDrawerMenu(position: Int): Fragment? {
         return when (position) {
             MENU_CHANNELS -> ChannelListFragment()
             MENU_PROGRAM_GUIDE -> EpgFragment()
