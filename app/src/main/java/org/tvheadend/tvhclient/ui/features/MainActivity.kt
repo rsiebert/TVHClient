@@ -195,9 +195,8 @@ class MainActivity : AppCompatActivity(), ToolbarInterface, LayoutControlInterfa
         }
 
         baseViewModel.startupCompleteLiveData.observe(this, Observer { isComplete ->
-            Timber.d("Received live data, startup complete changed to $isComplete")
-            // TODO prevent double init when rotating the device
-            if (isComplete && savedInstanceState == null) {
+            Timber.d("Received live data, startup complete value changed to $isComplete")
+            if (isComplete) {
                 startupIsCompleteObserveMainLiveData()
             }
         })
