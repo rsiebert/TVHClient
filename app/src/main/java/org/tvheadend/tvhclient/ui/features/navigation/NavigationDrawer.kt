@@ -1,5 +1,6 @@
 package org.tvheadend.tvhclient.ui.features.navigation
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.TypedValue
 import android.view.View
@@ -8,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import androidx.preference.PreferenceManager
 import com.afollestad.materialdialogs.MaterialDialog
 import com.mikepenz.materialdrawer.AccountHeader
 import com.mikepenz.materialdrawer.AccountHeaderBuilder
@@ -34,15 +36,18 @@ import org.tvheadend.tvhclient.ui.features.information.HelpAndSupportFragment
 import org.tvheadend.tvhclient.ui.features.information.StatusFragment
 import org.tvheadend.tvhclient.ui.features.information.StatusViewModel
 import org.tvheadend.tvhclient.ui.features.information.WebViewFragment
+import org.tvheadend.tvhclient.ui.features.settings.SettingsActivity
 import org.tvheadend.tvhclient.ui.features.unlocker.UnlockerFragment
 import org.tvheadend.tvhclient.util.getThemeId
+import timber.log.Timber
 import java.util.*
 
 class NavigationDrawer(private val activity: AppCompatActivity,
                        private val savedInstanceState: Bundle?,
                        private val toolbar: Toolbar,
                        private val navigationViewModel: NavigationViewModel,
-                       statusViewModel: StatusViewModel) : AccountHeader.OnAccountHeaderListener, Drawer.OnDrawerItemClickListener {
+                       statusViewModel: StatusViewModel,
+                       private val isDualPane: Boolean) : AccountHeader.OnAccountHeaderListener, Drawer.OnDrawerItemClickListener {
 
     private lateinit var headerResult: AccountHeader
     private lateinit var result: Drawer
@@ -233,6 +238,10 @@ class NavigationDrawer(private val activity: AppCompatActivity,
         return out
     }
 
+    fun enableDrawerIndicator(isEnabled: Boolean) {
+        result.actionBarDrawerToggle?.isDrawerIndicatorEnabled = isEnabled
+    }
+
     fun setSelectedNavigationDrawerMenuFromFragmentType(fragment: Fragment?) {
         when (fragment) {
             is ChannelListFragment -> result.setSelection(MENU_CHANNELS.toLong(), false)
@@ -252,7 +261,7 @@ class NavigationDrawer(private val activity: AppCompatActivity,
     /**
      * Creates and returns a new fragment that is associated with the given menu
      */
-    fun getFragmentFromSelectedNavigationDrawerMenu(position: Int): Fragment? {
+    private fun getFragmentFromSelectedNavigationDrawerMenu(position: Int): Fragment? {
         return when (position) {
             MENU_CHANNELS -> ChannelListFragment()
             MENU_PROGRAM_GUIDE -> EpgFragment()
@@ -269,8 +278,42 @@ class NavigationDrawer(private val activity: AppCompatActivity,
         }
     }
 
-    fun enableDrawerIndicator(isEnabled: Boolean) {
-        result.actionBarDrawerToggle?.isDrawerIndicatorEnabled = isEnabled
+    /**
+     * Called when a menu item from the navigation drawer was selected. It loads
+     * and shows the correct fragment or fragments depending on the selected
+     * menu item.
+     *
+     * @param id Selected position within the menu array
+     */
+    fun handleDrawerItemSelected(id: Int) {
+        Timber.d("Handling new navigation menu id $id")
+
+        if (id == MENU_SETTINGS) {
+            activity.startActivity(Intent(activity, SettingsActivity::class.java))
+            return
+        }
+
+        // A new or existing main fragment shall be shown. So save the menu position so we
+        // know which one was selected. Additionally remove any old details fragment in case
+        // dual pane mode is active to prevent showing wrong details data.
+        // Finally show the new main fragment and add it to the back stack
+        // only if it is a new fragment and not an existing one.
+        val fragment = getFragmentFromSelectedNavigationDrawerMenu(id)
+        if (fragment != null) {
+            if (isDualPane) {
+                val detailsFragment = activity.supportFragmentManager.findFragmentById(R.id.details)
+                if (detailsFragment != null) {
+                    activity.supportFragmentManager.beginTransaction().remove(detailsFragment).commit()
+                }
+            }
+            activity.supportFragmentManager.beginTransaction().replace(R.id.main, fragment).let {
+                val addFragmentToBackStack = PreferenceManager.getDefaultSharedPreferences(activity).getBoolean("navigation_history_enabled", activity.resources.getBoolean(R.bool.pref_default_navigation_history_enabled))
+                if (addFragmentToBackStack) {
+                    it.addToBackStack(null)
+                }
+                it.commit()
+            }
+        }
     }
 
     companion object {

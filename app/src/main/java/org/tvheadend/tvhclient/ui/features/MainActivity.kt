@@ -47,12 +47,10 @@ import org.tvheadend.tvhclient.ui.features.information.PrivacyPolicyFragment
 import org.tvheadend.tvhclient.ui.features.information.StartupPrivacyPolicyFragment
 import org.tvheadend.tvhclient.ui.features.information.StatusViewModel
 import org.tvheadend.tvhclient.ui.features.navigation.NavigationDrawer
-import org.tvheadend.tvhclient.ui.features.navigation.NavigationDrawer.Companion.MENU_SETTINGS
 import org.tvheadend.tvhclient.ui.features.navigation.NavigationViewModel
 import org.tvheadend.tvhclient.ui.features.playback.external.CastSessionManagerListener
 import org.tvheadend.tvhclient.ui.features.programs.ProgramDetailsFragment
 import org.tvheadend.tvhclient.ui.features.programs.ProgramListFragment
-import org.tvheadend.tvhclient.ui.features.settings.SettingsActivity
 import org.tvheadend.tvhclient.ui.features.startup.StartupFragment
 import org.tvheadend.tvhclient.util.extensions.*
 import org.tvheadend.tvhclient.util.getThemeId
@@ -154,7 +152,7 @@ class MainActivity : AppCompatActivity(), ToolbarInterface, LayoutControlInterfa
         miniController = findViewById(R.id.cast_mini_controller)
         miniController.gone()
 
-        navigationDrawer = NavigationDrawer(this, savedInstanceState, toolbar, navigationViewModel, statusViewModel)
+        navigationDrawer = NavigationDrawer(this, savedInstanceState, toolbar, navigationViewModel, statusViewModel, isDualPane)
 
         supportFragmentManager.addOnBackStackChangedListener {
 
@@ -225,7 +223,7 @@ class MainActivity : AppCompatActivity(), ToolbarInterface, LayoutControlInterfa
             event.getContentIfNotHandled()?.let {
                 Timber.d("Navigation menu id changed to $it")
                 baseViewModel.clearSearchQuery()
-                handleDrawerItemSelected(it)
+                navigationDrawer.handleDrawerItemSelected(it)
             }
         })
         statusViewModel.showRunningRecordingCount.observe(this, Observer { show ->
@@ -255,38 +253,15 @@ class MainActivity : AppCompatActivity(), ToolbarInterface, LayoutControlInterfa
         super.onSaveInstanceState(out)
     }
 
+    override fun attachBaseContext(context: Context) {
+        super.attachBaseContext(onAttach(context))
+    }
+
     public override fun onStart() {
         super.onStart()
         LocalBroadcastManager.getInstance(this).registerReceiver(syncStateReceiver, IntentFilter(SyncStateReceiver.ACTION))
         LocalBroadcastManager.getInstance(this).registerReceiver(snackbarMessageReceiver, IntentFilter(SnackbarMessageReceiver.SNACKBAR_ACTION))
         registerReceiver(networkStatusReceiver, IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"))
-    }
-
-    public override fun onStop() {
-        super.onStop()
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(syncStateReceiver)
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(snackbarMessageReceiver)
-        unregisterReceiver(networkStatusReceiver)
-    }
-
-    override fun attachBaseContext(context: Context) {
-        super.attachBaseContext(onAttach(context))
-    }
-
-    override fun setTitle(title: String) {
-        supportActionBar?.title = title
-    }
-
-    override fun setSubtitle(subtitle: String) {
-        supportActionBar?.subtitle = subtitle
-    }
-
-    override fun dispatchKeyEvent(event: KeyEvent): Boolean {
-        castContext?.let {
-            return it.onDispatchVolumeKeyEventBeforeJellyBean(event) || super.dispatchKeyEvent(event)
-        } ?: run {
-            return super.dispatchKeyEvent(event)
-        }
     }
 
     public override fun onResume() {
@@ -307,34 +282,27 @@ class MainActivity : AppCompatActivity(), ToolbarInterface, LayoutControlInterfa
         super.onPause()
     }
 
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        super.onCreateOptionsMenu(menu)
-        menuInflater.inflate(R.menu.main_options_menu, menu)
+    public override fun onStop() {
+        super.onStop()
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(syncStateReceiver)
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(snackbarMessageReceiver)
+        unregisterReceiver(networkStatusReceiver)
+    }
 
-        mediaRouteMenuItem = menu.findItem(R.id.media_route_menu_item)
-        try {
-            CastButtonFactory.setUpMediaRouteButton(applicationContext, menu, R.id.media_route_menu_item)
-        } catch (e: Exception) {
-            Timber.e(e, "Could not setup media route button")
+    override fun setTitle(title: String) {
+        supportActionBar?.title = title
+    }
+
+    override fun setSubtitle(subtitle: String) {
+        supportActionBar?.subtitle = subtitle
+    }
+
+    override fun dispatchKeyEvent(event: KeyEvent): Boolean {
+        castContext?.let {
+            return it.onDispatchVolumeKeyEventBeforeJellyBean(event) || super.dispatchKeyEvent(event)
+        } ?: run {
+            return super.dispatchKeyEvent(event)
         }
-
-        val searchManager = getSystemService(Context.SEARCH_SERVICE) as SearchManager
-        searchMenuItem = menu.findItem(R.id.menu_search)
-        searchView = searchMenuItem?.actionView as SearchView
-
-        searchView?.let {
-            it.setSearchableInfo(searchManager.getSearchableInfo(componentName))
-            it.setIconifiedByDefault(true)
-            it.setOnQueryTextListener(this)
-            it.setOnSuggestionListener(this)
-            it.setOnQueryTextFocusChangeListener(this)
-
-            val fragment = supportFragmentManager.findFragmentById(R.id.main)
-            if (fragment is SearchRequestInterface && fragment.isVisible) {
-                it.queryHint = fragment.getQueryHint()
-            }
-        }
-        return true
     }
 
     private fun showIntroductoryOverlay() {
@@ -372,42 +340,34 @@ class MainActivity : AppCompatActivity(), ToolbarInterface, LayoutControlInterfa
         }
     }
 
-    /**
-     * Called when a menu item from the navigation drawer was selected. It loads
-     * and shows the correct fragment or fragments depending on the selected
-     * menu item.
-     *
-     * @param id Selected position within the menu array
-     */
-    private fun handleDrawerItemSelected(id: Int) {
-        Timber.d("Handling new navigation menu id $id")
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        super.onCreateOptionsMenu(menu)
+        menuInflater.inflate(R.menu.main_options_menu, menu)
 
-        if (id == MENU_SETTINGS) {
-            startActivity(Intent(this, SettingsActivity::class.java))
-            return
+        mediaRouteMenuItem = menu.findItem(R.id.media_route_menu_item)
+        try {
+            CastButtonFactory.setUpMediaRouteButton(applicationContext, menu, R.id.media_route_menu_item)
+        } catch (e: Exception) {
+            Timber.e(e, "Could not setup media route button")
         }
 
-        val addFragmentToBackStack = sharedPreferences.getBoolean("navigation_history_enabled",
-                resources.getBoolean(R.bool.pref_default_navigation_history_enabled))
+        val searchManager = getSystemService(Context.SEARCH_SERVICE) as SearchManager
+        searchMenuItem = menu.findItem(R.id.menu_search)
+        searchView = searchMenuItem?.actionView as SearchView
 
-        // A new or existing main fragment shall be shown. So save the menu position so we
-        // know which one was selected. Additionally remove any old details fragment in case
-        // dual pane mode is active to prevent showing wrong details data.
-        // Finally show the new main fragment and add it to the back stack
-        // only if it is a new fragment and not an existing one.
-        val fragment = navigationDrawer.getFragmentFromSelectedNavigationDrawerMenu(id)
-        if (fragment != null) {
-            if (isDualPane) {
-                val detailsFragment = supportFragmentManager.findFragmentById(R.id.details)
-                if (detailsFragment != null) {
-                    supportFragmentManager.beginTransaction().remove(detailsFragment).commit()
-                }
-            }
-            supportFragmentManager.beginTransaction().replace(R.id.main, fragment).let {
-                if (addFragmentToBackStack) it.addToBackStack(null)
-                it.commit()
+        searchView?.let {
+            it.setSearchableInfo(searchManager.getSearchableInfo(componentName))
+            it.setIconifiedByDefault(true)
+            it.setOnQueryTextListener(this)
+            it.setOnSuggestionListener(this)
+            it.setOnQueryTextFocusChangeListener(this)
+
+            val fragment = supportFragmentManager.findFragmentById(R.id.main)
+            if (fragment is SearchRequestInterface && fragment.isVisible) {
+                it.queryHint = fragment.getQueryHint()
             }
         }
+        return true
     }
 
     override fun onPrepareOptionsMenu(menu: Menu): Boolean {
