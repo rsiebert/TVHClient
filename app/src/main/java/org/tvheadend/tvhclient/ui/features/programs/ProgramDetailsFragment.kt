@@ -13,12 +13,13 @@ import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.databinding.ProgramDetailsFragmentBinding
 import org.tvheadend.tvhclient.ui.base.BaseFragment
 import org.tvheadend.tvhclient.ui.common.*
+import org.tvheadend.tvhclient.ui.common.interfaces.ClearSearchResultsOrPopBackStackInterface
 import org.tvheadend.tvhclient.ui.common.interfaces.LayoutControlInterface
 import org.tvheadend.tvhclient.util.extensions.gone
 import org.tvheadend.tvhclient.util.extensions.visible
 import timber.log.Timber
 
-class ProgramDetailsFragment : BaseFragment() {
+class ProgramDetailsFragment : BaseFragment(), ClearSearchResultsOrPopBackStackInterface {
 
     private lateinit var programViewModel: ProgramViewModel
     private var program: Program? = null

@@ -36,12 +36,7 @@ import org.tvheadend.tvhclient.service.SyncStateReceiver
 import org.tvheadend.tvhclient.ui.base.BaseViewModel
 import org.tvheadend.tvhclient.ui.common.*
 import org.tvheadend.tvhclient.ui.common.interfaces.*
-import org.tvheadend.tvhclient.ui.features.channels.ChannelListFragment
-import org.tvheadend.tvhclient.ui.features.dvr.recordings.RecordingDetailsFragment
 import org.tvheadend.tvhclient.ui.features.dvr.recordings.download.DownloadPermissionGrantedInterface
-import org.tvheadend.tvhclient.ui.features.dvr.series_recordings.SeriesRecordingDetailsFragment
-import org.tvheadend.tvhclient.ui.features.dvr.timer_recordings.TimerRecordingDetailsFragment
-import org.tvheadend.tvhclient.ui.features.epg.EpgFragment
 import org.tvheadend.tvhclient.ui.features.information.ChangeLogFragment
 import org.tvheadend.tvhclient.ui.features.information.PrivacyPolicyFragment
 import org.tvheadend.tvhclient.ui.features.information.StartupPrivacyPolicyFragment
@@ -49,7 +44,6 @@ import org.tvheadend.tvhclient.ui.features.information.StatusViewModel
 import org.tvheadend.tvhclient.ui.features.navigation.NavigationDrawer
 import org.tvheadend.tvhclient.ui.features.navigation.NavigationViewModel
 import org.tvheadend.tvhclient.ui.features.playback.external.CastSessionManagerListener
-import org.tvheadend.tvhclient.ui.features.programs.ProgramDetailsFragment
 import org.tvheadend.tvhclient.ui.features.programs.ProgramListFragment
 import org.tvheadend.tvhclient.ui.features.startup.StartupFragment
 import org.tvheadend.tvhclient.util.extensions.*
@@ -431,7 +425,7 @@ class MainActivity : AppCompatActivity(), ToolbarInterface, LayoutControlInterfa
         // In case the channels or epg is currently visible, show the program list fragment.
         // It observes the search query and will perform the search and show the results.
         val fragment = supportFragmentManager.findFragmentById(R.id.main)
-        if (fragment is ChannelListFragment || fragment is EpgFragment) {
+        if (fragment is ShowProgramListFragmentInterface) {
             Timber.d("Adding program list fragment where the search will be done")
             val newFragment: Fragment = ProgramListFragment.newInstance()
             supportFragmentManager.beginTransaction().replace(R.id.main, newFragment).let {
@@ -451,7 +445,7 @@ class MainActivity : AppCompatActivity(), ToolbarInterface, LayoutControlInterfa
         delayedQueryTextSubmitHandler.removeCallbacks(queryTextSubmitTask)
 
         val fragment = supportFragmentManager.findFragmentById(R.id.main)
-        if (fragment !is ChannelListFragment && fragment !is EpgFragment) {
+        if (fragment !is ShowProgramListFragmentInterface) {
             if (newText.length >= 3) {
                 Timber.d("Search query is ${newText.length} characters long, starting timer to start searching")
                 delayedQueryTextSubmitHandler.postDelayed(queryTextSubmitTask, 2000)
@@ -556,11 +550,7 @@ class MainActivity : AppCompatActivity(), ToolbarInterface, LayoutControlInterfa
             // So do not finish the activity in case any of these fragments are visible
             // but pop the back stack so that the channel list is shown again.
             when (supportFragmentManager.findFragmentById(R.id.main)) {
-                is ProgramListFragment -> clearSearchResultsOrPopBackStack()
-                is ProgramDetailsFragment -> clearSearchResultsOrPopBackStack()
-                is RecordingDetailsFragment -> clearSearchResultsOrPopBackStack()
-                is SeriesRecordingDetailsFragment -> clearSearchResultsOrPopBackStack()
-                is TimerRecordingDetailsFragment -> clearSearchResultsOrPopBackStack()
+                is ClearSearchResultsOrPopBackStackInterface -> clearSearchResultsOrPopBackStack()
                 else -> finish()
             }
         } else {
