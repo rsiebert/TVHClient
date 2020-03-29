@@ -30,6 +30,17 @@
         <item>Sendernummer (absteigend)</item>
     </string-array>
 
+    <string-array name="pref_sort_completed_recordings_names">
+        <item>Start time (aufsteigend)</item>
+        <item>Start time (absteigend)</item>
+        <item>Titel (aufsteigend)</item>
+        <item>Titel (absteigend)</item>
+        <item>Genre (aufsteigend)</item>
+        <item>Genre (absteigend)</item>
+        <item>Dauer (aufsteigend)</item>
+        <item>Dauer (absteigend)</item>
+    </string-array>
+
     <string-array name="day_short_names">
         <item>Mo</item>
         <item>Di</item>
@@ -69,20 +80,20 @@
 
     <string-array name="duplicate_detection_list">
         <item>Alles aufnehmen</item>
-        <item>Alle: Aufnahme wenn das EPG angibt, dass das Program einmalig ist</item>
         <item>Alle: Aufnahme bei anderer Episodennummer</item>
         <item>Alle: Aufnahme bei anderem Untertitel</item>
         <item>Alle: Aufnahme bei anderer Beschreibung</item>
-        <item>Alle: Aufnahme einmal pro Monat</item>
         <item>Alle: Aufnahme einmal pro Woche</item>
         <item>Alle: Aufnahme einmal pro Tag</item>
         <item>Lolal: Aufnahme bei anderer Episodennummer</item>
         <item>Lokal: Aufnahme bei anderem Titel</item>
         <item>Lokal: Aufnahme bei anderem Untertitel</item>
         <item>Lokal: Aufnahme bei anderer Beschreibung</item>
-        <item>Lokal: Aufnahme einmal pro Monat</item>
         <item>Lokal: Aufnahme einmal pro Woche</item>
         <item>Lokal: Aufnahme einmal pro Tag</item>
+        <item>Alle: Aufnahme einmal pro Monat</item>
+        <item>Lokal: Aufnahme einmal pro Monat</item>
+        <item>Alle: Aufnahme wenn das EPG angibt, dass das Program einmalig ist</item>
     </string-array>
 
     <string-array name="epg_max_time_names">

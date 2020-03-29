@@ -43,4 +43,8 @@
         <item quantity="one">%d Upcoming recording</item>
         <item quantity="other">%d Upcoming recordings</item>
     </plurals>
+    <plurals name="running_recordings">
+        <item quantity="one">%d recording is running</item>
+        <item quantity="other">%d recordings are running</item>
+    </plurals>
 </resources>

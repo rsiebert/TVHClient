@@ -23,6 +23,8 @@ class SeriesRecordingViewModel(application: Application) : BaseViewModel(applica
     val recordings: LiveData<List<SeriesRecording>> = appRepository.seriesRecordingData.getLiveDataItems()
     var recordingProfileNameId = 0
 
+    var duplicateDetectionList: Array<String> = application.resources.getStringArray(R.array.duplicate_detection_list)
+
     /**
      * Returns an intent with the recording data
      */

@@ -15,7 +15,7 @@ import org.tvheadend.data.entity.ServerStatus
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.service.HtspService
 import org.tvheadend.tvhclient.ui.base.BaseFragment
-import org.tvheadend.tvhclient.ui.base.LayoutControlInterface
+import org.tvheadend.tvhclient.ui.common.interfaces.LayoutControlInterface
 import org.tvheadend.tvhclient.ui.features.dvr.recordings.RecordingViewModel
 import timber.log.Timber
 
@@ -31,7 +31,7 @@ class StatusFragment : BaseFragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        statusViewModel = ViewModelProviders.of(activity!!).get(StatusViewModel::class.java)
+        statusViewModel = ViewModelProviders.of(requireActivity()).get(StatusViewModel::class.java)
 
         if (activity is LayoutControlInterface) {
             (activity as LayoutControlInterface).forceSingleScreenLayout()
@@ -63,7 +63,7 @@ class StatusFragment : BaseFragment() {
             }
         }
 
-        baseViewModel.connectionToServerAvailable.observe(this, Observer { connectionAvailable ->
+        baseViewModel.connectionToServerAvailableLiveData.observe(viewLifecycleOwner, Observer { connectionAvailable ->
             Timber.d("Connection to server availability changed to $connectionAvailable")
             if (connectionAvailable) {
                 Timber.d("Starting additional information update handler")

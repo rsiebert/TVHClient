@@ -16,8 +16,11 @@ import java.util.*
 
 class ProgramNotificationWorker(val context: Context, workerParams: WorkerParameters) : Worker(context, workerParams) {
 
+    companion object {
+        const val WORK_NAME = "ProgramNotificationWorker"
+    }
+
     override fun doWork(): Result {
-        Timber.d("Loading more event data from server")
 
         val eventTitle = inputData.getString("eventTitle")
         val eventId = inputData.getInt("eventId", 0)
@@ -46,10 +49,10 @@ class ProgramNotificationWorker(val context: Context, workerParams: WorkerParame
         // The text below the title will be the program name
         val currentTime = Date().time
         val title = if (startTime < currentTime)
-            "Program has already started."
+            context.resources.getString(R.string.program_has_already_started)
         else {
             val sdf = SimpleDateFormat("HH:mm", Locale.US)
-            "Program starts at ${sdf.format(startTime)} in ${(startTime - currentTime) / 1000 / 60} minutes."
+            context.resources.getString(R.string.program_starts_soon, sdf.format(startTime), (startTime - currentTime) / 1000 / 60)
         }
 
         val builder = getNotificationBuilder(context)

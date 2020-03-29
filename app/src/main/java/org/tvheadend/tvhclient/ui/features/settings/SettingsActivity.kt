@@ -1,27 +1,45 @@
 package org.tvheadend.tvhclient.ui.features.settings
 
 
+import android.content.Context
+import android.content.IntentFilter
 import android.os.Bundle
+import android.view.MenuItem
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import org.tvheadend.tvhclient.MainApplication
 import org.tvheadend.tvhclient.R
-import org.tvheadend.tvhclient.ui.base.BaseActivity
+import org.tvheadend.tvhclient.ui.common.SnackbarMessageReceiver
 import org.tvheadend.tvhclient.ui.common.interfaces.BackPressedInterface
+import org.tvheadend.tvhclient.ui.common.interfaces.ToolbarInterface
+import org.tvheadend.tvhclient.ui.common.onAttach
 import org.tvheadend.tvhclient.ui.features.information.ChangeLogFragment
 import org.tvheadend.tvhclient.ui.features.information.InformationFragment
 import org.tvheadend.tvhclient.ui.features.information.PrivacyPolicyFragment
 import org.tvheadend.tvhclient.ui.features.unlocker.UnlockerFragment
 import org.tvheadend.tvhclient.util.extensions.showSnackbarMessage
+import org.tvheadend.tvhclient.util.getThemeId
 import timber.log.Timber
 
-class SettingsActivity : BaseActivity(), RemoveFragmentFromBackstackInterface {
+class SettingsActivity : AppCompatActivity(), RemoveFragmentFromBackstackInterface, ToolbarInterface {
 
-    lateinit var settingsViewModel: SettingsViewModel
+    private lateinit var settingsViewModel: SettingsViewModel
+    private lateinit var snackbarMessageReceiver: SnackbarMessageReceiver
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        setTheme(getThemeId(this))
         super.onCreate(savedInstanceState)
+        setContentView(R.layout.misc_content_activity)
+
+        MainApplication.component.inject(this)
+
+        setSupportActionBar(findViewById(R.id.toolbar))
+
         settingsViewModel = ViewModelProviders.of(this).get(SettingsViewModel::class.java)
+        snackbarMessageReceiver = SnackbarMessageReceiver(settingsViewModel)
 
         // If the user wants to go directly to a sub setting screen like the connections
         // and not the main settings screen the setting type can be passed here
@@ -33,19 +51,57 @@ class SettingsActivity : BaseActivity(), RemoveFragmentFromBackstackInterface {
         settingsViewModel.getNavigationMenuId().observe(this, Observer { event ->
             event.getContentIfNotHandled()?.let {
                 Timber.d("New preference selected with id $it, replacing settings fragment")
-                val fragment: Fragment = getSettingsFragment(it)
                 supportFragmentManager.beginTransaction()
-                        .replace(R.id.main, fragment)
+                        .replace(R.id.main, getSettingsFragment(it))
                         .addToBackStack(null)
                         .commit()
             }
         })
 
-        baseViewModel.showSnackbar.observe(this, Observer { event ->
+        settingsViewModel.currentServerStatusLiveData.observe(this, Observer { serverStatus ->
+            Timber.d("Received live data, server status has changed and is ${if (serverStatus != null) "" else "not"} available")
+            if (serverStatus != null) {
+                settingsViewModel.currentServerStatus = serverStatus
+            }
+        })
+
+        settingsViewModel.snackbarMessageLiveData.observe(this, Observer { event ->
             event.getContentIfNotHandled()?.let {
                 this.showSnackbarMessage(it)
             }
         })
+    }
+
+    public override fun onStart() {
+        super.onStart()
+        LocalBroadcastManager.getInstance(this).registerReceiver(snackbarMessageReceiver, IntentFilter(SnackbarMessageReceiver.SNACKBAR_ACTION))
+    }
+
+    public override fun onStop() {
+        super.onStop()
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(snackbarMessageReceiver)
+    }
+
+    override fun attachBaseContext(context: Context) {
+        super.attachBaseContext(onAttach(context))
+    }
+
+    override fun setTitle(title: String) {
+        supportActionBar?.title = title
+    }
+
+    override fun setSubtitle(subtitle: String) {
+        supportActionBar?.subtitle = subtitle
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            android.R.id.home -> {
+                onBackPressed()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
     }
 
     private fun getSettingsFragment(type: String): Fragment {
@@ -58,19 +114,20 @@ class SettingsActivity : BaseActivity(), RemoveFragmentFromBackstackInterface {
             "profiles" -> SettingsProfilesFragment()
             "playback" -> SettingsPlaybackFragment()
             "advanced" -> SettingsAdvancedFragment()
-            "unlocker" -> UnlockerFragment()
+            "unlocker" -> UnlockerFragment.newInstance(settingsViewModel.isUnlocked)
             "information" -> InformationFragment()
             "privacy_policy" -> PrivacyPolicyFragment()
             "changelog" -> ChangeLogFragment.newInstance(showFullChangelog = true)
-            else -> {
-                SettingsFragment().also { it.arguments = intent.extras }
-            }
+            else -> SettingsFragment()
         }
     }
 
+    /*
+     * Forwards the back press command to the fragment that implements the to handle the back press.
+     * This is usually required when a confirmation dialog shall be shown before exiting the fragment.
+     * Otherwise remove the last fragment from the back stack or close the activity in case only one fragment remains.
+     */
     override fun onBackPressed() {
-        // If a settings fragment is currently visible, let the fragment
-        // handle the back press, otherwise the setting activity.
         val fragment = supportFragmentManager.findFragmentById(R.id.main)
         if (fragment is BackPressedInterface && fragment.isVisible) {
             Timber.d("Calling back press in the fragment")

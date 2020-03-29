@@ -13,12 +13,13 @@ import com.google.android.gms.cast.framework.media.CastMediaOptions
 import com.google.android.gms.cast.framework.media.NotificationOptions
 import com.google.firebase.analytics.FirebaseAnalytics
 import io.fabric.sdk.android.Fabric
-import org.tvheadend.tvhclient.di.component.DaggerMainApplicationComponent
-import org.tvheadend.tvhclient.di.component.MainApplicationComponent
+import org.tvheadend.data.AppRepository
+import org.tvheadend.data.di.DaggerRepositoryComponent
+import org.tvheadend.data.di.RepositoryModule
+import org.tvheadend.tvhclient.di.component.DaggerMainComponent
+import org.tvheadend.tvhclient.di.component.MainComponent
 import org.tvheadend.tvhclient.di.module.ContextModule
-import org.tvheadend.tvhclient.di.module.RepositoryModule
 import org.tvheadend.tvhclient.di.module.SharedPreferencesModule
-import org.tvheadend.tvhclient.repository.AppRepository
 import org.tvheadend.tvhclient.ui.common.onAttach
 import org.tvheadend.tvhclient.ui.features.playback.external.ExpandedControlsActivity
 import org.tvheadend.tvhclient.util.MigrateUtils
@@ -35,7 +36,7 @@ import javax.inject.Inject
 // TODO day night theme
 // TODO replace material dialog calls with native ones
 // TODO when a notification is dismissed, it reappears when the recording gets updated,
-//  save the dismissed id in the viewmodel and dont add another notification if the id was already dismissed
+//  save the dismissed id in the viewmodel and don't add another notification if the id was already dismissed
 
 class MainApplication : MultiDexApplication(), OptionsProvider, BillingUpdatesListener {
 
@@ -49,11 +50,18 @@ class MainApplication : MultiDexApplication(), OptionsProvider, BillingUpdatesLi
     override fun onCreate() {
         super.onCreate()
 
-        // Setup the required dependencies for injection
-        component = DaggerMainApplicationComponent.builder()
-                .contextModule(ContextModule(this))
+        // Create the repository component which is then be used for the dependency injection.
+        val repositoryComponent = DaggerRepositoryComponent
+                .builder()
+                .repositoryModule(RepositoryModule(applicationContext))
+                .build()
+
+        // Setup the required modules and components for dependency injection
+        component = DaggerMainComponent
+                .builder()
+                .contextModule(ContextModule(applicationContext))
                 .sharedPreferencesModule(SharedPreferencesModule())
-                .repositoryModule(RepositoryModule())
+                .repositoryComponent(repositoryComponent)
                 .build()
         component.inject(this)
 
@@ -70,11 +78,11 @@ class MainApplication : MultiDexApplication(), OptionsProvider, BillingUpdatesLi
 
         fireBaseAnalytics = FirebaseAnalytics.getInstance(this)
 
-        // Initialize Fabric with the debug-disabled crashlytics.
+        // Initialize firebase crashlytics with the debug-disabled crashlytics.
         if (!BuildConfig.DEBUG && sharedPreferences.getBoolean("crash_reports_enabled", resources.getBoolean(R.bool.pref_default_crash_reports_enabled))) {
             Fabric.with(this, Crashlytics())
         }
-        // Initialize the logging. In release mode Log to theUse debug log
+        // Initialize the logging. Log to the console only when in debug mode.
         if (BuildConfig.DEBUG || BuildConfig.DEBUG_LOG) {
             Timber.plant(DebugTree())
         }
@@ -89,13 +97,14 @@ class MainApplication : MultiDexApplication(), OptionsProvider, BillingUpdatesLi
 
         billingHandler = BillingHandler()
         billingHandler.addListener(this)
-        billingManager = BillingManager(applicationContext, billingHandler, appRepository)
+        billingManager = BillingManager(billingHandler)
         billingManager.queryPurchases()
 
         Timber.d("Application build time is ${BuildConfig.BUILD_TIME}, git commit hash is ${BuildConfig.GIT_SHA}")
 
-        // Migrates existing connections from the old database to the new room database.
-        // Migrates existing preferences or remove old ones before starting the actual application
+        // Execute some additional tasks before starting the application.
+        // These tasks are for example migrating connections, updating or
+        // removing preferences, removing old information from the database and others
         MigrateUtils(applicationContext, appRepository, sharedPreferences).doMigrate()
     }
 
@@ -110,6 +119,9 @@ class MainApplication : MultiDexApplication(), OptionsProvider, BillingUpdatesLi
 
     /**
      * Provides CastOptions, which affects discovery and session management of a Cast device
+     *
+     * @param context Required context object
+     * @return CastOptions
      */
     override fun getCastOptions(context: Context): CastOptions {
         val notificationOptions = NotificationOptions.Builder()
@@ -128,6 +140,9 @@ class MainApplication : MultiDexApplication(), OptionsProvider, BillingUpdatesLi
 
     /**
      * Provides a list of custom SessionProvider instances for non-Cast devices.
+     *
+     * @param context Required context object
+     * @return List of session providers
      */
     override fun getAdditionalSessionProviders(context: Context): List<SessionProvider>? {
         return null
@@ -157,7 +172,7 @@ class MainApplication : MultiDexApplication(), OptionsProvider, BillingUpdatesLi
     companion object {
 
         lateinit var instance: MainApplication
-        lateinit var component: MainApplicationComponent
+        lateinit var component: MainComponent
         lateinit var billingManager: BillingManager
         lateinit var billingHandler: BillingHandler
     }

@@ -2,6 +2,7 @@ package org.tvheadend.tvhclient.ui.features.settings
 
 import android.os.Bundle
 import org.tvheadend.tvhclient.R
+import org.tvheadend.tvhclient.util.extensions.sendSnackbarMessage
 
 class SettingsEditConnectionFragment : SettingsConnectionBaseFragment() {
 
@@ -11,18 +12,21 @@ class SettingsEditConnectionFragment : SettingsConnectionBaseFragment() {
 
         if (savedInstanceState == null) {
             settingsViewModel.loadConnectionById(settingsViewModel.connectionIdToBeEdited)
-            toolbarInterface.setSubtitle(settingsViewModel.connection.name ?: "")
+            toolbarInterface.setSubtitle(settingsViewModel.connectionToEdit.name ?: "")
         }
     }
 
     override fun save() {
-        if (isConnectionInputValid(settingsViewModel.connection)) {
+        val status = connectionValidator.isConnectionInputValid(settingsViewModel.connectionToEdit)
+        if (status == ConnectionValidator.ValidationStatus.SUCCESS) {
             settingsViewModel.updateConnection()
             activity.let {
                 if (it is RemoveFragmentFromBackstackInterface) {
                     it.removeFragmentFromBackstack()
                 }
             }
+        } else {
+            context?.sendSnackbarMessage(getErrorDescription(status))
         }
     }
 }

@@ -35,13 +35,13 @@ internal class TvheadendExtractorsFactory : ExtractorsFactory {
     override fun createExtractors(): Array<Extractor> {
         return arrayOf(
                 HtspSubscriptionExtractor(),
-                MatroskaExtractor(0),
-                FragmentedMp4Extractor(0),
+                MatroskaExtractor(MatroskaExtractor.RESULT_CONTINUE),
+                FragmentedMp4Extractor(FragmentedMp4Extractor.RESULT_CONTINUE),
                 Mp4Extractor(),
-                Mp3Extractor(0),
+                Mp3Extractor(Mp3Extractor.RESULT_CONTINUE),
                 AdtsExtractor(),
                 Ac3Extractor(),
-                TsExtractor(0),
+                TsExtractor(TsExtractor.MODE_MULTI_PMT),
                 FlvExtractor(),
                 OggExtractor(),
                 PsExtractor(),

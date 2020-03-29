@@ -44,6 +44,7 @@
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
             app:genreColor="@{program.contentType}"
+            app:genreColorItemName="@{program.title}"
             app:genreColorAlphaOffset="@{0}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

@@ -5,15 +5,18 @@ import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.view.*
+import android.webkit.WebView
+import android.widget.ProgressBar
+import androidx.core.view.forEach
 import androidx.fragment.app.Fragment
 import androidx.preference.PreferenceManager
-import kotlinx.android.synthetic.main.webview_fragment.*
 import kotlinx.coroutines.*
 import org.tvheadend.tvhclient.BuildConfig
 import org.tvheadend.tvhclient.R
+import org.tvheadend.tvhclient.ui.common.interfaces.HideNavigationDrawerInterface
 import org.tvheadend.tvhclient.ui.common.interfaces.BackPressedInterface
+import org.tvheadend.tvhclient.ui.common.interfaces.LayoutControlInterface
 import org.tvheadend.tvhclient.ui.common.interfaces.ToolbarInterface
-import org.tvheadend.tvhclient.ui.features.settings.RemoveFragmentFromBackstackInterface
 import org.tvheadend.tvhclient.util.extensions.gone
 import org.tvheadend.tvhclient.util.extensions.visible
 import org.tvheadend.tvhclient.util.getThemeId
@@ -22,19 +25,25 @@ import java.io.BufferedReader
 import java.io.InputStream
 import java.io.InputStreamReader
 
-class ChangeLogFragment : Fragment(), BackPressedInterface {
+class ChangeLogFragment : Fragment(), BackPressedInterface, HideNavigationDrawerInterface {
 
     private val job = Job()
     private val scope = CoroutineScope(Dispatchers.IO + job)
     private var showFullChangeLog = false
     private var versionName: String = ""
 
+    private var webView: WebView? = null
+    private var loadingView: ProgressBar? = null
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return if (Build.VERSION.SDK_INT in 21..25) {
+        val view = if (Build.VERSION.SDK_INT in 21..25) {
             inflater.inflate(R.layout.webview_fragment_for_lollipop, container, false)
         } else {
             inflater.inflate(R.layout.webview_fragment, container, false)
         }
+        webView = view.findViewById(R.id.webview)
+        loadingView = view.findViewById(R.id.loading_view)
+        return view
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -43,18 +52,27 @@ class ChangeLogFragment : Fragment(), BackPressedInterface {
         if (activity is ToolbarInterface) {
             (activity as ToolbarInterface).setTitle(getString(R.string.pref_changelog))
         }
+
+        if (activity is LayoutControlInterface) {
+            (activity as LayoutControlInterface).forceSingleScreenLayout()
+        }
+
         showFullChangeLog = arguments?.getBoolean("showFullChangelog", true) ?: true
         versionName = arguments?.getString("versionNameForChangelog", BuildConfig.VERSION_NAME) ?: BuildConfig.VERSION_NAME
         setHasOptionsMenu(true)
+
+        // Make the background transparent to remove flickering. This avoids
+        // seeing the default theme background color before the stylesheets are loaded.
+        webView?.setBackgroundColor(Color.argb(0, 0, 0, 0))
+
+        Timber.d("Showing changelog, show full changelog: $showFullChangeLog")
+        activity?.let {
+            scope.launch { loadChangeLogContents(it, versionName, showFullChangeLog) }
+        }
     }
 
-    override fun onResume() {
-        super.onResume()
-        showChangelog(showFullChangeLog)
-    }
-
-    override fun onPause() {
-        super.onPause()
+    override fun onDestroy() {
+        super.onDestroy()
         job.cancel()
     }
 
@@ -62,21 +80,6 @@ class ChangeLogFragment : Fragment(), BackPressedInterface {
         super.onSaveInstanceState(outState)
         outState.putBoolean("showFullChangelog", showFullChangeLog)
         outState.putString("versionNameForChangelog", versionName)
-    }
-
-    private fun showChangelog(showFullChangeLog: Boolean) {
-        Timber.d("Showing changelog, show full changelog: $showFullChangeLog")
-        // Make the background transparent to remove flickering. This avoids
-        // seeing the default theme background color before the stylesheets are loaded.
-        webview.setBackgroundColor(Color.argb(0, 0, 0, 0))
-        webview.gone()
-        loading_view.visible()
-
-        Timber.d("About to launch coroutine to load contents")
-        activity?.let {
-            Timber.d("Activity is present, launching coroutine")
-            scope.launch { loadChangeLogContents(it, versionName, showFullChangeLog) }
-        }
     }
 
     private suspend fun loadChangeLogContents(context: Context, versionName: String, showFullChangeLog: Boolean) {
@@ -95,6 +98,7 @@ class ChangeLogFragment : Fragment(), BackPressedInterface {
     }
 
     override fun onPrepareOptionsMenu(menu: Menu) {
+        menu.forEach { it.isVisible = false }
         menu.findItem(R.id.menu_show_full_changelog)?.isVisible = !showFullChangeLog
     }
 
@@ -110,7 +114,7 @@ class ChangeLogFragment : Fragment(), BackPressedInterface {
                 return true
             }
             R.id.menu_show_full_changelog -> {
-                scope.launch { loadChangeLogContents(context!!, versionName, true) }
+                scope.launch { loadChangeLogContents(requireContext(), versionName, true) }
                 return true
             }
         }
@@ -124,20 +128,16 @@ class ChangeLogFragment : Fragment(), BackPressedInterface {
         editor.putString("versionNameForChangelog", BuildConfig.VERSION_NAME)
         editor.apply()
 
-        activity.let {
-            if (it is RemoveFragmentFromBackstackInterface) {
-                it.removeFragmentFromBackstack()
-            }
-        }
+        activity?.supportFragmentManager?.popBackStack()
     }
 
     private fun onFileContentsLoaded(fileContent: String) {
-        Timber.d("Changelog data was loaded")
-        if (fileContent.isNotEmpty() && isVisible) {
+        Timber.d("Changelog data was loaded, file contents is not empty ${fileContent.isNotEmpty()}, fragment is added $isAdded and is visible $isVisible")
+        if (fileContent.isNotEmpty() && isAdded) {
             Timber.d("Changelog data is available, showing contents in webview")
-            webview.loadDataWithBaseURL("file:///android_asset/", fileContent, "text/html", "utf-8", null)
-            webview.visible()
-            loading_view.gone()
+            webView?.loadDataWithBaseURL("file:///android_asset/", fileContent, "text/html", "utf-8", null)
+            webView?.visible()
+            loadingView?.gone()
         }
     }
 
@@ -159,8 +159,8 @@ class ChangeLogFragment : Fragment(), BackPressedInterface {
             isLightTheme = getThemeId(context) == R.style.CustomTheme_Light
         }
 
-        fun getChangeLogFromFile(full: Boolean): String {
-            Timber.d("Loading full changelog $full")
+        fun getChangeLogFromFile(loadFullChangelog: Boolean): String {
+            Timber.d("Loading full changelog $loadFullChangelog")
 
             // Add the style sheet depending on the used theme
             stringBuffer = StringBuffer()
@@ -188,7 +188,7 @@ class ChangeLogFragment : Fragment(), BackPressedInterface {
                     closeList()
                     val version = line.substring(1).trim()
                     // stop output?
-                    if (!full) {
+                    if (!loadFullChangelog) {
                         if (lastAppVersion == version) {
                             advanceToEOVS = true
                         } else if (version == "END_OF_CHANGE_LOG") {

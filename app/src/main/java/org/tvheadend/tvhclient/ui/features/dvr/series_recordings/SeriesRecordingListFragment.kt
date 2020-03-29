@@ -33,7 +33,7 @@ class SeriesRecordingListFragment : BaseFragment(), RecyclerViewClickInterface, 
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        seriesRecordingViewModel = ViewModelProviders.of(activity!!).get(SeriesRecordingViewModel::class.java)
+        seriesRecordingViewModel = ViewModelProviders.of(requireActivity()).get(SeriesRecordingViewModel::class.java)
 
         arguments?.let {
             seriesRecordingViewModel.selectedListPosition = it.getInt("listPosition")
@@ -88,7 +88,7 @@ class SeriesRecordingListFragment : BaseFragment(), RecyclerViewClickInterface, 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         val ctx = context ?: return super.onOptionsItemSelected(item)
         return when (item.itemId) {
-            R.id.menu_add_recording -> addNewSeriesRecording(ctx)
+            R.id.menu_add_recording -> return addNewSeriesRecording(requireActivity())
             R.id.menu_remove_all_recordings -> showConfirmationToRemoveAllSeriesRecordings(ctx, CopyOnWriteArrayList(recyclerViewAdapter.items))
             else -> super.onOptionsItemSelected(item)
         }
@@ -146,7 +146,7 @@ class SeriesRecordingListFragment : BaseFragment(), RecyclerViewClickInterface, 
                         it.commit()
                     }
                 }
-            } else if (seriesRecordingViewModel.currentId.value != recording.id){
+            } else if (seriesRecordingViewModel.currentId.value != recording.id) {
                 seriesRecordingViewModel.currentId.value = recording.id
             }
         }
@@ -167,7 +167,7 @@ class SeriesRecordingListFragment : BaseFragment(), RecyclerViewClickInterface, 
 
         popupMenu.setOnMenuItemClickListener { item ->
             when (item.itemId) {
-                R.id.menu_edit_recording -> return@setOnMenuItemClickListener editSelectedSeriesRecording(ctx, seriesRecording.id)
+                R.id.menu_edit_recording -> return@setOnMenuItemClickListener editSelectedSeriesRecording(requireActivity(), seriesRecording.id)
                 R.id.menu_remove_recording -> return@setOnMenuItemClickListener showConfirmationToRemoveSelectedSeriesRecording(ctx, seriesRecording, null)
                 R.id.menu_disable_recording -> return@setOnMenuItemClickListener enableSeriesRecording(seriesRecording, false)
                 R.id.menu_enable_recording -> return@setOnMenuItemClickListener enableSeriesRecording(seriesRecording, true)
@@ -176,7 +176,7 @@ class SeriesRecordingListFragment : BaseFragment(), RecyclerViewClickInterface, 
                 R.id.menu_search_fileaffinity -> return@setOnMenuItemClickListener searchTitleOnFileAffinityWebsite(ctx, seriesRecording.title)
                 R.id.menu_search_youtube -> return@setOnMenuItemClickListener searchTitleOnYoutube(ctx, seriesRecording.title)
                 R.id.menu_search_google -> return@setOnMenuItemClickListener searchTitleOnGoogle(ctx, seriesRecording.title)
-                R.id.menu_search_epg -> return@setOnMenuItemClickListener searchTitleInTheLocalDatabase(activity!!, baseViewModel, seriesRecording.title)
+                R.id.menu_search_epg -> return@setOnMenuItemClickListener searchTitleInTheLocalDatabase(requireActivity(), baseViewModel, seriesRecording.title)
                 else -> return@setOnMenuItemClickListener false
             }
         }
@@ -205,8 +205,18 @@ class SeriesRecordingListFragment : BaseFragment(), RecyclerViewClickInterface, 
         search_progress?.gone()
         showStatusInToolbar()
         // Preselect the first result item in the details screen
-        if (isDualPane && recyclerViewAdapter.itemCount > 0) {
-            showRecordingDetails(0)
+        if (isDualPane) {
+            when {
+                recyclerViewAdapter.itemCount > seriesRecordingViewModel.selectedListPosition -> {
+                    showRecordingDetails(seriesRecordingViewModel.selectedListPosition)
+                }
+                recyclerViewAdapter.itemCount <= seriesRecordingViewModel.selectedListPosition -> {
+                    showRecordingDetails(0)
+                }
+                recyclerViewAdapter.itemCount == 0 -> {
+                    removeDetailsFragment()
+                }
+            }
         }
     }
 

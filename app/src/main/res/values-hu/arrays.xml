@@ -69,20 +69,20 @@
 
     <string-array name="duplicate_detection_list">
         <item>Összes felvétele</item>
-        <item>Mind: Felvétel, ha az EPG azt jelzi, hogy ez egy egyedi program</item>
         <item>Mind: Felvétel ha különböző az epizód száma</item>
         <item>Mind: Felvétel ha új a felirat</item>
         <item>Mind: Felvétel akkor ha eltérő a leírás</item>
-        <item>Mind: havonta egyszeri rögzítés</item>
         <item>Mind: hetente egyszeri rögzítés</item>
         <item>Mind: naponta egyszeri rögzítés</item>
         <item>Helyi: Felvétel ha különböző az epizód száma</item>
         <item>Helyi: Felvétel ha más a cím</item>
         <item>Helyi: Felvétel ha új a felirat</item>
         <item>Helyi: Felvétel akkor ha eltérő a leírás</item>
-        <item>Helyi: havonta egyszeri rögzítés</item>
         <item>Helyi: hetente egyszeri rögzítés</item>
         <item>Helyi: naponta egyszeri rögzítés</item>
+        <item>Mind: havonta egyszeri rögzítés</item>
+        <item>Helyi: havonta egyszeri rögzítés</item>
+        <item>Mind: Felvétel, ha az EPG azt jelzi, hogy ez egy egyedi program</item>
     </string-array>
 
     <string-array name="pr_content_type0">

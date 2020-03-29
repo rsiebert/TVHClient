@@ -1,6 +1,5 @@
 package org.tvheadend.tvhclient.ui.features.programs
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.*
 import androidx.databinding.DataBindingUtil
@@ -13,14 +12,14 @@ import org.tvheadend.data.entity.Recording
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.databinding.ProgramDetailsFragmentBinding
 import org.tvheadend.tvhclient.ui.base.BaseFragment
-import org.tvheadend.tvhclient.ui.base.LayoutControlInterface
 import org.tvheadend.tvhclient.ui.common.*
-import org.tvheadend.tvhclient.ui.features.dvr.RecordingAddEditActivity
+import org.tvheadend.tvhclient.ui.common.interfaces.ClearSearchResultsOrPopBackStackInterface
+import org.tvheadend.tvhclient.ui.common.interfaces.LayoutControlInterface
 import org.tvheadend.tvhclient.util.extensions.gone
 import org.tvheadend.tvhclient.util.extensions.visible
 import timber.log.Timber
 
-class ProgramDetailsFragment : BaseFragment() {
+class ProgramDetailsFragment : BaseFragment(), ClearSearchResultsOrPopBackStackInterface {
 
     private lateinit var programViewModel: ProgramViewModel
     private var program: Program? = null
@@ -35,7 +34,7 @@ class ProgramDetailsFragment : BaseFragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        programViewModel = ViewModelProviders.of(activity!!).get(ProgramViewModel::class.java)
+        programViewModel = ViewModelProviders.of(requireActivity()).get(ProgramViewModel::class.java)
 
         if (activity is LayoutControlInterface) {
             (activity as LayoutControlInterface).forceSingleScreenLayout()
@@ -89,10 +88,7 @@ class ProgramDetailsFragment : BaseFragment() {
             // Otherwise remember the recording so that the state can be updated
             if (rec.eventId == programIdToBeEditedWhenBeingRecorded && programIdToBeEditedWhenBeingRecorded > 0) {
                 programIdToBeEditedWhenBeingRecorded = 0
-                val intent = Intent(activity, RecordingAddEditActivity::class.java)
-                intent.putExtra("id", rec.id)
-                intent.putExtra("type", "recording")
-                activity?.startActivity(intent)
+                editSelectedRecording(requireActivity(), rec.id)
                 break
 
             } else {
@@ -158,7 +154,7 @@ class ProgramDetailsFragment : BaseFragment() {
             R.id.menu_search_fileaffinity -> return searchTitleOnFileAffinityWebsite(ctx, program.title)
             R.id.menu_search_youtube -> return searchTitleOnYoutube(ctx, program.title)
             R.id.menu_search_google -> return searchTitleOnGoogle(ctx, program.title)
-            R.id.menu_search_epg -> return searchTitleInTheLocalDatabase(activity!!, baseViewModel, program.title, program.channelId)
+            R.id.menu_search_epg -> return searchTitleInTheLocalDatabase(requireActivity(), baseViewModel, program.title, program.channelId)
 
             R.id.menu_add_notification -> return addNotificationProgramIsAboutToStart(ctx, program, programViewModel.getRecordingProfile())
             else -> return false

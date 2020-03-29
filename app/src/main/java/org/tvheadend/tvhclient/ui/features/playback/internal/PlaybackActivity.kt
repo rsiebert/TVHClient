@@ -16,13 +16,11 @@ import android.os.Bundle
 import android.view.Surface
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.PopupMenu
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.preference.PreferenceManager
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.list.listItemsSingleChoice
-import com.google.android.exoplayer2.C
 import com.google.android.exoplayer2.Player
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
@@ -33,7 +31,8 @@ import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.ui.common.onAttach
 import org.tvheadend.tvhclient.ui.features.MainActivity
 import org.tvheadend.tvhclient.ui.features.playback.internal.utils.Rational
-import org.tvheadend.tvhclient.ui.features.playback.internal.utils.TrackSelectionHelper
+import org.tvheadend.tvhclient.ui.features.playback.internal.utils.TrackInformationDialog
+import org.tvheadend.tvhclient.ui.features.playback.internal.utils.TrackSelectionDialog
 import org.tvheadend.tvhclient.util.extensions.*
 import org.tvheadend.tvhclient.util.getIconUrl
 import org.tvheadend.tvhclient.util.getThemeId
@@ -44,9 +43,10 @@ class PlaybackActivity : AppCompatActivity() {
     private var timeshiftSupported: Boolean = false
     private lateinit var viewModel: PlayerViewModel
 
-    private val videoAspectRatioNameList = listOf("5:4 (1.25:1)", "4:3 (1.3:1)", "16:9 (1.7:1)", "16:10 (1.6:1)")
+    private val videoAspectRatioNameList = listOf("5:4", "4:3", "16:9", "16:10")
     private val videoAspectRatioList = listOf(Rational(5, 4), Rational(4, 3), Rational(16, 9), Rational(16, 10))
     private var selectedVideoAspectRatio: Rational? = null
+    private var selectedVideoAspectIndex = -1
 
     private var orientationSensorListener: SensorEventListener? = null
     private var sensorManager: SensorManager? = null
@@ -121,9 +121,10 @@ class PlaybackActivity : AppCompatActivity() {
         player_pause?.setOnClickListener { onPauseButtonSelected() }
         player_rewind?.setOnClickListener { onRewindButtonSelected() }
         player_forward?.setOnClickListener { onForwardButtonSelected() }
-        player_menu?.setOnClickListener { onMenuButtonSelected() }
-        player_menu_aspect_ratio?.setOnClickListener { onChangeAspectRatioSelected() }
-        player_menu_fullscreen?.setOnClickListener { onMenuFullscreenSelected() }
+        player_settings?.setOnClickListener { onSettingsButtonSelected() }
+        player_information?.setOnClickListener { onInformationButtonSelected() }
+        player_aspect_ratio?.setOnClickListener { onChangeAspectRatioSelected() }
+        player_toggle_fullscreen?.setOnClickListener { onToggleFullscreenSelected() }
         play_next_channel?.setOnClickListener { onPlayNextChannelButtonSelected() }
         play_previous_channel?.setOnClickListener { onPlayPreviousChannelButtonSelected() }
 
@@ -283,11 +284,11 @@ class PlaybackActivity : AppCompatActivity() {
         when (newConfig.orientation) {
             Configuration.ORIENTATION_PORTRAIT -> {
                 Timber.d("Player is in portrait mode")
-                player_menu_fullscreen?.setImageResource(R.drawable.ic_player_fullscreen)
+                player_toggle_fullscreen?.setImageResource(R.drawable.ic_player_fullscreen)
             }
             Configuration.ORIENTATION_LANDSCAPE -> {
                 Timber.d("Player is in landscape mode")
-                player_menu_fullscreen?.setImageResource(R.drawable.ic_player_fullscreen_exit)
+                player_toggle_fullscreen?.setImageResource(R.drawable.ic_player_fullscreen_exit)
             }
         }
 
@@ -306,6 +307,8 @@ class PlaybackActivity : AppCompatActivity() {
         var height = videoAspectRatio.denominator
         val ratio = width.toFloat() / height.toFloat()
         val orientation = resources.configuration.orientation
+
+        Timber.d("Current video dimensions are $width:$height, ratio: $ratio")
 
         if (orientation == Configuration.ORIENTATION_PORTRAIT) {
             if (width != screenWidth) {
@@ -341,70 +344,48 @@ class PlaybackActivity : AppCompatActivity() {
         viewModel.play()
     }
 
-    private fun onMenuButtonSelected() {
-        Timber.d("Menu button selected")
-
-        var popupMenu: PopupMenu? = null
-        player_menu?.let {
-            popupMenu = PopupMenu(this, it)
-            popupMenu?.menuInflater?.inflate(R.menu.player_popup_menu, popupMenu?.menu)
+    private fun onSettingsButtonSelected() {
+        Timber.d("Settings button selected")
+        if (TrackSelectionDialog.willHaveContent(viewModel.trackSelector)) {
+            val trackSelectionDialog = TrackSelectionDialog.createForTrackSelector(viewModel.trackSelector)
+            trackSelectionDialog.show(supportFragmentManager, null)
         }
+    }
 
-        val mappedTrackInfo = viewModel.trackSelector.currentMappedTrackInfo
-        if (mappedTrackInfo != null) {
-            for (i in 0 until mappedTrackInfo.length) {
-                val trackGroups = mappedTrackInfo.getTrackGroups(i)
-                if (trackGroups.length != 0) {
-                    when (viewModel.player.getRendererType(i)) {
-                        C.TRACK_TYPE_AUDIO -> {
-                            Timber.d("Track renderer type for index $i is audio, showing audio menu")
-                            popupMenu?.menu?.findItem(R.id.menu_audio)?.isVisible = true
-                        }
-                        C.TRACK_TYPE_VIDEO -> {
-                            Timber.d("Track renderer type for index $i is video")
-                            //popupMenu?.menu?.findItem(R.id.menu_video)?.isVisible = true
-                        }
-                        C.TRACK_TYPE_TEXT -> {
-                            Timber.d("Track renderer type for index $i is text, showing subtitle menu")
-                            popupMenu?.menu?.findItem(R.id.menu_subtitle)?.isVisible = true
-                        }
-                    }
-                }
-            }
-
-            Timber.d("Adding popup menu listener")
-            popupMenu?.setOnMenuItemClickListener { item ->
-                val trackSelectionHelper = TrackSelectionHelper(viewModel.trackSelector, viewModel.adaptiveTrackSelectionFactory)
-                when (item.itemId) {
-                    R.id.menu_audio -> {
-                        trackSelectionHelper.showSelectionDialog(this, "Audio", mappedTrackInfo, C.TRACK_TYPE_AUDIO)
-                        return@setOnMenuItemClickListener true
-                    }
-                    R.id.menu_subtitle -> {
-                        trackSelectionHelper.showSelectionDialog(this, "Subtitles", mappedTrackInfo, C.TRACK_TYPE_TEXT)
-                        return@setOnMenuItemClickListener true
-                    }
-                    else -> {
-                        return@setOnMenuItemClickListener false
-                    }
-                }
-            }
-            popupMenu?.show()
-        }
+    private fun onInformationButtonSelected() {
+        Timber.d("Information button selected")
+        val trackInformationDialog = TrackInformationDialog.createForTrackSelector(viewModel.player)
+        trackInformationDialog.show(supportFragmentManager, null)
     }
 
     private fun onChangeAspectRatioSelected() {
         Timber.d("Change aspect ratio button selected")
+        val width = selectedVideoAspectRatio?.numerator ?: 0
+        val height = selectedVideoAspectRatio?.denominator ?: 1
+        val currentRatio = (width.toFloat() / height.toFloat()).toString().subStringUntilOrLess(4)
+
+        Timber.d("Current video dimensions are $width:$height, current ratio: $currentRatio:1, selected index $selectedVideoAspectIndex")
+        if (selectedVideoAspectIndex == -1) {
+            videoAspectRatioList.forEachIndexed { index, value ->
+                val ratio = (value.numerator.toFloat() / value.denominator.toFloat()).toString().subStringUntilOrLess(4)
+                Timber.d("Current ratio: $currentRatio, ratio: $ratio")
+                if (currentRatio == ratio) {
+                    selectedVideoAspectIndex = index
+                }
+            }
+        }
+
         MaterialDialog(this).show {
             title(text = "Select the video aspect ratio")
-            listItemsSingleChoice(items = videoAspectRatioNameList.toList(), initialSelection = -1) { _, which, _ ->
+            listItemsSingleChoice(items = videoAspectRatioNameList.toList(), initialSelection = selectedVideoAspectIndex) { _, which, _ ->
                 Timber.d("Selected aspect ratio index is $which")
+                selectedVideoAspectIndex = which
                 viewModel.setVideoAspectRatio(videoAspectRatioList[which])
             }
         }
     }
 
-    private fun onMenuFullscreenSelected() {
+    private fun onToggleFullscreenSelected() {
         when (resources.configuration.orientation) {
             Configuration.ORIENTATION_PORTRAIT -> {
                 forceOrientation = true

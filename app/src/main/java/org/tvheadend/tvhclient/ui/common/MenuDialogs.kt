@@ -185,11 +185,10 @@ class GenreColorListAdapter internal constructor(private val contentInfo: Array<
     }
 }
 
-
 fun showProgramTimeframeSelectionDialog(context: Context, currentSelection: Int, intervalInHours: Int, maxIntervalsToShow: Int, callback: ChannelTimeSelectedInterface?): Boolean {
 
-    val startDateFormat = SimpleDateFormat("dd.MM.yyyy - HH.00", Locale.US)
-    val endDateFormat = SimpleDateFormat("HH.00", Locale.US)
+    val startDateFormat = SimpleDateFormat("dd.MM.yyyy - HH:00", Locale.US)
+    val endDateFormat = SimpleDateFormat("HH:00", Locale.US)
 
     val times = ArrayList<String>()
     times.add(context.getString(R.string.current_time))
@@ -223,6 +222,21 @@ fun showChannelSortOrderSelectionDialog(context: Context): Boolean {
             Timber.d("New selected channel sort order changed from $channelSortOrder to $index")
             val editor = PreferenceManager.getDefaultSharedPreferences(context).edit()
             editor.putString("channel_sort_order", index.toString())
+            editor.apply()
+        }
+    }
+    return false
+}
+
+fun showCompletedRecordingSortOrderSelectionDialog(context: Context): Boolean {
+
+    val sortOrder = Integer.valueOf(PreferenceManager.getDefaultSharedPreferences(context).getString("completed_recording_sort_order", context.resources.getString(R.string.pref_default_completed_recording_sort_order))!!)
+    MaterialDialog(context).show {
+        title(R.string.pref_sort_completed_recordings)
+        listItemsSingleChoice(R.array.pref_sort_completed_recordings_names, initialSelection = sortOrder) { _, index, _ ->
+            Timber.d("New selected completed recording sort order changed from $sortOrder to $index")
+            val editor = PreferenceManager.getDefaultSharedPreferences(context).edit()
+            editor.putString("completed_recording_sort_order", index.toString())
             editor.apply()
         }
     }

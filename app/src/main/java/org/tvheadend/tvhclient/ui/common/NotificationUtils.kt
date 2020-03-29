@@ -15,6 +15,7 @@ import org.tvheadend.data.entity.ProgramInterface
 import org.tvheadend.data.entity.Recording
 import org.tvheadend.data.entity.ServerProfile
 import org.tvheadend.tvhclient.R
+import org.tvheadend.tvhclient.util.extensions.sendSnackbarMessage
 import org.tvheadend.tvhclient.util.worker.ProgramNotificationWorker
 import org.tvheadend.tvhclient.util.worker.RecordingNotificationWorker
 import timber.log.Timber
@@ -78,6 +79,8 @@ fun addNotificationScheduledRecordingStarts(context: Context, recording: Recordi
             && recording.start > System.currentTimeMillis()
             && !recording.title.isNullOrEmpty()) {
 
+        Timber.d("Adding of notification for recording ${recording.title}, it starts at ${recording.start}")
+
         val data = Data.Builder()
                 .putString("dvrTitle", recording.title)
                 .putInt("dvrId", recording.eventId)
@@ -88,8 +91,8 @@ fun addNotificationScheduledRecordingStarts(context: Context, recording: Recordi
                 .setInitialDelay(getNotificationTime(context, recording.start), TimeUnit.MILLISECONDS)
                 .setInputData(data)
                 .build()
-        val uniqueWorkName = "Notification_" + recording.id.toString()
-        WorkManager.getInstance().enqueueUniqueWork(uniqueWorkName, ExistingWorkPolicy.REPLACE, workRequest)
+        val uniqueWorkName = "${RecordingNotificationWorker.WORK_NAME}_Notification_${recording.id}"
+        WorkManager.getInstance(context).enqueueUniqueWork(uniqueWorkName, ExistingWorkPolicy.KEEP, workRequest)
     }
 }
 
@@ -103,8 +106,8 @@ fun removeNotificationById(context: Context, id: Int) {
     if (PreferenceManager.getDefaultSharedPreferences(context).getBoolean("notifications_enabled", context.resources.getBoolean(R.bool.pref_default_notifications_enabled))) {
         Timber.d("Removing notification for id $id")
 
-        val uniqueWorkName = "Notification_$id"
-        WorkManager.getInstance().cancelUniqueWork(uniqueWorkName)
+        val uniqueWorkName = "${RecordingNotificationWorker.WORK_NAME}_Notification_$id"
+        WorkManager.getInstance(context).cancelUniqueWork(uniqueWorkName)
         (context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager).cancel(id)
     }
 }
@@ -131,18 +134,22 @@ fun addNotificationProgramIsAboutToStart(context: Context, program: ProgramInter
                 .putString("configName", if (profile != null) profile.name else "")
                 .build()
 
+        Timber.d("Adding notification for program ${program.title}, it starts at ${program.start}")
+
         val workRequest = OneTimeWorkRequest.Builder(ProgramNotificationWorker::class.java)
                 .setInitialDelay(getNotificationTime(context, program.start), TimeUnit.MILLISECONDS)
                 .setInputData(data)
                 .build()
-        val uniqueWorkName = "Notification_" + program.eventId.toString()
-        WorkManager.getInstance().enqueueUniqueWork(uniqueWorkName, ExistingWorkPolicy.REPLACE, workRequest)
+
+        val uniqueWorkName = "${ProgramNotificationWorker.WORK_NAME}_Notification_${program.eventId}"
+        WorkManager.getInstance(context).enqueueUniqueWork(uniqueWorkName, ExistingWorkPolicy.KEEP, workRequest)
+        context.sendSnackbarMessage(context.resources.getString(R.string.notification_added))
     }
     return true
 }
 
 fun showOrCancelNotificationProgramIsCurrentlyBeingRecorded(context: Context, count: Int, showNotification: Boolean) {
-    Timber.d("Notification of running recording count of $count shall be shown $showNotification")
+    Timber.d("Notification of $count running recording(s) shall be shown $showNotification")
     val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
     if (showNotification) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -155,7 +162,7 @@ fun showOrCancelNotificationProgramIsCurrentlyBeingRecorded(context: Context, co
 
             val builder = getNotificationBuilder(context)
             builder.setContentTitle(context.getString(R.string.currently_recording))
-                    .setContentText("$count recording are running")
+                    .setContentText(context.resources.getQuantityString(R.plurals.running_recordings, count, count))
                     .setSmallIcon(R.drawable.ic_menu_record_dark)
                     .setOngoing(false)
             NotificationManagerCompat.from(context).notify(NOTIFICATION_ID_PROGRAM_CURRENTLY_BEING_RECORDED, builder.build())
@@ -166,7 +173,7 @@ fun showOrCancelNotificationProgramIsCurrentlyBeingRecorded(context: Context, co
 }
 
 fun showOrCancelNotificationDiskSpaceIsLow(context: Context, gigabytes: Int, showNotification: Boolean) {
-    Timber.d("Notification of free disk space $gigabytes gigabytes shall be shown $showNotification")
+    Timber.d("Notification $gigabytes gigabytes of free disk space shall be shown $showNotification")
     val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
     if (showNotification) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {

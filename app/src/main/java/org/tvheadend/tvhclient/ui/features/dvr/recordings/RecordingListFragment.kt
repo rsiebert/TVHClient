@@ -35,13 +35,13 @@ abstract class RecordingListFragment : BaseFragment(), RecyclerViewClickInterfac
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        recordingViewModel = ViewModelProviders.of(activity!!).get(RecordingViewModel::class.java)
+        recordingViewModel = ViewModelProviders.of(requireActivity()).get(RecordingViewModel::class.java)
 
         arguments?.let {
             recordingViewModel.selectedListPosition = it.getInt("listPosition")
         }
 
-        recyclerViewAdapter = RecordingRecyclerViewAdapter(isDualPane, this, htspVersion)
+        recyclerViewAdapter = RecordingRecyclerViewAdapter(recordingViewModel, isDualPane, this, htspVersion)
         recycler_view.layoutManager = LinearLayoutManager(activity)
         recycler_view.adapter = recyclerViewAdapter
         recycler_view.gone()
@@ -64,8 +64,9 @@ abstract class RecordingListFragment : BaseFragment(), RecyclerViewClickInterfac
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         val ctx = context ?: return super.onOptionsItemSelected(item)
         return when (item.itemId) {
-            R.id.menu_add_recording -> addNewRecording(ctx)
+            R.id.menu_add_recording -> return addNewRecording(requireActivity())
             R.id.menu_remove_all_recordings -> showConfirmationToRemoveAllRecordings(ctx, CopyOnWriteArrayList(recyclerViewAdapter.items))
+            R.id.menu_genre_color_information -> showGenreColorDialog(ctx)
             else -> super.onOptionsItemSelected(item)
         }
     }
@@ -85,8 +86,15 @@ abstract class RecordingListFragment : BaseFragment(), RecyclerViewClickInterfac
         }
         // Hide the casting icon as a default.
         menu.findItem(R.id.media_route_menu_item)?.isVisible = false
+        // Hide the sorting menu by default, only the completed recordings can be sorted
+        menu.findItem(R.id.menu_recording_sort_order)?.isVisible = false
         // Do not show the search menu when no recordings are available
         menu.findItem(R.id.menu_search)?.isVisible = recyclerViewAdapter.itemCount > 0
+
+        val showGenreColors = sharedPreferences.getBoolean("genre_colors_for_recordings_enabled", resources.getBoolean(R.bool.pref_default_genre_colors_for_recordings_enabled))
+        if (!baseViewModel.isSearchActive) {
+            menu.findItem(R.id.menu_genre_color_information)?.isVisible = showGenreColors
+        }
     }
 
     private fun showRecordingDetails(position: Int) {
@@ -122,7 +130,7 @@ abstract class RecordingListFragment : BaseFragment(), RecyclerViewClickInterfac
                         it.commit()
                     }
                 }
-            } else if (recordingViewModel.currentId.value != recording.id){
+            } else if (recordingViewModel.currentId.value != recording.id) {
                 recordingViewModel.currentId.value = recording.id
             }
         }
@@ -145,7 +153,8 @@ abstract class RecordingListFragment : BaseFragment(), RecyclerViewClickInterfac
                 R.id.menu_stop_recording -> return@setOnMenuItemClickListener showConfirmationToStopSelectedRecording(ctx, recording, null)
                 R.id.menu_cancel_recording -> return@setOnMenuItemClickListener showConfirmationToCancelSelectedRecording(ctx, recording, null)
                 R.id.menu_remove_recording -> return@setOnMenuItemClickListener showConfirmationToRemoveSelectedRecording(ctx, recording, null)
-                R.id.menu_edit_recording -> return@setOnMenuItemClickListener editSelectedRecording(ctx, recording.id)
+                R.id.menu_edit_recording -> return@setOnMenuItemClickListener editSelectedRecording(requireActivity(), recording.id)
+
                 R.id.menu_play -> return@setOnMenuItemClickListener playSelectedRecording(ctx, recording.id, isUnlocked)
                 R.id.menu_cast -> return@setOnMenuItemClickListener castSelectedRecording(ctx, recording.id)
 
@@ -153,7 +162,7 @@ abstract class RecordingListFragment : BaseFragment(), RecyclerViewClickInterfac
                 R.id.menu_search_fileaffinity -> return@setOnMenuItemClickListener searchTitleOnFileAffinityWebsite(ctx, recording.title)
                 R.id.menu_search_youtube -> return@setOnMenuItemClickListener searchTitleOnYoutube(ctx, recording.title)
                 R.id.menu_search_google -> return@setOnMenuItemClickListener searchTitleOnGoogle(ctx, recording.title)
-                R.id.menu_search_epg -> return@setOnMenuItemClickListener searchTitleInTheLocalDatabase(activity!!, baseViewModel, recording.title)
+                R.id.menu_search_epg -> return@setOnMenuItemClickListener searchTitleInTheLocalDatabase(requireActivity(), baseViewModel, recording.title)
 
                 R.id.menu_disable_recording -> return@setOnMenuItemClickListener enableScheduledRecording(recording, false)
                 R.id.menu_enable_recording -> return@setOnMenuItemClickListener enableScheduledRecording(recording, true)
@@ -184,6 +193,14 @@ abstract class RecordingListFragment : BaseFragment(), RecyclerViewClickInterfac
     }
 
     fun addRecordingsAndUpdateUI(recordings: List<Recording>?) {
+        // Prevent updating the recording list and any calls to the filter in the adapter.
+        // Without this the active search view would be closed before the user has a chance
+        // to enter a complete search term or submit the query.
+        if (baseViewModel.searchViewHasFocus || baseViewModel.isSearchActive) {
+            Timber.d("Skipping updating UI, search view has focus or search results are already being shown")
+            return
+        }
+
         if (recordings != null) {
             recyclerViewAdapter.addItems(recordings)
             observeSearchQuery()
@@ -207,8 +224,18 @@ abstract class RecordingListFragment : BaseFragment(), RecyclerViewClickInterfac
         search_progress?.gone()
         showStatusInToolbar()
 
-        if (isDualPane && recyclerViewAdapter.itemCount > 0) {
-            showRecordingDetails(0)
+        if (isDualPane) {
+            when {
+                recyclerViewAdapter.itemCount > recordingViewModel.selectedListPosition -> {
+                    showRecordingDetails(recordingViewModel.selectedListPosition)
+                }
+                recyclerViewAdapter.itemCount <= recordingViewModel.selectedListPosition -> {
+                    showRecordingDetails(0)
+                }
+                recyclerViewAdapter.itemCount == 0 -> {
+                    removeDetailsFragment()
+                }
+            }
         }
     }
 

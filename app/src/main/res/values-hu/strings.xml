@@ -187,8 +187,6 @@
     <string name="pref_http_playback_profiles_sum">Válasszon ki egy profilt, amelyet egy külső lejátszó használ egy felvett program lejátszásához egy külső lejátszó segítségével.</string>
     <string name="pref_information">Információ</string>
     <string name="pref_information_sum">A fejlesztők és segítők listájának megtekintése.</string>
-    <string name="pref_internal_player_audio_passthrough_enabled">Audio átengedés (passthrough) engedélyezése</string>
-    <string name="pref_internal_player_audio_passthrough_enabled_sum">Biztosítania kell azt is, hogy a rendszer hangbeállításai lehetővé teszik az átengedést</string>
     <string name="pref_internal_player_audio_tunneling_enabled">Audio alagút (tunnel) engedélyezése</string>
     <string name="pref_internal_player_audio_tunneling_enabled_sum">Engedélyezze a DSP audio alagutak támogatását</string>
     <string name="pref_internal_player_buffer_duration">Puffer időtartama</string>

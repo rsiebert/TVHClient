@@ -9,6 +9,10 @@ import timber.log.Timber
 
 class EpgDataUpdateWorker(context: Context, workerParams: WorkerParameters) : Worker(context, workerParams) {
 
+    companion object {
+        const val WORK_NAME = "EpgDataUpdateWorker"
+    }
+
     override fun doWork(): Result {
         Timber.d("Loading more event data from server")
 

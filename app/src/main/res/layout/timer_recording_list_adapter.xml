@@ -125,7 +125,7 @@
             android:gravity="end"
             app:layout_constraintEnd_toStartOf="@+id/stop"
             app:layout_constraintTop_toTopOf="@+id/days_of_week"
-            app:timeText="@{recording.start &lt; 0 ? recording.start : recording.startTimeInMillis}"
+            app:timeText="@{recording.start == 0 ? Long.valueOf(-1) : recording.startTimeInMillis}"
             tools:text="@tools:sample/date/hhmm" />
 
         <TextView
@@ -138,7 +138,7 @@
             android:gravity="end"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/start"
-            app:timeText="@{recording.stop &lt; 0 ? recording.stop : recording.stopTimeInMillis}"
+            app:timeText="@{recording.stop == 0 ? Long.valueOf(-1) : recording.stopTimeInMillis}"
             tools:text="@tools:sample/date/hhmm" />
 
         <TextView

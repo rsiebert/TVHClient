@@ -2,10 +2,10 @@ package org.tvheadend.data.dao
 
 import androidx.lifecycle.LiveData
 import androidx.room.*
-import org.tvheadend.data.entity.Recording
+import org.tvheadend.data.entity.RecordingEntity
 
 @Dao
-interface RecordingDao {
+internal interface RecordingDao {
 
     @get:Query("SELECT COUNT (*) FROM recordings AS rec " +
             " WHERE (rec.error IS NULL AND rec.state = 'completed') " +
@@ -42,14 +42,14 @@ interface RecordingDao {
     @Query(RECORDING_BASE_QUERY +
             " WHERE $CONNECTION_IS_ACTIVE" +
             " ORDER BY rec.start DESC")
-    fun loadRecordings(): LiveData<List<Recording>>
+    fun loadRecordings(): LiveData<List<RecordingEntity>>
 
     @Transaction
     @Query(RECORDING_BASE_QUERY +
             " WHERE $CONNECTION_IS_ACTIVE" +
-            " AND rec.error IS NULL AND rec.state = 'completed'" +
-            " ORDER BY rec.start DESC")
-    fun loadCompletedRecordings(): LiveData<List<Recording>>
+            " AND rec.error IS NULL AND rec.state = 'completed' " +
+            ORDER_BY)
+    fun loadCompletedRecordings(sortOrder: Int): LiveData<List<RecordingEntity>>
 
     @Transaction
     @Query(RECORDING_BASE_QUERY +
@@ -57,14 +57,14 @@ interface RecordingDao {
             " AND rec.error IS NULL AND (rec.state = 'recording' OR rec.state = 'scheduled')" +
             " AND rec.duplicate = 0 " +
             " ORDER BY rec.start ASC")
-    fun loadUniqueScheduledRecordings(): LiveData<List<Recording>>
+    fun loadUniqueScheduledRecordings(): LiveData<List<RecordingEntity>>
 
     @Transaction
     @Query(RECORDING_BASE_QUERY +
             " WHERE $CONNECTION_IS_ACTIVE" +
             " AND rec.error IS NULL AND (rec.state = 'recording' OR rec.state = 'scheduled')" +
             " ORDER BY rec.start ASC")
-    fun loadScheduledRecordings(): LiveData<List<Recording>>
+    fun loadScheduledRecordings(): LiveData<List<RecordingEntity>>
 
     @Transaction
     @Query(RECORDING_BASE_QUERY +
@@ -73,55 +73,55 @@ interface RecordingDao {
             " OR (rec.error IS NULL  AND rec.state='missed') " +
             " OR (rec.error='Aborted by user' AND rec.state='completed')" +
             " ORDER BY rec.start DESC")
-    fun loadFailedRecordings(): LiveData<List<Recording>>
+    fun loadFailedRecordings(): LiveData<List<RecordingEntity>>
 
     @Transaction
     @Query(RECORDING_BASE_QUERY +
             " WHERE $CONNECTION_IS_ACTIVE" +
             " AND rec.error = 'File missing' AND rec.state = 'completed'" +
             " ORDER BY rec.start DESC")
-    fun loadRemovedRecordings(): LiveData<List<Recording>>
+    fun loadRemovedRecordings(): LiveData<List<RecordingEntity>>
 
     @Transaction
     @Query(RECORDING_BASE_QUERY +
             " WHERE $CONNECTION_IS_ACTIVE" +
             " AND rec.id = :id")
-    fun loadRecordingById(id: Int): LiveData<Recording>
+    fun loadRecordingById(id: Int): LiveData<RecordingEntity>
 
     @Transaction
     @Query(RECORDING_BASE_QUERY +
             " WHERE $CONNECTION_IS_ACTIVE" +
             " AND rec.id = :id")
-    fun loadRecordingByIdSync(id: Int): Recording
+    fun loadRecordingByIdSync(id: Int): RecordingEntity
 
     @Transaction
     @Query(RECORDING_BASE_QUERY +
             " WHERE $CONNECTION_IS_ACTIVE" +
             " AND rec.channel_id = :channelId")
-    fun loadRecordingsByChannelId(channelId: Int): LiveData<List<Recording>>
+    fun loadRecordingsByChannelId(channelId: Int): LiveData<List<RecordingEntity>>
 
     @Transaction
     @Query(RECORDING_BASE_QUERY +
             " WHERE $CONNECTION_IS_ACTIVE" +
             " AND rec.event_id = :id")
-    fun loadRecordingByEventIdSync(id: Int): Recording
+    fun loadRecordingByEventIdSync(id: Int): RecordingEntity
 
     @Transaction
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(recording: Recording)
+    fun insert(recording: RecordingEntity)
 
     @Transaction
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(recordings: List<Recording>)
+    fun insert(recordings: List<RecordingEntity>)
 
     @Update
-    fun update(recording: Recording)
+    fun update(recording: RecordingEntity)
 
     @Delete
-    fun delete(recording: Recording)
+    fun delete(recording: RecordingEntity)
 
     @Delete
-    fun delete(recordings: List<Recording>)
+    fun delete(recordings: List<RecordingEntity>)
 
     @Query("DELETE FROM recordings " +
             " WHERE connection_id IN (SELECT id FROM connections WHERE active = 1) " +
@@ -137,6 +137,16 @@ interface RecordingDao {
                 "c.icon AS channel_icon " +
                 "FROM recordings AS rec " +
                 "LEFT JOIN channels AS c ON c.id = rec.channel_id "
+
+        const val ORDER_BY = " ORDER BY " +
+                "CASE :sortOrder WHEN 0 THEN rec.start END ASC," +
+                "CASE :sortOrder WHEN 1 THEN rec.start END DESC," +
+                "CASE :sortOrder WHEN 2 THEN rec.title END ASC," +
+                "CASE :sortOrder WHEN 3 THEN rec.title END DESC," +
+                "CASE :sortOrder WHEN 4 THEN rec.content_type END ASC," +
+                "CASE :sortOrder WHEN 5 THEN rec.content_type END DESC," +
+                "CASE :sortOrder WHEN 6 THEN rec.duration END ASC," +
+                "CASE :sortOrder WHEN 7 THEN rec.duration END DESC"
 
         const val CONNECTION_IS_ACTIVE = " rec.connection_id IN (SELECT id FROM connections WHERE active = 1) "
     }

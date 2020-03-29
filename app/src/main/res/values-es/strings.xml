@@ -186,8 +186,6 @@
     <string name="pref_http_playback_profiles_sum">Seleccione un perfil que sea usado por un reproductor externo para reproducir un programa grabado usando un reproductor externo.</string>
     <string name="pref_information">Información</string>
     <string name="pref_information_sum">Mostrar la lista de las bibliotecas usadas y las personas que contribuyeron al desarrollo..</string>
-    <string name="pref_internal_player_audio_passthrough_enabled">Habilitar paso de audio</string>
-    <string name="pref_internal_player_audio_passthrough_enabled_sum">También debe asegurarse de que la configuración de audio del sistema permita la transferencia de audio.</string>
     <string name="pref_internal_player_audio_tunneling_enabled">Habilitar tunelización de audio</string>
     <string name="pref_internal_player_audio_tunneling_enabled_sum">Habilitar soporte para tunelización de audio DSP</string>
     <string name="pref_internal_player_buffer_duration">duración de copia de seguridad</string>

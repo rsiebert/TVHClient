@@ -1,6 +1,5 @@
 package org.tvheadend.tvhclient.ui.features.epg
 
-import android.content.Intent
 import android.os.Bundle
 import android.util.DisplayMetrics
 import android.view.*
@@ -19,18 +18,13 @@ import org.tvheadend.data.entity.ChannelTag
 import org.tvheadend.data.entity.EpgProgram
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.ui.base.BaseFragment
-import org.tvheadend.tvhclient.ui.base.LayoutControlInterface
 import org.tvheadend.tvhclient.ui.common.*
-import org.tvheadend.tvhclient.ui.common.interfaces.ChannelTagIdsSelectedInterface
-import org.tvheadend.tvhclient.ui.common.interfaces.ChannelTimeSelectedInterface
-import org.tvheadend.tvhclient.ui.common.interfaces.RecyclerViewClickInterface
-import org.tvheadend.tvhclient.ui.common.interfaces.SearchRequestInterface
-import org.tvheadend.tvhclient.ui.features.dvr.RecordingAddEditActivity
+import org.tvheadend.tvhclient.ui.common.interfaces.*
 import org.tvheadend.tvhclient.util.extensions.gone
 import org.tvheadend.tvhclient.util.extensions.visible
 import timber.log.Timber
 
-class EpgFragment : BaseFragment(), EpgScrollInterface, RecyclerViewClickInterface, ChannelTimeSelectedInterface, ChannelTagIdsSelectedInterface, Filter.FilterListener, SearchRequestInterface {
+class EpgFragment : BaseFragment(), EpgScrollInterface, RecyclerViewClickInterface, ChannelTimeSelectedInterface, ChannelTagIdsSelectedInterface, Filter.FilterListener, SearchRequestInterface, ShowProgramListFragmentInterface {
 
     private lateinit var epgViewModel: EpgViewModel
     private lateinit var channelListRecyclerViewAdapter: EpgChannelListRecyclerViewAdapter
@@ -48,7 +42,7 @@ class EpgFragment : BaseFragment(), EpgScrollInterface, RecyclerViewClickInterfa
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        epgViewModel = ViewModelProviders.of(activity!!).get(EpgViewModel::class.java)
+        epgViewModel = ViewModelProviders.of(requireActivity()).get(EpgViewModel::class.java)
 
         if (activity is LayoutControlInterface) {
             (activity as LayoutControlInterface).forceSingleScreenLayout()
@@ -156,10 +150,7 @@ class EpgFragment : BaseFragment(), EpgScrollInterface, RecyclerViewClickInterfa
                     // in case the user has selected the record and edit menu item.
                     if (recording.eventId == programIdToBeEditedWhenBeingRecorded && programIdToBeEditedWhenBeingRecorded > 0) {
                         programIdToBeEditedWhenBeingRecorded = 0
-                        val intent = Intent(activity, RecordingAddEditActivity::class.java)
-                        intent.putExtra("id", recording.id)
-                        intent.putExtra("type", "recording")
-                        activity?.startActivity(intent)
+                        editSelectedRecording(requireActivity(), recording.id)
                         break
                     }
                 }
@@ -193,7 +184,7 @@ class EpgFragment : BaseFragment(), EpgScrollInterface, RecyclerViewClickInterfa
         val ctx = context ?: return super.onOptionsItemSelected(item)
         return when (item.itemId) {
             R.id.menu_channel_tags -> showChannelTagSelectionDialog(ctx, channelTags.toMutableList(), channelCount, this)
-            R.id.menu_program_timeframe -> showProgramTimeframeSelectionDialog(ctx, epgViewModel.selectedTimeOffset, epgViewModel.hoursToShow, epgViewModel.hoursToShow * epgViewModel.daysToShow, this)
+            R.id.menu_program_timeframe -> showProgramTimeframeSelectionDialog(ctx, epgViewModel.selectedTimeOffset, epgViewModel.hoursToShow, (24 / epgViewModel.hoursToShow) * epgViewModel.daysToShow, this)
             R.id.menu_genre_color_information -> showGenreColorDialog(ctx)
             R.id.menu_channel_sort_order -> showChannelSortOrderSelectionDialog(ctx)
             else -> super.onOptionsItemSelected(item)
@@ -265,7 +256,7 @@ class EpgFragment : BaseFragment(), EpgScrollInterface, RecyclerViewClickInterfa
                 R.id.menu_search_fileaffinity -> return@setOnMenuItemClickListener searchTitleOnFileAffinityWebsite(ctx, program.title)
                 R.id.menu_search_youtube -> return@setOnMenuItemClickListener searchTitleOnYoutube(ctx, program.title)
                 R.id.menu_search_google -> return@setOnMenuItemClickListener searchTitleOnGoogle(ctx, program.title)
-                R.id.menu_search_epg -> return@setOnMenuItemClickListener searchTitleInTheLocalDatabase(activity!!, baseViewModel, program.title, program.channelId)
+                R.id.menu_search_epg -> return@setOnMenuItemClickListener searchTitleInTheLocalDatabase(requireActivity(), baseViewModel, program.title, program.channelId)
 
                 R.id.menu_add_notification -> return@setOnMenuItemClickListener addNotificationProgramIsAboutToStart(ctx, program, epgViewModel.getRecordingProfile())
                 else -> return@setOnMenuItemClickListener false

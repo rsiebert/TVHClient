@@ -188,8 +188,6 @@ Verifica che siano soddsifatti i requisiti descritti nelle impostazioni trasmiss
     <string name="pref_http_playback_profiles_sum">Selezionare un profilo che viene utilizzato da un lettore esterno per riprodurre un programma registrato utilizzando un lettore esterno.</string>
     <string name="pref_information">Informazioni</string>
     <string name="pref_information_sum">Mostra un elenco delle librerie usate e delle persone che hanno contribuito allo sviluppo.</string>
-    <string name="pref_internal_player_audio_passthrough_enabled">Abilita passthrough audio</string>
-    <string name="pref_internal_player_audio_passthrough_enabled_sum">È inoltre necessario assicurarsi che le impostazioni audio del sistema consentano il passthrough</string>
     <string name="pref_internal_player_audio_tunneling_enabled">Abilita tunnelling audio</string>
     <string name="pref_internal_player_audio_tunneling_enabled_sum">Abilita il supporto per il tunneling audio DSP</string>
     <string name="pref_internal_player_buffer_duration">Durata del buffer</string>

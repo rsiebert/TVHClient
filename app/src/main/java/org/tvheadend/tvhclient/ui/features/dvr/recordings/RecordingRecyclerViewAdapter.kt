@@ -12,7 +12,7 @@ import org.tvheadend.tvhclient.ui.common.interfaces.RecyclerViewClickInterface
 import java.util.*
 import java.util.concurrent.CopyOnWriteArrayList
 
-class RecordingRecyclerViewAdapter internal constructor(private val isDualPane: Boolean, private val clickCallback: RecyclerViewClickInterface, private val htspVersion: Int) : RecyclerView.Adapter<RecordingRecyclerViewAdapter.RecordingViewHolder>(), Filterable {
+class RecordingRecyclerViewAdapter internal constructor(private val viewModel: RecordingViewModel, private val isDualPane: Boolean, private val clickCallback: RecyclerViewClickInterface, private val htspVersion: Int) : RecyclerView.Adapter<RecordingRecyclerViewAdapter.RecordingViewHolder>(), Filterable {
 
     private val recordingList = ArrayList<Recording>()
     private var recordingListFiltered: MutableList<Recording> = ArrayList()
@@ -24,7 +24,7 @@ class RecordingRecyclerViewAdapter internal constructor(private val isDualPane: 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecordingViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
         val itemBinding = RecordingListAdapterBinding.inflate(layoutInflater, parent, false)
-        return RecordingViewHolder(itemBinding, isDualPane)
+        return RecordingViewHolder(itemBinding, viewModel, isDualPane)
     }
 
     override fun onBindViewHolder(holder: RecordingViewHolder, position: Int) {
@@ -101,13 +101,16 @@ class RecordingRecyclerViewAdapter internal constructor(private val isDualPane: 
         }
     }
 
-    class RecordingViewHolder(private val binding: RecordingListAdapterBinding, private val isDualPane: Boolean) : RecyclerView.ViewHolder(binding.root) {
+    class RecordingViewHolder(private val binding: RecordingListAdapterBinding,
+                              private val viewModel: RecordingViewModel,
+                              private val isDualPane: Boolean) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(recording: Recording, position: Int, isSelected: Boolean, htspVersion: Int, clickCallback: RecyclerViewClickInterface) {
             binding.recording = recording
             binding.position = position
             binding.htspVersion = htspVersion
             binding.isSelected = isSelected
+            binding.viewModel = viewModel
             binding.isDualPane = isDualPane
             binding.callback = clickCallback
             binding.executePendingBindings()

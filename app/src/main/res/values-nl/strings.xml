@@ -186,8 +186,6 @@
     <string name="pref_http_playback_profiles_sum">Selecteer een profiel dat door een externe speler wordt gebruikt om een opgenomen programma af te spelen met behulp van een externe speler.</string>
     <string name="pref_information">Informatie</string>
     <string name="pref_information_sum">Toon een lijst met gebruikte bibliotheken en de mensen die hebben bijgedragen aan de ontwikkeling.</string>
-    <string name="pref_internal_player_audio_passthrough_enabled">Audio Passthrough inschakelen</string>
-    <string name="pref_internal_player_audio_passthrough_enabled_sum">U moet er ook voor zorgen dat de systeemaudio-instellingen een doorgang mogelijk maken.</string>
     <string name="pref_internal_player_audio_tunneling_enabled">Audiotunnelbouw inschakelen</string>
     <string name="pref_internal_player_audio_tunneling_enabled_sum">Ondersteuning voor DSP-audiotunneling inschakelen</string>
     <string name="pref_internal_player_buffer_duration">Buffer Duur</string>

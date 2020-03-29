@@ -30,6 +30,13 @@ fun convertUrlToHashString(url: String?): String {
     return ""
 }
 
+/**
+ * Returns the url to the file of the channel icon.
+ *
+ * @param context Context
+ * @param url The url to the icon
+ * @return A string of the url to the local icon file
+ */
 fun getIconUrl(context: Context, url: String?): String {
     // Replace all occurrences of + with the utf-8 value
     val urlEncoded = url?.replace("\\+", "%2b") ?: ""

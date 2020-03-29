@@ -2,6 +2,7 @@ package org.tvheadend.tvhclient.ui.features.dvr.series_recordings
 
 import android.os.Bundle
 import android.view.*
+import androidx.core.view.forEach
 import androidx.lifecycle.ViewModelProviders
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.list.listItemsSingleChoice
@@ -10,18 +11,19 @@ import org.tvheadend.data.entity.Channel
 import org.tvheadend.data.entity.ServerProfile
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.ui.base.BaseFragment
+import org.tvheadend.tvhclient.ui.common.interfaces.HideNavigationDrawerInterface
 import org.tvheadend.tvhclient.ui.common.interfaces.BackPressedInterface
+import org.tvheadend.tvhclient.ui.common.interfaces.LayoutControlInterface
 import org.tvheadend.tvhclient.ui.features.dvr.*
 import org.tvheadend.tvhclient.util.extensions.afterTextChanged
 import org.tvheadend.tvhclient.util.extensions.sendSnackbarMessage
 import org.tvheadend.tvhclient.util.extensions.visibleOrGone
 import timber.log.Timber
 
-class SeriesRecordingAddEditFragment : BaseFragment(), BackPressedInterface, RecordingConfigSelectedListener, DatePickerFragment.Listener, TimePickerFragment.Listener {
+class SeriesRecordingAddEditFragment : BaseFragment(), BackPressedInterface, RecordingConfigSelectedListener, DatePickerFragment.Listener, TimePickerFragment.Listener, HideNavigationDrawerInterface {
 
     private lateinit var seriesRecordingViewModel: SeriesRecordingViewModel
     private lateinit var recordingProfilesList: Array<String>
-    private lateinit var duplicateDetectionList: Array<String>
     private var profile: ServerProfile? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -30,10 +32,12 @@ class SeriesRecordingAddEditFragment : BaseFragment(), BackPressedInterface, Rec
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+        seriesRecordingViewModel = ViewModelProviders.of(requireActivity()).get(SeriesRecordingViewModel::class.java)
 
-        seriesRecordingViewModel = ViewModelProviders.of(activity!!).get(SeriesRecordingViewModel::class.java)
+        if (activity is LayoutControlInterface) {
+            (activity as LayoutControlInterface).forceSingleScreenLayout()
+        }
 
-        duplicateDetectionList = resources.getStringArray(R.array.duplicate_detection_list)
         recordingProfilesList = seriesRecordingViewModel.getRecordingProfileNames()
         profile = seriesRecordingViewModel.getRecordingProfile()
         seriesRecordingViewModel.recordingProfileNameId = getSelectedProfileId(profile, recordingProfilesList)
@@ -44,6 +48,7 @@ class SeriesRecordingAddEditFragment : BaseFragment(), BackPressedInterface, Rec
 
         updateUI()
 
+        toolbarInterface.setSubtitle("")
         toolbarInterface.setTitle(if (seriesRecordingViewModel.recording.id.isNotEmpty())
             getString(R.string.edit_recording)
         else
@@ -116,10 +121,10 @@ class SeriesRecordingAddEditFragment : BaseFragment(), BackPressedInterface, Rec
 
         duplicate_detection_label.visibleOrGone(htspVersion >= 20)
         duplicate_detection.visibleOrGone(htspVersion >= 20)
-        duplicate_detection.text = duplicateDetectionList[seriesRecordingViewModel.recording.dupDetect]
+        duplicate_detection.text = seriesRecordingViewModel.duplicateDetectionList[seriesRecordingViewModel.recording.dupDetect]
 
         duplicate_detection.setOnClickListener {
-            handleDuplicateDetectionSelection(duplicateDetectionList, seriesRecordingViewModel.recording.dupDetect)
+            handleDuplicateDetectionSelection(seriesRecordingViewModel.duplicateDetectionList, seriesRecordingViewModel.recording.dupDetect)
         }
 
         title.afterTextChanged { seriesRecordingViewModel.recording.title = it }
@@ -169,6 +174,13 @@ class SeriesRecordingAddEditFragment : BaseFragment(), BackPressedInterface, Rec
         start_window_time_label.visibleOrGone(checked)
         start_window_time.visibleOrGone(checked)
         start_window_time.isEnabled = checked
+    }
+
+    override fun onPrepareOptionsMenu(menu: Menu) {
+        super.onPrepareOptionsMenu(menu)
+        menu.forEach { it.isVisible = false }
+        menu.findItem(R.id.menu_save)?.isVisible = true
+        menu.findItem(R.id.menu_cancel)?.isVisible = true
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -228,7 +240,7 @@ class SeriesRecordingAddEditFragment : BaseFragment(), BackPressedInterface, Rec
             intent.action = "addAutorecEntry"
         }
         activity?.startService(intent)
-        activity?.finish()
+        activity?.supportFragmentManager?.popBackStack()
     }
 
     /**
@@ -240,8 +252,8 @@ class SeriesRecordingAddEditFragment : BaseFragment(), BackPressedInterface, Rec
         context?.let {
             MaterialDialog(it).show {
                 message(R.string.cancel_add_recording)
-                positiveButton(R.string.discard) { activity?.finish() }
-                negativeButton(R.string.cancel) { cancel() }
+                positiveButton(R.string.discard) { activity?.supportFragmentManager?.popBackStack() }
+                negativeButton(R.string.cancel) { dismiss() }
             }
         }
     }
@@ -295,7 +307,7 @@ class SeriesRecordingAddEditFragment : BaseFragment(), BackPressedInterface, Rec
 
     private fun onDuplicateDetectionValueSelected(which: Int) {
         seriesRecordingViewModel.recording.dupDetect = which
-        duplicate_detection.text = duplicateDetectionList[which]
+        duplicate_detection.text = seriesRecordingViewModel.duplicateDetectionList[which]
     }
 
     private fun handleDuplicateDetectionSelection(duplicateDetectionList: Array<String>, duplicateDetectionId: Int) {
@@ -311,5 +323,15 @@ class SeriesRecordingAddEditFragment : BaseFragment(), BackPressedInterface, Rec
 
     override fun onBackPressed() {
         cancel()
+    }
+
+    companion object {
+        fun newInstance(id: String = ""): SeriesRecordingAddEditFragment {
+            val f = SeriesRecordingAddEditFragment()
+            if (id.isNotEmpty()) {
+                f.arguments = Bundle().also { it.putString("id", id) }
+            }
+            return f
+        }
     }
 }

@@ -31,9 +31,19 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-
     implementation 'androidx.appcompat:appcompat:1.1.0'
-
-    // Logging library
     implementation 'com.jakewharton.timber:timber:4.7.1'
 }
+
+ext {
+    javadocTitle = 'Android HTSP Library used by TVHClient to communicate with TVHeadend'
+}
+apply from: '../javadoc_library.gradle'
+
+ext {
+    releaseVersion = '1.0.1'
+    releaseArtifact = 'htsp'
+    releaseGroupId = 'org.tvheadend.tvhclient.htsp'
+    releaseDescription = 'Android HTSP Library used by TVHClient to communicate with TVHeadend'
+}
+apply from: '../publish.gradle'

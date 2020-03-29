@@ -12,11 +12,12 @@ import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.databinding.TimerRecordingDetailsFragmentBinding
 import org.tvheadend.tvhclient.ui.base.BaseFragment
 import org.tvheadend.tvhclient.ui.common.*
+import org.tvheadend.tvhclient.ui.common.interfaces.ClearSearchResultsOrPopBackStackInterface
 import org.tvheadend.tvhclient.ui.common.interfaces.RecordingRemovedInterface
 import org.tvheadend.tvhclient.util.extensions.gone
 import org.tvheadend.tvhclient.util.extensions.visible
 
-class TimerRecordingDetailsFragment : BaseFragment(), RecordingRemovedInterface {
+class TimerRecordingDetailsFragment : BaseFragment(), RecordingRemovedInterface, ClearSearchResultsOrPopBackStackInterface {
 
     private lateinit var timerRecordingViewModel: TimerRecordingViewModel
     private var recording: TimerRecording? = null
@@ -29,7 +30,7 @@ class TimerRecordingDetailsFragment : BaseFragment(), RecordingRemovedInterface 
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        timerRecordingViewModel = ViewModelProviders.of(activity!!).get(TimerRecordingViewModel::class.java)
+        timerRecordingViewModel = ViewModelProviders.of(requireActivity()).get(TimerRecordingViewModel::class.java)
 
         if (!isDualPane) {
             toolbarInterface.setTitle(getString(R.string.details))
@@ -82,14 +83,14 @@ class TimerRecordingDetailsFragment : BaseFragment(), RecordingRemovedInterface 
         val recording = this.recording ?: return super.onOptionsItemSelected(item)
 
         return when (item.itemId) {
-            R.id.menu_edit_recording -> return editSelectedTimerRecording(ctx, recording.id)
+            R.id.menu_edit_recording -> editSelectedTimerRecording(requireActivity(), recording.id)
             R.id.menu_remove_recording -> showConfirmationToRemoveSelectedTimerRecording(ctx, recording, this)
 
             R.id.menu_search_imdb -> return searchTitleOnImdbWebsite(ctx, recording.title)
             R.id.menu_search_fileaffinity -> return searchTitleOnFileAffinityWebsite(ctx, recording.title)
             R.id.menu_search_youtube -> return searchTitleOnYoutube(ctx, recording.title)
             R.id.menu_search_google -> return searchTitleOnGoogle(ctx, recording.title)
-            R.id.menu_search_epg -> return searchTitleInTheLocalDatabase(activity!!, baseViewModel, recording.title)
+            R.id.menu_search_epg -> return searchTitleInTheLocalDatabase(requireActivity(), baseViewModel, recording.title)
             else -> super.onOptionsItemSelected(item)
         }
     }

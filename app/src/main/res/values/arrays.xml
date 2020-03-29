@@ -90,6 +90,28 @@
         <item>Channel number (descending)</item>
     </string-array>
 
+    <string-array name="pref_sort_completed_recordings_ids" translatable="false">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+    </string-array>
+
+    <string-array name="pref_sort_completed_recordings_names">
+        <item>Start time (ascending)</item>
+        <item>Start time (descending)</item>
+        <item>Title (ascending)</item>
+        <item>Title (descending)</item>
+        <item>Genre (ascending)</item>
+        <item>Genre (descending)</item>
+        <item>Duration (ascending)</item>
+        <item>Duration (descending)</item>
+    </string-array>
+
     <string-array name="day_short_names">
         <item>Mon</item>
         <item>Tue</item>
@@ -137,20 +159,20 @@
 
     <string-array name="duplicate_detection_list">
         <item>Record all</item>
-        <item>All: Record if EPG indicates it is a unique program</item>
         <item>All: Record if different episode number</item>
         <item>All: Record if different subtitle</item>
         <item>All: Record if different description</item>
-        <item>All: Record once per month</item>
         <item>All: Record once per week</item>
         <item>All: Record once per day</item>
         <item>Local: Record if different episode number</item>
         <item>Local: Record if different title</item>
         <item>Local: Record if different subtitle</item>
         <item>Local: Record if different description</item>
-        <item>Local: Record once per month</item>
         <item>Local: Record once per week</item>
         <item>Local: Record once per day</item>
+        <item>All: Record once per month</item>
+        <item>Local: Record once per month</item>
+        <item>All: Record if EPG indicates it is a unique program</item>
     </string-array>
 
     <string-array name="pr_content_type0">

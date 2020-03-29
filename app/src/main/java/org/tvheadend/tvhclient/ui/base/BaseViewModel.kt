@@ -7,17 +7,18 @@ import android.content.SharedPreferences
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import org.tvheadend.data.AppRepository
 import org.tvheadend.data.entity.Connection
 import org.tvheadend.tvhclient.MainApplication
-import org.tvheadend.tvhclient.repository.AppRepository
 import org.tvheadend.tvhclient.service.HtspService
-import org.tvheadend.tvhclient.util.livedata.Event
 import org.tvheadend.tvhclient.ui.common.NetworkStatus
+import org.tvheadend.tvhclient.ui.common.interfaces.NetworkStatusInterface
+import org.tvheadend.tvhclient.ui.common.interfaces.SnackbarMessageInterface
 import org.tvheadend.tvhclient.ui.features.startup.SplashActivity
-import timber.log.Timber
+import org.tvheadend.tvhclient.util.livedata.Event
 import javax.inject.Inject
 
-open class BaseViewModel(application: Application) : AndroidViewModel(application) {
+open class BaseViewModel(application: Application) : AndroidViewModel(application), SnackbarMessageInterface, NetworkStatusInterface {
 
     @Inject
     lateinit var appContext: Context
@@ -26,47 +27,70 @@ open class BaseViewModel(application: Application) : AndroidViewModel(applicatio
     @Inject
     lateinit var sharedPreferences: SharedPreferences
 
+    var startupCompleteLiveData = MutableLiveData<Boolean>()
+        private set
+
+    var connectionToServerAvailableLiveData = MutableLiveData<Boolean>()
+        private set
+
+    /**
+     * Contains an intent with the snackbar message and other information.
+     * The value gets set by the {@link SnackbarMessageReceiver}
+     */
+    var snackbarMessageLiveData = MutableLiveData<Event<Intent>>()
+        private set
+
+    /**
+     * Contains the current network status.
+     * The value gets set by the {@link NetworkStatusReceiver}
+     */
+    var networkStatusLiveData = MutableLiveData<NetworkStatus>()
+        private set
+
     var connection: Connection
-    var connectionCount: LiveData<Int>
     var connectionLiveData: LiveData<Connection>
 
-    var connectionToServerAvailable: LiveData<Boolean>
-    var networkStatus: LiveData<NetworkStatus>
-    var showSnackbar: LiveData<Event<Intent>>
-    var isUnlocked: LiveData<Boolean>
+    /**
+     * Contains the live data information that the application is unlocked or not
+     */
+    var isUnlockedLiveData: LiveData<Boolean>
+        private set
+
+    /**
+     * Contains the information that the application is unlocked or not
+     */
+    var isUnlocked = false
+        private set
+
     var htspVersion: Int
     var removeFragmentWhenSearchIsDone = false
 
-    var searchQuery = MutableLiveData("")
+    var searchQuery = MutableLiveData("") // TODO rename
+    var searchViewHasFocus = false
 
     val isSearchActive: Boolean
         get() = !searchQuery.value.isNullOrEmpty()
 
     init {
         inject()
-        connection = appRepository.connectionData.activeItem
-        networkStatus = appRepository.getNetworkStatus()
-        showSnackbar = appRepository.getSnackbarMessage()
+        startupCompleteLiveData.value = false
+
         isUnlocked = appRepository.getIsUnlocked()
+        isUnlockedLiveData = appRepository.getIsUnlockedLiveData()
+        connection = appRepository.connectionData.activeItem
         htspVersion = appRepository.serverStatusData.activeItem.htspVersion
 
-        connectionToServerAvailable = appRepository.getConnectionToServerAvailable()
-
-        connectionCount = appRepository.connectionData.getLiveDataItemCount()
         connectionLiveData = appRepository.connectionData.liveDataActiveItem
+        connectionToServerAvailableLiveData.value = false
+
+        networkStatusLiveData.value = NetworkStatus.NETWORK_UNKNOWN
     }
 
     private fun inject() {
         MainApplication.component.inject(this)
     }
 
-    fun setConnectionToServerIsAvailable(isAvailable: Boolean) {
-        Timber.d("Updating connection to server is available to $isAvailable")
-        appRepository.setConnectionToServerAvailable(isAvailable)
-    }
-
     fun updateConnectionAndRestartApplication(context: Context?, isSyncRequired: Boolean = true) {
-        Timber.d("Restart of application requested")
         context?.let {
             if (isSyncRequired) {
                 appRepository.connectionData.setSyncRequiredForActiveConnection()
@@ -84,5 +108,23 @@ open class BaseViewModel(application: Application) : AndroidViewModel(applicatio
 
     fun clearSearchQuery() {
         searchQuery.value = ""
+    }
+
+    override fun setSnackbarMessage(intent: Intent) {
+        snackbarMessageLiveData.value = Event(intent)
+    }
+
+    override fun setNetworkStatus(status: NetworkStatus) {
+        networkStatusLiveData.value = status
+    }
+
+    override fun getNetworkStatus(): NetworkStatus? = networkStatusLiveData.value
+
+    fun setConnectionToServerAvailable(available: Boolean) {
+        connectionToServerAvailableLiveData.value = available
+    }
+
+    fun setStartupComplete(isComplete: Boolean) {
+        startupCompleteLiveData.value = isComplete
     }
 }

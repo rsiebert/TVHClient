@@ -1,7 +1,6 @@
 package org.tvheadend.tvhclient.ui.features.channels
 
 import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.view.*
@@ -20,11 +19,7 @@ import org.tvheadend.data.entity.ChannelTag
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.ui.base.BaseFragment
 import org.tvheadend.tvhclient.ui.common.*
-import org.tvheadend.tvhclient.ui.common.interfaces.ChannelTagIdsSelectedInterface
-import org.tvheadend.tvhclient.ui.common.interfaces.ChannelTimeSelectedInterface
-import org.tvheadend.tvhclient.ui.common.interfaces.RecyclerViewClickInterface
-import org.tvheadend.tvhclient.ui.common.interfaces.SearchRequestInterface
-import org.tvheadend.tvhclient.ui.features.dvr.RecordingAddEditActivity
+import org.tvheadend.tvhclient.ui.common.interfaces.*
 import org.tvheadend.tvhclient.ui.features.programs.ProgramListFragment
 import org.tvheadend.tvhclient.ui.features.programs.ProgramViewModel
 import org.tvheadend.tvhclient.util.extensions.gone
@@ -32,7 +27,7 @@ import org.tvheadend.tvhclient.util.extensions.visible
 import org.tvheadend.tvhclient.util.extensions.visibleOrGone
 import timber.log.Timber
 
-class ChannelListFragment : BaseFragment(), RecyclerViewClickInterface, ChannelTimeSelectedInterface, ChannelTagIdsSelectedInterface, SearchRequestInterface, Filter.FilterListener {
+class ChannelListFragment : BaseFragment(), RecyclerViewClickInterface, ChannelTimeSelectedInterface, ChannelTagIdsSelectedInterface, SearchRequestInterface, Filter.FilterListener, ShowProgramListFragmentInterface {
 
     private lateinit var programViewModel: ProgramViewModel
     private lateinit var recyclerViewAdapter: ChannelRecyclerViewAdapter
@@ -54,8 +49,8 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickInterface, ChannelT
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        channelViewModel = ViewModelProviders.of(activity!!).get(ChannelViewModel::class.java)
-        programViewModel = ViewModelProviders.of(activity!!).get(ProgramViewModel::class.java)
+        channelViewModel = ViewModelProviders.of(requireActivity()).get(ChannelViewModel::class.java)
+        programViewModel = ViewModelProviders.of(requireActivity()).get(ProgramViewModel::class.java)
 
         arguments?.let {
             channelViewModel.selectedListPosition = it.getInt("listPosition")
@@ -133,10 +128,7 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickInterface, ChannelT
                     // in case the user has selected the record and edit menu item.
                     if (recording.eventId == programIdToBeEditedWhenBeingRecorded && programIdToBeEditedWhenBeingRecorded > 0) {
                         programIdToBeEditedWhenBeingRecorded = 0
-                        val intent = Intent(activity, RecordingAddEditActivity::class.java)
-                        intent.putExtra("id", recording.id)
-                        intent.putExtra("type", "recording")
-                        activity?.startActivity(intent)
+                        editSelectedRecording(requireActivity(), recording.id)
                         break
                     }
                 }
@@ -351,7 +343,7 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickInterface, ChannelT
                 R.id.menu_search_fileaffinity -> return@setOnMenuItemClickListener searchTitleOnFileAffinityWebsite(ctx, channel.programTitle)
                 R.id.menu_search_youtube -> return@setOnMenuItemClickListener searchTitleOnYoutube(ctx, channel.programTitle)
                 R.id.menu_search_google -> return@setOnMenuItemClickListener searchTitleOnGoogle(ctx, channel.programTitle)
-                R.id.menu_search_epg -> return@setOnMenuItemClickListener searchTitleInTheLocalDatabase(activity!!, baseViewModel, channel.programTitle, channel.id)
+                R.id.menu_search_epg -> return@setOnMenuItemClickListener searchTitleInTheLocalDatabase(requireActivity(), baseViewModel, channel.programTitle, channel.id)
 
                 R.id.menu_add_notification -> return@setOnMenuItemClickListener addNotificationProgramIsAboutToStart(ctx, program, channelViewModel.getRecordingProfile())
                 else -> return@setOnMenuItemClickListener false
@@ -393,8 +385,18 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickInterface, ChannelT
         search_progress?.gone()
         showStatusInToolbar()
         // Show the first search result item in the details screen
-        if (isDualPane && recyclerViewAdapter.itemCount > 0) {
-            showChannelDetails(0)
+        if (isDualPane) {
+            when {
+                recyclerViewAdapter.itemCount > channelViewModel.selectedListPosition -> {
+                    showChannelDetails(channelViewModel.selectedListPosition)
+                }
+                recyclerViewAdapter.itemCount <= channelViewModel.selectedListPosition -> {
+                    showChannelDetails(0)
+                }
+                recyclerViewAdapter.itemCount == 0 -> {
+                    removeDetailsFragment()
+                }
+            }
         }
     }
 }

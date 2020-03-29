@@ -17,7 +17,8 @@ interface SeriesRecordingDao {
 
     @Transaction
     @Query(RECORDING_BASE_QUERY +
-            " WHERE $CONNECTION_IS_ACTIVE")
+            " WHERE $CONNECTION_IS_ACTIVE" +
+            " ORDER BY rec.start, rec.title ASC")
     fun loadAllRecordings(): LiveData<List<SeriesRecording>>
 
     @Transaction

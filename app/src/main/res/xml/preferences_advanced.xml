@@ -39,6 +39,9 @@
             android:key="epg_max_time"
             android:summary="@string/pref_epg_sync_duration_sum"
             android:title="@string/pref_epg_sync_duration" />
+        <Preference
+            android:key="load_more_epg_data"
+            android:title="@string/pref_load_more_epg_data" />
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/pref_notifications">

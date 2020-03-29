@@ -5,6 +5,7 @@ import android.app.SearchManager
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.database.Cursor
@@ -16,42 +17,49 @@ import android.view.KeyEvent
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.widget.FrameLayout
+import android.widget.LinearLayout
 import android.widget.ProgressBar
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
+import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.preference.PreferenceManager
 import com.google.android.gms.cast.framework.*
+import org.tvheadend.tvhclient.BuildConfig
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.service.HtspService
 import org.tvheadend.tvhclient.service.SyncStateReceiver
-import org.tvheadend.tvhclient.ui.base.BaseActivity
+import org.tvheadend.tvhclient.ui.base.BaseViewModel
 import org.tvheadend.tvhclient.ui.common.*
-import org.tvheadend.tvhclient.ui.common.interfaces.SearchRequestInterface
-import org.tvheadend.tvhclient.ui.features.channels.ChannelListFragment
-import org.tvheadend.tvhclient.ui.features.dvr.recordings.RecordingDetailsFragment
+import org.tvheadend.tvhclient.ui.common.interfaces.*
 import org.tvheadend.tvhclient.ui.features.dvr.recordings.download.DownloadPermissionGrantedInterface
-import org.tvheadend.tvhclient.ui.features.dvr.series_recordings.SeriesRecordingDetailsFragment
-import org.tvheadend.tvhclient.ui.features.dvr.timer_recordings.TimerRecordingDetailsFragment
-import org.tvheadend.tvhclient.ui.features.epg.EpgFragment
+import org.tvheadend.tvhclient.ui.features.information.ChangeLogFragment
 import org.tvheadend.tvhclient.ui.features.information.PrivacyPolicyFragment
+import org.tvheadend.tvhclient.ui.features.information.StartupPrivacyPolicyFragment
 import org.tvheadend.tvhclient.ui.features.information.StatusViewModel
 import org.tvheadend.tvhclient.ui.features.navigation.NavigationDrawer
-import org.tvheadend.tvhclient.ui.features.navigation.NavigationDrawer.Companion.MENU_SETTINGS
 import org.tvheadend.tvhclient.ui.features.navigation.NavigationViewModel
 import org.tvheadend.tvhclient.ui.features.playback.external.CastSessionManagerListener
-import org.tvheadend.tvhclient.ui.features.programs.ProgramDetailsFragment
 import org.tvheadend.tvhclient.ui.features.programs.ProgramListFragment
-import org.tvheadend.tvhclient.ui.features.settings.SettingsActivity
+import org.tvheadend.tvhclient.ui.features.startup.StartupFragment
 import org.tvheadend.tvhclient.util.extensions.*
+import org.tvheadend.tvhclient.util.getThemeId
 import timber.log.Timber
 
-class MainActivity : BaseActivity(R.layout.main_activity), SearchView.OnQueryTextListener, SearchView.OnSuggestionListener, SyncStateReceiver.Listener {
+class MainActivity : AppCompatActivity(), ToolbarInterface, LayoutControlInterface, SearchView.OnQueryTextListener, SearchView.OnSuggestionListener, SyncStateReceiver.Listener, View.OnFocusChangeListener {
 
+    private lateinit var sharedPreferences: SharedPreferences
     private lateinit var navigationViewModel: NavigationViewModel
     private lateinit var statusViewModel: StatusViewModel
+    private lateinit var baseViewModel: BaseViewModel
+
+    private lateinit var snackbarMessageReceiver: SnackbarMessageReceiver
+    private lateinit var networkStatusReceiver: NetworkStatusReceiver
+    private lateinit var toolbar: Toolbar
 
     private lateinit var syncProgress: ProgressBar
 
@@ -76,16 +84,59 @@ class MainActivity : BaseActivity(R.layout.main_activity), SearchView.OnQueryTex
     private lateinit var miniController: View
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        setTheme(getThemeId(this))
         super.onCreate(savedInstanceState)
+        setContentView(R.layout.main_activity)
 
+        toolbar = findViewById(R.id.toolbar)
+        setSupportActionBar(toolbar)
+
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
+        baseViewModel = ViewModelProviders.of(this).get(BaseViewModel::class.java)
         navigationViewModel = ViewModelProviders.of(this).get(NavigationViewModel::class.java)
         statusViewModel = ViewModelProviders.of(this).get(StatusViewModel::class.java)
+
+        snackbarMessageReceiver = SnackbarMessageReceiver(baseViewModel)
+        networkStatusReceiver = NetworkStatusReceiver(baseViewModel)
 
         // Reset the search in case the main activity was called for the first
         // time or when we came back from another like the search activity
         if (savedInstanceState == null) {
+            Timber.d("Saved instance is null")
             baseViewModel.clearSearchQuery()
             baseViewModel.removeFragmentWhenSearchIsDone = false
+
+            Timber.d("Showing startup fragment")
+            supportFragmentManager.beginTransaction()
+                    .replace(R.id.main, StartupFragment())
+                    .addToBackStack(null)
+                    .commit()
+
+            val showPrivacyPolicyRequired = sharedPreferences.getBoolean("showPrivacyPolicy", true)
+            Timber.d("Privacy policy needs to be displayed $showPrivacyPolicyRequired")
+            if (showPrivacyPolicyRequired) {
+                supportFragmentManager.beginTransaction()
+                        .replace(R.id.main, StartupPrivacyPolicyFragment())
+                        .addToBackStack(null)
+                        .commit()
+                supportActionBar?.setDisplayHomeAsUpEnabled(false)
+            }
+
+            // Show the full changelog if the changelog was never shown before (app version
+            // name is empty) or if it was already shown and the version name is the same as
+            // the one in the preferences. Otherwise show the changelog of the newest app version.
+            val versionName = sharedPreferences.getString("versionNameForChangelog", "") ?: ""
+            val showChangeLogRequired = BuildConfig.VERSION_NAME != versionName
+            Timber.d("Version name from prefs is $versionName, build version from gradle is ${BuildConfig.VERSION_NAME}")
+
+            if (showChangeLogRequired) {
+                Timber.d("Showing changelog")
+                supportActionBar?.setDisplayHomeAsUpEnabled(true)
+                supportFragmentManager.beginTransaction()
+                        .replace(R.id.main, ChangeLogFragment.newInstance(versionName, false))
+                        .addToBackStack(null)
+                        .commit()
+            }
         }
 
         syncProgress = findViewById(R.id.sync_progress)
@@ -95,10 +146,23 @@ class MainActivity : BaseActivity(R.layout.main_activity), SearchView.OnQueryTex
         miniController = findViewById(R.id.cast_mini_controller)
         miniController.gone()
 
-        navigationDrawer = NavigationDrawer(this, savedInstanceState, toolbar, navigationViewModel, statusViewModel)
+        navigationDrawer = NavigationDrawer(this, savedInstanceState, toolbar, navigationViewModel, statusViewModel, isDualPane)
 
         supportFragmentManager.addOnBackStackChangedListener {
-            navigationDrawer.handleMenuSelection(supportFragmentManager.findFragmentById(R.id.main))
+
+            // Hide the navigation menu and show an arrow icon to allow going back for certain fragments
+            // Otherwise show the navigation menu again and invalidate any menus and update the toolbar.
+            val fragment = supportFragmentManager.findFragmentById(R.id.main)
+            if (fragment is HideNavigationDrawerInterface) {
+                navigationDrawer.enableDrawerIndicator(false)
+                supportActionBar?.setDisplayHomeAsUpEnabled(true)
+            } else {
+                supportActionBar?.setDisplayHomeAsUpEnabled(false)
+                navigationDrawer.enableDrawerIndicator(true)
+                invalidateOptionsMenu()
+            }
+
+            navigationDrawer.setSelectedNavigationDrawerMenuFromFragmentType(supportFragmentManager.findFragmentById(R.id.main))
         }
 
         castContext = this.getCastContext()
@@ -122,21 +186,30 @@ class MainActivity : BaseActivity(R.layout.main_activity), SearchView.OnQueryTex
             Timber.d("Delayed search timer elapsed, starting search")
         }
 
+        baseViewModel.startupCompleteLiveData.observe(this, Observer { isComplete ->
+            Timber.d("Received live data, startup complete value changed to $isComplete")
+            if (isComplete) {
+                startupIsCompleteObserveMainLiveData()
+            }
+        })
+    }
+
+    private fun startupIsCompleteObserveMainLiveData() {
+        Timber.d("initializeObservers")
         // Observe any changes in the network availability. If the app is in the background
         // and is resumed and the network is still available the lambda function is not
         // called and nothing will be done.
-        baseViewModel.networkStatus.observe(this, Observer { status ->
+        baseViewModel.networkStatusLiveData.observe(this, Observer { status ->
             Timber.d("Network status changed to $status")
             connectToServer(status)
         })
 
-        baseViewModel.connectionToServerAvailable.observe(this, Observer { isAvailable ->
+        baseViewModel.connectionToServerAvailableLiveData.observe(this, Observer { isAvailable ->
             Timber.d("Connection to server availability changed to $isAvailable")
             invalidateOptionsMenu()
+            statusViewModel.stopDiskSpaceUpdateHandler()
             if (isAvailable) {
                 statusViewModel.startDiskSpaceUpdateHandler()
-            } else {
-                statusViewModel.stopDiskSpaceUpdateHandler()
             }
         })
 
@@ -144,7 +217,7 @@ class MainActivity : BaseActivity(R.layout.main_activity), SearchView.OnQueryTex
             event.getContentIfNotHandled()?.let {
                 Timber.d("Navigation menu id changed to $it")
                 baseViewModel.clearSearchQuery()
-                handleDrawerItemSelected(it)
+                navigationDrawer.handleDrawerItemSelected(it)
             }
         })
         statusViewModel.showRunningRecordingCount.observe(this, Observer { show ->
@@ -153,14 +226,13 @@ class MainActivity : BaseActivity(R.layout.main_activity), SearchView.OnQueryTex
         statusViewModel.showLowStorageSpace.observe(this, Observer { show ->
             showOrCancelNotificationDiskSpaceIsLow(this, statusViewModel.availableStorageSpace, show)
         })
-        baseViewModel.showSnackbar.observe(this, Observer { event ->
+        baseViewModel.snackbarMessageLiveData.observe(this, Observer { event ->
             event.getContentIfNotHandled()?.let {
                 this.showSnackbarMessage(it)
             }
         })
-        baseViewModel.isUnlocked.observe(this, Observer { unlocked ->
+        baseViewModel.isUnlockedLiveData.observe(this, Observer { unlocked ->
             Timber.d("Received live data, unlocked changed to $unlocked")
-            isUnlocked = unlocked
             invalidateOptionsMenu()
             miniController.visibleOrGone(isUnlocked && sharedPreferences.getBoolean("casting_minicontroller_enabled", resources.getBoolean(R.bool.pref_default_casting_minicontroller_enabled)))
         })
@@ -175,22 +247,15 @@ class MainActivity : BaseActivity(R.layout.main_activity), SearchView.OnQueryTex
         super.onSaveInstanceState(out)
     }
 
-    override fun onStart() {
+    override fun attachBaseContext(context: Context) {
+        super.attachBaseContext(onAttach(context))
+    }
+
+    public override fun onStart() {
         super.onStart()
         LocalBroadcastManager.getInstance(this).registerReceiver(syncStateReceiver, IntentFilter(SyncStateReceiver.ACTION))
-    }
-
-    override fun onStop() {
-        super.onStop()
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(syncStateReceiver)
-    }
-
-    override fun dispatchKeyEvent(event: KeyEvent): Boolean {
-        castContext?.let {
-            return it.onDispatchVolumeKeyEventBeforeJellyBean(event) || super.dispatchKeyEvent(event)
-        } ?: run {
-            return super.dispatchKeyEvent(event)
-        }
+        LocalBroadcastManager.getInstance(this).registerReceiver(snackbarMessageReceiver, IntentFilter(SnackbarMessageReceiver.SNACKBAR_ACTION))
+        registerReceiver(networkStatusReceiver, IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"))
     }
 
     public override fun onResume() {
@@ -211,33 +276,27 @@ class MainActivity : BaseActivity(R.layout.main_activity), SearchView.OnQueryTex
         super.onPause()
     }
 
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        super.onCreateOptionsMenu(menu)
-        menuInflater.inflate(R.menu.main_options_menu, menu)
+    public override fun onStop() {
+        super.onStop()
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(syncStateReceiver)
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(snackbarMessageReceiver)
+        unregisterReceiver(networkStatusReceiver)
+    }
 
-        mediaRouteMenuItem = menu.findItem(R.id.media_route_menu_item)
-        try {
-            CastButtonFactory.setUpMediaRouteButton(applicationContext, menu, R.id.media_route_menu_item)
-        } catch (e: Exception) {
-            Timber.e(e, "Could not setup media route button")
+    override fun setTitle(title: String) {
+        supportActionBar?.title = title
+    }
+
+    override fun setSubtitle(subtitle: String) {
+        supportActionBar?.subtitle = subtitle
+    }
+
+    override fun dispatchKeyEvent(event: KeyEvent): Boolean {
+        castContext?.let {
+            return it.onDispatchVolumeKeyEventBeforeJellyBean(event) || super.dispatchKeyEvent(event)
+        } ?: run {
+            return super.dispatchKeyEvent(event)
         }
-
-        val searchManager = getSystemService(Context.SEARCH_SERVICE) as SearchManager
-        searchMenuItem = menu.findItem(R.id.menu_search)
-        searchView = searchMenuItem?.actionView as SearchView
-
-        searchView?.let {
-            it.setSearchableInfo(searchManager.getSearchableInfo(componentName))
-            it.setIconifiedByDefault(true)
-            it.setOnQueryTextListener(this)
-            it.setOnSuggestionListener(this)
-
-            val fragment = supportFragmentManager.findFragmentById(R.id.main)
-            if (fragment is SearchRequestInterface && fragment.isVisible) {
-                it.queryHint = fragment.getQueryHint()
-            }
-        }
-        return true
     }
 
     private fun showIntroductoryOverlay() {
@@ -275,42 +334,34 @@ class MainActivity : BaseActivity(R.layout.main_activity), SearchView.OnQueryTex
         }
     }
 
-    /**
-     * Called when a menu item from the navigation drawer was selected. It loads
-     * and shows the correct fragment or fragments depending on the selected
-     * menu item.
-     *
-     * @param id Selected position within the menu array
-     */
-    private fun handleDrawerItemSelected(id: Int) {
-        Timber.d("Handling new navigation menu id $id")
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        super.onCreateOptionsMenu(menu)
+        menuInflater.inflate(R.menu.main_options_menu, menu)
 
-        if (id == MENU_SETTINGS) {
-            startActivity(Intent(this, SettingsActivity::class.java))
-            return
+        mediaRouteMenuItem = menu.findItem(R.id.media_route_menu_item)
+        try {
+            CastButtonFactory.setUpMediaRouteButton(applicationContext, menu, R.id.media_route_menu_item)
+        } catch (e: Exception) {
+            Timber.e(e, "Could not setup media route button")
         }
 
-        val addFragmentToBackStack = sharedPreferences.getBoolean("navigation_history_enabled",
-                resources.getBoolean(R.bool.pref_default_navigation_history_enabled))
+        val searchManager = getSystemService(Context.SEARCH_SERVICE) as SearchManager
+        searchMenuItem = menu.findItem(R.id.menu_search)
+        searchView = searchMenuItem?.actionView as SearchView
 
-        // A new or existing main fragment shall be shown. So save the menu position so we
-        // know which one was selected. Additionally remove any old details fragment in case
-        // dual pane mode is active to prevent showing wrong details data.
-        // Finally show the new main fragment and add it to the back stack
-        // only if it is a new fragment and not an existing one.
-        val fragment = navigationDrawer.getFragmentFromSelection(id)
-        if (fragment != null) {
-            if (isDualPane) {
-                val detailsFragment = supportFragmentManager.findFragmentById(R.id.details)
-                if (detailsFragment != null) {
-                    supportFragmentManager.beginTransaction().remove(detailsFragment).commit()
-                }
-            }
-            supportFragmentManager.beginTransaction().replace(R.id.main, fragment).let {
-                if (addFragmentToBackStack) it.addToBackStack(null)
-                it.commit()
+        searchView?.let {
+            it.setSearchableInfo(searchManager.getSearchableInfo(componentName))
+            it.setIconifiedByDefault(true)
+            it.setOnQueryTextListener(this)
+            it.setOnSuggestionListener(this)
+            it.setOnQueryTextFocusChangeListener(this)
+
+            val fragment = supportFragmentManager.findFragmentById(R.id.main)
+            if (fragment is SearchRequestInterface && fragment.isVisible) {
+                it.queryHint = fragment.getQueryHint()
             }
         }
+        return true
     }
 
     override fun onPrepareOptionsMenu(menu: Menu): Boolean {
@@ -328,11 +379,11 @@ class MainActivity : BaseActivity(R.layout.main_activity), SearchView.OnQueryTex
             NavigationDrawer.MENU_STATUS -> {
                 menu.findItem(R.id.media_route_menu_item)?.isVisible = false
                 menu.findItem(R.id.menu_search).isVisible = false
-                menu.findItem(R.id.menu_send_wake_on_lan_packet)?.isVisible = isUnlocked && baseViewModel.connection.isWolEnabled
+                menu.findItem(R.id.menu_send_wake_on_lan_packet)?.isVisible = baseViewModel.isUnlocked && baseViewModel.connection.isWolEnabled
             }
             else -> {
-                menu.findItem(R.id.media_route_menu_item)?.isVisible = isUnlocked
-                menu.findItem(R.id.menu_send_wake_on_lan_packet)?.isVisible = isUnlocked && baseViewModel.connection.isWolEnabled
+                menu.findItem(R.id.media_route_menu_item)?.isVisible = baseViewModel.isUnlocked
+                menu.findItem(R.id.menu_send_wake_on_lan_packet)?.isVisible = baseViewModel.isUnlocked && baseViewModel.connection.isWolEnabled
             }
         }
         return true
@@ -340,6 +391,10 @@ class MainActivity : BaseActivity(R.layout.main_activity), SearchView.OnQueryTex
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
+            android.R.id.home -> {
+                onBackPressed()
+                true
+            }
             R.id.menu_privacy_policy -> {
                 Timber.d("Showing privacy policy fragment")
                 val fragment: Fragment = PrivacyPolicyFragment()
@@ -370,7 +425,7 @@ class MainActivity : BaseActivity(R.layout.main_activity), SearchView.OnQueryTex
         // In case the channels or epg is currently visible, show the program list fragment.
         // It observes the search query and will perform the search and show the results.
         val fragment = supportFragmentManager.findFragmentById(R.id.main)
-        if (fragment is ChannelListFragment || fragment is EpgFragment) {
+        if (fragment is ShowProgramListFragmentInterface) {
             Timber.d("Adding program list fragment where the search will be done")
             val newFragment: Fragment = ProgramListFragment.newInstance()
             supportFragmentManager.beginTransaction().replace(R.id.main, newFragment).let {
@@ -390,7 +445,7 @@ class MainActivity : BaseActivity(R.layout.main_activity), SearchView.OnQueryTex
         delayedQueryTextSubmitHandler.removeCallbacks(queryTextSubmitTask)
 
         val fragment = supportFragmentManager.findFragmentById(R.id.main)
-        if (fragment !is ChannelListFragment && fragment !is EpgFragment) {
+        if (fragment !is ShowProgramListFragmentInterface) {
             if (newText.length >= 3) {
                 Timber.d("Search query is ${newText.length} characters long, starting timer to start searching")
                 delayedQueryTextSubmitHandler.postDelayed(queryTextSubmitTask, 2000)
@@ -421,7 +476,7 @@ class MainActivity : BaseActivity(R.layout.main_activity), SearchView.OnQueryTex
                 Timber.d("Connection failed or closed")
                 sendSnackbarMessage(message)
                 Timber.d("Setting connection to server not available")
-                appRepository.setConnectionToServerAvailable(false)
+                baseViewModel.setConnectionToServerAvailable(false)
             }
             SyncStateReceiver.State.CONNECTING -> {
                 Timber.d("Connecting")
@@ -430,7 +485,7 @@ class MainActivity : BaseActivity(R.layout.main_activity), SearchView.OnQueryTex
             SyncStateReceiver.State.CONNECTED -> {
                 Timber.d("Connected")
                 sendSnackbarMessage(message)
-                appRepository.setConnectionToServerAvailable(true)
+                baseViewModel.setConnectionToServerAvailable(true)
             }
             SyncStateReceiver.State.SYNC_STARTED -> {
                 Timber.d("Sync started, showing progress bar")
@@ -472,7 +527,7 @@ class MainActivity : BaseActivity(R.layout.main_activity), SearchView.OnQueryTex
                     Timber.d("Disconnecting from server because network is down")
                     stopService(intent)
                     Timber.d("Setting connection to server not available")
-                    appRepository.setConnectionToServerAvailable(false)
+                    baseViewModel.setConnectionToServerAvailable(false)
                 }
                 else -> {
                     Timber.d("Network status is $status, doing nothing")
@@ -482,17 +537,20 @@ class MainActivity : BaseActivity(R.layout.main_activity), SearchView.OnQueryTex
     }
 
     override fun onBackPressed() {
+
+        val fragment = supportFragmentManager.findFragmentById(R.id.main)
+        if (fragment is BackPressedInterface) {
+            fragment.onBackPressed()
+            return
+        }
+
         val navigationHistoryEnabled = PreferenceManager.getDefaultSharedPreferences(this).getBoolean("navigation_history_enabled", resources.getBoolean(R.bool.pref_default_navigation_history_enabled))
         if (!navigationHistoryEnabled) {
             // The following fragments can be called from the channel list fragment.
             // So do not finish the activity in case any of these fragments are visible
             // but pop the back stack so that the channel list is shown again.
             when (supportFragmentManager.findFragmentById(R.id.main)) {
-                is ProgramListFragment -> clearSearchResultsOrPopBackStack()
-                is ProgramDetailsFragment -> clearSearchResultsOrPopBackStack()
-                is RecordingDetailsFragment -> clearSearchResultsOrPopBackStack()
-                is SeriesRecordingDetailsFragment -> clearSearchResultsOrPopBackStack()
-                is TimerRecordingDetailsFragment -> clearSearchResultsOrPopBackStack()
+                is ClearSearchResultsOrPopBackStackInterface -> clearSearchResultsOrPopBackStack()
                 else -> finish()
             }
         } else {
@@ -533,5 +591,35 @@ class MainActivity : BaseActivity(R.layout.main_activity), SearchView.OnQueryTex
             return
         }
         super.applyOverrideConfiguration(overrideConfiguration)
+    }
+
+    override fun onFocusChange(v: View?, hasFocus: Boolean) {
+        baseViewModel.searchViewHasFocus = hasFocus
+    }
+
+    override fun enableSingleScreenLayout() {
+        Timber.d("Dual pane is not active, hiding details layout")
+        val mainFrameLayout: FrameLayout = findViewById(R.id.main)
+        val detailsFrameLayout: FrameLayout? = findViewById(R.id.details)
+        detailsFrameLayout?.gone()
+        mainFrameLayout.layoutParams = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                1.0f)
+    }
+
+    override fun enableDualScreenLayout() {
+        Timber.d("Dual pane is active, showing details layout")
+        val mainFrameLayout: FrameLayout = findViewById(R.id.main)
+        val detailsFrameLayout: FrameLayout? = findViewById(R.id.details)
+        detailsFrameLayout?.visible()
+        mainFrameLayout.layoutParams = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                0.65f)
+    }
+
+    override fun forceSingleScreenLayout() {
+        enableSingleScreenLayout()
     }
 }

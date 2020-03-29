@@ -9,6 +9,10 @@ import timber.log.Timber
 
 class DatabaseCleanupWorker(context: Context, workerParams: WorkerParameters) : Worker(context, workerParams) {
 
+    companion object {
+        const val WORK_NAME = "DatabaseCleanupWorker"
+    }
+
     override fun doWork(): Result {
         Timber.d("Cleaning database by removing duplicate entries")
         HtspIntentService.enqueueWork(applicationContext, Intent().setAction("cleanupDatabase"))

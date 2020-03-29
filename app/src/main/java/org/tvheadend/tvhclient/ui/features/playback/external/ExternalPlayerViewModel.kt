@@ -134,7 +134,7 @@ class ExternalPlayerViewModel(application: Application) : BaseViewModel(applicat
             Timber.d("Hostname $hostname to IP address conversion not required")
         }
 
-        var baseUrl = "${uri.scheme}://$hostname"
+        var baseUrl = "${uri.scheme.toString().toLowerCase()}://$hostname"
         if (uri.port != 80 && uri.port != 443) {
             baseUrl = "${uri.scheme}://$hostname:${uri.port}"
         }

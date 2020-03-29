@@ -2,6 +2,7 @@ package org.tvheadend.tvhclient.ui.features.dvr.recordings
 
 import android.os.Bundle
 import android.view.*
+import androidx.core.view.forEach
 import androidx.lifecycle.ViewModelProviders
 import com.afollestad.materialdialogs.MaterialDialog
 import kotlinx.android.synthetic.main.recording_add_edit_fragment.*
@@ -9,14 +10,16 @@ import org.tvheadend.data.entity.Channel
 import org.tvheadend.data.entity.ServerProfile
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.ui.base.BaseFragment
+import org.tvheadend.tvhclient.ui.common.interfaces.HideNavigationDrawerInterface
 import org.tvheadend.tvhclient.ui.common.interfaces.BackPressedInterface
+import org.tvheadend.tvhclient.ui.common.interfaces.LayoutControlInterface
 import org.tvheadend.tvhclient.ui.features.dvr.*
 import org.tvheadend.tvhclient.util.extensions.afterTextChanged
 import org.tvheadend.tvhclient.util.extensions.gone
 import org.tvheadend.tvhclient.util.extensions.sendSnackbarMessage
 import org.tvheadend.tvhclient.util.extensions.visibleOrGone
 
-class RecordingAddEditFragment : BaseFragment(), BackPressedInterface, RecordingConfigSelectedListener, DatePickerFragment.Listener, TimePickerFragment.Listener {
+class RecordingAddEditFragment : BaseFragment(), BackPressedInterface, RecordingConfigSelectedListener, DatePickerFragment.Listener, TimePickerFragment.Listener, HideNavigationDrawerInterface {
 
     private lateinit var recordingViewModel: RecordingViewModel
     private lateinit var recordingProfilesList: Array<String>
@@ -28,8 +31,11 @@ class RecordingAddEditFragment : BaseFragment(), BackPressedInterface, Recording
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+        recordingViewModel = ViewModelProviders.of(requireActivity()).get(RecordingViewModel::class.java)
 
-        recordingViewModel = ViewModelProviders.of(activity!!).get(RecordingViewModel::class.java)
+        if (activity is LayoutControlInterface) {
+            (activity as LayoutControlInterface).forceSingleScreenLayout()
+        }
 
         recordingProfilesList = recordingViewModel.getRecordingProfileNames()
         profile = recordingViewModel.getRecordingProfile()
@@ -41,6 +47,7 @@ class RecordingAddEditFragment : BaseFragment(), BackPressedInterface, Recording
 
         updateUI()
 
+        toolbarInterface.setSubtitle("")
         toolbarInterface.setTitle(if (id > 0)
             getString(R.string.edit_recording)
         else
@@ -137,6 +144,13 @@ class RecordingAddEditFragment : BaseFragment(), BackPressedInterface, Recording
         }
     }
 
+    override fun onPrepareOptionsMenu(menu: Menu) {
+        super.onPrepareOptionsMenu(menu)
+        menu.forEach { it.isVisible = false }
+        menu.findItem(R.id.menu_save)?.isVisible = true
+        menu.findItem(R.id.menu_cancel)?.isVisible = true
+    }
+
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
         inflater.inflate(R.menu.save_cancel_options_menu, menu)
@@ -192,7 +206,7 @@ class RecordingAddEditFragment : BaseFragment(), BackPressedInterface, Recording
             intent.action = "addDvrEntry"
         }
         activity?.startService(intent)
-        activity?.finish()
+        activity?.supportFragmentManager?.popBackStack()
     }
 
     /**
@@ -205,8 +219,8 @@ class RecordingAddEditFragment : BaseFragment(), BackPressedInterface, Recording
         context?.let {
             MaterialDialog(it).show {
                 message(R.string.cancel_edit_recording)
-                positiveButton(R.string.discard) { activity?.finish() }
-                negativeButton(R.string.cancel) { cancel() }
+                positiveButton(R.string.discard) { activity?.supportFragmentManager?.popBackStack() }
+                negativeButton(R.string.cancel) { dismiss() }
             }
         }
     }
@@ -254,5 +268,15 @@ class RecordingAddEditFragment : BaseFragment(), BackPressedInterface, Recording
 
     override fun onBackPressed() {
         cancel()
+    }
+
+    companion object {
+        fun newInstance(id: Int = 0): RecordingAddEditFragment {
+            val f = RecordingAddEditFragment()
+            if (id > 0) {
+                f.arguments = Bundle().also { it.putInt("id", id) }
+            }
+            return f
+        }
     }
 }

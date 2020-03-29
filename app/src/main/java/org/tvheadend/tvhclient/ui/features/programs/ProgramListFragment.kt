@@ -2,7 +2,6 @@ package org.tvheadend.tvhclient.ui.features.programs
 
 import android.content.Intent
 import android.os.Bundle
-import android.os.Handler
 import android.view.*
 import android.widget.Filter
 import androidx.appcompat.widget.PopupMenu
@@ -17,24 +16,22 @@ import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.service.HtspService
 import org.tvheadend.tvhclient.ui.base.BaseFragment
 import org.tvheadend.tvhclient.ui.common.*
+import org.tvheadend.tvhclient.ui.common.interfaces.ClearSearchResultsOrPopBackStackInterface
 import org.tvheadend.tvhclient.ui.common.interfaces.RecyclerViewClickInterface
 import org.tvheadend.tvhclient.ui.common.interfaces.SearchRequestInterface
-import org.tvheadend.tvhclient.ui.features.dvr.RecordingAddEditActivity
 import org.tvheadend.tvhclient.util.extensions.getCastSession
 import org.tvheadend.tvhclient.util.extensions.gone
 import org.tvheadend.tvhclient.util.extensions.visible
 import org.tvheadend.tvhclient.util.extensions.visibleOrGone
 import timber.log.Timber
 
-class ProgramListFragment : BaseFragment(), RecyclerViewClickInterface, LastProgramVisibleListener, SearchRequestInterface, Filter.FilterListener {
+class ProgramListFragment : BaseFragment(), RecyclerViewClickInterface, LastProgramVisibleListener, SearchRequestInterface, Filter.FilterListener, ClearSearchResultsOrPopBackStackInterface {
 
     lateinit var recyclerViewAdapter: ProgramRecyclerViewAdapter
     private lateinit var programViewModel: ProgramViewModel
     private var loadingMoreProgramAllowed: Boolean = false
-
-    private lateinit var loadingProgramsAllowedTask: Runnable
-    private var loadingProgramAllowedHandler: Handler? = null
     private var programIdToBeEditedWhenBeingRecorded = 0
+    private var lastProgramItemCount = 0
     private var channelId = 0
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -43,9 +40,10 @@ class ProgramListFragment : BaseFragment(), RecyclerViewClickInterface, LastProg
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        programViewModel = ViewModelProviders.of(activity!!).get(ProgramViewModel::class.java)
+        programViewModel = ViewModelProviders.of(requireActivity()).get(ProgramViewModel::class.java)
 
         arguments?.let {
+            programViewModel.channelId = it.getInt("channelId", 0)
             programViewModel.channelIdLiveData.value = it.getInt("channelId", 0)
             programViewModel.selectedTimeLiveData.value = it.getLong("selectedTime", System.currentTimeMillis())
             programViewModel.channelName = it.getString("channelName", "")
@@ -96,17 +94,15 @@ class ProgramListFragment : BaseFragment(), RecyclerViewClickInterface, LastProg
     private fun observeSearchQuery() {
         Timber.d("Observing search query")
         baseViewModel.searchQuery.observe(viewLifecycleOwner, Observer { query ->
-            if (query.isNotEmpty()) {
+            loadingMoreProgramAllowed = if (query.isNotEmpty()) {
                 Timber.d("View model returned search query '$query'")
                 onSearchRequested(query)
-                loadingMoreProgramAllowed = false
+                false
 
             } else {
                 Timber.d("View model returned empty search query")
                 onSearchResultsCleared()
-                loadingMoreProgramAllowed = true
-                loadingProgramAllowedHandler = Handler()
-                loadingProgramsAllowedTask = Runnable { loadingMoreProgramAllowed = true }
+                true
             }
         })
     }
@@ -123,18 +119,10 @@ class ProgramListFragment : BaseFragment(), RecyclerViewClickInterface, LastProg
         for (recording in recordings) {
             if (recording.eventId == programIdToBeEditedWhenBeingRecorded && programIdToBeEditedWhenBeingRecorded > 0) {
                 programIdToBeEditedWhenBeingRecorded = 0
-                val intent = Intent(activity, RecordingAddEditActivity::class.java)
-                intent.putExtra("id", recording.id)
-                intent.putExtra("type", "recording")
-                activity?.startActivity(intent)
+                editSelectedRecording(requireActivity(), recording.id)
                 break
             }
         }
-    }
-
-    override fun onPause() {
-        super.onPause()
-        loadingProgramAllowedHandler?.removeCallbacks(loadingProgramsAllowedTask)
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -215,7 +203,7 @@ class ProgramListFragment : BaseFragment(), RecyclerViewClickInterface, LastProg
                 R.id.menu_search_fileaffinity -> return@setOnMenuItemClickListener searchTitleOnFileAffinityWebsite(ctx, program.title)
                 R.id.menu_search_youtube -> return@setOnMenuItemClickListener searchTitleOnYoutube(ctx, program.title)
                 R.id.menu_search_google -> return@setOnMenuItemClickListener searchTitleOnGoogle(ctx, program.title)
-                R.id.menu_search_epg -> return@setOnMenuItemClickListener searchTitleInTheLocalDatabase(activity!!, baseViewModel, program.title, program.channelId)
+                R.id.menu_search_epg -> return@setOnMenuItemClickListener searchTitleInTheLocalDatabase(requireActivity(), baseViewModel, program.title, program.channelId)
 
                 R.id.menu_add_notification -> return@setOnMenuItemClickListener addNotificationProgramIsAboutToStart(ctx, program, programViewModel.getRecordingProfile())
                 else -> return@setOnMenuItemClickListener false
@@ -238,12 +226,13 @@ class ProgramListFragment : BaseFragment(), RecyclerViewClickInterface, LastProg
 
     override fun onLastProgramVisible(position: Int) {
         // Do not load more programs when a search query was given or all programs were loaded.
-        if (baseViewModel.isSearchActive || !loadingMoreProgramAllowed || !isConnectionToServerAvailable) {
+        if (baseViewModel.isSearchActive
+                || !loadingMoreProgramAllowed
+                || !isConnectionToServerAvailable
+                || recyclerViewAdapter.itemCount == lastProgramItemCount) {
             return
         }
-
-        loadingMoreProgramAllowed = false
-        loadingProgramAllowedHandler?.postDelayed(loadingProgramsAllowedTask, 2000)
+        lastProgramItemCount = recyclerViewAdapter.itemCount
 
         val lastProgram = recyclerViewAdapter.getItem(position)
         lastProgram?.let {

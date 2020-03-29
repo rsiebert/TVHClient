@@ -12,11 +12,12 @@ import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.databinding.SeriesRecordingDetailsFragmentBinding
 import org.tvheadend.tvhclient.ui.base.BaseFragment
 import org.tvheadend.tvhclient.ui.common.*
+import org.tvheadend.tvhclient.ui.common.interfaces.ClearSearchResultsOrPopBackStackInterface
 import org.tvheadend.tvhclient.ui.common.interfaces.RecordingRemovedInterface
 import org.tvheadend.tvhclient.util.extensions.gone
 import org.tvheadend.tvhclient.util.extensions.visible
 
-class SeriesRecordingDetailsFragment : BaseFragment(), RecordingRemovedInterface {
+class SeriesRecordingDetailsFragment : BaseFragment(), RecordingRemovedInterface, ClearSearchResultsOrPopBackStackInterface {
 
     private lateinit var seriesRecordingViewModel: SeriesRecordingViewModel
     private var recording: SeriesRecording? = null
@@ -29,7 +30,7 @@ class SeriesRecordingDetailsFragment : BaseFragment(), RecordingRemovedInterface
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        seriesRecordingViewModel = ViewModelProviders.of(activity!!).get(SeriesRecordingViewModel::class.java)
+        seriesRecordingViewModel = ViewModelProviders.of(requireActivity()).get(SeriesRecordingViewModel::class.java)
 
         if (!isDualPane) {
             toolbarInterface.setTitle(getString(R.string.details))
@@ -47,15 +48,16 @@ class SeriesRecordingDetailsFragment : BaseFragment(), RecordingRemovedInterface
     }
 
     private fun showRecordingDetails() {
-        if (recording != null) {
-            itemBinding.recording = recording
+        recording?.let {
+            itemBinding.recording = it
             itemBinding.htspVersion = htspVersion
             itemBinding.isDualPane = isDualPane
+            itemBinding.duplicateDetectionText = seriesRecordingViewModel.duplicateDetectionList[it.dupDetect]
             // The toolbar is hidden as a default to prevent pressing any icons if no recording
             // has been loaded yet. The toolbar is shown here because a recording was loaded
             nested_toolbar.visible()
             activity?.invalidateOptionsMenu()
-        } else {
+        } ?: run {
             scrollview.gone()
             status.text = getString(R.string.error_loading_recording_details)
             status.visible()
@@ -82,14 +84,14 @@ class SeriesRecordingDetailsFragment : BaseFragment(), RecordingRemovedInterface
         val recording = this.recording ?: return super.onOptionsItemSelected(item)
 
         return when (item.itemId) {
-            R.id.menu_edit_recording -> return editSelectedSeriesRecording(ctx, recording.id)
+            R.id.menu_edit_recording -> editSelectedSeriesRecording(requireActivity(), recording.id)
             R.id.menu_remove_recording -> showConfirmationToRemoveSelectedSeriesRecording(ctx, recording, this)
 
             R.id.menu_search_imdb -> return searchTitleOnImdbWebsite(ctx, recording.title)
             R.id.menu_search_fileaffinity -> return searchTitleOnFileAffinityWebsite(ctx, recording.title)
             R.id.menu_search_youtube -> return searchTitleOnYoutube(ctx, recording.title)
             R.id.menu_search_google -> return searchTitleOnGoogle(ctx, recording.title)
-            R.id.menu_search_epg -> return searchTitleInTheLocalDatabase(activity!!, baseViewModel, recording.title)
+            R.id.menu_search_epg -> return searchTitleInTheLocalDatabase(requireActivity(), baseViewModel, recording.title)
             else -> super.onOptionsItemSelected(item)
         }
     }

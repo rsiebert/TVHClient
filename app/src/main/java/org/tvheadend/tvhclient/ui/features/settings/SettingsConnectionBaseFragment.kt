@@ -1,7 +1,5 @@
 package org.tvheadend.tvhclient.ui.features.settings
 
-import android.content.Context
-import android.net.Uri
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuInflater
@@ -12,19 +10,16 @@ import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.SwitchPreference
 import com.afollestad.materialdialogs.MaterialDialog
-import com.google.android.material.snackbar.Snackbar
-import org.tvheadend.data.entity.Connection
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.ui.common.interfaces.BackPressedInterface
 import org.tvheadend.tvhclient.ui.common.interfaces.ToolbarInterface
 import org.tvheadend.tvhclient.util.extensions.sendSnackbarMessage
-import timber.log.Timber
-import java.util.regex.Pattern
 
 abstract class SettingsConnectionBaseFragment : PreferenceFragmentCompat(), BackPressedInterface, Preference.OnPreferenceChangeListener {
 
     lateinit var toolbarInterface: ToolbarInterface
     lateinit var settingsViewModel: SettingsViewModel
+    val connectionValidator = ConnectionValidator()
 
     private lateinit var namePreference: EditTextPreference
     private lateinit var serverUrlPreference: EditTextPreference
@@ -81,38 +76,38 @@ abstract class SettingsConnectionBaseFragment : PreferenceFragmentCompat(), Back
     }
 
     private fun setPreferenceDefaultValues() {
-        val name = settingsViewModel.connection.name
+        val name = settingsViewModel.connectionToEdit.name
         namePreference.text = name
         namePreference.summary = if (name.isNullOrEmpty()) getString(R.string.pref_name_sum) else name
 
-        val serverUrl = settingsViewModel.connection.serverUrl
+        val serverUrl = settingsViewModel.connectionToEdit.serverUrl
         serverUrlPreference.text = serverUrl
         serverUrlPreference.summary = if (serverUrl.isNullOrEmpty()) getString(R.string.pref_server_url_sum) else serverUrl
 
-        val streamingUrl = settingsViewModel.connection.streamingUrl
+        val streamingUrl = settingsViewModel.connectionToEdit.streamingUrl
         streamingUrlPreference.text = streamingUrl
         streamingUrlPreference.summary = if (streamingUrl.isNullOrEmpty()) getString(R.string.pref_streaming_url_sum) else streamingUrl
 
-        val username = settingsViewModel.connection.username
+        val username = settingsViewModel.connectionToEdit.username
         usernamePreference.text = username
         usernamePreference.summary = if (username.isNullOrEmpty()) getString(R.string.pref_user_sum) else username
 
-        val password = settingsViewModel.connection.password
+        val password = settingsViewModel.connectionToEdit.password
         passwordPreference.text = password
         passwordPreference.summary = if (password.isNullOrEmpty()) getString(R.string.pref_pass_sum) else getString(R.string.pref_pass_set_sum)
 
-        activeEnabledPreference.isChecked = settingsViewModel.connection.isActive
-        wolEnabledPreference.isChecked = settingsViewModel.connection.isWolEnabled
+        activeEnabledPreference.isChecked = settingsViewModel.connectionToEdit.isActive
+        wolEnabledPreference.isChecked = settingsViewModel.connectionToEdit.isWolEnabled
 
-        if (!settingsViewModel.connection.isWolEnabled) {
-            val wolPort = settingsViewModel.connection.wolPort
-            val wolMacAddress = settingsViewModel.connection.wolMacAddress
+        if (!settingsViewModel.connectionToEdit.isWolEnabled) {
+            val wolPort = settingsViewModel.connectionToEdit.wolPort
+            val wolMacAddress = settingsViewModel.connectionToEdit.wolMacAddress
 
             wolMacAddressPreference.text = wolMacAddress
             wolMacAddressPreference.summary = if (wolMacAddress.isNullOrEmpty()) getString(R.string.pref_wol_address_sum) else wolMacAddress
             wolPortPreference.text = wolPort.toString()
             wolPortPreference.summary = getString(R.string.pref_wol_port_sum, wolPort)
-            wolUseBroadcastEnabled.isChecked = settingsViewModel.connection.isWolUseBroadcast
+            wolUseBroadcastEnabled.isChecked = settingsViewModel.connectionToEdit.isWolUseBroadcast
         }
     }
 
@@ -137,23 +132,20 @@ abstract class SettingsConnectionBaseFragment : PreferenceFragmentCompat(), Back
 
     protected abstract fun save()
 
-    fun isConnectionInputValid(connection: Connection): Boolean {
-        Timber.d("Validating input before saving")
-        return if (!isConnectionNameValid(connection.name)) {
-            context?.sendSnackbarMessage(R.string.pref_name_error_invalid)
-            false
-        } else if (!isConnectionUrlValid(context, connection.serverUrl)) {
-            false
-        } else if (!isConnectionUrlValid(context, connection.streamingUrl)) {
-            false
-        } else if (connection.isWolEnabled && !isConnectionWolPortValid(connection.wolPort)) {
-            context?.sendSnackbarMessage(R.string.pref_port_error_invalid)
-            false
-        } else if (connection.isWolEnabled && !isConnectionWolMacAddressValid(connection.wolMacAddress)) {
-            context?.sendSnackbarMessage(R.string.pref_wol_address_invalid)
-            false
-        } else {
-            true
+    fun getErrorDescription(status: ConnectionValidator.ValidationStatus): String {
+        return when (status) {
+            ConnectionValidator.ValidationStatus.ERROR_EMPTY_NAME -> context?.resources?.getString(R.string.pref_name_error_invalid) ?: ""
+            ConnectionValidator.ValidationStatus.ERROR_INVALID_NAME -> context?.resources?.getString(R.string.pref_name_error_invalid) ?: ""
+            ConnectionValidator.ValidationStatus.ERROR_EMPTY_URL -> "The url must not be empty"
+            ConnectionValidator.ValidationStatus.ERROR_WRONG_URL_SCHEME -> "The url must start with http:// or https://"
+            ConnectionValidator.ValidationStatus.ERROR_MISSING_URL_SCHEME -> "The url must contain http:// or https://"
+            ConnectionValidator.ValidationStatus.ERROR_MISSING_URL_HOST -> "The url is missing a hostname"
+            ConnectionValidator.ValidationStatus.ERROR_MISSING_URL_PORT -> "The url is missing a port number"
+            ConnectionValidator.ValidationStatus.ERROR_INVALID_PORT_RANGE -> context?.resources?.getString(R.string.pref_port_error_invalid) ?: ""
+            ConnectionValidator.ValidationStatus.ERROR_UNNEEDED_CREDENTIALS -> "The url must not contain a username or password"
+            ConnectionValidator.ValidationStatus.ERROR_EMPTY_MAC_ADDRESS,
+            ConnectionValidator.ValidationStatus.ERROR_INVALID_MAC_ADDRESS -> context?.resources?.getString(R.string.pref_wol_address_invalid) ?: ""
+            ConnectionValidator.ValidationStatus.SUCCESS -> ""
         }
     }
 
@@ -200,44 +192,49 @@ abstract class SettingsConnectionBaseFragment : PreferenceFragmentCompat(), Back
     }
 
     private fun preferenceNameChanged(value: String) {
-        if (isConnectionNameValid(value)) {
-            settingsViewModel.connection.name = value
+        val status = connectionValidator.isConnectionNameValid(value)
+        if (status == ConnectionValidator.ValidationStatus.SUCCESS) {
+            settingsViewModel.connectionToEdit.name = value
             namePreference.text = value
             namePreference.summary = if (value.isEmpty()) getString(R.string.pref_name_sum) else value
         } else {
-            namePreference.text = settingsViewModel.connection.name
-            context?.sendSnackbarMessage(R.string.pref_name_error_invalid)
+            namePreference.text = settingsViewModel.connectionToEdit.name
+            context?.sendSnackbarMessage(getErrorDescription(status))
         }
     }
 
     private fun preferenceUrlChanged(value: String) {
-        if (isConnectionUrlValid(context, value)) {
-            settingsViewModel.connection.serverUrl = value
+        val status = connectionValidator.isConnectionUrlValid(value)
+        if (status == ConnectionValidator.ValidationStatus.SUCCESS) {
+            settingsViewModel.connectionToEdit.serverUrl = value
             serverUrlPreference.text = value
             serverUrlPreference.summary = if (value.isEmpty()) getString(R.string.pref_server_url_sum) else value
         } else {
-            serverUrlPreference.text = settingsViewModel.connection.serverUrl
+            serverUrlPreference.text = settingsViewModel.connectionToEdit.serverUrl
+            context?.sendSnackbarMessage(getErrorDescription(status))
         }
     }
 
     private fun preferenceStreamingUrlChanged(value: String) {
-        if (isConnectionUrlValid(context, value)) {
-            settingsViewModel.connection.streamingUrl = value
+        val status = connectionValidator.isConnectionUrlValid(value)
+        if (status == ConnectionValidator.ValidationStatus.SUCCESS) {
+            settingsViewModel.connectionToEdit.streamingUrl = value
             streamingUrlPreference.text = value
             streamingUrlPreference.summary = if (value.isEmpty()) getString(R.string.pref_streaming_url_sum) else value
         } else {
-            streamingUrlPreference.text = settingsViewModel.connection.streamingUrl
+            streamingUrlPreference.text = settingsViewModel.connectionToEdit.streamingUrl
+            context?.sendSnackbarMessage(getErrorDescription(status))
         }
     }
 
     private fun preferenceUsernameChanged(value: String) {
-        settingsViewModel.connection.username = value
+        settingsViewModel.connectionToEdit.username = value
         usernamePreference.text = value
         usernamePreference.summary = if (value.isEmpty()) getString(R.string.pref_user_sum) else value
     }
 
     private fun preferencePasswordChanged(value: String) {
-        settingsViewModel.connection.password = value
+        settingsViewModel.connectionToEdit.password = value
         passwordPreference.text = value
         passwordPreference.summary = if (value.isEmpty()) getString(R.string.pref_pass_sum) else getString(R.string.pref_pass_set_sum)
     }
@@ -246,38 +243,40 @@ abstract class SettingsConnectionBaseFragment : PreferenceFragmentCompat(), Back
         // When the connection was set as the new active
         // connection, an initial sync is required
         val isActive = java.lang.Boolean.valueOf(value)
-        if (!settingsViewModel.connection.isActive && isActive) {
-            settingsViewModel.connection.isSyncRequired = true
-            settingsViewModel.connection.lastUpdate = 0
+        if (!settingsViewModel.connectionToEdit.isActive && isActive) {
+            settingsViewModel.connectionToEdit.isSyncRequired = true
+            settingsViewModel.connectionToEdit.lastUpdate = 0
         }
-        settingsViewModel.connection.isActive = java.lang.Boolean.valueOf(value)
+        settingsViewModel.connectionToEdit.isActive = java.lang.Boolean.valueOf(value)
     }
 
     private fun preferenceWolEnabledChanged(value: String) {
-        settingsViewModel.connection.isWolEnabled = java.lang.Boolean.valueOf(value)
+        settingsViewModel.connectionToEdit.isWolEnabled = java.lang.Boolean.valueOf(value)
     }
 
     private fun preferenceWolMacAddressChanged(value: String) {
-        if (isConnectionWolMacAddressValid(value)) {
-            settingsViewModel.connection.wolMacAddress = value
+        val status = connectionValidator.isConnectionWolMacAddressValid(value)
+        if (status == ConnectionValidator.ValidationStatus.SUCCESS) {
+            settingsViewModel.connectionToEdit.wolMacAddress = value
             wolMacAddressPreference.text = value
             wolMacAddressPreference.summary = if (value.isEmpty()) getString(R.string.pref_wol_address_sum) else value
         } else {
-            wolMacAddressPreference.text = settingsViewModel.connection.wolMacAddress
-            context?.sendSnackbarMessage(R.string.pref_wol_address_invalid)
+            wolMacAddressPreference.text = settingsViewModel.connectionToEdit.wolMacAddress
+            context?.sendSnackbarMessage(getErrorDescription(status))
         }
     }
 
     private fun preferenceWolPortChanged(value: String) {
         try {
             val port = Integer.parseInt(value)
-            if (isConnectionWolPortValid(port)) {
-                settingsViewModel.connection.wolPort = port
+            val status = connectionValidator.isConnectionWolPortValid(port)
+            if (status == ConnectionValidator.ValidationStatus.SUCCESS) {
+                settingsViewModel.connectionToEdit.wolPort = port
                 wolPortPreference.text = value
                 wolPortPreference.summary = getString(R.string.pref_wol_port_sum, port)
             } else {
-                wolPortPreference.text = settingsViewModel.connection.wolPort.toString()
-                context?.sendSnackbarMessage(R.string.pref_port_error_invalid)
+                wolPortPreference.text = settingsViewModel.connectionToEdit.wolPort.toString()
+                context?.sendSnackbarMessage(getErrorDescription(status))
             }
         } catch (e: NumberFormatException) {
             // NOP
@@ -285,67 +284,6 @@ abstract class SettingsConnectionBaseFragment : PreferenceFragmentCompat(), Back
     }
 
     private fun preferenceWolBroadcastChanged(value: String) {
-        settingsViewModel.connection.isWolUseBroadcast = java.lang.Boolean.valueOf(value)
-    }
-
-    private fun isConnectionNameValid(value: String?): Boolean {
-        if (value.isNullOrEmpty()) {
-            return false
-        }
-        // Check if the name contains only valid characters.
-        val pattern = Pattern.compile("^[0-9a-zA-Z_\\-.]*$")
-        val matcher = pattern.matcher(value)
-        return matcher.matches()
-    }
-
-    private fun isConnectionUrlValid(context: Context? = null, value: String?): Boolean {
-        // Do not allow an empty serverUrl
-        if (value.isNullOrEmpty()) {
-            context?.sendSnackbarMessage("The url must not be empty")
-            return false
-        }
-
-        val uri = Uri.parse(value)
-        if (uri.scheme.isNullOrEmpty()) {
-            context?.sendSnackbarMessage("The url must start with http://", Snackbar.LENGTH_LONG)
-            return false
-        }
-
-        if (uri.host.isNullOrEmpty()) {
-            context?.sendSnackbarMessage("The url is missing a hostname", Snackbar.LENGTH_LONG)
-            return false
-        }
-
-        if (uri.port == -1) {
-            context?.sendSnackbarMessage("The url is missing a port number", Snackbar.LENGTH_LONG)
-            return false
-        }
-
-        if (uri.port > 65535) {
-            context?.sendSnackbarMessage("The port number must be between 0 and 65535", Snackbar.LENGTH_LONG)
-            return false
-        }
-
-        if (!uri.userInfo.isNullOrEmpty()) {
-            context?.sendSnackbarMessage("The url must not contain a username or password", Snackbar.LENGTH_LONG)
-            return false
-        }
-
-        return true
-    }
-
-    private fun isConnectionWolMacAddressValid(value: String?): Boolean {
-        // Do not allow an empty address
-        if (value.isNullOrEmpty()) {
-            return false
-        }
-        // Check if the MAC address is valid
-        val pattern = Pattern.compile("([0-9a-fA-F]{2}(?::|-|$)){6}")
-        val matcher = pattern.matcher(value)
-        return matcher.matches()
-    }
-
-    private fun isConnectionWolPortValid(port: Int): Boolean {
-        return port in 1..65535
+        settingsViewModel.connectionToEdit.isWolUseBroadcast = java.lang.Boolean.valueOf(value)
     }
 }

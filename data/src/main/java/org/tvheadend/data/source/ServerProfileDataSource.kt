@@ -8,6 +8,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.tvheadend.data.db.AppRoomDatabase
 import org.tvheadend.data.entity.ServerProfile
+import org.tvheadend.data.entity.ServerProfileEntity
 import java.util.*
 
 class ServerProfileDataSource(private val db: AppRoomDatabase) : DataSourceInterface<ServerProfile> {
@@ -27,7 +28,7 @@ class ServerProfileDataSource(private val db: AppRoomDatabase) : DataSourceInter
         get() {
             val serverProfiles = ArrayList<ServerProfile>()
             runBlocking(Dispatchers.IO) {
-                serverProfiles.addAll(db.serverProfileDao.loadAllRecordingProfilesSync())
+                serverProfiles.addAll(db.serverProfileDao.loadAllRecordingProfilesSync().map { it.toServerProfile() })
             }
             return serverProfiles
         }
@@ -36,7 +37,7 @@ class ServerProfileDataSource(private val db: AppRoomDatabase) : DataSourceInter
         get() {
             val serverProfiles = ArrayList<ServerProfile>()
             runBlocking(Dispatchers.IO) {
-                serverProfiles.addAll(db.serverProfileDao.loadHtspPlaybackProfilesSync())
+                serverProfiles.addAll(db.serverProfileDao.loadHtspPlaybackProfilesSync().map { it.toServerProfile() })
             }
             return serverProfiles
         }
@@ -45,21 +46,21 @@ class ServerProfileDataSource(private val db: AppRoomDatabase) : DataSourceInter
         get() {
             val serverProfiles = ArrayList<ServerProfile>()
             runBlocking(Dispatchers.IO) {
-                serverProfiles.addAll(db.serverProfileDao.loadHttpPlaybackProfilesSync())
+                serverProfiles.addAll(db.serverProfileDao.loadHttpPlaybackProfilesSync().map { it.toServerProfile() })
             }
             return serverProfiles
         }
 
     override fun addItem(item: ServerProfile) {
-        ioScope.launch { db.serverProfileDao.insert(item) }
+        ioScope.launch { db.serverProfileDao.insert(ServerProfileEntity.from(item)) }
     }
 
     override fun updateItem(item: ServerProfile) {
-        ioScope.launch { db.serverProfileDao.update(item) }
+        ioScope.launch { db.serverProfileDao.update(ServerProfileEntity.from(item)) }
     }
 
     override fun removeItem(item: ServerProfile) {
-        ioScope.launch { db.serverProfileDao.delete(item) }
+        ioScope.launch { db.serverProfileDao.delete(ServerProfileEntity.from(item)) }
     }
 
     fun removeAll() {
@@ -82,9 +83,9 @@ class ServerProfileDataSource(private val db: AppRoomDatabase) : DataSourceInter
         var serverProfile: ServerProfile? = null
         runBlocking(Dispatchers.IO) {
             if (id is Int) {
-                serverProfile = db.serverProfileDao.loadProfileByIdSync(id)
+                serverProfile = db.serverProfileDao.loadProfileByIdSync(id).toServerProfile()
             } else if (id is String) {
-                serverProfile = db.serverProfileDao.loadProfileByUuidSync(id)
+                serverProfile = db.serverProfileDao.loadProfileByUuidSync(id).toServerProfile()
             }
         }
         return serverProfile

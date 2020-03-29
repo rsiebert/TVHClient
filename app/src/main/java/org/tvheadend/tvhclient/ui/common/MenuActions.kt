@@ -6,6 +6,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.view.Menu
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.children
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
@@ -17,7 +18,9 @@ import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.service.HtspService
 import org.tvheadend.tvhclient.ui.base.BaseViewModel
 import org.tvheadend.tvhclient.ui.common.interfaces.RecordingRemovedInterface
-import org.tvheadend.tvhclient.ui.features.dvr.RecordingAddEditActivity
+import org.tvheadend.tvhclient.ui.features.dvr.recordings.RecordingAddEditFragment
+import org.tvheadend.tvhclient.ui.features.dvr.series_recordings.SeriesRecordingAddEditFragment
+import org.tvheadend.tvhclient.ui.features.dvr.timer_recordings.TimerRecordingAddEditFragment
 import org.tvheadend.tvhclient.ui.features.playback.external.CastChannelActivity
 import org.tvheadend.tvhclient.ui.features.playback.external.CastRecordingActivity
 import org.tvheadend.tvhclient.ui.features.playback.external.PlayChannelActivity
@@ -233,48 +236,63 @@ private fun cancelSelectedRecording(context: Context, recording: Recording, call
     callback?.onRecordingRemoved()
 }
 
-fun editSelectedRecording(context: Context, id: Int): Boolean {
-    val intent = Intent(context, RecordingAddEditActivity::class.java)
-    intent.putExtra("id", id)
-    intent.putExtra("type", "recording")
-    context.startActivity(intent)
+fun editSelectedRecording(activity: FragmentActivity, id: Int): Boolean {
+    val fragment = RecordingAddEditFragment.newInstance(id)
+    activity.supportFragmentManager
+            .beginTransaction()
+            .replace(R.id.main, fragment)
+            .addToBackStack(null)
+            .commit()
     return true
 }
 
-fun editSelectedSeriesRecording(context: Context, id: String): Boolean {
-    val intent = Intent(context, RecordingAddEditActivity::class.java)
-    intent.putExtra("id", id)
-    intent.putExtra("type", "series_recording")
-    context.startActivity(intent)
+fun editSelectedSeriesRecording(activity: FragmentActivity, id: String): Boolean {
+    val fragment = SeriesRecordingAddEditFragment.newInstance(id)
+    activity.supportFragmentManager
+            .beginTransaction()
+            .replace(R.id.main, fragment)
+            .addToBackStack(null)
+            .commit()
     return true
 }
 
-fun editSelectedTimerRecording(context: Context, id: String): Boolean {
-    val intent = Intent(context, RecordingAddEditActivity::class.java)
-    intent.putExtra("id", id)
-    intent.putExtra("type", "timer_recording")
-    context.startActivity(intent)
+fun editSelectedTimerRecording(activity: FragmentActivity, id: String): Boolean {
+    val fragment = TimerRecordingAddEditFragment.newInstance(id)
+    activity.supportFragmentManager
+            .beginTransaction()
+            .replace(R.id.main, fragment)
+            .addToBackStack(null)
+            .commit()
     return true
 }
 
-fun addNewRecording(context: Context): Boolean {
-    val intent = Intent(context, RecordingAddEditActivity::class.java)
-    intent.putExtra("type", "recording")
-    context.startActivity(intent)
+fun addNewRecording(activity: FragmentActivity): Boolean {
+    val fragment = RecordingAddEditFragment.newInstance()
+    activity.supportFragmentManager
+            .beginTransaction()
+            .replace(R.id.main, fragment)
+            .addToBackStack(null)
+            .commit()
     return true
 }
 
-fun addNewSeriesRecording(context: Context): Boolean {
-    val intent = Intent(context, RecordingAddEditActivity::class.java)
-    intent.putExtra("type", "series_recording")
-    context.startActivity(intent)
+fun addNewSeriesRecording(activity: FragmentActivity): Boolean {
+    val fragment = SeriesRecordingAddEditFragment.newInstance()
+    activity.supportFragmentManager
+            .beginTransaction()
+            .replace(R.id.main, fragment)
+            .addToBackStack(null)
+            .commit()
     return true
 }
 
-fun addNewTimerRecording(context: Context): Boolean {
-    val intent = Intent(context, RecordingAddEditActivity::class.java)
-    intent.putExtra("type", "timer_recording")
-    context.startActivity(intent)
+fun addNewTimerRecording(activity: FragmentActivity): Boolean {
+    val fragment = TimerRecordingAddEditFragment.newInstance()
+    activity.supportFragmentManager
+            .beginTransaction()
+            .replace(R.id.main, fragment)
+            .addToBackStack(null)
+            .commit()
     return true
 }
 

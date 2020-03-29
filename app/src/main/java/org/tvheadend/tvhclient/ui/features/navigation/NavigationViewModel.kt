@@ -5,8 +5,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.ui.base.BaseViewModel
-import org.tvheadend.tvhclient.util.livedata.Event
 import org.tvheadend.tvhclient.ui.features.navigation.NavigationDrawer.Companion.MENU_SETTINGS
+import org.tvheadend.tvhclient.util.livedata.Event
 import timber.log.Timber
 
 class NavigationViewModel(application: Application) : BaseViewModel(application) {
@@ -24,7 +24,7 @@ class NavigationViewModel(application: Application) : BaseViewModel(application)
     fun getNavigationMenuId(): LiveData<Event<Int>> = navigationMenuId
 
     fun setNavigationMenuId(id: Int) {
-        Timber.d("Received new navigation id $id, previous navigation id is ${navigationMenuId.value}")
+        Timber.d("Received new navigation id $id, previous navigation id is ${navigationMenuId.value?.peekContent()}")
         if (currentNavigationMenuId != id || id == MENU_SETTINGS) {
             Timber.d("Setting navigation id to $id")
             currentNavigationMenuId = id

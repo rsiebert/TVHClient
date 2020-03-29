@@ -10,39 +10,39 @@ import org.tvheadend.data.dao.*
 import org.tvheadend.data.entity.*
 
 @Database(
-        entities = [TimerRecording::class,
-            SeriesRecording::class,
-            Recording::class,
-            Program::class,
-            Channel::class,
-            ChannelTag::class,
-            TagAndChannel::class,
-            Connection::class,
-            ServerProfile::class,
-            ServerStatus::class],
+        entities = [TimerRecordingEntity::class,
+            SeriesRecordingEntity::class,
+            RecordingEntity::class,
+            ProgramEntity::class,
+            ChannelEntity::class,
+            ChannelTagEntity::class,
+            TagAndChannelEntity::class,
+            ConnectionEntity::class,
+            ServerProfileEntity::class,
+            ServerStatusEntity::class],
         exportSchema = false,
-        version = 12)
+        version = 13)
 abstract class AppRoomDatabase : RoomDatabase() {
 
-    abstract val timerRecordingDao: TimerRecordingDao
+    internal abstract val timerRecordingDao: TimerRecordingDao
 
-    abstract val seriesRecordingDao: SeriesRecordingDao
+    internal abstract val seriesRecordingDao: SeriesRecordingDao
 
-    abstract val recordingDao: RecordingDao
+    internal abstract val recordingDao: RecordingDao
 
-    abstract val channelDao: ChannelDao
+    internal abstract val channelDao: ChannelDao
 
-    abstract val channelTagDao: ChannelTagDao
+    internal abstract val channelTagDao: ChannelTagDao
 
-    abstract val tagAndChannelDao: TagAndChannelDao
+    internal abstract val tagAndChannelDao: TagAndChannelDao
 
-    abstract val programDao: ProgramDao
+    internal abstract val programDao: ProgramDao
 
-    abstract val connectionDao: ConnectionDao
+    internal abstract val connectionDao: ConnectionDao
 
-    abstract val serverProfileDao: ServerProfileDao
+    internal abstract val serverProfileDao: ServerProfileDao
 
-    abstract val serverStatusDao: ServerStatusDao
+    internal abstract val serverStatusDao: ServerStatusDao
 
     companion object {
 
@@ -63,6 +63,7 @@ abstract class AppRoomDatabase : RoomDatabase() {
                             .addMigrations(MIGRATION_9_10)
                             .addMigrations(MIGRATION_10_11)
                             .addMigrations(MIGRATION_11_12)
+                            .addMigrations(MIGRATION_12_13)
                             .build()
                 }
             }
@@ -149,6 +150,12 @@ abstract class AppRoomDatabase : RoomDatabase() {
         private val MIGRATION_11_12 = object : Migration(11, 12) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("ALTER TABLE programs ADD COLUMN modified_time INTEGER NOT NULL DEFAULT 0;")
+            }
+        }
+
+        private val MIGRATION_12_13 = object : Migration(12, 13) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("ALTER TABLE recordings ADD COLUMN duration INTEGER NOT NULL DEFAULT 0;")
             }
         }
     }

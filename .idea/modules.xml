@@ -2,10 +2,10 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/TVHClient.iml" filepath="$PROJECT_DIR$/TVHClient.iml" />
-      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/data/data.iml" filepath="$PROJECT_DIR$/data/data.iml" />
-      <module fileurl="file://$PROJECT_DIR$/htsp/htsp.iml" filepath="$PROJECT_DIR$/htsp/htsp.iml" />
+      <module fileurl="file://$PROJECT_DIR$/TVHClient.iml" filepath="$PROJECT_DIR$/TVHClient.iml" group="TVHClient" />
+      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" group="TVHClient/app" />
+      <module fileurl="file://$PROJECT_DIR$/data/data.iml" filepath="$PROJECT_DIR$/data/data.iml" group="TVHClient/data" />
+      <module fileurl="file://$PROJECT_DIR$/htsp/htsp.iml" filepath="$PROJECT_DIR$/htsp/htsp.iml" group="TVHClient/htsp" />
     </modules>
   </component>
 </project>

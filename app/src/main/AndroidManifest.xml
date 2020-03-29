@@ -35,17 +35,6 @@
             android:name="firebase_crashlytics_collection_enabled"
             android:value="false" />
 
-        <activity
-            android:name=".ui.features.startup.StartupActivity"
-            android:launchMode="singleTask">
-            <intent-filter>
-                <data android:scheme="tvhclient" />
-                <action android:name="android.intent.action.VIEW" />
-
-                <category android:name="android.intent.category.BROWSABLE" />
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </activity>
         <activity android:name=".ui.features.settings.SettingsActivity" />
         <activity
             android:name=".ui.features.playback.external.ExpandedControlsActivity"
@@ -56,13 +45,19 @@
                 <action android:name="android.intent.action.MAIN" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.features.dvr.RecordingAddEditActivity" />
         <activity
             android:name=".ui.features.MainActivity"
             android:launchMode="singleTask">
             <intent-filter>
+                <data android:scheme="tvhclient" />
+
+                <action android:name="android.intent.action.VIEW" />
                 <action android:name="android.intent.action.SEARCH" />
+
+                <category android:name="android.intent.category.BROWSABLE" />
+                <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
+
             <meta-data
                 android:name="android.app.default_searchable"
                 android:value=".ui.features.MainActivity" />
@@ -87,7 +82,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.base.BaseActivity" />
         <activity
             android:name=".ui.features.playback.internal.PlaybackActivity"
             android:autoRemoveFromRecents="true"

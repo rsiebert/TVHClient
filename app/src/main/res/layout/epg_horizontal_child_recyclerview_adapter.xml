@@ -54,6 +54,7 @@
             android:layout_marginRight="2dp"
             android:layout_marginBottom="2dp"
             app:genreColor="@{program.contentType}"
+            app:genreColorItemName="@{program.title}"
             app:genreColorAlphaOffset="@{25}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/vertical_divider"

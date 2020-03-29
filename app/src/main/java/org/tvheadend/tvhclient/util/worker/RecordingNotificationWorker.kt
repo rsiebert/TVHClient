@@ -15,8 +15,11 @@ import java.util.*
 
 class RecordingNotificationWorker(val context: Context, workerParams: WorkerParameters) : Worker(context, workerParams) {
 
+    companion object {
+        const val WORK_NAME = "RecordingNotificationWorker"
+    }
+
     override fun doWork(): Result {
-        Timber.d("Loading more event data from server")
 
         val dvrTitle = inputData.getString("dvrTitle")
         val dvrId = inputData.getInt("dvrId", 0)

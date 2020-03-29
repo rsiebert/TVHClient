@@ -44,9 +44,11 @@ Contact me either by
 
 # Building from Source (Android Studio)
 
-* Download and install Android Studio 3.4 (http://developer.android.com/sdk/index.html)
+* Download and install the latest Android Studio (http://developer.android.com/sdk/index.html)
 * Clone the TVHClient repository within Android Studio
+* Additionally the project requires the ExoPlayer library, so clone the repository (https://github.com/google/ExoPlayer) at the same level as TVHClient is located
 * Open the project from Android Studio
+* Note: The internal player uses the FFMpeg extension which needs to be compiled separately. To do so install MSYS2 from https://www.msys2.org/ in case you are running Windows. Then follow the instructions at https://github.com/google/ExoPlayer/tree/release-v2/extensions/ffmpeg
 
 # Build Properties
 

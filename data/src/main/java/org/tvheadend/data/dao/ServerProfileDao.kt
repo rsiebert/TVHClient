@@ -1,7 +1,7 @@
 package org.tvheadend.data.dao
 
 import androidx.room.*
-import org.tvheadend.data.entity.ServerProfile
+import org.tvheadend.data.entity.ServerProfileEntity
 
 @Dao
 interface ServerProfileDao {
@@ -13,26 +13,26 @@ interface ServerProfileDao {
     @Query("SELECT p.* FROM server_profiles AS p " +
             " WHERE $CONNECTION_IS_ACTIVE" +
             " AND p.type = 'htsp_playback'")
-    fun loadHtspPlaybackProfilesSync(): List<ServerProfile>
+    fun loadHtspPlaybackProfilesSync(): List<ServerProfileEntity>
 
     @Query("SELECT p.* FROM server_profiles AS p " +
             " WHERE $CONNECTION_IS_ACTIVE" +
             " AND p.type = 'http_playback'")
-    fun loadHttpPlaybackProfilesSync(): List<ServerProfile>
+    fun loadHttpPlaybackProfilesSync(): List<ServerProfileEntity>
 
     @Query("SELECT p.* FROM server_profiles AS p " +
             " WHERE $CONNECTION_IS_ACTIVE" +
             " AND p.type = 'recording'")
-    fun loadAllRecordingProfilesSync(): List<ServerProfile>
+    fun loadAllRecordingProfilesSync(): List<ServerProfileEntity>
 
     @Insert
-    fun insert(serverProfile: ServerProfile)
+    fun insert(serverProfile: ServerProfileEntity)
 
     @Update
-    fun update(serverProfile: ServerProfile)
+    fun update(serverProfile: ServerProfileEntity)
 
     @Delete
-    fun delete(serverProfile: ServerProfile)
+    fun delete(serverProfile: ServerProfileEntity)
 
     @Query("DELETE FROM server_profiles")
     fun deleteAll()
@@ -40,12 +40,12 @@ interface ServerProfileDao {
     @Query("SELECT p.* FROM server_profiles AS p " +
             " WHERE $CONNECTION_IS_ACTIVE" +
             " AND p.id = :id")
-    fun loadProfileByIdSync(id: Int): ServerProfile
+    fun loadProfileByIdSync(id: Int): ServerProfileEntity
 
     @Query("SELECT p.* FROM server_profiles AS p " +
             " WHERE $CONNECTION_IS_ACTIVE" +
             " AND p.uuid = :uuid")
-    fun loadProfileByUuidSync(uuid: String): ServerProfile
+    fun loadProfileByUuidSync(uuid: String): ServerProfileEntity
 
     companion object {
 

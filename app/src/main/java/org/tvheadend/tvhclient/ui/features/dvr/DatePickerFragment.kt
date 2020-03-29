@@ -24,7 +24,7 @@ class DatePickerFragment : DialogFragment(), DatePickerDialog.OnDateSetListener 
         hourOfDay = c.get(Calendar.HOUR_OF_DAY)
         minute = c.get(Calendar.MINUTE)
 
-        return DatePickerDialog(context!!, this, year, month, day)
+        return DatePickerDialog(requireContext(), this, year, month, day)
     }
 
     override fun onDateSet(view: DatePicker, year: Int, month: Int, day: Int) {

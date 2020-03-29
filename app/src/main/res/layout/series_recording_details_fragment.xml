@@ -181,6 +181,31 @@
                     tools:text="@tools:sample/date/hhmm" />
 
                 <TextView
+                    android:id="@+id/duplicate_detection_label"
+                    style="?attr/TitleFont"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginEnd="16dp"
+                    android:text="@string/duplicate_detection"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/start_before_label" />
+
+                <TextView
+                    android:id="@+id/duplicate_detection"
+                    style="?attr/ContentFont"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginTop="8dp"
+                    android:text="@{duplicateDetectionText}"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/duplicate_detection_label" />
+
+                <TextView
                     android:id="@+id/minimum_duration_label"
                     style="?attr/TitleFont"
                     android:layout_width="0dp"
@@ -191,7 +216,7 @@
                     android:text="@string/min_duration"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/start_before_label" />
+                    app:layout_constraintTop_toBottomOf="@+id/duplicate_detection" />
 
                 <TextView
                     android:id="@+id/minimum_duration"
@@ -332,6 +357,10 @@
         <variable
             name="isDualPane"
             type="boolean" />
+
+        <variable
+            name="duplicateDetectionText"
+            type="String" />
 
     </data>
 </layout>

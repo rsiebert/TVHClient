@@ -28,6 +28,7 @@ import androidx.preference.PreferenceManager;
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DataSpec;
+import com.google.android.exoplayer2.upstream.TransferListener;
 
 import org.jetbrains.annotations.NotNull;
 import org.tvheadend.htsp.HtspConnection;
@@ -42,6 +43,9 @@ import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.nio.BufferOverflowException;
 import java.nio.ByteBuffer;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -140,6 +144,11 @@ public class HtspSubscriptionDataSource implements DataSource, Closeable, HtspMe
         Timber.d("Finalizing subscription data source");
         release();
         super.finalize();
+    }
+
+    @Override
+    public void addTransferListener(TransferListener transferListener) {
+
     }
 
     @Override
@@ -243,6 +252,12 @@ public class HtspSubscriptionDataSource implements DataSource, Closeable, HtspMe
             return dataSpec.uri;
         }
         return null;
+    }
+
+    @Override
+    public Map<String, List<String>> getResponseHeaders() {
+        Timber.d("Returning response headers");
+        return Collections.emptyMap();
     }
 
     @Override

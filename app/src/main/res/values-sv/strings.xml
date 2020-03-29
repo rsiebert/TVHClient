@@ -186,8 +186,6 @@
     <string name="pref_http_playback_profiles_sum">Välj en profil som används av en extern spelare för att spela ett inspelat program med en extern spelare.</string>
     <string name="pref_information">Information</string>
     <string name="pref_information_sum">Visa en lista över begagnade bibliotek och de personer som bidragit till utvecklingen.</string>
-    <string name="pref_internal_player_audio_passthrough_enabled">Aktivera ljudpassning</string>
-    <string name="pref_internal_player_audio_passthrough_enabled_sum">Du måste också se till att systemets ljudinställningar tillåter passning</string>
     <string name="pref_internal_player_audio_tunneling_enabled">Aktivera ljudtunnel</string>
     <string name="pref_internal_player_audio_tunneling_enabled_sum">Aktivera stöd för DSP-ljudtunnelning</string>
     <string name="pref_internal_player_buffer_duration">Buffertvaraktighet i sekunder…</string>

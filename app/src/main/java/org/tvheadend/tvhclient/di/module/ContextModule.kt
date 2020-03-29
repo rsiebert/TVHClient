@@ -3,14 +3,14 @@ package org.tvheadend.tvhclient.di.module
 import android.content.Context
 import dagger.Module
 import dagger.Provides
-import javax.inject.Singleton
+import org.tvheadend.data.di.FeatureScope
 
 @Suppress("unused")
 @Module
 class ContextModule(private val appContext: Context) {
 
     @Provides
-    @Singleton
+    @FeatureScope
     internal fun provideContext(): Context {
         return appContext
     }

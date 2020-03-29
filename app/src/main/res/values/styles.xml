@@ -57,6 +57,11 @@
     </style>
     <!--</editor-fold>-->
 
+    <!--<editor-fold desc="Theme for the internal players audio/video selection dialog">-->
+    <style name="TrackSelectionDialogThemeOverlay" parent="ThemeOverlay.MaterialComponents.Dialog.Alert">
+        <item name="windowNoTitle">false</item>
+    </style>
+
     <!-- Styles that will be used for the dark holo theme -->
     <style name="CustomTheme" parent="Theme.MaterialComponents">
 

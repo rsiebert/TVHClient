@@ -15,11 +15,11 @@ import androidx.work.OneTimeWorkRequest
 import androidx.work.WorkManager
 import org.json.JSONException
 import org.json.JSONObject
+import org.tvheadend.data.AppRepository
 import org.tvheadend.data.entity.*
 import org.tvheadend.htsp.*
 import org.tvheadend.tvhclient.MainApplication
 import org.tvheadend.tvhclient.R
-import org.tvheadend.tvhclient.repository.AppRepository
 import org.tvheadend.tvhclient.ui.common.addNotificationScheduledRecordingStarts
 import org.tvheadend.tvhclient.ui.common.removeNotificationById
 import org.tvheadend.tvhclient.util.convertUrlToHashString
@@ -31,6 +31,7 @@ import org.tvheadend.tvhclient.util.worker.EpgDataUpdateWorker
 import timber.log.Timber
 import java.io.*
 import java.net.URL
+import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledExecutorService
@@ -357,9 +358,12 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
 
         startBackgroundWorkers()
 
-        Timber.d("Updating connection status with full sync completed and last update time")
+        Timber.d("Updating connection status that initial sync is completed")
         connection.isSyncRequired = false
-        connection.lastUpdate = System.currentTimeMillis() / 1000L
+        if (syncEventsRequired) {
+            Timber.d("Updating last update time of full sync")
+            connection.lastUpdate = System.currentTimeMillis() / 1000L
+        }
         appRepository.connectionData.updateItem(connection)
 
         // The initial sync is considered to be done at this point.
@@ -383,14 +387,17 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
             val updateEpgWorker = OneTimeWorkRequest.Builder(EpgDataUpdateWorker::class.java)
                     .setInitialDelay(15, TimeUnit.SECONDS)
                     .build()
-            WorkManager.getInstance().enqueueUniqueWork("UpdateEpg", ExistingWorkPolicy.REPLACE, updateEpgWorker)
+            WorkManager.getInstance(this.applicationContext).enqueueUniqueWork(EpgDataUpdateWorker.WORK_NAME, ExistingWorkPolicy.APPEND, updateEpgWorker)
+        } else {
+            val sdf = SimpleDateFormat("dd.MM.yyyy HH.mm", Locale.US)
+            Timber.d("Last loading of epg data was at ${sdf.format(connection.lastUpdate * 1000L)}")
         }
 
         Timber.d("Starting background worker in 1 minute to cleanup database")
         val databaseCleanupWorker = OneTimeWorkRequest.Builder(DatabaseCleanupWorker::class.java)
                 .setInitialDelay(1, TimeUnit.MINUTES)
                 .build()
-        WorkManager.getInstance().enqueueUniqueWork("CleanupDatabase", ExistingWorkPolicy.REPLACE, databaseCleanupWorker)
+        WorkManager.getInstance(this.applicationContext).enqueueUniqueWork(DatabaseCleanupWorker.WORK_NAME, ExistingWorkPolicy.KEEP, databaseCleanupWorker)
     }
 
     /**
@@ -502,7 +509,7 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
         }
     }
 
-    private fun addMissingHtspPlaybackProfileIfNotExists(name: String) {
+    private fun addMissingHtspPlaybackProfileIfNotExists(@Suppress("SameParameterValue") name: String) {
         var profileExists = false
 
         val profileNames = appRepository.serverProfileData.htspPlaybackProfileNames
@@ -1544,46 +1551,33 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
         notificationManager.cancel(intent.getIntExtra("id", 0))
     }
 
-    private fun addAutorecEntry(intent: Intent) {
+    private fun addAutorecEntry(intent: Intent,
+                                successMessage: Int = R.string.success_adding_recording,
+                                errorMessage: Int = R.string.error_adding_recording) {
         val request = convertIntentToAutorecMessage(intent, htspVersion)
         request["method"] = "addAutorecEntry"
 
         htspConnection?.sendMessage(request, object : HtspResponseListener {
             override fun handleResponse(response: HtspMessage) {
                 if (response.getInteger("success", 0) == 1) {
-                    applicationContext?.sendSnackbarMessage(getString(R.string.success_adding_recording))
+                    applicationContext?.sendSnackbarMessage(getString(successMessage))
                 } else {
-                    applicationContext?.sendSnackbarMessage(getString(R.string.error_adding_recording, response.getString("error", "")))
+                    applicationContext?.sendSnackbarMessage(getString(errorMessage, response.getString("error", "")))
                 }
             }
         })
     }
 
     private fun updateAutorecEntry(intent: Intent) {
-        var request = HtspMessage()
-        if (htspVersion >= 25) {
-            request = convertIntentToAutorecMessage(intent, htspVersion)
-            request["method"] = "updateAutorecEntry"
-        } else {
-            request["method"] = "deleteAutorecEntry"
-        }
+        val request = HtspMessage()
+        request["method"] = "deleteAutorecEntry"
         request["id"] = intent.getStringExtra("id")
 
         htspConnection?.sendMessage(request, object : HtspResponseListener {
             override fun handleResponse(response: HtspMessage) {
-                // Handle the response here because the "updateAutorecEntry" call does
-                // not exist on the server. First delete the entry and if this was
-                // successful add a new entry with the new values.
-                val success = response.getInteger("success", 0) == 1
-                if (htspVersion < 25 && success) {
-                    addAutorecEntry(intent)
-                } else {
-                    if (success) {
-                        applicationContext?.sendSnackbarMessage(getString(R.string.success_updating_recording))
-                    } else {
-                        applicationContext?.sendSnackbarMessage(getString(R.string.error_updating_recording, response.getString("error", "")))
-                    }
-                }
+                addAutorecEntry(intent,
+                        R.string.success_updating_recording,
+                        R.string.error_updating_recording)
             }
         })
     }

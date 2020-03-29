@@ -6,8 +6,50 @@ import androidx.room.Ignore
 import java.util.*
 import kotlin.math.floor
 
-@Entity(tableName = "channels", primaryKeys = ["id", "connection_id"])
 data class Channel(
+
+        var id: Int = 0,                        // u32   required   ID of channel.
+        var number: Int = 0,                    // u32   required   Channel number, 0 means not configured.
+        var numberMinor: Int = 0,               // u32   optional   Minor channel number (Added in version 13).
+        var name: String? = null,               // str   required   Name of channel.
+        var icon: String? = null,               // str   optional   URL to an icon representative for the channel
+        var eventId: Int = 0,                   // u32   optional   ID of the current event on this channel.
+        var nextEventId: Int = 0,               // u32   optional   ID of the next event on the channel.
+        var connectionId: Int = 0,
+
+        var programId: Int = 0,
+        var programTitle: String? = null,
+        var programSubtitle: String? = null,
+        var programStart: Long = 0,
+        var programStop: Long = 0,
+        var programContentType: Int = 0,
+        var nextProgramId: Int = 0,
+        var nextProgramTitle: String? = null,
+
+        var displayNumber: String? = null,
+        var serverOrder: Int = 0,
+        var tags: List<Int>? = null,
+        var recording: Recording? = null
+) {
+    val duration: Int
+        get() = ((programStop - programStart) / 1000 / 60).toInt()
+
+    val progress: Int
+        get() {
+            var percentage = 0.0
+            // Get the start and end times to calculate the progress.
+            val durationTime = (programStop - programStart).toDouble()
+            val elapsedTime = (Date().time - programStart).toDouble()
+            // Show the progress as a percentage
+            if (durationTime > 0) {
+                percentage = elapsedTime / durationTime
+            }
+            return floor(percentage * 100).toInt()
+        }
+}
+
+@Entity(tableName = "channels", primaryKeys = ["id", "connection_id"])
+internal data class ChannelEntity(
 
         @ColumnInfo(name = "id")
         var id: Int = 0,                        // u32   required   ID of channel.
@@ -55,19 +97,34 @@ data class Channel(
         @Ignore
         var recording: Recording? = null
 ) {
-    val duration: Int
-        get() = ((programStop - programStart) / 1000 / 60).toInt()
-
-    val progress: Int
-        get() {
-            var percentage = 0.0
-            // Get the start and end times to calculate the progress.
-            val durationTime = (programStop - programStart).toDouble()
-            val elapsedTime = (Date().time - programStart).toDouble()
-            // Show the progress as a percentage
-            if (durationTime > 0) {
-                percentage = elapsedTime / durationTime
-            }
-            return floor(percentage * 100).toInt()
+    companion object {
+        fun from(channel: Channel): ChannelEntity {
+            return ChannelEntity(
+                    channel.id,
+                    channel.number,
+                    channel.numberMinor,
+                    channel.name,
+                    channel.icon,
+                    channel.eventId,
+                    channel.nextEventId,
+                    channel.connectionId,
+                    channel.programId,
+                    channel.programTitle,
+                    channel.programSubtitle,
+                    channel.programStart,
+                    channel.programStop,
+                    channel.programContentType,
+                    channel.nextProgramId,
+                    channel.nextProgramTitle,
+                    channel.displayNumber,
+                    channel.serverOrder,
+                    channel.tags,
+                    channel.recording
+            )
         }
+    }
+
+    fun toChannel(): Channel {
+        return Channel(id, number, numberMinor, name, icon, eventId, nextEventId, connectionId, programId, programTitle, programSubtitle, programStart, programStop, programContentType, nextProgramId, nextProgramTitle, displayNumber, serverOrder, tags, recording)
+    }
 }

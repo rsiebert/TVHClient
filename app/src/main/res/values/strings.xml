@@ -177,6 +177,8 @@
     <string name="pref_genre_colors_epg_sum">Shows the genre color in the background of each program guide item.</string>
     <string name="pref_genre_colors_programs">Programs</string>
     <string name="pref_genre_colors_programs_sum">The genre color will be shown as a vertical line on the left side of the program lists and the program details screen.</string>
+    <string name="pref_genre_colors_recordings">Recordings</string>
+    <string name="pref_genre_colors_recordings_sum">The genre color will be shown as a vertical line on the left side of the different recording list screens.</string>
     <string name="pref_genre_colors_sum">Specify on which screens the genre color shall be shown.</string>
     <string name="pref_genre_colors_visibility">Genre color visibility</string>
     <string name="pref_genre_colors_visibility_message">Set the visibility of the colors. Higher values mean stronger colors.</string>
@@ -187,8 +189,6 @@
     <string name="pref_http_playback_profiles_sum">Select a profile that is used by an external player to play a recorded program using an external player.</string>
     <string name="pref_information">Information</string>
     <string name="pref_information_sum">Show a list of used libraries and the people that contributed to the development.</string>
-    <string name="pref_internal_player_audio_passthrough_enabled">Enable Audio Passthrough</string>
-    <string name="pref_internal_player_audio_passthrough_enabled_sum">You must also ensure the system audio settings allows passthrough</string>
     <string name="pref_internal_player_audio_tunneling_enabled">Enable Audio Tunneling</string>
     <string name="pref_internal_player_audio_tunneling_enabled_sum">Enable support for DSP audio tunneling</string>
     <string name="pref_internal_player_buffer_duration">Buffer duration</string>
@@ -263,6 +263,9 @@
     <string name="pref_show_progressbar_sum">Indicates in the channel list how much of the current program has already been shown.</string>
     <string name="pref_show_recording_file_status">Show recording file status</string>
     <string name="pref_show_recording_file_status_sum">The file size and number of data errors of each recording will be shown in the recording lists.</string>
+    <string name="pref_sort_recordings">Recording Order</string>
+    <string name="pref_sort_completed_recordings">Completed Recording Order</string>
+    <string name="pref_sort_completed_recordings_sum">Choose in which order the completed recordings will be displayed.</string>
     <string name="pref_sort_channels">Channel Order</string>
     <string name="pref_sort_channels_sum">Choose in which order the channels will be displayed.</string>
     <string name="pref_streaming_url">Playback Url</string>
@@ -400,4 +403,10 @@
     <string name="wol_send">Successfully sent wake on LAN packet to \'%s\'</string>
     <string name="wol_send_broadcast">Successfully sent wake on LAN packet as a broadcast to \'%s\'</string>
     <string name="yesterday">Yesterday</string>
+    <string name="track_selection_title">Select tracks</string>
+    <string name="notification_added">Notification was added</string>
+    <string name="program_has_already_started">Program has already started</string>
+    <string name="program_starts_soon">Program %1$s starts in %2$d minutes</string>
+    <string name="pref_load_more_epg_data">Load more epg data</string>
+    <string name="error_loading_information">Error loading required information</string>
 </resources>

@@ -2,40 +2,40 @@ package org.tvheadend.data.dao
 
 import androidx.lifecycle.LiveData
 import androidx.room.*
-import org.tvheadend.data.entity.Connection
+import org.tvheadend.data.entity.ConnectionEntity
 
 @Dao
-interface ConnectionDao {
+internal interface ConnectionDao {
 
     @get:Query("SELECT COUNT (*) FROM connections")
     val connectionCount: LiveData<Int>
 
     @Query("SELECT * FROM connections")
-    fun loadAllConnections(): LiveData<List<Connection>>
+    fun loadAllConnections(): LiveData<List<ConnectionEntity>>
 
     @Query("SELECT * FROM connections")
-    fun loadAllConnectionsSync(): List<Connection>
+    fun loadAllConnectionsSync(): List<ConnectionEntity>
 
     @Query("SELECT * FROM connections WHERE active = 1")
-    fun loadActiveConnection(): LiveData<Connection>
+    fun loadActiveConnection(): LiveData<ConnectionEntity>
 
     @Query("SELECT * FROM connections WHERE active = 1")
-    fun loadActiveConnectionSync(): Connection?
+    fun loadActiveConnectionSync(): ConnectionEntity?
 
     @Query("SELECT * FROM connections WHERE id = :id")
-    fun loadConnectionByIdSync(id: Int): Connection
+    fun loadConnectionByIdSync(id: Int): ConnectionEntity
 
     @Query("SELECT * FROM connections WHERE id = :id")
-    fun loadConnectionById(id: Int): LiveData<Connection>
+    fun loadConnectionById(id: Int): LiveData<ConnectionEntity>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(connection: Connection): Long
+    fun insert(connection: ConnectionEntity): Long
 
     @Update
-    fun update(vararg connection: Connection)
+    fun update(vararg connection: ConnectionEntity)
 
     @Delete
-    fun delete(connection: Connection)
+    fun delete(connection: ConnectionEntity)
 
     @Query("UPDATE connections SET active = 0 WHERE active = 1")
     fun disableActiveConnection()

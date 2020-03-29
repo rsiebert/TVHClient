@@ -2,12 +2,14 @@ package org.tvheadend.data.source
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Transformations
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.tvheadend.data.db.AppRoomDatabase
 import org.tvheadend.data.entity.ChannelTag
+import org.tvheadend.data.entity.ChannelTagEntity
 import java.util.*
 
 class ChannelTagDataSource(private val db: AppRoomDatabase) : DataSourceInterface<ChannelTag> {
@@ -27,19 +29,19 @@ class ChannelTagDataSource(private val db: AppRoomDatabase) : DataSourceInterfac
         }
 
     override fun addItem(item: ChannelTag) {
-        ioScope.launch { db.channelTagDao.insert(item) }
+        ioScope.launch { db.channelTagDao.insert(ChannelTagEntity.from(item)) }
     }
 
     fun addItems(items: List<ChannelTag>) {
-        ioScope.launch { db.channelTagDao.insert(ArrayList(items)) }
+        ioScope.launch { db.channelTagDao.insert(ArrayList(items).map { ChannelTagEntity.from(it) }) }
     }
 
     override fun updateItem(item: ChannelTag) {
-        ioScope.launch { db.channelTagDao.update(item) }
+        ioScope.launch { db.channelTagDao.update(ChannelTagEntity.from(item)) }
     }
 
     override fun removeItem(item: ChannelTag) {
-        ioScope.launch { db.channelTagDao.delete(item) }
+        ioScope.launch { db.channelTagDao.delete(ChannelTagEntity.from(item)) }
     }
 
     fun updateSelectedChannelTags(ids: Set<Int>) {
@@ -61,7 +63,9 @@ class ChannelTagDataSource(private val db: AppRoomDatabase) : DataSourceInterfac
     }
 
     override fun getLiveDataItems(): LiveData<List<ChannelTag>> {
-        return db.channelTagDao.loadAllChannelTags()
+        return Transformations.map(db.channelTagDao.loadAllChannelTags()) { entities ->
+            entities.map { it.toChannelTag() }
+        }
     }
 
     override fun getLiveDataItemById(id: Any): LiveData<ChannelTag> {
@@ -71,7 +75,7 @@ class ChannelTagDataSource(private val db: AppRoomDatabase) : DataSourceInterfac
     override fun getItemById(id: Any): ChannelTag? {
         var channelTag: ChannelTag? = null
         runBlocking(Dispatchers.IO) {
-            channelTag = db.channelTagDao.loadChannelTagByIdSync(id as Int)
+            channelTag = db.channelTagDao.loadChannelTagByIdSync(id as Int).toChannelTag()
         }
         return channelTag
     }
@@ -79,7 +83,7 @@ class ChannelTagDataSource(private val db: AppRoomDatabase) : DataSourceInterfac
     override fun getItems(): List<ChannelTag> {
         var channelTags: List<ChannelTag> = ArrayList()
         runBlocking(Dispatchers.IO) {
-            channelTags = db.channelTagDao.loadAllChannelTagsSync()
+            channelTags = db.channelTagDao.loadAllChannelTagsSync().map { it.toChannelTag() }
         }
         return channelTags
     }
@@ -88,9 +92,9 @@ class ChannelTagDataSource(private val db: AppRoomDatabase) : DataSourceInterfac
         var channelTags: List<ChannelTag> = ArrayList()
         runBlocking(Dispatchers.IO) {
             channelTags = if (loadAll) {
-                db.channelTagDao.loadAllChannelTagsSync()
+                db.channelTagDao.loadAllChannelTagsSync().map { it.toChannelTag() }
             } else {
-                db.channelTagDao.loadOnlyNonEmptyChannelTagsSync()
+                db.channelTagDao.loadOnlyNonEmptyChannelTagsSync().map { it.toChannelTag() }
             }
         }
         return channelTags
