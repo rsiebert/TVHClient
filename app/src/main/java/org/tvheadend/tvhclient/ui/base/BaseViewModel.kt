@@ -65,11 +65,11 @@ open class BaseViewModel(application: Application) : AndroidViewModel(applicatio
     var htspVersion: Int
     var removeFragmentWhenSearchIsDone = false
 
-    var searchQuery = MutableLiveData("") // TODO rename
+    var searchQueryLiveData = MutableLiveData("")
     var searchViewHasFocus = false
 
     val isSearchActive: Boolean
-        get() = !searchQuery.value.isNullOrEmpty()
+        get() = !searchQueryLiveData.value.isNullOrEmpty()
 
     init {
         inject()
@@ -103,11 +103,11 @@ open class BaseViewModel(application: Application) : AndroidViewModel(applicatio
     }
 
     fun startSearchQuery(query: String) {
-        searchQuery.value = query
+        searchQueryLiveData.value = query
     }
 
     fun clearSearchQuery() {
-        searchQuery.value = ""
+        searchQueryLiveData.value = ""
     }
 
     override fun setSnackbarMessage(intent: Intent) {

@@ -138,7 +138,7 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickInterface, ChannelT
 
     private fun observeSearchQuery() {
         Timber.d("Observing search query")
-        baseViewModel.searchQuery.observe(viewLifecycleOwner, Observer { query ->
+        baseViewModel.searchQueryLiveData.observe(viewLifecycleOwner, Observer { query ->
             if (query.isNotEmpty()) {
                 Timber.d("View model returned search query '$query'")
                 onSearchRequested(query)
