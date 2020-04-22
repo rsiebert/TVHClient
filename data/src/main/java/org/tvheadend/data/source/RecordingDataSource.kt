@@ -113,7 +113,7 @@ class RecordingDataSource(private val db: AppRoomDatabase) : DataSourceInterface
         var recording: Recording? = null
         if (id > 0) {
             runBlocking(Dispatchers.IO) {
-                recording = db.recordingDao.loadRecordingByEventIdSync(id).toRecording()
+                recording = db.recordingDao.loadRecordingByEventIdSync(id)?.toRecording()
             }
         }
         return recording
