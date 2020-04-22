@@ -40,12 +40,12 @@ interface ServerProfileDao {
     @Query("SELECT p.* FROM server_profiles AS p " +
             " WHERE $CONNECTION_IS_ACTIVE" +
             " AND p.id = :id")
-    fun loadProfileByIdSync(id: Int): ServerProfileEntity
+    fun loadProfileByIdSync(id: Int): ServerProfileEntity?
 
     @Query("SELECT p.* FROM server_profiles AS p " +
             " WHERE $CONNECTION_IS_ACTIVE" +
             " AND p.uuid = :uuid")
-    fun loadProfileByUuidSync(uuid: String): ServerProfileEntity
+    fun loadProfileByUuidSync(uuid: String): ServerProfileEntity?
 
     companion object {
 
