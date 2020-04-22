@@ -1,8 +1,9 @@
 $ 2.4.0
   % VERSION 2.4.0
-  _ 04.03.2020
+  _ 22.04.2020
     * Removed the white screen flickering during startup
     * Added episode information to the recording screens
+    * Made the setting dialog button texts more readable
     * Many internal improvements
 $ 2.3.6
   % VERSION 2.3.6
@@ -58,7 +59,7 @@ $ 2.3.0
   _ 26.11.2019
     * Minor UI changes
     * Added toolbar menu to search for channels only
-    * Added support for Kodi color tags in descriptions
+    * Added support for KODI color tags in descriptions
     * Fixed disable option not working for scheduled recordings
     * Fixed server name was not shown in the main menu header
     * Fixed some minor search issues
