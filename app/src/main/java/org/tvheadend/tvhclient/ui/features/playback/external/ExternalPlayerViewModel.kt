@@ -99,17 +99,19 @@ class ExternalPlayerViewModel(application: Application) : BaseViewModel(applicat
         request["method"] = "getTicket"
         if (channelId > 0) {
             channel = appRepository.channelData.getItemById(channelId)
+            Timber.d("Requesting ticket for channel id $channelId")
             request["channelId"] = channelId
         }
         if (dvrId > 0) {
             recording = appRepository.recordingData.getItemById(dvrId)
+            Timber.d("Requesting ticket for recording id $dvrId")
             request["dvrId"] = dvrId
         }
         htspConnection.sendMessage(request, object : HtspResponseListener {
             override fun handleResponse(response: HtspMessage) {
-                Timber.d("Received response for ticket request")
                 path = response.getString("path", "")
                 ticket = response.getString("ticket", "")
+                Timber.d("Received response for ticket request, path is $path, ticket is $ticket")
                 isTicketReceived.postValue(true)
             }
         })
