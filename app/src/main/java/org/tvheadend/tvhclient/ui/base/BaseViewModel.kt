@@ -48,7 +48,7 @@ open class BaseViewModel(application: Application) : AndroidViewModel(applicatio
         private set
 
     var connection: Connection
-    var connectionLiveData: LiveData<Connection>
+    private var connectionLiveData: LiveData<Connection>
 
     /**
      * Contains the live data information that the application is unlocked or not
