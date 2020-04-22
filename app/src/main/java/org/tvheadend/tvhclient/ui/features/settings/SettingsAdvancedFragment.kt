@@ -47,9 +47,7 @@ class SettingsAdvancedFragment : PreferenceFragmentCompat(), Preference.OnPrefer
         super.onActivityCreated(savedInstanceState)
         settingsViewModel = ViewModelProviders.of(activity as SettingsActivity).get(SettingsViewModel::class.java)
 
-        (activity as ToolbarInterface).let {
-            it.setTitle(getString(R.string.pref_advanced_settings))
-        }
+        (activity as ToolbarInterface).setTitle(getString(R.string.pref_advanced_settings))
 
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(activity)
 
