@@ -55,4 +55,6 @@
     <attr name="material_drawer_badge" format="reference" />
     <attr name="divider_color" format="reference" />
 
+    <attr name="toolbarColorPrimary" format="reference" />
+
 </resources>

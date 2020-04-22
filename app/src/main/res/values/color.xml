@@ -1,8 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <!--<editor-fold desc="Toolbar main color">-->
+    <color name="toolbarPrimaryDarkColor">#363636</color>
+    <color name="toolbarPrimaryLightColor">#eeeeee</color>
+    <!--</editor-fold>-->
+
     <!--<editor-fold desc="Material components main colors">-->
-    <color name="primaryColor">#eeeeee</color>
+    <color name="primaryColor">#808080</color>
     <color name="primaryLightColor">#707070</color>
     <color name="primaryDarkColor">#404040</color>
 
