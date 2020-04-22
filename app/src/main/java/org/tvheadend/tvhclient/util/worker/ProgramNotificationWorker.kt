@@ -52,7 +52,8 @@ class ProgramNotificationWorker(val context: Context, workerParams: WorkerParame
             context.resources.getString(R.string.program_has_already_started)
         else {
             val sdf = SimpleDateFormat("HH:mm", Locale.US)
-            context.resources.getString(R.string.program_starts_soon, sdf.format(startTime), (startTime - currentTime) / 1000 / 60)
+            val minutes = ((startTime - currentTime) / 1000 / 60).toInt()
+            context.resources.getQuantityString(R.plurals.program_starts_soon, minutes, sdf.format(startTime), minutes)
         }
 
         val builder = getNotificationBuilder(context)
