@@ -554,8 +554,9 @@ class MainActivity : AppCompatActivity(), ToolbarInterface, LayoutControlInterfa
                 else -> finish()
             }
         } else {
-            // Only finish the activity when the last fragment is visible
-            if (supportFragmentManager.backStackEntryCount <= 1) {
+            // Only finish the activity when the status fragment and
+            // another fragment are the last two fragments on the back stack.
+            if (supportFragmentManager.backStackEntryCount <= 2) {
                 finish()
             } else {
                 clearSearchResultsOrPopBackStack()
