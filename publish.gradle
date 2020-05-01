@@ -14,36 +14,38 @@
 
 apply plugin: 'bintray-release'
 
-Properties properties = new Properties()
-properties.load(project.rootProject.file('local.properties').newDataInputStream())
+if (tvhHasProperty("keystoreFile")) {
 
-publish {
-    bintrayUser = properties.getProperty("bintray.user")
-    bintrayKey = properties.getProperty("bintray.apikey")
-    artifactId = releaseArtifact
-    desc = releaseDescription
-    publishVersion = releaseVersion
-    repoName = 'TVHClient'
-    userOrg = 'rsiebert'
-    groupId = releaseGroupId
-    website = 'https://github.com/rsiebert/TVHClient'
-    dryRun = false
-    override = true
-}
+    Properties properties = new Properties()
+    properties.load(project.rootProject.file('local.properties').newDataInputStream())
 
-gradle.taskGraph.whenReady { taskGraph ->
-    project.tasks
-            .findAll { task -> task.name.contains("generatePomFileFor") }
-            .forEach { task ->
-                task.doLast {
-                    task.outputs.files
-                            .filter { File file ->
-                                file.path.contains("publications") \
-                                         && file.name.matches("^pom-.+\\.xml\$")
-                            }
-                            .forEach { File file -> addLicense(file) }
+    publish {
+        bintrayUser = properties.getProperty("bintray.user")
+        bintrayKey = properties.getProperty("bintray.apikey")
+        artifactId = releaseArtifact
+        desc = releaseDescription
+        publishVersion = releaseVersion
+        repoName = 'TVHClient'
+        userOrg = 'rsiebert'
+        groupId = releaseGroupId
+        website = 'https://github.com/rsiebert/TVHClient'
+        dryRun = false
+        override = true
+    }
+
+    gradle.taskGraph.whenReady { taskGraph ->
+        project.tasks
+                .findAll { task -> task.name.contains("generatePomFileFor") }
+                .forEach { task ->
+                    task.doLast {
+                        task.outputs.files
+                                .filter { File file ->
+                                    file.path.contains("publications") && file.name.matches("^pom-.+\\.xml\$")
+                                }
+                                .forEach { File file -> addLicense(file) }
+                    }
                 }
-            }
+    }
 }
 
 static void addLicense(File pom) {
