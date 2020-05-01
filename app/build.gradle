@@ -162,20 +162,20 @@ dependencies {
     // Dependency on local binaries
     implementation fileTree(include: ['*.jar'], dir: 'libs')
 
-    def fragment_version = '1.2.2'
+    def fragment_version = '1.2.4'
     def lifecycle_version = '2.1.0'
     def material_dialogs_version = '3.1.1'
-    def dagger_version = '2.26'
+    def dagger_version = '2.27'
 
     // AndroidX libraries
     implementation 'androidx.core:core-ktx:1.2.0'
     implementation 'androidx.appcompat:appcompat:1.1.0'
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
     implementation 'androidx.annotation:annotation:1.1.0'
-    implementation 'androidx.preference:preference:1.1.0'
+    implementation 'androidx.preference:preference:1.1.1'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.0-beta4'
     implementation 'androidx.viewpager2:viewpager2:1.0.0'
-    implementation 'androidx.work:work-runtime:2.3.1'
+    implementation 'androidx.work:work-runtime:2.3.4'
     implementation "androidx.lifecycle:lifecycle-extensions:$lifecycle_version"
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version"
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version"
@@ -184,11 +184,11 @@ dependencies {
     debugImplementation "androidx.fragment:fragment-testing:$fragment_version"
 
     // Misc stuff like logging, image loading, billing, casting
-    implementation 'com.google.android.material:material:1.2.0-alpha04'
+    implementation 'com.google.android.material:material:1.2.0-alpha06'
     implementation 'com.jakewharton.timber:timber:4.7.1'
     implementation 'com.squareup.picasso:picasso:2.71828'
-    implementation 'com.android.billingclient:billing:2.1.0'
-    implementation 'com.google.android.gms:play-services-cast-framework:18.0.0'
+    implementation 'com.android.billingclient:billing:2.2.0'
+    implementation 'com.google.android.gms:play-services-cast-framework:18.1.0'
     implementation 'androidx.mediarouter:mediarouter:1.1.0'
 
     // Kotlin
@@ -205,8 +205,8 @@ dependencies {
 
     // Firebase Crash Reporting and Performance Monitoring
     implementation 'com.crashlytics.sdk.android:crashlytics:2.10.1'
-    implementation 'com.google.firebase:firebase-core:17.2.2'
-    implementation 'com.google.firebase:firebase-perf:19.0.5'
+    implementation 'com.google.firebase:firebase-core:17.3.0'
+    implementation 'com.google.firebase:firebase-perf:19.0.6'
 
     // Dependency injection
     implementation "com.google.dagger:dagger:$dagger_version"
