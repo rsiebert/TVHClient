@@ -1,10 +1,11 @@
 $ 2.4.0
   % VERSION 2.4.0
-  _ 22.04.2020
+  _ 04.05.2020
+    * Added setting to set the dark theme automatically
     * Removed the white screen flickering during startup
     * Added episode information to the recording screens
     * Made the setting dialog button texts more readable
-    * Many internal improvements
+    * Some internal improvements
 $ 2.3.6
   % VERSION 2.3.6
   _ 11.02.2020
