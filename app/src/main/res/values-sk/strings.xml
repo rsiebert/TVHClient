@@ -268,7 +268,6 @@
     <string name="pref_tag_icon">Skupiny kanálov</string>
     <string name="pref_tag_icon_sum">Zobrazenie ikony \'skupiny kanálov\'.</string>
     <string name="pref_theme">Svetla téma</string>
-    <string name="pref_theme_sum">Použiť svetlú tému.</string>
     <string name="pref_unlocker">Sprístupniť všetky funkcie</string>
     <string name="pref_unlocker_sum">Odomknutie ďalších funkcií a podporenie vývoju zakúpením aplikácie.</string>
     <string name="pref_user">Použivateľské meno</string>

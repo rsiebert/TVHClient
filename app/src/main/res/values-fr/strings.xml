@@ -268,7 +268,6 @@
     <string name="pref_tag_icon">Icone du tag de la chaine</string>
     <string name="pref_tag_icon_sum">Montre licône de la chaine.</string>
     <string name="pref_theme">Thème soft</string>
-    <string name="pref_theme_sum">Utiliser le thème soft</string>
     <string name="pref_unlocker">Fonctionnalités supplémentaires</string>
     <string name="pref_unlocker_sum">Activer l\'accès aux fonctionnalités supplémentaires et aider au support des nouveaux développements en achetant la version complète de TVHClient.</string>
     <string name="pref_user">Nom d\'utilisateur</string>

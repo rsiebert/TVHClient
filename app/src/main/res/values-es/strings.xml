@@ -266,7 +266,6 @@
     <string name="pref_tag_icon">Icono de etiqueta de canal</string>
     <string name="pref_tag_icon_sum">Mostrar el icono de una etiqueta de canal.</string>
     <string name="pref_theme">Tema Luz</string>
-    <string name="pref_theme_sum">Usar tema Luz</string>
     <string name="pref_unlocker">Características adicionales</string>
     <string name="pref_unlocker_sum">Habilite el acceso a funciones adicionales y admita un mayor desarrollo comprando la versión desbloqueada de TVHClient..</string>
     <string name="pref_user">Usuario</string>

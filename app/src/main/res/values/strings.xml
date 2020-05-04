@@ -273,8 +273,7 @@
     <string name="pref_streaming_url_sum">Enter the url with the hostname and port to stream videos from the server. Only required if an external player is used. Example: http://myserver:9981</string>
     <string name="pref_tag_icon">Channel tag icon</string>
     <string name="pref_tag_icon_sum">Show the icon for a channel tag.</string>
-    <string name="pref_theme">Light theme</string>
-    <string name="pref_theme_sum">Use a light theme</string>
+    <string name="pref_theme">Theme</string>
     <string name="pref_unlocker">Additional features</string>
     <string name="pref_unlocker_sum">Enable access to additional features and support further development by buying the unlocked version of TVHClient.</string>
     <string name="pref_user">Username</string>

@@ -266,7 +266,6 @@
     <string name="pref_tag_icon">Kanaltaggikon</string>
     <string name="pref_tag_icon_sum">Visa ikonen för en kanaltagg.</string>
     <string name="pref_theme">Ljust tema</string>
-    <string name="pref_theme_sum">Använd ett ljust tema</string>
     <string name="pref_unlocker">Aktivera alla funktioner</string>
     <string name="pref_unlocker_sum">Aktivera tillgång till ytterligare funktioner och stödja utvecklingen genom att köpa det här programmet.</string>
     <string name="pref_user">Användarnamn</string>

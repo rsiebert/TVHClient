@@ -268,7 +268,6 @@ Verifica che siano soddsifatti i requisiti descritti nelle impostazioni trasmiss
     <string name="pref_tag_icon">Icone etichette canali</string>
     <string name="pref_tag_icon_sum">Visualizzare l\'icona dell\'etichetta del canale.</string>
     <string name="pref_theme">Tema chiaro</string>
-    <string name="pref_theme_sum">Usa un tema dai colori chiari</string>
     <string name="pref_unlocker">ACQUISTA VERSIONE COMPLETA</string>
     <string name="pref_unlocker_sum">"Abilita l'accesso a tutte le opzioni acquistando l'applicazione."</string>
     <string name="pref_user">Nome utente</string>

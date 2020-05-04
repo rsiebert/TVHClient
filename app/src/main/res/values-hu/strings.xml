@@ -267,8 +267,7 @@
     <string name="pref_streaming_url_sum">Írja be az URL-t a gazdagépnévvel és a portnal, hogy a videókat a szerverről továbbítsa. Csak akkor szükséges, ha külső lejátszót használnak. Példa: http://myserver:9981</string>
     <string name="pref_tag_icon">Csatorna címke ikon</string>
     <string name="pref_tag_icon_sum">Mutassa a csatorna címke ikonját.</string>
-    <string name="pref_theme">Világos téma</string>
-    <string name="pref_theme_sum">Világos téma használata</string>
+    <string name="pref_theme">Téma</string>
     <string name="pref_unlocker">További beállítások</string>
     <string name="pref_unlocker_sum">Engedélyezze a további funkciók elérését és támogatja a TVHClient további fejlesztést a teljes verzió megvásárlásával.</string>
     <string name="pref_user">Felhasználónév</string>

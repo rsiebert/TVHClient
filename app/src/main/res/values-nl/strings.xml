@@ -266,7 +266,6 @@
     <string name="pref_tag_icon">Logo voor stationsgroepen</string>
     <string name="pref_tag_icon_sum">Toont het bijbehorende logo voor de geselecteerde kanaalgroep (indien beschikbaar).</string>
     <string name="pref_theme">Licht thema</string>
-    <string name="pref_theme_sum">Gebruik een licht thema</string>
     <string name="pref_unlocker">Extra functies</string>
     <string name="pref_unlocker_sum">Maak toegang tot extra functies mogelijk en ondersteun de verdere ontwikkeling door de ontgrendelde versie van TVHClient aan te schaffen.</string>
     <string name="pref_user">Gebruikersnaam</string>

@@ -265,8 +265,7 @@
     <string name="pref_streaming_url_sum">Chcete-li streamovat videa ze serveru, zadejte adresu URL s názvem hostitele a portem. Vyžaduje se pouze v případě použití externího přehrávače. Příklad: http://myserver:9981</string>
     <string name="pref_tag_icon">Ikona štítku kanálu</string>
     <string name="pref_tag_icon_sum">Zobrazit ikonu pro štítek kanálu.</string>
-    <string name="pref_theme">Světlé téma</string>
-    <string name="pref_theme_sum">Použít světlé téma.</string>
+    <string name="pref_theme">Téma</string>
     <string name="pref_unlocker">Povolit všechny funkce</string>
     <string name="pref_unlocker_sum">Povolit přístup k dalším funkcím a podpořit vývoj zakoupením této aplikace.</string>
     <string name="pref_user">Uživatelské jméno</string>

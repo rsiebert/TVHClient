@@ -266,8 +266,7 @@
     <string name="pref_streaming_url_sum">Geben Sie die URL mit dem Hostnamen und Port ein, um Videos vom Server zu streamen. Nur erforderlich, wenn ein externer Player verwendet wird. Beispiel: http://mein-server:9981</string>
     <string name="pref_tag_icon">Logo für Sendergruppen</string>
     <string name="pref_tag_icon_sum">Zeigt für die gewählte Sendergruppe (falls verfügbar) das dazugehörige Logo.</string>
-    <string name="pref_theme">Helles Theme</string>
-    <string name="pref_theme_sum">Zeigt den Hintergrund und alle Elemente in helleren Farben an. Alternativ wird ein Theme mit fast schwarzem Hintergrund und dunkleren Farben verwendet.</string>
+    <string name="pref_theme">Theme</string>
     <string name="pref_unlocker">Funktionen freischalten</string>
     <string name="pref_unlocker_sum">Schaltet nach dem Kauf der Applikation zusätzliche Funktionen frei. Durch den Kauf wird auch die weitere Entwicklung von TVHClient unterstützt.</string>
     <string name="pref_user">Benutzername</string>
