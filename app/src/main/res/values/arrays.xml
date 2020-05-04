@@ -32,6 +32,18 @@
         <item>Húngaro</item>
     </string-array>
 
+    <string-array name="pref_theme_list" translatable="false">
+        <item>light</item>
+        <item>dark</item>
+        <item>auto</item>
+    </string-array>
+
+    <string-array name="pref_theme_list_display">
+        <item>Light</item>
+        <item>Dark</item>
+        <item>Automatically</item>
+    </string-array>
+
     <string-array name="pref_menu_ids" translatable="false">
         <item>0</item>
         <item>1</item>

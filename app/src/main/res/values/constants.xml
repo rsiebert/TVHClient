@@ -4,6 +4,7 @@
     <!-- Default main preference values -->
     <string name="pref_default_language" translatable="false">default</string>
     <bool name="pref_default_light_theme_enabled">true</bool>
+    <string name="pref_default_theme" translatable="false">light</string>
 
     <!-- Default playback preference values -->
     <bool name="pref_default_internal_player_enabled">false</bool>
