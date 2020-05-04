@@ -50,7 +50,7 @@ class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceClic
         findPreference<Preference>("advanced")?.onPreferenceClickListener = this
         findPreference<Preference>("changelog")?.onPreferenceClickListener = this
         findPreference<Preference>("language")?.onPreferenceClickListener = this
-        findPreference<Preference>("light_theme_enabled")?.onPreferenceClickListener = this
+        findPreference<Preference>("selected_theme")?.onPreferenceClickListener = this
         findPreference<Preference>("information")?.onPreferenceClickListener = this
         findPreference<Preference>("privacy_policy")?.onPreferenceClickListener = this
 
@@ -102,6 +102,7 @@ class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceClic
 
     override fun onSharedPreferenceChanged(prefs: SharedPreferences, key: String) {
         when (key) {
+            "selected_theme" -> handlePreferenceThemeChanged()
             "language" -> {
                 activity?.let {
                     val intent = Intent(it, MainActivity::class.java)
@@ -114,7 +115,6 @@ class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceClic
 
     override fun onPreferenceClick(preference: Preference): Boolean {
         when (preference.key) {
-            "light_theme_enabled" -> handlePreferenceThemeSelected()
             "profiles" -> handlePreferenceProfilesSelected()
             "playback" -> handlePreferencePlaybackSelected()
             "download_directory" -> handlePreferenceDownloadDirectorySelected()
@@ -123,7 +123,7 @@ class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceClic
         return true
     }
 
-    private fun handlePreferenceThemeSelected() {
+    private fun handlePreferenceThemeChanged() {
         activity?.let {
             TaskStackBuilder.create(it)
                     .addNextIntent(Intent(it, MainActivity::class.java))
