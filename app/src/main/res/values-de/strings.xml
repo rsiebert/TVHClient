@@ -149,7 +149,6 @@
     <string name="pref_copy_playback_url_to_clipboard_enabled_sum">Bei Problemen mit der Wiedergabe kann die URL zum Testen der Wiedergabe in einem Browser verwendet werden.</string>
     <string name="pref_crash_reporting_settings">" Einstellungen für Absturzberichte"</string>
     <string name="pref_customize_user_interface">Benutzeroberfläche anpassen</string>
-    <string name="pref_customize_user_interface_sum">Legt fest welche Informationen in den einzelnen Bildschirmen angezeigt werden sollen.</string>
     <string name="pref_date_time_format">Datum- und Zeitformat </string>
     <string name="pref_date_time_format_sum">Zeige das Datum und die Zeit in der landesüblichen Form an. Alternativ wird das Format \'31.12.2017, 21:09\' verwendet.</string>
     <string name="pref_debug_mode">Debug Modus</string>
@@ -195,7 +194,6 @@
     <string name="pref_internal_player_for_recordings_enabled">Aufnahmen mit dem interen Player abspielen</string>
     <string name="pref_internal_player_timeshift_enabled">Timeshift-Unterstützung aktivieren</string>
     <string name="pref_language">Sprache</string>
-    <string name="pref_language_sum">Definiert die Sprache, die verwendet werden soll.</string>
     <string name="pref_manage_connections">Verbindungen verwalten</string>
     <string name="pref_manage_connections_sum">Die aktive Verbindung zum TVHeadend Server ändern, neue Verbindungen erstellen, vorhandene bearbeiten oder entfernen.</string>
     <string name="pref_menu_visibility">Menü Sichtbarkeit</string>

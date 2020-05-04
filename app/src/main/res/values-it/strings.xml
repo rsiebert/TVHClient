@@ -151,7 +151,6 @@ Verifica che siano soddsifatti i requisiti descritti nelle impostazioni trasmiss
     <string name="pref_copy_playback_url_to_clipboard_enabled_sum">In caso di problemi di riproduzione, l\'Url copiato può essere utilizzato per testare la riproduzione in un browser.</string>
     <string name="pref_crash_reporting_settings">Impostazioni del Crash Reporting</string>
     <string name="pref_customize_user_interface">Personalizzare l\'interfaccia utente</string>
-    <string name="pref_customize_user_interface_sum">Scegliere tra una varietà di opzioni per decidere quali informazioni devono essere visualizzate in ogni schermata.</string>
     <string name="pref_date_time_format">Formato data e ora</string>
     <string name="pref_date_time_format_sum">Visualizzare la data e l\'ora come di solito usate nel vostro paese. Altrimenti viene utilizzato il formato \'31.12.2017, 21:09\'.</string>
     <string name="pref_debug_mode">Modo debug</string>
@@ -197,7 +196,6 @@ Verifica che siano soddsifatti i requisiti descritti nelle impostazioni trasmiss
     <string name="pref_internal_player_for_recordings_enabled">Riproduci le registrazioni con il lettore interno</string>
     <string name="pref_internal_player_timeshift_enabled">Abilita il supporto per il timeshift</string>
     <string name="pref_language">Lingua</string>
-    <string name="pref_language_sum">"Scegli la lingua che utilizzerà l'applicazione."</string>
     <string name="pref_manage_connections">Gestisci connessioni</string>
     <string name="pref_manage_connections_sum">Seleziona la connessione attiva a un server TVHeadend oppure aggiungi, modifica o rimuovi le connessioni.</string>
     <string name="pref_menu_visibility">Visibilità menu</string>

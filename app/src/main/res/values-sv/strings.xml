@@ -149,7 +149,6 @@
     <string name="pref_copy_playback_url_to_clipboard_enabled_sum">Vid uppspelningsproblem kan den kopierade Url användas för att testa uppspelning i en webbläsare.</string>
     <string name="pref_crash_reporting_settings">Inställningar för kraschrapportering</string>
     <string name="pref_customize_user_interface">Anpassa användargränssnittet</string>
-    <string name="pref_customize_user_interface_sum">Välj mellan olika alternativ för att bestämma vilken information som ska visas på varje skärm.</string>
     <string name="pref_date_time_format">Datum och tid format</string>
     <string name="pref_date_time_format_sum">Visa datum och tid som vanligt används i ditt land. Annars används formatet \'31.12.2017, 21:09\'.</string>
     <string name="pref_debug_mode">Debugläge</string>
@@ -195,7 +194,6 @@
     <string name="pref_internal_player_for_recordings_enabled">Spela inspelningar med den interna spelaren</string>
     <string name="pref_internal_player_timeshift_enabled">Aktivera tidsskiftstöd</string>
     <string name="pref_language">Språk</string>
-    <string name="pref_language_sum">Välj det språk applikationen skall använda.</string>
     <string name="pref_manage_connections">Hantera anslutningar</string>
     <string name="pref_manage_connections_sum">Välj din aktiva anslutning till en TVHeadend-server eller lägg till, editera eller ta bort anslutning.</string>
     <string name="pref_menu_visibility">Menysynlighet</string>

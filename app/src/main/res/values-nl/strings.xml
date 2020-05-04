@@ -149,7 +149,6 @@
     <string name="pref_copy_playback_url_to_clipboard_enabled_sum">In het geval van afspeelproblemen kan de gekopieerde URL worden gebruikt om het afspelen in een browser te testen.</string>
     <string name="pref_crash_reporting_settings">Crash Rapportage-instellingen</string>
     <string name="pref_customize_user_interface">Pas de gebruikersinterface aan</string>
-    <string name="pref_customize_user_interface_sum">Kies uit verschillende opties om te beslissen welke informatie op elk scherm moet worden getoond.</string>
     <string name="pref_date_time_format">Datum- en tijdnotatie</string>
     <string name="pref_date_time_format_sum">Geef de datum en tijd weer zoals gebruikelijk in uw land. Anders wordt het formaat \'31 .12.2017, 21:09\' gebruikt.</string>
     <string name="pref_debug_mode">Foutopsporingsmodus</string>
@@ -195,7 +194,6 @@
     <string name="pref_internal_player_for_recordings_enabled">Speel opnamen met de interne speler</string>
     <string name="pref_internal_player_timeshift_enabled">Schakel timeshift ondersteuning in</string>
     <string name="pref_language">Taal</string>
-    <string name="pref_language_sum">Kies de taal die door het programma gebruikt zal worden.</string>
     <string name="pref_manage_connections">Beheer connecties</string>
     <string name="pref_manage_connections_sum">Selecteer een actieve connectie naar een TVHeadend server of maak, wijzig of verwijder connecties.</string>
     <string name="pref_menu_visibility">Zichtbare menu\'s</string>
