@@ -54,11 +54,24 @@ class MigrateUtils(val context: Context, val appRepository: AppRepository, val s
             if (lastInstalledApplicationVersion < VERSION_196) {
                 convertInvalidLowSpaceThresholdPreference()
             }
+            if (lastInstalledApplicationVersion < VERSION_205) {
+                convertThemePreference()
+            }
         }
 
         // Store the current version as the last installed version
         val editor = sharedPreferences.edit()
         editor.putInt("build_version_for_migration", currentApplicationVersion)
+        editor.apply()
+    }
+
+    private fun convertThemePreference() {
+        val lightThemeEnabled = sharedPreferences.getBoolean("light_theme_enabled", context.resources.getBoolean(R.bool.pref_default_light_theme_enabled))
+        Timber.d("Light theme is enabled $lightThemeEnabled, migrating preference to a string")
+        val themeList = listOf(*context.resources.getStringArray(R.array.pref_theme_list))
+        val editor = sharedPreferences.edit()
+        editor.remove("light_theme_enabled")
+        editor.putString("selected_theme", if (lightThemeEnabled) themeList[0].toString() else themeList[1].toString())
         editor.apply()
     }
 
@@ -322,5 +335,6 @@ class MigrateUtils(val context: Context, val appRepository: AppRepository, val s
         private const val VERSION_176 = 176
         private const val VERSION_189 = 189
         private const val VERSION_196 = 196
+        private const val VERSION_205 = 205
     }
 }
