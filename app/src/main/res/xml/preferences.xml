@@ -15,7 +15,6 @@
             android:entries="@array/pref_language_list_display"
             android:entryValues="@array/pref_language_list"
             android:key="language"
-            android:summary="@string/pref_language_sum"
             android:title="@string/pref_language" />
         <SwitchPreference
             android:defaultValue="@bool/pref_default_light_theme_enabled"
@@ -23,7 +22,6 @@
             android:title="@string/pref_theme" />
         <PreferenceScreen
             android:key="user_interface"
-            android:summary="@string/pref_customize_user_interface_sum"
             android:title="@string/pref_customize_user_interface" />
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/pref_playback_and_recording">
