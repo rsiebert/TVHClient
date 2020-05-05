@@ -495,9 +495,7 @@ fun setChannelName(view: TextView, name: String?, iconUrl: String?) {
 @BindingAdapter("backgroundImage")
 fun setDualPaneBackground(view: ImageView, isSelected: Boolean) {
     if (isSelected) {
-        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(view.context)
-        val lightTheme = sharedPreferences.getBoolean("light_theme_enabled", view.context.resources.getBoolean(R.bool.pref_default_light_theme_enabled))
-        val icon = if (lightTheme) R.drawable.dual_pane_selector_active_light else R.drawable.dual_pane_selector_active_dark
+        val icon = if (getThemeId(view.context) == R.style.CustomTheme_Light) R.drawable.dual_pane_selector_active_light else R.drawable.dual_pane_selector_active_dark
         view.setBackgroundResource(icon)
     } else {
         val icon = R.drawable.dual_pane_selector_inactive
