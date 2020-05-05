@@ -14,7 +14,7 @@ android {
         minSdkVersion 16
         targetSdkVersion 29
 
-        versionCode 204
+        versionCode 205
         versionName "2.4.0"
 
         // Define the apk naming convention
@@ -205,15 +205,15 @@ dependencies {
 
     // Firebase Crash Reporting and Performance Monitoring
     implementation 'com.crashlytics.sdk.android:crashlytics:2.10.1'
-    implementation 'com.google.firebase:firebase-core:17.3.0'
-    implementation 'com.google.firebase:firebase-perf:19.0.6'
+    implementation 'com.google.firebase:firebase-core:17.4.0'
+    implementation 'com.google.firebase:firebase-perf:19.0.7'
 
     // Dependency injection
     implementation "com.google.dagger:dagger:$dagger_version"
     kapt "com.google.dagger:dagger-compiler:$dagger_version"
 
     // App data access via browser
-    debugImplementation('com.facebook.stetho:stetho:1.5.1') {
+    implementation('com.facebook.stetho:stetho:1.5.1') {
         exclude group: "com.google.code.findbugs", module: "jsr305"
     }
 
