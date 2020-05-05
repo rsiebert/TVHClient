@@ -59,7 +59,7 @@ class SettingsActivity : AppCompatActivity(), RemoveFragmentFromBackstackInterfa
         })
 
         settingsViewModel.currentServerStatusLiveData.observe(this, Observer { serverStatus ->
-            Timber.d("Received live data, server status has changed and is ${if (serverStatus != null) "" else "not"} available")
+            Timber.d("Received live data, server status has changed and is ${if (serverStatus != null) "" else "not "}available")
             if (serverStatus != null) {
                 settingsViewModel.currentServerStatus = serverStatus
             }
@@ -139,6 +139,7 @@ class SettingsActivity : AppCompatActivity(), RemoveFragmentFromBackstackInterfa
     }
 
     override fun removeFragmentFromBackstack() {
+        Timber.d("Back stack count is ${supportFragmentManager.backStackEntryCount}")
         if (supportFragmentManager.backStackEntryCount <= 1) {
             finish()
         } else {
