@@ -75,7 +75,7 @@ class ChannelTagDataSource(private val db: AppRoomDatabase) : DataSourceInterfac
     override fun getItemById(id: Any): ChannelTag? {
         var channelTag: ChannelTag? = null
         runBlocking(Dispatchers.IO) {
-            channelTag = db.channelTagDao.loadChannelTagByIdSync(id as Int).toChannelTag()
+            channelTag = db.channelTagDao.loadChannelTagByIdSync(id as Int)?.toChannelTag()
         }
         return channelTag
     }

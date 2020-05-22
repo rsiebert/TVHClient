@@ -30,7 +30,7 @@ internal interface ChannelTagDao {
     @Query("SELECT DISTINCT * FROM channel_tags " +
             " WHERE $CONNECTION_IS_ACTIVE" +
             " AND id = :id ")
-    fun loadChannelTagByIdSync(id: Int): ChannelTagEntity
+    fun loadChannelTagByIdSync(id: Int): ChannelTagEntity?
 
     @Transaction
     @Insert(onConflict = OnConflictStrategy.REPLACE)
