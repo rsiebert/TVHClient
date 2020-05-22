@@ -43,8 +43,8 @@ class PlaybackActivity : AppCompatActivity() {
     private var timeshiftSupported: Boolean = false
     private lateinit var viewModel: PlayerViewModel
 
-    private val videoAspectRatioNameList = listOf("5:4", "4:3", "16:9", "16:10")
-    private val videoAspectRatioList = listOf(Rational(5, 4), Rational(4, 3), Rational(16, 9), Rational(16, 10))
+    private val videoAspectRatioNameList = listOf("5:4", "4:3", "16:9", "16:10", "18:9")
+    private val videoAspectRatioList = listOf(Rational(5, 4), Rational(4, 3), Rational(16, 9), Rational(16, 10), Rational(18, 9))
     private var selectedVideoAspectRatio: Rational? = null
     private var selectedVideoAspectIndex = -1
 
