@@ -73,7 +73,7 @@ internal interface ProgramDao {
     @Query(PROGRAM_BASE_QUERY +
             " WHERE $CONNECTION_IS_ACTIVE" +
             " AND p.id = :id")
-    fun loadProgramByIdSync(id: Int): ProgramEntity
+    fun loadProgramByIdSync(id: Int): ProgramEntity?
 
     @Query(PROGRAM_BASE_QUERY +
             " WHERE $CONNECTION_IS_ACTIVE" +

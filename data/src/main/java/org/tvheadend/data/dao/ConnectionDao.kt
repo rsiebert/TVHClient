@@ -23,7 +23,7 @@ internal interface ConnectionDao {
     fun loadActiveConnectionSync(): ConnectionEntity?
 
     @Query("SELECT * FROM connections WHERE id = :id")
-    fun loadConnectionByIdSync(id: Int): ConnectionEntity
+    fun loadConnectionByIdSync(id: Int): ConnectionEntity?
 
     @Query("SELECT * FROM connections WHERE id = :id")
     fun loadConnectionById(id: Int): LiveData<ConnectionEntity>

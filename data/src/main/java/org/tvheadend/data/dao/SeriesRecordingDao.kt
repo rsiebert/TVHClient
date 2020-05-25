@@ -3,9 +3,10 @@ package org.tvheadend.data.dao
 import androidx.lifecycle.LiveData
 import androidx.room.*
 import org.tvheadend.data.entity.SeriesRecording
+import org.tvheadend.data.entity.SeriesRecordingEntity
 
 @Dao
-interface SeriesRecordingDao {
+internal interface SeriesRecordingDao {
 
     @get:Query("SELECT COUNT (*) FROM series_recordings AS rec " +
             " WHERE $CONNECTION_IS_ACTIVE")
@@ -19,28 +20,28 @@ interface SeriesRecordingDao {
     @Query(RECORDING_BASE_QUERY +
             " WHERE $CONNECTION_IS_ACTIVE" +
             " ORDER BY rec.start, rec.title ASC")
-    fun loadAllRecordings(): LiveData<List<SeriesRecording>>
+    fun loadAllRecordings(): LiveData<List<SeriesRecordingEntity>>
 
     @Transaction
     @Query(RECORDING_BASE_QUERY +
             " WHERE $CONNECTION_IS_ACTIVE" +
             " AND rec.id = :id")
-    fun loadRecordingById(id: String): LiveData<SeriesRecording>
+    fun loadRecordingById(id: String): LiveData<SeriesRecordingEntity>
 
     @Transaction
     @Query(RECORDING_BASE_QUERY +
             " WHERE $CONNECTION_IS_ACTIVE" +
             " AND rec.id = :id")
-    fun loadRecordingByIdSync(id: String): SeriesRecording
+    fun loadRecordingByIdSync(id: String): SeriesRecordingEntity?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(recording: SeriesRecording)
+    fun insert(recording: SeriesRecordingEntity)
 
     @Update
-    fun update(recording: SeriesRecording)
+    fun update(recording: SeriesRecordingEntity)
 
     @Delete
-    fun delete(recording: SeriesRecording)
+    fun delete(recording: SeriesRecordingEntity)
 
     @Query("DELETE FROM series_recordings " +
             " WHERE connection_id IN (SELECT id FROM connections WHERE active = 1)" +

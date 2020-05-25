@@ -67,7 +67,7 @@ class ProgramDataSource(private val db: AppRoomDatabase) : DataSourceInterface<P
     override fun getItemById(id: Any): Program? {
         var program: Program? = null
         runBlocking(Dispatchers.IO) {
-            program = db.programDao.loadProgramByIdSync(id as Int).toProgram()
+            program = db.programDao.loadProgramByIdSync(id as Int)?.toProgram()
         }
         return program
     }

@@ -47,7 +47,7 @@ class MiscDataSource(private val db: AppRoomDatabase) {
             connection.isSyncRequired = true
             db.connectionDao.update(connection)
 
-            val serverStatus: ServerStatus? = db.serverStatusDao.loadServerStatusByIdSync(connection.id).toServerStatus()
+            val serverStatus: ServerStatus? = db.serverStatusDao.loadServerStatusByIdSync(connection.id)?.toServerStatus()
             // Crashlytics reported that the server status was null, even though this should
             // not happen because the server status is always added with a new connection.
             if (serverStatus != null) {
