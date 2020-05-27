@@ -46,7 +46,12 @@
         </activity>
         <activity
             android:name=".ui.features.MainActivity"
-            android:launchMode="singleTask">
+            android:theme="@style/SplashTheme">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
             <intent-filter>
                 <data android:scheme="tvhclient" />
 
@@ -73,14 +78,6 @@
         <activity android:name=".ui.features.playback.external.PlayChannelActivity" />
         <activity android:name=".ui.features.playback.external.CastChannelActivity" />
         <activity android:name=".ui.features.playback.external.CastRecordingActivity" />
-        <activity
-            android:name=".ui.features.startup.SplashActivity"
-            android:theme="@style/SplashTheme">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
         <activity
             android:name=".ui.features.playback.internal.PlaybackActivity"
             android:autoRemoveFromRecents="true"

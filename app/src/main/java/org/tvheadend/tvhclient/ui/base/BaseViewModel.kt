@@ -14,7 +14,7 @@ import org.tvheadend.tvhclient.service.HtspService
 import org.tvheadend.tvhclient.ui.common.NetworkStatus
 import org.tvheadend.tvhclient.ui.common.interfaces.NetworkStatusInterface
 import org.tvheadend.tvhclient.ui.common.interfaces.SnackbarMessageInterface
-import org.tvheadend.tvhclient.ui.features.startup.SplashActivity
+import org.tvheadend.tvhclient.ui.features.MainActivity
 import org.tvheadend.tvhclient.util.livedata.Event
 import javax.inject.Inject
 
@@ -96,7 +96,7 @@ open class BaseViewModel(application: Application) : AndroidViewModel(applicatio
                 appRepository.connectionData.setSyncRequiredForActiveConnection()
             }
             context.stopService(Intent(context, HtspService::class.java))
-            val intent = Intent(context, SplashActivity::class.java)
+            val intent = Intent(context, MainActivity::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             context.startActivity(intent)
         }
