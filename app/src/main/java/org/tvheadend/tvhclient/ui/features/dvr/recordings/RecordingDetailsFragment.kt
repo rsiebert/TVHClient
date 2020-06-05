@@ -43,7 +43,7 @@ class RecordingDetailsFragment : BaseFragment(), RecordingRemovedInterface, Down
         // Get the recording id after an orientation change has occurred
         // or when the fragment is shown for the first time
         arguments?.let {
-            recordingViewModel.currentId.value = it.getInt("id", 0)
+            recordingViewModel.currentIdLiveData.value = it.getInt("id", 0)
         }
 
         Timber.d("Observing recording")

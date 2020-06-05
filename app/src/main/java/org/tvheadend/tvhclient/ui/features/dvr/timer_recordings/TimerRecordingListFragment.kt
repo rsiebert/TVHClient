@@ -146,8 +146,8 @@ class TimerRecordingListFragment : BaseFragment(), RecyclerViewClickInterface, S
                         it.commit()
                     }
                 }
-            } else if (timerRecordingViewModel.currentId.value != recording.id) {
-                timerRecordingViewModel.currentId.value = recording.id
+            } else if (timerRecordingViewModel.currentIdLiveData.value != recording.id) {
+                timerRecordingViewModel.currentIdLiveData.value = recording.id
             }
         }
     }

@@ -17,7 +17,7 @@ import java.util.*
 class TimerRecordingViewModel(application: Application) : BaseViewModel(application) {
 
     var selectedListPosition = 0
-    val currentId = MutableLiveData("")
+    val currentIdLiveData = MutableLiveData("")
     var recording = TimerRecording()
     var recordingLiveData = MediatorLiveData<TimerRecording>()
     val recordings: LiveData<List<TimerRecording>> = appRepository.timerRecordingData.getLiveDataItems()
@@ -59,7 +59,7 @@ class TimerRecordingViewModel(application: Application) : BaseViewModel(applicat
         }
 
     init {
-        recordingLiveData.addSource(currentId) { value ->
+        recordingLiveData.addSource(currentIdLiveData) { value ->
             if (value.isNotEmpty()) {
                 recordingLiveData.value = appRepository.timerRecordingData.getItemById(value)
             }

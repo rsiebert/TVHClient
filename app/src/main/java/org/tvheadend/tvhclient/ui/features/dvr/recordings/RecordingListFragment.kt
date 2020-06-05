@@ -130,8 +130,8 @@ abstract class RecordingListFragment : BaseFragment(), RecyclerViewClickInterfac
                         it.commit()
                     }
                 }
-            } else if (recordingViewModel.currentId.value != recording.id) {
-                recordingViewModel.currentId.value = recording.id
+            } else if (recordingViewModel.currentIdLiveData.value != recording.id) {
+                recordingViewModel.currentIdLiveData.value = recording.id
             }
         }
     }

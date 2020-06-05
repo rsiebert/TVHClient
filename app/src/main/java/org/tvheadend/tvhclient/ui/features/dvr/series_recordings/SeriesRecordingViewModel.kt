@@ -17,7 +17,7 @@ import java.util.*
 class SeriesRecordingViewModel(application: Application) : BaseViewModel(application) {
 
     var selectedListPosition = 0
-    val currentId = MutableLiveData("")
+    val currentIdLiveData = MutableLiveData("")
     var recording = SeriesRecording()
     var recordingLiveData = MediatorLiveData<SeriesRecording>()
     val recordings: LiveData<List<SeriesRecording>> = appRepository.seriesRecordingData.getLiveDataItems()
@@ -69,7 +69,7 @@ class SeriesRecordingViewModel(application: Application) : BaseViewModel(applica
         }
 
     init {
-        recordingLiveData.addSource(currentId) { value ->
+        recordingLiveData.addSource(currentIdLiveData) { value ->
             if (value.isNotEmpty()) {
                 recordingLiveData.value = appRepository.seriesRecordingData.getItemById(value)
             }

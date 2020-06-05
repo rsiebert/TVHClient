@@ -146,8 +146,8 @@ class SeriesRecordingListFragment : BaseFragment(), RecyclerViewClickInterface, 
                         it.commit()
                     }
                 }
-            } else if (seriesRecordingViewModel.currentId.value != recording.id) {
-                seriesRecordingViewModel.currentId.value = recording.id
+            } else if (seriesRecordingViewModel.currentIdLiveData.value != recording.id) {
+                seriesRecordingViewModel.currentIdLiveData.value = recording.id
             }
         }
     }

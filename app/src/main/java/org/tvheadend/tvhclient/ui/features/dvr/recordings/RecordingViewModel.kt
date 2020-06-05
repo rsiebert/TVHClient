@@ -18,7 +18,7 @@ import timber.log.Timber
 class RecordingViewModel(application: Application) : BaseViewModel(application), SharedPreferences.OnSharedPreferenceChangeListener {
 
     var selectedListPosition = 0
-    val currentId = MutableLiveData(0)
+    val currentIdLiveData = MutableLiveData(0)
     val completedRecordings: LiveData<List<Recording>>
     val scheduledRecordings: LiveData<List<Recording>>
     val failedRecordings: LiveData<List<Recording>>
@@ -57,7 +57,7 @@ class RecordingViewModel(application: Application) : BaseViewModel(application),
         onSharedPreferenceChanged(sharedPreferences, "completed_recording_sort_order")
         onSharedPreferenceChanged(sharedPreferences, "genre_colors_for_recordings_enabled")
 
-        recordingLiveData.addSource(currentId) { value ->
+        recordingLiveData.addSource(currentIdLiveData) { value ->
             if (value > 0) {
                 recordingLiveData.value = appRepository.recordingData.getItemById(value)
             }
