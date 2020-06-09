@@ -961,7 +961,7 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
                 var profileExists = false
                 for (p in htspPlaybackProfiles) {
                     Timber.d("Comparing profile $name with database profile ${p.name}")
-                    if (p.name == name && p.uuid == uuid) {
+                    if (p.uuid == uuid) {
                         Timber.d("Htsp playback profile $name exists already")
                         profileExists = true
                         break
@@ -1002,7 +1002,7 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
                                 var profileExists = false
                                 for (p in httpPlaybackProfiles) {
                                     Timber.d("Comparing profile $name with database profile ${p.name}")
-                                    if (p.name == name && p.uuid == uuid) {
+                                    if (p.uuid == uuid) {
                                         Timber.d("Http playback profile $name exists already")
                                         profileExists = true
                                         break
