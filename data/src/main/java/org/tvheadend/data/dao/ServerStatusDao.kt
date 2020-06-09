@@ -2,7 +2,6 @@ package org.tvheadend.data.dao
 
 import androidx.lifecycle.LiveData
 import androidx.room.*
-import org.tvheadend.data.entity.ServerStatus
 import org.tvheadend.data.entity.ServerStatusEntity
 
 @Dao

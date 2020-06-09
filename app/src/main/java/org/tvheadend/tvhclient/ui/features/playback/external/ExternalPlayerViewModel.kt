@@ -16,6 +16,7 @@ import org.tvheadend.htsp.HtspResponseListener
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.ui.base.BaseViewModel
 import timber.log.Timber
+import java.util.*
 import java.util.concurrent.ExecutionException
 import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledExecutorService
@@ -136,7 +137,7 @@ class ExternalPlayerViewModel(application: Application) : BaseViewModel(applicat
             Timber.d("Hostname $hostname to IP address conversion not required")
         }
 
-        var baseUrl = "${uri.scheme.toString().toLowerCase()}://$hostname"
+        var baseUrl = "${uri.scheme.toString().toLowerCase(Locale.getDefault())}://$hostname"
         if (uri.port != 80 && uri.port != 443) {
             baseUrl = "${uri.scheme}://$hostname:${uri.port}"
         }
