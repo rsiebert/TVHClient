@@ -72,7 +72,7 @@ class BillingManager(private val billingUpdatesListener: BillingUpdatesListener)
                 val subscriptionResult = billingClient.queryPurchases(SkuType.SUBS)
                 if (subscriptionResult.responseCode == BillingClient.BillingResponseCode.OK) {
                     Timber.d("Adding available subscriptions")
-                    purchasesResult.purchasesList.addAll(subscriptionResult.purchasesList)
+                    purchasesResult.purchasesList?.addAll(subscriptionResult.purchasesList)
                 } else {
                     Timber.d("Error while querying for available subscriptions")
                 }
