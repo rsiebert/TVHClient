@@ -170,6 +170,7 @@
             android:defaultValue="@string/pref_default_genre_color_transparency"
             android:key="genre_color_transparency"
             android:max="100"
+            android:min="30"
             android:summary="@string/pref_genre_colors_visibility_message"
             android:title="@string/pref_genre_colors_visibility" />
     </PreferenceCategory>
