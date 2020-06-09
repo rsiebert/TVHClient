@@ -1,6 +1,7 @@
 package org.tvheadend.tvhclient.ui.features.epg
 
 import android.os.Bundle
+import android.os.Handler
 import android.util.DisplayMetrics
 import android.view.*
 import android.widget.Filter
@@ -13,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.SCROLL_STATE_IDLE
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
+import com.afollestad.materialdialogs.MaterialDialog
 import kotlinx.android.synthetic.main.epg_fragment.*
 import org.tvheadend.data.entity.ChannelTag
 import org.tvheadend.data.entity.EpgProgram
@@ -26,6 +28,8 @@ import timber.log.Timber
 
 class EpgFragment : BaseFragment(), EpgScrollInterface, RecyclerViewClickInterface, ChannelTimeSelectedInterface, ChannelTagIdsSelectedInterface, Filter.FilterListener, SearchRequestInterface, ShowProgramListFragmentInterface {
 
+    private val dialogDismissHandler = Handler()
+    private var dialogDismissRunnable: Runnable? = null
     private lateinit var epgViewModel: EpgViewModel
     private lateinit var channelListRecyclerViewAdapter: EpgChannelListRecyclerViewAdapter
     private lateinit var channelListRecyclerViewLayoutManager: LinearLayoutManager
@@ -162,6 +166,11 @@ class EpgFragment : BaseFragment(), EpgScrollInterface, RecyclerViewClickInterfa
         })
     }
 
+    override fun onPause() {
+        super.onPause()
+        dialogDismissRunnable?.let { dialogDismissHandler.removeCallbacks(it) }
+    }
+
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
         inflater.inflate(R.menu.channel_list_options_menu, menu)
@@ -184,14 +193,27 @@ class EpgFragment : BaseFragment(), EpgScrollInterface, RecyclerViewClickInterfa
         val ctx = context ?: return super.onOptionsItemSelected(item)
         return when (item.itemId) {
             R.id.menu_channel_tags -> showChannelTagSelectionDialog(ctx, channelTags.toMutableList(), channelCount, this)
-            R.id.menu_program_timeframe -> showProgramTimeframeSelectionDialog(ctx, epgViewModel.selectedTimeOffset, epgViewModel.hoursToShow, (24 / epgViewModel.hoursToShow) * epgViewModel.daysToShow, this)
+            R.id.menu_program_timeframe -> {
+                val dialog = showProgramTimeframeSelectionDialog(ctx, epgViewModel.selectedTimeOffset, epgViewModel.hoursToShow, (24 / epgViewModel.hoursToShow) * epgViewModel.daysToShow, this)
+                startDialogDismissTimer(dialog)
+                true
+            }
             R.id.menu_genre_color_information -> showGenreColorDialog(ctx)
             R.id.menu_channel_sort_order -> showChannelSortOrderSelectionDialog(ctx)
             else -> super.onOptionsItemSelected(item)
         }
     }
 
+    private fun startDialogDismissTimer(dialog: MaterialDialog) {
+        dialogDismissRunnable = Runnable {
+            if (dialog.isShowing) {
+                dialog.dismiss()
+            }
+        }.also { dialogDismissHandler.postDelayed(it, 60000) }
+    }
+
     override fun onTimeSelected(which: Int) {
+        dialogDismissRunnable?.let { dialogDismissHandler.removeCallbacks(it) }
         epgViewModel.selectedTimeOffset = which
         program_list_viewpager?.currentItem = which
 

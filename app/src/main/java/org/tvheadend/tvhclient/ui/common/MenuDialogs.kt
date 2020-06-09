@@ -185,7 +185,7 @@ class GenreColorListAdapter internal constructor(private val contentInfo: Array<
     }
 }
 
-fun showProgramTimeframeSelectionDialog(context: Context, currentSelection: Int, intervalInHours: Int, maxIntervalsToShow: Int, callback: ChannelTimeSelectedInterface?): Boolean {
+fun showProgramTimeframeSelectionDialog(context: Context, currentSelection: Int, intervalInHours: Int, maxIntervalsToShow: Int, callback: ChannelTimeSelectedInterface?): MaterialDialog {
 
     val startDateFormat = SimpleDateFormat("dd.MM.yyyy - HH:00", Locale.US)
     val endDateFormat = SimpleDateFormat("HH:00", Locale.US)
@@ -206,11 +206,14 @@ fun showProgramTimeframeSelectionDialog(context: Context, currentSelection: Int,
         times.add("$startTime - $endTime")
     }
 
-    MaterialDialog(context).show {
+    val dialog = MaterialDialog(context)
+    dialog.show {
         title(R.string.select_time)
-        listItemsSingleChoice(items = times, initialSelection = currentSelection) { _, index, _ -> callback?.onTimeSelected(index) }
+        listItemsSingleChoice(items = times, initialSelection = currentSelection) { _, index, _ ->
+            callback?.onTimeSelected(index)
+        }
     }
-    return true
+    return dialog
 }
 
 fun showChannelSortOrderSelectionDialog(context: Context): Boolean {
