@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+/*
 apply plugin: 'bintray-release'
 
 if (tvhHasProperty("keystoreFile")) {
@@ -66,3 +67,4 @@ static void addLicense(File pom) {
     printer.print(xml)
     writer.close()
 }
+*/
