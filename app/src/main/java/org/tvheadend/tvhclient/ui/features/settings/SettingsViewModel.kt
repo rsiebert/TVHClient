@@ -1,11 +1,12 @@
 package org.tvheadend.tvhclient.ui.features.settings
 
-import android.content.Context
+import android.app.Application
 import android.content.Intent
 import android.content.SharedPreferences
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
+import androidx.preference.PreferenceManager
 import org.tvheadend.data.AppRepository
 import org.tvheadend.data.entity.Channel
 import org.tvheadend.data.entity.Connection
@@ -19,14 +20,13 @@ import org.tvheadend.tvhclient.util.livedata.Event
 import timber.log.Timber
 import javax.inject.Inject
 
-class SettingsViewModel : ViewModel(), SnackbarMessageInterface {
+class SettingsViewModel(application: Application) : AndroidViewModel(application), SnackbarMessageInterface {
 
     @Inject
-    lateinit var context: Context
-    @Inject
     lateinit var appRepository: AppRepository
-    @Inject
-    lateinit var sharedPreferences: SharedPreferences
+
+    private var sharedPreferences: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(application.applicationContext)
+    private val defaultChannelSortOrder = application.applicationContext.resources.getString(R.string.pref_default_channel_sort_order)
 
     /**
      * The currently active connection. It is also used to hold the current
@@ -82,7 +82,7 @@ class SettingsViewModel : ViewModel(), SnackbarMessageInterface {
     /**
      * Contains a string with the name of the fragment that shall be shown
      */
-    private val navigationMenuIdLiveData = MutableLiveData<Event<String>>(Event("default"))
+    private val navigationMenuIdLiveData = MutableLiveData(Event("default"))
 
     /**
      * Contains an intent with the snackbar message and other information.
@@ -115,7 +115,6 @@ class SettingsViewModel : ViewModel(), SnackbarMessageInterface {
     }
 
     fun getChannelList(): List<Channel> {
-        val defaultChannelSortOrder = context.resources.getString(R.string.pref_default_channel_sort_order)
         val channelSortOrder = Integer.valueOf(sharedPreferences.getString("channel_sort_order", defaultChannelSortOrder)
                 ?: defaultChannelSortOrder)
         return appRepository.channelData.getChannels(channelSortOrder)

@@ -22,10 +22,12 @@ open class BaseChannelViewModel(application: Application) : BaseViewModel(applic
     val selectedChannelTagIds: LiveData<List<Int>?> = appRepository.channelTagData.liveDataSelectedItemIds
     val channelCount: LiveData<Int> = appRepository.channelData.getLiveDataItemCount()
     val selectedTime = MutableLiveData(Date().time)
-    val defaultChannelSortOrder: String = appContext.resources.getString(R.string.pref_default_channel_sort_order)
+
+    val defaultChannelSortOrder: String = application.applicationContext.resources.getString(R.string.pref_default_channel_sort_order)
+    private val defaultShowEmptyChannelTags = application.applicationContext.resources.getBoolean(R.bool.pref_default_empty_channel_tags_enabled)
 
     init {
-        showAllChannelTags.value = sharedPreferences.getBoolean("empty_channel_tags_enabled", appContext.resources.getBoolean(R.bool.pref_default_empty_channel_tags_enabled))
+        showAllChannelTags.value = sharedPreferences.getBoolean("empty_channel_tags_enabled", defaultShowEmptyChannelTags)
         // Reload the channel tag list depending on the preference
         channelTags.addSource(showAllChannelTags) { allTags ->
             channelTags.value = appRepository.channelTagData.getNonEmptyItems(allTags)

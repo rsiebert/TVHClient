@@ -1,6 +1,7 @@
 package org.tvheadend.tvhclient.ui.features.dvr.recordings
 
 import android.app.Application
+import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import androidx.lifecycle.LiveData
@@ -30,11 +31,15 @@ class RecordingViewModel(application: Application) : BaseViewModel(application),
     var recordingProfileNameId = 0
 
     private val completedRecordingSortOrder = MutableLiveData<Int>()
-    private val defaultCompletedRecordingSortOrder: String = appContext.resources.getString(R.string.pref_default_completed_recording_sort_order)
     private var hideDuplicateScheduledRecordings: MutableLiveData<Boolean> = MutableLiveData()
 
-    fun getIntentData(recording: Recording): Intent {
-        val intent = Intent(appContext, HtspService::class.java)
+    private val defaultChannelSortOrder = application.applicationContext.resources.getString(R.string.pref_default_channel_sort_order)
+    private val defaultShowGenreColor = application.applicationContext.resources.getBoolean(R.bool.pref_default_genre_colors_for_recordings_enabled)
+    private val defaultCompletedRecordingSortOrder = application.applicationContext.resources.getString(R.string.pref_default_completed_recording_sort_order)
+    private val defaultHideDuplicateScheduledRecordings = application.applicationContext.resources.getBoolean(R.bool.pref_default_hide_duplicate_scheduled_recordings_enabled)
+
+    fun getIntentData(context: Context, recording: Recording): Intent {
+        val intent = Intent(context, HtspService::class.java)
         intent.putExtra("title", recording.title)
         intent.putExtra("subtitle", recording.subtitle)
         intent.putExtra("summary", recording.summary)
@@ -95,9 +100,9 @@ class RecordingViewModel(application: Application) : BaseViewModel(application),
         Timber.d("Shared preference $key has changed")
         if (sharedPreferences == null) return
         when (key) {
-            "genre_colors_for_recordings_enabled" -> showGenreColor.value = sharedPreferences.getBoolean(key, appContext.resources.getBoolean(R.bool.pref_default_genre_colors_for_recordings_enabled))
+            "genre_colors_for_recordings_enabled" -> showGenreColor.value = sharedPreferences.getBoolean(key,defaultShowGenreColor)
             "completed_recording_sort_order" -> completedRecordingSortOrder.value = Integer.valueOf(sharedPreferences.getString("completed_recording_sort_order", defaultCompletedRecordingSortOrder) ?: defaultCompletedRecordingSortOrder)
-            "hide_duplicate_scheduled_recordings_enabled" -> hideDuplicateScheduledRecordings.value = sharedPreferences.getBoolean(key, appContext.resources.getBoolean(R.bool.pref_default_hide_duplicate_scheduled_recordings_enabled))
+            "hide_duplicate_scheduled_recordings_enabled" -> hideDuplicateScheduledRecordings.value = sharedPreferences.getBoolean(key, defaultHideDuplicateScheduledRecordings)
         }
     }
 
@@ -106,7 +111,6 @@ class RecordingViewModel(application: Application) : BaseViewModel(application),
     }
 
     fun getChannelList(): List<Channel> {
-        val defaultChannelSortOrder = appContext.resources.getString(R.string.pref_default_channel_sort_order)
         val channelSortOrder = Integer.valueOf(sharedPreferences.getString("channel_sort_order", defaultChannelSortOrder)
                 ?: defaultChannelSortOrder)
         return appRepository.channelData.getChannels(channelSortOrder)

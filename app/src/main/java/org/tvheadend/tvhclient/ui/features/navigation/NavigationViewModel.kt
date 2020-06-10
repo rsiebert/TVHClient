@@ -14,10 +14,11 @@ class NavigationViewModel(application: Application) : BaseViewModel(application)
     val connections = appRepository.connectionData.getLiveDataItems()
     private val navigationMenuId = MutableLiveData<Event<Int>>()
     var currentNavigationMenuId: Int
+    private val defaultStartScreen = application.applicationContext.resources.getString(R.string.pref_default_start_screen)
 
     init {
         Timber.d("Initializing")
-        currentNavigationMenuId = Integer.parseInt(sharedPreferences.getString("start_screen", appContext.resources.getString(R.string.pref_default_start_screen))!!)
+        currentNavigationMenuId = Integer.parseInt(sharedPreferences.getString("start_screen", defaultStartScreen)!!)
         navigationMenuId.value = Event(currentNavigationMenuId)
     }
 

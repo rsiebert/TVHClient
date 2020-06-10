@@ -23,6 +23,14 @@ class ChannelViewModel(application: Application) : BaseChannelViewModel(applicat
     val showChannelNumber = MutableLiveData<Boolean>()
     private val channelSortOrder = MutableLiveData<Int>()
 
+    private val defaultShowChannelName = application.applicationContext.resources.getBoolean(R.bool.pref_default_channel_name_enabled)
+    private val defaultShowChannelNumber = application.applicationContext.resources.getBoolean(R.bool.pref_default_channel_number_enabled)
+    private val defaultShowProgramSubtitle = application.applicationContext.resources.getBoolean(R.bool.pref_default_program_subtitle_enabled)
+    private val defaultShowProgressBar = application.applicationContext.resources.getBoolean(R.bool.pref_default_program_progressbar_enabled)
+    private val defaultShowNextProgramTitle = application.applicationContext.resources.getBoolean(R.bool.pref_default_next_program_title_enabled)
+    private val defaultShowGenreColor = application.applicationContext.resources.getBoolean(R.bool.pref_default_genre_colors_for_channels_enabled)
+    private val defaultShowAllChannelTags = application.applicationContext.resources.getBoolean(R.bool.pref_default_empty_channel_tags_enabled)
+
     init {
         val trigger = ChannelLiveData(selectedTime, channelSortOrder, selectedChannelTagIds)
         channels = Transformations.switchMap(trigger) { value ->
@@ -68,13 +76,13 @@ class ChannelViewModel(application: Application) : BaseChannelViewModel(applicat
         if (sharedPreferences == null) return
         when (key) {
             "channel_sort_order" -> channelSortOrder.value = Integer.valueOf(sharedPreferences.getString("channel_sort_order", defaultChannelSortOrder) ?: defaultChannelSortOrder)
-            "channel_name_enabled" -> showChannelName.value = sharedPreferences.getBoolean(key, appContext.resources.getBoolean(R.bool.pref_default_channel_name_enabled))
-            "channel_number_enabled" -> showChannelNumber.value = sharedPreferences.getBoolean(key, appContext.resources.getBoolean(R.bool.pref_default_channel_number_enabled))
-            "program_subtitle_enabled" -> showProgramSubtitle.value = sharedPreferences.getBoolean(key, appContext.resources.getBoolean(R.bool.pref_default_program_subtitle_enabled))
-            "program_progressbar_enabled" -> showProgressBar.value = sharedPreferences.getBoolean(key, appContext.resources.getBoolean(R.bool.pref_default_program_progressbar_enabled))
-            "next_program_title_enabled" -> showNextProgramTitle.value = sharedPreferences.getBoolean(key, appContext.resources.getBoolean(R.bool.pref_default_next_program_title_enabled))
-            "genre_colors_for_channels_enabled" -> showGenreColor.value = sharedPreferences.getBoolean(key, appContext.resources.getBoolean(R.bool.pref_default_genre_colors_for_channels_enabled))
-            "empty_channel_tags_enabled" -> showAllChannelTags.value = sharedPreferences.getBoolean(key, appContext.resources.getBoolean(R.bool.pref_default_empty_channel_tags_enabled))
+            "channel_name_enabled" -> showChannelName.value = sharedPreferences.getBoolean(key, defaultShowChannelName)
+            "channel_number_enabled" -> showChannelNumber.value = sharedPreferences.getBoolean(key, defaultShowChannelNumber)
+            "program_subtitle_enabled" -> showProgramSubtitle.value = sharedPreferences.getBoolean(key, defaultShowProgramSubtitle)
+            "program_progressbar_enabled" -> showProgressBar.value = sharedPreferences.getBoolean(key, defaultShowProgressBar)
+            "next_program_title_enabled" -> showNextProgramTitle.value = sharedPreferences.getBoolean(key, defaultShowNextProgramTitle)
+            "genre_colors_for_channels_enabled" -> showGenreColor.value = sharedPreferences.getBoolean(key, defaultShowGenreColor)
+            "empty_channel_tags_enabled" -> showAllChannelTags.value = sharedPreferences.getBoolean(key, defaultShowAllChannelTags)
         }
     }
 

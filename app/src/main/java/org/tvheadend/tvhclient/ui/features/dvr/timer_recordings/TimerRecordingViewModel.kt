@@ -1,6 +1,7 @@
 package org.tvheadend.tvhclient.ui.features.dvr.timer_recordings
 
 import android.app.Application
+import android.content.Context
 import android.content.Intent
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
@@ -23,11 +24,13 @@ class TimerRecordingViewModel(application: Application) : BaseViewModel(applicat
     val recordings: LiveData<List<TimerRecording>> = appRepository.timerRecordingData.getLiveDataItems()
     var recordingProfileNameId = 0
 
+    private val defaultChannelSortOrder = application.applicationContext.resources.getString(R.string.pref_default_channel_sort_order)
+
     /**
      * Returns an intent with the recording data
      */
-    fun getIntentData(recording: TimerRecording): Intent {
-        val intent = Intent(appContext, HtspService::class.java)
+    fun getIntentData(context: Context, recording: TimerRecording): Intent {
+        val intent = Intent(context, HtspService::class.java)
         intent.putExtra("directory", recording.directory)
         intent.putExtra("title", recording.title)
         intent.putExtra("name", recording.name)
@@ -106,7 +109,6 @@ class TimerRecordingViewModel(application: Application) : BaseViewModel(applicat
     }
 
     fun getChannelList(): List<Channel> {
-        val defaultChannelSortOrder = appContext.resources.getString(R.string.pref_default_channel_sort_order)
         val channelSortOrder = Integer.valueOf(sharedPreferences.getString("channel_sort_order", defaultChannelSortOrder) ?: defaultChannelSortOrder)
         return appRepository.channelData.getChannels(channelSortOrder)
     }

@@ -1,6 +1,7 @@
 package org.tvheadend.tvhclient.ui.features.playback.internal
 
 import android.app.Application
+import android.content.Context
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
@@ -68,6 +69,10 @@ class PlayerViewModel(application: Application) : BaseViewModel(application), Ht
 
     var pipModeActive: Boolean = false
 
+    private val defaultChannelSortOrder = application.applicationContext.resources.getString(R.string.pref_default_channel_sort_order)
+    private val defaultAudioTunnelingEnabled = application.applicationContext.resources.getBoolean(R.bool.pref_default_audio_tunneling_enabled)
+    private val defaultConnectionTimeout = application.resources.getString(R.string.pref_default_connection_timeout)
+
     init {
         Timber.d("Initializing view model")
 
@@ -77,7 +82,7 @@ class PlayerViewModel(application: Application) : BaseViewModel(application), Ht
 
         Timber.d("Starting connection")
         val connection = appRepository.connectionData.activeItem
-        val connectionTimeout = Integer.valueOf(sharedPreferences.getString("connection_timeout", application.resources.getString(R.string.pref_default_connection_timeout))!!) * 1000
+        val connectionTimeout = Integer.valueOf(sharedPreferences.getString("connection_timeout", defaultConnectionTimeout)!!) * 1000
         htspConnection = HtspConnection(
                 connection.username ?: "",
                 connection.password ?: "",
@@ -90,13 +95,13 @@ class PlayerViewModel(application: Application) : BaseViewModel(application), Ht
             htspConnection.authenticate()
         }
 
-        trackSelector = DefaultTrackSelector(appContext, AdaptiveTrackSelection.Factory())
-        if (sharedPreferences.getBoolean("audio_tunneling_enabled", appContext.resources.getBoolean(R.bool.pref_default_audio_tunneling_enabled))) {
-            trackSelector.buildUponParameters().setTunnelingAudioSessionId(C.generateAudioSessionIdV21(appContext))
+        trackSelector = DefaultTrackSelector(application.applicationContext, AdaptiveTrackSelection.Factory())
+        if (sharedPreferences.getBoolean("audio_tunneling_enabled", defaultAudioTunnelingEnabled)) {
+            trackSelector.buildUponParameters().setTunnelingAudioSessionId(C.generateAudioSessionIdV21(application.applicationContext))
         }
 
         Timber.d("Creating load control")
-        val bufferTime = Integer.valueOf(sharedPreferences.getString("buffer_playback_ms", appContext.resources.getString(R.string.pref_default_buffer_playback_ms))!!)
+        val bufferTime = Integer.valueOf(sharedPreferences.getString("buffer_playback_ms", application.applicationContext.resources.getString(R.string.pref_default_buffer_playback_ms))!!)
         val loadControl = DefaultLoadControl.Builder()
                 .setAllocator(DefaultAllocator(true, C.DEFAULT_BUFFER_SEGMENT_SIZE))
                 .setBufferDurationsMs(DefaultLoadControl.DEFAULT_MIN_BUFFER_MS,
@@ -108,11 +113,11 @@ class PlayerViewModel(application: Application) : BaseViewModel(application), Ht
                 .createDefaultLoadControl()
 
         Timber.d("Creating player instance")
-        val rendererFactory = DefaultRenderersFactory(appContext)
+        val rendererFactory = DefaultRenderersFactory(application.applicationContext)
                 .setExtensionRendererMode(DefaultRenderersFactory.EXTENSION_RENDERER_MODE_PREFER)
                 .setAllowedVideoJoiningTimeMs(DefaultRenderersFactory.DEFAULT_ALLOWED_VIDEO_JOINING_TIME_MS)
 
-        player = SimpleExoPlayer.Builder(appContext, rendererFactory)
+        player = SimpleExoPlayer.Builder(application.applicationContext, rendererFactory)
                 .setTrackSelector(trackSelector)
                 .setLoadControl(loadControl).build()
 
@@ -128,7 +133,7 @@ class PlayerViewModel(application: Application) : BaseViewModel(application), Ht
         }
     }
 
-    fun loadMediaSource(bundle: Bundle?) {
+    fun loadMediaSource(context: Context, bundle: Bundle?) {
         Timber.d("Loading new media source")
 
         releaseMediaSource()
@@ -137,7 +142,7 @@ class PlayerViewModel(application: Application) : BaseViewModel(application), Ht
 
         if (channelId > 0) {
             liveTvIsPlaying.value = true
-            loadMediaSourceForChannel(channelId)
+            loadMediaSourceForChannel(context, channelId)
         } else if (dvrId > 0) {
             liveTvIsPlaying.value = false
             loadMediaSourceForRecording(dvrId)
@@ -151,7 +156,7 @@ class PlayerViewModel(application: Application) : BaseViewModel(application), Ht
         nextTitle.postValue(playbackInformation.nextTitle)
     }
 
-    private fun loadMediaSourceForChannel(channelId: Int) {
+    private fun loadMediaSourceForChannel(context: Context, channelId: Int) {
         Timber.d("Loading media source for channel id $channelId")
         if (channelId > 0) {
             Timber.d("Loading player info")
@@ -160,7 +165,7 @@ class PlayerViewModel(application: Application) : BaseViewModel(application), Ht
             Timber.d("Creating data source")
             val serverStatus = appRepository.serverStatusData.activeItem
             val serverProfile = appRepository.serverProfileData.getItemById(serverStatus.htspPlaybackServerProfileId)
-            htspSubscriptionDataSourceFactory = HtspSubscriptionDataSource.Factory(appContext, htspConnection, serverProfile?.name)
+            htspSubscriptionDataSourceFactory = HtspSubscriptionDataSource.Factory(context, htspConnection, serverProfile?.name)
             dataSource = htspSubscriptionDataSourceFactory?.currentDataSource
 
             Timber.d("Loading response header after data source creation in factory")
@@ -355,13 +360,12 @@ class PlayerViewModel(application: Application) : BaseViewModel(application), Ht
     }
 
     private fun getChannelList(): List<Channel> {
-        val defaultChannelSortOrder = appContext.resources.getString(R.string.pref_default_channel_sort_order)
         val channelSortOrder = Integer.valueOf(sharedPreferences.getString("channel_sort_order", defaultChannelSortOrder)
                 ?: defaultChannelSortOrder)
         return appRepository.channelData.getChannels(channelSortOrder)
     }
 
-    fun playNextChannel() {
+    fun playNextChannel(context: Context) {
 
         val channels = getChannelList()
         var newChannelId = channelId
@@ -376,10 +380,10 @@ class PlayerViewModel(application: Application) : BaseViewModel(application), Ht
         }
         val bundle = Bundle()
         bundle.putInt("channelId", newChannelId)
-        loadMediaSource(bundle)
+        loadMediaSource(context, bundle)
     }
 
-    fun playPreviousChannel() {
+    fun playPreviousChannel(context: Context) {
         val channels = getChannelList()
         var newChannelId = channelId
         channels.forEachIndexed { index, channel ->
@@ -393,7 +397,7 @@ class PlayerViewModel(application: Application) : BaseViewModel(application), Ht
         }
         val bundle = Bundle()
         bundle.putInt("channelId", newChannelId)
-        loadMediaSource(bundle)
+        loadMediaSource(context, bundle)
     }
 
     override fun onPlayerError(playbackException: ExoPlaybackException) {

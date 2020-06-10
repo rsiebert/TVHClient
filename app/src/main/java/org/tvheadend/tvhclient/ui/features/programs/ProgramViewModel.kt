@@ -34,6 +34,10 @@ class ProgramViewModel(application: Application) : BaseViewModel(application), S
     val channelIdLiveData = MutableLiveData(0)
     val selectedTimeLiveData = MutableLiveData(Date().time)
 
+    private val defaultShowGenreColor = application.applicationContext.resources.getBoolean(R.bool.pref_default_genre_colors_for_programs_enabled)
+    private val defaultShowProgramSubtitles = application.applicationContext.resources.getBoolean(R.bool.pref_default_program_subtitle_enabled)
+    private val defaultShowProgramArtwork = application.applicationContext.resources.getBoolean(R.bool.pref_default_program_artwork_enabled)
+
     init {
         Timber.d("Initializing")
         onSharedPreferenceChanged(sharedPreferences, "genre_colors_for_programs_enabled")
@@ -80,9 +84,9 @@ class ProgramViewModel(application: Application) : BaseViewModel(application), S
         Timber.d("Shared preference $key has changed")
         if (sharedPreferences == null) return
         when (key) {
-            "genre_colors_for_programs_enabled" -> showGenreColor.value = sharedPreferences.getBoolean(key, appContext.resources.getBoolean(R.bool.pref_default_genre_colors_for_programs_enabled))
-            "program_subtitle_enabled" -> showProgramSubtitles.value = sharedPreferences.getBoolean(key, appContext.resources.getBoolean(R.bool.pref_default_program_subtitle_enabled))
-            "program_artwork_enabled" -> showProgramArtwork.value = sharedPreferences.getBoolean(key, appContext.resources.getBoolean(R.bool.pref_default_program_artwork_enabled))
+            "genre_colors_for_programs_enabled" -> showGenreColor.value = sharedPreferences.getBoolean(key, defaultShowGenreColor)
+            "program_subtitle_enabled" -> showProgramSubtitles.value = sharedPreferences.getBoolean(key, defaultShowProgramSubtitles)
+            "program_artwork_enabled" -> showProgramArtwork.value = sharedPreferences.getBoolean(key, defaultShowProgramArtwork)
         }
     }
 

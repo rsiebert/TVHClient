@@ -1,8 +1,5 @@
 package org.tvheadend.tvhclient.ui.features.startup
 
-import android.app.Application
-import android.content.Context
-import android.content.SharedPreferences
 import androidx.core.util.Pair
 import androidx.lifecycle.*
 import org.tvheadend.data.AppRepository
@@ -10,14 +7,10 @@ import org.tvheadend.data.entity.Connection
 import org.tvheadend.tvhclient.MainApplication
 import javax.inject.Inject
 
-open class StartupViewModel(application: Application) : AndroidViewModel(application) {
+open class StartupViewModel : ViewModel() {
 
     @Inject
-    lateinit var appContext: Context
-    @Inject
     lateinit var appRepository: AppRepository
-    @Inject
-    lateinit var sharedPreferences: SharedPreferences
 
     private var connectionCount: LiveData<Int>
     private var connectionLiveData: LiveData<Connection>
