@@ -960,9 +960,9 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
 
                 var profileExists = false
                 for (p in htspPlaybackProfiles) {
-                    Timber.d("Comparing profile $name with database profile ${p.name}")
-                    if (p.uuid == uuid) {
-                        Timber.d("Htsp playback profile $name exists already")
+                    Timber.d("Comparing htsp profile $name and uuid $uuid with database profile ${p.name} and uuid ${p.uuid}")
+                    if (p.name == name || p.uuid == uuid) {
+                        Timber.d("Htsp playback profile $name and uuid $uuid exists already")
                         profileExists = true
                         break
                     }
@@ -975,7 +975,7 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
                     serverProfile.comment = msg.getString("comment")
                     serverProfile.type = "htsp_playback"
 
-                    Timber.d("Adding htsp playback profile ${serverProfile.name}")
+                    Timber.d("Adding htsp playback profile $name and uuid $uuid")
                     appRepository.serverProfileData.addItem(serverProfile)
                 }
             }
@@ -1001,9 +1001,9 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
 
                                 var profileExists = false
                                 for (p in httpPlaybackProfiles) {
-                                    Timber.d("Comparing profile $name with database profile ${p.name}")
-                                    if (p.uuid == uuid) {
-                                        Timber.d("Http playback profile $name exists already")
+                                    Timber.d("Comparing http profile $name and uuid $uuid with database profile ${p.name} and uuid ${p.uuid}")
+                                    if (p.name == name || p.uuid == uuid) {
+                                        Timber.d("Http playback profile $name and uuid $uuid exists already")
                                         profileExists = true
                                         break
                                     }
@@ -1015,7 +1015,7 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
                                     serverProfile.uuid = uuid
                                     serverProfile.type = "http_playback"
 
-                                    Timber.d("Adding http playback profile ${serverProfile.name}")
+                                    Timber.d("Adding http playback profile $name and uuid $uuid")
                                     appRepository.serverProfileData.addItem(serverProfile)
                                 }
                             }
