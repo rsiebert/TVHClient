@@ -194,7 +194,7 @@ class RecordingAddEditFragment : BaseFragment(), BackPressedInterface, Recording
             return
         }
 
-        val intent = recordingViewModel.getIntentData(recordingViewModel.recording)
+        val intent = recordingViewModel.getIntentData(requireContext(), recordingViewModel.recording)
         if (profile != null && htspVersion >= 16 && dvr_config.text.isNotEmpty()) {
             intent.putExtra("configName", dvr_config.text.toString())
         }

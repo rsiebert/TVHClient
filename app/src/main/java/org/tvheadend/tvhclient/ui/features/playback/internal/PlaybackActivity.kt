@@ -138,7 +138,7 @@ class PlaybackActivity : AppCompatActivity() {
             if (isConnected) {
                 Timber.d("Connected to server")
                 status.setText(R.string.connected_to_server)
-                viewModel.loadMediaSource(intent.extras)
+                viewModel.loadMediaSource(applicationContext, intent.extras)
             } else {
                 Timber.d("Not connected to server")
                 status.setText(R.string.connection_failed)
@@ -242,7 +242,7 @@ class PlaybackActivity : AppCompatActivity() {
         setIntent(intent)
 
         Timber.d("Getting channel id or recording id from bundle")
-        viewModel.loadMediaSource(intent.extras)
+        viewModel.loadMediaSource(applicationContext, intent.extras)
     }
 
     override fun onPause() {
@@ -410,12 +410,12 @@ class PlaybackActivity : AppCompatActivity() {
 
     private fun onPlayPreviousChannelButtonSelected() {
         Timber.d("Play previous channel button selected")
-        viewModel.playPreviousChannel()
+        viewModel.playPreviousChannel(applicationContext)
     }
 
     private fun onPlayNextChannelButtonSelected() {
         Timber.d("Play next channel button selected")
-        viewModel.playNextChannel()
+        viewModel.playNextChannel(applicationContext)
     }
 
     override fun onWindowFocusChanged(hasFocus: Boolean) {

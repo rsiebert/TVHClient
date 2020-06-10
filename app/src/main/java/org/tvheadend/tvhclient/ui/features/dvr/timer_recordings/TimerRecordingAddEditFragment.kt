@@ -169,7 +169,7 @@ class TimerRecordingAddEditFragment : BaseFragment(), BackPressedInterface, Reco
             return
         }
 
-        val intent = timerRecordingViewModel.getIntentData(timerRecordingViewModel.recording)
+        val intent = timerRecordingViewModel.getIntentData(requireContext(), timerRecordingViewModel.recording)
 
         // Add the recording profile if available and enabled
         if (profile != null && htspVersion >= 16 && dvr_config.text.isNotEmpty()) {

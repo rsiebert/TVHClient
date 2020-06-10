@@ -184,7 +184,7 @@ class SeriesRecordingListFragment : BaseFragment(), RecyclerViewClickInterface, 
     }
 
     private fun enableSeriesRecording(seriesRecording: SeriesRecording, enabled: Boolean): Boolean {
-        val intent = seriesRecordingViewModel.getIntentData(seriesRecording)
+        val intent = seriesRecordingViewModel.getIntentData(requireContext(), seriesRecording)
         intent.action = "updateAutorecEntry"
         intent.putExtra("id", seriesRecording.id)
         intent.putExtra("enabled", if (enabled) 1 else 0)

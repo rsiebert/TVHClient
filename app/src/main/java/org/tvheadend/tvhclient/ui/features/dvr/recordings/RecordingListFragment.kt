@@ -250,7 +250,7 @@ abstract class RecordingListFragment : BaseFragment(), RecyclerViewClickInterfac
     abstract override fun getQueryHint(): String
 
     private fun enableScheduledRecording(recording: Recording, enabled: Boolean): Boolean {
-        val intent = recordingViewModel.getIntentData(recording)
+        val intent = recordingViewModel.getIntentData(requireContext(), recording)
         intent.action = "updateDvrEntry"
         intent.putExtra("id", recording.id)
         intent.putExtra("enabled", if (enabled) 1 else 0)

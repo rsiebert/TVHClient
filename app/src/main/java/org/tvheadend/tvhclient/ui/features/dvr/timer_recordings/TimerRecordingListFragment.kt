@@ -183,7 +183,7 @@ class TimerRecordingListFragment : BaseFragment(), RecyclerViewClickInterface, S
     }
 
     private fun enableTimerRecording(timerRecording: TimerRecording, enabled: Boolean): Boolean {
-        val intent = timerRecordingViewModel.getIntentData(timerRecording)
+        val intent = timerRecordingViewModel.getIntentData(requireContext(), timerRecording)
         intent.action = "updateTimerecEntry"
         intent.putExtra("id", timerRecording.id)
         intent.putExtra("enabled", if (enabled) 1 else 0)
