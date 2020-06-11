@@ -57,6 +57,9 @@ class MigrateUtils(val context: Context, val appRepository: AppRepository, val s
             if (lastInstalledApplicationVersion < VERSION_205) {
                 convertThemePreference()
             }
+            if (lastInstalledApplicationVersion < VERSION_210) {
+                updateRecordingProfiles()
+            }
         }
 
         // Store the current version as the last installed version
@@ -325,6 +328,18 @@ class MigrateUtils(val context: Context, val appRepository: AppRepository, val s
         editor.apply()
     }
 
+    private fun updateRecordingProfiles() {
+        for (connection in appRepository.connectionData.getItems()) {
+            val serverStatus = appRepository.serverStatusData.getItemById(connection.id)
+            if (serverStatus != null) {
+                Timber.d("Updating series and timer recording profile for connection ${connection.name}")
+                serverStatus.seriesRecordingServerProfileId = serverStatus.recordingServerProfileId
+                serverStatus.timerRecordingServerProfileId = serverStatus.recordingServerProfileId
+                appRepository.serverStatusData.updateItem(serverStatus)
+            }
+        }
+    }
+
     companion object {
         private const val VERSION_101 = 101
         private const val VERSION_109 = 109
@@ -336,5 +351,6 @@ class MigrateUtils(val context: Context, val appRepository: AppRepository, val s
         private const val VERSION_189 = 189
         private const val VERSION_196 = 196
         private const val VERSION_205 = 205
+        private const val VERSION_210 = 210
     }
 }
