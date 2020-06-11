@@ -956,7 +956,7 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
                 val msg = obj as HtspMessage
                 val name = msg.getString("name")
                 val uuid = msg.getString("uuid")
-                Timber.d("Checking if htsp playback profile $name should be added to the database")
+                Timber.d("Checking if htsp playback profile $name and uuid $uuid should be added to the database")
 
                 var profileExists = false
                 for (p in htspPlaybackProfiles) {
@@ -997,7 +997,7 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
                             if (profile.has("key") && profile.has("val")) {
                                 val name = profile.getString("val")
                                 val uuid = profile.getString("key")
-                                Timber.d("Checking if http playback profile $name should be added to the database")
+                                Timber.d("Checking if http playback profile $name and uuid $uuid should be added to the database")
 
                                 var profileExists = false
                                 for (p in httpPlaybackProfiles) {
