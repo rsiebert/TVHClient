@@ -37,6 +37,10 @@ data class ServerStatus(
         var httpPlaybackServerProfileId: Int = 0,
         @ColumnInfo(name = "recording_server_profile_id")
         var recordingServerProfileId: Int = 0,
+        @ColumnInfo(name = "series_recording_server_profile_id")
+        var seriesRecordingServerProfileId: Int = 0,
+        @ColumnInfo(name = "timer_recording_server_profile_id")
+        var timerRecordingServerProfileId: Int = 0,
         @ColumnInfo(name = "casting_server_profile_id")
         var castingServerProfileId: Int = 0,
         @ColumnInfo(name = "playback_transcoding_profile_id")
