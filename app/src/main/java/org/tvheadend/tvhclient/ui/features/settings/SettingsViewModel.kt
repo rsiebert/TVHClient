@@ -164,6 +164,14 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
         return appRepository.serverProfileData.getItemById(currentServerStatus.recordingServerProfileId)
     }
 
+    fun getSeriesRecordingProfile(): ServerProfile? {
+        return appRepository.serverProfileData.getItemById(currentServerStatus.seriesRecordingServerProfileId)
+    }
+
+    fun getTimerRecordingProfile(): ServerProfile? {
+        return appRepository.serverProfileData.getItemById(currentServerStatus.timerRecordingServerProfileId)
+    }
+
     fun getRecordingProfiles(): List<ServerProfile> {
         val profiles = appRepository.serverProfileData.recordingProfiles
         Timber.d("Loaded ${profiles.size} recording profiles")

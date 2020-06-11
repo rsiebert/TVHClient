@@ -14,6 +14,8 @@ import timber.log.Timber
 class SettingsProfilesFragment : PreferenceFragmentCompat() {
 
     private lateinit var recordingProfilesPreference: ListPreference
+    private lateinit var seriesRecordingProfilesPreference: ListPreference
+    private lateinit var timerRecordingProfilesPreference: ListPreference
     private lateinit var htspPlaybackProfilesPreference: ListPreference
     private lateinit var httpPlaybackProfilesPreference: ListPreference
     private lateinit var castingProfilesPreference: ListPreference
@@ -29,11 +31,15 @@ class SettingsProfilesFragment : PreferenceFragmentCompat() {
         htspPlaybackProfilesPreference = findPreference("htsp_playback_profiles")!!
         httpPlaybackProfilesPreference = findPreference("http_playback_profiles")!!
         recordingProfilesPreference = findPreference("recording_profiles")!!
+        seriesRecordingProfilesPreference = findPreference("series_recording_profiles")!!
+        timerRecordingProfilesPreference = findPreference("timer_recording_profiles")!!
         castingProfilesPreference = findPreference("casting_profiles")!!
 
         addProfileValuesToListPreference(htspPlaybackProfilesPreference, settingsViewModel.getHtspProfiles(), settingsViewModel.currentServerStatus.htspPlaybackServerProfileId)
         addProfileValuesToListPreference(httpPlaybackProfilesPreference, settingsViewModel.getHttpProfiles(), settingsViewModel.currentServerStatus.httpPlaybackServerProfileId)
         addProfileValuesToListPreference(recordingProfilesPreference, settingsViewModel.getRecordingProfiles(), settingsViewModel.currentServerStatus.recordingServerProfileId)
+        addProfileValuesToListPreference(seriesRecordingProfilesPreference, settingsViewModel.getRecordingProfiles(), settingsViewModel.currentServerStatus.seriesRecordingServerProfileId)
+        addProfileValuesToListPreference(timerRecordingProfilesPreference, settingsViewModel.getRecordingProfiles(), settingsViewModel.currentServerStatus.timerRecordingServerProfileId)
         addProfileValuesToListPreference(castingProfilesPreference, settingsViewModel.getHttpProfiles(), settingsViewModel.currentServerStatus.castingServerProfileId)
 
         settingsViewModel.activeConnectionLiveData.observe(viewLifecycleOwner, Observer { connection ->
@@ -44,17 +50,20 @@ class SettingsProfilesFragment : PreferenceFragmentCompat() {
             initProfileChangeListeners()
         })
 
-        setHttpPlaybackPreferenceSummary()
-        setHtspPlaybackPreferenceSummary()
-        setRecordingPreferenceSummary()
-        setCastingPreferenceSummary()
+        settingsViewModel.currentServerStatusLiveData.observe(viewLifecycleOwner, Observer { _ ->
+            setHttpPlaybackPreferenceSummary()
+            setHtspPlaybackPreferenceSummary()
+            setRecordingPreferenceSummary()
+            setSeriesRecordingPreferenceSummary()
+            setTimerRecordingPreferenceSummary()
+            setCastingPreferenceSummary()
+        })
     }
 
     private fun initProfileChangeListeners() {
         htspPlaybackProfilesPreference.setOnPreferenceChangeListener { _, o ->
             settingsViewModel.currentServerStatus.let {
                 it.htspPlaybackServerProfileId = Integer.valueOf(o as String)
-                setHtspPlaybackPreferenceSummary()
                 settingsViewModel.updateServerStatus(it)
             }
             true
@@ -62,7 +71,6 @@ class SettingsProfilesFragment : PreferenceFragmentCompat() {
         httpPlaybackProfilesPreference.setOnPreferenceChangeListener { _, o ->
             settingsViewModel.currentServerStatus.let {
                 it.httpPlaybackServerProfileId = Integer.valueOf(o as String)
-                setHttpPlaybackPreferenceSummary()
                 settingsViewModel.updateServerStatus(it)
             }
             true
@@ -70,12 +78,24 @@ class SettingsProfilesFragment : PreferenceFragmentCompat() {
         recordingProfilesPreference.setOnPreferenceChangeListener { _, o ->
             settingsViewModel.currentServerStatus.let {
                 it.recordingServerProfileId = Integer.valueOf(o as String)
-                setRecordingPreferenceSummary()
                 settingsViewModel.updateServerStatus(it)
             }
             true
         }
-
+        seriesRecordingProfilesPreference.setOnPreferenceChangeListener { _, o ->
+            settingsViewModel.currentServerStatus.let {
+                it.seriesRecordingServerProfileId = Integer.valueOf(o as String)
+                settingsViewModel.updateServerStatus(it)
+            }
+            true
+        }
+        timerRecordingProfilesPreference.setOnPreferenceChangeListener { _, o ->
+            settingsViewModel.currentServerStatus.let {
+                it.timerRecordingServerProfileId = Integer.valueOf(o as String)
+                settingsViewModel.updateServerStatus(it)
+            }
+            true
+        }
         if (settingsViewModel.isUnlocked) {
             castingProfilesPreference.onPreferenceClickListener = null
             castingProfilesPreference.setOnPreferenceChangeListener { _, o ->
@@ -123,6 +143,24 @@ class SettingsProfilesFragment : PreferenceFragmentCompat() {
             recordingProfilesPreference.summary = "None"
         } else {
             recordingProfilesPreference.summary = settingsViewModel.getRecordingProfile()?.name
+        }
+    }
+
+    private fun setSeriesRecordingPreferenceSummary() {
+        Timber.d("Series recording profile id is ${settingsViewModel.currentServerStatus.seriesRecordingServerProfileId}")
+        if (settingsViewModel.currentServerStatus.seriesRecordingServerProfileId == 0) {
+            seriesRecordingProfilesPreference.summary = "None"
+        } else {
+            seriesRecordingProfilesPreference.summary = settingsViewModel.getSeriesRecordingProfile()?.name
+        }
+    }
+
+    private fun setTimerRecordingPreferenceSummary() {
+        Timber.d("Timer recording profile id is ${settingsViewModel.currentServerStatus.timerRecordingServerProfileId}")
+        if (settingsViewModel.currentServerStatus.timerRecordingServerProfileId == 0) {
+            timerRecordingProfilesPreference.summary = "None"
+        } else {
+            timerRecordingProfilesPreference.summary = settingsViewModel.getTimerRecordingProfile()?.name
         }
     }
 
