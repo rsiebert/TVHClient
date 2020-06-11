@@ -55,6 +55,8 @@ class MiscDataSource(private val db: AppRoomDatabase) {
                 serverStatus.httpPlaybackServerProfileId = 0
                 serverStatus.castingServerProfileId = 0
                 serverStatus.recordingServerProfileId = 0
+                serverStatus.seriesRecordingServerProfileId = 0
+                serverStatus.timerRecordingServerProfileId = 0
                 db.serverStatusDao.update(ServerStatusEntity.from(serverStatus))
             }
         }
