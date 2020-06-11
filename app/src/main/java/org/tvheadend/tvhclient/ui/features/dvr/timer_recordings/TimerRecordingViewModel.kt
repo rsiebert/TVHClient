@@ -118,6 +118,6 @@ class TimerRecordingViewModel(application: Application) : BaseViewModel(applicat
     }
 
     fun getRecordingProfile(): ServerProfile? {
-        return appRepository.serverProfileData.getItemById(appRepository.serverStatusData.activeItem.recordingServerProfileId)
+        return appRepository.serverProfileData.getItemById(appRepository.serverStatusData.activeItem.timerRecordingServerProfileId)
     }
 }

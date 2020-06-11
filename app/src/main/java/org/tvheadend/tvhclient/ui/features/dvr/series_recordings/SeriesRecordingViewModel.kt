@@ -132,6 +132,6 @@ class SeriesRecordingViewModel(application: Application) : BaseViewModel(applica
     }
 
     fun getRecordingProfile(): ServerProfile? {
-        return appRepository.serverProfileData.getItemById(appRepository.serverStatusData.activeItem.recordingServerProfileId)
+        return appRepository.serverProfileData.getItemById(appRepository.serverStatusData.activeItem.seriesRecordingServerProfileId)
     }
 }
