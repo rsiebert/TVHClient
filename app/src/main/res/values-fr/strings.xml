@@ -150,7 +150,6 @@
     <string name="pref_copy_playback_url_to_clipboard_enabled_sum">En cas de problèmes de lecture, l’URL copiée peut être utilisée pour tester la lecture dans un navigateur.</string>
     <string name="pref_crash_reporting_settings">Paramétrage des rapports de crash</string>
     <string name="pref_customize_user_interface">Personnalisation de l\'interface utilisateur</string>
-    <string name="pref_customize_user_interface_sum">Choisir depuis une liste d\'option quelles informations doivent être affichées dans chaque écrans.</string>
     <string name="pref_date_time_format">Format de l\'heure et de la date</string>
     <string name="pref_date_time_format_sum">Affiche l\'heure et la date tel qu\'affichée habituellement. Sinon le format \'31.12.2017, 21:09\' sera utilisé.</string>
     <string name="pref_debug_mode"> Mode debug </string>
@@ -196,7 +195,6 @@
     <string name="pref_internal_player_for_recordings_enabled">Jouer des enregistrements avec le lecteur interne</string>
     <string name="pref_internal_player_timeshift_enabled">Activer la prise en charge du timeshift</string>
     <string name="pref_language">Langue</string>
-    <string name="pref_language_sum">Choisir la langue que devra utiliser l\'application.</string>
     <string name="pref_manage_connections">Gestions des connexions</string>
     <string name="pref_manage_connections_sum">Choisir votre connexion active au serveur TVHeadend ou ajouter, éditer ou effacer des connexions.</string>
     <string name="pref_menu_visibility">Visibilité du menu</string>
@@ -268,7 +266,6 @@
     <string name="pref_tag_icon">Icone du tag de la chaine</string>
     <string name="pref_tag_icon_sum">Montre licône de la chaine.</string>
     <string name="pref_theme">Thème soft</string>
-    <string name="pref_theme_sum">Utiliser le thème soft</string>
     <string name="pref_unlocker">Fonctionnalités supplémentaires</string>
     <string name="pref_unlocker_sum">Activer l\'accès aux fonctionnalités supplémentaires et aider au support des nouveaux développements en achetant la version complète de TVHClient.</string>
     <string name="pref_user">Nom d\'utilisateur</string>

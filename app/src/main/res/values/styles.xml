@@ -122,6 +122,10 @@
         <!--</editor-fold>-->
 
         <!--<editor-fold desc="Toolbar color">-->
+        <item name="toolbarColorPrimary">@color/toolbarPrimaryDarkColor</item>
+        <!--</editor-fold>-->
+
+        <!--<editor-fold desc="Main color">-->
         <item name="colorPrimary">@color/primaryColor</item>
         <!--</editor-fold>-->
 
@@ -220,6 +224,10 @@
         <!--</editor-fold>-->
 
         <!--<editor-fold desc="Toolbar color">-->
+        <item name="toolbarColorPrimary">@color/toolbarPrimaryLightColor</item>
+        <!--</editor-fold>-->
+
+        <!--<editor-fold desc="Main color">-->
         <item name="colorPrimary">@color/primaryColor</item>
         <!--</editor-fold>-->
 

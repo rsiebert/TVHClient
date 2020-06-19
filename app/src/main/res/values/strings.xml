@@ -150,7 +150,6 @@
     <string name="pref_copy_playback_url_to_clipboard_enabled_sum">In case of playback issues the copied Url can be used to test playback in a browser.</string>
     <string name="pref_crash_reporting_settings">Crash Reporting Settings</string>
     <string name="pref_customize_user_interface">Customize the user interface</string>
-    <string name="pref_customize_user_interface_sum">Choose from a variety of options to decide which information shall be shown in each screen.</string>
     <string name="pref_date_time_format">Date and time format</string>
     <string name="pref_date_time_format_sum">Display the date and time as usually used in your country. Otherwise the format \'31.12.2017, 21:09\' is used.</string>
     <string name="pref_debug_mode">Debug Mode</string>
@@ -200,7 +199,6 @@
     <string name="pref_internal_player_timeshift_period">Timeshift period</string>
     <string name="pref_internal_player_timeshift_period_sum">Timeshift period in seconds</string>
     <string name="pref_language">Language</string>
-    <string name="pref_language_sum">Choose the language that shall be used by the application.</string>
     <string name="pref_manage_connections">Manage connections</string>
     <string name="pref_manage_connections_sum">Select your active connection to a TVHeadend server or add, edit or remove connections.</string>
     <string name="pref_menu_visibility">Menu visibility</string>
@@ -235,6 +233,10 @@
     <string name="pref_program_guide_sum">Configure the program guide screen and how the data shall be displayed.</string>
     <string name="pref_recording_profiles">Recording profiles</string>
     <string name="pref_recording_profiles_sum">Select a profile that the server shall use to record a scheduled program.</string>
+    <string name="pref_series_recording_profiles">Series recording profiles</string>
+    <string name="pref_series_recording_profiles_sum">Select a profile that the server shall use to record a scheduled series program.</string>
+    <string name="pref_timer_recording_profiles">Timer recording profiles</string>
+    <string name="pref_timer_recording_profiles_sum">Select a profile that the server shall use to record a scheduled timer program.</string>
     <string name="pref_selected">Default connection</string>
     <string name="pref_selected_sum">Select to make this the default connection and use it after the application has started.</string>
     <string name="pref_send_logfile">Send log to developer</string>
@@ -273,8 +275,7 @@
     <string name="pref_streaming_url_sum">Enter the url with the hostname and port to stream videos from the server. Only required if an external player is used. Example: http://myserver:9981</string>
     <string name="pref_tag_icon">Channel tag icon</string>
     <string name="pref_tag_icon_sum">Show the icon for a channel tag.</string>
-    <string name="pref_theme">Light theme</string>
-    <string name="pref_theme_sum">Use a light theme</string>
+    <string name="pref_theme">Theme</string>
     <string name="pref_unlocker">Additional features</string>
     <string name="pref_unlocker_sum">Enable access to additional features and support further development by buying the unlocked version of TVHClient.</string>
     <string name="pref_user">Username</string>
@@ -406,7 +407,6 @@
     <string name="track_selection_title">Select tracks</string>
     <string name="notification_added">Notification was added</string>
     <string name="program_has_already_started">Program has already started</string>
-    <string name="program_starts_soon">Program %1$s starts in %2$d minutes</string>
     <string name="pref_load_more_epg_data">Load more epg data</string>
     <string name="error_loading_information">Error loading required information</string>
 </resources>

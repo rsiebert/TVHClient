@@ -73,7 +73,7 @@ internal interface ProgramDao {
     @Query(PROGRAM_BASE_QUERY +
             " WHERE $CONNECTION_IS_ACTIVE" +
             " AND p.id = :id")
-    fun loadProgramByIdSync(id: Int): ProgramEntity
+    fun loadProgramByIdSync(id: Int): ProgramEntity?
 
     @Query(PROGRAM_BASE_QUERY +
             " WHERE $CONNECTION_IS_ACTIVE" +
@@ -85,7 +85,7 @@ internal interface ProgramDao {
             " WHERE $CONNECTION_IS_ACTIVE" +
             " AND p.channel_id = :channelId " +
             " ORDER BY start DESC LIMIT 1")
-    fun loadLastProgramFromChannelSync(channelId: Int): ProgramEntity
+    fun loadLastProgramFromChannelSync(channelId: Int): ProgramEntity?
 
     @Query("DELETE FROM programs " + "WHERE stop < :time")
     fun deleteProgramsByTime(time: Long)

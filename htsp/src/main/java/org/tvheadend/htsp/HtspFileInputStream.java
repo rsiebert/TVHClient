@@ -46,7 +46,7 @@ public class HtspFileInputStream extends InputStream {
         offset = 0;
     }
 
-    class FileOpenResponse implements HtspResponseListener {
+    static class FileOpenResponse implements HtspResponseListener {
         int id;
         long size;
         long mtime;
@@ -60,7 +60,7 @@ public class HtspFileInputStream extends InputStream {
         }
     }
 
-    class FileReadResponse implements HtspResponseListener {
+    static class FileReadResponse implements HtspResponseListener {
         byte[] data;
 
         @Override
@@ -70,7 +70,7 @@ public class HtspFileInputStream extends InputStream {
         }
     }
 
-    class FileCloseResponse implements HtspResponseListener {
+    static class FileCloseResponse implements HtspResponseListener {
 
         @Override
         public void handleResponse(@NotNull HtspMessage response) {

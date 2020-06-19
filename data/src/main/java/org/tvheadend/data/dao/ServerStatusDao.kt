@@ -2,41 +2,41 @@ package org.tvheadend.data.dao
 
 import androidx.lifecycle.LiveData
 import androidx.room.*
-import org.tvheadend.data.entity.ServerStatus
+import org.tvheadend.data.entity.ServerStatusEntity
 
 @Dao
-interface ServerStatusDao {
+internal interface ServerStatusDao {
 
     @Query("DELETE FROM server_status WHERE connection_id = :id")
     fun deleteByConnectionId(id: Int)
 
     @Transaction
     @Query("$SERVER_STATUS_BASE_QUERY WHERE $CONNECTION_IS_ACTIVE")
-    fun loadAllServerStatus(): LiveData<List<ServerStatus>>
+    fun loadAllServerStatus(): LiveData<List<ServerStatusEntity>>
 
     @Query("$SERVER_STATUS_BASE_QUERY WHERE $CONNECTION_IS_ACTIVE")
-    fun loadActiveServerStatusSync(): ServerStatus?
+    fun loadActiveServerStatusSync(): ServerStatusEntity?
 
     @Query("$SERVER_STATUS_BASE_QUERY WHERE $CONNECTION_IS_ACTIVE")
-    fun loadActiveServerStatus(): LiveData<ServerStatus>
+    fun loadActiveServerStatus(): LiveData<ServerStatusEntity>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(serverStatus: ServerStatus)
+    fun insert(serverStatus: ServerStatusEntity)
 
     @Update
-    fun update(serverStatus: ServerStatus)
+    fun update(serverStatus: ServerStatusEntity)
 
     @Delete
-    fun delete(serverStatus: ServerStatus)
+    fun delete(serverStatus: ServerStatusEntity)
 
     @Query("DELETE FROM server_status")
     fun deleteAll()
 
     @Query("$SERVER_STATUS_BASE_QUERY WHERE s.connection_id = :id")
-    fun loadServerStatusByIdSync(id: Int): ServerStatus
+    fun loadServerStatusByIdSync(id: Int): ServerStatusEntity?
 
     @Query("$SERVER_STATUS_BASE_QUERY WHERE s.connection_id = :id")
-    fun loadServerStatusById(id: Int): LiveData<ServerStatus>
+    fun loadServerStatusById(id: Int): LiveData<ServerStatusEntity>
 
     @get:Query("SELECT COUNT (*) FROM server_status AS s WHERE $CONNECTION_IS_ACTIVE")
     val serverStatusCount: LiveData<Int>

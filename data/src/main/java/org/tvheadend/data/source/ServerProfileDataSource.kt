@@ -83,9 +83,9 @@ class ServerProfileDataSource(private val db: AppRoomDatabase) : DataSourceInter
         var serverProfile: ServerProfile? = null
         runBlocking(Dispatchers.IO) {
             if (id is Int) {
-                serverProfile = db.serverProfileDao.loadProfileByIdSync(id).toServerProfile()
+                serverProfile = db.serverProfileDao.loadProfileByIdSync(id)?.toServerProfile()
             } else if (id is String) {
-                serverProfile = db.serverProfileDao.loadProfileByUuidSync(id).toServerProfile()
+                serverProfile = db.serverProfileDao.loadProfileByUuidSync(id)?.toServerProfile()
             }
         }
         return serverProfile

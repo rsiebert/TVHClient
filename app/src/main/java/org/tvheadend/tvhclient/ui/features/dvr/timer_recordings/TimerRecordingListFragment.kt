@@ -63,7 +63,7 @@ class TimerRecordingListFragment : BaseFragment(), RecyclerViewClickInterface, S
 
     private fun observeSearchQuery() {
         Timber.d("Observing search query")
-        baseViewModel.searchQuery.observe(viewLifecycleOwner, Observer { query ->
+        baseViewModel.searchQueryLiveData.observe(viewLifecycleOwner, Observer { query ->
             if (query.isNotEmpty()) {
                 Timber.d("View model returned search query '$query'")
                 onSearchRequested(query)
@@ -146,8 +146,8 @@ class TimerRecordingListFragment : BaseFragment(), RecyclerViewClickInterface, S
                         it.commit()
                     }
                 }
-            } else if (timerRecordingViewModel.currentId.value != recording.id) {
-                timerRecordingViewModel.currentId.value = recording.id
+            } else if (timerRecordingViewModel.currentIdLiveData.value != recording.id) {
+                timerRecordingViewModel.currentIdLiveData.value = recording.id
             }
         }
     }
@@ -183,7 +183,7 @@ class TimerRecordingListFragment : BaseFragment(), RecyclerViewClickInterface, S
     }
 
     private fun enableTimerRecording(timerRecording: TimerRecording, enabled: Boolean): Boolean {
-        val intent = timerRecordingViewModel.getIntentData(timerRecording)
+        val intent = timerRecordingViewModel.getIntentData(requireContext(), timerRecording)
         intent.action = "updateTimerecEntry"
         intent.putExtra("id", timerRecording.id)
         intent.putExtra("enabled", if (enabled) 1 else 0)

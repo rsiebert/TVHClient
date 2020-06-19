@@ -33,6 +33,13 @@ class EpgViewModel(application: Application) : BaseChannelViewModel(application)
     private var hoursOfEpgDataPerScreen = MutableLiveData<Int>()
     private var daysOfEpgData = MutableLiveData<Int>()
 
+    private val defaultShowChannelNumber = application.applicationContext.resources.getBoolean(R.bool.pref_default_channel_number_enabled)
+    private val defaultShowProgramSubtitle = application.applicationContext.resources.getBoolean(R.bool.pref_default_program_subtitle_enabled)
+    private val defaultDaysOfEpgData = application.applicationContext.resources.getString(R.string.pref_default_days_of_epg_data)
+    private val defaultShowGenreColor = application.applicationContext.resources.getBoolean(R.bool.pref_default_genre_colors_for_program_guide_enabled)
+    private val defaultHoursOfEpgDataPerScreen = application.applicationContext.resources.getString(R.string.pref_default_hours_of_epg_data_per_screen)
+    private val defaultShowAllChannelTags = application.applicationContext.resources.getBoolean(R.bool.pref_default_empty_channel_tags_enabled)
+
     /**
      * Whenever the display width is set, update the pixels per minute variable
      * to have an up to date value. The calculation must be done in the view model
@@ -82,8 +89,8 @@ class EpgViewModel(application: Application) : BaseChannelViewModel(application)
     init {
         Timber.d("Initializing")
 
-        daysToShow = Integer.parseInt(sharedPreferences.getString("days_of_epg_data", appContext.resources.getString(R.string.pref_default_days_of_epg_data))!!)
-        hoursToShow = Integer.parseInt(sharedPreferences.getString("hours_of_epg_data_per_screen", appContext.resources.getString(R.string.pref_default_hours_of_epg_data_per_screen))!!)
+        daysToShow = Integer.parseInt(sharedPreferences.getString("days_of_epg_data", defaultDaysOfEpgData)!!)
+        hoursToShow = Integer.parseInt(sharedPreferences.getString("hours_of_epg_data_per_screen", defaultHoursOfEpgDataPerScreen)!!)
 
         daysOfEpgData.value = daysToShow
         hoursOfEpgDataPerScreen.value = hoursToShow
@@ -215,12 +222,12 @@ class EpgViewModel(application: Application) : BaseChannelViewModel(application)
         when (key) {
             "channel_sort_order" -> channelSortOrder.value = Integer.valueOf(sharedPreferences.getString("channel_sort_order", defaultChannelSortOrder)
                     ?: defaultChannelSortOrder)
-            "channel_number_enabled" -> showChannelNumber.value = sharedPreferences.getBoolean(key, appContext.resources.getBoolean(R.bool.pref_default_channel_number_enabled))
-            "program_subtitle_enabled" -> showProgramSubtitle.value = sharedPreferences.getBoolean(key, appContext.resources.getBoolean(R.bool.pref_default_program_subtitle_enabled))
-            "genre_colors_for_program_guide_enabled" -> showGenreColor.value = sharedPreferences.getBoolean(key, appContext.resources.getBoolean(R.bool.pref_default_genre_colors_for_program_guide_enabled))
-            "hours_of_epg_data_per_screen" -> hoursOfEpgDataPerScreen.value = Integer.parseInt(sharedPreferences.getString(key, appContext.resources.getString(R.string.pref_default_hours_of_epg_data_per_screen))!!)
-            "days_of_epg_data" -> daysOfEpgData.value = Integer.parseInt(sharedPreferences.getString(key, appContext.resources.getString(R.string.pref_default_days_of_epg_data))!!)
-            "empty_channel_tags_enabled" -> showAllChannelTags.value = sharedPreferences.getBoolean(key, appContext.resources.getBoolean(R.bool.pref_default_empty_channel_tags_enabled))
+            "channel_number_enabled" -> showChannelNumber.value = sharedPreferences.getBoolean(key, defaultShowChannelNumber)
+            "program_subtitle_enabled" -> showProgramSubtitle.value = sharedPreferences.getBoolean(key, defaultShowProgramSubtitle)
+            "genre_colors_for_program_guide_enabled" -> showGenreColor.value = sharedPreferences.getBoolean(key, defaultShowGenreColor)
+            "hours_of_epg_data_per_screen" -> hoursOfEpgDataPerScreen.value = Integer.parseInt(sharedPreferences.getString(key, defaultHoursOfEpgDataPerScreen)!!)
+            "days_of_epg_data" -> daysOfEpgData.value = Integer.parseInt(sharedPreferences.getString(key, defaultDaysOfEpgData)!!)
+            "empty_channel_tags_enabled" -> showAllChannelTags.value = sharedPreferences.getBoolean(key, defaultShowAllChannelTags)
         }
     }
 

@@ -1,6 +1,7 @@
 package org.tvheadend.tvhclient.ui.features.dvr.series_recordings
 
 import android.app.Application
+import android.content.Context
 import android.content.Intent
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
@@ -17,7 +18,7 @@ import java.util.*
 class SeriesRecordingViewModel(application: Application) : BaseViewModel(application) {
 
     var selectedListPosition = 0
-    val currentId = MutableLiveData("")
+    val currentIdLiveData = MutableLiveData("")
     var recording = SeriesRecording()
     var recordingLiveData = MediatorLiveData<SeriesRecording>()
     val recordings: LiveData<List<SeriesRecording>> = appRepository.seriesRecordingData.getLiveDataItems()
@@ -25,11 +26,13 @@ class SeriesRecordingViewModel(application: Application) : BaseViewModel(applica
 
     var duplicateDetectionList: Array<String> = application.resources.getStringArray(R.array.duplicate_detection_list)
 
+    private val defaultChannelSortOrder = application.applicationContext.resources.getString(R.string.pref_default_channel_sort_order)
+
     /**
      * Returns an intent with the recording data
      */
-    fun getIntentData(recording: SeriesRecording): Intent {
-        val intent = Intent(appContext, HtspService::class.java)
+    fun getIntentData(context: Context, recording: SeriesRecording): Intent {
+        val intent = Intent(context, HtspService::class.java)
         intent.putExtra("title", recording.title)
         intent.putExtra("name", recording.name)
         intent.putExtra("directory", recording.directory)
@@ -69,7 +72,7 @@ class SeriesRecordingViewModel(application: Application) : BaseViewModel(applica
         }
 
     init {
-        recordingLiveData.addSource(currentId) { value ->
+        recordingLiveData.addSource(currentIdLiveData) { value ->
             if (value.isNotEmpty()) {
                 recordingLiveData.value = appRepository.seriesRecordingData.getItemById(value)
             }
@@ -119,7 +122,6 @@ class SeriesRecordingViewModel(application: Application) : BaseViewModel(applica
     }
 
     fun getChannelList(): List<Channel> {
-        val defaultChannelSortOrder = appContext.resources.getString(R.string.pref_default_channel_sort_order)
         val channelSortOrder = Integer.valueOf(sharedPreferences.getString("channel_sort_order", defaultChannelSortOrder)
                 ?: defaultChannelSortOrder)
         return appRepository.channelData.getChannels(channelSortOrder)
@@ -130,6 +132,6 @@ class SeriesRecordingViewModel(application: Application) : BaseViewModel(applica
     }
 
     fun getRecordingProfile(): ServerProfile? {
-        return appRepository.serverProfileData.getItemById(appRepository.serverStatusData.activeItem.recordingServerProfileId)
+        return appRepository.serverProfileData.getItemById(appRepository.serverStatusData.activeItem.seriesRecordingServerProfileId)
     }
 }

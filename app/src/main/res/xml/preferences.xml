@@ -15,16 +15,17 @@
             android:entries="@array/pref_language_list_display"
             android:entryValues="@array/pref_language_list"
             android:key="language"
-            android:summary="@string/pref_language_sum"
             android:title="@string/pref_language" />
-        <SwitchPreference
-            android:defaultValue="@bool/pref_default_light_theme_enabled"
-            android:key="light_theme_enabled"
-            android:summary="@string/pref_theme_sum"
+        <ListPreference
+            android:name="@string/pref_theme"
+            android:defaultValue="@string/pref_default_theme"
+            android:dialogTitle="@string/pref_theme"
+            android:entries="@array/pref_theme_list_display"
+            android:entryValues="@array/pref_theme_list"
+            android:key="selected_theme"
             android:title="@string/pref_theme" />
         <PreferenceScreen
             android:key="user_interface"
-            android:summary="@string/pref_customize_user_interface_sum"
             android:title="@string/pref_customize_user_interface" />
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/pref_playback_and_recording">

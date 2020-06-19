@@ -40,6 +40,10 @@ class StatusViewModel(application: Application) : BaseViewModel(application), Sh
     private lateinit var discSpaceUpdateTask: Runnable
     private val diskSpaceUpdateHandler = Handler()
 
+    private val defaultNotifyRunningRecordingCount = application.applicationContext.resources.getBoolean(R.bool.pref_default_notify_running_recording_count_enabled)
+    private val defaultNotifyLowStorageSpace = application.applicationContext.resources.getBoolean(R.bool.pref_default_notify_low_storage_space_enabled)
+    private val defaultNotifyLowStorageSpaceThreshold = application.applicationContext.resources.getString(R.string.pref_default_low_storage_space_threshold)
+
     init {
         Timber.d("Initializing")
         // Listen to changes of the recording count. If the count changes to zero or the setting
@@ -47,7 +51,7 @@ class StatusViewModel(application: Application) : BaseViewModel(application), Sh
         showRunningRecordingCount.addSource(appRepository.recordingData.getLiveDataCountByType("running")) { count ->
             Timber.d("Running recording count has changed, checking if notification shall be shown")
             runningRecordingCount = count
-            val enabled = sharedPreferences.getBoolean("notify_running_recording_count_enabled", appContext.resources.getBoolean(R.bool.pref_default_notify_running_recording_count_enabled))
+            val enabled = sharedPreferences.getBoolean("notify_running_recording_count_enabled", defaultNotifyRunningRecordingCount)
             showRunningRecordingCount.value = enabled && count > 0
         }
 
@@ -57,24 +61,24 @@ class StatusViewModel(application: Application) : BaseViewModel(application), Sh
         showLowStorageSpace.addSource(serverStatusLiveData) { serverStatus ->
             if (serverStatus != null) {
                 availableStorageSpace = (serverStatus.freeDiskSpace / (1024 * 1024 * 1024)).toInt()
-                val enabled = sharedPreferences.getBoolean("notify_low_storage_space_enabled", appContext.resources.getBoolean(R.bool.pref_default_notify_low_storage_space_enabled))
-                val threshold = Integer.valueOf(sharedPreferences.getString("low_storage_space_threshold", appContext.resources.getString(R.string.pref_default_low_storage_space_threshold))!!)
+                val enabled = sharedPreferences.getBoolean("notify_low_storage_space_enabled", defaultNotifyLowStorageSpace)
+                val threshold = Integer.valueOf(sharedPreferences.getString("low_storage_space_threshold", defaultNotifyLowStorageSpaceThreshold)!!)
                 Timber.d("Server status free space has changed to $availableStorageSpace, threshold is $threshold, checking if notification shall be shown")
                 showLowStorageSpace.value = enabled && availableStorageSpace <= threshold
             }
         }
 
         discSpaceUpdateTask = Runnable {
-            val activityManager = appContext.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+            val activityManager = application.applicationContext.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
             val runningAppProcessInfo = activityManager.runningAppProcesses?.get(0)
 
             if (runningAppProcessInfo != null
                     && runningAppProcessInfo.importance <= ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND) {
 
                 Timber.d("Application is in the foreground, starting service to get disk space ")
-                val intent = Intent(appContext, HtspService::class.java)
+                val intent = Intent(application.applicationContext, HtspService::class.java)
                 intent.action = "getDiskSpace"
-                appContext.startService(intent)
+                application.applicationContext.startService(intent)
             }
             Timber.d("Restarting disc space update handler in 60s")
             diskSpaceUpdateHandler.postDelayed(discSpaceUpdateTask, 60000)
@@ -100,12 +104,12 @@ class StatusViewModel(application: Application) : BaseViewModel(application), Sh
         when (key) {
             "notifications_enabled" -> {
                 Timber.d("Setting has changed, checking if running recording count notification shall be shown")
-                val enabled = sharedPreferences.getBoolean(key, appContext.resources.getBoolean(R.bool.pref_default_notify_running_recording_count_enabled))
+                val enabled = sharedPreferences.getBoolean(key, defaultNotifyRunningRecordingCount)
                 showRunningRecordingCount.value = enabled && runningRecordingCount > 0
             }
             "notify_low_storage_space_enabled" -> {
-                val enabled = sharedPreferences.getBoolean(key, appContext.resources.getBoolean(R.bool.pref_default_notify_low_storage_space_enabled))
-                val threshold = Integer.valueOf(sharedPreferences.getString("low_storage_space_threshold", appContext.resources.getString(R.string.pref_default_low_storage_space_threshold))!!)
+                val enabled = sharedPreferences.getBoolean(key, defaultNotifyLowStorageSpace)
+                val threshold = Integer.valueOf(sharedPreferences.getString("low_storage_space_threshold", defaultNotifyLowStorageSpaceThreshold)!!)
                 Timber.d("Server status free space has changed to $availableStorageSpace, threshold is $threshold, checking if notification shall be shown")
                 showLowStorageSpace.value = enabled && availableStorageSpace <= threshold
             }

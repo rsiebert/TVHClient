@@ -8,8 +8,8 @@ android {
         minSdkVersion 16
         targetSdkVersion 29
 
-        versionCode 1
-        versionName "1.0.0"
+        versionCode 3
+        versionName "2.1.0"
 
         javaCompileOptions {
             annotationProcessorOptions {
@@ -44,10 +44,10 @@ dependencies {
 
     // Support library basics
     implementation 'androidx.appcompat:appcompat:1.1.0'
-    implementation 'androidx.preference:preference:1.1.0'
+    implementation 'androidx.preference:preference:1.1.1'
 
     // Android Room
-    def room_version = '2.2.3'
+    def room_version = '2.2.5'
     implementation "androidx.room:room-runtime:$room_version"
     implementation "androidx.room:room-ktx:$room_version"
     kapt "androidx.room:room-compiler:$room_version"
@@ -56,7 +56,7 @@ dependencies {
     implementation 'com.jakewharton.timber:timber:4.7.1'
 
     // Dependency injection
-    def dagger_version = '2.26'
+    def dagger_version = '2.28'
     implementation "com.google.dagger:dagger:$dagger_version"
     kapt "com.google.dagger:dagger-compiler:$dagger_version"
 }

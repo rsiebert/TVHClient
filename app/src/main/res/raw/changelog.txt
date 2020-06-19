@@ -1,9 +1,14 @@
 $ 2.4.0
   % VERSION 2.4.0
-  _ 04.03.2020
+  _ 11.06.2020
+    * Added setting to set the dark theme automatically
+    * Made the dialog buttons in the settings more readable
     * Removed the white screen flickering during startup
     * Added episode information to the recording screens
-    * Many internal improvements
+    * Added an option to set a 18:9 aspect ratio in the internal player
+    * Auto close the time selection dialog after 1 minute
+    * Added option to select a separate recording profile for series recordings
+    * Some internal improvements
 $ 2.3.6
   % VERSION 2.3.6
   _ 11.02.2020
@@ -58,7 +63,7 @@ $ 2.3.0
   _ 26.11.2019
     * Minor UI changes
     * Added toolbar menu to search for channels only
-    * Added support for Kodi color tags in descriptions
+    * Added support for KODI color tags in descriptions
     * Fixed disable option not working for scheduled recordings
     * Fixed server name was not shown in the main menu header
     * Fixed some minor search issues

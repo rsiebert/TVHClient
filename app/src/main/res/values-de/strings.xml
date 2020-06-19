@@ -149,7 +149,6 @@
     <string name="pref_copy_playback_url_to_clipboard_enabled_sum">Bei Problemen mit der Wiedergabe kann die URL zum Testen der Wiedergabe in einem Browser verwendet werden.</string>
     <string name="pref_crash_reporting_settings">" Einstellungen für Absturzberichte"</string>
     <string name="pref_customize_user_interface">Benutzeroberfläche anpassen</string>
-    <string name="pref_customize_user_interface_sum">Legt fest welche Informationen in den einzelnen Bildschirmen angezeigt werden sollen.</string>
     <string name="pref_date_time_format">Datum- und Zeitformat </string>
     <string name="pref_date_time_format_sum">Zeige das Datum und die Zeit in der landesüblichen Form an. Alternativ wird das Format \'31.12.2017, 21:09\' verwendet.</string>
     <string name="pref_debug_mode">Debug Modus</string>
@@ -176,6 +175,8 @@
     <string name="pref_genre_colors_epg_sum">Falls gesetzt, wird die Genrefarbe als farbiger Hintergrund für jedes Programm verwendet.</string>
     <string name="pref_genre_colors_programs">Programme</string>
     <string name="pref_genre_colors_programs_sum">Falls gesetzt, wird die Genrefarbe als vertikale Linie im linken Bereich in der Programmliste und in der Detailansicht angezeigt.</string>
+    <string name="pref_genre_colors_recordings">Aufnahmen</string>
+    <string name="pref_genre_colors_recordings_sum">Falls gesetzt, wird die Genrefarbe als vertikale Linie im linken Bereich in der Aufnahmeliste und in der Detailansicht angezeigt.</string>
     <string name="pref_genre_colors_sum">Zeigt zu jedem Sender oder Programm das dazugehörige Genre farbig an.</string>
     <string name="pref_genre_colors_visibility">Sichtbarkeit der Genrefarben</string>
     <string name="pref_genre_colors_visibility_message">Definiere wie stark die Farben sichtbar sein sollen. Je höher der Wert, desto stärker wirken die Farben.</string>
@@ -191,11 +192,12 @@
     <string name="pref_internal_player_buffer_duration">Pufferdauer</string>
     <string name="pref_internal_player_buffer_duration_dialog_title">Pufferdauer in Sekunden</string>
     <string name="pref_internal_player_buffer_duration_sum">Wie viele Sekunden sollen zwischengespeichert werden, bevor die Wiedergabe gestartet wird.</string>
-    <string name="pref_internal_player_for_channels_enabled">Live-TV mit dem interen Player abspielen</string>
-    <string name="pref_internal_player_for_recordings_enabled">Aufnahmen mit dem interen Player abspielen</string>
+    <string name="pref_internal_player_for_channels_enabled">Live-TV mit dem internen Player abspielen</string>
+    <string name="pref_internal_player_for_recordings_enabled">Aufnahmen mit dem internen Player abspielen</string>
     <string name="pref_internal_player_timeshift_enabled">Timeshift-Unterstützung aktivieren</string>
+    <string name="pref_internal_player_timeshift_period">Timeshift Periode</string>
+    <string name="pref_internal_player_timeshift_period_sum">Timeshift Periode in Sekunden</string>
     <string name="pref_language">Sprache</string>
-    <string name="pref_language_sum">Definiert die Sprache, die verwendet werden soll.</string>
     <string name="pref_manage_connections">Verbindungen verwalten</string>
     <string name="pref_manage_connections_sum">Die aktive Verbindung zum TVHeadend Server ändern, neue Verbindungen erstellen, vorhandene bearbeiten oder entfernen.</string>
     <string name="pref_menu_visibility">Menü Sichtbarkeit</string>
@@ -230,6 +232,10 @@
     <string name="pref_program_guide_sum">Konfiguriert das Aussehen und weitere Parameter der Programmübersicht.</string>
     <string name="pref_recording_profiles">Aufnahmeprofile</string>
     <string name="pref_recording_profiles_sum">Bestimmt das Profil, dass der Server für das Aufnehmen von geplanten Programmen verwenden soll.</string>
+    <string name="pref_series_recording_profiles">Seriesaufnahmeprofile</string>
+    <string name="pref_series_recording_profiles_sum">Bestimmt das Profil, dass der Server für Serienaufnahmen verwenden soll.</string>
+    <string name="pref_timer_recording_profiles">Manuelle Aufnahmeprofile</string>
+    <string name="pref_timer_recording_profiles_sum">Bestimmt das Profil, dass der Server für die manuellen Aufnehmen verwenden soll.</string>
     <string name="pref_selected">Standardverbindung</string>
     <string name="pref_selected_sum">Falls gesetzt, wird diese Verbindung beim Starten automatisch verwendet.</string>
     <string name="pref_send_logfile">Sende Log-Datei an den Entwickler</string>
@@ -259,6 +265,9 @@
     <string name="pref_show_progressbar_sum">In der Senderliste wird für das aktuelle Programm angezeigt, wieviel der Sendung bereits gezeigt ausgestrahlt wurde.</string>
     <string name="pref_show_recording_file_status">Dateistatus der Aufnahme anzeigen</string>
     <string name="pref_show_recording_file_status_sum">Die Dateigröße und die Anzahl der Datenfehler jeder Aufnahme werden in den Aufnahmelisten angezeigt.</string>
+    <string name="pref_sort_recordings">Aufnahme-Reihenfolge</string>
+    <string name="pref_sort_completed_recordings">Reihenfolge der fertigen Aufnahmen</string>
+    <string name="pref_sort_completed_recordings_sum">Legt fest in welcher Reihenfolge die fertigen Aufnahmen angezeigt werden sollen.</string>
     <string name="pref_sort_channels">Sender-Reihenfolge</string>
     <string name="pref_sort_channels_sum">Legt fest in welcher Reihenfolge die Sender angezeigt werden sollen.</string>
     <string name="pref_streaming_url">Wiedergabe-URL</string>
@@ -266,8 +275,7 @@
     <string name="pref_streaming_url_sum">Geben Sie die URL mit dem Hostnamen und Port ein, um Videos vom Server zu streamen. Nur erforderlich, wenn ein externer Player verwendet wird. Beispiel: http://mein-server:9981</string>
     <string name="pref_tag_icon">Logo für Sendergruppen</string>
     <string name="pref_tag_icon_sum">Zeigt für die gewählte Sendergruppe (falls verfügbar) das dazugehörige Logo.</string>
-    <string name="pref_theme">Helles Theme</string>
-    <string name="pref_theme_sum">Zeigt den Hintergrund und alle Elemente in helleren Farben an. Alternativ wird ein Theme mit fast schwarzem Hintergrund und dunkleren Farben verwendet.</string>
+    <string name="pref_theme">Theme</string>
     <string name="pref_unlocker">Funktionen freischalten</string>
     <string name="pref_unlocker_sum">Schaltet nach dem Kauf der Applikation zusätzliche Funktionen frei. Durch den Kauf wird auch die weitere Entwicklung von TVHClient unterstützt.</string>
     <string name="pref_user">Benutzername</string>
@@ -397,5 +405,9 @@
     <string name="wol_send">Wake on LAN Paket erfolgreich an \'%s\' gesendet.</string>
     <string name="wol_send_broadcast">Wake on LAN Paket als Broadcast erfolgreich an \'%s\' gesendet.</string>
     <string name="yesterday">Gestern</string>
+    <string name="track_selection_title">Tracks auswählen</string>
+    <string name="notification_added">Benachrichtigung wurde hinzugefügt</string>
+    <string name="program_has_already_started">Programm läuft bereits</string>
     <string name="pref_load_more_epg_data">Weitere Programme laden</string>
+    <string name="error_loading_information">Fehler beim Laden der erforderlichen Informationen</string>
 </resources>

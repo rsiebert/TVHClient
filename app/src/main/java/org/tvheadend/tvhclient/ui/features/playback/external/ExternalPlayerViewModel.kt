@@ -16,6 +16,7 @@ import org.tvheadend.htsp.HtspResponseListener
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.ui.base.BaseViewModel
 import timber.log.Timber
+import java.util.*
 import java.util.concurrent.ExecutionException
 import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledExecutorService
@@ -99,17 +100,19 @@ class ExternalPlayerViewModel(application: Application) : BaseViewModel(applicat
         request["method"] = "getTicket"
         if (channelId > 0) {
             channel = appRepository.channelData.getItemById(channelId)
+            Timber.d("Requesting ticket for channel id $channelId")
             request["channelId"] = channelId
         }
         if (dvrId > 0) {
             recording = appRepository.recordingData.getItemById(dvrId)
+            Timber.d("Requesting ticket for recording id $dvrId")
             request["dvrId"] = dvrId
         }
         htspConnection.sendMessage(request, object : HtspResponseListener {
             override fun handleResponse(response: HtspMessage) {
-                Timber.d("Received response for ticket request")
                 path = response.getString("path", "")
                 ticket = response.getString("ticket", "")
+                Timber.d("Received response for ticket request, path is $path, ticket is $ticket")
                 isTicketReceived.postValue(true)
             }
         })
@@ -134,7 +137,7 @@ class ExternalPlayerViewModel(application: Application) : BaseViewModel(applicat
             Timber.d("Hostname $hostname to IP address conversion not required")
         }
 
-        var baseUrl = "${uri.scheme.toString().toLowerCase()}://$hostname"
+        var baseUrl = "${uri.scheme.toString().toLowerCase(Locale.getDefault())}://$hostname"
         if (uri.port != 80 && uri.port != 443) {
             baseUrl = "${uri.scheme}://$hostname:${uri.port}"
         }

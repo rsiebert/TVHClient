@@ -7,6 +7,7 @@ import android.content.SharedPreferences
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.preference.PreferenceManager
 import org.tvheadend.data.AppRepository
 import org.tvheadend.data.entity.Connection
 import org.tvheadend.tvhclient.MainApplication
@@ -14,18 +15,16 @@ import org.tvheadend.tvhclient.service.HtspService
 import org.tvheadend.tvhclient.ui.common.NetworkStatus
 import org.tvheadend.tvhclient.ui.common.interfaces.NetworkStatusInterface
 import org.tvheadend.tvhclient.ui.common.interfaces.SnackbarMessageInterface
-import org.tvheadend.tvhclient.ui.features.startup.SplashActivity
+import org.tvheadend.tvhclient.ui.features.MainActivity
 import org.tvheadend.tvhclient.util.livedata.Event
 import javax.inject.Inject
 
 open class BaseViewModel(application: Application) : AndroidViewModel(application), SnackbarMessageInterface, NetworkStatusInterface {
 
     @Inject
-    lateinit var appContext: Context
-    @Inject
     lateinit var appRepository: AppRepository
-    @Inject
-    lateinit var sharedPreferences: SharedPreferences
+
+    var sharedPreferences: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(application.applicationContext)
 
     var startupCompleteLiveData = MutableLiveData<Boolean>()
         private set
@@ -48,7 +47,7 @@ open class BaseViewModel(application: Application) : AndroidViewModel(applicatio
         private set
 
     var connection: Connection
-    var connectionLiveData: LiveData<Connection>
+    private var connectionLiveData: LiveData<Connection>
 
     /**
      * Contains the live data information that the application is unlocked or not
@@ -65,11 +64,11 @@ open class BaseViewModel(application: Application) : AndroidViewModel(applicatio
     var htspVersion: Int
     var removeFragmentWhenSearchIsDone = false
 
-    var searchQuery = MutableLiveData("") // TODO rename
+    var searchQueryLiveData = MutableLiveData("")
     var searchViewHasFocus = false
 
     val isSearchActive: Boolean
-        get() = !searchQuery.value.isNullOrEmpty()
+        get() = !searchQueryLiveData.value.isNullOrEmpty()
 
     init {
         inject()
@@ -96,18 +95,18 @@ open class BaseViewModel(application: Application) : AndroidViewModel(applicatio
                 appRepository.connectionData.setSyncRequiredForActiveConnection()
             }
             context.stopService(Intent(context, HtspService::class.java))
-            val intent = Intent(context, SplashActivity::class.java)
+            val intent = Intent(context, MainActivity::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             context.startActivity(intent)
         }
     }
 
     fun startSearchQuery(query: String) {
-        searchQuery.value = query
+        searchQueryLiveData.value = query
     }
 
     fun clearSearchQuery() {
-        searchQuery.value = ""
+        searchQueryLiveData.value = ""
     }
 
     override fun setSnackbarMessage(intent: Intent) {

@@ -47,4 +47,8 @@
         <item quantity="one">%d recording is running</item>
         <item quantity="other">%d recordings are running</item>
     </plurals>
+    <plurals name="program_starts_soon">
+        <item quantity="one">Program %1$s starts in %2$d minute</item>
+        <item quantity="other">Program %1$s starts in %2$d minutes</item>
+    </plurals>
 </resources>

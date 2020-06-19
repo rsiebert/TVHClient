@@ -85,7 +85,7 @@ class ConnectionDataSource(private val db: AppRoomDatabase) : DataSourceInterfac
     override fun getItemById(id: Any): Connection? {
         var connection: Connection? = null
         runBlocking(Dispatchers.IO) {
-            connection = db.connectionDao.loadConnectionByIdSync(id as Int).toConnection()
+            connection = db.connectionDao.loadConnectionByIdSync(id as Int)?.toConnection()
         }
         return connection
     }

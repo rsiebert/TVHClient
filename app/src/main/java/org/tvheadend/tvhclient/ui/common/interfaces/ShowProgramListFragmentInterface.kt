@@ -1,4 +1,3 @@
 package org.tvheadend.tvhclient.ui.common.interfaces
 
-interface ShowProgramListFragmentInterface {
-}
+interface ShowProgramListFragmentInterface

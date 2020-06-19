@@ -150,7 +150,6 @@
     <string name="pref_copy_playback_url_to_clipboard_enabled_sum">Lejátszási problémák esetén a másolás használható a lejátszás tesztelésére a böngészőben.</string>
     <string name="pref_crash_reporting_settings">Hibajelentések beállítása</string>
     <string name="pref_customize_user_interface">A felhasználói felület testreszabása</string>
-    <string name="pref_customize_user_interface_sum">Válasszon a különböző lehetőségek közül, a felület testreszabásához.</string>
     <string name="pref_date_time_format">Idő és dátumformátum</string>
     <string name="pref_date_time_format_sum">Jelenítse meg az országában használt idő és dátumformátumot. Alapértelmezett a következő formátum \'31.12.2017, 21:09\'.</string>
     <string name="pref_debug_mode">Debug Mód</string>
@@ -196,7 +195,6 @@
     <string name="pref_internal_player_for_recordings_enabled">Lejátszások lejátszása a belső lejátszóval</string>
     <string name="pref_internal_player_timeshift_enabled">Engedélyezze az időeltolás (timeshift) támogatását</string>
     <string name="pref_language">Nyelv</string>
-    <string name="pref_language_sum">Válassza ki az alkalmazás nyelvét.</string>
     <string name="pref_manage_connections">Kapcsolatok kezelése</string>
     <string name="pref_manage_connections_sum">TVHeadend szerver kiválasztása, hozzáadása, szerkesztése.</string>
     <string name="pref_menu_visibility">Menü láthatósága</string>
@@ -267,8 +265,7 @@
     <string name="pref_streaming_url_sum">Írja be az URL-t a gazdagépnévvel és a portnal, hogy a videókat a szerverről továbbítsa. Csak akkor szükséges, ha külső lejátszót használnak. Példa: http://myserver:9981</string>
     <string name="pref_tag_icon">Csatorna címke ikon</string>
     <string name="pref_tag_icon_sum">Mutassa a csatorna címke ikonját.</string>
-    <string name="pref_theme">Világos téma</string>
-    <string name="pref_theme_sum">Világos téma használata</string>
+    <string name="pref_theme">Téma</string>
     <string name="pref_unlocker">További beállítások</string>
     <string name="pref_unlocker_sum">Engedélyezze a további funkciók elérését és támogatja a TVHClient további fejlesztést a teljes verzió megvásárlásával.</string>
     <string name="pref_user">Felhasználónév</string>

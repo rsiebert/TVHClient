@@ -21,7 +21,7 @@ import org.tvheadend.data.entity.*
             ServerProfileEntity::class,
             ServerStatusEntity::class],
         exportSchema = false,
-        version = 13)
+        version = 14)
 abstract class AppRoomDatabase : RoomDatabase() {
 
     internal abstract val timerRecordingDao: TimerRecordingDao
@@ -64,6 +64,7 @@ abstract class AppRoomDatabase : RoomDatabase() {
                             .addMigrations(MIGRATION_10_11)
                             .addMigrations(MIGRATION_11_12)
                             .addMigrations(MIGRATION_12_13)
+                            .addMigrations(MIGRATION_13_14)
                             .build()
                 }
             }
@@ -156,6 +157,13 @@ abstract class AppRoomDatabase : RoomDatabase() {
         private val MIGRATION_12_13 = object : Migration(12, 13) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("ALTER TABLE recordings ADD COLUMN duration INTEGER NOT NULL DEFAULT 0;")
+            }
+        }
+
+        private val MIGRATION_13_14 = object : Migration(13, 14) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("ALTER TABLE server_status ADD COLUMN series_recording_server_profile_id INTEGER NOT NULL DEFAULT 0;")
+                database.execSQL("ALTER TABLE server_status ADD COLUMN timer_recording_server_profile_id INTEGER NOT NULL DEFAULT 0;")
             }
         }
     }

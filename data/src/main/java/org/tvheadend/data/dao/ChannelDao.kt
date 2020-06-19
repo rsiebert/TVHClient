@@ -19,7 +19,7 @@ internal interface ChannelDao {
     @Query("SELECT c.* FROM channels AS c " +
             " WHERE $CONNECTION_IS_ACTIVE" +
             " AND c.id = :id")
-    fun loadChannelByIdSync(id: Int): ChannelEntity
+    fun loadChannelByIdSync(id: Int): ChannelEntity?
 
     @Transaction
     @Query(CHANNEL_BASE_QUERY +
@@ -27,7 +27,7 @@ internal interface ChannelDao {
             " LEFT JOIN programs AS next_program ON next_program.start = program.stop AND next_program.channel_id = c.id " +
             " WHERE $CONNECTION_IS_ACTIVE" +
             " AND c.id = :id")
-    fun loadChannelByIdWithProgramsSync(id: Int, time: Long): ChannelEntity
+    fun loadChannelByIdWithProgramsSync(id: Int, time: Long): ChannelEntity?
 
     @Query("SELECT c.* FROM channels AS c " +
             " WHERE $CONNECTION_IS_ACTIVE" +

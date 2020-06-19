@@ -23,7 +23,7 @@ import org.tvheadend.tvhclient.service.HtspIntentService
 import org.tvheadend.tvhclient.service.HtspService
 import org.tvheadend.tvhclient.ui.common.SuggestionProvider
 import org.tvheadend.tvhclient.ui.common.interfaces.ToolbarInterface
-import org.tvheadend.tvhclient.ui.features.startup.SplashActivity
+import org.tvheadend.tvhclient.ui.features.MainActivity
 import org.tvheadend.tvhclient.util.extensions.sendSnackbarMessage
 import org.tvheadend.tvhclient.util.getIconUrl
 import org.tvheadend.tvhclient.util.logging.FileLoggingTree
@@ -47,9 +47,7 @@ class SettingsAdvancedFragment : PreferenceFragmentCompat(), Preference.OnPrefer
         super.onActivityCreated(savedInstanceState)
         settingsViewModel = ViewModelProviders.of(activity as SettingsActivity).get(SettingsViewModel::class.java)
 
-        (activity as ToolbarInterface).let {
-            it.setTitle(getString(R.string.pref_advanced_settings))
-        }
+        (activity as ToolbarInterface).setTitle(getString(R.string.pref_advanced_settings))
 
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(activity)
 
@@ -295,7 +293,7 @@ class SettingsAdvancedFragment : PreferenceFragmentCompat(), Preference.OnPrefer
             it.stopService(Intent(it, HtspService::class.java))
             settingsViewModel.setSyncRequiredForActiveConnection()
 
-            val intent = Intent(it, SplashActivity::class.java)
+            val intent = Intent(it, MainActivity::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             it.startActivity(intent)
         }

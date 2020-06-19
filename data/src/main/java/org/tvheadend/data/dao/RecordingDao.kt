@@ -92,7 +92,7 @@ internal interface RecordingDao {
     @Query(RECORDING_BASE_QUERY +
             " WHERE $CONNECTION_IS_ACTIVE" +
             " AND rec.id = :id")
-    fun loadRecordingByIdSync(id: Int): RecordingEntity
+    fun loadRecordingByIdSync(id: Int): RecordingEntity?
 
     @Transaction
     @Query(RECORDING_BASE_QUERY +
@@ -104,7 +104,7 @@ internal interface RecordingDao {
     @Query(RECORDING_BASE_QUERY +
             " WHERE $CONNECTION_IS_ACTIVE" +
             " AND rec.event_id = :id")
-    fun loadRecordingByEventIdSync(id: Int): RecordingEntity
+    fun loadRecordingByEventIdSync(id: Int): RecordingEntity?
 
     @Transaction
     @Insert(onConflict = OnConflictStrategy.REPLACE)

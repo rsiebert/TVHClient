@@ -129,7 +129,7 @@
             app:layout_constraintEnd_toStartOf="@+id/state"
             app:layout_constraintStart_toStartOf="@+id/guideline"
             app:layout_constraintTop_toTopOf="@+id/guideline2"
-            tools:text="WDR Düsseldorf"
+            tools:text="@string/channel"
             tools:visibility="visible" />
 
         <TextView

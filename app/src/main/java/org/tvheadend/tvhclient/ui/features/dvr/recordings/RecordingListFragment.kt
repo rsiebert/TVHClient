@@ -50,7 +50,7 @@ abstract class RecordingListFragment : BaseFragment(), RecyclerViewClickInterfac
 
     private fun observeSearchQuery() {
         Timber.d("Observing search query")
-        baseViewModel.searchQuery.observe(viewLifecycleOwner, Observer { query ->
+        baseViewModel.searchQueryLiveData.observe(viewLifecycleOwner, Observer { query ->
             if (query.isNotEmpty()) {
                 Timber.d("View model returned search query '$query'")
                 onSearchRequested(query)
@@ -130,8 +130,8 @@ abstract class RecordingListFragment : BaseFragment(), RecyclerViewClickInterfac
                         it.commit()
                     }
                 }
-            } else if (recordingViewModel.currentId.value != recording.id) {
-                recordingViewModel.currentId.value = recording.id
+            } else if (recordingViewModel.currentIdLiveData.value != recording.id) {
+                recordingViewModel.currentIdLiveData.value = recording.id
             }
         }
     }
@@ -250,7 +250,7 @@ abstract class RecordingListFragment : BaseFragment(), RecyclerViewClickInterfac
     abstract override fun getQueryHint(): String
 
     private fun enableScheduledRecording(recording: Recording, enabled: Boolean): Boolean {
-        val intent = recordingViewModel.getIntentData(recording)
+        val intent = recordingViewModel.getIntentData(requireContext(), recording)
         intent.action = "updateDvrEntry"
         intent.putExtra("id", recording.id)
         intent.putExtra("enabled", if (enabled) 1 else 0)

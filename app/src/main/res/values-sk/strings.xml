@@ -150,7 +150,6 @@
     <string name="pref_copy_playback_url_to_clipboard_enabled_sum">V prípade problémov s prehrávaním je možné kopírovanú adresu URL použiť na testovanie prehrávania v prehliadači.</string>
     <string name="pref_crash_reporting_settings">Nastavenie nahlasovania chýb</string>
     <string name="pref_customize_user_interface">Upraviť použivateľské rozhranie</string>
-    <string name="pref_customize_user_interface_sum">Výber rôznych nastavení, ktoré definujú, aké informácie budú zobrazené na jednotlivých obrazovkách.</string>
     <string name="pref_date_time_format">Formát dátumu a času</string>
     <string name="pref_date_time_format_sum">Zobrazí dátum a čas, ktorý je používaný vo vašej krajine. V opačnom prípade bude použitý formát \'31.12.2017, 21:09\'.</string>
     <string name="pref_debug_mode">Debug Mode</string>
@@ -196,7 +195,6 @@
     <string name="pref_internal_player_for_recordings_enabled">Prehrávajte nahrávky s interným prehrávačom</string>
     <string name="pref_internal_player_timeshift_enabled">Povoliť podporu časového posunu</string>
     <string name="pref_language">Jazyk</string>
-    <string name="pref_language_sum">Výber jazyka, ktorý bude použitý v aplikácii.</string>
     <string name="pref_manage_connections">Spravovať pripojenia</string>
     <string name="pref_manage_connections_sum">Nastaviť aktívne pripojenie k TVHeadend serveru alebo pridať, upraviť či vymazať pripojenie.</string>
     <string name="pref_menu_visibility">Viditeľnosť menu</string>
@@ -268,7 +266,6 @@
     <string name="pref_tag_icon">Skupiny kanálov</string>
     <string name="pref_tag_icon_sum">Zobrazenie ikony \'skupiny kanálov\'.</string>
     <string name="pref_theme">Svetla téma</string>
-    <string name="pref_theme_sum">Použiť svetlú tému.</string>
     <string name="pref_unlocker">Sprístupniť všetky funkcie</string>
     <string name="pref_unlocker_sum">Odomknutie ďalších funkcií a podporenie vývoju zakúpením aplikácie.</string>
     <string name="pref_user">Použivateľské meno</string>

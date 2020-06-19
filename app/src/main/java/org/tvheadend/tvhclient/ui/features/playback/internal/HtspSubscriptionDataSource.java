@@ -115,7 +115,7 @@ public class HtspSubscriptionDataSource implements DataSource, Closeable, HtspMe
         SharedPreferences mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         boolean timeshiftEnabled = mSharedPreferences.getBoolean("timeshift_enabled", context.getResources().getBoolean(R.bool.pref_default_timeshift_enabled));
         if (timeshiftEnabled) {
-            timeshiftPeriod = Integer.valueOf(mSharedPreferences.getString("timeshift_period", context.getResources().getString(R.string.pref_default_timeshift_period)));
+            timeshiftPeriod = Integer.parseInt(mSharedPreferences.getString("timeshift_period", context.getResources().getString(R.string.pref_default_timeshift_period)));
         }
 
         dataSourceNumber = dataSourceCount.incrementAndGet();
@@ -233,7 +233,7 @@ public class HtspSubscriptionDataSource implements DataSource, Closeable, HtspMe
         lock.lock();
         try {
             int remaining = byteBuffer.remaining();
-            length = remaining >= readLength ? readLength : remaining;
+            length = Math.min(remaining, readLength);
 
             byteBuffer.get(buffer, offset, length);
             byteBuffer.compact();

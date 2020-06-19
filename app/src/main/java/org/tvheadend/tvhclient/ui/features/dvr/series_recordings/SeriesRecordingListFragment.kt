@@ -62,7 +62,7 @@ class SeriesRecordingListFragment : BaseFragment(), RecyclerViewClickInterface, 
 
     private fun observeSearchQuery() {
         Timber.d("Observing search query")
-        baseViewModel.searchQuery.observe(viewLifecycleOwner, Observer { query ->
+        baseViewModel.searchQueryLiveData.observe(viewLifecycleOwner, Observer { query ->
             if (query.isNotEmpty()) {
                 Timber.d("View model returned search query '$query'")
                 onSearchRequested(query)
@@ -146,8 +146,8 @@ class SeriesRecordingListFragment : BaseFragment(), RecyclerViewClickInterface, 
                         it.commit()
                     }
                 }
-            } else if (seriesRecordingViewModel.currentId.value != recording.id) {
-                seriesRecordingViewModel.currentId.value = recording.id
+            } else if (seriesRecordingViewModel.currentIdLiveData.value != recording.id) {
+                seriesRecordingViewModel.currentIdLiveData.value = recording.id
             }
         }
     }
@@ -184,7 +184,7 @@ class SeriesRecordingListFragment : BaseFragment(), RecyclerViewClickInterface, 
     }
 
     private fun enableSeriesRecording(seriesRecording: SeriesRecording, enabled: Boolean): Boolean {
-        val intent = seriesRecordingViewModel.getIntentData(seriesRecording)
+        val intent = seriesRecordingViewModel.getIntentData(requireContext(), seriesRecording)
         intent.action = "updateAutorecEntry"
         intent.putExtra("id", seriesRecording.id)
         intent.putExtra("enabled", if (enabled) 1 else 0)

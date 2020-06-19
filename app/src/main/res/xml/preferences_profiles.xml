@@ -10,6 +10,20 @@
             android:title="@string/pref_recording_profiles" />
 
         <ListPreference
+            android:name="@string/pref_series_recording_profiles"
+            android:dialogTitle="@string/pref_series_recording_profiles"
+            android:key="series_recording_profiles"
+            android:summary="@string/pref_series_recording_profiles_sum"
+            android:title="@string/pref_series_recording_profiles" />
+
+        <ListPreference
+            android:name="@string/pref_timer_recording_profiles"
+            android:dialogTitle="@string/pref_timer_recording_profiles"
+            android:key="timer_recording_profiles"
+            android:summary="@string/pref_timer_recording_profiles_sum"
+            android:title="@string/pref_timer_recording_profiles" />
+
+        <ListPreference
             android:name="@string/pref_htsp_playback_profiles"
             android:dialogTitle="@string/pref_htsp_playback_profiles"
             android:key="htsp_playback_profiles"

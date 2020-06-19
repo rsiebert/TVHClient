@@ -47,4 +47,8 @@
         <item quantity="one">%d Aufnahme läuft</item>
         <item quantity="other">%d Aufnahmen laufen</item>
     </plurals>
+    <plurals name="program_starts_soon">
+        <item quantity="one">Programm %1$s beginnt in %2$d Minute</item>
+        <item quantity="other">Programm %1$s beginnt in %2$d Minuten</item>
+    </plurals>
 </resources>

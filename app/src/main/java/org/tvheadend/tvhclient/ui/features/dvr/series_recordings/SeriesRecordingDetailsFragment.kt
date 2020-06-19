@@ -38,7 +38,7 @@ class SeriesRecordingDetailsFragment : BaseFragment(), RecordingRemovedInterface
         }
 
         arguments?.let {
-            seriesRecordingViewModel.currentId.value = it.getString("id", "")
+            seriesRecordingViewModel.currentIdLiveData.value = it.getString("id", "")
         }
 
         seriesRecordingViewModel.recordingLiveData.observe(viewLifecycleOwner, Observer {

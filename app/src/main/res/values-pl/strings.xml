@@ -150,7 +150,6 @@
     <string name="pref_copy_playback_url_to_clipboard_enabled_sum">W przypadku problemów z odtwarzaniem skopiowany adres URL można wykorzystać do testowania odtwarzania w przeglądarce.</string>
     <string name="pref_crash_reporting_settings">Ustawienia raportowania awarii</string>
     <string name="pref_customize_user_interface">Dostosuj interfejs użytkownika</string>
-    <string name="pref_customize_user_interface_sum">Wybierz jedną z wielu opcji, aby zdecydować, które informacje będą wyświetlane na każdym ekranie.</string>
     <string name="pref_date_time_format">Format daty i czasu</string>
     <string name="pref_date_time_format_sum">Wyświetl datę i godzinę jaka jest zwykle uzywana w Twoim karju. W przeciwnym wypadku zostanie użyty format \'31.12.2017, 21:09\'.</string>
     <string name="pref_debug_mode">Tryb debugowania</string>
@@ -196,7 +195,6 @@
     <string name="pref_internal_player_for_recordings_enabled">Odtwarzaj nagrania za pomocą wewnętrznego odtwarzacza</string>
     <string name="pref_internal_player_timeshift_enabled">Włącz obsługę Timeshift</string>
     <string name="pref_language">Język</string>
-    <string name="pref_language_sum">Wybierz język, który będzie używany przez aplikację.</string>
     <string name="pref_manage_connections">Zarządzanie połączeniami</string>
     <string name="pref_manage_connections_sum">Wybierz Twoje aktywne połączenie do serwera TVheadend lub dodaj, edytuj lub usuń połączenia.</string>
     <string name="pref_menu_visibility">Widoczność menu</string>
@@ -268,7 +266,6 @@
     <string name="pref_tag_icon">Ikona tagu kanałów</string>
     <string name="pref_tag_icon_sum">Pokaż ikonę tagu kanałów.</string>
     <string name="pref_theme">Jasny motyw</string>
-    <string name="pref_theme_sum">Użyj jasnego motywu</string>
     <string name="pref_unlocker">Włacz wszystkie opcję</string>
     <string name="pref_unlocker_sum">Włącz dostęp do zaawansowanych opcji i wspieraj rozwój przez zakup tej aplikacji.</string>
     <string name="pref_user">Nazwa użytkownika</string>

@@ -182,15 +182,17 @@ public class HtspFileInputStreamDataSource implements DataSource, Closeable, Hts
 
     @Override
     public int read(byte[] bytes, int offset, int readLength) {
-
+        Timber.d("Read %s at offset %s with length %s", bytes.length, offset, readLength);
         // If we've reached the end of the file, we're done :)
         if (fileSize == filePosition && !byteBuffer.hasRemaining()) {
+            Timber.d("Return because file has been read");
             return -1;
         }
 
         sendFileRead(filePosition);
 
         if (!byteBuffer.hasRemaining() && fileSize == -1) {
+            Timber.d("No data and no known size, return");
             // If we still don't have any data, and we
             // don't have a known size, then we're done.
             return -1;
@@ -202,16 +204,20 @@ public class HtspFileInputStreamDataSource implements DataSource, Closeable, Hts
 
         int startPos = byteBuffer.position();
 
+        Timber.d("Getting bytes %s from offset %s with length %s, buffer has elements remaining %s", bytes.length, offset, readLength, byteBuffer.remaining());
         byteBuffer.get(bytes, offset, Math.min(readLength, byteBuffer.remaining()));
-        return byteBuffer.position() - startPos;
+        int bytesRead = byteBuffer.position() - startPos;
+        Timber.d("Read %s bytes", bytesRead);
+        return bytesRead;
     }
 
     @Override
     public Uri getUri() {
-        Timber.d("Returning data spec uri");
         if (dataSpec != null) {
+            Timber.d("Returning data spec uri of %s", dataSpec.uri);
             return dataSpec.uri;
         }
+        Timber.d("Returning data spec uri of null");
         return null;
     }
 
@@ -250,6 +256,7 @@ public class HtspFileInputStreamDataSource implements DataSource, Closeable, Hts
         }
 
         long size = 1024000;
+        Timber.d("File size is %s", fileSize);
         if (fileSize != -1) {
             // Make sure we don't overrun the file
             if (offset + size > fileSize) {

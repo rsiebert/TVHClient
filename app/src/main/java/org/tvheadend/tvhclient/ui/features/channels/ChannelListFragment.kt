@@ -29,6 +29,8 @@ import timber.log.Timber
 
 class ChannelListFragment : BaseFragment(), RecyclerViewClickInterface, ChannelTimeSelectedInterface, ChannelTagIdsSelectedInterface, SearchRequestInterface, Filter.FilterListener, ShowProgramListFragmentInterface {
 
+    private val dialogDismissHandler = Handler()
+    private var dialogDismissRunnable: Runnable? = null
     private lateinit var programViewModel: ProgramViewModel
     private lateinit var recyclerViewAdapter: ChannelRecyclerViewAdapter
     private lateinit var channelViewModel: ChannelViewModel
@@ -138,7 +140,7 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickInterface, ChannelT
 
     private fun observeSearchQuery() {
         Timber.d("Observing search query")
-        baseViewModel.searchQuery.observe(viewLifecycleOwner, Observer { query ->
+        baseViewModel.searchQueryLiveData.observe(viewLifecycleOwner, Observer { query ->
             if (query.isNotEmpty()) {
                 Timber.d("View model returned search query '$query'")
                 onSearchRequested(query)
@@ -172,6 +174,7 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickInterface, ChannelT
     override fun onPause() {
         super.onPause()
         currentTimeUpdateHandler.removeCallbacks(currentTimeUpdateTask)
+        dialogDismissRunnable?.let { dialogDismissHandler.removeCallbacks(it) }
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -206,12 +209,24 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickInterface, ChannelT
         val ctx = context ?: return super.onOptionsItemSelected(item)
         return when (item.itemId) {
             R.id.menu_channel_tags -> showChannelTagSelectionDialog(ctx, channelTags.toMutableList(), channelCount, this)
-            R.id.menu_program_timeframe -> showProgramTimeframeSelectionDialog(ctx, channelViewModel.selectedTimeOffset, intervalInHours, 12, this)
+            R.id.menu_program_timeframe -> {
+                val dialog = showProgramTimeframeSelectionDialog(requireActivity(), channelViewModel.selectedTimeOffset, intervalInHours, 12, this)
+                startDialogDismissTimer(dialog)
+                true
+            }
             R.id.menu_genre_color_information -> showGenreColorDialog(ctx)
             R.id.menu_channel_sort_order -> showChannelSortOrderSelectionDialog(ctx)
             R.id.menu_search_channels -> showSearchForChannelsDialog(ctx)
             else -> super.onOptionsItemSelected(item)
         }
+    }
+
+    private fun startDialogDismissTimer(dialog: MaterialDialog) {
+        dialogDismissRunnable = Runnable {
+            if (dialog.isShowing) {
+                dialog.dismiss()
+            }
+        }.also { dialogDismissHandler.postDelayed(it, 60000) }
     }
 
     private fun showSearchForChannelsDialog(context: Context): Boolean {
@@ -226,6 +241,7 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickInterface, ChannelT
     }
 
     override fun onTimeSelected(which: Int) {
+        dialogDismissRunnable?.let { dialogDismissHandler.removeCallbacks(it) }
         channelViewModel.selectedTimeOffset = which
         recycler_view?.gone()
 

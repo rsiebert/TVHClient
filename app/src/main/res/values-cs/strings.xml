@@ -149,7 +149,6 @@
     <string name="pref_copy_playback_url_to_clipboard_enabled_sum">V případě problémů s přehráváním lze kopírovat Url použít k testování přehrávání v prohlížeči.</string>
     <string name="pref_crash_reporting_settings">Nastavení hlášení selhání</string>
     <string name="pref_customize_user_interface">Přizpůsobte uživatelské rozhraní</string>
-    <string name="pref_customize_user_interface_sum">Vyberte si z různých možností, abyste se rozhodli, které informace se budou zobrazovat na každé obrazovce.</string>
     <string name="pref_date_time_format">Formát data a času</string>
     <string name="pref_date_time_format_sum">Zobrazte datum a čas obvykle používané ve vaší zemi. V opačném případě se použije formát \'31 .12.2017, 21:09\'.</string>
     <string name="pref_debug_mode">Debugovací mód</string>
@@ -195,7 +194,6 @@
     <string name="pref_internal_player_for_recordings_enabled">Přehrávejte nahrávky s interním přehrávačem</string>
     <string name="pref_internal_player_timeshift_enabled">Povolit podporu timeshift</string>
     <string name="pref_language">Jazyk</string>
-    <string name="pref_language_sum">Zvolte jazyk, který bude použit v aplikaci.</string>
     <string name="pref_manage_connections">Spravovat připojení</string>
     <string name="pref_manage_connections_sum">Nastavit Vaše aktivní připojení k TVHeadend serveru nebo přidat, odebrat a upravit již existující připojení.</string>
     <string name="pref_menu_visibility">Viditelnost částí menu</string>
@@ -265,8 +263,7 @@
     <string name="pref_streaming_url_sum">Chcete-li streamovat videa ze serveru, zadejte adresu URL s názvem hostitele a portem. Vyžaduje se pouze v případě použití externího přehrávače. Příklad: http://myserver:9981</string>
     <string name="pref_tag_icon">Ikona štítku kanálu</string>
     <string name="pref_tag_icon_sum">Zobrazit ikonu pro štítek kanálu.</string>
-    <string name="pref_theme">Světlé téma</string>
-    <string name="pref_theme_sum">Použít světlé téma.</string>
+    <string name="pref_theme">Téma</string>
     <string name="pref_unlocker">Povolit všechny funkce</string>
     <string name="pref_unlocker_sum">Povolit přístup k dalším funkcím a podpořit vývoj zakoupením této aplikace.</string>
     <string name="pref_user">Uživatelské jméno</string>
