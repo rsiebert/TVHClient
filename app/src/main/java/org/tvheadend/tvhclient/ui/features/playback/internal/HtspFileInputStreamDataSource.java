@@ -134,7 +134,7 @@ public class HtspFileInputStreamDataSource implements DataSource, Closeable, Hts
 
             } else {
                 final byte[] data = response.getByteArray("data");
-                Timber.d("Fetched " + data.length + " bytes of file at offset 0");
+                Timber.d("Fetched " + data.length + " bytes of file at filePosition " + filePosition);
                 filePosition += data.length;
                 byteBuffer = ByteBuffer.wrap(data);
             }
@@ -185,26 +185,27 @@ public class HtspFileInputStreamDataSource implements DataSource, Closeable, Hts
         Timber.d("Read %s at offset %s with length %s", bytes.length, offset, readLength);
         // If we've reached the end of the file, we're done :)
         if (fileSize == filePosition && !byteBuffer.hasRemaining()) {
-            Timber.d("Return because file has been read");
+            Timber.d("File has been read, returning -1");
             return -1;
         }
 
         sendFileRead(filePosition);
 
         if (!byteBuffer.hasRemaining() && fileSize == -1) {
-            Timber.d("No data and no known size, return");
+            Timber.d("No data and no known size, returning -1");
             // If we still don't have any data, and we
             // don't have a known size, then we're done.
             return -1;
 
         } else if (!byteBuffer.hasRemaining()) {
             // If we don't have data here, something went wrong
-            Timber.d("Failed to read data for %s", fileName);
+            Timber.d("Failed to read data for %s, returning -1", fileName);
+            return -1;
         }
 
         int startPos = byteBuffer.position();
 
-        Timber.d("Getting bytes %s from offset %s with length %s, buffer has elements remaining %s", bytes.length, offset, readLength, byteBuffer.remaining());
+        Timber.d("Getting bytes %s from offset %s, read length: %s, buffer elements remaining: %s", bytes.length, offset, readLength, byteBuffer.remaining());
         byteBuffer.get(bytes, offset, Math.min(readLength, byteBuffer.remaining()));
         int bytesRead = byteBuffer.position() - startPos;
         Timber.d("Read %s bytes", bytesRead);
