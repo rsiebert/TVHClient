@@ -20,8 +20,7 @@ public class HtspFileInputStream extends InputStream {
     private int bufPos;
     private long offset;
 
-    public HtspFileInputStream(HtspConnection conn, String path)
-            throws IOException {
+    public HtspFileInputStream(HtspConnection conn, String path) throws IOException {
         this.connection = conn;
         this.path = path;
 
@@ -49,13 +48,13 @@ public class HtspFileInputStream extends InputStream {
     static class FileOpenResponse implements HtspResponseListener {
         int id;
         long size;
-        long mtime;
+        long time;
 
         @Override
         public void handleResponse(@NotNull HtspMessage response) {
             id = response.getInteger("id", 0);
             size = response.getLong("size", 0);
-            mtime = response.getLong("mtime", 0);
+            time = response.getLong("mtime", 0);
             notifyAll();
         }
     }
@@ -126,7 +125,7 @@ public class HtspFileInputStream extends InputStream {
         fillBuffer();
 
         int ret = Math.min(buf.length - bufPos, outLength - outOffset);
-        if(ret > 0) {
+        if (ret > 0) {
             System.arraycopy(buf, bufPos, outBuf, outOffset, ret);
             bufPos += ret;
             return ret;
@@ -147,7 +146,7 @@ public class HtspFileInputStream extends InputStream {
     }
 
     private void fillBuffer() {
-        if(bufPos < buf.length) {
+        if (bufPos < buf.length) {
             return;
         }
 
