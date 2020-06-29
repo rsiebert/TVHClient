@@ -1,8 +1,11 @@
 package org.tvheadend.tvhclient.ui.features.settings
 
 
+import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.content.IntentFilter
+import android.os.Build
 import android.os.Bundle
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
@@ -10,6 +13,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import androidx.preference.PreferenceManager
 import org.tvheadend.tvhclient.MainApplication
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.ui.common.SnackbarMessageReceiver
@@ -145,5 +149,28 @@ class SettingsActivity : AppCompatActivity(), RemoveFragmentFromBackstackInterfa
         } else {
             super.onBackPressed()
         }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, resultData: Intent?) {
+        super.onActivityResult(requestCode, resultCode, resultData)
+        Timber.d("On activity result called with request code $requestCode and result code $resultCode")
+        if (requestCode == REQUEST_CODE_DIRECTORY_PICKER && resultCode == Activity.RESULT_OK) {
+            // The result data contains a URI for the document or directory that the user selected.
+            resultData?.data?.also { uri ->
+                val contentResolver = applicationContext.contentResolver
+                val takeFlags: Int = Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+                // Check for the freshest data.
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                    contentResolver.takePersistableUriPermission(uri, takeFlags)
+                }
+                Timber.d("Updating download directory preference to $uri")
+                val prefs = PreferenceManager.getDefaultSharedPreferences(this)
+                prefs.edit().putString("download_directory", uri.toString()).apply()
+            }
+        }
+    }
+
+    companion object {
+        const val REQUEST_CODE_DIRECTORY_PICKER = 1000
     }
 }
