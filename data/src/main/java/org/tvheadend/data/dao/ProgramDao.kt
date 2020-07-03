@@ -47,7 +47,21 @@ internal interface ProgramDao {
             "  OR (start < :endTime AND stop >= :endTime)) " +
             " GROUP BY p.id " +
             " ORDER BY start ASC")
-    fun loadProgramsFromChannelBetweenTimeSync(channelId: Int, startTime: Long, endTime: Long): List<EpgProgramEntity>
+    fun loadEpgProgramsFromChannelBetweenTimeSync(channelId: Int, startTime: Long, endTime: Long): List<EpgProgramEntity>
+
+    @Transaction
+    @Query(PROGRAM_BASE_QUERY +
+            " WHERE $CONNECTION_IS_ACTIVE" +
+            " AND channel_id = :channelId " +
+            // Program is within time slot
+            " AND ((start >= :startTime AND stop <= :endTime) " +
+            // Program is at the beginning of time slot
+            "  OR (start <= :startTime AND stop > :startTime) " +
+            // Program is at the end of the time slot
+            "  OR (start < :endTime AND stop >= :endTime)) " +
+            " GROUP BY p.id " +
+            " ORDER BY start ASC")
+    fun loadProgramsFromChannelBetweenTimeSync(channelId: Int, startTime: Long, endTime: Long): List<ProgramEntity>
 
     @Transaction
     @Query(PROGRAM_BASE_QUERY +

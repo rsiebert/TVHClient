@@ -95,7 +95,7 @@ class ProgramDataSource(private val db: AppRoomDatabase) : DataSourceInterface<P
     fun getItemByChannelIdAndBetweenTime(channelId: Int, startTime: Long, endTime: Long): List<EpgProgram> {
         val programs = ArrayList<EpgProgram>()
         runBlocking(Dispatchers.IO) {
-            programs.addAll(db.programDao.loadProgramsFromChannelBetweenTimeSync(channelId, startTime, endTime).map { it.toEpgProgram() })
+            programs.addAll(db.programDao.loadEpgProgramsFromChannelBetweenTimeSync(channelId, startTime, endTime).map { it.toEpgProgram() })
         }
         return programs
     }
@@ -108,10 +108,19 @@ class ProgramDataSource(private val db: AppRoomDatabase) : DataSourceInterface<P
         return program
     }
 
-    fun getItemsByChannelId(id: Int): List<Program> {
+    fun getItemsByChannelId(channelId: Int): List<Program> {
         val programs = ArrayList<Program>()
         runBlocking(Dispatchers.IO) {
-            programs.addAll(db.programDao.loadProgramsFromChannelSync(id).map { it.toProgram() })
+
+            val timeStep = 1000L * 3600 * 24 * 2
+            val lastProgram = db.programDao.loadLastProgramFromChannelSync(channelId)?.toProgram()
+            val startTime = System.currentTimeMillis()
+            val endTime = lastProgram?.stop ?: startTime
+
+            // Load the programs in chunks to avoid a SQLiteBlobTooBigException
+            for (time in startTime until endTime step timeStep) {
+                programs.addAll(db.programDao.loadProgramsFromChannelBetweenTimeSync(channelId, time, time + timeStep).map { it.toProgram() })
+            }
         }
         return programs
     }
