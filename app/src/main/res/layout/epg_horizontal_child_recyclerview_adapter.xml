@@ -8,8 +8,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="?android:attr/selectableItemBackground"
-        android:onClick="@{(view) -> callback.onClick(view, position)}"
-        android:onLongClick="@{(view) -> callback.onLongClick(view, position)}"
+        android:onClick="@{(view) -> viewModel.onClick(view, program)}"
+        android:onLongClick="@{(view) -> viewModel.onLongClick(view, program)}"
         app:layoutWidth="@{layoutWidth}">
 
         <ImageView
@@ -124,15 +124,7 @@
             type="org.tvheadend.tvhclient.ui.features.epg.EpgViewModel" />
 
         <variable
-            name="position"
-            type="int" />
-
-        <variable
             name="layoutWidth"
             type="int" />
-
-        <variable
-            name="callback"
-            type="org.tvheadend.tvhclient.ui.common.interfaces.RecyclerViewClickInterface" />
     </data>
 </layout>

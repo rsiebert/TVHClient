@@ -1,10 +1,14 @@
 package org.tvheadend.tvhclient.ui.features.epg
 
 import android.app.Application
+import android.content.ContextWrapper
 import android.content.SharedPreferences
 import android.util.SparseArray
+import android.view.View
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.util.Pair
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
@@ -13,6 +17,7 @@ import org.tvheadend.data.entity.EpgChannel
 import org.tvheadend.data.entity.EpgProgram
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.ui.features.channels.BaseChannelViewModel
+import org.tvheadend.tvhclient.ui.features.programs.ProgramDetailsFragment
 import org.tvheadend.tvhclient.util.livedata.LiveEvent
 import timber.log.Timber
 import java.util.*
@@ -254,5 +259,46 @@ class EpgViewModel(application: Application) : BaseChannelViewModel(application)
 
     fun getEndTime(fragmentId: Int): Long {
         return endTimes[fragmentId]
+    }
+
+    /**
+     * Returns the activity from the view context so that
+     * stuff like the fragment manager can be accessed
+     *
+     * @param view The view to retrieve the activity from
+     * @return Activity or null if none was found
+     */
+    private fun getActivity(view: View): AppCompatActivity? {
+        var context = view.context
+        while (context is ContextWrapper) {
+            if (context is AppCompatActivity) {
+                return context
+            }
+            context = context.baseContext
+        }
+        return null
+    }
+
+    fun onClick(view: View, program: EpgProgram) {
+        Timber.d("Clicked on program ${program.title}")
+        val activity = getActivity(view) ?: return
+        val fragment = ProgramDetailsFragment.newInstance(program.eventId, program.channelId)
+        val ft = activity.supportFragmentManager.beginTransaction()
+        ft.replace(R.id.main, fragment)
+        ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+        ft.addToBackStack(null)
+        ft.commit()
+    }
+
+    fun onLongClick(view: View, program: EpgProgram): Boolean {
+        Timber.d("Long clicked on program ${program.title}")
+        val activity = getActivity(view) ?: return false
+        val fragment = activity.supportFragmentManager.findFragmentById(R.id.main)
+        if (fragment is EpgFragment
+                && fragment.isAdded
+                && fragment.isResumed) {
+            fragment.showPopupMenu(view, program)
+        }
+        return true
     }
 }
