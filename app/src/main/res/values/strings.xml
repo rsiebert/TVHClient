@@ -244,6 +244,7 @@
     <string name="pref_server_url">Connection Url</string>
     <string name="pref_server_url_hint">Example: http://myserver:9982</string>
     <string name="pref_server_url_sum">Enter the url with the hostname and port to connect to the server. This is the same url used to connect to the web interface of the server. Example: http://myserver:9982</string>
+    <string name="pref_share">Share link</string>
     <string name="pref_show_cast_minicontroller">Cast controls</string>
     <string name="pref_show_cast_minicontroller_sum">Show a cast mini controller at the bottom of the screen to display some information about the current cast.</string>
     <string name="pref_show_channel_name">Show channel name</string>

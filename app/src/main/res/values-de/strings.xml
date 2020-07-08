@@ -243,6 +243,7 @@
     <string name="pref_server_url">Verbindungs-URL</string>
     <string name="pref_server_url_hint">Beispiel: http://mein-server:9982</string>
     <string name="pref_server_url_sum">Geben Sie die URL mit dem Hostnamen und dem Port ein, um eine Verbindung zum Server herzustellen. Dies ist die gleiche URL, die zum Herstellen einer Verbindung mit der Webschnittstelle des Servers verwendet wird. Beispiel: http://mein-server:9982</string>
+    <string name="pref_share">Link teilen</string>
     <string name="pref_show_cast_minicontroller">Cast Ministeuerung</string>
     <string name="pref_show_cast_minicontroller_sum">Zeigt im unteren Bildschirmbereich die wichtigsten Informationen und Steuerelemente für den aktuellen Cast an.</string>
     <string name="pref_show_channel_name">Zeige Sendername</string>
