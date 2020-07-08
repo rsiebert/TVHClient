@@ -110,6 +110,7 @@
         <item name="ic_menu_status">@drawable/ic_menu_status_dark</item>
         <item name="ic_menu_information">@drawable/ic_menu_info_dark</item>
         <item name="ic_menu_extras">@drawable/ic_menu_extras_dark</item>
+        <item name="ic_menu_share">@drawable/ic_menu_share_dark</item>
         <item name="ic_arrow_drop_down_like_spinner">@drawable/ic_arrow_drop_down_like_spinner_dark</item>
         <!--</editor-fold>-->
 
@@ -212,6 +213,7 @@
         <item name="ic_menu_status">@drawable/ic_menu_status_light</item>
         <item name="ic_menu_information">@drawable/ic_menu_info_light</item>
         <item name="ic_menu_extras">@drawable/ic_menu_extras_light</item>
+        <item name="ic_menu_share">@drawable/ic_menu_share_light</item>
         <item name="ic_arrow_drop_down_like_spinner">@drawable/ic_arrow_drop_down_like_spinner_light</item>
         <!--</editor-fold>-->
 

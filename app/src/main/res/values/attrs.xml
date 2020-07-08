@@ -38,6 +38,7 @@
     <attr name="ic_menu_status" format="reference" />
     <attr name="ic_menu_information" format="reference" />
     <attr name="ic_menu_extras" format="reference" />
+    <attr name="ic_menu_share" format="reference" />
 
     <attr name="ic_arrow_drop_down_like_spinner" format="reference" />
 
