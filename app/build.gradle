@@ -163,7 +163,7 @@ dependencies {
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
     implementation 'androidx.annotation:annotation:1.1.0'
     implementation 'androidx.preference:preference:1.1.1'
-    implementation 'androidx.constraintlayout:constraintlayout:2.0.0-beta6'
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.0-beta7'
     implementation 'androidx.viewpager2:viewpager2:1.0.0'
     implementation 'androidx.work:work-runtime:2.3.4'
     implementation "androidx.lifecycle:lifecycle-extensions:$lifecycle_version"
@@ -212,13 +212,13 @@ dependencies {
 
     // ----------------------------------------------------------------------------
     // Required internal libraries for the application
-    def exoplayer_version = '2.11.1'
+    def exoplayer_version = '2.11.5'
 
     implementation "org.tvheadend.tvhclient.htsp:htsp:1.0.1"
-    debugImplementation "org.tvheadend.tvhclient.exoplayer:exoplayer-core:$exoplayer_version"
-    debugImplementation "org.tvheadend.tvhclient.exoplayer:exoplayer-ui:$exoplayer_version"
-    debugImplementation "org.tvheadend.tvhclient.exoplayer:exoplayer-dash:$exoplayer_version"
-    debugImplementation "org.tvheadend.tvhclient.exoplayer:extension-ffmpeg:$exoplayer_version"
+    implementation "org.tvheadend.tvhclient.exoplayer:exoplayer-core:$exoplayer_version"
+    implementation "org.tvheadend.tvhclient.exoplayer:exoplayer-ui:$exoplayer_version"
+    implementation "org.tvheadend.tvhclient.exoplayer:exoplayer-dash:$exoplayer_version"
+    implementation "org.tvheadend.tvhclient.exoplayer:extension-ffmpeg:$exoplayer_version"
     implementation project(':data')
 
     // ----------------------------------------------------------------------------
