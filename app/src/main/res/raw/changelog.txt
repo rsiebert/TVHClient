@@ -1,8 +1,9 @@
 $ 2.4.0
   % VERSION 2.4.0
-  _ 29.06.2020
+  _ 09.07.2020
     * Added setting to set the dark theme automatically
     * Added episode information to the recording screens
+    * Added support for KODI color tags in titles and subtitles
     * Added an option to set a 18:9 aspect ratio in the internal player
     * Added option to select a separate recording profile for series recordings
     * Fixed download folder selection for Android 10 devices
