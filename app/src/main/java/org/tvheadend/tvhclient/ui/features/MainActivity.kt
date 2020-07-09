@@ -12,6 +12,7 @@ import android.database.Cursor
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
+import android.os.StrictMode
 import android.provider.SearchRecentSuggestions
 import android.view.KeyEvent
 import android.view.Menu
@@ -85,6 +86,15 @@ class MainActivity : AppCompatActivity(), ToolbarInterface, LayoutControlInterfa
 
     override fun onCreate(savedInstanceState: Bundle?) {
         setTheme(getThemeId(this))
+
+        if (BuildConfig.DEBUG) {
+            StrictMode.setVmPolicy(StrictMode.VmPolicy.Builder()
+                    .detectLeakedSqlLiteObjects()
+                    .detectLeakedClosableObjects()
+                    .penaltyLog()
+                    .penaltyDeath()
+                    .build())
+        }
         super.onCreate(savedInstanceState)
         setContentView(R.layout.main_activity)
 
