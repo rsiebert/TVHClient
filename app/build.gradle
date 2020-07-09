@@ -214,11 +214,12 @@ dependencies {
     // Required internal libraries for the application
     def exoplayer_version = '2.11.5'
 
-    implementation "org.tvheadend.tvhclient.htsp:htsp:1.0.1"
     implementation "org.tvheadend.tvhclient.exoplayer:exoplayer-core:$exoplayer_version"
     implementation "org.tvheadend.tvhclient.exoplayer:exoplayer-ui:$exoplayer_version"
     implementation "org.tvheadend.tvhclient.exoplayer:exoplayer-dash:$exoplayer_version"
     implementation "org.tvheadend.tvhclient.exoplayer:extension-ffmpeg:$exoplayer_version"
+    //implementation "org.tvheadend.tvhclient.htsp:htsp:1.0.1"
+    implementation project(':htsp')
     implementation project(':data')
 
     // ----------------------------------------------------------------------------
