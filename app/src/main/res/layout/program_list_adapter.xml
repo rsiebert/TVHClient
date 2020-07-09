@@ -44,8 +44,8 @@
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
             app:genreColor="@{program.contentType}"
-            app:genreColorItemName="@{program.title}"
             app:genreColorAlphaOffset="@{0}"
+            app:genreColorItemName="@{program.title}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
@@ -80,11 +80,11 @@
             android:layout_marginEnd="8dp"
             android:layout_marginRight="8dp"
             android:ellipsize="end"
-            android:text="@{program.title}"
             app:layout_constraintEnd_toStartOf="@+id/state"
             app:layout_constraintStart_toEndOf="@+id/genre"
             app:layout_constraintTop_toTopOf="parent"
             app:marginStart="@{safeUnbox(viewModel.showProgramChannelIcon)}"
+            app:optionalColoredText="@{program.title}"
             tools:text="@string/title" />
 
         <TextView
@@ -99,12 +99,12 @@
             android:layout_marginRight="16dp"
             android:ellipsize="end"
             android:singleLine="true"
-            android:text="@{program.subtitle}"
             android:visibility="@{safeUnbox(viewModel.showProgramSubtitles) &amp;&amp; program.subtitle != null &amp;&amp; !program.subtitle.equals(program.title) ? View.VISIBLE : View.GONE}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/genre"
             app:layout_constraintTop_toBottomOf="@+id/title"
             app:marginStart="@{safeUnbox(viewModel.showProgramChannelIcon)}"
+            app:optionalColoredText="@{program.subtitle}"
             tools:text="@string/subtitle" />
 
         <TextView
@@ -259,7 +259,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/genre"
             app:marginStart="@{safeUnbox(viewModel.showProgramChannelIcon)}"
-            app:optionalDescriptionText="@{program.description}"
+            app:optionalColoredText="@{program.description}"
             tools:text="@tools:sample/lorem/random" />
 
         <View

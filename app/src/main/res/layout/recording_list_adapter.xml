@@ -92,10 +92,10 @@
             android:layout_marginRight="16dp"
             android:layout_weight="0.9"
             android:ellipsize="end"
-            android:text="@{recording.title}"
             app:layout_constraintEnd_toStartOf="@+id/state"
             app:layout_constraintStart_toEndOf="@+id/genre"
             app:layout_constraintTop_toTopOf="parent"
+            app:optionalColoredText="@{recording.title}"
             tools:text="@string/title" />
 
         <TextView
@@ -112,7 +112,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@+id/title"
             app:layout_constraintTop_toBottomOf="@+id/title"
-            app:optionalText="@{recording.subtitle}"
+            app:optionalColoredText="@{recording.subtitle}"
             tools:text="@string/subtitle" />
 
         <TextView
@@ -222,7 +222,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@+id/title"
             app:layout_constraintTop_toBottomOf="@+id/date"
-            app:optionalDescriptionText="@{recording.description}"
+            app:optionalColoredText="@{recording.description}"
             tools:text="@tools:sample/lorem/random" />
 
         <TextView
