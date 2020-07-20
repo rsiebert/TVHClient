@@ -1,6 +1,6 @@
 $ 2.4.0
   % VERSION 2.4.0
-  _ 09.07.2020
+  _ 20.07.2020
     * Added setting to set the dark theme automatically
     * Added episode information to the recording screens
     * Added support for KODI color tags in titles and subtitles
