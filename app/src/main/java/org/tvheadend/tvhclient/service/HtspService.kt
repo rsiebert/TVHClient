@@ -153,11 +153,11 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
     override fun onDestroy() {
         Timber.d("Stopping service")
         execService.shutdown()
-        stopHtspConnection()
+        htspConnection?.closeConnection()
     }
 
     private fun startHtspConnection() {
-        stopHtspConnection()
+        htspConnection?.closeConnection()
         Timber.d("Connecting to ${connection.name}, serverUrl is ${connection.serverUrl}")
         htspConnection = HtspConnection(
                 connection.username, connection.password,
@@ -169,11 +169,6 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
             htspConnection?.openConnection()
             htspConnection?.authenticate()
         }
-    }
-
-    private fun stopHtspConnection() {
-        Timber.d("Stopping existing connection")
-        htspConnection?.closeConnection()
     }
 
     override fun onMessage(response: HtspMessage) {
