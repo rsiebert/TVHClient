@@ -196,7 +196,8 @@ class MainActivity : AppCompatActivity(), ToolbarInterface, LayoutControlInterfa
             Timber.d("Delayed search timer elapsed, starting search")
         }
 
-        baseViewModel.startupCompleteLiveData.observe(this, Observer { isComplete ->
+        baseViewModel.startupCompleteLiveData.observe(this, Observer { event ->
+            val isComplete = event.getContentIfNotHandled() ?: false
             Timber.d("Received live data, startup complete value changed to $isComplete")
             if (isComplete) {
                 startupIsCompleteObserveMainLiveData()
@@ -205,10 +206,6 @@ class MainActivity : AppCompatActivity(), ToolbarInterface, LayoutControlInterfa
     }
 
     private fun startupIsCompleteObserveMainLiveData() {
-        Timber.d("initializeObservers")
-        // Observe any changes in the network availability. If the app is in the background
-        // and is resumed and the network is still available the lambda function is not
-        // called and nothing will be done.
         baseViewModel.networkStatusLiveData.observe(this, Observer { status ->
             Timber.d("Network status changed to $status")
             connectToServer(status)
