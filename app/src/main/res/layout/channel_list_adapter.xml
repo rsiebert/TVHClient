@@ -72,8 +72,8 @@
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
             app:genreColor="@{channel.programContentType}"
-            app:genreColorItemName="@{channel.programTitle}"
             app:genreColorAlphaOffset="@{0}"
+            app:genreColorItemName="@{channel.programTitle}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
@@ -141,11 +141,11 @@
             android:layout_marginRight="16dp"
             android:ellipsize="end"
             android:singleLine="true"
-            android:text="@{channel.programTitle}"
             android:visibility="@{channel.programId > 0 ? View.VISIBLE : View.GONE}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@+id/guideline"
             app:layout_constraintTop_toBottomOf="@+id/channel_name"
+            app:optionalColoredText="@{channel.programTitle}"
             tools:text="@string/title" />
 
         <TextView
@@ -157,11 +157,11 @@
             android:layout_marginRight="16dp"
             android:ellipsize="end"
             android:singleLine="true"
-            android:text="@{channel.programSubtitle}"
             android:visibility="@{channel.programId > 0  &amp;&amp; safeUnbox(viewModel.showProgramSubtitle) == true &amp;&amp; channel.programSubtitle != null &amp;&amp; !channel.programSubtitle.equals(channel.programTitle) ? View.VISIBLE : View.GONE}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@+id/guideline"
             app:layout_constraintTop_toBottomOf="@+id/title"
+            app:optionalColoredText="@{channel.programSubtitle}"
             tools:text="@string/subtitle" />
 
         <TextView
