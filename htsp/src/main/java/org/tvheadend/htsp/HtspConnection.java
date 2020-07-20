@@ -338,11 +338,7 @@ public class HtspConnection extends Thread implements HtspConnectionInterface {
             isAuthenticated = false;
             isConnecting = false;
             isRunning = false;
-
-            if (socketChannel.isOpen()) {
-                socketChannel.register(selector, 0);
-                socketChannel.close();
-            }
+            socketChannel.close();
 
         } catch (ClosedChannelException e) {
             Timber.d(e, "Failed to register selector with socket channel, closed channel exception");
