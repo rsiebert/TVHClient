@@ -31,5 +31,9 @@
         android:orderInCategory="10"
         android:title="@string/pref_privacy_policy"
         app:showAsAction="collapseActionView" />
+    <item
+        android:id="@+id/menu_test_playback"
+        android:orderInCategory="11"
+        android:title="Test Playback" />
 
 </menu>

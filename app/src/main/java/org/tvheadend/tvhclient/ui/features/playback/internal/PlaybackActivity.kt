@@ -38,6 +38,9 @@ import org.tvheadend.tvhclient.util.getIconUrl
 import org.tvheadend.tvhclient.util.getThemeId
 import timber.log.Timber
 
+// TODO set aspect ratio in SD content to 16:9 as a default
+// TODO disable subtitles as a default
+
 class PlaybackActivity : AppCompatActivity() {
 
     private var timeshiftSupported: Boolean = false

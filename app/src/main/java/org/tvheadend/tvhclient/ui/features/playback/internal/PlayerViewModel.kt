@@ -12,6 +12,7 @@ import com.google.android.exoplayer2.source.ProgressiveMediaSource
 import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
 import com.google.android.exoplayer2.upstream.DefaultAllocator
+import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
 import com.google.android.exoplayer2.video.VideoListener
 import org.tvheadend.data.entity.Channel
 import org.tvheadend.htsp.HtspConnection
@@ -139,6 +140,7 @@ class PlayerViewModel(application: Application) : BaseViewModel(application), Ht
         releaseMediaSource()
         channelId = bundle?.getInt("channelId", 0) ?: 0
         dvrId = bundle?.getInt("dvrId", 0) ?: 0
+        val localUri = bundle?.getString("uri", "") ?: ""
 
         if (channelId > 0) {
             liveTvIsPlaying.value = true
@@ -146,6 +148,8 @@ class PlayerViewModel(application: Application) : BaseViewModel(application), Ht
         } else if (dvrId > 0) {
             liveTvIsPlaying.value = false
             loadMediaSourceForRecording(dvrId)
+        } else if (localUri.isNotEmpty()) {
+            loadMediaSourceForLocalUri(context, localUri)
         }
 
         Timber.d("Showing playback information")
@@ -198,6 +202,16 @@ class PlayerViewModel(application: Application) : BaseViewModel(application), Ht
                     .createMediaSource(Uri.parse("htsp://dvrfile/$recordingId")))
             player.playWhenReady = true
         }
+    }
+
+    private fun loadMediaSourceForLocalUri(context: Context, localUri: String) {
+        Timber.d("Preparing player with local media source '$localUri'")
+        playbackInformation = PlaybackInformation()
+
+        player.prepare(ProgressiveMediaSource.Factory(
+                DefaultDataSourceFactory(context, "Exoplayer-local"))
+                .createMediaSource(Uri.parse(localUri)))
+        player.playWhenReady = true
     }
 
     private fun releaseMediaSource() {

@@ -45,6 +45,7 @@ import org.tvheadend.tvhclient.ui.features.information.StatusViewModel
 import org.tvheadend.tvhclient.ui.features.navigation.NavigationDrawer
 import org.tvheadend.tvhclient.ui.features.navigation.NavigationViewModel
 import org.tvheadend.tvhclient.ui.features.playback.external.CastSessionManagerListener
+import org.tvheadend.tvhclient.ui.features.playback.internal.PlaybackActivity
 import org.tvheadend.tvhclient.ui.features.programs.ProgramListFragment
 import org.tvheadend.tvhclient.ui.features.startup.StartupFragment
 import org.tvheadend.tvhclient.util.extensions.*
@@ -393,6 +394,7 @@ class MainActivity : AppCompatActivity(), ToolbarInterface, LayoutControlInterfa
                 menu.findItem(R.id.menu_send_wake_on_lan_packet)?.isVisible = baseViewModel.isUnlocked && baseViewModel.connection.isWolEnabled
             }
         }
+        menu.findItem(R.id.menu_test_playback)?.isVisible = true
         return true
     }
 
@@ -414,6 +416,12 @@ class MainActivity : AppCompatActivity(), ToolbarInterface, LayoutControlInterfa
             R.id.menu_reconnect_to_server -> showConfirmationToReconnectToServer(this, baseViewModel)
             R.id.menu_send_wake_on_lan_packet -> {
                 WakeOnLanTask(this, baseViewModel.connection).execute()
+                true
+            }
+            R.id.menu_test_playback -> {
+                val intent = Intent(this, PlaybackActivity::class.java)
+                intent.putExtra("uri", "/storage/emulated/0/Download/Der_Lehrer.mpeg")
+                startActivity(intent)
                 true
             }
             else -> super.onOptionsItemSelected(item)
