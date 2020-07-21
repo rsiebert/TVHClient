@@ -1,6 +1,6 @@
 $ 2.4.0
   % VERSION 2.4.0
-  _ 20.07.2020
+  _ 21.07.2020
     * Added setting to set the dark theme automatically
     * Added episode information to the recording screens
     * Added support for KODI color tags in titles and subtitles
@@ -10,6 +10,7 @@ $ 2.4.0
     * Made the dialog buttons in the settings more readable
     * Auto close the time selection dialog after 1 minute
     * Removed the white screen flickering during startup
+    * Updated the internal player library version to 2.11.7
     * Some internal improvements
 $ 2.3.6
   % VERSION 2.3.6
