@@ -9,7 +9,6 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.os.Handler
-import android.provider.DocumentsContract
 import androidx.core.app.ActivityCompat
 import androidx.core.app.TaskStackBuilder
 import androidx.fragment.app.FragmentActivity
@@ -22,7 +21,6 @@ import com.afollestad.materialdialogs.files.folderChooser
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.ui.common.interfaces.ToolbarInterface
 import org.tvheadend.tvhclient.ui.features.MainActivity
-import org.tvheadend.tvhclient.ui.features.settings.SettingsActivity.Companion.REQUEST_CODE_DIRECTORY_PICKER
 import org.tvheadend.tvhclient.util.extensions.sendSnackbarMessage
 import timber.log.Timber
 
@@ -73,8 +71,15 @@ class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceClic
     }
 
     private fun updateDownloadDirSummary() {
-        val path = sharedPreferences.getString("download_directory", Environment.DIRECTORY_DOWNLOADS)
-        Timber.d("Updating download directory summary to $path")
+        Timber.d("Updating download directory summary")
+        val path = if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+            Timber.d("Android API version is ${Build.VERSION.SDK_INT}, loading download folder from preference")
+            sharedPreferences.getString("download_directory", Environment.DIRECTORY_DOWNLOADS)
+        } else {
+            Timber.d("Android API version is ${Build.VERSION.SDK_INT}, using default folder")
+            Environment.DIRECTORY_DOWNLOADS
+        }
+        Timber.d("Setting download directory summary to $path")
         findPreference<Preference>("download_directory")?.summary = getString(R.string.pref_download_directory_sum, path)
     }
 
@@ -158,28 +163,19 @@ class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceClic
     private fun showFolderSelectionDialog(context: Context) {
         Timber.d("Showing folder selection dialog")
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
-            Timber.d("Android API version is ${Build.VERSION.SDK_INT}, showing legacy folder selection dialog")
+            Timber.d("Android API version is ${Build.VERSION.SDK_INT}, showing folder selection dialog")
             // Show the folder chooser dialog which defaults to the external storage dir
             MaterialDialog(context).show {
                 folderChooser { _, file ->
                     Timber.d("Folder ${file.absolutePath}, ${file.name} was selected")
                     val strippedPath = file.absolutePath.replace(Environment.getExternalStorageDirectory().absolutePath, "")
                     sharedPreferences.edit().putString("download_directory", strippedPath).apply()
+                    updateDownloadDirSummary()
                 }
             }
         } else {
-            Timber.d("Android API version is ${Build.VERSION.SDK_INT}, showing required selection dialog")
-            // Choose a directory using the system's file picker.
-            val intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE).apply {
-                // Provide read access to files and sub-directories in the user-selected directory.
-                flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
-                // Optionally, specify a URI for the directory that should
-                // be opened in the system file picker when it loads.
-                context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS)?.let {
-                    putExtra(DocumentsContract.EXTRA_INITIAL_URI, it)
-                }
-            }
-            activity?.startActivityForResult(intent, REQUEST_CODE_DIRECTORY_PICKER)
+            Timber.d("Android API version is ${Build.VERSION.SDK_INT}, showing information about default folder")
+            context.sendSnackbarMessage("On Android 10 and higher devices the download folder is always ${Environment.DIRECTORY_DOWNLOADS}")
         }
     }
 
