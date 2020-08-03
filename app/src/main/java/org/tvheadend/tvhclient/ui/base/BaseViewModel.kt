@@ -43,7 +43,7 @@ open class BaseViewModel(application: Application) : AndroidViewModel(applicatio
      * Contains the current network status.
      * The value gets set by the {@link NetworkStatusReceiver}
      */
-    var networkStatusLiveData = MutableLiveData<NetworkStatus>()
+    var networkStatusLiveData = MutableLiveData<Event<NetworkStatus>>()
         private set
 
     var connection: Connection
@@ -82,7 +82,7 @@ open class BaseViewModel(application: Application) : AndroidViewModel(applicatio
         connectionLiveData = appRepository.connectionData.liveDataActiveItem
         connectionToServerAvailableLiveData.value = false
 
-        networkStatusLiveData.value = NetworkStatus.NETWORK_UNKNOWN
+        networkStatusLiveData.value = Event(NetworkStatus.NETWORK_UNKNOWN)
     }
 
     private fun inject() {
@@ -114,10 +114,10 @@ open class BaseViewModel(application: Application) : AndroidViewModel(applicatio
     }
 
     override fun setNetworkStatus(status: NetworkStatus) {
-        networkStatusLiveData.value = status
+        networkStatusLiveData.value = Event(status)
     }
 
-    override fun getNetworkStatus(): NetworkStatus? = networkStatusLiveData.value
+    override fun getNetworkStatus(): NetworkStatus? = networkStatusLiveData.value?.peekContent()
 
     fun setConnectionToServerAvailable(available: Boolean) {
         connectionToServerAvailableLiveData.value = available

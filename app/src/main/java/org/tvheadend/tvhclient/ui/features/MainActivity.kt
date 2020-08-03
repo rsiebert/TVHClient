@@ -207,9 +207,11 @@ class MainActivity : AppCompatActivity(), ToolbarInterface, LayoutControlInterfa
     }
 
     private fun startupIsCompleteObserveMainLiveData() {
-        baseViewModel.networkStatusLiveData.observe(this, Observer { status ->
-            Timber.d("Network status changed to $status")
-            connectToServer(status)
+        baseViewModel.networkStatusLiveData.observe(this, Observer { event ->
+            event.getContentIfNotHandled()?.let {
+                Timber.d("Network status changed to $it")
+                connectToServer(it)
+            }
         })
 
         baseViewModel.connectionToServerAvailableLiveData.observe(this, Observer { isAvailable ->
