@@ -95,18 +95,17 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
             }
             "reconnect" -> {
                 Timber.d("Reconnection to server requested")
-                htspConnection?.let {
-                    if (it.isConnecting) {
+                when {
+                    htspConnection?.isConnecting == true -> {
                         Timber.d("Not reconnecting to server because we are currently connecting")
-                    } else if (!it.isNotConnected) {
+                    }
+                    htspConnection?.isNotConnected == false -> {
                         Timber.d("Not reconnecting to server because we are still connected")
-                    } else {
+                    }
+                    else -> {
                         Timber.d("Reconnecting to server because we are not connected anymore")
                         startHtspConnection()
                     }
-                } ?: run {
-                    Timber.d("Reconnecting to server because no previous connection existed")
-                    startHtspConnection()
                 }
             }
             else -> {
