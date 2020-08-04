@@ -5,8 +5,33 @@ import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
 
-@Entity(tableName = "server_status", indices = [Index(value = ["id", "connection_id"], unique = true)])
 data class ServerStatus(
+
+        var id: Int = 0,
+        var connectionId: Int = 0,
+        var connectionName: String? = null,
+        var serverName: String? = null,
+        var serverVersion: String? = null,
+        var webroot: String? = null,
+        var time: Long = 0,
+        var timezone: String? = null,
+        var gmtoffset: Int = 0,
+        var htspVersion: Int = 13,
+        var freeDiskSpace: Long = 0,
+        var totalDiskSpace: Long = 0,
+        var channelTagId: Int = 0,
+        var htspPlaybackServerProfileId: Int = 0,
+        var httpPlaybackServerProfileId: Int = 0,
+        var recordingServerProfileId: Int = 0,
+        var seriesRecordingServerProfileId: Int = 0,
+        var timerRecordingServerProfileId: Int = 0,
+        var castingServerProfileId: Int = 0,
+        var playbackTranscodingProfileId: Int = 0,
+        var recordingTranscodingProfileId: Int = 0
+)
+
+@Entity(tableName = "server_status", indices = [Index(value = ["id", "connection_id"], unique = true)])
+internal data class ServerStatusEntity(
 
         @PrimaryKey(autoGenerate = true)
         var id: Int = 0,
@@ -47,4 +72,35 @@ data class ServerStatus(
         var playbackTranscodingProfileId: Int = 0,
         @ColumnInfo(name = "recording_transcoding_profile_id")
         var recordingTranscodingProfileId: Int = 0
-)
+) {
+    companion object {
+        fun from(serverStatus: ServerStatus): ServerStatusEntity {
+            return ServerStatusEntity(
+                    serverStatus.id,
+                    serverStatus.connectionId,
+                    serverStatus.connectionName,
+                    serverStatus.serverName,
+                    serverStatus.serverVersion,
+                    serverStatus.webroot,
+                    serverStatus.time,
+                    serverStatus.timezone,
+                    serverStatus.gmtoffset,
+                    serverStatus.htspVersion,
+                    serverStatus.freeDiskSpace,
+                    serverStatus.totalDiskSpace,
+                    serverStatus.channelTagId,
+                    serverStatus.htspPlaybackServerProfileId,
+                    serverStatus.httpPlaybackServerProfileId,
+                    serverStatus.recordingServerProfileId,
+                    serverStatus.seriesRecordingServerProfileId,
+                    serverStatus.timerRecordingServerProfileId,
+                    serverStatus.castingServerProfileId,
+                    serverStatus.playbackTranscodingProfileId,
+                    serverStatus.recordingTranscodingProfileId)
+        }
+    }
+
+    fun toServerStatus(): ServerStatus {
+        return ServerStatus(id, connectionId, connectionName, serverName, serverVersion, webroot, time, timezone, gmtoffset, htspVersion, freeDiskSpace, totalDiskSpace, channelTagId, htspPlaybackServerProfileId, httpPlaybackServerProfileId, recordingServerProfileId, seriesRecordingServerProfileId, timerRecordingServerProfileId, castingServerProfileId, playbackTranscodingProfileId, recordingTranscodingProfileId)
+    }
+}

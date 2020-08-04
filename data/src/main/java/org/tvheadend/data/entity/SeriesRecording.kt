@@ -4,8 +4,65 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import java.util.*
 
-@Entity(tableName = "series_recordings", primaryKeys = ["id", "connection_id"])
 data class SeriesRecording(
+
+        var id: String = "",                    // str   required   ID (string!) of dvrAutorecEntry.
+        var isEnabled: Boolean = true,          // u32   required   If autorec entry is enabled (activated).
+        var name: String? = null,               // str   required   Name of the autorec entry (Added in version 18).
+        var minDuration: Int = 0,               // u32   required   Minimal duration in seconds (0 = Any).
+        var maxDuration: Int = 0,               // u32   required   Maximal duration in seconds (0 = Any).
+        var retention: Int = 0,                 // u32   required   Retention time (in days).
+        var daysOfWeek: Int = 127,              // u32   required   Bitmask - Days of week (0x01 = Monday, 0x40 = Sunday, 0x7f = Whole Week, 0 = Not set).
+        var priority: Int = 2,                  // u32   required   Priority (0 = Important, 1 = High, 2 = Normal, 3 = Low, 4 = Unimportant, 5 = Not set).
+        var approxTime: Int = 0,                // u32   required   Minutes from midnight (up to 24*60).
+        var start: Long = 0,                    // s32   required   Exact start time (minutes from midnight) (Added in version 18).
+        var startWindow: Long = 0,              // s32   required   Exact stop time (minutes from midnight) (Added in version 18).
+        var startExtra: Long = 0,               // s64   required   Extra start minutes (pre-time).
+        var stopExtra: Long = 0,                // s64   required   Extra stop minutes (post-time).
+        var title: String? = null,              // str   optional   Title.
+        var fulltext: Int = 0,                  // u32   optional   Fulltext flag (Added in version 20).
+        var directory: String? = null,          // str   optional   Forced directory name (Added in version 19).
+        var channelId: Int = 0,                 // u32   optional   Channel ID.
+        var owner: String? = null,              // str   optional   Owner of this autorec entry (Added in version 18).
+        var creator: String? = null,            // str   optional   Creator of this autorec entry (Added in version 18).
+        var dupDetect: Int = 0,                 // u32   optional   Duplicate detection (see addAutorecEntry) (Added in version 20).
+        var removal: Int = 0,                   // u32   optional   Number of days to keep recorded files (Added in version 32)
+        var maxCount: Int = 0,                  // u32   optional   The maximum number of entries that can be matched (Added in version 32)
+
+        var connectionId: Int = 0,
+        var channelName: String? = null,
+        var channelIcon: String? = null
+) {
+    val duration: Int
+        get() = (startWindow - start).toInt()
+
+    /**
+     * The start time in milliseconds from the current time at 0 o'clock plus the given minutes
+     */
+    val startTimeInMillis: Long
+        get() {
+            val calendar = Calendar.getInstance()
+            calendar.set(Calendar.HOUR_OF_DAY, 0)
+            calendar.set(Calendar.MINUTE, 0)
+            calendar.set(Calendar.SECOND, 0)
+            return calendar.timeInMillis + (start * 60 * 1000)
+        }
+
+    /**
+     * The stop time in milliseconds from the current time at 0 o'clock plus the given minutes
+     */
+    val startWindowTimeInMillis: Long
+        get() {
+            val calendar = Calendar.getInstance()
+            calendar.set(Calendar.HOUR_OF_DAY, 0)
+            calendar.set(Calendar.MINUTE, 0)
+            calendar.set(Calendar.SECOND, 0)
+            return calendar.timeInMillis + (startWindow * 60 * 1000)
+        }
+}
+
+@Entity(tableName = "series_recordings", primaryKeys = ["id", "connection_id"])
+internal data class SeriesRecordingEntity(
 
         var id: String = "",                    // str   required   ID (string!) of dvrAutorecEntry.
         @ColumnInfo(name = "enabled")
@@ -48,32 +105,38 @@ data class SeriesRecording(
         @ColumnInfo(name = "channel_icon")
         var channelIcon: String? = null
 ) {
-    val duration: Int
-        get() = (startWindow - start).toInt()
-
-    /**
-     * The start time in milliseconds from the current time at 0 o'clock plus the given minutes
-     */
-    @Suppress("unused")
-    val startTimeInMillis: Long
-        get() {
-            val calendar = Calendar.getInstance()
-            calendar.set(Calendar.HOUR_OF_DAY, 0)
-            calendar.set(Calendar.MINUTE, 0)
-            calendar.set(Calendar.SECOND, 0)
-            return calendar.timeInMillis + (start * 60 * 1000)
+    companion object {
+        fun from(recording: SeriesRecording): SeriesRecordingEntity {
+            return SeriesRecordingEntity(
+                    recording.id,
+                    recording.isEnabled,
+                    recording.name,
+                    recording.minDuration,
+                    recording.maxDuration,
+                    recording.retention,
+                    recording.daysOfWeek,
+                    recording.priority,
+                    recording.approxTime,
+                    recording.start,
+                    recording.startWindow,
+                    recording.startExtra,
+                    recording.stopExtra,
+                    recording.title,
+                    recording.fulltext,
+                    recording.directory,
+                    recording.channelId,
+                    recording.owner,
+                    recording.creator,
+                    recording.dupDetect,
+                    recording.removal,
+                    recording.maxCount,
+                    recording.connectionId,
+                    recording.channelName,
+                    recording.channelIcon)
         }
+    }
 
-    /**
-     * The stop time in milliseconds from the current time at 0 o'clock plus the given minutes
-     */
-    @Suppress("unused")
-    val startWindowTimeInMillis: Long
-        get() {
-            val calendar = Calendar.getInstance()
-            calendar.set(Calendar.HOUR_OF_DAY, 0)
-            calendar.set(Calendar.MINUTE, 0)
-            calendar.set(Calendar.SECOND, 0)
-            return calendar.timeInMillis + (startWindow * 60 * 1000)
-        }
+    fun toRecording(): SeriesRecording {
+        return SeriesRecording(id, isEnabled, name, minDuration, maxDuration, retention, daysOfWeek, priority, approxTime, start, startWindow, startExtra, stopExtra, title, fulltext, directory, channelId, owner, creator, dupDetect, removal, maxCount, connectionId, channelName, channelIcon)
+    }
 }
