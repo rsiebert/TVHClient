@@ -103,10 +103,10 @@
                     android:layout_marginTop="4dp"
                     android:layout_marginEnd="16dp"
                     android:ellipsize="end"
-                    android:text="@{recording.title}"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/title_label"
+                    app:optionalColoredText="@{recording.title}"
                     tools:text="@string/title" />
 
                 <TextView
@@ -135,7 +135,7 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/subtitle_label"
-                    app:optionalText="@{recording.subtitle}"
+                    app:optionalColoredText="@{recording.subtitle}"
                     tools:text="@string/subtitle" />
 
                 <TextView
@@ -192,7 +192,7 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/description_label"
-                    app:optionalDescriptionText="@{recording.description}"
+                    app:optionalColoredText="@{recording.description}"
                     tools:text="@string/description" />
 
                 <TextView

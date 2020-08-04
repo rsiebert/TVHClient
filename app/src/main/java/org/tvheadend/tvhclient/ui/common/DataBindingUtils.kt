@@ -304,7 +304,7 @@ fun setFailedReasonText(view: TextView, recording: Recording?) {
     view.text = failedReasonText
 }
 
-@BindingAdapter("optionalDescriptionText")
+@BindingAdapter("optionalColoredText")
 fun setOptionalDescriptionText(view: TextView, text: String?) {
     view.visibleOrGone(!text.isNullOrEmpty())
     if (text.isNullOrEmpty()) return

@@ -1,11 +1,7 @@
 package org.tvheadend.tvhclient.ui.features.epg
 
-import android.content.ContextWrapper
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LifecycleRegistry
@@ -15,12 +11,10 @@ import org.tvheadend.data.entity.EpgProgram
 import org.tvheadend.data.entity.Recording
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.databinding.EpgHorizontalChildRecyclerviewAdapterBinding
-import org.tvheadend.tvhclient.ui.common.interfaces.RecyclerViewClickInterface
-import org.tvheadend.tvhclient.ui.features.programs.ProgramDetailsFragment
 import org.tvheadend.tvhclient.util.extensions.isEqualTo
 import java.util.*
 
-internal class EpgHorizontalChildRecyclerViewAdapter(private val viewModel: EpgViewModel, private val fragmentId: Int) : RecyclerView.Adapter<EpgHorizontalChildRecyclerViewAdapter.EpgProgramListViewHolder>(), RecyclerViewClickInterface {
+internal class EpgHorizontalChildRecyclerViewAdapter(private val viewModel: EpgViewModel, private val fragmentId: Int) : RecyclerView.Adapter<EpgHorizontalChildRecyclerViewAdapter.EpgProgramListViewHolder>() {
 
     private val programList = ArrayList<EpgProgram>()
     private val recordingList = ArrayList<Recording>()
@@ -28,7 +22,7 @@ internal class EpgHorizontalChildRecyclerViewAdapter(private val viewModel: EpgV
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): EpgProgramListViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
         val itemBinding = EpgHorizontalChildRecyclerviewAdapterBinding.inflate(layoutInflater, parent, false)
-        val viewHolder = EpgProgramListViewHolder(itemBinding, viewModel, this)
+        val viewHolder = EpgProgramListViewHolder(itemBinding, viewModel)
         itemBinding.lifecycleOwner = viewHolder
         return viewHolder
     }
@@ -41,7 +35,7 @@ internal class EpgHorizontalChildRecyclerViewAdapter(private val viewModel: EpgV
             val stopTime = if (program.stop > viewModel.getEndTime(fragmentId)) viewModel.getEndTime(fragmentId) else program.stop
             val layoutWidth = ((stopTime - startTime) / 1000 / 60 * viewModel.pixelsPerMinute).toInt()
 
-            holder.bind(program, position, layoutWidth)
+            holder.bind(program, layoutWidth)
         }
     }
 
@@ -104,63 +98,6 @@ internal class EpgHorizontalChildRecyclerViewAdapter(private val viewModel: EpgV
         return R.layout.epg_horizontal_child_recyclerview_adapter
     }
 
-    private fun getItem(position: Int): EpgProgram? {
-        return if (programList.size > position && position >= 0) {
-            programList[position]
-        } else {
-            null
-        }
-    }
-
-    /**
-     * Returns the activity from the view context so that
-     * stuff like the fragment manager can be accessed
-     *
-     * @param view The view to retrieve the activity from
-     * @return Activity or null if none was found
-     */
-    private fun getActivity(view: View): AppCompatActivity? {
-        var context = view.context
-        while (context is ContextWrapper) {
-            if (context is AppCompatActivity) {
-                return context
-            }
-            context = context.baseContext
-        }
-        return null
-    }
-
-    override fun onClick(view: View, position: Int) {
-        val activity = getActivity(view)
-        val program = getItem(position)
-        if (program == null || activity == null) {
-            return
-        }
-
-        val fragment = ProgramDetailsFragment.newInstance(program.eventId, program.channelId)
-        val ft = activity.supportFragmentManager.beginTransaction()
-        ft.replace(R.id.main, fragment)
-        ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
-        ft.addToBackStack(null)
-        ft.commit()
-    }
-
-    override fun onLongClick(view: View, position: Int): Boolean {
-        val activity = getActivity(view)
-        val program = getItem(position)
-        if (program == null || activity == null) {
-            return false
-        }
-
-        val fragment = activity.supportFragmentManager.findFragmentById(R.id.main)
-        if (fragment is EpgFragment
-                && fragment.isAdded
-                && fragment.isResumed) {
-            fragment.showPopupMenu(view, program)
-        }
-        return true
-    }
-
     override fun onViewAttachedToWindow(holder: EpgProgramListViewHolder) {
         super.onViewAttachedToWindow(holder)
         holder.markAttach()
@@ -172,8 +109,7 @@ internal class EpgHorizontalChildRecyclerViewAdapter(private val viewModel: EpgV
     }
 
     internal class EpgProgramListViewHolder(private val binding: EpgHorizontalChildRecyclerviewAdapterBinding,
-                                            private val viewModel: EpgViewModel,
-                                            private val clickCallback: RecyclerViewClickInterface) : RecyclerView.ViewHolder(binding.root), LifecycleOwner {
+                                            private val viewModel: EpgViewModel) : RecyclerView.ViewHolder(binding.root), LifecycleOwner {
 
         private val lifecycleRegistry = LifecycleRegistry(this)
 
@@ -193,12 +129,10 @@ internal class EpgHorizontalChildRecyclerViewAdapter(private val viewModel: EpgV
             return lifecycleRegistry
         }
 
-        fun bind(program: EpgProgram, position: Int, layoutWidth: Int) {
+        fun bind(program: EpgProgram, layoutWidth: Int) {
             binding.program = program
-            binding.position = position
             binding.layoutWidth = layoutWidth
             binding.viewModel = viewModel
-            binding.callback = clickCallback
             binding.executePendingBindings()
         }
     }

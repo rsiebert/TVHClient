@@ -12,6 +12,7 @@ import com.google.android.exoplayer2.source.ProgressiveMediaSource
 import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
 import com.google.android.exoplayer2.upstream.DefaultAllocator
+import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
 import com.google.android.exoplayer2.video.VideoListener
 import org.tvheadend.data.entity.Channel
 import org.tvheadend.htsp.HtspConnection
@@ -30,7 +31,7 @@ import kotlin.math.max
 class PlayerViewModel(application: Application) : BaseViewModel(application), HtspConnectionStateListener, VideoListener, Player.EventListener {
 
     private var channelId: Int = 0
-    private var dvrId: Int = 0
+    private val channelList: List<Channel>
 
     // Connection related
     private val execService: ScheduledExecutorService = Executors.newScheduledThreadPool(10)
@@ -79,6 +80,9 @@ class PlayerViewModel(application: Application) : BaseViewModel(application), Ht
         isConnected.postValue(false)
         playerIsPlaying.postValue(false)
         playerState.postValue(Player.STATE_IDLE)
+
+        val channelSortOrder = Integer.valueOf(sharedPreferences.getString("channel_sort_order", defaultChannelSortOrder) ?: defaultChannelSortOrder)
+        channelList = appRepository.channelData.getChannels(channelSortOrder)
 
         Timber.d("Starting connection")
         val connection = appRepository.connectionData.activeItem
@@ -137,15 +141,15 @@ class PlayerViewModel(application: Application) : BaseViewModel(application), Ht
         Timber.d("Loading new media source")
 
         releaseMediaSource()
-        channelId = bundle?.getInt("channelId", 0) ?: 0
-        dvrId = bundle?.getInt("dvrId", 0) ?: 0
 
-        if (channelId > 0) {
-            liveTvIsPlaying.value = true
-            loadMediaSourceForChannel(context, channelId)
-        } else if (dvrId > 0) {
-            liveTvIsPlaying.value = false
-            loadMediaSourceForRecording(dvrId)
+        channelId = bundle?.getInt("channelId", 0) ?: 0
+        val dvrId = bundle?.getInt("dvrId", 0) ?: 0
+        val localUri = bundle?.getString("uri", "") ?: ""
+
+        when {
+            channelId > 0 -> loadMediaSourceForChannel(context, channelId)
+            dvrId > 0 -> loadMediaSourceForRecording(dvrId)
+            localUri.isNotEmpty() -> loadMediaSourceForLocalUri(context, localUri)
         }
 
         Timber.d("Showing playback information")
@@ -158,46 +162,48 @@ class PlayerViewModel(application: Application) : BaseViewModel(application), Ht
 
     private fun loadMediaSourceForChannel(context: Context, channelId: Int) {
         Timber.d("Loading media source for channel id $channelId")
-        if (channelId > 0) {
-            Timber.d("Loading player info")
-            playbackInformation = PlaybackInformation(appRepository.channelData.getItemByIdWithPrograms(channelId, Date().time))
+        playbackInformation = PlaybackInformation(appRepository.channelData.getItemByIdWithPrograms(channelId, Date().time))
+        val serverStatus = appRepository.serverStatusData.activeItem
+        val serverProfile = appRepository.serverProfileData.getItemById(serverStatus.htspPlaybackServerProfileId)
+        htspSubscriptionDataSourceFactory = HtspSubscriptionDataSource.Factory(context, htspConnection, serverProfile?.name)
+        dataSource = htspSubscriptionDataSourceFactory?.currentDataSource
 
-            Timber.d("Creating data source")
-            val serverStatus = appRepository.serverStatusData.activeItem
-            val serverProfile = appRepository.serverProfileData.getItemById(serverStatus.htspPlaybackServerProfileId)
-            htspSubscriptionDataSourceFactory = HtspSubscriptionDataSource.Factory(context, htspConnection, serverProfile?.name)
-            dataSource = htspSubscriptionDataSourceFactory?.currentDataSource
+        Timber.d("Preparing player with media source")
+        player.prepare(ProgressiveMediaSource.Factory(
+                htspSubscriptionDataSourceFactory,
+                TvheadendExtractorsFactory())
+                .createMediaSource(Uri.parse("htsp://channel/$channelId")))
 
-            Timber.d("Loading response header after data source creation in factory")
-            val responseHeaders = dataSource?.getResponseHeaders()
-            Timber.d("Found ${responseHeaders?.size ?: 0} response headers")
-
-            Timber.d("Preparing player with media source")
-            player.prepare(ProgressiveMediaSource.Factory(
-                    htspSubscriptionDataSourceFactory,
-                    TvheadendExtractorsFactory())
-                    .createMediaSource(Uri.parse("htsp://channel/$channelId")))
-            player.playWhenReady = true
-        }
+        liveTvIsPlaying.value = true
+        player.playWhenReady = true
     }
 
     private fun loadMediaSourceForRecording(recordingId: Int) {
         Timber.d("Loading media source for recording id $recordingId")
-        if (recordingId > 0) {
-            Timber.d("Loading player info")
-            playbackInformation = PlaybackInformation(appRepository.recordingData.getItemById(recordingId))
+        playbackInformation = PlaybackInformation(appRepository.recordingData.getItemById(recordingId))
+        htspFileInputStreamDataSourceFactory = HtspFileInputStreamDataSource.Factory(htspConnection)
+        dataSource = htspFileInputStreamDataSourceFactory?.currentDataSource
 
-            Timber.d("Creating data source")
-            htspFileInputStreamDataSourceFactory = HtspFileInputStreamDataSource.Factory(htspConnection)
-            dataSource = htspFileInputStreamDataSourceFactory?.currentDataSource
+        Timber.d("Preparing player with media source")
+        player.prepare(ProgressiveMediaSource.Factory(
+                htspFileInputStreamDataSourceFactory,
+                TvheadendExtractorsFactory())
+                .createMediaSource(Uri.parse("htsp://dvrfile/$recordingId")))
 
-            Timber.d("Preparing player with media source")
-            player.prepare(ProgressiveMediaSource.Factory(
-                    htspFileInputStreamDataSourceFactory,
-                    TvheadendExtractorsFactory())
-                    .createMediaSource(Uri.parse("htsp://dvrfile/$recordingId")))
-            player.playWhenReady = true
-        }
+        liveTvIsPlaying.value = false
+        player.playWhenReady = true
+    }
+
+    private fun loadMediaSourceForLocalUri(context: Context, localUri: String) {
+        Timber.d("Preparing player with local media source '$localUri'")
+        playbackInformation = PlaybackInformation()
+
+        player.prepare(ProgressiveMediaSource.Factory(
+                DefaultDataSourceFactory(context, "Exoplayer-local"))
+                .createMediaSource(Uri.parse(localUri)))
+
+        liveTvIsPlaying.value = false
+        player.playWhenReady = true
     }
 
     private fun releaseMediaSource() {
@@ -359,22 +365,14 @@ class PlayerViewModel(application: Application) : BaseViewModel(application), Ht
         return max(seekPts, timeshiftStartPts) / 1000
     }
 
-    private fun getChannelList(): List<Channel> {
-        val channelSortOrder = Integer.valueOf(sharedPreferences.getString("channel_sort_order", defaultChannelSortOrder)
-                ?: defaultChannelSortOrder)
-        return appRepository.channelData.getChannels(channelSortOrder)
-    }
-
     fun playNextChannel(context: Context) {
-
-        val channels = getChannelList()
         var newChannelId = channelId
-        channels.forEachIndexed { index, channel ->
+        channelList.forEachIndexed { index, channel ->
             if (channel.id == channelId) {
-                newChannelId = if (index + 1 < channels.size) {
-                    channels[index + 1].id
+                newChannelId = if (index + 1 < channelList.size) {
+                    channelList[index + 1].id
                 } else {
-                    channels.first().id
+                    channelList.first().id
                 }
             }
         }
@@ -384,14 +382,13 @@ class PlayerViewModel(application: Application) : BaseViewModel(application), Ht
     }
 
     fun playPreviousChannel(context: Context) {
-        val channels = getChannelList()
         var newChannelId = channelId
-        channels.forEachIndexed { index, channel ->
+        channelList.forEachIndexed { index, channel ->
             if (channel.id == channelId) {
                 newChannelId = if (index - 1 > 0) {
-                    channels[index - 1].id
+                    channelList[index - 1].id
                 } else {
-                    channels.last().id
+                    channelList.last().id
                 }
             }
         }

@@ -154,6 +154,7 @@ abstract class RecordingListFragment : BaseFragment(), RecyclerViewClickInterfac
                 R.id.menu_cancel_recording -> return@setOnMenuItemClickListener showConfirmationToCancelSelectedRecording(ctx, recording, null)
                 R.id.menu_remove_recording -> return@setOnMenuItemClickListener showConfirmationToRemoveSelectedRecording(ctx, recording, null)
                 R.id.menu_edit_recording -> return@setOnMenuItemClickListener editSelectedRecording(requireActivity(), recording.id)
+                R.id.menu_share_recording -> return@setOnMenuItemClickListener shareSelectedRecording(ctx, recording.id, isUnlocked)
 
                 R.id.menu_play -> return@setOnMenuItemClickListener playSelectedRecording(ctx, recording.id, isUnlocked)
                 R.id.menu_cast -> return@setOnMenuItemClickListener castSelectedRecording(ctx, recording.id)

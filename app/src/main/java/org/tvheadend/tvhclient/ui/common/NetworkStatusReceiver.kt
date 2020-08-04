@@ -24,8 +24,12 @@ class NetworkStatusReceiver(private val viewModel: NetworkStatusInterface) : Bro
     override fun onReceive(context: Context, intent: Intent) {
         val isAvailable = isNetworkAvailable(context) || isWifiApEnabled(context)
         Timber.d("Network availability is $isAvailable")
-        val networkIsAvailable = getNetworkStatus(viewModel.getNetworkStatus(), isAvailable)
-        viewModel.setNetworkStatus(networkIsAvailable)
+        val newNetworkStatus = getNetworkStatus(viewModel.getNetworkStatus(), isAvailable)
+
+        Timber.d("Previous network status is ${viewModel.getNetworkStatus()}, new one is $newNetworkStatus")
+        if (newNetworkStatus != viewModel.getNetworkStatus()) {
+            viewModel.setNetworkStatus(newNetworkStatus)
+        }
     }
 
     @Suppress("DEPRECATION")

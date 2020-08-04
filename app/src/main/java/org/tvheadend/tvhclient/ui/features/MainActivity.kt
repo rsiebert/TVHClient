@@ -12,6 +12,7 @@ import android.database.Cursor
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
+import android.os.StrictMode
 import android.provider.SearchRecentSuggestions
 import android.view.KeyEvent
 import android.view.Menu
@@ -44,6 +45,7 @@ import org.tvheadend.tvhclient.ui.features.information.StatusViewModel
 import org.tvheadend.tvhclient.ui.features.navigation.NavigationDrawer
 import org.tvheadend.tvhclient.ui.features.navigation.NavigationViewModel
 import org.tvheadend.tvhclient.ui.features.playback.external.CastSessionManagerListener
+import org.tvheadend.tvhclient.ui.features.playback.internal.PlaybackActivity
 import org.tvheadend.tvhclient.ui.features.programs.ProgramListFragment
 import org.tvheadend.tvhclient.ui.features.startup.StartupFragment
 import org.tvheadend.tvhclient.util.extensions.*
@@ -85,6 +87,15 @@ class MainActivity : AppCompatActivity(), ToolbarInterface, LayoutControlInterfa
 
     override fun onCreate(savedInstanceState: Bundle?) {
         setTheme(getThemeId(this))
+
+        if (BuildConfig.DEBUG) {
+            StrictMode.setVmPolicy(StrictMode.VmPolicy.Builder()
+                    .detectLeakedSqlLiteObjects()
+                    .detectLeakedClosableObjects()
+                    .penaltyLog()
+                    .penaltyDeath()
+                    .build())
+        }
         super.onCreate(savedInstanceState)
         setContentView(R.layout.main_activity)
 
@@ -186,7 +197,8 @@ class MainActivity : AppCompatActivity(), ToolbarInterface, LayoutControlInterfa
             Timber.d("Delayed search timer elapsed, starting search")
         }
 
-        baseViewModel.startupCompleteLiveData.observe(this, Observer { isComplete ->
+        baseViewModel.startupCompleteLiveData.observe(this, Observer { event ->
+            val isComplete = event.getContentIfNotHandled() ?: false
             Timber.d("Received live data, startup complete value changed to $isComplete")
             if (isComplete) {
                 startupIsCompleteObserveMainLiveData()
@@ -195,13 +207,11 @@ class MainActivity : AppCompatActivity(), ToolbarInterface, LayoutControlInterfa
     }
 
     private fun startupIsCompleteObserveMainLiveData() {
-        Timber.d("initializeObservers")
-        // Observe any changes in the network availability. If the app is in the background
-        // and is resumed and the network is still available the lambda function is not
-        // called and nothing will be done.
-        baseViewModel.networkStatusLiveData.observe(this, Observer { status ->
-            Timber.d("Network status changed to $status")
-            connectToServer(status)
+        baseViewModel.networkStatusLiveData.observe(this, Observer { event ->
+            event.getContentIfNotHandled()?.let {
+                Timber.d("Network status changed to $it")
+                connectToServer(it)
+            }
         })
 
         baseViewModel.connectionToServerAvailableLiveData.observe(this, Observer { isAvailable ->

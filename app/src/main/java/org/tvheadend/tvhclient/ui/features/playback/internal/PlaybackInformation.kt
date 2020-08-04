@@ -5,6 +5,8 @@ import org.tvheadend.data.entity.Recording
 
 class PlaybackInformation {
 
+    constructor()
+
     constructor(channel: Channel?) {
         channelIcon = channel?.icon ?: ""
         channelName = channel?.name ?: ""

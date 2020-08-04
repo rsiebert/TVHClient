@@ -26,7 +26,7 @@ open class BaseViewModel(application: Application) : AndroidViewModel(applicatio
 
     var sharedPreferences: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(application.applicationContext)
 
-    var startupCompleteLiveData = MutableLiveData<Boolean>()
+    var startupCompleteLiveData = MutableLiveData<Event<Boolean>>()
         private set
 
     var connectionToServerAvailableLiveData = MutableLiveData<Boolean>()
@@ -43,7 +43,7 @@ open class BaseViewModel(application: Application) : AndroidViewModel(applicatio
      * Contains the current network status.
      * The value gets set by the {@link NetworkStatusReceiver}
      */
-    var networkStatusLiveData = MutableLiveData<NetworkStatus>()
+    var networkStatusLiveData = MutableLiveData<Event<NetworkStatus>>()
         private set
 
     var connection: Connection
@@ -72,7 +72,7 @@ open class BaseViewModel(application: Application) : AndroidViewModel(applicatio
 
     init {
         inject()
-        startupCompleteLiveData.value = false
+        startupCompleteLiveData.value = Event(false)
 
         isUnlocked = appRepository.getIsUnlocked()
         isUnlockedLiveData = appRepository.getIsUnlockedLiveData()
@@ -82,7 +82,7 @@ open class BaseViewModel(application: Application) : AndroidViewModel(applicatio
         connectionLiveData = appRepository.connectionData.liveDataActiveItem
         connectionToServerAvailableLiveData.value = false
 
-        networkStatusLiveData.value = NetworkStatus.NETWORK_UNKNOWN
+        networkStatusLiveData.value = Event(NetworkStatus.NETWORK_UNKNOWN)
     }
 
     private fun inject() {
@@ -114,16 +114,16 @@ open class BaseViewModel(application: Application) : AndroidViewModel(applicatio
     }
 
     override fun setNetworkStatus(status: NetworkStatus) {
-        networkStatusLiveData.value = status
+        networkStatusLiveData.value = Event(status)
     }
 
-    override fun getNetworkStatus(): NetworkStatus? = networkStatusLiveData.value
+    override fun getNetworkStatus(): NetworkStatus? = networkStatusLiveData.value?.peekContent()
 
     fun setConnectionToServerAvailable(available: Boolean) {
         connectionToServerAvailableLiveData.value = available
     }
 
     fun setStartupComplete(isComplete: Boolean) {
-        startupCompleteLiveData.value = isComplete
+        startupCompleteLiveData.value = Event(isComplete)
     }
 }

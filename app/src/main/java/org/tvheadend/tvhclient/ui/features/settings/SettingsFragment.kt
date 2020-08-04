@@ -1,6 +1,7 @@
 package org.tvheadend.tvhclient.ui.features.settings
 
 import android.Manifest
+import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
@@ -22,11 +23,9 @@ import org.tvheadend.tvhclient.ui.common.interfaces.ToolbarInterface
 import org.tvheadend.tvhclient.ui.features.MainActivity
 import org.tvheadend.tvhclient.util.extensions.sendSnackbarMessage
 import timber.log.Timber
-import java.io.File
 
 class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceClickListener, SharedPreferences.OnSharedPreferenceChangeListener, ActivityCompat.OnRequestPermissionsResultCallback {
 
-    private var downloadDirectoryPreference: Preference? = null
     lateinit var sharedPreferences: SharedPreferences
     lateinit var settingsViewModel: SettingsViewModel
 
@@ -53,11 +52,7 @@ class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceClic
         findPreference<Preference>("selected_theme")?.onPreferenceClickListener = this
         findPreference<Preference>("information")?.onPreferenceClickListener = this
         findPreference<Preference>("privacy_policy")?.onPreferenceClickListener = this
-
-        downloadDirectoryPreference = findPreference("download_directory")
-        downloadDirectoryPreference?.onPreferenceClickListener = this
-
-        updateDownloadDirSummary()
+        findPreference<Preference>("download_directory")?.onPreferenceClickListener = this
     }
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
@@ -67,6 +62,7 @@ class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceClic
     override fun onResume() {
         super.onResume()
         sharedPreferences.registerOnSharedPreferenceChangeListener(this)
+        updateDownloadDirSummary()
     }
 
     override fun onPause() {
@@ -75,8 +71,16 @@ class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceClic
     }
 
     private fun updateDownloadDirSummary() {
-        val path = sharedPreferences.getString("download_directory", Environment.DIRECTORY_DOWNLOADS)
-        downloadDirectoryPreference?.summary = getString(R.string.pref_download_directory_sum, path)
+        Timber.d("Updating download directory summary")
+        val path = if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+            Timber.d("Android API version is ${Build.VERSION.SDK_INT}, loading download folder from preference")
+            sharedPreferences.getString("download_directory", Environment.DIRECTORY_DOWNLOADS)
+        } else {
+            Timber.d("Android API version is ${Build.VERSION.SDK_INT}, using default folder")
+            Environment.DIRECTORY_DOWNLOADS
+        }
+        Timber.d("Setting download directory summary to $path")
+        findPreference<Preference>("download_directory")?.summary = getString(R.string.pref_download_directory_sum, path)
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
@@ -87,20 +91,13 @@ class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceClic
             // The delay is needed, otherwise an illegalStateException would be thrown. This is
             // a known bug in android. Until it is fixed this workaround is required.
             Handler().postDelayed({
-                // Get the parent activity that implements the callback
-                activity?.let {
-                    // Show the folder chooser dialog which defaults to the external storage dir
-                    MaterialDialog(it).show {
-                        folderChooser { _, file ->
-                            onFolderSelected(file)
-                        }
-                    }
-                }
+                activity?.let { showFolderSelectionDialog(it) }
             }, 200)
         }
     }
 
     override fun onSharedPreferenceChanged(prefs: SharedPreferences, key: String) {
+        Timber.d("Shared preference $key has changed")
         when (key) {
             "selected_theme" -> handlePreferenceThemeChanged()
             "language" -> {
@@ -156,24 +153,30 @@ class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceClic
         } else {
             activity?.let {
                 if (isReadPermissionGranted(it)) {
-                    // Get the parent activity that implements the callback
-                    MaterialDialog(it).show {
-                        folderChooser { _, file ->
-                            onFolderSelected(file)
-                        }
-                    }
+                    showFolderSelectionDialog(it)
                 }
             }
         }
     }
 
-    private fun onFolderSelected(file: File) {
-        Timber.d("Folder ${file.absolutePath}, ${file.name} was selected")
-        val strippedPath = file.absolutePath.replace(Environment.getExternalStorageDirectory().absolutePath, "")
-        val prefs = PreferenceManager.getDefaultSharedPreferences(activity)
-        prefs.edit().putString("download_directory", strippedPath).apply()
-
-        updateDownloadDirSummary()
+    @Suppress("DEPRECATION")
+    private fun showFolderSelectionDialog(context: Context) {
+        Timber.d("Showing folder selection dialog")
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+            Timber.d("Android API version is ${Build.VERSION.SDK_INT}, showing folder selection dialog")
+            // Show the folder chooser dialog which defaults to the external storage dir
+            MaterialDialog(context).show {
+                folderChooser { _, file ->
+                    Timber.d("Folder ${file.absolutePath}, ${file.name} was selected")
+                    val strippedPath = file.absolutePath.replace(Environment.getExternalStorageDirectory().absolutePath, "")
+                    sharedPreferences.edit().putString("download_directory", strippedPath).apply()
+                    updateDownloadDirSummary()
+                }
+            }
+        } else {
+            Timber.d("Android API version is ${Build.VERSION.SDK_INT}, showing information about default folder")
+            context.sendSnackbarMessage("On Android 10 and higher devices the download folder is always ${Environment.DIRECTORY_DOWNLOADS}")
+        }
     }
 
     private fun isReadPermissionGranted(activity: FragmentActivity): Boolean {

@@ -41,4 +41,8 @@
         android:icon="?attr/ic_menu_download"
         android:title="@string/download"
         android:visible="false" />
+    <item
+        android:id="@+id/menu_share_recording"
+        android:icon="?attr/ic_menu_share"
+        android:title="@string/pref_share" />
 </menu>

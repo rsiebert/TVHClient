@@ -20,10 +20,7 @@ import org.tvheadend.tvhclient.ui.common.interfaces.RecordingRemovedInterface
 import org.tvheadend.tvhclient.ui.features.dvr.recordings.RecordingAddEditFragment
 import org.tvheadend.tvhclient.ui.features.dvr.series_recordings.SeriesRecordingAddEditFragment
 import org.tvheadend.tvhclient.ui.features.dvr.timer_recordings.TimerRecordingAddEditFragment
-import org.tvheadend.tvhclient.ui.features.playback.external.CastChannelActivity
-import org.tvheadend.tvhclient.ui.features.playback.external.CastRecordingActivity
-import org.tvheadend.tvhclient.ui.features.playback.external.PlayChannelActivity
-import org.tvheadend.tvhclient.ui.features.playback.external.PlayRecordingActivity
+import org.tvheadend.tvhclient.ui.features.playback.external.*
 import org.tvheadend.tvhclient.ui.features.playback.internal.PlaybackActivity
 import org.tvheadend.tvhclient.ui.features.programs.ProgramListFragment
 import org.tvheadend.tvhclient.util.extensions.getCastSession
@@ -61,6 +58,7 @@ fun preparePopupOrToolbarRecordingMenu(context: Context,
             menu.findItem(R.id.menu_cast)?.isVisible = context.getCastSession() != null
             menu.findItem(R.id.menu_remove_recording)?.isVisible = true
             menu.findItem(R.id.menu_download_recording)?.isVisible = isUnlocked
+            menu.findItem(R.id.menu_share_recording)?.isVisible = isUnlocked
 
         } else if (recording.isScheduled && !recording.isRecording) {
             Timber.d("Recording is scheduled")
@@ -75,6 +73,7 @@ fun preparePopupOrToolbarRecordingMenu(context: Context,
             menu.findItem(R.id.menu_cast)?.isVisible = context.getCastSession() != null
             menu.findItem(R.id.menu_stop_recording)?.isVisible = true
             menu.findItem(R.id.menu_edit_recording)?.isVisible = isUnlocked
+            menu.findItem(R.id.menu_share_recording)?.isVisible = isUnlocked
 
         } else if (recording.isFailed || recording.isFileMissing || recording.isMissed || recording.isAborted) {
             Timber.d("Recording is failed, file is missing, has been missed or was aborted")
@@ -487,6 +486,15 @@ fun playSelectedRecording(context: Context, dvrId: Int, isUnlocked: Boolean): Bo
         context.startActivity(intent)
     } else {
         val intent = Intent(context, PlayRecordingActivity::class.java)
+        intent.putExtra("dvrId", dvrId)
+        context.startActivity(intent)
+    }
+    return true
+}
+
+fun shareSelectedRecording(context: Context, dvrId: Int, isUnlocked: Boolean): Boolean {
+    if (isUnlocked) {
+        val intent = Intent(context, ShareRecordingActivity::class.java)
         intent.putExtra("dvrId", dvrId)
         context.startActivity(intent)
     }

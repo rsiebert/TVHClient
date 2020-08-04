@@ -46,7 +46,7 @@ abstract class BasePlaybackActivity : AppCompatActivity() {
             Timber.d("Received ticket $isTicketReceived")
             if (isTicketReceived) {
                 progress_bar.gone()
-                status.text = getString(R.string.starting_playback)
+                status.text = getString(R.string.connected_to_server)
                 onTicketReceived()
             }
         })

@@ -89,10 +89,10 @@
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="4dp"
                     android:layout_marginEnd="16dp"
-                    android:text="@{program.title}"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/title_label"
+                    app:optionalColoredText="@{program.title}"
                     tools:text="@string/title" />
 
                 <TextView
@@ -106,7 +106,7 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/title"
-                    app:optionalText="@{program.subtitle}"
+                    app:optionalColoredText="@{program.subtitle}"
                     tools:text="@string/subtitle" />
 
                 <TextView
@@ -176,7 +176,7 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/description_label"
-                    app:optionalDescriptionText="@{program.description}"
+                    app:optionalColoredText="@{program.description}"
                     tools:text="@string/description" />
 
                 <TextView
