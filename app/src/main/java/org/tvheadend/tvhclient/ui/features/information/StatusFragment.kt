@@ -9,7 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import kotlinx.android.synthetic.main.status_fragment.*
 import org.tvheadend.data.entity.ServerStatus
 import org.tvheadend.tvhclient.R
@@ -31,7 +31,7 @@ class StatusFragment : BaseFragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        statusViewModel = ViewModelProviders.of(requireActivity()).get(StatusViewModel::class.java)
+        statusViewModel = ViewModelProvider(requireActivity()).get(StatusViewModel::class.java)
 
         if (activity is LayoutControlInterface) {
             (activity as LayoutControlInterface).forceSingleScreenLayout()
@@ -120,7 +120,7 @@ class StatusFragment : BaseFragment() {
         })
 
         // Get the programs that are currently being recorded
-        val recordingViewModel = ViewModelProviders.of(this).get(RecordingViewModel::class.java)
+        val recordingViewModel = ViewModelProvider(this).get(RecordingViewModel::class.java)
         recordingViewModel.scheduledRecordings.observe(viewLifecycleOwner, Observer { recordings ->
             if (recordings != null) {
                 val currentRecText = StringBuilder()

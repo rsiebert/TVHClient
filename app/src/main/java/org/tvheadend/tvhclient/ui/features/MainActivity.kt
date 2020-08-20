@@ -26,7 +26,7 @@ import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.preference.PreferenceManager
 import com.google.android.gms.cast.framework.*
@@ -45,7 +45,6 @@ import org.tvheadend.tvhclient.ui.features.information.StatusViewModel
 import org.tvheadend.tvhclient.ui.features.navigation.NavigationDrawer
 import org.tvheadend.tvhclient.ui.features.navigation.NavigationViewModel
 import org.tvheadend.tvhclient.ui.features.playback.external.CastSessionManagerListener
-import org.tvheadend.tvhclient.ui.features.playback.internal.PlaybackActivity
 import org.tvheadend.tvhclient.ui.features.programs.ProgramListFragment
 import org.tvheadend.tvhclient.ui.features.startup.StartupFragment
 import org.tvheadend.tvhclient.util.extensions.*
@@ -103,9 +102,9 @@ class MainActivity : AppCompatActivity(), ToolbarInterface, LayoutControlInterfa
         setSupportActionBar(toolbar)
 
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
-        baseViewModel = ViewModelProviders.of(this).get(BaseViewModel::class.java)
-        navigationViewModel = ViewModelProviders.of(this).get(NavigationViewModel::class.java)
-        statusViewModel = ViewModelProviders.of(this).get(StatusViewModel::class.java)
+        baseViewModel = ViewModelProvider(this).get(BaseViewModel::class.java)
+        navigationViewModel = ViewModelProvider(this).get(NavigationViewModel::class.java)
+        statusViewModel = ViewModelProvider(this).get(StatusViewModel::class.java)
 
         snackbarMessageReceiver = SnackbarMessageReceiver(baseViewModel)
         networkStatusReceiver = NetworkStatusReceiver(baseViewModel)

@@ -1,7 +1,7 @@
 package org.tvheadend.tvhclient.ui.features.settings
 
 import android.os.Bundle
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import androidx.preference.EditTextPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
@@ -23,7 +23,7 @@ class SettingsUserInterfaceFragment : PreferenceFragmentCompat(), Preference.OnP
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        settingsViewModel = ViewModelProviders.of(activity as SettingsActivity).get(SettingsViewModel::class.java)
+        settingsViewModel = ViewModelProvider(activity as SettingsActivity).get(SettingsViewModel::class.java)
 
         (activity as ToolbarInterface).let {
             it.setTitle(getString(R.string.pref_user_interface))

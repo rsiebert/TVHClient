@@ -8,7 +8,7 @@ import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import org.tvheadend.tvhclient.MainApplication
 import org.tvheadend.tvhclient.R
@@ -38,7 +38,7 @@ class SettingsActivity : AppCompatActivity(), RemoveFragmentFromBackstackInterfa
 
         setSupportActionBar(findViewById(R.id.toolbar))
 
-        settingsViewModel = ViewModelProviders.of(this).get(SettingsViewModel::class.java)
+        settingsViewModel = ViewModelProvider(this).get(SettingsViewModel::class.java)
         snackbarMessageReceiver = SnackbarMessageReceiver(settingsViewModel)
 
         // If the user wants to go directly to a sub setting screen like the connections

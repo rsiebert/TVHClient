@@ -3,7 +3,7 @@ package org.tvheadend.tvhclient.ui.features.dvr.timer_recordings
 import android.os.Bundle
 import android.view.*
 import androidx.core.view.forEach
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import com.afollestad.materialdialogs.MaterialDialog
 import kotlinx.android.synthetic.main.timer_recording_add_edit_fragment.*
 import org.tvheadend.data.entity.Channel
@@ -32,7 +32,7 @@ class TimerRecordingAddEditFragment : BaseFragment(), BackPressedInterface, Reco
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        timerRecordingViewModel = ViewModelProviders.of(requireActivity()).get(TimerRecordingViewModel::class.java)
+        timerRecordingViewModel = ViewModelProvider(requireActivity()).get(TimerRecordingViewModel::class.java)
 
         if (activity is LayoutControlInterface) {
            (activity as LayoutControlInterface).forceSingleScreenLayout()

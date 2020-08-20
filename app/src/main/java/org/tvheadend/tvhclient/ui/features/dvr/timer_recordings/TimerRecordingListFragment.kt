@@ -7,7 +7,7 @@ import androidx.appcompat.widget.PopupMenu
 import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.recyclerview_fragment.*
 import org.tvheadend.data.entity.TimerRecording
@@ -33,7 +33,7 @@ class TimerRecordingListFragment : BaseFragment(), RecyclerViewClickInterface, S
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        timerRecordingViewModel = ViewModelProviders.of(requireActivity()).get(TimerRecordingViewModel::class.java)
+        timerRecordingViewModel = ViewModelProvider(requireActivity()).get(TimerRecordingViewModel::class.java)
 
         arguments?.let {
             timerRecordingViewModel.selectedListPosition = it.getInt("listPosition")

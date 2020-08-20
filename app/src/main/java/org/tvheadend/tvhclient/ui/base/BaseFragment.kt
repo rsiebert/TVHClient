@@ -6,7 +6,7 @@ import android.view.MenuItem
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import androidx.preference.PreferenceManager
 import org.tvheadend.data.AppRepository
 import org.tvheadend.data.entity.Connection
@@ -40,7 +40,7 @@ abstract class BaseFragment : Fragment() {
         }
 
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(activity)
-        baseViewModel = ViewModelProviders.of(requireActivity()).get(BaseViewModel::class.java)
+        baseViewModel = ViewModelProvider(requireActivity()).get(BaseViewModel::class.java)
         baseViewModel.connectionToServerAvailableLiveData.observe(viewLifecycleOwner, Observer { isAvailable ->
             Timber.d("Received live data, connection to server availability changed to $isAvailable")
             isConnectionToServerAvailable = isAvailable

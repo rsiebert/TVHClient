@@ -4,7 +4,7 @@ import android.os.Bundle
 import android.view.*
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import kotlinx.android.synthetic.main.details_fragment_header.*
 import kotlinx.android.synthetic.main.program_details_fragment.*
 import org.tvheadend.data.entity.Program
@@ -34,7 +34,7 @@ class ProgramDetailsFragment : BaseFragment(), ClearSearchResultsOrPopBackStackI
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        programViewModel = ViewModelProviders.of(requireActivity()).get(ProgramViewModel::class.java)
+        programViewModel = ViewModelProvider(requireActivity()).get(ProgramViewModel::class.java)
 
         if (activity is LayoutControlInterface) {
             (activity as LayoutControlInterface).forceSingleScreenLayout()

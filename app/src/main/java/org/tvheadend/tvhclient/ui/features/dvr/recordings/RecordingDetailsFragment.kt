@@ -4,7 +4,7 @@ import android.os.Bundle
 import android.view.*
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import kotlinx.android.synthetic.main.details_fragment_header.*
 import kotlinx.android.synthetic.main.recording_details_fragment.*
 import org.tvheadend.data.entity.Recording
@@ -33,7 +33,7 @@ class RecordingDetailsFragment : BaseFragment(), RecordingRemovedInterface, Down
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        recordingViewModel = ViewModelProviders.of(requireActivity()).get(RecordingViewModel::class.java)
+        recordingViewModel = ViewModelProvider(requireActivity()).get(RecordingViewModel::class.java)
 
         if (!isDualPane) {
             toolbarInterface.setTitle(getString(R.string.details))
