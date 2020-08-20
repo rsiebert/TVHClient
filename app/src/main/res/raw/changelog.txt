@@ -1,3 +1,8 @@
+$ 2.4.1
+  % VERSION 2.4.1
+  _ 20.08.2020
+    * Added support for KODI color tags in internal player
+    * Some internal improvements
 $ 2.4.0
   % VERSION 2.4.0
   _ 03.08.2020
