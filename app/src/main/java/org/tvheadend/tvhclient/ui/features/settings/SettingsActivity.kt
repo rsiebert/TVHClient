@@ -36,6 +36,7 @@ class SettingsActivity : AppCompatActivity(), RemoveFragmentFromBackstackInterfa
         MainApplication.component.inject(this)
 
         setSupportActionBar(findViewById(R.id.toolbar))
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         settingsViewModel = ViewModelProvider(this).get(SettingsViewModel::class.java)
         snackbarMessageReceiver = SnackbarMessageReceiver(settingsViewModel)
