@@ -6,7 +6,6 @@ import android.widget.Filter
 import androidx.appcompat.widget.PopupMenu
 import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.recyclerview_fragment.*
@@ -45,7 +44,7 @@ class TimerRecordingListFragment : BaseFragment(), RecyclerViewClickInterface, S
         recycler_view.gone()
         search_progress?.visibleOrGone(baseViewModel.isSearchActive)
 
-        timerRecordingViewModel.recordings.observe(viewLifecycleOwner, Observer { recordings ->
+        timerRecordingViewModel.recordings.observe(viewLifecycleOwner,  { recordings ->
             if (recordings != null) {
                 recyclerViewAdapter.addItems(recordings)
                 observeSearchQuery()
@@ -63,7 +62,7 @@ class TimerRecordingListFragment : BaseFragment(), RecyclerViewClickInterface, S
 
     private fun observeSearchQuery() {
         Timber.d("Observing search query")
-        baseViewModel.searchQueryLiveData.observe(viewLifecycleOwner, Observer { query ->
+        baseViewModel.searchQueryLiveData.observe(viewLifecycleOwner,  { query ->
             if (query.isNotEmpty()) {
                 Timber.d("View model returned search query '$query'")
                 onSearchRequested(query)

@@ -1,7 +1,6 @@
 package org.tvheadend.tvhclient.ui.features.dvr.recordings
 
 import android.os.Bundle
-import androidx.lifecycle.Observer
 import org.tvheadend.tvhclient.R
 import timber.log.Timber
 
@@ -11,7 +10,7 @@ class FailedRecordingListFragment : RecordingListFragment() {
         super.onActivityCreated(savedInstanceState)
 
         Timber.d("Observing recordings")
-        recordingViewModel.failedRecordings.observe(viewLifecycleOwner, Observer { recordings ->
+        recordingViewModel.failedRecordings.observe(viewLifecycleOwner,  { recordings ->
             Timber.d("View model returned ${recordings.size} recordings")
             addRecordingsAndUpdateUI(recordings)
         })

@@ -3,7 +3,6 @@ package org.tvheadend.tvhclient.ui.features.programs
 import android.os.Bundle
 import android.view.*
 import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import kotlinx.android.synthetic.main.details_fragment_header.*
 import kotlinx.android.synthetic.main.program_details_fragment.*
@@ -50,14 +49,14 @@ class ProgramDetailsFragment : BaseFragment(), ClearSearchResultsOrPopBackStackI
         }
 
         Timber.d("Observing program")
-        programViewModel.program.observe(viewLifecycleOwner, Observer {
+        programViewModel.program.observe(viewLifecycleOwner,  {
             Timber.d("View model returned a program")
             program = it
             showProgramDetails()
         })
 
         Timber.d("Observing recordings")
-        programViewModel.recordings.observe(viewLifecycleOwner, Observer { recordings ->
+        programViewModel.recordings.observe(viewLifecycleOwner,  { recordings ->
             if (recordings != null) {
                 Timber.d("View model returned ${recordings.size} recordings")
                 showRecordingStatusOfProgram(recordings)

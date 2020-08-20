@@ -3,7 +3,6 @@ package org.tvheadend.tvhclient.ui.features.dvr.recordings
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
-import androidx.lifecycle.Observer
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.ui.common.showCompletedRecordingSortOrderSelectionDialog
 import timber.log.Timber
@@ -14,7 +13,7 @@ class CompletedRecordingListFragment : RecordingListFragment() {
         super.onActivityCreated(savedInstanceState)
 
         Timber.d("Observing recordings")
-        recordingViewModel.completedRecordings.observe(viewLifecycleOwner, Observer { recordings ->
+        recordingViewModel.completedRecordings.observe(viewLifecycleOwner,  { recordings ->
             Timber.d("View model returned ${recordings.size} recordings")
             addRecordingsAndUpdateUI(recordings)
         })

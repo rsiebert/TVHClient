@@ -9,7 +9,6 @@ import androidx.appcompat.widget.PopupMenu
 import androidx.core.view.children
 import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.afollestad.materialdialogs.MaterialDialog
@@ -67,7 +66,7 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickInterface, ChannelT
         search_progress?.visibleOrGone(baseViewModel.isSearchActive)
 
         Timber.d("Observing selected time")
-        channelViewModel.selectedTime.observe(viewLifecycleOwner, Observer { time ->
+        channelViewModel.selectedTime.observe(viewLifecycleOwner,  { time ->
             Timber.d("View model returned selected time $time")
             if (time != null) {
                 selectedTime = time
@@ -75,7 +74,7 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickInterface, ChannelT
         })
 
         Timber.d("Observing channel tags")
-        channelViewModel.channelTags.observe(viewLifecycleOwner, Observer { tags ->
+        channelViewModel.channelTags.observe(viewLifecycleOwner,  { tags ->
             if (tags != null) {
                 Timber.d("View model returned ${tags.size} channel tags")
                 channelTags = tags
@@ -83,7 +82,7 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickInterface, ChannelT
         })
 
         Timber.d("Observing channels")
-        channelViewModel.channels.observe(viewLifecycleOwner, Observer { channels ->
+        channelViewModel.channels.observe(viewLifecycleOwner,  { channels ->
             if (channels != null) {
                 Timber.d("View model returned ${channels.size} channels")
                 recyclerViewAdapter.addItems(channels.toMutableList())
@@ -100,7 +99,7 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickInterface, ChannelT
             }
         })
 
-        channelViewModel.channelCount.observe(viewLifecycleOwner, Observer { count ->
+        channelViewModel.channelCount.observe(viewLifecycleOwner,  { count ->
             channelCount = count
         })
 
@@ -122,7 +121,7 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickInterface, ChannelT
         // so the recording status of the particular program can be updated. This is required
         // because the programs are not updated automatically when recordings change.
         Timber.d("Observing recordings")
-        channelViewModel.recordings.observe(viewLifecycleOwner, Observer { recordings ->
+        channelViewModel.recordings.observe(viewLifecycleOwner,  { recordings ->
             if (recordings != null) {
                 Timber.d("View model returned ${recordings.size} recordings")
                 recyclerViewAdapter.addRecordings(recordings)
@@ -141,7 +140,7 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickInterface, ChannelT
 
     private fun observeSearchQuery() {
         Timber.d("Observing search query")
-        baseViewModel.searchQueryLiveData.observe(viewLifecycleOwner, Observer { query ->
+        baseViewModel.searchQueryLiveData.observe(viewLifecycleOwner,  { query ->
             if (query.isNotEmpty()) {
                 Timber.d("View model returned search query '$query'")
                 onSearchRequested(query)

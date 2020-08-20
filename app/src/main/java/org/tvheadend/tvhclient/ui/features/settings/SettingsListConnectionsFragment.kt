@@ -6,7 +6,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.*
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.afollestad.materialdialogs.MaterialDialog
@@ -47,7 +46,7 @@ class SettingsListConnectionsFragment : Fragment(), BackPressedInterface, Action
         recycler_view.layoutManager = LinearLayoutManager(activity)
         recycler_view.adapter = recyclerViewAdapter
 
-        settingsViewModel.connectionListLiveData.observe(viewLifecycleOwner, Observer { connections ->
+        settingsViewModel.connectionListLiveData.observe(viewLifecycleOwner,  { connections ->
             if (connections != null) {
                 recyclerViewAdapter.addItems(connections)
                 context?.let {
@@ -58,7 +57,7 @@ class SettingsListConnectionsFragment : Fragment(), BackPressedInterface, Action
                 }
             }
         })
-        settingsViewModel.activeConnectionLiveData.observe(viewLifecycleOwner, Observer { connection ->
+        settingsViewModel.activeConnectionLiveData.observe(viewLifecycleOwner,  { connection ->
             connectionHasChanged = connection != null && connection.id != settingsViewModel.connectionToEdit.id
             activeConnectionId = connection?.id ?: -1
         })

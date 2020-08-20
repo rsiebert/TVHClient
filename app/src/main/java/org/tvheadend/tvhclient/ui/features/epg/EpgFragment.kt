@@ -7,7 +7,6 @@ import android.view.*
 import android.widget.Filter
 import androidx.appcompat.widget.PopupMenu
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -101,7 +100,7 @@ class EpgFragment : BaseFragment(), EpgScrollInterface, RecyclerViewClickInterfa
         epgViewModel.displayWidth = displayMetrics.widthPixels
 
         Timber.d("Observing channel tags")
-        epgViewModel.channelTags.observe(viewLifecycleOwner, Observer { tags ->
+        epgViewModel.channelTags.observe(viewLifecycleOwner,  { tags ->
             if (tags != null) {
                 Timber.d("View model returned ${tags.size} channel tags")
                 channelTags = tags
@@ -109,7 +108,7 @@ class EpgFragment : BaseFragment(), EpgScrollInterface, RecyclerViewClickInterfa
         })
 
         Timber.d("Observing epg channels")
-        epgViewModel.epgChannels.observe(viewLifecycleOwner, Observer { channels ->
+        epgViewModel.epgChannels.observe(viewLifecycleOwner,  { channels ->
 
             progress_bar?.gone()
             channel_list_recycler_view?.visible()
@@ -130,7 +129,7 @@ class EpgFragment : BaseFragment(), EpgScrollInterface, RecyclerViewClickInterfa
         })
 
         Timber.d("Observing trigger to reload epg data")
-        epgViewModel.viewAndEpgDataIsInvalid.observe(viewLifecycleOwner, Observer { reload ->
+        epgViewModel.viewAndEpgDataIsInvalid.observe(viewLifecycleOwner,  { reload ->
             Timber.d("Trigger to reload epg data has changed to $reload")
             if (reload) {
                 viewPagerAdapter.notifyDataSetChanged()
@@ -138,7 +137,7 @@ class EpgFragment : BaseFragment(), EpgScrollInterface, RecyclerViewClickInterfa
         })
 
         Timber.d("Observing epg data")
-        epgViewModel.epgData.observe(viewLifecycleOwner, Observer { data ->
+        epgViewModel.epgData.observe(viewLifecycleOwner,  { data ->
             data?.forEach {
                 Timber.d("Loaded ${it.value.size} programs for channel ${it.key}")
             }
@@ -147,7 +146,7 @@ class EpgFragment : BaseFragment(), EpgScrollInterface, RecyclerViewClickInterfa
         // Observe all recordings here in case a recording shall be edited right after it was added.
         // This needs to be done in this fragment because the popup menu handling is also done here.
         Timber.d("Observing recordings")
-        epgViewModel.recordings.observe(viewLifecycleOwner, Observer { recordings ->
+        epgViewModel.recordings.observe(viewLifecycleOwner,  { recordings ->
             if (recordings != null) {
                 Timber.d("View model returned ${recordings.size} recordings")
                 for (recording in recordings) {
@@ -162,7 +161,7 @@ class EpgFragment : BaseFragment(), EpgScrollInterface, RecyclerViewClickInterfa
             }
         })
 
-        epgViewModel.channelCount.observe(viewLifecycleOwner, Observer { count ->
+        epgViewModel.channelCount.observe(viewLifecycleOwner,  { count ->
             channelCount = count
         })
     }

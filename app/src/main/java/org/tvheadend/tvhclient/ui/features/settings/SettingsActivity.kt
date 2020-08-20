@@ -7,7 +7,6 @@ import android.os.Bundle
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import org.tvheadend.tvhclient.MainApplication
@@ -48,7 +47,7 @@ class SettingsActivity : AppCompatActivity(), RemoveFragmentFromBackstackInterfa
             settingsViewModel.setNavigationMenuId(id)
         }
 
-        settingsViewModel.getNavigationMenuId().observe(this, Observer { event ->
+        settingsViewModel.getNavigationMenuId().observe(this,  { event ->
             event.getContentIfNotHandled()?.let {
                 Timber.d("New preference selected with id $it, replacing settings fragment")
                 supportFragmentManager.beginTransaction()
@@ -58,14 +57,14 @@ class SettingsActivity : AppCompatActivity(), RemoveFragmentFromBackstackInterfa
             }
         })
 
-        settingsViewModel.currentServerStatusLiveData.observe(this, Observer { serverStatus ->
+        settingsViewModel.currentServerStatusLiveData.observe(this,  { serverStatus ->
             Timber.d("Received live data, server status has changed and is ${if (serverStatus != null) "" else "not "}available")
             if (serverStatus != null) {
                 settingsViewModel.currentServerStatus = serverStatus
             }
         })
 
-        settingsViewModel.snackbarMessageLiveData.observe(this, Observer { event ->
+        settingsViewModel.snackbarMessageLiveData.observe(this,  { event ->
             event.getContentIfNotHandled()?.let {
                 this.showSnackbarMessage(it)
             }

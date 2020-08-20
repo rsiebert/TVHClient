@@ -8,7 +8,6 @@ import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import kotlinx.android.synthetic.main.status_fragment.*
 import org.tvheadend.data.entity.ServerStatus
@@ -63,7 +62,7 @@ class StatusFragment : BaseFragment() {
             }
         }
 
-        baseViewModel.connectionToServerAvailableLiveData.observe(viewLifecycleOwner, Observer { connectionAvailable ->
+        baseViewModel.connectionToServerAvailableLiveData.observe(viewLifecycleOwner,  { connectionAvailable ->
             Timber.d("Connection to server availability changed to $connectionAvailable")
             if (connectionAvailable) {
                 Timber.d("Starting additional information update handler")
@@ -82,38 +81,38 @@ class StatusFragment : BaseFragment() {
         series_recordings_view.visibility = if (htspVersion >= 13) View.VISIBLE else View.GONE
         timer_recordings_view.visibility = if (htspVersion >= 18 && isUnlocked) View.VISIBLE else View.GONE
 
-        statusViewModel.channelCount.observe(viewLifecycleOwner, Observer { count ->
+        statusViewModel.channelCount.observe(viewLifecycleOwner,  { count ->
             val channelCountText = "$count ${getString(R.string.available)}"
             channels_view.text = channelCountText
         })
-        statusViewModel.programCount.observe(viewLifecycleOwner, Observer { count ->
+        statusViewModel.programCount.observe(viewLifecycleOwner,  { count ->
             programs_view.text = resources.getQuantityString(R.plurals.programs, count ?: 0, count)
         })
-        statusViewModel.seriesRecordingCount.observe(viewLifecycleOwner, Observer { count ->
+        statusViewModel.seriesRecordingCount.observe(viewLifecycleOwner,  { count ->
             series_recordings_view.text = resources.getQuantityString(R.plurals.series_recordings, count
                     ?: 0, count)
         })
-        statusViewModel.timerRecordingCount.observe(viewLifecycleOwner, Observer { count ->
+        statusViewModel.timerRecordingCount.observe(viewLifecycleOwner,  { count ->
             timer_recordings_view.text = resources.getQuantityString(R.plurals.timer_recordings, count
                     ?: 0, count)
         })
-        statusViewModel.completedRecordingCount.observe(viewLifecycleOwner, Observer { count ->
+        statusViewModel.completedRecordingCount.observe(viewLifecycleOwner,  { count ->
             completed_recordings_view.text = resources.getQuantityString(R.plurals.completed_recordings, count
                     ?: 0, count)
         })
-        statusViewModel.scheduledRecordingCount.observe(viewLifecycleOwner, Observer { count ->
+        statusViewModel.scheduledRecordingCount.observe(viewLifecycleOwner,  { count ->
             upcoming_recordings_view.text = resources.getQuantityString(R.plurals.upcoming_recordings, count
                     ?: 0, count)
         })
-        statusViewModel.failedRecordingCount.observe(viewLifecycleOwner, Observer { count ->
+        statusViewModel.failedRecordingCount.observe(viewLifecycleOwner,  { count ->
             failed_recordings_view.text = resources.getQuantityString(R.plurals.failed_recordings, count
                     ?: 0, count)
         })
-        statusViewModel.removedRecordingCount.observe(viewLifecycleOwner, Observer { count ->
+        statusViewModel.removedRecordingCount.observe(viewLifecycleOwner,  { count ->
             removed_recordings_view.text = resources.getQuantityString(R.plurals.removed_recordings, count
                     ?: 0, count)
         })
-        statusViewModel.serverStatusLiveData.observe(viewLifecycleOwner, Observer { serverStatus ->
+        statusViewModel.serverStatusLiveData.observe(viewLifecycleOwner,  { serverStatus ->
             if (serverStatus != null) {
                 showServerInformation(serverStatus)
             }
@@ -121,7 +120,7 @@ class StatusFragment : BaseFragment() {
 
         // Get the programs that are currently being recorded
         val recordingViewModel = ViewModelProvider(this).get(RecordingViewModel::class.java)
-        recordingViewModel.scheduledRecordings.observe(viewLifecycleOwner, Observer { recordings ->
+        recordingViewModel.scheduledRecordings.observe(viewLifecycleOwner,  { recordings ->
             if (recordings != null) {
                 val currentRecText = StringBuilder()
                 for (rec in recordings) {
@@ -183,12 +182,12 @@ class StatusFragment : BaseFragment() {
     }
 
     private fun showSubscriptionAndInputStatus() {
-        statusViewModel.subscriptions.observe(viewLifecycleOwner, Observer { subscriptions ->
+        statusViewModel.subscriptions.observe(viewLifecycleOwner,  { subscriptions ->
             if (subscriptions != null) {
                 Timber.d("Received subscription status")
             }
         })
-        statusViewModel.inputs.observe(viewLifecycleOwner, Observer { inputs ->
+        statusViewModel.inputs.observe(viewLifecycleOwner,  { inputs ->
             if (inputs != null) {
                 Timber.d("Received input status")
             }

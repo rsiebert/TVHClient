@@ -8,7 +8,6 @@ import android.view.ViewGroup
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -117,7 +116,7 @@ class EpgViewPagerFragment : Fragment(), EpgScrollInterface {
         // In case the channels and hours and days to show have changed invalidate
         // the adapter so that the UI can be updated with the new data
         Timber.d("Observing trigger to reload epg data")
-        epgViewModel.viewAndEpgDataIsInvalid.observe(viewLifecycleOwner, Observer { reload ->
+        epgViewModel.viewAndEpgDataIsInvalid.observe(viewLifecycleOwner, { reload ->
             Timber.d("Trigger to reload epg data has changed to $reload")
             if (reload) {
                 recyclerViewAdapter.loadProgramData()

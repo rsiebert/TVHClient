@@ -3,7 +3,6 @@ package org.tvheadend.tvhclient.ui.features.dvr.recordings
 import android.os.Bundle
 import android.view.*
 import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import kotlinx.android.synthetic.main.details_fragment_header.*
 import kotlinx.android.synthetic.main.recording_details_fragment.*
@@ -47,7 +46,7 @@ class RecordingDetailsFragment : BaseFragment(), RecordingRemovedInterface, Down
         }
 
         Timber.d("Observing recording")
-        recordingViewModel.recordingLiveData.observe(viewLifecycleOwner, Observer {
+        recordingViewModel.recordingLiveData.observe(viewLifecycleOwner,  {
             Timber.d("View model returned a recording")
             recording = it
             showRecordingDetails()

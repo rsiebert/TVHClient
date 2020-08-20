@@ -16,7 +16,6 @@ import android.os.Bundle
 import android.view.Surface
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.preference.PreferenceManager
 import com.afollestad.materialdialogs.MaterialDialog
@@ -138,7 +137,7 @@ class PlaybackActivity : AppCompatActivity() {
         player_view.player = viewModel.player
 
         Timber.d("Observing authentication status")
-        viewModel.isConnected.observe(this, Observer { isConnected ->
+        viewModel.isConnected.observe(this,  { isConnected ->
             if (isConnected) {
                 Timber.d("Connected to server")
                 status.setText(R.string.connected_to_server)
@@ -150,14 +149,14 @@ class PlaybackActivity : AppCompatActivity() {
         })
 
         Timber.d("Observing video aspect ratio value")
-        viewModel.videoAspectRatio.observe(this, Observer { ratio ->
+        viewModel.videoAspectRatio.observe(this,  { ratio ->
             Timber.d("Received video aspect ratio value")
             selectedVideoAspectRatio = ratio
             updateVideoAspectRatio(ratio)
         })
 
         Timber.d("Observing player playback state")
-        viewModel.playerState.observe(this, Observer { state ->
+        viewModel.playerState.observe(this,  { state ->
             Timber.d("Received player playback state $state")
             when (state) {
                 Player.STATE_IDLE -> {
@@ -177,7 +176,7 @@ class PlaybackActivity : AppCompatActivity() {
         })
 
         Timber.d("Observing player is playing state")
-        viewModel.playerIsPlaying.observe(this, Observer { isPlaying ->
+        viewModel.playerIsPlaying.observe(this,  { isPlaying ->
             Timber.d("Received player is playing $isPlaying")
             player_play?.visibleOrInvisible(!isPlaying)
             player_pause?.visibleOrInvisible(isPlaying)
@@ -186,14 +185,14 @@ class PlaybackActivity : AppCompatActivity() {
         })
 
         Timber.d("Observing live TV playing")
-        viewModel.liveTvIsPlaying.observe(this, Observer { isPlaying ->
+        viewModel.liveTvIsPlaying.observe(this,  { isPlaying ->
             Timber.d("Received live TV is playing $isPlaying")
             play_previous_channel?.visibleOrGone(isPlaying)
             play_next_channel?.visibleOrGone(isPlaying)
         })
 
         Timber.d("Observing playback information")
-        viewModel.channelIcon.observe(this, Observer { icon ->
+        viewModel.channelIcon.observe(this,  { icon ->
             Timber.d("Received channel icon $icon")
             Picasso.get()
                     .load(getIconUrl(this, icon))
@@ -210,28 +209,28 @@ class PlaybackActivity : AppCompatActivity() {
                     })
         })
 
-        viewModel.channelName.observe(this, Observer { channelName ->
+        viewModel.channelName.observe(this,  { channelName ->
             Timber.d("Received channel name $channelName")
             channel_name?.text = if (!channelName.isNullOrEmpty()) channelName else getString(R.string.all_channels)
         })
-        viewModel.title.observe(this, Observer { title ->
+        viewModel.title.observe(this,  { title ->
             Timber.d("Received title $title")
             setOptionalDescriptionText(program_title, title)
         })
-        viewModel.subtitle.observe(this, Observer { subtitle ->
+        viewModel.subtitle.observe(this,  { subtitle ->
             Timber.d("Received subtitle $subtitle")
             setOptionalDescriptionText(program_subtitle, subtitle)
             program_subtitle?.visibleOrGone(subtitle.isNotEmpty())
         })
-        viewModel.nextTitle.observe(this, Observer { nextTitle ->
+        viewModel.nextTitle.observe(this,  { nextTitle ->
             Timber.d("Received next title $nextTitle")
             setOptionalDescriptionText(next_program_title, nextTitle)
             next_program_title?.visibleOrGone(nextTitle.isNotEmpty())
         })
-        viewModel.elapsedTime.observe(this, Observer { elapsedTime ->
+        viewModel.elapsedTime.observe(this,  { elapsedTime ->
             elapsed_time?.text = elapsedTime
         })
-        viewModel.remainingTime.observe(this, Observer { remainingTime ->
+        viewModel.remainingTime.observe(this,  { remainingTime ->
             remaining_time?.text = remainingTime
         })
     }

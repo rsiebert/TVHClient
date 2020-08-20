@@ -3,7 +3,6 @@ package org.tvheadend.tvhclient.ui.features.dvr.timer_recordings
 import android.os.Bundle
 import android.view.*
 import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import kotlinx.android.synthetic.main.details_fragment_header.*
 import kotlinx.android.synthetic.main.timer_recording_details_fragment.*
@@ -41,7 +40,7 @@ class TimerRecordingDetailsFragment : BaseFragment(), RecordingRemovedInterface,
             timerRecordingViewModel.currentIdLiveData.value = it.getString("id", "")
         }
 
-        timerRecordingViewModel.recordingLiveData.observe(viewLifecycleOwner, Observer {
+        timerRecordingViewModel.recordingLiveData.observe(viewLifecycleOwner,  {
             recording = it
             showRecordingDetails()
         })
