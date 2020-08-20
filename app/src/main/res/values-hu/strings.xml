@@ -148,7 +148,6 @@
     <string name="pref_connections">Kapcsolatok</string>
     <string name="pref_copy_playback_url_to_clipboard_enabled">Másolja a lejátszási URL-t a vágólapra</string>
     <string name="pref_copy_playback_url_to_clipboard_enabled_sum">Lejátszási problémák esetén a másolás használható a lejátszás tesztelésére a böngészőben.</string>
-    <string name="pref_crash_reporting_settings">Hibajelentések beállítása</string>
     <string name="pref_customize_user_interface">A felhasználói felület testreszabása</string>
     <string name="pref_date_time_format">Idő és dátumformátum</string>
     <string name="pref_date_time_format_sum">Jelenítse meg az országában használt idő és dátumformátumot. Alapértelmezett a következő formátum \'31.12.2017, 21:09\'.</string>
@@ -160,8 +159,6 @@
     <string name="pref_download_directory_sum">A felvételek a következő könyvtárba kerülnek: \'%s\'</string>
     <string name="pref_empty_channel_tags_enabled">Az összes csatornacímke megjelenítése</string>
     <string name="pref_empty_channel_tags_enabled_sum">Mutassa az összes elérhető csatornacímkét a csatornaszűrő listában, még akkor is, ha egyik csatornához sem rendelték őket.</string>
-    <string name="pref_enable_crash_reports">Névtelen hibajelentés küldése</string>
-    <string name="pref_enable_crash_reports_sum">A jelentések tartalmazzák azokat az információkat, amelyek segítik az alkalmazás stabilitásának és felhasználói élményének javítását.</string>
     <string name="pref_epg_hours_visible">Látható időtartam</string>
     <string name="pref_epg_hours_visible_sum">A képernyőn megjelenő műsorújság időtartam. Ha túl sok órát ad meg, befolyásolja az olvashatóságot.</string>
     <string name="pref_epg_max_days">Megjelenítendő maximális napok száma</string>

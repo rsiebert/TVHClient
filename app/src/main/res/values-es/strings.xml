@@ -147,7 +147,6 @@
     <string name="pref_connections">Conexiones</string>
     <string name="pref_copy_playback_url_to_clipboard_enabled">Copia de reproducción Url al portapapeles</string>
     <string name="pref_copy_playback_url_to_clipboard_enabled_sum">En caso de problemas de reproducción, la URL copiada se puede utilizar para probar la reproducción en un navegador.</string>
-    <string name="pref_crash_reporting_settings">Configuración de informes de bloqueo</string>
     <string name="pref_customize_user_interface">Personaliza la interfaz de usuario</string>
     <string name="pref_date_time_format">Formato de hora y fecha</string>
     <string name="pref_date_time_format_sum">Muestra la fecha y la hora como se usa habitualmente en tu país. De lo contrario, se utiliza el formato \'31 .12.2017, 21:09\'.</string>
@@ -159,8 +158,6 @@
     <string name="pref_download_directory_sum">"Las grabaciones se descargarán en el siguiente directorio: '%s'"</string>
     <string name="pref_empty_channel_tags_enabled">Mostrar todas las etiquetas de canal</string>
     <string name="pref_empty_channel_tags_enabled_sum">Mostrar todas las etiquetas de canal disponibles en la lista de filtrado de canales, incluso si no están asignadas a ningún canal.</string>
-    <string name="pref_enable_crash_reports">Enviar informes de fallos de forma anónima</string>
-    <string name="pref_enable_crash_reports_sum">Los informes contienen la información que ayuda a mejorar la estabilidad y la experiencia del usuario de la aplicación..</string>
     <string name="pref_epg_hours_visible">Horas visibles</string>
     <string name="pref_epg_hours_visible_sum">Número de horas de datos del programa que se mostrarán en una pantalla para cada remitente. Demasiadas horas afectan la legibilidad.</string>
     <string name="pref_epg_max_days">Días máximos para mostrar</string>

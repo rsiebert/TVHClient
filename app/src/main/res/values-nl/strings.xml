@@ -147,7 +147,6 @@
     <string name="pref_connections">Connecties</string>
     <string name="pref_copy_playback_url_to_clipboard_enabled">Kopieer weergave-URL naar klembord</string>
     <string name="pref_copy_playback_url_to_clipboard_enabled_sum">In het geval van afspeelproblemen kan de gekopieerde URL worden gebruikt om het afspelen in een browser te testen.</string>
-    <string name="pref_crash_reporting_settings">Crash Rapportage-instellingen</string>
     <string name="pref_customize_user_interface">Pas de gebruikersinterface aan</string>
     <string name="pref_date_time_format">Datum- en tijdnotatie</string>
     <string name="pref_date_time_format_sum">Geef de datum en tijd weer zoals gebruikelijk in uw land. Anders wordt het formaat \'31 .12.2017, 21:09\' gebruikt.</string>
@@ -159,8 +158,6 @@
     <string name="pref_download_directory_sum">Opnames worden gedownload in de volgende map: \'%s\'</string>
     <string name="pref_empty_channel_tags_enabled">Toon alle kanaaltags</string>
     <string name="pref_empty_channel_tags_enabled_sum">Toon alle beschikbare kanaaltags in de lijst met kanaalfilters, zelfs als ze niet aan kanalen zijn toegewezen.</string>
-    <string name="pref_enable_crash_reports">Stuur anonieme crashrapporten</string>
-    <string name="pref_enable_crash_reports_sum">De rapporten bevatten de informatie die helpt om de stabiliteit en gebruikerservaring van de toepassing te verbeteren.</string>
     <string name="pref_epg_hours_visible">Toon uren</string>
     <string name="pref_epg_hours_visible_sum">Aantal uren programmagegevens dat op een scherm voor elke afzender moet worden weergegeven. Te veel uren zijn van invloed op de leesbaarheid.</string>
     <string name="pref_epg_max_days">Maximum aantal dagen tonen</string>

@@ -147,7 +147,6 @@
     <string name="pref_connections">Verbindungen</string>
     <string name="pref_copy_playback_url_to_clipboard_enabled">Wiedergabe-URL kopieren</string>
     <string name="pref_copy_playback_url_to_clipboard_enabled_sum">Bei Problemen mit der Wiedergabe kann die URL zum Testen der Wiedergabe in einem Browser verwendet werden.</string>
-    <string name="pref_crash_reporting_settings">" Einstellungen für Absturzberichte"</string>
     <string name="pref_customize_user_interface">Benutzeroberfläche anpassen</string>
     <string name="pref_date_time_format">Datum- und Zeitformat </string>
     <string name="pref_date_time_format_sum">Zeige das Datum und die Zeit in der landesüblichen Form an. Alternativ wird das Format \'31.12.2017, 21:09\' verwendet.</string>
@@ -159,8 +158,6 @@
     <string name="pref_download_directory_sum">Aufnahmen werden in folgendes Verzeichnis heruntergeladen: \'%s\'</string>
     <string name="pref_empty_channel_tags_enabled">Alle Sender-Tags anzeigen</string>
     <string name="pref_empty_channel_tags_enabled_sum">Zeige alle verfügbaren Sender-Tags in der filter Senderliste an, auch wenn kein Sender zugewiesen ist.</string>
-    <string name="pref_enable_crash_reports">Senden anonymer Absturzberichte</string>
-    <string name="pref_enable_crash_reports_sum">Die Berichte enthalten die Informationen, die helfen, die Stabilität und Benutzerfreundlichkeit der Anwendung zu verbessern.</string>
     <string name="pref_epg_hours_visible">Sichtbare Stunden</string>
     <string name="pref_epg_hours_visible_sum">Anzahl der Stunden von Programmdaten, die für jeden Sender auf einem Bildschirm angezeigt werden sollen. Zu viele Stunden beeinträchtigen die Lesbarkeit.</string>
     <string name="pref_epg_max_days">Anzahl der Tage</string>

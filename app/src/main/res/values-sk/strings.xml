@@ -148,7 +148,6 @@
     <string name="pref_connections">Pripojenia</string>
     <string name="pref_copy_playback_url_to_clipboard_enabled">Kopírovať prehrávanie Url do schránky</string>
     <string name="pref_copy_playback_url_to_clipboard_enabled_sum">V prípade problémov s prehrávaním je možné kopírovanú adresu URL použiť na testovanie prehrávania v prehliadači.</string>
-    <string name="pref_crash_reporting_settings">Nastavenie nahlasovania chýb</string>
     <string name="pref_customize_user_interface">Upraviť použivateľské rozhranie</string>
     <string name="pref_date_time_format">Formát dátumu a času</string>
     <string name="pref_date_time_format_sum">Zobrazí dátum a čas, ktorý je používaný vo vašej krajine. V opačnom prípade bude použitý formát \'31.12.2017, 21:09\'.</string>
@@ -160,8 +159,6 @@
     <string name="pref_download_directory_sum">Nahrávky budú sťahované do nasledujúceho priečinka: \'%s\'</string>
     <string name="pref_empty_channel_tags_enabled">Zobraziť všetky značky kanálov</string>
     <string name="pref_empty_channel_tags_enabled_sum">Zobraziť všetky dostupné značky kanálov v zozname filtrovania kanálov, aj keď nie sú priradené žiadnym kanálom.</string>
-    <string name="pref_enable_crash_reports">Odoslať anonymné správy o zlyhaní</string>
-    <string name="pref_enable_crash_reports_sum">Správy obsahujú informácie, ktoré pomáhajú zlepšiť stabilitu a užívateľskú skúsenosť s aplikáciou.</string>
     <string name="pref_epg_hours_visible">Počet zobrazených hodín</string>
     <string name="pref_epg_hours_visible_sum">Počet hodín programových údajov, ktoré sa majú zobrazovať na obrazovke pre každého odosielateľa. Príliš veľa hodín ovplyvňuje čitateľnosť.</string>
     <string name="pref_epg_max_days">Maximálny počet dní pre zobrazenie</string>

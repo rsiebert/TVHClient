@@ -148,7 +148,6 @@
     <string name="pref_connections">Connections</string>
     <string name="pref_copy_playback_url_to_clipboard_enabled">Copy playback Url to clipboard</string>
     <string name="pref_copy_playback_url_to_clipboard_enabled_sum">In case of playback issues the copied Url can be used to test playback in a browser.</string>
-    <string name="pref_crash_reporting_settings">Crash Reporting Settings</string>
     <string name="pref_customize_user_interface">Customize the user interface</string>
     <string name="pref_date_time_format">Date and time format</string>
     <string name="pref_date_time_format_sum">Display the date and time as usually used in your country. Otherwise the format \'31.12.2017, 21:09\' is used.</string>
@@ -160,8 +159,6 @@
     <string name="pref_download_directory_sum">Recordings will be downloaded into the following directory: \'%s\'</string>
     <string name="pref_empty_channel_tags_enabled">Show all channel tags</string>
     <string name="pref_empty_channel_tags_enabled_sum">Show all available channel tags in the channel filtering list, even if they are not assigned to any channel.</string>
-    <string name="pref_enable_crash_reports">Send anonymous crash reports</string>
-    <string name="pref_enable_crash_reports_sum">The reports contain the information that help to improve the stability and user experience of the application.</string>
     <string name="pref_epg_hours_visible">Hours visible</string>
     <string name="pref_epg_hours_visible_sum">Number of hours of program data to be displayed on a screen for each sender. Too many hours affect readability.</string>
     <string name="pref_epg_max_days">Maximum days to show</string>

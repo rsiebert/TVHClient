@@ -148,7 +148,6 @@
     <string name="pref_connections">Połączenia</string>
     <string name="pref_copy_playback_url_to_clipboard_enabled">Skopiuj Url odtwarzania do schowka</string>
     <string name="pref_copy_playback_url_to_clipboard_enabled_sum">W przypadku problemów z odtwarzaniem skopiowany adres URL można wykorzystać do testowania odtwarzania w przeglądarce.</string>
-    <string name="pref_crash_reporting_settings">Ustawienia raportowania awarii</string>
     <string name="pref_customize_user_interface">Dostosuj interfejs użytkownika</string>
     <string name="pref_date_time_format">Format daty i czasu</string>
     <string name="pref_date_time_format_sum">Wyświetl datę i godzinę jaka jest zwykle uzywana w Twoim karju. W przeciwnym wypadku zostanie użyty format \'31.12.2017, 21:09\'.</string>
@@ -160,8 +159,6 @@
     <string name="pref_download_directory_sum">Nagrania będą pobierane do następującego folderu: \'%s\'</string>
     <string name="pref_empty_channel_tags_enabled">Pokaż wszystkie tagi kanału</string>
     <string name="pref_empty_channel_tags_enabled_sum">Pokaż wszystkie dostępne tagi kanałów na liście filtrowania kanałów, nawet jeśli nie są przypisane do żadnych kanałów.</string>
-    <string name="pref_enable_crash_reports">Wysyłaj anonimowe raporty o awariach</string>
-    <string name="pref_enable_crash_reports_sum">Raporty zawierają informacje, które pomagają poprawić stabilność i wygodę korzystania z aplikacji.</string>
     <string name="pref_epg_hours_visible">Widoczne godziny</string>
     <string name="pref_epg_hours_visible_sum">Liczba godzin danych programu wyświetlanych na ekranie dla każdego nadawcy. Zbyt wiele godzin wpływa na czytelność.</string>
     <string name="pref_epg_max_days">Maksimum dni do wyświetlenia</string>

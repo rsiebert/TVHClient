@@ -147,7 +147,6 @@
     <string name="pref_connections">Anslutningar</string>
     <string name="pref_copy_playback_url_to_clipboard_enabled">Kopiera uppspelning Url till Urklipp</string>
     <string name="pref_copy_playback_url_to_clipboard_enabled_sum">Vid uppspelningsproblem kan den kopierade Url användas för att testa uppspelning i en webbläsare.</string>
-    <string name="pref_crash_reporting_settings">Inställningar för kraschrapportering</string>
     <string name="pref_customize_user_interface">Anpassa användargränssnittet</string>
     <string name="pref_date_time_format">Datum och tid format</string>
     <string name="pref_date_time_format_sum">Visa datum och tid som vanligt används i ditt land. Annars används formatet \'31.12.2017, 21:09\'.</string>
@@ -159,8 +158,6 @@
     <string name="pref_download_directory_sum">Inspelningar laddas ned i följande katalog: \'%s\'</string>
     <string name="pref_empty_channel_tags_enabled">Visa alla kanaltaggar</string>
     <string name="pref_empty_channel_tags_enabled_sum">Visa alla tillgängliga kanaltaggar i kanalfiltreringslistan även om de inte tilldelas några kanaler.</string>
-    <string name="pref_enable_crash_reports">Skicka anonyma kraschrapporter</string>
-    <string name="pref_enable_crash_reports_sum">Rapporterna innehåller information som hjälper till att förbättra stabiliteten och användarupplevelsen av programmet.</string>
     <string name="pref_epg_hours_visible">Synliga timmar</string>
     <string name="pref_epg_hours_visible_sum">Konfigurera hur många timmar som skall visas i programguiden. För många timmar kommer visa för många program och försämrar läsbarheten.</string>
     <string name="pref_epg_max_days">Max antal dagar att visa</string>

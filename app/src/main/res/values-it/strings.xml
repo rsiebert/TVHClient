@@ -149,7 +149,6 @@ Verifica che siano soddsifatti i requisiti descritti nelle impostazioni trasmiss
     <string name="pref_connections">Connessioni</string>
     <string name="pref_copy_playback_url_to_clipboard_enabled">Copia l\'URL di riproduzione negli appunti</string>
     <string name="pref_copy_playback_url_to_clipboard_enabled_sum">In caso di problemi di riproduzione, l\'Url copiato può essere utilizzato per testare la riproduzione in un browser.</string>
-    <string name="pref_crash_reporting_settings">Impostazioni del Crash Reporting</string>
     <string name="pref_customize_user_interface">Personalizzare l\'interfaccia utente</string>
     <string name="pref_date_time_format">Formato data e ora</string>
     <string name="pref_date_time_format_sum">Visualizzare la data e l\'ora come di solito usate nel vostro paese. Altrimenti viene utilizzato il formato \'31.12.2017, 21:09\'.</string>
@@ -161,8 +160,6 @@ Verifica che siano soddsifatti i requisiti descritti nelle impostazioni trasmiss
     <string name="pref_download_directory_sum">"Le registrazioni scaricate verranno salvate in questa cartella: \'%s\'"</string>
     <string name="pref_empty_channel_tags_enabled">Mostra tutti i tag del canale</string>
     <string name="pref_empty_channel_tags_enabled_sum">Mostra tutti i tag dei canali disponibili nell\'elenco dei filtri dei canali anche se non sono assegnati a nessun canale.</string>
-    <string name="pref_enable_crash_reports">Inviare rapporti di crash anonimi</string>
-    <string name="pref_enable_crash_reports_sum">I rapporti contengono le informazioni che aiutano a migliorare la stabilità e l\'esperienza utente dell\'applicazione.</string>
     <string name="pref_epg_hours_visible">Ore visibili</string>
     <string name="pref_epg_hours_visible_sum">Numero di ore di dati del programma da visualizzare su uno schermo per ciascun mittente. Troppe ore influiscono sulla leggibilità.</string>
     <string name="pref_epg_max_days">Numero massimo giorni da visualizzare</string>

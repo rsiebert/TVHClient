@@ -147,7 +147,6 @@
     <string name="pref_connections">Připojení</string>
     <string name="pref_copy_playback_url_to_clipboard_enabled">Kopírování přehrávání Url do schránky</string>
     <string name="pref_copy_playback_url_to_clipboard_enabled_sum">V případě problémů s přehráváním lze kopírovat Url použít k testování přehrávání v prohlížeči.</string>
-    <string name="pref_crash_reporting_settings">Nastavení hlášení selhání</string>
     <string name="pref_customize_user_interface">Přizpůsobte uživatelské rozhraní</string>
     <string name="pref_date_time_format">Formát data a času</string>
     <string name="pref_date_time_format_sum">Zobrazte datum a čas obvykle používané ve vaší zemi. V opačném případě se použije formát \'31 .12.2017, 21:09\'.</string>
@@ -159,8 +158,6 @@
     <string name="pref_download_directory_sum">Nahrávky budou staženy do následujícího adresáře: \'%s\'</string>
     <string name="pref_empty_channel_tags_enabled">Zobrazit všechny značky kanálů</string>
     <string name="pref_empty_channel_tags_enabled_sum">Zobrazit všechny dostupné značky kanálů v seznamu filtrování kanálů, i když nejsou přiřazeny k žádným kanálům.</string>
-    <string name="pref_enable_crash_reports">Odeslat anonymní zprávy o selhání</string>
-    <string name="pref_enable_crash_reports_sum">Zprávy obsahují informace, které pomáhají zlepšit stabilitu a uživatelský komfort aplikace.</string>
     <string name="pref_epg_hours_visible">Počet zobrazených hodin</string>
     <string name="pref_epg_hours_visible_sum">Počet hodin programových dat, které mají být zobrazeny na obrazovce pro každého odesílatele. Příliš mnoho hodin ovlivňuje čitelnost.</string>
     <string name="pref_epg_max_days">Největší množství dní k zobrazení</string>
