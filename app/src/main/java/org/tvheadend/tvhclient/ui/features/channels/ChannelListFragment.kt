@@ -63,6 +63,7 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickInterface, ChannelT
         recycler_view.layoutManager = LinearLayoutManager(activity)
         recycler_view.adapter = recyclerViewAdapter
         recycler_view.gone()
+        recycler_view.setHasFixedSize(true)
         search_progress?.visibleOrGone(baseViewModel.isSearchActive)
 
         Timber.d("Observing selected time")

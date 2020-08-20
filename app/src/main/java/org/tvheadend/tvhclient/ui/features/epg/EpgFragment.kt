@@ -56,6 +56,7 @@ class EpgFragment : BaseFragment(), EpgScrollInterface, RecyclerViewClickInterfa
         channelListRecyclerViewLayoutManager = LinearLayoutManager(activity)
         channel_list_recycler_view.layoutManager = channelListRecyclerViewLayoutManager
         channel_list_recycler_view.adapter = channelListRecyclerViewAdapter
+        channel_list_recycler_view.setHasFixedSize(true)
         channel_list_recycler_view.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 super.onScrollStateChanged(recyclerView, newState)
