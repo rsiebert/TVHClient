@@ -29,6 +29,7 @@ import kotlinx.android.synthetic.main.exo_player_view.*
 import kotlinx.android.synthetic.main.player_overlay_view.*
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.ui.common.onAttach
+import org.tvheadend.tvhclient.ui.common.setOptionalDescriptionText
 import org.tvheadend.tvhclient.ui.features.MainActivity
 import org.tvheadend.tvhclient.ui.features.playback.internal.utils.Rational
 import org.tvheadend.tvhclient.ui.features.playback.internal.utils.TrackInformationDialog
@@ -215,16 +216,16 @@ class PlaybackActivity : AppCompatActivity() {
         })
         viewModel.title.observe(this, Observer { title ->
             Timber.d("Received title $title")
-            program_title?.text = title
+            setOptionalDescriptionText(program_title, title)
         })
         viewModel.subtitle.observe(this, Observer { subtitle ->
             Timber.d("Received subtitle $subtitle")
-            program_subtitle?.text = subtitle
+            setOptionalDescriptionText(program_subtitle, subtitle)
             program_subtitle?.visibleOrGone(subtitle.isNotEmpty())
         })
         viewModel.nextTitle.observe(this, Observer { nextTitle ->
             Timber.d("Received next title $nextTitle")
-            next_program_title?.text = nextTitle
+            setOptionalDescriptionText(next_program_title, nextTitle)
             next_program_title?.visibleOrGone(nextTitle.isNotEmpty())
         })
         viewModel.elapsedTime.observe(this, Observer { elapsedTime ->
