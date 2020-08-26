@@ -14,11 +14,10 @@
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
         android:layout_marginRight="16dp"
-        android:text="TextView"
+        android:text="@string/pref_information"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-
 
     <Button
         android:id="@+id/track_selection_dialog_ok_button"
@@ -38,6 +37,5 @@
         app:layout_constraintTop_toBottomOf="@+id/track_information"
         app:layout_constraintVertical_bias="0.0"
         app:strokeColor="@color/primaryLightColor" />
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>
