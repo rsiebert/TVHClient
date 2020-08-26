@@ -98,7 +98,7 @@ class ProgramViewModel(application: Application) : BaseViewModel(application), S
         return appRepository.serverProfileData.recordingProfileNames
     }
 
-    internal inner class ProgramLiveData(channelId: LiveData<Int>,
+    internal class ProgramLiveData(channelId: LiveData<Int>,
                                          selectedTime: LiveData<Long>) : MediatorLiveData<Pair<Int?, Long?>>() {
         init {
             addSource(channelId) { id ->

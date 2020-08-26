@@ -24,7 +24,7 @@ class BillingManager(private val billingUpdatesListener: BillingUpdatesListener)
     init {
         MainApplication.component.inject(this)
         billingClient = BillingClient.newBuilder(context).enablePendingPurchases().setListener(this).build()
-        startServiceConnection(Runnable { billingUpdatesListener.onBillingClientSetupFinished() })
+        startServiceConnection { billingUpdatesListener.onBillingClientSetupFinished() }
     }
 
     private fun startServiceConnection(runnable: Runnable) {

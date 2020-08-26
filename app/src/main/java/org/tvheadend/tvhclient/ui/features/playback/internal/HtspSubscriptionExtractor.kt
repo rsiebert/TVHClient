@@ -35,7 +35,7 @@ internal class HtspSubscriptionExtractor : Extractor {
     private val mStreamReaders = SparseArray<StreamReader>()
     private val mRawBytes = ByteArray(1024 * 1024)
 
-    private inner class HtspSeekMap : SeekMap {
+    private class HtspSeekMap : SeekMap {
         override fun isSeekable(): Boolean {
             return true
         }

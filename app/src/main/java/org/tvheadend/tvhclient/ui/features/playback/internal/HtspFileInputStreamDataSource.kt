@@ -21,7 +21,6 @@ import kotlin.math.min
 class HtspFileInputStreamDataSource private constructor(val connection: HtspConnection) : DataSource, Closeable, HtspMessageListener, HtspDataSourceInterface {
 
     private val dataSourceCount = AtomicInteger()
-    private val subscriptionCount = AtomicInteger()
 
     private val htspConnection: HtspConnection = connection
     private lateinit var dataSpec: DataSpec

@@ -339,7 +339,7 @@ class EpgFragment : BaseFragment(), EpgScrollInterface, RecyclerViewClickInterfa
         return getString(R.string.search_program_guide)
     }
 
-    private class EpgViewPagerAdapter internal constructor(fragment: Fragment, private val viewModel: EpgViewModel) : FragmentStateAdapter(fragment) {
+    private class EpgViewPagerAdapter(fragment: Fragment, private val viewModel: EpgViewModel) : FragmentStateAdapter(fragment) {
 
         override fun createFragment(position: Int): Fragment {
             val fragment = EpgViewPagerFragment.newInstance(position)
@@ -347,7 +347,7 @@ class EpgFragment : BaseFragment(), EpgScrollInterface, RecyclerViewClickInterfa
             return fragment
         }
 
-        internal fun getRegisteredFragment(position: Int): Fragment? {
+        fun getRegisteredFragment(position: Int): Fragment? {
             return viewModel.registeredEpgFragments.get(position)
         }
 

@@ -108,7 +108,7 @@ internal class EpgVerticalRecyclerViewAdapter(private val activity: FragmentActi
                 no_programs.visible()
             }
 
-            epgViewModel.recordings.observe(activity, androidx.lifecycle.Observer { recordings ->
+            epgViewModel.recordings.observe(activity, { recordings ->
                 if (recordings != null) {
                     recyclerViewAdapter.addRecordings(recordings)
                 }
