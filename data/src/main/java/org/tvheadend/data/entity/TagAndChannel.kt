@@ -29,6 +29,7 @@ internal data class TagAndChannelEntity(
         }
     }
 
+    @Suppress("unused")
     fun toTagAndChannel(): TagAndChannel {
         return TagAndChannel(tagId, channelId, connectionId)
     }
