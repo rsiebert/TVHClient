@@ -12,7 +12,6 @@
     <string name="all_channels">Tutti i canali</string>
     <string name="any">Qualunque</string>
     <string name="app_name">TVHClient</string>
-    <string name="audio_settings">Impostazioni audio</string>
     <string name="authentication_failed">Autenticazione fallita</string>
     <string name="available">Disponibile</string>
     <string name="bad_username_or_password">Nome utente o password sbagliati</string>
@@ -75,7 +74,6 @@
     <string name="edit_connection">Modifica connessione</string>
     <string name="edit_recording">Modifica registrazione</string>
     <string name="enable">Attivare</string>
-    <string name="enable_random_adaptation">Abilita adattamento casuale</string>
     <string name="enable_time_window">Attiva tempo registrazione</string>
     <string name="enter_channel_name">Inserisci il nome del canale</string>
     <string name="episode">Episodio</string>
@@ -121,7 +119,6 @@ Verifica che siano soddsifatti i requisiti descritti nelle impostazioni trasmiss
     <string name="monday">Lunedì</string>
     <string name="multiple_channel_tags">Tag di più canali</string>
     <string name="name">Nome</string>
-    <string name="network_not_available">La rete non è disponibile</string>
     <string name="no_active_connection">Non è definita alcuna connessione attiva. La connessione esistente con il server verrà chiusa.</string>
     <string name="no_cast_session">Nessuna sessione del cast disponibile</string>
     <string name="no_connection_active_advice">È stata definita almeno una connessione, ma non attivata. Seleziona la connessione dall\'elenco e tocca il simbolo a stella nella barra degli strumenti.</string>
@@ -345,8 +342,6 @@ L'indirizzo deve essere nella forma '01:24:67:9a:cd:ef' e può contenere solo ci
     <string name="select_multiple_channel_tags">Seleziona tag a più canali o nessuno per mostrare tutti i canali.</string>
     <string name="select_priority">Seleziona priorità</string>
     <string name="select_time">Visualizza programmi che sono in esecuzione ad un certo orario.</string>
-    <string name="selection_default">Permettere</string>
-    <string name="selection_disabled">Invalido</string>
     <string name="send_wol">Risveglia</string>
     <string name="series_recordings">Registrazioni serie</string>
     <string name="server">Server</string>
@@ -358,7 +353,6 @@ L'indirizzo deve essere nella forma '01:24:67:9a:cd:ef' e può contenere solo ci
     <string name="start_after_time">Inizio</string>
     <string name="start_before_time">Fine</string>
     <string name="start_time">"Orario inizio"</string>
-    <string name="starting_playback">Avvio della riproduzione</string>
     <string name="status">Stato</string>
     <string name="stop">Stop</string>
     <string name="stop_recording">"Vuoi veramente fermare la registrazione \'%s\'?"</string>
@@ -366,7 +360,6 @@ L'indirizzo deve essere nella forma '01:24:67:9a:cd:ef' e può contenere solo ci
     <string name="stream_errors">Errori stream: %1$s</string>
     <string name="subscription_error">Errore sottoscrizione: %1$s</string>
     <string name="subtitle">Sottotitoli</string>
-    <string name="subtitle_settings">Impostazioni sottotitoli</string>
     <string name="success_adding_recording">Registrazione aggiunta.</string>
     <string name="success_removing_recording">Registrazione rimossa.</string>
     <string name="success_updating_recording">Registrazione aggiornata.</string>

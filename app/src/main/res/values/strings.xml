@@ -12,7 +12,6 @@
     <string name="all_channels">All channels</string>
     <string name="any">Any</string>
     <string name="app_name">TVHClient</string>
-    <string name="audio_settings">Audio settings</string>
     <string name="authentication_failed">Authentication failed</string>
     <string name="available">Available</string>
     <string name="bad_username_or_password">Wrong username or password</string>
@@ -75,7 +74,6 @@
     <string name="edit_connection">Edit connection</string>
     <string name="edit_recording">Edit recording</string>
     <string name="enable">Enable</string>
-    <string name="enable_random_adaptation">Enable random adaptation</string>
     <string name="enable_time_window">Activate times for recording</string>
     <string name="enter_channel_name">Enter channel name</string>
     <string name="episode">Episode</string>
@@ -120,7 +118,6 @@
     <string name="monday">Monday</string>
     <string name="multiple_channel_tags">Multiple channel tags</string>
     <string name="name">Name</string>
-    <string name="network_not_available">Network is not available</string>
     <string name="no_active_connection">No active connection is defined. The existing connection to the server will be closed.</string>
     <string name="no_cast_session">No cast session available</string>
     <string name="no_connection_active_advice">At least one connection is defined, but not activated. Select the connection from the list and tap the star symbol in the toolbar.</string>
@@ -355,8 +352,6 @@
     <string name="select_multiple_channel_tags">Select multiple channel tags or none to show all channels.</string>
     <string name="select_priority">Select priority</string>
     <string name="select_time">Show programs that are running at the selected time.</string>
-    <string name="selection_default">Enabled</string>
-    <string name="selection_disabled">Disabled</string>
     <string name="send_wol">Wake up</string>
     <string name="series_recordings">Series recordings</string>
     <string name="server">Server</string>
@@ -368,7 +363,6 @@
     <string name="start_after_time">Start</string>
     <string name="start_before_time">End</string>
     <string name="start_time">Start time</string>
-    <string name="starting_playback">Starting playback</string>
     <string name="status">Status</string>
     <string name="stop">Stop</string>
     <string name="stop_recording">Do you really want to stop the running recording \'%s\'?</string>
@@ -376,7 +370,6 @@
     <string name="stream_errors">Stream errors: %1$s</string>
     <string name="subscription_error">Subscription error: %1$s</string>
     <string name="subtitle">Subtitle</string>
-    <string name="subtitle_settings">Subtitle settings</string>
     <string name="success_adding_recording">Recording has been added.</string>
     <string name="success_removing_recording">Recording has been removed.</string>
     <string name="success_updating_recording">Recording has been updated.</string>

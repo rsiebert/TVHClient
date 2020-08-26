@@ -12,7 +12,6 @@
     <string name="all_channels">Alla Kanaler</string>
     <string name="any">Några</string>
     <string name="app_name">TVHClient</string>
-    <string name="audio_settings">Ljudinställningar</string>
     <string name="authentication_failed">Autentisering misslyckades</string>
     <string name="available">Tillgängligt</string>
     <string name="bad_username_or_password">fel användarnamn eller lösenord</string>
@@ -75,7 +74,6 @@
     <string name="edit_connection">Redigera anslutningen</string>
     <string name="edit_recording">Redigera inspelningen</string>
     <string name="enable">Aktivera</string>
-    <string name="enable_random_adaptation">Aktivera slumpmässig anpassning</string>
     <string name="enable_time_window">Aktivera tider för inspelning</string>
     <string name="enter_channel_name">Ange kanalnamn</string>
     <string name="episode">Avsnitt</string>
@@ -119,7 +117,6 @@
     <string name="monday">Måndag</string>
     <string name="multiple_channel_tags">Flerkanaliga taggar</string>
     <string name="name">Namn</string>
-    <string name="network_not_available">Nätverket är inte tillgängligt</string>
     <string name="no_active_connection">Ingen aktiv anslutning definieras. Den befintliga anslutningen till servern kommer att stängas.</string>
     <string name="no_cast_session">Ingen gjutningssession tillgänglig</string>
     <string name="no_connection_active_advice">Minst en anslutning är definierad, men inte aktiverad. Välj anslutningen från listan och tryck på stjärnsymbolen i verktygsfältet.</string>
@@ -342,8 +339,6 @@
     <string name="select_multiple_channel_tags">Välj flera kanaltaggar eller ingen för att visa alla kanaler.</string>
     <string name="select_priority">Välj prioritet</string>
     <string name="select_time">Visa program som körs vid den valda tiden.</string>
-    <string name="selection_default">Aktiverad</string>
-    <string name="selection_disabled">Inaktiverad</string>
     <string name="send_wol">Vakna upp</string>
     <string name="series_recordings">Serieinspelningar</string>
     <string name="server">Server</string>
@@ -355,7 +350,6 @@
     <string name="start_after_time">Start</string>
     <string name="start_before_time">Slutet</string>
     <string name="start_time">Starttid</string>
-    <string name="starting_playback">Startar uppspelningen</string>
     <string name="status">Status</string>
     <string name="stop">Sluta</string>
     <string name="stop_recording">Vill du verkligen stoppa inspelningen \'%s\'?</string>
@@ -363,7 +357,6 @@
     <string name="stream_errors">Strömfel: %1$s</string>
     <string name="subscription_error">Prenumerationsfel: %1$s</string>
     <string name="subtitle">Texta</string>
-    <string name="subtitle_settings">Inställningar för textning</string>
     <string name="success_adding_recording">Inspelning har lagts till.</string>
     <string name="success_removing_recording">Inspelningen har tagits bort.</string>
     <string name="success_updating_recording">Inspelningen har uppdaterats.</string>

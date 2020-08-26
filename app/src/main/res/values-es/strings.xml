@@ -12,7 +12,6 @@
     <string name="all_channels">Todos los canales</string>
     <string name="any">Alguna</string>
     <string name="app_name">TVHClient</string>
-    <string name="audio_settings">Configuraciones de audio</string>
     <string name="authentication_failed">Fallo de autenticación</string>
     <string name="available">Disponible</string>
     <string name="bad_username_or_password">Usuario o contraseña incorrectas</string>
@@ -75,7 +74,6 @@
     <string name="edit_connection">Editar conexión</string>
     <string name="edit_recording">Editar grabación</string>
     <string name="enable">Activar</string>
-    <string name="enable_random_adaptation">Habilitar la adaptación aleatoria</string>
     <string name="enable_time_window">Activar los tiempos para grabar</string>
     <string name="enter_channel_name">Ingrese el nombre del canal</string>
     <string name="episode">Episodio</string>
@@ -119,7 +117,6 @@
     <string name="monday">Lunes</string>
     <string name="multiple_channel_tags">múltiples etiquetas de canal</string>
     <string name="name">Nombre</string>
-    <string name="network_not_available">La red no está disponible</string>
     <string name="no_active_connection">No se define ninguna conexión activa. La conexión existente al servidor será cerrada..</string>
     <string name="no_cast_session">No hay sesión de emisión disponible</string>
     <string name="no_connection_active_advice">Se define al menos una conexión, pero no está activada. Seleccione la conexión de la lista y toque el símbolo de estrella en la barra de herramientas.</string>
@@ -342,8 +339,6 @@
     <string name="select_multiple_channel_tags">Seleccione múltiples etiquetas de canal o ninguna para mostrar todos los canales.</string>
     <string name="select_priority">Seleccionar prioridad</string>
     <string name="select_time">Mostrar programas que se ejecutan en el momento seleccionado.</string>
-    <string name="selection_default">Activado</string>
-    <string name="selection_disabled">Discapacitado</string>
     <string name="send_wol">Activar</string>
     <string name="series_recordings">Grabaciones en serie</string>
     <string name="server">Servidor</string>
@@ -355,7 +350,6 @@
     <string name="start_after_time">Empezar</string>
     <string name="start_before_time">Fin</string>
     <string name="start_time">Hora de inicio</string>
-    <string name="starting_playback">Comenzando la reproducción</string>
     <string name="status">Estado</string>
     <string name="stop">Detener</string>
     <string name="stop_recording">"¿De verdad quieres detener la grabación en funcionamiento '%s'?"</string>
@@ -363,7 +357,6 @@
     <string name="stream_errors">Errores de transmisión: %1$s</string>
     <string name="subscription_error">Error de suscripción: %1$s</string>
     <string name="subtitle">Subtitulo</string>
-    <string name="subtitle_settings">Ajustes de subtítulos</string>
     <string name="success_adding_recording">La grabación ha sido agregada.</string>
     <string name="success_removing_recording">La grabación ha sido eliminada.</string>
     <string name="success_updating_recording">La grabación ha sido actualizada.</string>

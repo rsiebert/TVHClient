@@ -12,7 +12,6 @@
     <string name="all_channels">Alle kanalen</string>
     <string name="any">Ieder</string>
     <string name="app_name">TVHClient</string>
-    <string name="audio_settings">Geluidsinstellingen</string>
     <string name="authentication_failed">Authenticatie mislukt</string>
     <string name="available">Beschikbaar</string>
     <string name="bad_username_or_password">Verkeerde gebruikersnaam of wachtwoord</string>
@@ -75,7 +74,6 @@
     <string name="edit_connection">Verbinding bewerken</string>
     <string name="edit_recording">Opname bewerken</string>
     <string name="enable">Activeren</string>
-    <string name="enable_random_adaptation">Schakel willekeurige aanpassing in</string>
     <string name="enable_time_window">Activeer tijden voor opname</string>
     <string name="enter_channel_name">Voer kanaalnaam in</string>
     <string name="episode">Aflevering</string>
@@ -119,7 +117,6 @@
     <string name="monday">Maandag</string>
     <string name="multiple_channel_tags">Meerkanaals tags</string>
     <string name="name">Benaming</string>
-    <string name="network_not_available">Netwerk is niet beschikbaar</string>
     <string name="no_active_connection">Er is geen actieve verbinding gedefinieerd. De bestaande verbinding met de server wordt gesloten.</string>
     <string name="no_cast_session">Geen cast-sessie beschikbaar</string>
     <string name="no_connection_active_advice">Ten minste één verbinding is gedefinieerd, maar niet geactiveerd. Selecteer de verbinding in de lijst en tik op het stersymbool op de werkbalk.</string>
@@ -342,8 +339,6 @@
     <string name="select_multiple_channel_tags">Selecteer meerdere kanaaltags of geen om alle kanalen weer te geven.</string>
     <string name="select_priority">Selecteer prioriteit</string>
     <string name="select_time">Toon programma\'s die op het geselecteerde tijdstip worden uitgevoerd.</string>
-    <string name="selection_default">Ingeschakeld</string>
-    <string name="selection_disabled">Invalide</string>
     <string name="send_wol">Wake On Lan</string>
     <string name="series_recordings">Serie-opnamen</string>
     <string name="server">Server</string>
@@ -355,7 +350,6 @@
     <string name="start_after_time">Start</string>
     <string name="start_before_time">Einde</string>
     <string name="start_time">starttijd</string>
-    <string name="starting_playback">Afspelen starten</string>
     <string name="status">Status</string>
     <string name="stop">Halte</string>
     <string name="stop_recording">Wilt u de lopende opname \'%s\' echt stoppen?</string>
@@ -363,7 +357,6 @@
     <string name="stream_errors">Stromingsfouten: %1$s</string>
     <string name="subscription_error">Abonnementsfout: %1$s</string>
     <string name="subtitle">Ondertitel</string>
-    <string name="subtitle_settings">Ondertitelinstellingen</string>
     <string name="success_adding_recording">Opname is toegevoegd.</string>
     <string name="success_removing_recording">Opname is verwijderd.</string>
     <string name="success_updating_recording">De opname is bijgewerkt.</string>

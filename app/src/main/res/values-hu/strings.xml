@@ -12,7 +12,6 @@
     <string name="all_channels">Összes csatorna</string>
     <string name="any">Bármilyen</string>
     <string name="app_name">TVHClient</string>
-    <string name="audio_settings">Hangbeállítások</string>
     <string name="authentication_failed">Hitelesítés sikertelen</string>
     <string name="available">Elérhető</string>
     <string name="bad_username_or_password">Rossz felhasználónév vagy jelszó</string>
@@ -75,7 +74,6 @@
     <string name="edit_connection">Kapcsolat szerkesztése</string>
     <string name="edit_recording">Felvétel szerkesztése</string>
     <string name="enable">Aktiválja</string>
-    <string name="enable_random_adaptation">Véletlenszerű adaptálás engedélyezése</string>
     <string name="enable_time_window">Aktiválja a felvételi időket</string>
     <string name="enter_channel_name">Adja meg a csatorna nevét</string>
     <string name="episode">Epizód</string>
@@ -119,7 +117,6 @@
     <string name="monday">Hétfő</string>
     <string name="multiple_channel_tags">Többszörös Csatorna cimkék</string>
     <string name="name">Név</string>
-    <string name="network_not_available">A hálózat nem érhető el</string>
     <string name="no_active_connection">Nincs aktív kapcsolat. A meglévő kapcsolat a kiszolgálóval bezárult.</string>
     <string name="no_cast_session">Nincs elérhető cast szekció</string>
     <string name="no_connection_active_advice">Legalább egy kapcsolat meg van határozva, de nincs aktiválva. Válassza ki a kapcsolatot a listából, és koppintson a csillag szimbólumra az eszköztáron.</string>
@@ -345,8 +342,6 @@
     <string name="select_multiple_channel_tags">Az összes csatorna megjelenítéséhez válasszon több csatornacímkét, vagy semmit</string>
     <string name="select_priority">Válassza ki a prioritást</string>
     <string name="select_time">A kiválasztott időpontban futó programok megjelenítése.</string>
-    <string name="selection_default">Engedélyezve</string>
-    <string name="selection_disabled">Mozgássérült</string>
     <string name="send_wol">Felébresztés (WOL)</string>
     <string name="series_recordings">Sorozat információ</string>
     <string name="server">Szerver</string>
@@ -358,7 +353,6 @@
     <string name="start_after_time">Kezdés</string>
     <string name="start_before_time">Vége</string>
     <string name="start_time">Kezdési idő</string>
-    <string name="starting_playback">Lejátszás indítása</string>
     <string name="status">Státusz</string>
     <string name="stop">Megállítás</string>
     <string name="stop_recording">Tényleg le akarja állítani a(z) \'%s\' futó felvételét?</string>
@@ -366,7 +360,6 @@
     <string name="stream_errors">Stream hibák: %1$s</string>
     <string name="subscription_error">Előfizetési hibák: %1$s</string>
     <string name="subtitle">Felirat</string>
-    <string name="subtitle_settings">Felirat beállítások</string>
     <string name="success_adding_recording">A felvétel hozzá lett adva.</string>
     <string name="success_removing_recording">A felvétel el lett távolítva.</string>
     <string name="success_updating_recording">A felvétel frissítve lett.</string>

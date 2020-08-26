@@ -12,7 +12,6 @@
     <string name="all_channels">Všechny kanály</string>
     <string name="any">Žádný</string>
     <string name="app_name">TVHClient</string>
-    <string name="audio_settings">Nastavení zvuku</string>
     <string name="authentication_failed">Ověření se nezdařilo</string>
     <string name="available">K dispozici</string>
     <string name="bad_username_or_password">Chybné uživatelské jméno nebo heslo</string>
@@ -75,7 +74,6 @@
     <string name="edit_connection">Upravit připojení</string>
     <string name="edit_recording">Úprava záznamu</string>
     <string name="enable">Aktivovat</string>
-    <string name="enable_random_adaptation">Povolit náhodné přizpůsobení</string>
     <string name="enable_time_window">Aktivujte časy pro nahrávání</string>
     <string name="enter_channel_name">Zadejte název kanálu</string>
     <string name="episode">Epizoda</string>
@@ -119,7 +117,6 @@
     <string name="monday">Pondělí</string>
     <string name="multiple_channel_tags">Více značek kanálů</string>
     <string name="name">Jméno</string>
-    <string name="network_not_available">Síť není k dispozici</string>
     <string name="no_active_connection">Není definováno žádné aktivní spojení. Stávající připojení k serveru bude ukončeno.</string>
     <string name="no_cast_session">K dispozici není žádné obsazení</string>
     <string name="no_connection_active_advice">Je definováno alespoň jedno spojení, ale není aktivováno. Vyberte připojení ze seznamu a klepněte na symbol hvězdičky na panelu nástrojů.</string>
@@ -342,8 +339,6 @@
     <string name="select_multiple_channel_tags">Vyberte více značek kanálů nebo žádné, chcete-li zobrazit všechny kanály.</string>
     <string name="select_priority">Vyberte prioritu</string>
     <string name="select_time">Zobrazit programy, které jsou spuštěny ve vybraném čase.</string>
-    <string name="selection_default">Povoleno</string>
-    <string name="selection_disabled">Zakázáno</string>
     <string name="send_wol">Probudit</string>
     <string name="series_recordings">Opakované nahrávky</string>
     <string name="server">Server</string>
@@ -355,7 +350,6 @@
     <string name="start_after_time">Start</string>
     <string name="start_before_time">Konec</string>
     <string name="start_time">Čas začátku</string>
-    <string name="starting_playback">Spuštění přehrávání</string>
     <string name="status">Stav</string>
     <string name="stop">Stop</string>
     <string name="stop_recording">Opravdu chcete zastavit běžící záznam \'%s\'?</string>
@@ -363,7 +357,6 @@
     <string name="stream_errors">Chyby streamu: %1$s</string>
     <string name="subscription_error">Chyba odběru: %1$s</string>
     <string name="subtitle">Podtitul</string>
-    <string name="subtitle_settings">Nastavení titulků</string>
     <string name="success_adding_recording">Byl přidán záznam.</string>
     <string name="success_removing_recording">Nahrávání bylo odstraněno.</string>
     <string name="success_updating_recording">Nahrávání bylo aktualizováno.</string>

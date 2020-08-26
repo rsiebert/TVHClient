@@ -12,7 +12,6 @@
     <string name="all_channels">Všetky kanály</string>
     <string name="any">Akýkoľvek</string>
     <string name="app_name">TVHClient</string>
-    <string name="audio_settings">Nastavenia zvuku</string>
     <string name="authentication_failed">Overenie zlyhalo</string>
     <string name="available">k dispozícii</string>
     <string name="bad_username_or_password">Chybné uživateľské meno alebo heslo</string>
@@ -75,7 +74,6 @@
     <string name="edit_connection">Upraviť pripojenie</string>
     <string name="edit_recording">Upraviť nahrávanie</string>
     <string name="enable">Aktivovať</string>
-    <string name="enable_random_adaptation">Povoliť náhodné prispôsobenie</string>
     <string name="enable_time_window">Nadefinovanie času</string>
     <string name="enter_channel_name">Zadajte názov kanála</string>
     <string name="episode">Epizóda</string>
@@ -119,7 +117,6 @@
     <string name="monday">Pondelok</string>
     <string name="multiple_channel_tags">Viacnásobné značky kanálov</string>
     <string name="name">Meno</string>
-    <string name="network_not_available">Sieť nie je k dispozícii</string>
     <string name="no_active_connection">Nie je definované žiadne aktívne spojenie. Existujúce pripojenie k serveru sa zatvorí.</string>
     <string name="no_cast_session">Nie je k dispozícii relácia obsadenia</string>
     <string name="no_connection_active_advice">Aspoň jedno pripojenie je definované, ale nie je aktivované. Vyberte pripojenie zo zoznamu a na paneli nástrojov klepnite na symbol hviezdy.</string>
@@ -345,8 +342,6 @@
     <string name="select_multiple_channel_tags">Ak chcete zobraziť všetky kanály, vyberte viac alebo viac značiek kanálov.</string>
     <string name="select_priority">Nastavte prioritu</string>
     <string name="select_time">Zobraziť programy, ktoré vyhovujú zvolenému času.</string>
-    <string name="selection_default">Povolené</string>
-    <string name="selection_disabled">Invalidný</string>
     <string name="send_wol">Prebudiť</string>
     <string name="series_recordings">Sériové nahrávky</string>
     <string name="server">Server</string>
@@ -358,7 +353,6 @@
     <string name="start_after_time">Začiatok</string>
     <string name="start_before_time">Koniec</string>
     <string name="start_time">Čas začiatku</string>
-    <string name="starting_playback">Spustenie prehrávania</string>
     <string name="status">Stav</string>
     <string name="stop">Zastaviť</string>
     <string name="stop_recording">Naozaj chcete zastaviť prebiehajúce nahrávanie \'%s\'?</string>
@@ -366,7 +360,6 @@
     <string name="stream_errors">Chyby streamu: %1$s</string>
     <string name="subscription_error">Chyba Subscription: %1$s</string>
     <string name="subtitle">Podtitulok</string>
-    <string name="subtitle_settings">Nastavenia titulkov</string>
     <string name="success_adding_recording">Nahrávanie bolo pridané.</string>
     <string name="success_removing_recording">Nahrávanie bolo vymazané.</string>
     <string name="success_updating_recording">Nahrávanie bolo upravené.</string>

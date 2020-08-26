@@ -12,7 +12,6 @@
     <string name="all_channels">Wszystkie kanały</string>
     <string name="any">Każdy</string>
     <string name="app_name">TVHClient</string>
-    <string name="audio_settings">Ustawienia dźwięku</string>
     <string name="authentication_failed">Uwierzytelnianie nie powiodło się</string>
     <string name="available">Dostępne</string>
     <string name="bad_username_or_password">Błędna nazwa użytkownika lub hasło</string>
@@ -75,7 +74,6 @@
     <string name="edit_connection">Edytuj poaczenie</string>
     <string name="edit_recording">Edytuj nagranie</string>
     <string name="enable">Aktywować</string>
-    <string name="enable_random_adaptation">Włącz losową adaptację</string>
     <string name="enable_time_window">Aktywuj czas dla nagrywania</string>
     <string name="enter_channel_name">Wpisz nazwę kanału</string>
     <string name="episode">Odcinek</string>
@@ -119,7 +117,6 @@
     <string name="monday">Poniedziałek</string>
     <string name="multiple_channel_tags">Wiele tagów kanałów</string>
     <string name="name">Nazwa</string>
-    <string name="network_not_available">Sieć jest niedostępna</string>
     <string name="no_active_connection">Nie zdefiniowano aktywnego połączenia. Istniejące połączenie z serwerem zostanie zamknięte.</string>
     <string name="no_cast_session">No cast session available</string>
     <string name="no_connection_active_advice">Co najmniej jedno połączenie jest zdefiniowane, ale nie aktywowane. Wybierz połączenie z listy i dotknij symbolu gwiazdy na pasku narzędzi.</string>
@@ -345,8 +342,6 @@
     <string name="select_multiple_channel_tags">Wybierz wiele tagów kanału lub żaden, aby wyświetlić wszystkie kanały.</string>
     <string name="select_priority">Wybierz priorytet</string>
     <string name="select_time">Pokaż programy uruchomione w wybranym czasie.</string>
-    <string name="selection_default">Włączone</string>
-    <string name="selection_disabled">Wyłączone</string>
     <string name="send_wol">Wybudzenie</string>
     <string name="series_recordings">Nagrywanie serii</string>
     <string name="server">Serwer</string>
@@ -358,7 +353,6 @@
     <string name="start_after_time">Pocztek</string>
     <string name="start_before_time">Koniec</string>
     <string name="start_time">Czas rozpoczęcia</string>
-    <string name="starting_playback">Rozpoczynanie odtwarzania</string>
     <string name="status">Status</string>
     <string name="stop">Zatrzymaj</string>
     <string name="stop_recording">Jesteś pewny że chcesz zatrzymać uruchomione nagrywanie \'%s\'?</string>
@@ -366,7 +360,6 @@
     <string name="stream_errors">Błędy strumienia: %1$s</string>
     <string name="subscription_error">Błędy subskrypcji: %1$s</string>
     <string name="subtitle">Podtytuł</string>
-    <string name="subtitle_settings">Ustawienia napisów</string>
     <string name="success_adding_recording">Nagranie zostało dodane.</string>
     <string name="success_removing_recording">Nagranie zostało usunięte.</string>
     <string name="success_updating_recording">Nagranie zostało zaktualizowane.</string>
