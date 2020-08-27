@@ -1,60 +1,42 @@
-package org.tvheadend.tvhclient.ui.features.playback.internal.utils;
+package org.tvheadend.tvhclient.ui.features.playback.internal.utils
 
-import timber.log.Timber;
+import timber.log.Timber
 
-public class TvhMappings {
+class TvhMappings private constructor() {
 
-    private TvhMappings() {
-        throw new IllegalAccessError("Utility class");
-    }
+    companion object {
+        private val mSampleRates = intArrayOf(
+                96000, 88200, 64000, 48000,
+                44100, 32000, 24000, 22050,
+                16000, 12000, 11025, 8000,
+                7350, 0, 0, 0
+        )
 
-    private static final int[] mSampleRates = new int[]{
-            96000, 88200, 64000, 48000,
-            44100, 32000, 24000, 22050,
-            16000, 12000, 11025, 8000,
-            7350, 0, 0, 0
-    };
-
-    public static int sriToRate(int sri) {
-        return mSampleRates[sri & 0xf];
-    }
-
-    public static int androidSpeedToTvhSpeed(float speed) {
-        // Translate the speed value from what Android uses, to what TVHeadend expects.
-        // TVHeadend expects: 0=pause, 100=1x fwd, -100=1x backward)
-        int translatedSpeed;
-        switch((int) speed) {
-            case 1: // Normal Playback
-                translatedSpeed = 100;
-                break;
-            case -2: // 2x Rewind
-                translatedSpeed = -200;
-                break;
-            case -4: // 3x Rewind
-                translatedSpeed = -300;
-                break;
-            case -12: // 4x Rewind
-                translatedSpeed = -400;
-                break;
-            case -48: // 5x Rewind
-                translatedSpeed = -500;
-                break;
-            case 2: // 2x Fast forward
-                translatedSpeed = 200;
-                break;
-            case 8: // 3x Fast forward
-                translatedSpeed = 300;
-                break;
-            case 32: // 4x Fast forward
-                translatedSpeed = 400;
-                break;
-            case 128: // 5x Fast forward
-                translatedSpeed = 500;
-                break;
-            default:
-                throw new IllegalArgumentException("Unknown speed: " + speed);
+        fun sriToRate(sri: Int): Int {
+            return mSampleRates[sri and 0xf]
         }
-        Timber.d("Translated android speed " + speed + " to TVH speed " + translatedSpeed);
-        return translatedSpeed;
+
+        fun androidSpeedToTvhSpeed(speed: Float): Int {
+            // Translate the speed value from what Android uses, to what TVHeadend expects.
+            // TVHeadend expects: 0=pause, 100=1x fwd, -100=1x backward)
+            val translatedSpeed: Int = when (speed.toInt()) {
+                1 -> 100
+                -2 -> -200
+                -4 -> -300
+                -12 -> -400
+                -48 -> -500
+                2 -> 200
+                8 -> 300
+                32 -> 400
+                128 -> 500
+                else -> throw IllegalArgumentException("Unknown speed: $speed")
+            }
+            Timber.d("Translated android speed $speed to TVH speed $translatedSpeed")
+            return translatedSpeed
+        }
+    }
+
+    init {
+        throw IllegalAccessError("Utility class")
     }
 }
