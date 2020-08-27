@@ -82,8 +82,7 @@ class TrackInformationDialog : DialogFragment() {
     }
 
     private fun getPixelAspectRatioString(pixelAspectRatio: Float?): String? {
-        return if (pixelAspectRatio == Format.NO_VALUE.toFloat()
-                || pixelAspectRatio == 1f) "" else " par:" + java.lang.String.format(Locale.US, "%.02f", pixelAspectRatio)
+        return if (pixelAspectRatio == Format.NO_VALUE.toFloat()) " par: no value" else " par:" + java.lang.String.format(Locale.US, "%.02f", pixelAspectRatio)
     }
 
     companion object {
