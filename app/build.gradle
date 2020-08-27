@@ -236,7 +236,7 @@ dependencies {
     testImplementation "androidx.test:core:$androidx_test_version"
     testImplementation "androidx.test:runner:$androidx_test_version"
     testImplementation "androidx.test:rules:$androidx_test_version"
-    testImplementation "androidx.test.ext:$androidx_junit_version"
+    testImplementation "androidx.test.ext:junit:$androidx_junit_version"
     testImplementation "org.robolectric:robolectric:4.3.1"
 
     // Required dependencies for UI Testing
@@ -244,7 +244,7 @@ dependencies {
     androidTestImplementation "androidx.test:core:$androidx_test_version"
     androidTestImplementation "androidx.test:runner:$androidx_test_version"
     androidTestImplementation "androidx.test:rules:$androidx_test_version"
-    androidTestImplementation "androidx.test.ext:$androidx_junit_version"
+    androidTestImplementation "androidx.test.ext:junit:$androidx_junit_version"
     androidTestImplementation "androidx.test.espresso:espresso-core:$espresso_version"
     androidTestImplementation "androidx.test.espresso:espresso-contrib:$espresso_version"
     androidTestImplementation "androidx.test.espresso:espresso-intents:$espresso_version"
