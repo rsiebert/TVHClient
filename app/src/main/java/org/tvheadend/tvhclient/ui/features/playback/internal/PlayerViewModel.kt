@@ -20,7 +20,7 @@ import org.tvheadend.htsp.HtspConnectionStateListener
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.ui.base.BaseViewModel
 import org.tvheadend.tvhclient.ui.features.playback.internal.utils.CustomEventLogger
-import org.tvheadend.tvhclient.ui.features.playback.internal.utils.Rational
+import org.tvheadend.tvhclient.ui.features.playback.internal.utils.VideoAspect
 import timber.log.Timber
 import java.util.*
 import java.util.concurrent.Executors
@@ -45,7 +45,7 @@ class PlayerViewModel(application: Application) : BaseViewModel(application), Ht
     val trackSelector: DefaultTrackSelector
 
     // Video dimension and aspect ratio related properties
-    val videoAspectRatio: MutableLiveData<Rational> = MutableLiveData()
+    val videoAspectRatio: MutableLiveData<VideoAspect> = MutableLiveData()
 
     // Observable fields
     var playerState: MutableLiveData<Int> = MutableLiveData()
@@ -214,7 +214,7 @@ class PlayerViewModel(application: Application) : BaseViewModel(application), Ht
         htspFileInputStreamDataSourceFactory?.releaseCurrentDataSource()
     }
 
-    fun setVideoAspectRatio(rational: Rational) {
+    fun setVideoAspectRatio(rational: VideoAspect) {
         if (videoAspectRatio.value != null && videoAspectRatio.value != rational) {
             Timber.d("Updating selected video aspect ratio")
             videoAspectRatio.postValue(rational)
@@ -272,7 +272,7 @@ class PlayerViewModel(application: Application) : BaseViewModel(application), Ht
 
     override fun onVideoSizeChanged(width: Int, height: Int, unappliedRotationDegrees: Int, pixelWidthHeightRatio: Float) {
         Timber.d("Video size changed to width $width, height $height, pixel aspect ratio $pixelWidthHeightRatio")
-        videoAspectRatio.postValue(Rational(width, height))
+        videoAspectRatio.postValue(VideoAspect(width, height))
     }
 
     override fun onRenderedFirstFrame() {

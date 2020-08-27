@@ -30,7 +30,7 @@ import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.ui.common.onAttach
 import org.tvheadend.tvhclient.ui.common.setOptionalDescriptionText
 import org.tvheadend.tvhclient.ui.features.MainActivity
-import org.tvheadend.tvhclient.ui.features.playback.internal.utils.Rational
+import org.tvheadend.tvhclient.ui.features.playback.internal.utils.VideoAspect
 import org.tvheadend.tvhclient.ui.features.playback.internal.utils.TrackInformationDialog
 import org.tvheadend.tvhclient.ui.features.playback.internal.utils.TrackSelectionDialog
 import org.tvheadend.tvhclient.util.extensions.*
@@ -47,8 +47,8 @@ class PlaybackActivity : AppCompatActivity() {
     private lateinit var viewModel: PlayerViewModel
 
     private val videoAspectRatioNameList = listOf("5:4", "4:3", "16:9", "16:10", "18:9")
-    private val videoAspectRatioList = listOf(Rational(5, 4), Rational(4, 3), Rational(16, 9), Rational(16, 10), Rational(18, 9))
-    private var selectedVideoAspectRatio: Rational? = null
+    private val videoAspectRatioList = listOf(VideoAspect(5, 4), VideoAspect(4, 3), VideoAspect(16, 9), VideoAspect(16, 10), VideoAspect(18, 9))
+    private var selectedVideoAspectRatio: VideoAspect? = null
     private var selectedVideoAspectIndex = -1
 
     private var orientationSensorListener: SensorEventListener? = null
@@ -297,7 +297,7 @@ class PlaybackActivity : AppCompatActivity() {
 
     }
 
-    private fun updateVideoAspectRatio(videoAspectRatio: Rational) {
+    private fun updateVideoAspectRatio(videoAspect: VideoAspect) {
         Timber.d("Updating video dimensions")
 
         val display = windowManager.defaultDisplay
@@ -306,8 +306,8 @@ class PlaybackActivity : AppCompatActivity() {
         val screenWidth = size.x
         val screenHeight = size.y
 
-        var width = videoAspectRatio.numerator
-        var height = videoAspectRatio.denominator
+        var width = videoAspect.width
+        var height = videoAspect.height
         val ratio = width.toFloat() / height.toFloat()
         val orientation = resources.configuration.orientation
 
@@ -363,14 +363,14 @@ class PlaybackActivity : AppCompatActivity() {
 
     private fun onChangeAspectRatioSelected() {
         Timber.d("Change aspect ratio button selected")
-        val width = selectedVideoAspectRatio?.numerator ?: 0
-        val height = selectedVideoAspectRatio?.denominator ?: 1
+        val width = selectedVideoAspectRatio?.width ?: 0
+        val height = selectedVideoAspectRatio?.height ?: 1
         val currentRatio = (width.toFloat() / height.toFloat()).toString().subStringUntilOrLess(4)
 
         Timber.d("Current video dimensions are $width:$height, current ratio: $currentRatio:1, selected index $selectedVideoAspectIndex")
         if (selectedVideoAspectIndex == -1) {
             videoAspectRatioList.forEachIndexed { index, value ->
-                val ratio = (value.numerator.toFloat() / value.denominator.toFloat()).toString().subStringUntilOrLess(4)
+                val ratio = (value.width.toFloat() / value.height.toFloat()).toString().subStringUntilOrLess(4)
                 Timber.d("Current ratio: $currentRatio, ratio: $ratio")
                 if (currentRatio == ratio) {
                     selectedVideoAspectIndex = index
@@ -444,13 +444,13 @@ class PlaybackActivity : AppCompatActivity() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val ratio = selectedVideoAspectRatio
             if (ratio != null) {
-                Timber.d("Entering PIP mode with ratio ${ratio.numerator}:${ratio.denominator}")
+                Timber.d("Entering PIP mode with ratio ${ratio.width}:${ratio.height}")
                 // Set the value already here because the onPause method is called before the onPictureInPictureModeChanged.
                 // This would pause the player before we know that the PIP mode has been entered.
                 viewModel.pipModeActive = true
                 enterPictureInPictureMode(
                         PictureInPictureParams.Builder()
-                                .setAspectRatio(android.util.Rational(ratio.numerator, ratio.denominator))
+                                .setAspectRatio(android.util.Rational(ratio.width, ratio.height))
                                 .build())
             }
         }
