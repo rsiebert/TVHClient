@@ -8,6 +8,7 @@
 
     <!-- Default playback preference values -->
     <bool name="pref_default_internal_player_enabled">false</bool>
+    <bool name="pref_default_force_aspect_ratio_for_sd_content_enabled">true</bool>
     <string name="pref_default_buffer_playback_ms" translatable="false">500</string>
     <bool name="pref_default_audio_passthrough_decoder_enabled">false</bool>
     <bool name="pref_default_audio_tunneling_enabled">false</bool>

@@ -134,6 +134,7 @@
     <string name="pref_cast_profiles_sum">Select a profile that shall be used to cast a channel or recorded program to a chromecast or similar device.</string>
     <string name="pref_casting">Casting</string>
     <string name="pref_casting_sum">Configure casting of programs or recordings to your TV. The server must have transcoding enabled.</string>
+    <string name="pref_force_aspect_ratio_for_sd_content_enabled">Aspect ratio is 16:9 for SD content</string>
     <string name="pref_changelog">Changelog</string>
     <string name="pref_changelog_sum">Show a list of features and changes of the different application versions.</string>
     <string name="pref_clear_database">Clear database</string>

@@ -13,6 +13,10 @@
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/pref_advanced_settings">
+        <SwitchPreference
+            android:defaultValue="@bool/pref_default_force_aspect_ratio_for_sd_content_enabled"
+            android:key="force_aspect_ratio_for_sd_content_enabled"
+            android:title="@string/pref_force_aspect_ratio_for_sd_content_enabled" />
         <ListPreference
             android:defaultValue="@string/pref_default_buffer_playback_ms"
             android:dialogTitle="@string/pref_internal_player_buffer_duration_dialog_title"
