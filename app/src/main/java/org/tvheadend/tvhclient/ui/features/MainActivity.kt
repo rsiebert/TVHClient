@@ -202,9 +202,18 @@ class MainActivity : AppCompatActivity(), ToolbarInterface, LayoutControlInterfa
                 startupIsCompleteObserveMainLiveData()
             }
         })
+
+        // In case an orientation change occurred assume the startup is complete and start observing the
+        // other required live data. Without that navigation and connectivity changes would not work anymore
+        if (savedInstanceState != null) {
+            Timber.d("Orientation change occurred")
+            baseViewModel.setStartupComplete(true)
+        }
     }
 
     private fun startupIsCompleteObserveMainLiveData() {
+        Timber.d("Startup complete, observing other required live data")
+
         baseViewModel.networkStatusLiveData.observe(this,  { event ->
             event.getContentIfNotHandled()?.let {
                 Timber.d("Network status changed to $it")
