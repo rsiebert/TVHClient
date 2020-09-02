@@ -1,6 +1,9 @@
 package org.tvheadend.data.dao
 
 import androidx.room.*
+import org.tvheadend.data.entity.ServerProfile.Companion.HTSP_PROFILE
+import org.tvheadend.data.entity.ServerProfile.Companion.HTTP_PROFILE
+import org.tvheadend.data.entity.ServerProfile.Companion.RECORDING_PROFILE
 import org.tvheadend.data.entity.ServerProfileEntity
 
 @Dao
@@ -12,17 +15,17 @@ interface ServerProfileDao {
 
     @Query("SELECT p.* FROM server_profiles AS p " +
             " WHERE $CONNECTION_IS_ACTIVE" +
-            " AND p.type = 'htsp_playback'")
+            " AND p.type = '" + HTSP_PROFILE + "'")
     fun loadHtspPlaybackProfilesSync(): List<ServerProfileEntity>
 
     @Query("SELECT p.* FROM server_profiles AS p " +
             " WHERE $CONNECTION_IS_ACTIVE" +
-            " AND p.type = 'http_playback'")
+            " AND p.type = '" + HTTP_PROFILE + "'")
     fun loadHttpPlaybackProfilesSync(): List<ServerProfileEntity>
 
     @Query("SELECT p.* FROM server_profiles AS p " +
             " WHERE $CONNECTION_IS_ACTIVE" +
-            " AND p.type = 'recording'")
+            " AND p.type = '" + RECORDING_PROFILE + "'")
     fun loadAllRecordingProfilesSync(): List<ServerProfileEntity>
 
     @Insert

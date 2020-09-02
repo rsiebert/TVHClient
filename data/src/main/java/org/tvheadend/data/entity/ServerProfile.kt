@@ -14,7 +14,13 @@ data class ServerProfile(
         var uuid: String? = null,
         var comment: String? = null,
         var type: String? = null
-)
+) {
+    companion object {
+        const val HTSP_PROFILE: String = "htsp_playback"
+        const val HTTP_PROFILE: String = "http_playback"
+        const val RECORDING_PROFILE: String = "recording"
+    }
+}
 
 @Entity(tableName = "server_profiles", indices = [Index(value = ["id"], unique = true)])
 data class ServerProfileEntity(
