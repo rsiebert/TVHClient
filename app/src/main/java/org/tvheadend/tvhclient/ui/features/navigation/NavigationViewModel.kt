@@ -34,21 +34,23 @@ class NavigationViewModel(application: Application) : BaseViewModel(application)
     }
 
     fun setSelectedConnectionAsActive(id: Int): Boolean {
-        val newActiveConnection = appRepository.connectionData.getItemById(id)
-        return if (newActiveConnection != null) {
+        for (connection in appRepository.connectionData.getItems()) {
+            if (connection.id == id) {
+                val currentlyActiveConnection = appRepository.connectionData.activeItem
+                currentlyActiveConnection.isActive = false
+                appRepository.connectionData.updateItem(currentlyActiveConnection)
 
-            val currentlyActiveConnection = appRepository.connectionData.activeItem
-            currentlyActiveConnection.isActive = false
-            appRepository.connectionData.updateItem(currentlyActiveConnection)
+                Timber.d("Switching active connection from $id to ${connection.id}")
+                connection.isActive = true
+                connection.isSyncRequired = true
+                connection.lastUpdate = 0
+                appRepository.connectionData.updateItem(connection)
 
-            newActiveConnection.isActive = true
-            newActiveConnection.isSyncRequired = true
-            newActiveConnection.lastUpdate = 0
-            appRepository.connectionData.updateItem(newActiveConnection)
-            true
-        } else {
-            false
+                Timber.d("Switched active connection from $id to ${appRepository.connectionData.activeItem.id}")
+                return true
+            }
         }
+        return false
     }
 
     fun setSelectedMenuItemId(id: Int) {
