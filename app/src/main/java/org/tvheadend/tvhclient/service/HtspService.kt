@@ -57,9 +57,6 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
     private val pendingChannelTagOps = ArrayList<ChannelTag>()
     private val pendingRecordingOps = ArrayList<Recording>()
 
-    private lateinit var httpPlaybackProfiles: List<ServerProfile>
-    private lateinit var htspPlaybackProfiles: List<ServerProfile>
-
     private var initialSyncWithServerRunning: Boolean = false
     private var syncEventsRequired: Boolean = false
     private var syncRequired: Boolean = false
@@ -73,12 +70,6 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
 
         connection = appRepository.connectionData.activeItem
         Timber.d("Loaded connection ${connection.name}")
-
-        httpPlaybackProfiles = appRepository.serverProfileData.httpPlaybackProfiles
-        Timber.d("Loaded existing ${httpPlaybackProfiles.size} http playback profiles for connection ${connection.name}")
-
-        htspPlaybackProfiles = appRepository.serverProfileData.htspPlaybackProfiles
-        Timber.d("Loaded existing ${htspPlaybackProfiles.size} htsp playback profiles for connection ${connection.name}")
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -408,10 +399,10 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
         getDvrConfigs()
         getHttpProfiles()
 
-        addMissingHtspPlaybackProfileIfNotExists("htsp")
-        addMissingHttpPlaybackProfileIfNotExists("matroska")
-        addMissingHttpPlaybackProfileIfNotExists("audio")
-        addMissingHttpPlaybackProfileIfNotExists("pass")
+        addHtspProfile("htsp")
+        addHttpProfile("matroska")
+        addHttpProfile("audio")
+        addHttpProfile("pass")
 
         setDefaultProfileSelection()
     }
@@ -503,34 +494,41 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
         }
     }
 
-    private fun addMissingHtspPlaybackProfileIfNotExists(@Suppress("SameParameterValue") name: String) {
+    private fun addHtspProfile(name: String, uuid: String = "", comment: String = "") {
         var profileExists = false
+        val htspPlaybackProfiles = appRepository.serverProfileData.htspPlaybackProfiles
+        Timber.d("Loaded existing ${htspPlaybackProfiles.size} profiles for connection ${connection.name}")
 
-        val profileNames = appRepository.serverProfileData.htspPlaybackProfileNames
-        for (profileName in profileNames) {
-            if (profileName == name) {
-                Timber.d("Default htsp playback profile $name exists already")
+        for (p in htspPlaybackProfiles) {
+            if (p.name == name || p.uuid == uuid) {
+                Timber.d("Profile '$name' with uuid '$uuid' exists already")
                 profileExists = true
+                break
             }
         }
         if (!profileExists) {
-            Timber.d("Default htsp playback profile $name does not exist, adding manually")
             val serverProfile = ServerProfile()
             serverProfile.connectionId = connection.id
             serverProfile.name = name
+            serverProfile.uuid = uuid
+            serverProfile.comment = comment
             serverProfile.type = "htsp_playback"
+
+            Timber.d("Adding profile '$name' with uuid '$uuid'")
             appRepository.serverProfileData.addItem(serverProfile)
         }
     }
 
-    private fun addMissingHttpPlaybackProfileIfNotExists(name: String) {
+    private fun addHttpProfile(name: String, uuid: String = "", comment: String = "") {
         var profileExists = false
+        val httpPlaybackProfiles = appRepository.serverProfileData.httpPlaybackProfiles
+        Timber.d("Loaded existing ${httpPlaybackProfiles.size} http playback profiles for connection ${connection.name}")
 
-        val profileNames = appRepository.serverProfileData.httpPlaybackProfileNames
-        for (profileName in profileNames) {
-            if (profileName == name) {
+        for (profile in httpPlaybackProfiles) {
+            if (profile.name == name) {
                 Timber.d("Default http playback profile $name exists already")
                 profileExists = true
+                break
             }
         }
         if (!profileExists) {
@@ -538,6 +536,8 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
             val serverProfile = ServerProfile()
             serverProfile.connectionId = connection.id
             serverProfile.name = name
+            serverProfile.uuid = uuid
+            serverProfile.comment = comment
             serverProfile.type = "http_playback"
             appRepository.serverProfileData.addItem(serverProfile)
         }
@@ -948,30 +948,7 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
         if (message.containsKey("profiles")) {
             for (obj in message.getList("profiles")) {
                 val msg = obj as HtspMessage
-                val name = msg.getString("name")
-                val uuid = msg.getString("uuid")
-                Timber.d("Checking if htsp playback profile $name and uuid $uuid should be added to the database")
-
-                var profileExists = false
-                for (p in htspPlaybackProfiles) {
-                    Timber.d("Comparing htsp profile $name and uuid $uuid with database profile ${p.name} and uuid ${p.uuid}")
-                    if (p.name == name || p.uuid == uuid) {
-                        Timber.d("Htsp playback profile $name and uuid $uuid exists already")
-                        profileExists = true
-                        break
-                    }
-                }
-                if (!profileExists) {
-                    val serverProfile = ServerProfile()
-                    serverProfile.connectionId = connection.id
-                    serverProfile.name = name
-                    serverProfile.uuid = uuid
-                    serverProfile.comment = msg.getString("comment")
-                    serverProfile.type = "htsp_playback"
-
-                    Timber.d("Adding htsp playback profile $name and uuid $uuid")
-                    appRepository.serverProfileData.addItem(serverProfile)
-                }
+                addHtspProfile(msg.getString("name"), msg.getString("uuid"), msg.getString("comment"))
             }
         }
     }
@@ -989,29 +966,7 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
                         while (i < totalObject) {
                             val profile = entries.getJSONObject(i)
                             if (profile.has("key") && profile.has("val")) {
-                                val name = profile.getString("val")
-                                val uuid = profile.getString("key")
-                                Timber.d("Checking if http playback profile $name and uuid $uuid should be added to the database")
-
-                                var profileExists = false
-                                for (p in httpPlaybackProfiles) {
-                                    Timber.d("Comparing http profile $name and uuid $uuid with database profile ${p.name} and uuid ${p.uuid}")
-                                    if (p.name == name || p.uuid == uuid) {
-                                        Timber.d("Http playback profile $name and uuid $uuid exists already")
-                                        profileExists = true
-                                        break
-                                    }
-                                }
-                                if (!profileExists) {
-                                    val serverProfile = ServerProfile()
-                                    serverProfile.connectionId = connection.id
-                                    serverProfile.name = name
-                                    serverProfile.uuid = uuid
-                                    serverProfile.type = "http_playback"
-
-                                    Timber.d("Adding http playback profile $name and uuid $uuid")
-                                    appRepository.serverProfileData.addItem(serverProfile)
-                                }
+                                addHttpProfile(profile.getString("val"), profile.getString("key"))
                             }
                             i++
                         }
