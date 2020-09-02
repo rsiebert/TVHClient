@@ -226,7 +226,7 @@
     <string name="pref_program_guide_sum">Konfiguriert das Aussehen und weitere Parameter der Programmübersicht.</string>
     <string name="pref_recording_profiles">Aufnahmeprofile</string>
     <string name="pref_recording_profiles_sum">Bestimmt das Profil, dass der Server für das Aufnehmen von geplanten Programmen verwenden soll.</string>
-    <string name="pref_series_recording_profiles">Seriesaufnahmeprofile</string>
+    <string name="pref_series_recording_profiles">Serienaufnahmeprofile</string>
     <string name="pref_series_recording_profiles_sum">Bestimmt das Profil, dass der Server für Serienaufnahmen verwenden soll.</string>
     <string name="pref_timer_recording_profiles">Manuelle Aufnahmeprofile</string>
     <string name="pref_timer_recording_profiles_sum">Bestimmt das Profil, dass der Server für die manuellen Aufnehmen verwenden soll.</string>
