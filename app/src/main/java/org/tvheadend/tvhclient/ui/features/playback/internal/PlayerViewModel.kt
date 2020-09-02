@@ -70,6 +70,7 @@ class PlayerViewModel(application: Application) : BaseViewModel(application), Ht
 
     var pipModeActive: Boolean = false
 
+    private val defaultForceAspectRatio = application.applicationContext.resources.getBoolean(R.bool.pref_default_force_aspect_ratio_for_sd_content_enabled)
     private val defaultChannelSortOrder = application.applicationContext.resources.getString(R.string.pref_default_channel_sort_order)
     private val defaultAudioTunnelingEnabled = application.applicationContext.resources.getBoolean(R.bool.pref_default_audio_tunneling_enabled)
     private val defaultConnectionTimeout = application.resources.getString(R.string.pref_default_connection_timeout)
@@ -272,7 +273,15 @@ class PlayerViewModel(application: Application) : BaseViewModel(application), Ht
 
     override fun onVideoSizeChanged(width: Int, height: Int, unappliedRotationDegrees: Int, pixelWidthHeightRatio: Float) {
         Timber.d("Video size changed to width $width, height $height, pixel aspect ratio $pixelWidthHeightRatio")
-        videoAspectRatio.postValue(VideoAspect(width, height))
+        var newPixelWidthHeightRatio = pixelWidthHeightRatio
+
+        // Only change the aspect ratio for content which has a resolution lower than 1280x720.
+        val forceAspectRatio = sharedPreferences.getBoolean("force_aspect_ratio_for_sd_content_enabled", defaultForceAspectRatio)
+        if (width < 1280 && height < 720 && pixelWidthHeightRatio == 1.0f && forceAspectRatio) {
+            newPixelWidthHeightRatio = ((16f / 9f) * height.toFloat()) / width.toFloat()
+            Timber.d("Video dimensions are from SD channel, setting pixel aspect ratio to $newPixelWidthHeightRatio")
+        }
+        videoAspectRatio.postValue(VideoAspect((width * newPixelWidthHeightRatio).toInt(), height))
     }
 
     override fun onRenderedFirstFrame() {
