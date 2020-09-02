@@ -935,6 +935,7 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
                 addProfile(msg.getString("name"), msg.getString("uuid"), msg.getString("comment"), HTSP_PROFILE)
             }
         }
+        // Add the minimum mandatory profiles if they do not exist already
         addProfile(name = "htsp", type = HTSP_PROFILE)
     }
 
@@ -963,6 +964,7 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
         } else {
             Timber.d("No http playback profile data available")
         }
+        // Add the minimum mandatory profiles if they do not exist already
         addProfile(name = "matroska", type = HTTP_PROFILE)
         addProfile(name = "audio", type = HTTP_PROFILE)
         addProfile(name = "pass", type = HTTP_PROFILE)
