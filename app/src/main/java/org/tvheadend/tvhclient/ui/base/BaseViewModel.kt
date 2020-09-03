@@ -17,6 +17,7 @@ import org.tvheadend.tvhclient.ui.common.interfaces.NetworkStatusInterface
 import org.tvheadend.tvhclient.ui.common.interfaces.SnackbarMessageInterface
 import org.tvheadend.tvhclient.ui.features.MainActivity
 import org.tvheadend.tvhclient.util.livedata.Event
+import timber.log.Timber
 import javax.inject.Inject
 
 open class BaseViewModel(application: Application) : AndroidViewModel(application), SnackbarMessageInterface, NetworkStatusInterface {
@@ -47,7 +48,6 @@ open class BaseViewModel(application: Application) : AndroidViewModel(applicatio
         private set
 
     var connection: Connection
-    private var connectionLiveData: LiveData<Connection>
 
     /**
      * Contains the live data information that the application is unlocked or not
@@ -79,7 +79,6 @@ open class BaseViewModel(application: Application) : AndroidViewModel(applicatio
         connection = appRepository.connectionData.activeItem
         htspVersion = appRepository.serverStatusData.activeItem.htspVersion
 
-        connectionLiveData = appRepository.connectionData.liveDataActiveItem
         connectionToServerAvailableLiveData.value = false
 
         networkStatusLiveData.value = Event(NetworkStatus.NETWORK_UNKNOWN)
