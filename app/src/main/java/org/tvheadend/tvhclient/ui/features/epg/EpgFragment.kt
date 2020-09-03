@@ -270,7 +270,7 @@ class EpgFragment : BaseFragment(), EpgScrollInterface, RecyclerViewClickInterfa
                     return@setOnMenuItemClickListener recordSelectedProgram(ctx, program.eventId, epgViewModel.getRecordingProfile(), htspVersion)
                 }
                 R.id.menu_record_program_with_custom_profile -> return@setOnMenuItemClickListener recordSelectedProgramWithCustomProfile(ctx, program.eventId, program.channelId, epgViewModel.getRecordingProfileNames(), epgViewModel.getRecordingProfile())
-                R.id.menu_record_program_as_series_recording -> return@setOnMenuItemClickListener recordSelectedProgramAsSeriesRecording(ctx, program.title, epgViewModel.getRecordingProfile(), htspVersion)
+                R.id.menu_record_program_as_series_recording -> return@setOnMenuItemClickListener recordSelectedProgramAsSeriesRecording(ctx, program.title, program.channelId, epgViewModel.getRecordingProfile(), htspVersion)
                 R.id.menu_play -> return@setOnMenuItemClickListener playSelectedChannel(ctx, program.channelId, isUnlocked)
                 R.id.menu_cast -> return@setOnMenuItemClickListener castSelectedChannel(ctx, program.channelId)
 

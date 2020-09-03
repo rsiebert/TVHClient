@@ -351,7 +351,7 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickInterface, ChannelT
                     return@setOnMenuItemClickListener recordSelectedProgram(ctx, channel.programId, channelViewModel.getRecordingProfile(), htspVersion)
                 }
                 R.id.menu_record_program_with_custom_profile -> return@setOnMenuItemClickListener recordSelectedProgramWithCustomProfile(ctx, channel.programId, channel.id, channelViewModel.getRecordingProfileNames(), channelViewModel.getRecordingProfile())
-                R.id.menu_record_program_as_series_recording -> return@setOnMenuItemClickListener recordSelectedProgramAsSeriesRecording(ctx, channel.programTitle, channelViewModel.getRecordingProfile(), htspVersion)
+                R.id.menu_record_program_as_series_recording -> return@setOnMenuItemClickListener recordSelectedProgramAsSeriesRecording(ctx, channel.programTitle, channel.id, channelViewModel.getRecordingProfile(), htspVersion)
                 R.id.menu_play -> return@setOnMenuItemClickListener playSelectedChannel(ctx, channel.id, isUnlocked)
                 R.id.menu_cast -> return@setOnMenuItemClickListener castSelectedChannel(ctx, channel.id)
 

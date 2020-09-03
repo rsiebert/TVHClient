@@ -156,10 +156,11 @@ fun recordSelectedProgram(context: Context, eventId: Int, profile: ServerProfile
     return true
 }
 
-fun recordSelectedProgramAsSeriesRecording(context: Context, title: String?, profile: ServerProfile?, htspVersion: Int): Boolean {
+fun recordSelectedProgramAsSeriesRecording(context: Context, title: String?, channelId: Int, profile: ServerProfile?, htspVersion: Int): Boolean {
     val intent = Intent(context, HtspService::class.java)
     intent.action = "addAutorecEntry"
     intent.putExtra("title", title)
+    intent.putExtra("channelId", channelId)
 
     if (profile != null && htspVersion >= 16) {
         intent.putExtra("configName", profile.name)
