@@ -90,11 +90,11 @@ abstract class SettingsConnectionBaseFragment : PreferenceFragmentCompat(), Back
 
         val username = settingsViewModel.connectionToEdit.username
         usernamePreference.text = username
-        usernamePreference.summary = if (username.isNullOrEmpty()) getString(R.string.pref_user_sum) else username
+        usernamePreference.summary = if (username.isNullOrEmpty() || username == "*") getString(R.string.pref_user_sum) else username
 
         val password = settingsViewModel.connectionToEdit.password
         passwordPreference.text = password
-        passwordPreference.summary = if (password.isNullOrEmpty()) getString(R.string.pref_pass_sum) else getString(R.string.pref_pass_set_sum)
+        passwordPreference.summary = if (password.isNullOrEmpty() || password == "*") getString(R.string.pref_pass_sum) else getString(R.string.pref_pass_set_sum)
 
         activeEnabledPreference.isChecked = settingsViewModel.connectionToEdit.isActive
         wolEnabledPreference.isChecked = settingsViewModel.connectionToEdit.isWolEnabled
