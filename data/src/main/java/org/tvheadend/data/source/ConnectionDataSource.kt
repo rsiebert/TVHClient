@@ -30,9 +30,11 @@ class ConnectionDataSource(private val db: AppRoomDatabase) : DataSourceInterfac
             runBlocking(Dispatchers.IO) {
                 val c = db.connectionDao.loadActiveConnectionSync()
                 if (c != null) {
+                    Timber.d("Loaded active connection ${c.name} with id ${c.id}")
                     connection = c.toConnection()
                 }
             }
+            Timber.d("Returning active connection ${connection.name} with id ${connection.id}")
             return connection
         }
 
@@ -104,6 +106,27 @@ class ConnectionDataSource(private val db: AppRoomDatabase) : DataSourceInterfac
             connection.isSyncRequired = true
             connection.lastUpdate = 0
             updateItem(connection)
+        }
+    }
+
+    fun switchActiveConnection(oldId: Int, newId: Int) {
+        Timber.d("Switching active connection from id $oldId to $newId")
+        runBlocking(Dispatchers.IO) {
+            db.connectionDao.loadConnectionByIdSync(oldId)?.also {
+                Timber.d("Currently active connection is ${it.name} with id ${it.id}")
+                it.isActive = false
+                db.connectionDao.update(it)
+            }
+            db.connectionDao.loadConnectionByIdSync(newId)?.also {
+                Timber.d("New active connection shall be ${it.name} with id ${it.id}")
+                it.isActive = true
+                it.isSyncRequired = true
+                it.lastUpdate = 0
+                db.connectionDao.update(it)
+            }
+            db.connectionDao.loadActiveConnectionSync()?.let {
+                Timber.d("New active connection is be ${it.name} with id ${it.id}")
+            }
         }
     }
 }

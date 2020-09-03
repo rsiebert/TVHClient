@@ -56,7 +56,10 @@ class NavigationDrawer(private val activity: AppCompatActivity,
         createMenu()
 
         navigationViewModel.isUnlockedLiveData.observe(activity,  { result.removeItem(MENU_UNLOCKER.toLong()) })
-        navigationViewModel.connections.observe(activity,  { this.showConnectionsInDrawerHeader(it) })
+        navigationViewModel.connectionLiveData.observe(activity,  {
+            this.showConnectionsInDrawerHeader()
+            headerResult.setActiveProfile(it.id.toLong())
+        })
 
         statusViewModel.channelCount.observe(activity,  { count -> result.updateBadge(MENU_CHANNELS.toLong(), StringHolder(count.toString())) })
         statusViewModel.seriesRecordingCount.observe(activity,  { count -> result.updateBadge(MENU_SERIES_RECORDINGS.toLong(), StringHolder(count.toString())) })
@@ -170,7 +173,7 @@ class NavigationDrawer(private val activity: AppCompatActivity,
         return typedValue.resourceId
     }
 
-    private fun showConnectionsInDrawerHeader(connections: List<Connection>) {
+    private fun showConnectionsInDrawerHeader() {
         // Remove old profiles from the header
         val profileIdList = ArrayList<Long>()
         headerResult.profiles?.forEach {
@@ -180,8 +183,8 @@ class NavigationDrawer(private val activity: AppCompatActivity,
             headerResult.removeProfileByIdentifier(id)
         }
         // Add the existing connections as new profiles
-        if (connections.isNotEmpty()) {
-            connections.forEach {
+        if (navigationViewModel.connections.isNotEmpty()) {
+            navigationViewModel.connections.forEach {
                 headerResult.addProfiles(
                         ProfileDrawerItem()
                                 .withIdentifier(it.id.toLong())
@@ -191,8 +194,6 @@ class NavigationDrawer(private val activity: AppCompatActivity,
         } else {
             headerResult.addProfiles(ProfileDrawerItem().withName(R.string.no_connection_available))
         }
-
-        headerResult.setActiveProfile(navigationViewModel.connection.id.toLong())
     }
 
     override fun onProfileChanged(view: View?, profile: IProfile<*>, current: Boolean): Boolean {
