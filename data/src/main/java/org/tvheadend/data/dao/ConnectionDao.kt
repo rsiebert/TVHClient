@@ -32,7 +32,7 @@ internal interface ConnectionDao {
     fun insert(connection: ConnectionEntity): Long
 
     @Update
-    fun update(vararg connection: ConnectionEntity)
+    fun update(connection: ConnectionEntity)
 
     @Delete
     fun delete(connection: ConnectionEntity)

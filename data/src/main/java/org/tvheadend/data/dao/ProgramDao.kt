@@ -116,7 +116,7 @@ internal interface ProgramDao {
     fun update(programs: List<ProgramEntity>)
 
     @Update
-    fun update(vararg program: ProgramEntity)
+    fun update(program: ProgramEntity)
 
     @Delete
     fun delete(programs: List<ProgramEntity>)

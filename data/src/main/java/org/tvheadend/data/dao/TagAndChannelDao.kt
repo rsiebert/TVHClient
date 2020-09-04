@@ -13,7 +13,7 @@ internal abstract class TagAndChannelDao {
     abstract fun insert(tagAndChannel: List<TagAndChannelEntity>)
 
     @Update
-    abstract fun update(vararg tagAndChannel: TagAndChannelEntity)
+    abstract fun update(tagAndChannel: TagAndChannelEntity)
 
     @Delete
     abstract fun delete(tagAndChannel: TagAndChannelEntity)
