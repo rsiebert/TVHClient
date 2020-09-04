@@ -61,6 +61,10 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
     private val pendingChannelTagOps = ArrayList<ChannelTag>()
     private val pendingRecordingOps = ArrayList<Recording>()
 
+    private lateinit var pendingHtspProfiles: MutableList<ServerProfile>
+    private lateinit var pendingHttpProfiles: MutableList<ServerProfile>
+    private lateinit var pendingRecordingProfiles: MutableList<ServerProfile>
+
     private var initialSyncWithServerRunning: Boolean = false
     private var syncEventsRequired: Boolean = false
     private var syncRequired: Boolean = false
@@ -74,6 +78,15 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
 
         connection = appRepository.connectionData.activeItem
         Timber.d("Loaded connection ${connection.name}")
+
+        pendingHtspProfiles = appRepository.serverProfileData.htspPlaybackProfiles.toMutableList()
+        Timber.d("Loaded ${pendingHtspProfiles.size} htsp profiles")
+
+        pendingHttpProfiles = appRepository.serverProfileData.httpPlaybackProfiles.toMutableList()
+        Timber.d("Loaded ${pendingHttpProfiles.size} http profiles")
+
+        pendingRecordingProfiles = appRepository.serverProfileData.recordingProfiles.toMutableList()
+        Timber.d("Loaded ${pendingRecordingProfiles.size} recording profiles")
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -493,19 +506,9 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
         }
     }
 
-    private fun addProfile(name: String, uuid: String = "", comment: String = "", type: String) {
-        Timber.d("Loading existing profiles of type '$type' for connection ${connection.name}")
-
+    private fun addProfile(name: String, uuid: String = "", comment: String = "", type: String, profiles: MutableList<ServerProfile>) {
+        Timber.d("Checking if profile $name needs to be added to the existing profiles of type '$type' for connection ${connection.name}")
         var profileExists = false
-
-        val profiles = when (type) {
-            HTSP_PROFILE -> appRepository.serverProfileData.htspPlaybackProfiles
-            HTTP_PROFILE -> appRepository.serverProfileData.httpPlaybackProfiles
-            RECORDING_PROFILE -> appRepository.serverProfileData.recordingProfiles
-            else -> return
-        }
-
-        Timber.d("Loaded existing ${profiles.size} profiles of type '$type' for connection ${connection.name}")
 
         for (p in profiles) {
             if (p.name == name || p.uuid == uuid) {
@@ -522,8 +525,8 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
             serverProfile.comment = comment
             serverProfile.type = type
 
-            Timber.d("Adding profile '$name' with uuid '$uuid'")
-            appRepository.serverProfileData.addItem(serverProfile)
+            Timber.d("Adding profile '$name' with uuid '$uuid' to list of type $type")
+            profiles.add(serverProfile)
         }
     }
 
@@ -532,7 +535,7 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
         val serverStatus = appRepository.serverStatusData.activeItem
         serverStatus.let {
             if (it.htspPlaybackServerProfileId == 0) {
-                for (profile in appRepository.serverProfileData.htspPlaybackProfiles) {
+                for (profile in pendingHtspProfiles) {
                     if (profile.name.isEqualTo("htsp")) {
                         Timber.d("Setting htsp profile to htsp")
                         it.htspPlaybackServerProfileId = profile.id
@@ -541,7 +544,7 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
                 }
             }
             if (it.httpPlaybackServerProfileId == 0) {
-                for (profile in appRepository.serverProfileData.httpPlaybackProfiles) {
+                for (profile in pendingHttpProfiles) {
                     if (profile.name.isEqualTo("pass")) {
                         Timber.d("Setting http profile to pass")
                         it.httpPlaybackServerProfileId = profile.id
@@ -550,7 +553,7 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
                 }
             }
             if (it.recordingServerProfileId == 0) {
-                for (profile in appRepository.serverProfileData.recordingProfiles) {
+                for (profile in pendingRecordingProfiles) {
                     if (profile.name.isEqualTo("Default Profile")) {
                         Timber.d("Setting recording profile to default")
                         it.recordingServerProfileId = profile.id
@@ -932,11 +935,14 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
         if (message.containsKey("profiles")) {
             for (obj in message.getList("profiles")) {
                 val msg = obj as HtspMessage
-                addProfile(msg.getString("name"), msg.getString("uuid"), msg.getString("comment"), HTSP_PROFILE)
+                addProfile(msg.getString("name"), msg.getString("uuid"), msg.getString("comment"), HTSP_PROFILE, pendingHtspProfiles)
             }
         }
         // Add the minimum mandatory profiles if they do not exist already
-        addProfile(name = "htsp", type = HTSP_PROFILE)
+        addProfile(name = "htsp", type = HTSP_PROFILE, profiles = pendingHtspProfiles)
+
+        Timber.d("Adding ${pendingHtspProfiles.size} htsp profiles")
+        appRepository.serverProfileData.addItems(pendingHtspProfiles)
     }
 
     private fun onHttpProfiles(message: HtspMessage) {
@@ -952,7 +958,7 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
                         while (i < totalObject) {
                             val profile = entries.getJSONObject(i)
                             if (profile.has("key") && profile.has("val")) {
-                                addProfile(profile.getString("val"), profile.getString("key"), "", HTTP_PROFILE)
+                                addProfile(profile.getString("val"), profile.getString("key"), "", HTTP_PROFILE, pendingHttpProfiles)
                             }
                             i++
                         }
@@ -965,9 +971,12 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
             Timber.d("No http playback profile data available")
         }
         // Add the minimum mandatory profiles if they do not exist already
-        addProfile(name = "matroska", type = HTTP_PROFILE)
-        addProfile(name = "audio", type = HTTP_PROFILE)
-        addProfile(name = "pass", type = HTTP_PROFILE)
+        addProfile(name = "matroska", type = HTTP_PROFILE, profiles = pendingHttpProfiles)
+        addProfile(name = "audio", type = HTTP_PROFILE, profiles = pendingHttpProfiles)
+        addProfile(name = "pass", type = HTTP_PROFILE, profiles = pendingHttpProfiles)
+
+        Timber.d("Adding ${pendingHttpProfiles.size} http profiles")
+        appRepository.serverProfileData.addItems(pendingHttpProfiles)
     }
 
     private fun onSubscriptions(message: HtspMessage) {
@@ -1078,9 +1087,11 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
             for (obj in message.getList("dvrconfigs")) {
                 val msg = obj as HtspMessage
                 val name = msg.getString("name")
-                addProfile(if (name.isNullOrEmpty()) "Default Profile" else name, msg.getString("uuid"), msg.getString("comment"), RECORDING_PROFILE)
+                addProfile(if (name.isNullOrEmpty()) "Default Profile" else name, msg.getString("uuid"), msg.getString("comment"), RECORDING_PROFILE, pendingRecordingProfiles)
             }
         }
+        Timber.d("Adding ${pendingRecordingProfiles.size} recording profiles")
+        appRepository.serverProfileData.addItems(pendingRecordingProfiles)
     }
 
     private fun onServerStatus(message: HtspMessage) {
