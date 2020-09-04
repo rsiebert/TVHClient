@@ -22,6 +22,7 @@ import org.tvheadend.tvhclient.ui.base.BaseViewModel
 import org.tvheadend.tvhclient.ui.features.playback.internal.utils.CustomEventLogger
 import org.tvheadend.tvhclient.ui.features.playback.internal.utils.VideoAspect
 import timber.log.Timber
+import java.text.DecimalFormat
 import java.util.*
 import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledExecutorService
@@ -288,11 +289,15 @@ class PlayerViewModel(application: Application) : BaseViewModel(application), Ht
         Timber.d("Video size changed to width $width, height $height, pixel aspect ratio $pixelWidthHeightRatio")
         var newPixelWidthHeightRatio = pixelWidthHeightRatio
 
-        // Only change the aspect ratio for content which has a resolution lower than 1280x720.
         val forceAspectRatio = sharedPreferences.getBoolean("force_aspect_ratio_for_sd_content_enabled", defaultForceAspectRatio)
-        if (width < 1280 && height < 720 && pixelWidthHeightRatio == 1.0f && forceAspectRatio) {
-            newPixelWidthHeightRatio = ((16f / 9f) * height.toFloat()) / width.toFloat()
-            Timber.d("Video dimensions are from SD channel, setting pixel aspect ratio to $newPixelWidthHeightRatio")
+        if (forceAspectRatio) {
+            Timber.d("Video aspect shall be forced, checking original video aspect ratio")
+
+            val aspectRatio = DecimalFormat("#.##").format(width.toFloat() / height.toFloat())
+            if (aspectRatio == "1,25") {
+                newPixelWidthHeightRatio = ((16f / 9f) * height.toFloat()) / width.toFloat()
+                Timber.d("Video aspect ratio is 5:4, updating pixel aspect ratio to $newPixelWidthHeightRatio")
+            }
         }
         videoAspectRatio.postValue(VideoAspect((width * newPixelWidthHeightRatio).toInt(), height))
     }
