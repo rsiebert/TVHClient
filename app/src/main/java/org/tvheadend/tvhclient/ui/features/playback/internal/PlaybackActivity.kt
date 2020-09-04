@@ -119,6 +119,10 @@ class PlaybackActivity : AppCompatActivity() {
         player_forward?.invisible()
         play_next_channel?.invisible()
         play_previous_channel?.invisible()
+        player_aspect_ratio?.invisible()
+        player_toggle_fullscreen?.invisible()
+        player_information?.invisible()
+        player_settings?.invisible()
 
         player_play?.setOnClickListener { onPlayButtonSelected() }
         player_pause?.setOnClickListener { onPauseButtonSelected() }
@@ -139,12 +143,17 @@ class PlaybackActivity : AppCompatActivity() {
         Timber.d("Observing authentication status")
         viewModel.isConnected.observe(this, { isConnected ->
             if (isConnected) {
-                Timber.d("Connected to server")
-                status.setText(R.string.connected_to_server)
-                viewModel.loadMediaSource(applicationContext, intent.extras)
+                if (!viewModel.isPlaybackProfileSelected(intent.extras)) {
+                    Timber.d("No playback profile was selected")
+                    status?.setText(R.string.no_playback_profile_selected)
+                } else {
+                    Timber.d("Connected to server")
+                    status?.setText(R.string.connected_to_server)
+                    viewModel.loadMediaSource(applicationContext, intent.extras)
+                }
             } else {
                 Timber.d("Not connected to server")
-                status.setText(R.string.connection_failed)
+                status?.setText(R.string.connection_failed)
             }
         })
 
@@ -171,6 +180,11 @@ class PlaybackActivity : AppCompatActivity() {
                 Player.STATE_READY, Player.STATE_ENDED -> {
                     status?.gone()
                     exo_player_surface_view?.visible()
+
+                    player_aspect_ratio?.visible()
+                    player_toggle_fullscreen?.visible()
+                    player_information?.visible()
+                    player_settings?.visible()
                 }
             }
         })

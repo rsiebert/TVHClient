@@ -138,6 +138,19 @@ class PlayerViewModel(application: Application) : BaseViewModel(application), Ht
         }
     }
 
+
+    fun isPlaybackProfileSelected(bundle: Bundle?): Boolean {
+        val channelId = bundle?.getInt("channelId", 0) ?: 0
+        if (channelId > 0) {
+            val serverStatus = appRepository.serverStatusData.activeItem
+            val serverProfile = appRepository.serverProfileData.getItemById(serverStatus.htspPlaybackServerProfileId)
+            if (serverProfile != null && !serverProfile.name.isNullOrEmpty() && serverProfile.name != "None") {
+                return true
+            }
+        }
+        return false
+    }
+
     fun loadMediaSource(context: Context, bundle: Bundle?) {
         Timber.d("Loading new media source")
 
