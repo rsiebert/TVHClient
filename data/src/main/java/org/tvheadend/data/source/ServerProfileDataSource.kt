@@ -55,6 +55,10 @@ class ServerProfileDataSource(private val db: AppRoomDatabase) : DataSourceInter
         ioScope.launch { db.serverProfileDao.insert(ServerProfileEntity.from(item)) }
     }
 
+    fun addItems(items: List<ServerProfile>) {
+        ioScope.launch { db.serverProfileDao.insert(items.map { ServerProfileEntity.from(it) }) }
+    }
+
     override fun updateItem(item: ServerProfile) {
         ioScope.launch { db.serverProfileDao.update(ServerProfileEntity.from(item)) }
     }

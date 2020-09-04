@@ -31,6 +31,9 @@ interface ServerProfileDao {
     @Insert
     fun insert(serverProfile: ServerProfileEntity)
 
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    fun insert(serverProfiles: List<ServerProfileEntity>)
+
     @Update
     fun update(serverProfile: ServerProfileEntity)
 
