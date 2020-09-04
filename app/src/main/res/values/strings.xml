@@ -124,6 +124,7 @@
     <string name="no_connection_available">No connection available. Please add a new connection to connect to the server.</string>
     <string name="no_data">No program data available</string>
     <string name="no_media_player">No media player found</string>
+    <string name="no_playback_profile_selected">Please select a profile in the playback settings first. A profile is required to start playing channels.</string>
     <string name="nothing">Nothing</string>
     <string name="part">Part</string>
     <string name="play">Play</string>
