@@ -167,7 +167,7 @@ class DownloadRecordingActivity : BasePlaybackActivity() {
         val intent = Intent(SnackbarMessageReceiver.SNACKBAR_ACTION)
         intent.putExtra(SnackbarMessageReceiver.SNACKBAR_CONTENT, msg)
         intent.putExtra(SnackbarMessageReceiver.SNACKBAR_DURATION, Snackbar.LENGTH_LONG)
-        LocalBroadcastManager.getInstance(context).sendBroadcast(intent)
+        LocalBroadcastManager.getInstance(context.applicationContext).sendBroadcast(intent)
         finish()
     }
 }
