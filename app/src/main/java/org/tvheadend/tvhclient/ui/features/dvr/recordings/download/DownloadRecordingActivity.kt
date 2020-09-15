@@ -8,6 +8,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.AsyncTask
 import android.os.Build
 import android.os.Environment
 import android.os.Handler
@@ -15,26 +16,80 @@ import android.util.Base64
 import androidx.core.app.ActivityCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.preference.PreferenceManager
+import com.downloader.OnDownloadListener
+import com.downloader.PRDownloader
 import com.google.android.material.snackbar.Snackbar
-import org.tvheadend.data.entity.Connection
 import org.tvheadend.data.entity.Recording
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.ui.common.SnackbarMessageReceiver
+import org.tvheadend.tvhclient.ui.features.playback.external.BasePlaybackActivity
 import timber.log.Timber
+import java.io.File
+import java.io.FileOutputStream
+import java.io.InputStream
+import java.net.HttpURLConnection
+import java.net.URL
 
-class DownloadRecordingManager(activity: Activity?, private val connection: Connection, recording: Recording?) {
+
+class DownloadRecordingActivity : BasePlaybackActivity() {
 
     private lateinit var downloadManager: DownloadManager
     private var lastDownloadId: Long = 0
 
-    init {
-        if (activity != null) {
-            Timber.d("Initializing download manager, given recording id is ${recording?.id}")
-            downloadManager = activity.getSystemService(Service.DOWNLOAD_SERVICE) as DownloadManager
-            if (recording != null && getIsStoragePermissionGranted(activity)) {
-                startDownload(activity.applicationContext, recording)
+    override fun onTicketReceived() {
+        viewModel.recording?.let {
+            if (getIsStoragePermissionGranted(this)) {
+                Timber.d("Initializing download manager")
+                downloadManager = getSystemService(Service.DOWNLOAD_SERVICE) as DownloadManager
+
+                PRDownloader.initialize(this.applicationContext)
+
+                val url = viewModel.getPlaybackUrl()
+                Timber.d("Downloading recording from server with url $url")
+                startDownload(url, it)
             }
         }
+    }
+
+    private fun startDownload(downloadUrl: String, recording: Recording) {
+        Timber.d("Preparing download of recording ${recording.title}")
+
+        // The user and password are required for authentication. They need to be encoded.
+        val credentials = "Basic " + Base64.encodeToString((viewModel.connection.username + ":" + viewModel.connection.password).toByteArray(), Base64.NO_WRAP)
+        // Use the recording title if present, otherwise use the recording id only
+        val recordingTitle = getRecordingTitle(recording)
+
+        val downloadDirectory: String = if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+            Timber.d("Android API version is ${Build.VERSION.SDK_INT}, loading download folder from preference")
+            val path = PreferenceManager.getDefaultSharedPreferences(this).getString("download_directory", Environment.DIRECTORY_DOWNLOADS)
+                    ?: Environment.DIRECTORY_DOWNLOADS
+            @Suppress("DEPRECATION")
+            Environment.getExternalStorageDirectory().absolutePath + path
+        } else {
+            Timber.d("Android API version is ${Build.VERSION.SDK_INT}, using default folder")
+            getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS)!!.absolutePath
+        }
+
+        Timber.d("Download recording from serverUrl '$downloadUrl' to $downloadDirectory/$recordingTitle")
+        val request = DownloadManager.Request(Uri.parse(downloadUrl))
+                .addRequestHeader("Authorization", credentials)
+                .setTitle(recording.title)
+                .setDescription(recording.description)
+                .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
+                .setDestinationInExternalPublicDir(downloadDirectory, recordingTitle)
+
+        try {
+            lastDownloadId = downloadManager.enqueue(request)
+            Timber.d("Started download with id $lastDownloadId")
+        } catch (e: SecurityException) {
+            Timber.d(e, "Could not start download, security exception")
+        } catch (e: IllegalArgumentException) {
+            Timber.d(e, "Could not start download, download uri is not valid")
+        }
+        // Check after a certain delay the status of the download and that for
+        // example the download has not failed due to insufficient storage space.
+        // The download manager does not sent a broadcast if this error occurs.
+        Handler().postDelayed({ this.showDownloadStatusMessage(this, recording) }, 1500)
     }
 
     private fun getRecordingTitle(recording: Recording): String {
@@ -72,54 +127,6 @@ class DownloadRecordingManager(activity: Activity?, private val connection: Conn
             Timber.d("Storage permissions were granted (API < 23)")
             true
         }
-    }
-
-    /**
-     * Creates the request for the download and puts the request with the
-     * required data in the download queue. When the
-     * download has been started it checks after a while if the download has
-     * actually started or if it has failed due to insufficient space. This is
-     * required because the download manager does not throw this error via a
-     * notification.
-     */
-    private fun startDownload(context: Context, recording: Recording) {
-        Timber.d("Starting download of recording ${recording.title}")
-
-        val downloadUrl = "${connection.streamingUrl}/dvrfile/${recording.id}"
-        // The user and password are required for authentication. They need to be encoded.
-        val credentials = "Basic " + Base64.encodeToString((connection.username + ":" + connection.password).toByteArray(), Base64.NO_WRAP)
-        // Use the recording title if present, otherwise use the recording id only
-        val recordingTitle = getRecordingTitle(recording)
-
-        val downloadDirectory = if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
-            Timber.d("Android API version is ${Build.VERSION.SDK_INT}, loading download folder from preference")
-            PreferenceManager.getDefaultSharedPreferences(context).getString("download_directory", Environment.DIRECTORY_DOWNLOADS)
-                    ?: Environment.DIRECTORY_DOWNLOADS
-        } else {
-            Timber.d("Android API version is ${Build.VERSION.SDK_INT}, using default folder")
-            Environment.DIRECTORY_DOWNLOADS
-        }
-
-        Timber.d("Download recording from serverUrl '$downloadUrl' to $downloadDirectory/$recordingTitle")
-        val request = DownloadManager.Request(Uri.parse(downloadUrl))
-                .addRequestHeader("Authorization", credentials)
-                .setTitle(recording.title)
-                .setDescription(recording.description)
-                .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
-                .setDestinationInExternalPublicDir(downloadDirectory, recordingTitle)
-
-        try {
-            lastDownloadId = downloadManager.enqueue(request)
-            Timber.d("Started download with id $lastDownloadId")
-        } catch (e: SecurityException) {
-            Timber.d(e, "Could not start download, security exception")
-        } catch (e: IllegalArgumentException) {
-            Timber.d(e, "Could not start download, download uri is not valid")
-        }
-        // Check after a certain delay the status of the download and that for
-        // example the download has not failed due to insufficient storage space.
-        // The download manager does not sent a broadcast if this error occurs.
-        Handler().postDelayed({ this.showDownloadStatusMessage(context, recording) }, 1500)
     }
 
     private fun showDownloadStatusMessage(context: Context, recording: Recording) {
@@ -172,5 +179,6 @@ class DownloadRecordingManager(activity: Activity?, private val connection: Conn
         intent.putExtra(SnackbarMessageReceiver.SNACKBAR_CONTENT, msg)
         intent.putExtra(SnackbarMessageReceiver.SNACKBAR_DURATION, Snackbar.LENGTH_LONG)
         LocalBroadcastManager.getInstance(context).sendBroadcast(intent)
+        finish()
     }
 }

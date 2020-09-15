@@ -18,6 +18,7 @@ import org.tvheadend.tvhclient.service.HtspService
 import org.tvheadend.tvhclient.ui.base.BaseViewModel
 import org.tvheadend.tvhclient.ui.common.interfaces.RecordingRemovedInterface
 import org.tvheadend.tvhclient.ui.features.dvr.recordings.RecordingAddEditFragment
+import org.tvheadend.tvhclient.ui.features.dvr.recordings.download.DownloadRecordingActivity
 import org.tvheadend.tvhclient.ui.features.dvr.series_recordings.SeriesRecordingAddEditFragment
 import org.tvheadend.tvhclient.ui.features.dvr.timer_recordings.TimerRecordingAddEditFragment
 import org.tvheadend.tvhclient.ui.features.playback.external.*
@@ -490,6 +491,13 @@ fun playSelectedRecording(context: Context, dvrId: Int, isUnlocked: Boolean): Bo
         intent.putExtra("dvrId", dvrId)
         context.startActivity(intent)
     }
+    return true
+}
+
+fun downloadSelectedRecording(context: Context, dvrId: Int): Boolean {
+    val intent = Intent(context, DownloadRecordingActivity::class.java)
+    intent.putExtra("dvrId", dvrId)
+    context.startActivity(intent)
     return true
 }
 

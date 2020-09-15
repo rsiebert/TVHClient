@@ -80,6 +80,7 @@
         <activity android:name=".ui.features.playback.external.CastChannelActivity" />
         <activity android:name=".ui.features.playback.external.CastRecordingActivity" />
         <activity android:name=".ui.features.playback.external.ShareRecordingActivity" />
+        <activity android:name=".ui.features.dvr.recordings.download.DownloadRecordingActivity" />
         <activity
             android:name=".ui.features.playback.internal.PlaybackActivity"
             android:autoRemoveFromRecents="true"

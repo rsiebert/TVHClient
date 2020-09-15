@@ -14,7 +14,6 @@ import org.tvheadend.tvhclient.ui.common.*
 import org.tvheadend.tvhclient.ui.common.interfaces.ClearSearchResultsOrPopBackStackInterface
 import org.tvheadend.tvhclient.ui.common.interfaces.RecordingRemovedInterface
 import org.tvheadend.tvhclient.ui.features.dvr.recordings.download.DownloadPermissionGrantedInterface
-import org.tvheadend.tvhclient.ui.features.dvr.recordings.download.DownloadRecordingManager
 import org.tvheadend.tvhclient.util.extensions.gone
 import org.tvheadend.tvhclient.util.extensions.visible
 import timber.log.Timber
@@ -101,10 +100,7 @@ class RecordingDetailsFragment : BaseFragment(), RecordingRemovedInterface, Down
             R.id.menu_search_google -> return searchTitleOnGoogle(ctx, recording.title)
             R.id.menu_search_epg -> return searchTitleInTheLocalDatabase(requireActivity(), baseViewModel, recording.title)
 
-            R.id.menu_download_recording -> {
-                DownloadRecordingManager(activity, connection, recording)
-                return true
-            }
+            R.id.menu_download_recording -> return downloadSelectedRecording(ctx, recording.id)
             else -> return super.onOptionsItemSelected(item)
         }
     }
@@ -124,7 +120,11 @@ class RecordingDetailsFragment : BaseFragment(), RecordingRemovedInterface, Down
     }
 
     override fun downloadRecording() {
-        DownloadRecordingManager(activity, connection, recording)
+        //DownloadRecordingManager(activity, connection, recording)
+        val id = recording?.id
+        if (id != null) {
+            downloadSelectedRecording(requireContext(), id)
+        }
     }
 
     companion object {
