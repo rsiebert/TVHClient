@@ -8,7 +8,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
-import android.os.AsyncTask
 import android.os.Build
 import android.os.Environment
 import android.os.Handler
@@ -16,19 +15,12 @@ import android.util.Base64
 import androidx.core.app.ActivityCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.preference.PreferenceManager
-import com.downloader.OnDownloadListener
-import com.downloader.PRDownloader
 import com.google.android.material.snackbar.Snackbar
 import org.tvheadend.data.entity.Recording
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.ui.common.SnackbarMessageReceiver
 import org.tvheadend.tvhclient.ui.features.playback.external.BasePlaybackActivity
 import timber.log.Timber
-import java.io.File
-import java.io.FileOutputStream
-import java.io.InputStream
-import java.net.HttpURLConnection
-import java.net.URL
 
 
 class DownloadRecordingActivity : BasePlaybackActivity() {
@@ -41,9 +33,6 @@ class DownloadRecordingActivity : BasePlaybackActivity() {
             if (getIsStoragePermissionGranted(this)) {
                 Timber.d("Initializing download manager")
                 downloadManager = getSystemService(Service.DOWNLOAD_SERVICE) as DownloadManager
-
-                PRDownloader.initialize(this.applicationContext)
-
                 val url = viewModel.getPlaybackUrl()
                 Timber.d("Downloading recording from server with url $url")
                 startDownload(url, it)
