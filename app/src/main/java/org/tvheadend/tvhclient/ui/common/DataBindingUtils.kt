@@ -11,6 +11,7 @@ import android.text.style.ForegroundColorSpan
 import android.util.SparseArray
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewTreeObserver
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.content.ContextCompat
@@ -326,7 +327,7 @@ fun setOptionalDescriptionText(view: TextView, text: String?) {
             builder.append(coloredText)
             builder.append(remainingText)
         }
-        view.setText( builder, TextView.BufferType.SPANNABLE)
+        view.setText(builder, TextView.BufferType.SPANNABLE)
     } else {
         view.text = text
     }
@@ -376,22 +377,32 @@ fun setProgramImage(view: ImageView, url: String?, visible: Boolean) {
         view.gone()
     } else {
 
-        val transformation = object : Transformation {
+        var viewWidth = 0
+        val viewTreeObserver: ViewTreeObserver = view.viewTreeObserver
+        viewTreeObserver.addOnPreDrawListener(object : ViewTreeObserver.OnPreDrawListener {
+            override fun onPreDraw(): Boolean {
+                view.viewTreeObserver.removeOnPreDrawListener(this)
+                viewWidth = view.measuredWidth
+                Timber.d("Dimensions of image view are $viewWidth:${view.measuredHeight}")
+                return true
+            }
+        })
 
+        val transformation = object : Transformation {
             override fun transform(source: Bitmap): Bitmap {
-                val targetWidth = view.width
-                if (targetWidth == 0 || source.height == 0 || source.width == 0) {
-                    Timber.d("Returning source image, target width is $targetWidth, source height is ${source.height}, source width is ${source.width}")
+                Timber.d("Transforming source image with dimensions w:${source.width}, h:${source.height} to fit the view width $viewWidth")
+                if (viewWidth == 0 || source.height == 0 || source.width == 0) {
+                    Timber.d("Returning source image with dimensions w:${source.width}, h:${source.height}, target width is $viewWidth")
                     return source
                 }
                 val aspectRatio = source.height.toDouble() / source.width.toDouble()
-                val targetHeight = (targetWidth * aspectRatio).toInt()
-                val result = Bitmap.createScaledBitmap(source, targetWidth, targetHeight, false)
+                val targetHeight = (viewWidth * aspectRatio).toInt()
+                val result = Bitmap.createScaledBitmap(source, viewWidth, targetHeight, false)
                 if (result != source) {
                     // Same bitmap is returned if sizes are the same
                     source.recycle()
                 }
-                Timber.d("Returning transformed image")
+                Timber.d("Returning transformed image with new dimensions w:${source.width}, h:${source.height}")
                 return result
             }
 
