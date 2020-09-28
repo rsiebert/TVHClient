@@ -10,6 +10,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import timber.log.Timber;
+
 public class HtspMessage extends HashMap<String, Object> {
 
     private static final long serialVersionUID = 1L;
@@ -313,11 +315,13 @@ public class HtspMessage extends HashMap<String, Object> {
                 throw new IOException("Would get precision losses, datalen " + datalen + ", max int " + Integer.MAX_VALUE);
             }
             if (buf.limit() < namelen + datalen) {
-                throw new IOException("Buffer limit exceeded, limit " + buf.limit() + ", namelen " + namelen + ", datalen " + datalen);
+                //throw new IOException("Buffer limit exceeded, limit " + buf.limit() + ", namelen " + namelen + ", datalen " + datalen);
+                Timber.d("Buffer limit exceeded, limit " + buf.limit() + ", namelen " + namelen + ", datalen " + datalen);
+                return null;
             }
 
             // Get the key for the map (the name)
-            String name;
+            String name = null;
             if (namelen == 0) {
                 name = Integer.toString(cnt++);
             } else if (namelen > 0) {
@@ -325,7 +329,9 @@ public class HtspMessage extends HashMap<String, Object> {
                 buf.get(bName);
                 name = new String(bName);
             } else {
-                throw new IOException("Buffer position is negative, namelen " + namelen);
+                //throw new IOException("Buffer position is negative, namelen " + namelen);
+                Timber.d("Buffer position is negative, namelen %s", namelen);
+                return null;
             }
 
             // Get the actual content
