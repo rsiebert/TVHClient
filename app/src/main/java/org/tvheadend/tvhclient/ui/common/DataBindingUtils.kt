@@ -371,22 +371,11 @@ fun setChannelIcon(view: ImageView, iconUrl: String?, visible: Boolean) {
  * @param view The view where the icon and visibility shall be applied to
  * @param url  The url of the channel icon
  */
-@BindingAdapter("programImage", "programImageVisibility")
-fun setProgramImage(view: ImageView, url: String?, visible: Boolean) {
+@BindingAdapter("programImage", "viewWidth", "programImageVisibility")
+fun setProgramImage(view: ImageView, url: String?, viewWidth: Int = 0, visible: Boolean) {
     if (url.isNullOrEmpty() || !visible) {
         view.gone()
     } else {
-
-        var viewWidth = 0
-        val viewTreeObserver: ViewTreeObserver = view.viewTreeObserver
-        viewTreeObserver.addOnPreDrawListener(object : ViewTreeObserver.OnPreDrawListener {
-            override fun onPreDraw(): Boolean {
-                view.viewTreeObserver.removeOnPreDrawListener(this)
-                viewWidth = view.measuredWidth
-                Timber.d("Dimensions of image view are $viewWidth:${view.measuredHeight}")
-                return true
-            }
-        })
 
         val transformation = object : Transformation {
             override fun transform(source: Bitmap): Bitmap {

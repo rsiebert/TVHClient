@@ -28,6 +28,14 @@ class ProgramDetailsFragment : BaseFragment(), ClearSearchResultsOrPopBackStackI
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         itemBinding = DataBindingUtil.inflate(inflater, R.layout.program_details_fragment, container, false)
+        itemBinding.layout.viewTreeObserver.addOnPreDrawListener(object : ViewTreeObserver.OnPreDrawListener {
+            override fun onPreDraw(): Boolean {
+                itemBinding.layout.viewTreeObserver.removeOnPreDrawListener(this)
+                itemBinding.viewWidth = itemBinding.layout.measuredWidth
+                Timber.d("Width of program details layout is %s", itemBinding.layout.measuredWidth)
+                return true
+            }
+        })
         return itemBinding.root
     }
 
