@@ -1,6 +1,6 @@
 $ 2.4.1
   % VERSION 2.4.1
-  _ 15.09.2020
+  _ 30.09.2020
     * Added option in the playback settings to set the aspect ratio to 16:9 for SD channels
     * Added support for KODI color tags in internal player
     * Show that no profile was selected when the internal player starts
