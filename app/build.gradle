@@ -2,6 +2,7 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'kotlin-android-extensions'
+apply plugin: 'com.google.gms.google-services'
 apply plugin: 'com.google.firebase.firebase-perf'
 apply plugin: 'com.google.firebase.crashlytics'
 
@@ -14,7 +15,7 @@ android {
         minSdkVersion 16
         targetSdkVersion 29
 
-        versionCode 223
+        versionCode 224
         versionName "2.4.1"
 
         // Define the apk naming convention
