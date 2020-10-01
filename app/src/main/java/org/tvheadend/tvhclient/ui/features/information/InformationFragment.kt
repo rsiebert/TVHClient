@@ -7,7 +7,7 @@ class InformationFragment : WebViewFragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        website = "help_and_support"
+        website = "information"
 
         toolbarInterface.setTitle(getString(R.string.pref_information))
         toolbarInterface.setSubtitle("")
