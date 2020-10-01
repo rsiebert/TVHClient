@@ -63,23 +63,6 @@ android {
     testOptions.unitTests.includeAndroidResources = true
 
     buildTypes {
-        debug {
-            // Show all features when true
-            buildConfigField "Boolean", "UNLOCKED", "false"
-            // Enable all logging, otherwise it is suppressed
-            buildConfigField "Boolean", "DEBUG_LOG", "true"
-
-            // Set this flag to 'false' to disable crashlytics
-            // in debug builds and to decrease up build times
-            ext.enableCrashlytics = false
-            ext.alwaysUpdateBuildId = false
-
-            FirebasePerformance {
-                // Set this flag to 'false' to disable @AddTrace annotation processing and
-                // automatic HTTP/S network request monitoring for a specific build variant at compile time.
-                instrumentationEnabled false
-            }
-        }
         release {
             // Show all features when true
             buildConfigField "Boolean", "UNLOCKED", "false"
@@ -104,29 +87,16 @@ android {
                 instrumentationEnabled false
             }
         }
+        debug {
+            initWith buildTypes.release
+
+            // Set this flag to 'false' to disable crashlytics
+            // in debug builds and to decrease up build times
+            ext.enableCrashlytics = false
+            ext.alwaysUpdateBuildId = false
+        }
         dev {
-            // Show all features when true
-            buildConfigField "Boolean", "UNLOCKED", "false"
-            // Enable all logging, otherwise it is suppressed
-            buildConfigField "Boolean", "DEBUG_LOG", "true"
-
-            // The property file must exist in release mode so that the
-            // actual values can be assigned from the property file to these fields.
-            if (tvhHasProperty("developerEmail")) {
-                buildConfigField "String", "DEVELOPER_EMAIL", "\"" + tvhProperty("developerEmail") + "\""
-            }
-            if (tvhHasProperty("publicKeySalt")) {
-                buildConfigField "String", "PUBLIC_KEY_SALT", "\"" + tvhProperty("publicKeySalt") + "\""
-            }
-
-            // Reduce the apk file size by enabling proguard
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-
-            FirebasePerformance {
-                // Set this flag to 'false' to disable @AddTrace annotation processing and
-                // automatic HTTP/S network request monitoring for a specific build variant at compile time.
-                instrumentationEnabled false
-            }
+            initWith buildTypes.release
         }
     }
 }
