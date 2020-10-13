@@ -21,6 +21,7 @@ import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.ui.common.SnackbarMessageReceiver
 import org.tvheadend.tvhclient.ui.features.playback.external.BasePlaybackActivity
 import timber.log.Timber
+import java.io.File
 
 
 class DownloadRecordingActivity : BasePlaybackActivity() {
@@ -48,6 +49,8 @@ class DownloadRecordingActivity : BasePlaybackActivity() {
         // Use the recording title if present, otherwise use the recording id only
         val recordingTitle = getRecordingTitle(recording)
 
+        Timber.d("State of external storage is ${Environment.getExternalStorageState()}")
+
         val downloadDirectory: String = if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
             Timber.d("Android API version is ${Build.VERSION.SDK_INT}, loading download folder from preference")
             val path = PreferenceManager.getDefaultSharedPreferences(this).getString("download_directory", Environment.DIRECTORY_DOWNLOADS)
@@ -56,7 +59,22 @@ class DownloadRecordingActivity : BasePlaybackActivity() {
             Environment.getExternalStorageDirectory().absolutePath + path
         } else {
             Timber.d("Android API version is ${Build.VERSION.SDK_INT}, using default folder")
-            getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS)!!.absolutePath
+
+            val state = Environment.getExternalStorageState()
+            if (Environment.MEDIA_MOUNTED == state) {
+                Timber.d("External storage state is mounted")
+                val baseDirFile: File? = getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS)
+                if (baseDirFile == null) {
+                    Timber.d("Download directory is null, using path '${filesDir.absolutePath}'")
+                    filesDir.absolutePath
+                } else {
+                    Timber.d("Download directory is not null, path is '${baseDirFile.absolutePath}'")
+                    baseDirFile.absolutePath
+                }
+            } else {
+                Timber.d("External storage is not mounted, using path '${filesDir.absolutePath}'")
+                filesDir.absolutePath
+            }
         }
 
         Timber.d("Download recording from serverUrl '$downloadUrl' to $downloadDirectory/$recordingTitle")
@@ -65,16 +83,21 @@ class DownloadRecordingActivity : BasePlaybackActivity() {
                 .setTitle(recording.title)
                 .setDescription(recording.description)
                 .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
-                .setDestinationInExternalPublicDir(downloadDirectory, recordingTitle)
 
         try {
+            Timber.d("Adding download directory to the request")
+            request.setDestinationInExternalPublicDir(downloadDirectory, recordingTitle)
+            Timber.d("Adding download request to the queue")
             lastDownloadId = downloadManager.enqueue(request)
             Timber.d("Started download with id $lastDownloadId")
         } catch (e: SecurityException) {
             Timber.d(e, "Could not start download, security exception")
         } catch (e: IllegalArgumentException) {
             Timber.d(e, "Could not start download, download uri is not valid")
+        } catch (e: IllegalStateException) {
+            Timber.d(e, "Could not set the destination directory %s", downloadDirectory)
         }
+
         // Check after a certain delay the status of the download and that for
         // example the download has not failed due to insufficient storage space.
         // The download manager does not sent a broadcast if this error occurs.
