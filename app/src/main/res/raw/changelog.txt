@@ -1,3 +1,8 @@
+$ 2.4.2
+  % VERSION 2.4.2
+  _ 19.10.2020
+    * Fixed some download issues on Android 10 devices
+    * Some minor internal improvements
 $ 2.4.1
   % VERSION 2.4.1
   _ 01.10.2020
