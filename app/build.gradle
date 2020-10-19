@@ -85,6 +85,11 @@ android {
                 // automatic HTTP/S network request monitoring for a specific build variant at compile time.
                 instrumentationEnabled false
             }
+
+            minifyEnabled true
+            firebaseCrashlytics {
+                mappingFileUploadEnabled true
+            }
         }
         debug {
             initWith buildTypes.release
