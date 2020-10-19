@@ -2,7 +2,13 @@
 apply from: 'properties.gradle'
 
 buildscript {
-    ext.kotlin_version = '1.4.10'
+    ext {
+        kotlin_version = '1.4.10'
+        compileSdkVersion = 29
+        minSdkVersion = 16
+        targetSdkVersion = 29
+        javaCompatibility = '1.8'
+    }
 
     repositories {
         google()
