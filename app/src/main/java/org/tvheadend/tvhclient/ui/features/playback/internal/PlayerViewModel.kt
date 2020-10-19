@@ -16,7 +16,9 @@ import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
 import com.google.android.exoplayer2.video.VideoListener
 import org.tvheadend.data.entity.Channel
 import org.tvheadend.htsp.HtspConnection
+import org.tvheadend.htsp.HtspConnectionData
 import org.tvheadend.htsp.HtspConnectionStateListener
+import org.tvheadend.tvhclient.BuildConfig
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.ui.base.BaseViewModel
 import org.tvheadend.tvhclient.ui.features.playback.internal.utils.CustomEventLogger
@@ -89,12 +91,16 @@ class PlayerViewModel(application: Application) : BaseViewModel(application), Ht
         Timber.d("Starting connection")
         val connection = appRepository.connectionData.activeItem
         val connectionTimeout = Integer.valueOf(sharedPreferences.getString("connection_timeout", defaultConnectionTimeout)!!) * 1000
-        htspConnection = HtspConnection(
-                connection.username ?: "",
-                connection.password ?: "",
-                connection.serverUrl ?: "",
-                connectionTimeout,
-                this, null)
+
+        val htspConnectionData = HtspConnectionData(
+                connection.username,
+                connection.password,
+                connection.serverUrl,
+                BuildConfig.VERSION_NAME,
+                BuildConfig.VERSION_CODE,
+                connectionTimeout
+        )
+        htspConnection = HtspConnection(htspConnectionData, this, null)
 
         execService.execute {
             htspConnection.openConnection()

@@ -21,6 +21,7 @@ import org.tvheadend.data.entity.ServerProfile.Companion.HTSP_PROFILE
 import org.tvheadend.data.entity.ServerProfile.Companion.HTTP_PROFILE
 import org.tvheadend.data.entity.ServerProfile.Companion.RECORDING_PROFILE
 import org.tvheadend.htsp.*
+import org.tvheadend.tvhclient.BuildConfig
 import org.tvheadend.tvhclient.MainApplication
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.ui.common.addNotificationScheduledRecordingStarts
@@ -51,6 +52,7 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
     @Inject
     lateinit var sharedPreferences: SharedPreferences
 
+    private lateinit var htspConnectionData: HtspConnectionData
     private lateinit var connection: Connection
     private var htspVersion: Int = 13
     private var htspConnection: HtspConnection? = null
@@ -69,15 +71,22 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
     private var syncEventsRequired: Boolean = false
     private var syncRequired: Boolean = false
     private var firstEventReceived = false
-    private var connectionTimeout: Int = 0
 
     override fun onCreate() {
         Timber.d("Starting service")
         MainApplication.component.inject(this)
-        connectionTimeout = Integer.valueOf(sharedPreferences.getString("connection_timeout", resources.getString(R.string.pref_default_connection_timeout))!!) * 1000
 
         connection = appRepository.connectionData.activeItem
         Timber.d("Loaded connection ${connection.name}")
+
+        htspConnectionData = HtspConnectionData(
+                connection.username,
+                connection.password,
+                connection.serverUrl,
+                BuildConfig.VERSION_NAME,
+                BuildConfig.VERSION_CODE,
+                Integer.valueOf(sharedPreferences.getString("connection_timeout", resources.getString(R.string.pref_default_connection_timeout))!!) * 1000
+        )
 
         pendingHtspProfiles = appRepository.serverProfileData.htspPlaybackProfiles.toMutableList()
         Timber.d("Loaded ${pendingHtspProfiles.size} htsp profiles")
@@ -166,11 +175,7 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
     private fun startHtspConnection() {
         htspConnection?.closeConnection()
         Timber.d("Connecting to ${connection.name}, serverUrl is ${connection.serverUrl}")
-        htspConnection = HtspConnection(
-                connection.username, connection.password,
-                connection.serverUrl,
-                connectionTimeout,
-                this, this)
+        htspConnection = HtspConnection(htspConnectionData, this, this)
         // Since this is blocking, spawn to a new thread
         execService.execute {
             htspConnection?.openConnection()
