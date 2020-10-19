@@ -17,7 +17,6 @@ import org.tvheadend.tvhclient.ui.common.interfaces.NetworkStatusInterface
 import org.tvheadend.tvhclient.ui.common.interfaces.SnackbarMessageInterface
 import org.tvheadend.tvhclient.ui.features.MainActivity
 import org.tvheadend.tvhclient.util.livedata.Event
-import timber.log.Timber
 import javax.inject.Inject
 
 open class BaseViewModel(application: Application) : AndroidViewModel(application), SnackbarMessageInterface, NetworkStatusInterface {
