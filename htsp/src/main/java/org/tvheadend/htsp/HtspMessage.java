@@ -118,7 +118,7 @@ public class HtspMessage extends HashMap<String, Object> {
         return list;
     }
 
-    public ArrayList getArrayList(String key) {
+    public ArrayList<String> getArrayList(String key) {
         Object obj = get(key);
         //noinspection unchecked
         return (ArrayList<String>) obj;
@@ -321,7 +321,7 @@ public class HtspMessage extends HashMap<String, Object> {
             }
 
             // Get the key for the map (the name)
-            String name = null;
+            String name;
             if (namelen == 0) {
                 name = Integer.toString(cnt++);
             } else if (namelen > 0) {
