@@ -34,6 +34,7 @@ import org.tvheadend.tvhclient.util.worker.DatabaseCleanupWorker
 import org.tvheadend.tvhclient.util.worker.EpgDataUpdateWorker
 import timber.log.Timber
 import java.io.*
+import java.lang.NumberFormatException
 import java.net.URL
 import java.text.SimpleDateFormat
 import java.util.*
@@ -1428,7 +1429,12 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
                 } else if (response.containsKey("eventIds")) {
                     // List of eventIds that match the query
                     for (obj in response.getArrayList("eventIds")) {
-                        eventIdList.add(obj as Int)
+                        val str = obj as String
+                        try {
+                            eventIdList.add(str.toInt())
+                        } catch (e: NumberFormatException) {
+                            Timber.d("Error converting eventId $str to Int")
+                        }
                     }
                 }
             }
