@@ -101,7 +101,7 @@ class DownloadRecordingActivity : BasePlaybackActivity() {
         // Check after a certain delay the status of the download and that for
         // example the download has not failed due to insufficient storage space.
         // The download manager does not sent a broadcast if this error occurs.
-        Handler().postDelayed({ this.showDownloadStatusMessage(this, recording) }, 1500)
+        Handler().postDelayed({ this.showDownloadStatusMessage(this, recording) }, 3000)
     }
 
     private fun getRecordingTitle(recording: Recording): String {
@@ -150,8 +150,7 @@ class DownloadRecordingActivity : BasePlaybackActivity() {
         var reason = DownloadManager.ERROR_UNKNOWN
 
         val cursor = downloadManager.query(DownloadManager.Query().setFilterById(lastDownloadId))
-        if (cursor != null) {
-            cursor.moveToFirst()
+        if (cursor != null && cursor.moveToFirst()) {
 
             if (cursor.columnCount > 0
                     && cursor.getColumnIndex(DownloadManager.COLUMN_STATUS) != -1
