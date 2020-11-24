@@ -36,6 +36,9 @@ jobs:
           FIREBASE_CONFIG: ${{ secrets.GOOGLE_SERVICES_CONFIG }}
         run: echo $GOOGLE_SERVICES_CONFIG > app/google-services.json
 
+      - name: Make gradlew executable
+        run: chmod +x ./gradlew
+      
       # Step: Assemble debug apk to send to firebase test lab
       - name: Assemble Debug APK
         run: ./gradlew assembleStagingDebug
