@@ -33,25 +33,25 @@ jobs:
       # Step: Replace stuff in google services json file
       - uses: jwsi/secret-parser@v1
         with:
-          filename: app/google-services.json.json
+          filename: app/google-services.json
           secret-name: PROJECT_NUMBER
           secret-value: ${{ secrets.PROJECT_NUMBER }}
 
       - uses: jwsi/secret-parser@v1
         with:
-          filename: app/google-services.json.json
+          filename: app/google-services.json
           secret-name: MOBILE_SDK_APP_ID
           secret-value: ${{ secrets.MOBILE_SDK_APP_ID }}
 
       - uses: jwsi/secret-parser@v1
         with:
-          filename: app/google-services.json.json
+          filename: app/google-services.json
           secret-name: OAUTH_CLIENT_ID
           secret-value: ${{ secrets.OAUTH_CLIENT_ID }}
 
       - uses: jwsi/secret-parser@v1
         with:
-          filename: app/google-services.json.json
+          filename: app/google-services.json
           secret-name: API_KEY
           secret-value: ${{ secrets.API_KEY }}
 
