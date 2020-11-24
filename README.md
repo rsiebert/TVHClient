@@ -1,6 +1,6 @@
 # TVHClient
 
-[![Debug Build Status](https://github.com/rsiebert/TVHClient/workflows/Debug%20Build/badge.svg)](https://github.com/rsiebert/TVHClient/actions)
+[![Debug Build Status](https://github.com/rsiebert/TVHClient/workflows/Assemble%20Debug/badge.svg)](https://github.com/rsiebert/TVHClient/actions)
 
 This application allows you to fully control your TVHeadend server. 
 
