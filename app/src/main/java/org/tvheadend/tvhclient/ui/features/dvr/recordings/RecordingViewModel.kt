@@ -124,7 +124,7 @@ class RecordingViewModel(application: Application) : BaseViewModel(application),
         return appRepository.serverProfileData.getItemById(appRepository.serverStatusData.activeItem.recordingServerProfileId)
     }
 
-    internal inner class ScheduledRecordingLiveData(hideDuplicates: LiveData<Boolean>) : MediatorLiveData<Boolean>() {
+    internal class ScheduledRecordingLiveData(hideDuplicates: LiveData<Boolean>) : MediatorLiveData<Boolean>() {
         init {
             addSource(hideDuplicates) { hide ->
                 value = hide
@@ -132,7 +132,7 @@ class RecordingViewModel(application: Application) : BaseViewModel(application),
         }
     }
 
-    internal inner class CompletedRecordingLiveData(selectedChannelSortOrder: LiveData<Int>) : MediatorLiveData<Int?>() {
+    internal class CompletedRecordingLiveData(selectedChannelSortOrder: LiveData<Int>) : MediatorLiveData<Int?>() {
         init {
             addSource(selectedChannelSortOrder) { order ->
                 value = order

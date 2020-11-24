@@ -12,7 +12,7 @@ import android.os.Handler
 import androidx.core.app.ActivityCompat
 import androidx.core.app.TaskStackBuilder
 import androidx.fragment.app.FragmentActivity
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceManager
@@ -32,7 +32,7 @@ class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceClic
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         PreferenceManager.setDefaultValues(activity, R.xml.preferences, false)
-        settingsViewModel = ViewModelProviders.of(activity as SettingsActivity).get(SettingsViewModel::class.java)
+        settingsViewModel = ViewModelProvider(activity as SettingsActivity).get(SettingsViewModel::class.java)
 
         (activity as ToolbarInterface).let {
             it.setTitle(getString(R.string.settings))

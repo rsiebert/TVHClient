@@ -3,7 +3,7 @@ package org.tvheadend.tvhclient.ui.features.dvr.series_recordings
 import android.os.Bundle
 import android.view.*
 import androidx.core.view.forEach
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.list.listItemsSingleChoice
 import kotlinx.android.synthetic.main.series_recording_add_edit_fragment.*
@@ -32,7 +32,7 @@ class SeriesRecordingAddEditFragment : BaseFragment(), BackPressedInterface, Rec
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        seriesRecordingViewModel = ViewModelProviders.of(requireActivity()).get(SeriesRecordingViewModel::class.java)
+        seriesRecordingViewModel = ViewModelProvider(requireActivity()).get(SeriesRecordingViewModel::class.java)
 
         if (activity is LayoutControlInterface) {
             (activity as LayoutControlInterface).forceSingleScreenLayout()

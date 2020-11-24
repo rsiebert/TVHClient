@@ -4,7 +4,7 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import androidx.preference.EditTextPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
@@ -39,7 +39,7 @@ abstract class SettingsConnectionBaseFragment : PreferenceFragmentCompat(), Back
             toolbarInterface = activity as ToolbarInterface
         }
 
-        settingsViewModel = ViewModelProviders.of(activity as SettingsActivity).get(SettingsViewModel::class.java)
+        settingsViewModel = ViewModelProvider(activity as SettingsActivity).get(SettingsViewModel::class.java)
         setHasOptionsMenu(true)
 
         // Get the connectivity preferences for later usage
@@ -90,11 +90,11 @@ abstract class SettingsConnectionBaseFragment : PreferenceFragmentCompat(), Back
 
         val username = settingsViewModel.connectionToEdit.username
         usernamePreference.text = username
-        usernamePreference.summary = if (username.isNullOrEmpty()) getString(R.string.pref_user_sum) else username
+        usernamePreference.summary = if (username.isNullOrEmpty() || username == "*") getString(R.string.pref_user_sum) else username
 
         val password = settingsViewModel.connectionToEdit.password
         passwordPreference.text = password
-        passwordPreference.summary = if (password.isNullOrEmpty()) getString(R.string.pref_pass_sum) else getString(R.string.pref_pass_set_sum)
+        passwordPreference.summary = if (password.isNullOrEmpty() || password == "*") getString(R.string.pref_pass_sum) else getString(R.string.pref_pass_set_sum)
 
         activeEnabledPreference.isChecked = settingsViewModel.connectionToEdit.isActive
         wolEnabledPreference.isChecked = settingsViewModel.connectionToEdit.isWolEnabled

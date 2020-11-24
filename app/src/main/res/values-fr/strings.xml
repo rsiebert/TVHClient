@@ -12,7 +12,6 @@
     <string name="all_channels">Toutes les chaines</string>
     <string name="any">Toute</string>
     <string name="app_name">TVHClient</string>
-    <string name="audio_settings">Les paramètres audio</string>
     <string name="authentication_failed">Erreur d\'authentification</string>
     <string name="available">Disponible</string>
     <string name="bad_username_or_password">Mauvais nom d\'utilisateur ou mot de passe</string>
@@ -75,7 +74,6 @@
     <string name="edit_connection">Editer la connexion</string>
     <string name="edit_recording">Editer un enregistrement</string>
     <string name="enable">Activer</string>
-    <string name="enable_random_adaptation">Activer l\'adaptation aléatoire</string>
     <string name="enable_time_window">Activer les horaires pour l\'enregistrement</string>
     <string name="enter_channel_name">Entrez le nom de la chaîne de télévision</string>
     <string name="episode">Episode</string>
@@ -119,7 +117,6 @@
     <string name="monday">Lundi</string>
     <string name="multiple_channel_tags">Étiquettes de canaux multiples</string>
     <string name="name">Nom</string>
-    <string name="network_not_available">Le réseau n\'est pas disponible</string>
     <string name="no_active_connection">Aucune connection active définie. La connection existante au serveur doit être fermée.</string>
     <string name="no_cast_session">Pas de session de diffusion disponible</string>
     <string name="no_connection_active_advice">Au moins une connexion est définie mais non activée. Sélectionnez la connexion dans la liste et appuyez sur l\'étoile dans la barre d\'outils.</string>
@@ -148,7 +145,6 @@
     <string name="pref_connections">Connexions</string>
     <string name="pref_copy_playback_url_to_clipboard_enabled">Copier l\'URL de lecture dans le presse-papier</string>
     <string name="pref_copy_playback_url_to_clipboard_enabled_sum">En cas de problèmes de lecture, l’URL copiée peut être utilisée pour tester la lecture dans un navigateur.</string>
-    <string name="pref_crash_reporting_settings">Paramétrage des rapports de crash</string>
     <string name="pref_customize_user_interface">Personnalisation de l\'interface utilisateur</string>
     <string name="pref_date_time_format">Format de l\'heure et de la date</string>
     <string name="pref_date_time_format_sum">Affiche l\'heure et la date tel qu\'affichée habituellement. Sinon le format \'31.12.2017, 21:09\' sera utilisé.</string>
@@ -160,8 +156,6 @@
     <string name="pref_download_directory_sum">Les enregistrements vont être récupéré dans le répertoire suivant : \'%s\'</string>
     <string name="pref_empty_channel_tags_enabled">Afficher tous les tags de chaîne</string>
     <string name="pref_empty_channel_tags_enabled_sum">Afficher toutes les étiquettes de canaux disponibles dans la liste de filtrage des canaux même si elles ne sont attribuées à aucun canal.</string>
-    <string name="pref_enable_crash_reports">Envois un rapport de crash anonymisé</string>
-    <string name="pref_enable_crash_reports_sum">Le rapport contient des informations qui nous aide a améliorer la stabilité et l\'expérience utilisateur de l\'application.</string>
     <string name="pref_epg_hours_visible">Heures visible</string>
     <string name="pref_epg_hours_visible_sum">Nombre d\'heures de données de programme à afficher sur un écran pour chaque expéditeur. Trop d\'heures affectent la lisibilité.</string>
     <string name="pref_epg_max_days">Nombre de jours a présenter</string>
@@ -348,8 +342,6 @@
     <string name="select_multiple_channel_tags">Sélectionnez plusieurs étiquettes de chaîne ou aucune pour afficher toutes les chaînes.</string>
     <string name="select_priority">Sélectionner une priorité</string>
     <string name="select_time">Montre les programmes en cours à l\'heure choisie.</string>
-    <string name="selection_default">Activé</string>
-    <string name="selection_disabled">Handicapés</string>
     <string name="send_wol">Allume</string>
     <string name="series_recordings">Enregistrements automatique</string>
     <string name="server">Serveur</string>
@@ -361,7 +353,6 @@
     <string name="start_after_time">Début</string>
     <string name="start_before_time">Fin</string>
     <string name="start_time">Heure de début</string>
-    <string name="starting_playback">Début du programme</string>
     <string name="status">Etat</string>
     <string name="stop">Stop</string>
     <string name="stop_recording">Voulez-vous vraiment arrêter l\'enregistrement \'%s\' en cours ?</string>
@@ -369,7 +360,6 @@
     <string name="stream_errors">Erreur de flux: %1$s</string>
     <string name="subscription_error">Erreur de souscription: %1$s</string>
     <string name="subtitle">Sous-titre</string>
-    <string name="subtitle_settings">Paramètres de sous-titres</string>
     <string name="success_adding_recording">L\'enregistrement a été ajouté.</string>
     <string name="success_removing_recording">L\'enregistrement a été supprimé.</string>
     <string name="success_updating_recording">L\'enregistrement a été mis à jour.</string>

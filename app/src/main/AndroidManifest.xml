@@ -31,9 +31,6 @@
         <meta-data
             android:name="google_analytics_adid_collection_enabled"
             android:value="false" />
-        <meta-data
-            android:name="firebase_crashlytics_collection_enabled"
-            android:value="false" />
 
         <activity android:name=".ui.features.settings.SettingsActivity" />
         <activity
@@ -80,6 +77,7 @@
         <activity android:name=".ui.features.playback.external.CastChannelActivity" />
         <activity android:name=".ui.features.playback.external.CastRecordingActivity" />
         <activity android:name=".ui.features.playback.external.ShareRecordingActivity" />
+        <activity android:name=".ui.features.dvr.recordings.download.DownloadRecordingActivity" />
         <activity
             android:name=".ui.features.playback.internal.PlaybackActivity"
             android:autoRemoveFromRecents="true"

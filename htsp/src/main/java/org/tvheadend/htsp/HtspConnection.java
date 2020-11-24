@@ -34,9 +34,7 @@ import timber.log.Timber;
 
 public class HtspConnection extends Thread implements HtspConnectionInterface {
 
-    private final String username;
-    private final String password;
-    private final String url;
+    private final HtspConnectionData htspConnectionData;
 
     private volatile boolean isRunning;
     private final Lock lock;
@@ -51,7 +49,6 @@ public class HtspConnection extends Thread implements HtspConnectionInterface {
     private boolean isConnecting = false;
     private boolean isAuthenticated = false;
     private Selector selector;
-    private final int connectionTimeout;
 
     @Override
     public void addMessageListener(@NonNull HtspMessageListener listener) {
@@ -84,18 +81,12 @@ public class HtspConnection extends Thread implements HtspConnectionInterface {
         FAILED_EXCEPTION_OPENING_SOCKET
     }
 
-    public HtspConnection(@Nullable String username,
-                          @Nullable String password,
-                          @Nullable String url,
-                          int connectionTimeout,
+    public HtspConnection(HtspConnectionData htspConnectionData,
                           @NonNull HtspConnectionStateListener connectionListener,
                           @Nullable HtspMessageListener messageListener) {
         Timber.d("Initializing HTSP connection thread");
 
-        this.username = username != null ? username : "";
-        this.password = password != null ? password : "";
-        this.url = url != null ? url : "";
-        this.connectionTimeout = connectionTimeout;
+        this.htspConnectionData = htspConnectionData;
 
         this.isRunning = false;
         this.lock = new ReentrantLock();
@@ -132,11 +123,11 @@ public class HtspConnection extends Thread implements HtspConnectionInterface {
             socketChannel = SocketChannel.open();
             socketChannel.configureBlocking(false);
             socketChannel.socket().setKeepAlive(true);
-            socketChannel.socket().setSoTimeout(connectionTimeout);
+            socketChannel.socket().setSoTimeout(htspConnectionData.getConnectionTimeout());
             socketChannel.register(selector, SelectionKey.OP_CONNECT, signal);
 
-            Timber.d("Parsing url " + url + " to get required host and port information");
-            Uri uri = Uri.parse(url);
+            Timber.d("Parsing url " + htspConnectionData.getServerUrl() + " to get required host and port information");
+            Uri uri = Uri.parse(htspConnectionData.getServerUrl());
             InetSocketAddress inetSocketAddress = new InetSocketAddress(uri.getHost(), uri.getPort());
 /*
             InetAddress inetAddress = inetSocketAddress.getAddress();
@@ -190,7 +181,7 @@ public class HtspConnection extends Thread implements HtspConnectionInterface {
         if (isRunning) {
             synchronized (signal) {
                 try {
-                    signal.wait(connectionTimeout);
+                    signal.wait(htspConnectionData.getConnectionTimeout());
                     if (socketChannel.isConnectionPending()) {
                         Timber.d("Timeout while waiting to connect to server");
                         connectionListener.onConnectionStateChange(ConnectionState.FAILED);
@@ -234,7 +225,7 @@ public class HtspConnection extends Thread implements HtspConnectionInterface {
 
         final HtspMessage authMessage = new HtspMessage();
         authMessage.setMethod("authenticate");
-        authMessage.put("username", username);
+        authMessage.put("username", htspConnectionData.getUsername());
 
         final HtspResponseListener authHandler = response -> {
             isAuthenticated = response.getInteger("noaccess", 0) != 1;
@@ -255,9 +246,9 @@ public class HtspConnection extends Thread implements HtspConnectionInterface {
         HtspMessage helloMessage = new HtspMessage();
         helloMessage.setMethod("hello");
         helloMessage.put("clientname", "TVHClient");
-        helloMessage.put("clientversion", (BuildConfig.VERSION_NAME + "-" + BuildConfig.VERSION_CODE));
+        helloMessage.put("clientversion", htspConnectionData.getVersionName() + "-" + htspConnectionData.getVersionCode());
         helloMessage.put("htspversion", HtspMessage.HTSP_VERSION);
-        helloMessage.put("username", username);
+        helloMessage.put("username", htspConnectionData.getUsername());
 
         sendMessage(helloMessage, response -> {
 
@@ -269,7 +260,7 @@ public class HtspConnection extends Thread implements HtspConnectionInterface {
             MessageDigest md;
             try {
                 md = MessageDigest.getInstance("SHA1");
-                md.update(password.getBytes());
+                md.update(htspConnectionData.getPassword().getBytes());
                 md.update(response.getByteArray("challenge"));
 
                 Timber.d("Sending authentication message");
@@ -282,7 +273,7 @@ public class HtspConnection extends Thread implements HtspConnectionInterface {
 
         synchronized (authMessage) {
             try {
-                authMessage.wait(connectionTimeout);
+                authMessage.wait(htspConnectionData.getConnectionTimeout());
                 if (!isAuthenticated) {
                     Timber.d("Timeout while waiting for authentication response");
                     connectionListener.onAuthenticationStateChange(AuthenticationState.FAILED);

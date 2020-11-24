@@ -86,7 +86,7 @@ class ChannelViewModel(application: Application) : BaseChannelViewModel(applicat
         }
     }
 
-    internal inner class ChannelLiveData(selectedTime: LiveData<Long>,
+    internal class ChannelLiveData(selectedTime: LiveData<Long>,
                                          selectedChannelSortOrder: LiveData<Int>,
                                          selectedChannelTagIds: LiveData<List<Int>?>) : MediatorLiveData<Triple<Long?, Int?, List<Int>?>>() {
         init {

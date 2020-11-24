@@ -28,3 +28,7 @@
 -keepclassmembernames class kotlinx.** {
     volatile <fields>;
 }
+
+# preserve the information Crashlytics requires for producing readable crash reports
+-keepattributes SourceFile,LineNumberTable        # Keep file names and line numbers.
+-keep public class * extends java.lang.Exception  # Optional: Keep custom exceptions.

@@ -3,8 +3,7 @@ package org.tvheadend.tvhclient.ui.features.programs
 import android.os.Bundle
 import android.view.*
 import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import kotlinx.android.synthetic.main.details_fragment_header.*
 import kotlinx.android.synthetic.main.program_details_fragment.*
 import org.tvheadend.data.entity.Program
@@ -29,12 +28,20 @@ class ProgramDetailsFragment : BaseFragment(), ClearSearchResultsOrPopBackStackI
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         itemBinding = DataBindingUtil.inflate(inflater, R.layout.program_details_fragment, container, false)
+        itemBinding.layout.viewTreeObserver.addOnPreDrawListener(object : ViewTreeObserver.OnPreDrawListener {
+            override fun onPreDraw(): Boolean {
+                itemBinding.layout.viewTreeObserver.removeOnPreDrawListener(this)
+                itemBinding.viewWidth = itemBinding.layout.measuredWidth
+                Timber.d("Width of program details layout is %s", itemBinding.layout.measuredWidth)
+                return true
+            }
+        })
         return itemBinding.root
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        programViewModel = ViewModelProviders.of(requireActivity()).get(ProgramViewModel::class.java)
+        programViewModel = ViewModelProvider(requireActivity()).get(ProgramViewModel::class.java)
 
         if (activity is LayoutControlInterface) {
             (activity as LayoutControlInterface).forceSingleScreenLayout()
@@ -50,14 +57,14 @@ class ProgramDetailsFragment : BaseFragment(), ClearSearchResultsOrPopBackStackI
         }
 
         Timber.d("Observing program")
-        programViewModel.program.observe(viewLifecycleOwner, Observer {
+        programViewModel.program.observe(viewLifecycleOwner,  {
             Timber.d("View model returned a program")
             program = it
             showProgramDetails()
         })
 
         Timber.d("Observing recordings")
-        programViewModel.recordings.observe(viewLifecycleOwner, Observer { recordings ->
+        programViewModel.recordings.observe(viewLifecycleOwner,  { recordings ->
             if (recordings != null) {
                 Timber.d("View model returned ${recordings.size} recordings")
                 showRecordingStatusOfProgram(recordings)
@@ -146,7 +153,7 @@ class ProgramDetailsFragment : BaseFragment(), ClearSearchResultsOrPopBackStackI
                 return recordSelectedProgram(ctx, program.eventId, programViewModel.getRecordingProfile(), htspVersion)
             }
             R.id.menu_record_program_with_custom_profile -> return recordSelectedProgramWithCustomProfile(ctx, program.eventId, program.channelId, programViewModel.getRecordingProfileNames(), programViewModel.getRecordingProfile())
-            R.id.menu_record_program_as_series_recording -> return recordSelectedProgramAsSeriesRecording(ctx, program.title, programViewModel.getRecordingProfile(), htspVersion)
+            R.id.menu_record_program_as_series_recording -> return recordSelectedProgramAsSeriesRecording(ctx, program.title, program.channelId, programViewModel.getRecordingProfile(), htspVersion)
             R.id.menu_play -> return playSelectedChannel(ctx, program.channelId, isUnlocked)
             R.id.menu_cast -> return castSelectedChannel(ctx, program.channelId)
 

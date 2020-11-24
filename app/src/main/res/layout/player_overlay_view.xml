@@ -18,6 +18,17 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:ignore="ContentDescription" />
 
+    <com.google.android.exoplayer2.ui.PlayerView
+        android:id="@+id/player_view"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_gravity="center"
+        android:keepScreenOn="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <TextView
         android:id="@+id/status"
         style="?attr/TitleFont"
@@ -36,16 +47,4 @@
         app:layout_constraintEnd_toEndOf="@+id/status_background"
         app:layout_constraintStart_toStartOf="@+id/status_background"
         app:layout_constraintTop_toTopOf="@+id/status_background" />
-
-    <com.google.android.exoplayer2.ui.PlayerView
-        android:id="@+id/player_view"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_gravity="center"
-        android:keepScreenOn="true"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
 </androidx.constraintlayout.widget.ConstraintLayout>

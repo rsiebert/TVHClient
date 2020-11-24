@@ -28,7 +28,7 @@ open class StartupViewModel : ViewModel() {
         }
     }
 
-    internal inner class ConnectionStatusLiveData(connectionCount: LiveData<Int>,
+    internal class ConnectionStatusLiveData(connectionCount: LiveData<Int>,
                                                   activeConnection: LiveData<Connection>) : MediatorLiveData<Pair<Int, Connection>>() {
         init {
             addSource(connectionCount) { count ->

@@ -11,7 +11,8 @@ import timber.log.Timber
 
 class NavigationViewModel(application: Application) : BaseViewModel(application) {
 
-    val connections = appRepository.connectionData.getLiveDataItems()
+    val connections = appRepository.connectionData.getItems()
+    val connectionLiveData = appRepository.connectionData.liveDataActiveItem
     private val navigationMenuId = MutableLiveData<Event<Int>>()
     var currentNavigationMenuId: Int
     private val defaultStartScreen = application.applicationContext.resources.getString(R.string.pref_default_start_screen)
@@ -34,21 +35,17 @@ class NavigationViewModel(application: Application) : BaseViewModel(application)
     }
 
     fun setSelectedConnectionAsActive(id: Int): Boolean {
+        val currentlyActiveConnection = appRepository.connectionData.activeItem
         val newActiveConnection = appRepository.connectionData.getItemById(id)
-        return if (newActiveConnection != null) {
 
-            val currentlyActiveConnection = appRepository.connectionData.activeItem
-            currentlyActiveConnection.isActive = false
-            appRepository.connectionData.updateItem(currentlyActiveConnection)
+        Timber.d("Switching connection from ${currentlyActiveConnection.name} with id ${currentlyActiveConnection.id} to ${newActiveConnection?.name} with id ${newActiveConnection?.id}")
 
-            newActiveConnection.isActive = true
-            newActiveConnection.isSyncRequired = true
-            newActiveConnection.lastUpdate = 0
-            appRepository.connectionData.updateItem(newActiveConnection)
-            true
-        } else {
-            false
+        if (newActiveConnection != null && newActiveConnection.id != currentlyActiveConnection.id) {
+            appRepository.connectionData.switchActiveConnection(currentlyActiveConnection.id, newActiveConnection.id)
+            Timber.d("Switched active connection from ${currentlyActiveConnection.name} to ${newActiveConnection.name} (db version is ${appRepository.connectionData.activeItem.name})")
+            return true
         }
+        return false
     }
 
     fun setSelectedMenuItemId(id: Int) {

@@ -12,7 +12,6 @@
     <string name="all_channels">All channels</string>
     <string name="any">Any</string>
     <string name="app_name">TVHClient</string>
-    <string name="audio_settings">Audio settings</string>
     <string name="authentication_failed">Authentication failed</string>
     <string name="available">Available</string>
     <string name="bad_username_or_password">Wrong username or password</string>
@@ -75,7 +74,6 @@
     <string name="edit_connection">Edit connection</string>
     <string name="edit_recording">Edit recording</string>
     <string name="enable">Enable</string>
-    <string name="enable_random_adaptation">Enable random adaptation</string>
     <string name="enable_time_window">Activate times for recording</string>
     <string name="enter_channel_name">Enter channel name</string>
     <string name="episode">Episode</string>
@@ -120,13 +118,13 @@
     <string name="monday">Monday</string>
     <string name="multiple_channel_tags">Multiple channel tags</string>
     <string name="name">Name</string>
-    <string name="network_not_available">Network is not available</string>
     <string name="no_active_connection">No active connection is defined. The existing connection to the server will be closed.</string>
     <string name="no_cast_session">No cast session available</string>
     <string name="no_connection_active_advice">At least one connection is defined, but not activated. Select the connection from the list and tap the star symbol in the toolbar.</string>
     <string name="no_connection_available">No connection available. Please add a new connection to connect to the server.</string>
     <string name="no_data">No program data available</string>
     <string name="no_media_player">No media player found</string>
+    <string name="no_playback_profile_selected">Please select a profile in the playback settings first. A profile is required to start playing channels.</string>
     <string name="nothing">Nothing</string>
     <string name="part">Part</string>
     <string name="play">Play</string>
@@ -137,6 +135,7 @@
     <string name="pref_cast_profiles_sum">Select a profile that shall be used to cast a channel or recorded program to a chromecast or similar device.</string>
     <string name="pref_casting">Casting</string>
     <string name="pref_casting_sum">Configure casting of programs or recordings to your TV. The server must have transcoding enabled.</string>
+    <string name="pref_force_aspect_ratio_for_sd_content_enabled">Aspect ratio is 16:9 for SD content</string>
     <string name="pref_changelog">Changelog</string>
     <string name="pref_changelog_sum">Show a list of features and changes of the different application versions.</string>
     <string name="pref_clear_database">Clear database</string>
@@ -148,7 +147,6 @@
     <string name="pref_connections">Connections</string>
     <string name="pref_copy_playback_url_to_clipboard_enabled">Copy playback Url to clipboard</string>
     <string name="pref_copy_playback_url_to_clipboard_enabled_sum">In case of playback issues the copied Url can be used to test playback in a browser.</string>
-    <string name="pref_crash_reporting_settings">Crash Reporting Settings</string>
     <string name="pref_customize_user_interface">Customize the user interface</string>
     <string name="pref_date_time_format">Date and time format</string>
     <string name="pref_date_time_format_sum">Display the date and time as usually used in your country. Otherwise the format \'31.12.2017, 21:09\' is used.</string>
@@ -160,8 +158,6 @@
     <string name="pref_download_directory_sum">Recordings will be downloaded into the following directory: \'%s\'</string>
     <string name="pref_empty_channel_tags_enabled">Show all channel tags</string>
     <string name="pref_empty_channel_tags_enabled_sum">Show all available channel tags in the channel filtering list, even if they are not assigned to any channel.</string>
-    <string name="pref_enable_crash_reports">Send anonymous crash reports</string>
-    <string name="pref_enable_crash_reports_sum">The reports contain the information that help to improve the stability and user experience of the application.</string>
     <string name="pref_epg_hours_visible">Hours visible</string>
     <string name="pref_epg_hours_visible_sum">Number of hours of program data to be displayed on a screen for each sender. Too many hours affect readability.</string>
     <string name="pref_epg_max_days">Maximum days to show</string>
@@ -358,8 +354,6 @@
     <string name="select_multiple_channel_tags">Select multiple channel tags or none to show all channels.</string>
     <string name="select_priority">Select priority</string>
     <string name="select_time">Show programs that are running at the selected time.</string>
-    <string name="selection_default">Enabled</string>
-    <string name="selection_disabled">Disabled</string>
     <string name="send_wol">Wake up</string>
     <string name="series_recordings">Series recordings</string>
     <string name="server">Server</string>
@@ -371,7 +365,6 @@
     <string name="start_after_time">Start</string>
     <string name="start_before_time">End</string>
     <string name="start_time">Start time</string>
-    <string name="starting_playback">Starting playback</string>
     <string name="status">Status</string>
     <string name="stop">Stop</string>
     <string name="stop_recording">Do you really want to stop the running recording \'%s\'?</string>
@@ -379,7 +372,6 @@
     <string name="stream_errors">Stream errors: %1$s</string>
     <string name="subscription_error">Subscription error: %1$s</string>
     <string name="subtitle">Subtitle</string>
-    <string name="subtitle_settings">Subtitle settings</string>
     <string name="success_adding_recording">Recording has been added.</string>
     <string name="success_removing_recording">Recording has been removed.</string>
     <string name="success_updating_recording">Recording has been updated.</string>

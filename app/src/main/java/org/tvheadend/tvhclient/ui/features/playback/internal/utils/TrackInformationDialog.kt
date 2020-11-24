@@ -30,7 +30,6 @@ class TrackInformationDialog : DialogFragment() {
     }
 
     private fun init(player: SimpleExoPlayer) {
-        // TODO change variable string
         titleId = R.string.pref_information
         videoFormat = player.videoFormat
         audioFormat = player.audioFormat
@@ -82,8 +81,7 @@ class TrackInformationDialog : DialogFragment() {
     }
 
     private fun getPixelAspectRatioString(pixelAspectRatio: Float?): String? {
-        return if (pixelAspectRatio == Format.NO_VALUE.toFloat()
-                || pixelAspectRatio == 1f) "" else " par:" + java.lang.String.format(Locale.US, "%.02f", pixelAspectRatio)
+        return if (pixelAspectRatio == Format.NO_VALUE.toFloat()) " no value" else " ${String.format(Locale.US, "%.02f", pixelAspectRatio)}"
     }
 
     companion object {

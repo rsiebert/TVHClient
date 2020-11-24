@@ -6,8 +6,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.*
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.afollestad.materialdialogs.MaterialDialog
 import kotlinx.android.synthetic.main.recyclerview_fragment.*
@@ -36,7 +35,7 @@ class SettingsListConnectionsFragment : Fragment(), BackPressedInterface, Action
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        settingsViewModel = ViewModelProviders.of(activity as SettingsActivity).get(SettingsViewModel::class.java)
+        settingsViewModel = ViewModelProvider(activity as SettingsActivity).get(SettingsViewModel::class.java)
 
         if (activity is ToolbarInterface) {
             toolbarInterface = activity as ToolbarInterface
@@ -47,7 +46,7 @@ class SettingsListConnectionsFragment : Fragment(), BackPressedInterface, Action
         recycler_view.layoutManager = LinearLayoutManager(activity)
         recycler_view.adapter = recyclerViewAdapter
 
-        settingsViewModel.connectionListLiveData.observe(viewLifecycleOwner, Observer { connections ->
+        settingsViewModel.connectionListLiveData.observe(viewLifecycleOwner,  { connections ->
             if (connections != null) {
                 recyclerViewAdapter.addItems(connections)
                 context?.let {
@@ -58,7 +57,7 @@ class SettingsListConnectionsFragment : Fragment(), BackPressedInterface, Action
                 }
             }
         })
-        settingsViewModel.activeConnectionLiveData.observe(viewLifecycleOwner, Observer { connection ->
+        settingsViewModel.activeConnectionLiveData.observe(viewLifecycleOwner,  { connection ->
             connectionHasChanged = connection != null && connection.id != settingsViewModel.connectionToEdit.id
             activeConnectionId = connection?.id ?: -1
         })

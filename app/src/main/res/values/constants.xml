@@ -8,6 +8,7 @@
 
     <!-- Default playback preference values -->
     <bool name="pref_default_internal_player_enabled">false</bool>
+    <bool name="pref_default_force_aspect_ratio_for_sd_content_enabled">true</bool>
     <string name="pref_default_buffer_playback_ms" translatable="false">500</string>
     <bool name="pref_default_audio_passthrough_decoder_enabled">false</bool>
     <bool name="pref_default_audio_tunneling_enabled">false</bool>
@@ -21,7 +22,6 @@
     <string name="pref_default_wol_port" translatable="false">9</string>
 
     <!-- Default advanced preference values -->
-    <bool name="pref_default_crash_reports_enabled">true</bool>
     <bool name="pref_default_debug_mode_enabled">false</bool>
     <string name="pref_default_connection_timeout" translatable="false">5</string>
     <string name="pref_default_epg_max_time" translatable="false">86400</string>

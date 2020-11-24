@@ -18,6 +18,7 @@ import org.tvheadend.tvhclient.service.HtspService
 import org.tvheadend.tvhclient.ui.base.BaseViewModel
 import org.tvheadend.tvhclient.ui.common.interfaces.RecordingRemovedInterface
 import org.tvheadend.tvhclient.ui.features.dvr.recordings.RecordingAddEditFragment
+import org.tvheadend.tvhclient.ui.features.dvr.recordings.download.DownloadRecordingActivity
 import org.tvheadend.tvhclient.ui.features.dvr.series_recordings.SeriesRecordingAddEditFragment
 import org.tvheadend.tvhclient.ui.features.dvr.timer_recordings.TimerRecordingAddEditFragment
 import org.tvheadend.tvhclient.ui.features.playback.external.*
@@ -156,10 +157,11 @@ fun recordSelectedProgram(context: Context, eventId: Int, profile: ServerProfile
     return true
 }
 
-fun recordSelectedProgramAsSeriesRecording(context: Context, title: String?, profile: ServerProfile?, htspVersion: Int): Boolean {
+fun recordSelectedProgramAsSeriesRecording(context: Context, title: String?, channelId: Int, profile: ServerProfile?, htspVersion: Int): Boolean {
     val intent = Intent(context, HtspService::class.java)
     intent.action = "addAutorecEntry"
     intent.putExtra("title", title)
+    intent.putExtra("channelId", channelId)
 
     if (profile != null && htspVersion >= 16) {
         intent.putExtra("configName", profile.name)
@@ -489,6 +491,13 @@ fun playSelectedRecording(context: Context, dvrId: Int, isUnlocked: Boolean): Bo
         intent.putExtra("dvrId", dvrId)
         context.startActivity(intent)
     }
+    return true
+}
+
+fun downloadSelectedRecording(context: Context, dvrId: Int): Boolean {
+    val intent = Intent(context, DownloadRecordingActivity::class.java)
+    intent.putExtra("dvrId", dvrId)
+    context.startActivity(intent)
     return true
 }
 

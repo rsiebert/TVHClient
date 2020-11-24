@@ -47,7 +47,6 @@ open class BaseViewModel(application: Application) : AndroidViewModel(applicatio
         private set
 
     var connection: Connection
-    private var connectionLiveData: LiveData<Connection>
 
     /**
      * Contains the live data information that the application is unlocked or not
@@ -79,7 +78,6 @@ open class BaseViewModel(application: Application) : AndroidViewModel(applicatio
         connection = appRepository.connectionData.activeItem
         htspVersion = appRepository.serverStatusData.activeItem.htspVersion
 
-        connectionLiveData = appRepository.connectionData.liveDataActiveItem
         connectionToServerAvailableLiveData.value = false
 
         networkStatusLiveData.value = Event(NetworkStatus.NETWORK_UNKNOWN)

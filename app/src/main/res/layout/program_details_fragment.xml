@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <LinearLayout
+        android:id="@+id/layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
@@ -22,7 +23,7 @@
 
                 <ImageView
                     android:id="@+id/image"
-                    android:layout_width="0dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="16dp"
@@ -31,8 +32,10 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintWidth_percent="0.9"
                     app:programImage="@{program.image}"
-                    app:programImageVisibility="@{safeUnbox(viewModel.showProgramArtwork)}" />
+                    app:programImageVisibility="@{safeUnbox(viewModel.showProgramArtwork)}"
+                    app:viewWidth="@{viewWidth}" />
 
                 <ImageView
                     android:id="@+id/state"
@@ -375,5 +378,9 @@
         <variable
             name="isProgramArtworkEnabled"
             type="boolean" />
+
+        <variable
+            name="viewWidth"
+            type="int" />
     </data>
 </layout>

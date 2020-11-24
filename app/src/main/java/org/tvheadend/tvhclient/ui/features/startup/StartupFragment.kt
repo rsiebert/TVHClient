@@ -5,8 +5,7 @@ import android.os.Bundle
 import android.view.*
 import androidx.core.view.forEach
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import com.afollestad.materialdialogs.MaterialDialog
 import kotlinx.android.synthetic.main.startup_fragment.*
 import org.tvheadend.tvhclient.R
@@ -33,8 +32,8 @@ class StartupFragment : Fragment(), HideNavigationDrawerInterface {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        startupViewModel = ViewModelProviders.of(requireActivity()).get(StartupViewModel::class.java)
-        baseViewModel = ViewModelProviders.of(requireActivity()).get(BaseViewModel::class.java)
+        startupViewModel = ViewModelProvider(requireActivity()).get(StartupViewModel::class.java)
+        baseViewModel = ViewModelProvider(requireActivity()).get(BaseViewModel::class.java)
 
         if (activity is LayoutControlInterface) {
             (activity as LayoutControlInterface).forceSingleScreenLayout()
@@ -48,7 +47,7 @@ class StartupFragment : Fragment(), HideNavigationDrawerInterface {
         loadingDone = false
 
         Timber.d("Observing connection status")
-        startupViewModel.connectionStatus.observe(viewLifecycleOwner, Observer { status ->
+        startupViewModel.connectionStatus.observe(viewLifecycleOwner,  { status ->
             Timber.d("Received connection status from view model")
 
             if (status != null) {

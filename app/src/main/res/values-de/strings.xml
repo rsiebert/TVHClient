@@ -12,7 +12,6 @@
     <string name="all_channels">Alle Sender</string>
     <string name="any">Beliebig</string>
     <string name="app_name">TVHClient</string>
-    <string name="audio_settings">Audio-Einstellungen</string>
     <string name="authentication_failed">Authentifizierung fehlgeschlagen</string>
     <string name="available">Verfügbar</string>
     <string name="bad_username_or_password">Falscher Benutzername oder Passwort</string>
@@ -75,7 +74,6 @@
     <string name="edit_connection">Verbindung bearbeiten</string>
     <string name="edit_recording">Aufnahme bearbeiten</string>
     <string name="enable">Aktivieren</string>
-    <string name="enable_random_adaptation">Zufällige Anpassung aktivieren</string>
     <string name="enable_time_window">Zeiten für Aufnahme aktivieren</string>
     <string name="enter_channel_name">Kanalnamen eingeben</string>
     <string name="episode">Folge</string>
@@ -119,7 +117,6 @@
     <string name="monday">Montag</string>
     <string name="multiple_channel_tags">Multiple Sendergruppen</string>
     <string name="name">Name</string>
-    <string name="network_not_available">Netzwerk ist nicht verfügbar</string>
     <string name="no_active_connection">Es ist keine aktive Verbindung definiert. Die bestehende Verbindung zum Server wird geschlossen.</string>
     <string name="no_cast_session">Keine Cast-Session verfügbar</string>
     <string name="no_connection_active_advice">Mindestens eine Verbindung ist definiert, aber nicht aktiviert. Wähle aus der Liste der Verbindungen die gewünschte aus und tippe auf das Sternsymbol in der Symbolleiste.</string>
@@ -136,6 +133,7 @@
     <string name="pref_cast_profiles_sum">Bestimmt das Profil, dass der Server für Abspielen von Live-TV oder Aufnahmen auf einem Cast Gerät verwenden soll.</string>
     <string name="pref_casting">Casting</string>
     <string name="pref_casting_sum">Einstellungen für die Casting Funktionalität. Bitte beachte, dass Casting eine TVHeadend Version erfordert, die transkodieren kann. Außerdem muss der Server leistungsstark genug sein, um die Videodaten in Echtzeit konvertieren zu können. Andernfalls wird Casting nicht funktionieren!</string>
+    <string name="pref_force_aspect_ratio_for_sd_content_enabled">Seitenverhältnis ist 16:9 für SD-Inhalte</string>
     <string name="pref_changelog">Änderungshistorie</string>
     <string name="pref_changelog_sum">Zeigt eine Liste aller Änderungen und Eigenschaften zwischen den Versionen.</string>
     <string name="pref_clear_database">Lösche Datenbankinhalte</string>
@@ -147,7 +145,6 @@
     <string name="pref_connections">Verbindungen</string>
     <string name="pref_copy_playback_url_to_clipboard_enabled">Wiedergabe-URL kopieren</string>
     <string name="pref_copy_playback_url_to_clipboard_enabled_sum">Bei Problemen mit der Wiedergabe kann die URL zum Testen der Wiedergabe in einem Browser verwendet werden.</string>
-    <string name="pref_crash_reporting_settings">" Einstellungen für Absturzberichte"</string>
     <string name="pref_customize_user_interface">Benutzeroberfläche anpassen</string>
     <string name="pref_date_time_format">Datum- und Zeitformat </string>
     <string name="pref_date_time_format_sum">Zeige das Datum und die Zeit in der landesüblichen Form an. Alternativ wird das Format \'31.12.2017, 21:09\' verwendet.</string>
@@ -159,8 +156,6 @@
     <string name="pref_download_directory_sum">Aufnahmen werden in folgendes Verzeichnis heruntergeladen: \'%s\'</string>
     <string name="pref_empty_channel_tags_enabled">Alle Sender-Tags anzeigen</string>
     <string name="pref_empty_channel_tags_enabled_sum">Zeige alle verfügbaren Sender-Tags in der filter Senderliste an, auch wenn kein Sender zugewiesen ist.</string>
-    <string name="pref_enable_crash_reports">Senden anonymer Absturzberichte</string>
-    <string name="pref_enable_crash_reports_sum">Die Berichte enthalten die Informationen, die helfen, die Stabilität und Benutzerfreundlichkeit der Anwendung zu verbessern.</string>
     <string name="pref_epg_hours_visible">Sichtbare Stunden</string>
     <string name="pref_epg_hours_visible_sum">Anzahl der Stunden von Programmdaten, die für jeden Sender auf einem Bildschirm angezeigt werden sollen. Zu viele Stunden beeinträchtigen die Lesbarkeit.</string>
     <string name="pref_epg_max_days">Anzahl der Tage</string>
@@ -232,7 +227,7 @@
     <string name="pref_program_guide_sum">Konfiguriert das Aussehen und weitere Parameter der Programmübersicht.</string>
     <string name="pref_recording_profiles">Aufnahmeprofile</string>
     <string name="pref_recording_profiles_sum">Bestimmt das Profil, dass der Server für das Aufnehmen von geplanten Programmen verwenden soll.</string>
-    <string name="pref_series_recording_profiles">Seriesaufnahmeprofile</string>
+    <string name="pref_series_recording_profiles">Serienaufnahmeprofile</string>
     <string name="pref_series_recording_profiles_sum">Bestimmt das Profil, dass der Server für Serienaufnahmen verwenden soll.</string>
     <string name="pref_timer_recording_profiles">Manuelle Aufnahmeprofile</string>
     <string name="pref_timer_recording_profiles_sum">Bestimmt das Profil, dass der Server für die manuellen Aufnehmen verwenden soll.</string>
@@ -359,8 +354,6 @@
     <string name="select_multiple_channel_tags">Wählen Sie mehrere oder keine Sender-Tags aus, um alle Sender anzuzeigen.</string>
     <string name="select_priority">Priorität auswählen</string>
     <string name="select_time">Zeige Programme die zur gewählten Zeit laufen.</string>
-    <string name="selection_default">Aktiviert</string>
-    <string name="selection_disabled">Deaktiviert</string>
     <string name="send_wol">Aufwecken</string>
     <string name="series_recordings">Serienaufnahmen</string>
     <string name="server">Server</string>
@@ -372,7 +365,6 @@
     <string name="start_after_time">Beginn</string>
     <string name="start_before_time">Ende</string>
     <string name="start_time">Startzeit</string>
-    <string name="starting_playback">Starte Wiedergabe</string>
     <string name="status">Status</string>
     <string name="stop">Stoppen</string>
     <string name="stop_recording">Laufende Aufnahme \'%s\' entfernen?</string>
@@ -380,7 +372,6 @@
     <string name="stream_errors">Streamingfehler: %1$s</string>
     <string name="subscription_error">Subscription-Fehler: %1$s</string>
     <string name="subtitle">Untertitel</string>
-    <string name="subtitle_settings">Subtitle-Einstellungen</string>
     <string name="success_adding_recording">Aufnahme wurde hinzugefügt.</string>
     <string name="success_removing_recording">Aufnahme wurde entfernt.</string>
     <string name="success_updating_recording">Aufnahme wurde aktualisiert.</string>

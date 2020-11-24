@@ -1,8 +1,7 @@
 package org.tvheadend.tvhclient.ui.features.settings
 
 import android.os.Bundle
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import androidx.preference.ListPreference
 import androidx.preference.PreferenceFragmentCompat
 import org.tvheadend.data.entity.ServerProfile
@@ -23,7 +22,7 @@ class SettingsProfilesFragment : PreferenceFragmentCompat() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        settingsViewModel = ViewModelProviders.of(activity as SettingsActivity).get(SettingsViewModel::class.java)
+        settingsViewModel = ViewModelProvider(activity as SettingsActivity).get(SettingsViewModel::class.java)
 
         val toolbarInterface = (activity as ToolbarInterface)
         toolbarInterface.setTitle(getString(R.string.pref_profiles))
@@ -42,15 +41,15 @@ class SettingsProfilesFragment : PreferenceFragmentCompat() {
         addProfileValuesToListPreference(timerRecordingProfilesPreference, settingsViewModel.getRecordingProfiles(), settingsViewModel.currentServerStatus.timerRecordingServerProfileId)
         addProfileValuesToListPreference(castingProfilesPreference, settingsViewModel.getHttpProfiles(), settingsViewModel.currentServerStatus.castingServerProfileId)
 
-        settingsViewModel.activeConnectionLiveData.observe(viewLifecycleOwner, Observer { connection ->
+        settingsViewModel.activeConnectionLiveData.observe(viewLifecycleOwner,  { connection ->
             toolbarInterface.setSubtitle(connection.name ?: "")
         })
 
-        settingsViewModel.isUnlockedLiveData.observe(viewLifecycleOwner, Observer {
+        settingsViewModel.isUnlockedLiveData.observe(viewLifecycleOwner,  {
             initProfileChangeListeners()
         })
 
-        settingsViewModel.currentServerStatusLiveData.observe(viewLifecycleOwner, Observer { _ ->
+        settingsViewModel.currentServerStatusLiveData.observe(viewLifecycleOwner,  {
             setHttpPlaybackPreferenceSummary()
             setHtspPlaybackPreferenceSummary()
             setRecordingPreferenceSummary()

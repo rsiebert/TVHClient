@@ -16,8 +16,7 @@ import android.os.Bundle
 import android.view.Surface
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import androidx.preference.PreferenceManager
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.list.listItemsSingleChoice
@@ -29,16 +28,16 @@ import kotlinx.android.synthetic.main.exo_player_view.*
 import kotlinx.android.synthetic.main.player_overlay_view.*
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.ui.common.onAttach
+import org.tvheadend.tvhclient.ui.common.setOptionalDescriptionText
 import org.tvheadend.tvhclient.ui.features.MainActivity
-import org.tvheadend.tvhclient.ui.features.playback.internal.utils.Rational
 import org.tvheadend.tvhclient.ui.features.playback.internal.utils.TrackInformationDialog
 import org.tvheadend.tvhclient.ui.features.playback.internal.utils.TrackSelectionDialog
+import org.tvheadend.tvhclient.ui.features.playback.internal.utils.VideoAspect
 import org.tvheadend.tvhclient.util.extensions.*
 import org.tvheadend.tvhclient.util.getIconUrl
 import org.tvheadend.tvhclient.util.getThemeId
 import timber.log.Timber
 
-// TODO set aspect ratio in SD content to 16:9 as a default
 // TODO disable subtitles as a default
 
 class PlaybackActivity : AppCompatActivity() {
@@ -47,8 +46,8 @@ class PlaybackActivity : AppCompatActivity() {
     private lateinit var viewModel: PlayerViewModel
 
     private val videoAspectRatioNameList = listOf("5:4", "4:3", "16:9", "16:10", "18:9")
-    private val videoAspectRatioList = listOf(Rational(5, 4), Rational(4, 3), Rational(16, 9), Rational(16, 10), Rational(18, 9))
-    private var selectedVideoAspectRatio: Rational? = null
+    private val videoAspectRatioList = listOf(VideoAspect(5, 4), VideoAspect(4, 3), VideoAspect(16, 9), VideoAspect(16, 10), VideoAspect(18, 9))
+    private var selectedVideoAspectRatio: VideoAspect? = null
     private var selectedVideoAspectIndex = -1
 
     private var orientationSensorListener: SensorEventListener? = null
@@ -119,6 +118,10 @@ class PlaybackActivity : AppCompatActivity() {
         player_forward?.invisible()
         play_next_channel?.invisible()
         play_previous_channel?.invisible()
+        player_aspect_ratio?.invisible()
+        player_toggle_fullscreen?.invisible()
+        player_information?.invisible()
+        player_settings?.invisible()
 
         player_play?.setOnClickListener { onPlayButtonSelected() }
         player_pause?.setOnClickListener { onPauseButtonSelected() }
@@ -132,31 +135,36 @@ class PlaybackActivity : AppCompatActivity() {
         play_previous_channel?.setOnClickListener { onPlayPreviousChannelButtonSelected() }
 
         Timber.d("Getting view model")
-        viewModel = ViewModelProviders.of(this).get(PlayerViewModel::class.java)
+        viewModel = ViewModelProvider(this).get(PlayerViewModel::class.java)
         viewModel.player.setVideoSurfaceView(exo_player_surface_view)
         player_view.player = viewModel.player
 
         Timber.d("Observing authentication status")
-        viewModel.isConnected.observe(this, Observer { isConnected ->
+        viewModel.isConnected.observe(this, { isConnected ->
             if (isConnected) {
-                Timber.d("Connected to server")
-                status.setText(R.string.connected_to_server)
-                viewModel.loadMediaSource(applicationContext, intent.extras)
+                if (!viewModel.isPlaybackProfileSelected(intent.extras)) {
+                    Timber.d("No playback profile was selected")
+                    status?.setText(R.string.no_playback_profile_selected)
+                } else {
+                    Timber.d("Connected to server")
+                    status?.setText(R.string.connected_to_server)
+                    viewModel.loadMediaSource(applicationContext, intent.extras)
+                }
             } else {
                 Timber.d("Not connected to server")
-                status.setText(R.string.connection_failed)
+                status?.setText(R.string.connection_failed)
             }
         })
 
         Timber.d("Observing video aspect ratio value")
-        viewModel.videoAspectRatio.observe(this, Observer { ratio ->
+        viewModel.videoAspectRatio.observe(this, { ratio ->
             Timber.d("Received video aspect ratio value")
             selectedVideoAspectRatio = ratio
             updateVideoAspectRatio(ratio)
         })
 
         Timber.d("Observing player playback state")
-        viewModel.playerState.observe(this, Observer { state ->
+        viewModel.playerState.observe(this, { state ->
             Timber.d("Received player playback state $state")
             when (state) {
                 Player.STATE_IDLE -> {
@@ -171,12 +179,17 @@ class PlaybackActivity : AppCompatActivity() {
                 Player.STATE_READY, Player.STATE_ENDED -> {
                     status?.gone()
                     exo_player_surface_view?.visible()
+
+                    player_aspect_ratio?.visible()
+                    player_toggle_fullscreen?.visible()
+                    player_information?.visible()
+                    player_settings?.visible()
                 }
             }
         })
 
         Timber.d("Observing player is playing state")
-        viewModel.playerIsPlaying.observe(this, Observer { isPlaying ->
+        viewModel.playerIsPlaying.observe(this, { isPlaying ->
             Timber.d("Received player is playing $isPlaying")
             player_play?.visibleOrInvisible(!isPlaying)
             player_pause?.visibleOrInvisible(isPlaying)
@@ -185,14 +198,14 @@ class PlaybackActivity : AppCompatActivity() {
         })
 
         Timber.d("Observing live TV playing")
-        viewModel.liveTvIsPlaying.observe(this, Observer { isPlaying ->
+        viewModel.liveTvIsPlaying.observe(this, { isPlaying ->
             Timber.d("Received live TV is playing $isPlaying")
             play_previous_channel?.visibleOrGone(isPlaying)
             play_next_channel?.visibleOrGone(isPlaying)
         })
 
         Timber.d("Observing playback information")
-        viewModel.channelIcon.observe(this, Observer { icon ->
+        viewModel.channelIcon.observe(this, { icon ->
             Timber.d("Received channel icon $icon")
             Picasso.get()
                     .load(getIconUrl(this, icon))
@@ -209,28 +222,28 @@ class PlaybackActivity : AppCompatActivity() {
                     })
         })
 
-        viewModel.channelName.observe(this, Observer { channelName ->
+        viewModel.channelName.observe(this, { channelName ->
             Timber.d("Received channel name $channelName")
             channel_name?.text = if (!channelName.isNullOrEmpty()) channelName else getString(R.string.all_channels)
         })
-        viewModel.title.observe(this, Observer { title ->
+        viewModel.title.observe(this, { title ->
             Timber.d("Received title $title")
-            program_title?.text = title
+            setOptionalDescriptionText(program_title, title)
         })
-        viewModel.subtitle.observe(this, Observer { subtitle ->
+        viewModel.subtitle.observe(this, { subtitle ->
             Timber.d("Received subtitle $subtitle")
-            program_subtitle?.text = subtitle
+            setOptionalDescriptionText(program_subtitle, subtitle)
             program_subtitle?.visibleOrGone(subtitle.isNotEmpty())
         })
-        viewModel.nextTitle.observe(this, Observer { nextTitle ->
+        viewModel.nextTitle.observe(this, { nextTitle ->
             Timber.d("Received next title $nextTitle")
-            next_program_title?.text = nextTitle
+            setOptionalDescriptionText(next_program_title, nextTitle)
             next_program_title?.visibleOrGone(nextTitle.isNotEmpty())
         })
-        viewModel.elapsedTime.observe(this, Observer { elapsedTime ->
+        viewModel.elapsedTime.observe(this, { elapsedTime ->
             elapsed_time?.text = elapsedTime
         })
-        viewModel.remainingTime.observe(this, Observer { remainingTime ->
+        viewModel.remainingTime.observe(this, { remainingTime ->
             remaining_time?.text = remainingTime
         })
     }
@@ -297,7 +310,7 @@ class PlaybackActivity : AppCompatActivity() {
 
     }
 
-    private fun updateVideoAspectRatio(videoAspectRatio: Rational) {
+    private fun updateVideoAspectRatio(videoAspect: VideoAspect) {
         Timber.d("Updating video dimensions")
 
         val display = windowManager.defaultDisplay
@@ -306,8 +319,8 @@ class PlaybackActivity : AppCompatActivity() {
         val screenWidth = size.x
         val screenHeight = size.y
 
-        var width = videoAspectRatio.numerator
-        var height = videoAspectRatio.denominator
+        var width = videoAspect.width
+        var height = videoAspect.height
         val ratio = width.toFloat() / height.toFloat()
         val orientation = resources.configuration.orientation
 
@@ -363,14 +376,14 @@ class PlaybackActivity : AppCompatActivity() {
 
     private fun onChangeAspectRatioSelected() {
         Timber.d("Change aspect ratio button selected")
-        val width = selectedVideoAspectRatio?.numerator ?: 0
-        val height = selectedVideoAspectRatio?.denominator ?: 1
+        val width = selectedVideoAspectRatio?.width ?: 0
+        val height = selectedVideoAspectRatio?.height ?: 1
         val currentRatio = (width.toFloat() / height.toFloat()).toString().subStringUntilOrLess(4)
 
         Timber.d("Current video dimensions are $width:$height, current ratio: $currentRatio:1, selected index $selectedVideoAspectIndex")
         if (selectedVideoAspectIndex == -1) {
             videoAspectRatioList.forEachIndexed { index, value ->
-                val ratio = (value.numerator.toFloat() / value.denominator.toFloat()).toString().subStringUntilOrLess(4)
+                val ratio = (value.width.toFloat() / value.height.toFloat()).toString().subStringUntilOrLess(4)
                 Timber.d("Current ratio: $currentRatio, ratio: $ratio")
                 if (currentRatio == ratio) {
                     selectedVideoAspectIndex = index
@@ -444,13 +457,13 @@ class PlaybackActivity : AppCompatActivity() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val ratio = selectedVideoAspectRatio
             if (ratio != null) {
-                Timber.d("Entering PIP mode with ratio ${ratio.numerator}:${ratio.denominator}")
+                Timber.d("Entering PIP mode with ratio ${ratio.width}:${ratio.height}")
                 // Set the value already here because the onPause method is called before the onPictureInPictureModeChanged.
                 // This would pause the player before we know that the PIP mode has been entered.
                 viewModel.pipModeActive = true
                 enterPictureInPictureMode(
                         PictureInPictureParams.Builder()
-                                .setAspectRatio(android.util.Rational(ratio.numerator, ratio.denominator))
+                                .setAspectRatio(android.util.Rational(ratio.width, ratio.height))
                                 .build())
             }
         }

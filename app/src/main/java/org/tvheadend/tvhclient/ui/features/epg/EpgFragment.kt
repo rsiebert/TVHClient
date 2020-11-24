@@ -7,8 +7,7 @@ import android.view.*
 import android.widget.Filter
 import androidx.appcompat.widget.PopupMenu
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.SCROLL_STATE_IDLE
@@ -46,7 +45,7 @@ class EpgFragment : BaseFragment(), EpgScrollInterface, RecyclerViewClickInterfa
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        epgViewModel = ViewModelProviders.of(requireActivity()).get(EpgViewModel::class.java)
+        epgViewModel = ViewModelProvider(requireActivity()).get(EpgViewModel::class.java)
 
         if (activity is LayoutControlInterface) {
             (activity as LayoutControlInterface).forceSingleScreenLayout()
@@ -56,6 +55,7 @@ class EpgFragment : BaseFragment(), EpgScrollInterface, RecyclerViewClickInterfa
         channelListRecyclerViewLayoutManager = LinearLayoutManager(activity)
         channel_list_recycler_view.layoutManager = channelListRecyclerViewLayoutManager
         channel_list_recycler_view.adapter = channelListRecyclerViewAdapter
+        channel_list_recycler_view.setHasFixedSize(true)
         channel_list_recycler_view.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 super.onScrollStateChanged(recyclerView, newState)
@@ -100,7 +100,7 @@ class EpgFragment : BaseFragment(), EpgScrollInterface, RecyclerViewClickInterfa
         epgViewModel.displayWidth = displayMetrics.widthPixels
 
         Timber.d("Observing channel tags")
-        epgViewModel.channelTags.observe(viewLifecycleOwner, Observer { tags ->
+        epgViewModel.channelTags.observe(viewLifecycleOwner,  { tags ->
             if (tags != null) {
                 Timber.d("View model returned ${tags.size} channel tags")
                 channelTags = tags
@@ -108,7 +108,7 @@ class EpgFragment : BaseFragment(), EpgScrollInterface, RecyclerViewClickInterfa
         })
 
         Timber.d("Observing epg channels")
-        epgViewModel.epgChannels.observe(viewLifecycleOwner, Observer { channels ->
+        epgViewModel.epgChannels.observe(viewLifecycleOwner,  { channels ->
 
             progress_bar?.gone()
             channel_list_recycler_view?.visible()
@@ -129,7 +129,7 @@ class EpgFragment : BaseFragment(), EpgScrollInterface, RecyclerViewClickInterfa
         })
 
         Timber.d("Observing trigger to reload epg data")
-        epgViewModel.viewAndEpgDataIsInvalid.observe(viewLifecycleOwner, Observer { reload ->
+        epgViewModel.viewAndEpgDataIsInvalid.observe(viewLifecycleOwner,  { reload ->
             Timber.d("Trigger to reload epg data has changed to $reload")
             if (reload) {
                 viewPagerAdapter.notifyDataSetChanged()
@@ -137,7 +137,7 @@ class EpgFragment : BaseFragment(), EpgScrollInterface, RecyclerViewClickInterfa
         })
 
         Timber.d("Observing epg data")
-        epgViewModel.epgData.observe(viewLifecycleOwner, Observer { data ->
+        epgViewModel.epgData.observe(viewLifecycleOwner,  { data ->
             data?.forEach {
                 Timber.d("Loaded ${it.value.size} programs for channel ${it.key}")
             }
@@ -146,7 +146,7 @@ class EpgFragment : BaseFragment(), EpgScrollInterface, RecyclerViewClickInterfa
         // Observe all recordings here in case a recording shall be edited right after it was added.
         // This needs to be done in this fragment because the popup menu handling is also done here.
         Timber.d("Observing recordings")
-        epgViewModel.recordings.observe(viewLifecycleOwner, Observer { recordings ->
+        epgViewModel.recordings.observe(viewLifecycleOwner,  { recordings ->
             if (recordings != null) {
                 Timber.d("View model returned ${recordings.size} recordings")
                 for (recording in recordings) {
@@ -161,7 +161,7 @@ class EpgFragment : BaseFragment(), EpgScrollInterface, RecyclerViewClickInterfa
             }
         })
 
-        epgViewModel.channelCount.observe(viewLifecycleOwner, Observer { count ->
+        epgViewModel.channelCount.observe(viewLifecycleOwner,  { count ->
             channelCount = count
         })
     }
@@ -270,7 +270,7 @@ class EpgFragment : BaseFragment(), EpgScrollInterface, RecyclerViewClickInterfa
                     return@setOnMenuItemClickListener recordSelectedProgram(ctx, program.eventId, epgViewModel.getRecordingProfile(), htspVersion)
                 }
                 R.id.menu_record_program_with_custom_profile -> return@setOnMenuItemClickListener recordSelectedProgramWithCustomProfile(ctx, program.eventId, program.channelId, epgViewModel.getRecordingProfileNames(), epgViewModel.getRecordingProfile())
-                R.id.menu_record_program_as_series_recording -> return@setOnMenuItemClickListener recordSelectedProgramAsSeriesRecording(ctx, program.title, epgViewModel.getRecordingProfile(), htspVersion)
+                R.id.menu_record_program_as_series_recording -> return@setOnMenuItemClickListener recordSelectedProgramAsSeriesRecording(ctx, program.title, program.channelId, epgViewModel.getRecordingProfile(), htspVersion)
                 R.id.menu_play -> return@setOnMenuItemClickListener playSelectedChannel(ctx, program.channelId, isUnlocked)
                 R.id.menu_cast -> return@setOnMenuItemClickListener castSelectedChannel(ctx, program.channelId)
 
@@ -339,7 +339,7 @@ class EpgFragment : BaseFragment(), EpgScrollInterface, RecyclerViewClickInterfa
         return getString(R.string.search_program_guide)
     }
 
-    private class EpgViewPagerAdapter internal constructor(fragment: Fragment, private val viewModel: EpgViewModel) : FragmentStateAdapter(fragment) {
+    private class EpgViewPagerAdapter(fragment: Fragment, private val viewModel: EpgViewModel) : FragmentStateAdapter(fragment) {
 
         override fun createFragment(position: Int): Fragment {
             val fragment = EpgViewPagerFragment.newInstance(position)
@@ -347,7 +347,7 @@ class EpgFragment : BaseFragment(), EpgScrollInterface, RecyclerViewClickInterfa
             return fragment
         }
 
-        internal fun getRegisteredFragment(position: Int): Fragment? {
+        fun getRegisteredFragment(position: Int): Fragment? {
             return viewModel.registeredEpgFragments.get(position)
         }
 

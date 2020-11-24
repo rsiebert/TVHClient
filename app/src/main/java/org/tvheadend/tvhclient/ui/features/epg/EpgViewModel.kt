@@ -240,7 +240,7 @@ class EpgViewModel(application: Application) : BaseChannelViewModel(application)
         return appRepository.programData.getItemByChannelIdAndBetweenTime(channelId, startTimes[fragmentId], endTimes[fragmentId])
     }
 
-    internal inner class EpgChannelLiveData(selectedChannelSortOrder: LiveData<Int>,
+    internal class EpgChannelLiveData(selectedChannelSortOrder: LiveData<Int>,
                                             selectedChannelTagIds: LiveData<List<Int>?>) : MediatorLiveData<Pair<Int, List<Int>?>>() {
 
         init {

@@ -7,8 +7,7 @@ import android.content.pm.ResolveInfo
 import android.net.Uri
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import com.afollestad.materialdialogs.MaterialDialog
 import kotlinx.android.synthetic.main.play_activity.*
 import org.tvheadend.tvhclient.R
@@ -28,9 +27,9 @@ abstract class BasePlaybackActivity : AppCompatActivity() {
 
         status.setText(R.string.connecting_to_server)
 
-        viewModel = ViewModelProviders.of(this).get(ExternalPlayerViewModel::class.java)
+        viewModel = ViewModelProvider(this).get(ExternalPlayerViewModel::class.java)
 
-        viewModel.isConnected.observe(this, Observer { isConnected ->
+        viewModel.isConnected.observe(this,  { isConnected ->
             if (isConnected) {
                 Timber.d("Received live data, connected to server, requesting ticket")
                 status.setText(R.string.requesting_playback_information)
@@ -42,7 +41,7 @@ abstract class BasePlaybackActivity : AppCompatActivity() {
             }
         })
 
-        viewModel.isTicketReceived.observe(this, Observer { isTicketReceived ->
+        viewModel.isTicketReceived.observe(this,  { isTicketReceived ->
             Timber.d("Received ticket $isTicketReceived")
             if (isTicketReceived) {
                 progress_bar.gone()

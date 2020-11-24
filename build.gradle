@@ -2,20 +2,25 @@
 apply from: 'properties.gradle'
 
 buildscript {
-    ext.kotlin_version = '1.3.72'
+    ext {
+        kotlin_version = '1.4.10'
+        compileSdkVersion = 29
+        minSdkVersion = 16
+        targetSdkVersion = 29
+        javaCompatibility = '1.8'
+    }
 
     repositories {
         google()
-        maven { url 'https://maven.fabric.io/public' }
         jcenter()
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:4.0.1'
+        classpath 'com.android.tools.build:gradle:4.1.1'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-        classpath 'com.google.gms:google-services:4.3.3'
-        classpath 'io.fabric.tools:gradle:1.29.0'
-        classpath 'com.google.firebase:perf-plugin:1.3.1'
+        classpath 'com.google.gms:google-services:4.3.4'
+        classpath 'com.google.firebase:firebase-crashlytics-gradle:2.3.0'
+        classpath 'com.google.firebase:perf-plugin:1.3.2'
         classpath 'com.novoda:bintray-release:0.9.1'
 
         // NOTE: Do not place your application dependencies here; they belong

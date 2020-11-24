@@ -19,7 +19,7 @@ class ServerStatusDataSource(private val db: AppRoomDatabase) : DataSourceInterf
     val liveDataActiveItem: LiveData<ServerStatus>
         get() = Transformations.map(db.serverStatusDao.loadActiveServerStatus()) { entity ->
             Timber.d("Loading active server status as live data is null ${entity == null}")
-            entity?.toServerStatus()
+            entity?.toServerStatus() ?: activeItem
         }
 
     val activeItem: ServerStatus
@@ -28,12 +28,16 @@ class ServerStatusDataSource(private val db: AppRoomDatabase) : DataSourceInterf
             runBlocking(Dispatchers.IO) {
                 val newServerStatus = db.serverStatusDao.loadActiveServerStatusSync()
                 if (newServerStatus == null) {
+                    Timber.d("Active server status is null")
                     val connection = db.connectionDao.loadActiveConnectionSync()
                     serverStatus.serverName = "Unknown"
                     serverStatus.serverVersion = "Unknown"
                     if (connection != null) {
+                        Timber.d("Loaded active connection for empty server status")
                         serverStatus.connectionId = connection.id
                         serverStatus.connectionName = connection.name
+                        Timber.d("Inserting new server status information for connection ${connection.name}")
+                        db.serverStatusDao.insert(ServerStatusEntity.from(serverStatus))
                     }
                 } else {
                     serverStatus = newServerStatus.toServerStatus()

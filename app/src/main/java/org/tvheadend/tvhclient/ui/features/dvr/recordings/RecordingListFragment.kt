@@ -6,8 +6,7 @@ import android.widget.Filter
 import androidx.appcompat.widget.PopupMenu
 import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.recyclerview_fragment.*
 import org.tvheadend.data.entity.Recording
@@ -17,7 +16,6 @@ import org.tvheadend.tvhclient.ui.common.*
 import org.tvheadend.tvhclient.ui.common.interfaces.RecyclerViewClickInterface
 import org.tvheadend.tvhclient.ui.common.interfaces.SearchRequestInterface
 import org.tvheadend.tvhclient.ui.features.dvr.recordings.download.DownloadPermissionGrantedInterface
-import org.tvheadend.tvhclient.ui.features.dvr.recordings.download.DownloadRecordingManager
 import org.tvheadend.tvhclient.util.extensions.gone
 import org.tvheadend.tvhclient.util.extensions.visible
 import org.tvheadend.tvhclient.util.extensions.visibleOrGone
@@ -35,7 +33,7 @@ abstract class RecordingListFragment : BaseFragment(), RecyclerViewClickInterfac
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        recordingViewModel = ViewModelProviders.of(requireActivity()).get(RecordingViewModel::class.java)
+        recordingViewModel = ViewModelProvider(requireActivity()).get(RecordingViewModel::class.java)
 
         arguments?.let {
             recordingViewModel.selectedListPosition = it.getInt("listPosition")
@@ -50,7 +48,7 @@ abstract class RecordingListFragment : BaseFragment(), RecyclerViewClickInterfac
 
     private fun observeSearchQuery() {
         Timber.d("Observing search query")
-        baseViewModel.searchQueryLiveData.observe(viewLifecycleOwner, Observer { query ->
+        baseViewModel.searchQueryLiveData.observe(viewLifecycleOwner,  { query ->
             if (query.isNotEmpty()) {
                 Timber.d("View model returned search query '$query'")
                 onSearchRequested(query)
@@ -167,10 +165,7 @@ abstract class RecordingListFragment : BaseFragment(), RecyclerViewClickInterfac
 
                 R.id.menu_disable_recording -> return@setOnMenuItemClickListener enableScheduledRecording(recording, false)
                 R.id.menu_enable_recording -> return@setOnMenuItemClickListener enableScheduledRecording(recording, true)
-                R.id.menu_download_recording -> {
-                    DownloadRecordingManager(activity, connection, recording)
-                    return@setOnMenuItemClickListener true
-                }
+                R.id.menu_download_recording -> return@setOnMenuItemClickListener downloadSelectedRecording(ctx, recording.id)
                 else -> return@setOnMenuItemClickListener false
             }
         }
@@ -218,7 +213,11 @@ abstract class RecordingListFragment : BaseFragment(), RecyclerViewClickInterfac
     abstract fun showStatusInToolbar()
 
     override fun downloadRecording() {
-        DownloadRecordingManager(activity, connection, recyclerViewAdapter.getItem(recordingViewModel.selectedListPosition))
+        //DownloadRecordingManager(activity, connection, recyclerViewAdapter.getItem(recordingViewModel.selectedListPosition))
+        val id = recyclerViewAdapter.getItem(recordingViewModel.selectedListPosition)?.id
+        if (id != null) {
+            downloadSelectedRecording(requireContext(), id)
+        }
     }
 
     override fun onFilterComplete(i: Int) {

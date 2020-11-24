@@ -9,10 +9,8 @@ import org.tvheadend.data.entity.Channel
 import org.tvheadend.data.entity.Recording
 import org.tvheadend.data.entity.ServerProfile
 import org.tvheadend.data.entity.ServerStatus
-import org.tvheadend.htsp.HtspConnection
-import org.tvheadend.htsp.HtspConnectionStateListener
-import org.tvheadend.htsp.HtspMessage
-import org.tvheadend.htsp.HtspResponseListener
+import org.tvheadend.htsp.*
+import org.tvheadend.tvhclient.BuildConfig
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.ui.base.BaseViewModel
 import timber.log.Timber
@@ -39,12 +37,15 @@ class ExternalPlayerViewModel(application: Application) : BaseViewModel(applicat
     init {
         Timber.d("Initializing")
         val connectionTimeout = Integer.valueOf(PreferenceManager.getDefaultSharedPreferences(application).getString("connection_timeout", application.resources.getString(R.string.pref_default_connection_timeout))!!) * 1000
-        htspConnection = HtspConnection(
-                connection.username ?: "",
-                connection.password ?: "",
-                connection.serverUrl ?: "",
-                connectionTimeout,
-                this, null)
+        val htspConnectionData = HtspConnectionData(
+                connection.username,
+                connection.password,
+                connection.serverUrl,
+                BuildConfig.VERSION_NAME,
+                BuildConfig.VERSION_CODE,
+                connectionTimeout
+        )
+        htspConnection = HtspConnection(htspConnectionData, this, null)
 
         execService.execute {
             htspConnection.openConnection()

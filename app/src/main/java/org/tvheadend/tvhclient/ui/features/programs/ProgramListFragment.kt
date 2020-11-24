@@ -7,8 +7,7 @@ import android.widget.Filter
 import androidx.appcompat.widget.PopupMenu
 import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.recyclerview_fragment.*
 import org.tvheadend.data.entity.Recording
@@ -40,7 +39,7 @@ class ProgramListFragment : BaseFragment(), RecyclerViewClickInterface, LastProg
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        programViewModel = ViewModelProviders.of(requireActivity()).get(ProgramViewModel::class.java)
+        programViewModel = ViewModelProvider(requireActivity()).get(ProgramViewModel::class.java)
 
         arguments?.let {
             programViewModel.channelId = it.getInt("channelId", 0)
@@ -59,7 +58,7 @@ class ProgramListFragment : BaseFragment(), RecyclerViewClickInterface, LastProg
         search_progress?.visibleOrGone(baseViewModel.isSearchActive)
 
         Timber.d("Observing programs")
-        programViewModel.programs.observe(viewLifecycleOwner, Observer { progs ->
+        programViewModel.programs.observe(viewLifecycleOwner,  { progs ->
             if (progs != null) {
                 Timber.d("View model returned ${progs.size} programs")
                 recyclerViewAdapter.addItems(progs.toMutableList())
@@ -73,7 +72,7 @@ class ProgramListFragment : BaseFragment(), RecyclerViewClickInterface, LastProg
         })
 
         Timber.d("Observing channel id")
-        programViewModel.channelIdLiveData.observe(viewLifecycleOwner, Observer { id ->
+        programViewModel.channelIdLiveData.observe(viewLifecycleOwner,  { id ->
             if (id != null) {
                 Timber.d("View model returned channel id $id")
                 channelId = id
@@ -83,7 +82,7 @@ class ProgramListFragment : BaseFragment(), RecyclerViewClickInterface, LastProg
 
     private fun observeRecordings() {
         Timber.d("Observing recordings")
-        programViewModel.recordings.observe(viewLifecycleOwner, Observer { recs ->
+        programViewModel.recordings.observe(viewLifecycleOwner,  { recs ->
             if (recs != null) {
                 Timber.d("View model returned ${recs.size} recordings")
                 handleObservedRecordings(recs)
@@ -93,7 +92,7 @@ class ProgramListFragment : BaseFragment(), RecyclerViewClickInterface, LastProg
 
     private fun observeSearchQuery() {
         Timber.d("Observing search query")
-        baseViewModel.searchQueryLiveData.observe(viewLifecycleOwner, Observer { query ->
+        baseViewModel.searchQueryLiveData.observe(viewLifecycleOwner,  { query ->
             loadingMoreProgramAllowed = if (query.isNotEmpty()) {
                 Timber.d("View model returned search query '$query'")
                 onSearchRequested(query)
@@ -195,7 +194,7 @@ class ProgramListFragment : BaseFragment(), RecyclerViewClickInterface, LastProg
                     return@setOnMenuItemClickListener recordSelectedProgram(ctx, program.eventId, programViewModel.getRecordingProfile(), htspVersion)
                 }
                 R.id.menu_record_program_with_custom_profile -> return@setOnMenuItemClickListener recordSelectedProgramWithCustomProfile(ctx, program.eventId, program.channelId, programViewModel.getRecordingProfileNames(), programViewModel.getRecordingProfile())
-                R.id.menu_record_program_as_series_recording -> return@setOnMenuItemClickListener recordSelectedProgramAsSeriesRecording(ctx, program.title, programViewModel.getRecordingProfile(), htspVersion)
+                R.id.menu_record_program_as_series_recording -> return@setOnMenuItemClickListener recordSelectedProgramAsSeriesRecording(ctx, program.title, program.channelId, programViewModel.getRecordingProfile(), htspVersion)
                 R.id.menu_play -> return@setOnMenuItemClickListener playSelectedChannel(ctx, channelId, isUnlocked)
                 R.id.menu_cast -> return@setOnMenuItemClickListener castSelectedChannel(ctx, channelId)
 

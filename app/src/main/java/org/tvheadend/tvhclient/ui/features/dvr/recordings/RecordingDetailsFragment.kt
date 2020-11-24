@@ -3,8 +3,7 @@ package org.tvheadend.tvhclient.ui.features.dvr.recordings
 import android.os.Bundle
 import android.view.*
 import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import kotlinx.android.synthetic.main.details_fragment_header.*
 import kotlinx.android.synthetic.main.recording_details_fragment.*
 import org.tvheadend.data.entity.Recording
@@ -15,7 +14,6 @@ import org.tvheadend.tvhclient.ui.common.*
 import org.tvheadend.tvhclient.ui.common.interfaces.ClearSearchResultsOrPopBackStackInterface
 import org.tvheadend.tvhclient.ui.common.interfaces.RecordingRemovedInterface
 import org.tvheadend.tvhclient.ui.features.dvr.recordings.download.DownloadPermissionGrantedInterface
-import org.tvheadend.tvhclient.ui.features.dvr.recordings.download.DownloadRecordingManager
 import org.tvheadend.tvhclient.util.extensions.gone
 import org.tvheadend.tvhclient.util.extensions.visible
 import timber.log.Timber
@@ -33,7 +31,7 @@ class RecordingDetailsFragment : BaseFragment(), RecordingRemovedInterface, Down
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        recordingViewModel = ViewModelProviders.of(requireActivity()).get(RecordingViewModel::class.java)
+        recordingViewModel = ViewModelProvider(requireActivity()).get(RecordingViewModel::class.java)
 
         if (!isDualPane) {
             toolbarInterface.setTitle(getString(R.string.details))
@@ -47,7 +45,7 @@ class RecordingDetailsFragment : BaseFragment(), RecordingRemovedInterface, Down
         }
 
         Timber.d("Observing recording")
-        recordingViewModel.recordingLiveData.observe(viewLifecycleOwner, Observer {
+        recordingViewModel.recordingLiveData.observe(viewLifecycleOwner,  {
             Timber.d("View model returned a recording")
             recording = it
             showRecordingDetails()
@@ -102,10 +100,7 @@ class RecordingDetailsFragment : BaseFragment(), RecordingRemovedInterface, Down
             R.id.menu_search_google -> return searchTitleOnGoogle(ctx, recording.title)
             R.id.menu_search_epg -> return searchTitleInTheLocalDatabase(requireActivity(), baseViewModel, recording.title)
 
-            R.id.menu_download_recording -> {
-                DownloadRecordingManager(activity, connection, recording)
-                return true
-            }
+            R.id.menu_download_recording -> return downloadSelectedRecording(ctx, recording.id)
             else -> return super.onOptionsItemSelected(item)
         }
     }
@@ -125,7 +120,11 @@ class RecordingDetailsFragment : BaseFragment(), RecordingRemovedInterface, Down
     }
 
     override fun downloadRecording() {
-        DownloadRecordingManager(activity, connection, recording)
+        //DownloadRecordingManager(activity, connection, recording)
+        val id = recording?.id
+        if (id != null) {
+            downloadSelectedRecording(requireContext(), id)
+        }
     }
 
     companion object {

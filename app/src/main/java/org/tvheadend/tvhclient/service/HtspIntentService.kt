@@ -12,6 +12,7 @@ import org.tvheadend.data.entity.Program
 import org.tvheadend.data.entity.ServerStatus
 import org.tvheadend.htsp.*
 import org.tvheadend.tvhclient.MainApplication
+import org.tvheadend.tvhclient.BuildConfig
 import org.tvheadend.tvhclient.R
 import org.tvheadend.data.AppRepository
 import org.tvheadend.tvhclient.util.convertUrlToHashString
@@ -51,13 +52,15 @@ class HtspIntentService : JobIntentService(), HtspConnectionStateListener {
         serverStatus = appRepository.serverStatusData.activeItem
         htspVersion = serverStatus.htspVersion
 
-        val connectionTimeout = Integer.valueOf(sharedPreferences.getString("connection_timeout", appContext.resources.getString(R.string.pref_default_connection_timeout))!!) * 1000
-        htspConnection = HtspConnection(
+        val htspConnectionData = HtspConnectionData(
                 connection.username,
                 connection.password,
                 connection.serverUrl,
-                connectionTimeout,
-                this, null)
+                BuildConfig.VERSION_NAME,
+                BuildConfig.VERSION_CODE,
+                Integer.valueOf(sharedPreferences.getString("connection_timeout", appContext.resources.getString(R.string.pref_default_connection_timeout))!!) * 1000
+        )
+        htspConnection = HtspConnection(htspConnectionData, this, null)
 
         // Since this is blocking, spawn to a new thread
         execService.execute {

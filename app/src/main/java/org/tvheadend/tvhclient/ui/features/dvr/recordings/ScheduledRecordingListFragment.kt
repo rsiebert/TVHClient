@@ -2,7 +2,6 @@ package org.tvheadend.tvhclient.ui.features.dvr.recordings
 
 import android.os.Bundle
 import android.view.Menu
-import androidx.lifecycle.Observer
 import org.tvheadend.tvhclient.R
 import timber.log.Timber
 
@@ -12,7 +11,7 @@ class ScheduledRecordingListFragment : RecordingListFragment() {
         super.onActivityCreated(savedInstanceState)
 
         Timber.d("Observing recordings")
-        recordingViewModel.scheduledRecordings.observe(viewLifecycleOwner, Observer { recordings ->
+        recordingViewModel.scheduledRecordings.observe(viewLifecycleOwner,  { recordings ->
             Timber.d("View model returned ${recordings.size} recordings")
             addRecordingsAndUpdateUI(recordings)
         })

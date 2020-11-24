@@ -1,11 +1,7 @@
 package org.tvheadend.tvhclient.ui.features.playback.external
 
 import android.content.Intent
-import android.net.Uri
-import android.os.Environment
-import androidx.preference.PreferenceManager
 import timber.log.Timber
-import java.io.File
 
 class ShareRecordingActivity : BasePlaybackActivity() {
 

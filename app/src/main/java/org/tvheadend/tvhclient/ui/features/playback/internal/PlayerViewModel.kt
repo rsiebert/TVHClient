@@ -16,12 +16,15 @@ import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
 import com.google.android.exoplayer2.video.VideoListener
 import org.tvheadend.data.entity.Channel
 import org.tvheadend.htsp.HtspConnection
+import org.tvheadend.htsp.HtspConnectionData
 import org.tvheadend.htsp.HtspConnectionStateListener
+import org.tvheadend.tvhclient.BuildConfig
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.ui.base.BaseViewModel
 import org.tvheadend.tvhclient.ui.features.playback.internal.utils.CustomEventLogger
-import org.tvheadend.tvhclient.ui.features.playback.internal.utils.Rational
+import org.tvheadend.tvhclient.ui.features.playback.internal.utils.VideoAspect
 import timber.log.Timber
+import java.text.DecimalFormat
 import java.util.*
 import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledExecutorService
@@ -45,7 +48,7 @@ class PlayerViewModel(application: Application) : BaseViewModel(application), Ht
     val trackSelector: DefaultTrackSelector
 
     // Video dimension and aspect ratio related properties
-    val videoAspectRatio: MutableLiveData<Rational> = MutableLiveData()
+    val videoAspectRatio: MutableLiveData<VideoAspect> = MutableLiveData()
 
     // Observable fields
     var playerState: MutableLiveData<Int> = MutableLiveData()
@@ -70,6 +73,7 @@ class PlayerViewModel(application: Application) : BaseViewModel(application), Ht
 
     var pipModeActive: Boolean = false
 
+    private val defaultForceAspectRatio = application.applicationContext.resources.getBoolean(R.bool.pref_default_force_aspect_ratio_for_sd_content_enabled)
     private val defaultChannelSortOrder = application.applicationContext.resources.getString(R.string.pref_default_channel_sort_order)
     private val defaultAudioTunnelingEnabled = application.applicationContext.resources.getBoolean(R.bool.pref_default_audio_tunneling_enabled)
     private val defaultConnectionTimeout = application.resources.getString(R.string.pref_default_connection_timeout)
@@ -87,12 +91,16 @@ class PlayerViewModel(application: Application) : BaseViewModel(application), Ht
         Timber.d("Starting connection")
         val connection = appRepository.connectionData.activeItem
         val connectionTimeout = Integer.valueOf(sharedPreferences.getString("connection_timeout", defaultConnectionTimeout)!!) * 1000
-        htspConnection = HtspConnection(
-                connection.username ?: "",
-                connection.password ?: "",
-                connection.serverUrl ?: "",
-                connectionTimeout,
-                this, null)
+
+        val htspConnectionData = HtspConnectionData(
+                connection.username,
+                connection.password,
+                connection.serverUrl,
+                BuildConfig.VERSION_NAME,
+                BuildConfig.VERSION_CODE,
+                connectionTimeout
+        )
+        htspConnection = HtspConnection(htspConnectionData, this, null)
 
         execService.execute {
             htspConnection.openConnection()
@@ -135,6 +143,19 @@ class PlayerViewModel(application: Application) : BaseViewModel(application), Ht
             elapsedTime.postValue(playbackInformation.elapsedTime)
             timeUpdateHandler.postDelayed(timeUpdateRunnable, 1000)
         }
+    }
+
+
+    fun isPlaybackProfileSelected(bundle: Bundle?): Boolean {
+        val channelId = bundle?.getInt("channelId", 0) ?: 0
+        if (channelId > 0) {
+            val serverStatus = appRepository.serverStatusData.activeItem
+            val serverProfile = appRepository.serverProfileData.getItemById(serverStatus.htspPlaybackServerProfileId)
+            if (serverProfile != null && !serverProfile.name.isNullOrEmpty() && serverProfile.name != "None") {
+                return true
+            }
+        }
+        return false
     }
 
     fun loadMediaSource(context: Context, bundle: Bundle?) {
@@ -214,7 +235,7 @@ class PlayerViewModel(application: Application) : BaseViewModel(application), Ht
         htspFileInputStreamDataSourceFactory?.releaseCurrentDataSource()
     }
 
-    fun setVideoAspectRatio(rational: Rational) {
+    fun setVideoAspectRatio(rational: VideoAspect) {
         if (videoAspectRatio.value != null && videoAspectRatio.value != rational) {
             Timber.d("Updating selected video aspect ratio")
             videoAspectRatio.postValue(rational)
@@ -272,7 +293,19 @@ class PlayerViewModel(application: Application) : BaseViewModel(application), Ht
 
     override fun onVideoSizeChanged(width: Int, height: Int, unappliedRotationDegrees: Int, pixelWidthHeightRatio: Float) {
         Timber.d("Video size changed to width $width, height $height, pixel aspect ratio $pixelWidthHeightRatio")
-        videoAspectRatio.postValue(Rational(width, height))
+        var newPixelWidthHeightRatio = pixelWidthHeightRatio
+
+        val forceAspectRatio = sharedPreferences.getBoolean("force_aspect_ratio_for_sd_content_enabled", defaultForceAspectRatio)
+        if (forceAspectRatio) {
+            Timber.d("Video aspect shall be forced, checking original video aspect ratio")
+
+            val aspectRatio = DecimalFormat("#.##").format(width.toFloat() / height.toFloat())
+            if (aspectRatio == "1,25") {
+                newPixelWidthHeightRatio = ((16f / 9f) * height.toFloat()) / width.toFloat()
+                Timber.d("Video aspect ratio is 5:4, updating pixel aspect ratio to $newPixelWidthHeightRatio")
+            }
+        }
+        videoAspectRatio.postValue(VideoAspect((width * newPixelWidthHeightRatio).toInt(), height))
     }
 
     override fun onRenderedFirstFrame() {

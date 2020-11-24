@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.SharedPreferences
 import androidx.multidex.MultiDexApplication
 import com.android.billingclient.api.Purchase
-import com.crashlytics.android.Crashlytics
 import com.facebook.stetho.Stetho
 import com.google.android.gms.cast.framework.CastOptions
 import com.google.android.gms.cast.framework.OptionsProvider
@@ -12,7 +11,6 @@ import com.google.android.gms.cast.framework.SessionProvider
 import com.google.android.gms.cast.framework.media.CastMediaOptions
 import com.google.android.gms.cast.framework.media.NotificationOptions
 import com.google.firebase.analytics.FirebaseAnalytics
-import io.fabric.sdk.android.Fabric
 import org.tvheadend.data.AppRepository
 import org.tvheadend.data.di.DaggerRepositoryComponent
 import org.tvheadend.data.di.RepositoryModule
@@ -26,14 +24,12 @@ import org.tvheadend.tvhclient.util.MigrateUtils
 import org.tvheadend.tvhclient.util.billing.BillingHandler
 import org.tvheadend.tvhclient.util.billing.BillingManager
 import org.tvheadend.tvhclient.util.billing.BillingUpdatesListener
-import org.tvheadend.tvhclient.util.logging.CrashlyticsTree
 import org.tvheadend.tvhclient.util.logging.DebugTree
 import org.tvheadend.tvhclient.util.logging.FileLoggingTree
 import timber.log.Timber
 import javax.inject.Inject
 
 // TODO snackbar locale changes
-// TODO replace material dialog calls with native ones
 // TODO when a notification is dismissed, it reappears when the recording gets updated,
 //  save the dismissed id in the viewmodel and don't add another notification if the id was already dismissed
 
@@ -77,10 +73,6 @@ class MainApplication : MultiDexApplication(), OptionsProvider, BillingUpdatesLi
 
         fireBaseAnalytics = FirebaseAnalytics.getInstance(this)
 
-        // Initialize firebase crashlytics with the debug-disabled crashlytics.
-        if (!BuildConfig.DEBUG && sharedPreferences.getBoolean("crash_reports_enabled", resources.getBoolean(R.bool.pref_default_crash_reports_enabled))) {
-            Fabric.with(this, Crashlytics())
-        }
         // Initialize the logging. Log to the console only when in debug mode.
         if (BuildConfig.DEBUG || BuildConfig.DEBUG_LOG) {
             Timber.plant(DebugTree())
@@ -88,10 +80,6 @@ class MainApplication : MultiDexApplication(), OptionsProvider, BillingUpdatesLi
         // Log to a file when in release mode and the user has activated the setting
         if (!BuildConfig.DEBUG && sharedPreferences.getBoolean("debug_mode_enabled", resources.getBoolean(R.bool.pref_default_debug_mode_enabled))) {
             Timber.plant(FileLoggingTree(applicationContext))
-        }
-        // Log any non fatal crashes via crashlytics when the app is in release mode and the user has activated the setting
-        if (!BuildConfig.DEBUG && sharedPreferences.getBoolean("crash_reports_enabled", resources.getBoolean(R.bool.pref_default_crash_reports_enabled))) {
-            Timber.plant(CrashlyticsTree())
         }
 
         billingHandler = BillingHandler()

@@ -8,7 +8,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.provider.SearchRecentSuggestions
 import androidx.core.content.FileProvider
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import androidx.preference.*
 import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequest
@@ -45,7 +45,7 @@ class SettingsAdvancedFragment : PreferenceFragmentCompat(), Preference.OnPrefer
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        settingsViewModel = ViewModelProviders.of(activity as SettingsActivity).get(SettingsViewModel::class.java)
+        settingsViewModel = ViewModelProvider(activity as SettingsActivity).get(SettingsViewModel::class.java)
 
         (activity as ToolbarInterface).setTitle(getString(R.string.pref_advanced_settings))
 
@@ -65,7 +65,7 @@ class SettingsAdvancedFragment : PreferenceFragmentCompat(), Preference.OnPrefer
         connectionTimeoutPreference = findPreference("connection_timeout")
         connectionTimeoutPreference?.onPreferenceChangeListener = this
 
-        settingsViewModel.isUnlockedLiveData.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
+        settingsViewModel.isUnlockedLiveData.observe(viewLifecycleOwner, {
             initPreferenceChangeListeners()
         })
     }

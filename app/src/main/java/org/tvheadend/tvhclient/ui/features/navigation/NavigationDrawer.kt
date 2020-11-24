@@ -8,7 +8,6 @@ import androidx.annotation.AttrRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.preference.PreferenceManager
 import com.afollestad.materialdialogs.MaterialDialog
 import com.mikepenz.materialdrawer.AccountHeader
@@ -22,7 +21,6 @@ import com.mikepenz.materialdrawer.model.PrimaryDrawerItem
 import com.mikepenz.materialdrawer.model.ProfileDrawerItem
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem
 import com.mikepenz.materialdrawer.model.interfaces.IProfile
-import org.tvheadend.data.entity.Connection
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.ui.features.channels.ChannelListFragment
 import org.tvheadend.tvhclient.ui.features.dvr.recordings.CompletedRecordingListFragment
@@ -56,16 +54,19 @@ class NavigationDrawer(private val activity: AppCompatActivity,
         createHeader()
         createMenu()
 
-        navigationViewModel.isUnlockedLiveData.observe(activity, Observer { result.removeItem(MENU_UNLOCKER.toLong()) })
-        navigationViewModel.connections.observe(activity, Observer { this.showConnectionsInDrawerHeader(it) })
+        navigationViewModel.isUnlockedLiveData.observe(activity,  { result.removeItem(MENU_UNLOCKER.toLong()) })
+        navigationViewModel.connectionLiveData.observe(activity,  {
+            this.showConnectionsInDrawerHeader()
+            headerResult.setActiveProfile(it.id.toLong())
+        })
 
-        statusViewModel.channelCount.observe(activity, Observer { count -> result.updateBadge(MENU_CHANNELS.toLong(), StringHolder(count.toString())) })
-        statusViewModel.seriesRecordingCount.observe(activity, Observer { count -> result.updateBadge(MENU_SERIES_RECORDINGS.toLong(), StringHolder(count.toString())) })
-        statusViewModel.timerRecordingCount.observe(activity, Observer { count -> result.updateBadge(MENU_TIMER_RECORDINGS.toLong(), StringHolder(count.toString())) })
-        statusViewModel.completedRecordingCount.observe(activity, Observer { count -> result.updateBadge(MENU_COMPLETED_RECORDINGS.toLong(), StringHolder(count.toString())) })
-        statusViewModel.scheduledRecordingCount.observe(activity, Observer { count -> result.updateBadge(MENU_SCHEDULED_RECORDINGS.toLong(), StringHolder(count.toString())) })
-        statusViewModel.failedRecordingCount.observe(activity, Observer { count -> result.updateBadge(MENU_FAILED_RECORDINGS.toLong(), StringHolder(count.toString())) })
-        statusViewModel.removedRecordingCount.observe(activity, Observer { count -> result.updateBadge(MENU_REMOVED_RECORDINGS.toLong(), StringHolder(count.toString())) })
+        statusViewModel.channelCount.observe(activity,  { count -> result.updateBadge(MENU_CHANNELS.toLong(), StringHolder(count.toString())) })
+        statusViewModel.seriesRecordingCount.observe(activity,  { count -> result.updateBadge(MENU_SERIES_RECORDINGS.toLong(), StringHolder(count.toString())) })
+        statusViewModel.timerRecordingCount.observe(activity,  { count -> result.updateBadge(MENU_TIMER_RECORDINGS.toLong(), StringHolder(count.toString())) })
+        statusViewModel.completedRecordingCount.observe(activity,  { count -> result.updateBadge(MENU_COMPLETED_RECORDINGS.toLong(), StringHolder(count.toString())) })
+        statusViewModel.scheduledRecordingCount.observe(activity,  { count -> result.updateBadge(MENU_SCHEDULED_RECORDINGS.toLong(), StringHolder(count.toString())) })
+        statusViewModel.failedRecordingCount.observe(activity,  { count -> result.updateBadge(MENU_FAILED_RECORDINGS.toLong(), StringHolder(count.toString())) })
+        statusViewModel.removedRecordingCount.observe(activity,  { count -> result.updateBadge(MENU_REMOVED_RECORDINGS.toLong(), StringHolder(count.toString())) })
     }
 
     private fun createHeader() {
@@ -171,7 +172,7 @@ class NavigationDrawer(private val activity: AppCompatActivity,
         return typedValue.resourceId
     }
 
-    private fun showConnectionsInDrawerHeader(connections: List<Connection>) {
+    private fun showConnectionsInDrawerHeader() {
         // Remove old profiles from the header
         val profileIdList = ArrayList<Long>()
         headerResult.profiles?.forEach {
@@ -181,8 +182,8 @@ class NavigationDrawer(private val activity: AppCompatActivity,
             headerResult.removeProfileByIdentifier(id)
         }
         // Add the existing connections as new profiles
-        if (connections.isNotEmpty()) {
-            connections.forEach {
+        if (navigationViewModel.connections.isNotEmpty()) {
+            navigationViewModel.connections.forEach {
                 headerResult.addProfiles(
                         ProfileDrawerItem()
                                 .withIdentifier(it.id.toLong())
@@ -192,8 +193,6 @@ class NavigationDrawer(private val activity: AppCompatActivity,
         } else {
             headerResult.addProfiles(ProfileDrawerItem().withName(R.string.no_connection_available))
         }
-
-        headerResult.setActiveProfile(navigationViewModel.connection.id.toLong())
     }
 
     override fun onProfileChanged(view: View?, profile: IProfile<*>, current: Boolean): Boolean {

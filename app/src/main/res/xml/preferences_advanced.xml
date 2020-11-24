@@ -1,24 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-    <PreferenceCategory android:title="@string/pref_crash_reporting_settings">
-        <SwitchPreference
-            android:defaultValue="@bool/pref_default_crash_reports_enabled"
-            android:key="crash_reports_enabled"
-            android:summary="@string/pref_enable_crash_reports_sum"
-            android:title="@string/pref_enable_crash_reports" />
+    <SwitchPreference
+        android:defaultValue="@bool/pref_default_debug_mode_enabled"
+        android:key="debug_mode_enabled"
+        android:summary="@string/pref_debug_mode_sum"
+        android:title="@string/pref_debug_mode" />
 
-        <SwitchPreference
-            android:defaultValue="@bool/pref_default_debug_mode_enabled"
-            android:key="debug_mode_enabled"
-            android:summary="@string/pref_debug_mode_sum"
-            android:title="@string/pref_debug_mode" />
-
-        <Preference
-            android:dependency="debug_mode_enabled"
-            android:key="send_debug_logfile_enabled"
-            android:summary="@string/pref_send_logfile_sum"
-            android:title="@string/pref_send_logfile" />
-    </PreferenceCategory>
+    <Preference
+        android:dependency="debug_mode_enabled"
+        android:key="send_debug_logfile_enabled"
+        android:summary="@string/pref_send_logfile_sum"
+        android:title="@string/pref_send_logfile" />
 
     <PreferenceCategory android:title="@string/pref_connections">
         <EditTextPreference

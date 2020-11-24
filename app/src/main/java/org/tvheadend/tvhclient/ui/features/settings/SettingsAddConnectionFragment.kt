@@ -1,7 +1,6 @@
 package org.tvheadend.tvhclient.ui.features.settings
 
 import android.os.Bundle
-import androidx.lifecycle.Observer
 import org.tvheadend.data.entity.Connection
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.util.extensions.sendSnackbarMessage
@@ -20,7 +19,7 @@ class SettingsAddConnectionFragment : SettingsConnectionBaseFragment() {
             settingsViewModel.connectionToEdit = Connection()
         }
 
-        settingsViewModel.connectionCountLiveData.observe(viewLifecycleOwner, Observer { count ->
+        settingsViewModel.connectionCountLiveData.observe(viewLifecycleOwner,  { count ->
             Timber.d("Received live data, connection count is $count, setting this one as the active")
             activeEnabledPreference.isChecked = (count == 0)
             settingsViewModel.connectionToEdit.isActive = (count == 0)

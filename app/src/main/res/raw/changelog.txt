@@ -1,3 +1,22 @@
+$ 2.4.2
+  % VERSION 2.4.2
+  _ 23.11.2020
+    * Fixed some download issues on Android 10 devices
+    * Some minor internal improvements
+$ 2.4.1
+  % VERSION 2.4.1
+  _ 01.10.2020
+    * Added option in the playback settings to set the aspect ratio to 16:9 for SD channels
+    * Added support for KODI color tags in internal player
+    * Show that no profile was selected when the internal player starts
+    * Use 90% of the screen width for the cover image in the program details screen
+    * Fixed downloading of recordings
+    * Fixed issue where all channels were preselected when creating a series recording
+    * Fixed issue selecting a new active connection from the navigation menu
+    * Fixed issue where the navigation from the menu was not working after an orientation change
+    * Fixed issue where profiles were added multiple times
+    * If the connection credentials are empty, use * as username and password
+    * Some internal improvements
 $ 2.4.0
   % VERSION 2.4.0
   _ 03.08.2020

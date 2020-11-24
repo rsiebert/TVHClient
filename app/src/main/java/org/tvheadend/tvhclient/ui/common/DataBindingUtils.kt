@@ -326,7 +326,7 @@ fun setOptionalDescriptionText(view: TextView, text: String?) {
             builder.append(coloredText)
             builder.append(remainingText)
         }
-        view.setText( builder, TextView.BufferType.SPANNABLE)
+        view.setText(builder, TextView.BufferType.SPANNABLE)
     } else {
         view.text = text
     }
@@ -370,28 +370,27 @@ fun setChannelIcon(view: ImageView, iconUrl: String?, visible: Boolean) {
  * @param view The view where the icon and visibility shall be applied to
  * @param url  The url of the channel icon
  */
-@BindingAdapter("programImage", "programImageVisibility")
-fun setProgramImage(view: ImageView, url: String?, visible: Boolean) {
+@BindingAdapter("programImage", "viewWidth", "programImageVisibility")
+fun setProgramImage(view: ImageView, url: String?, viewWidth: Int = 0, visible: Boolean) {
     if (url.isNullOrEmpty() || !visible) {
         view.gone()
     } else {
 
         val transformation = object : Transformation {
-
             override fun transform(source: Bitmap): Bitmap {
-                val targetWidth = view.width
-                if (targetWidth == 0 || source.height == 0 || source.width == 0) {
-                    Timber.d("Returning source image, target width is $targetWidth, source height is ${source.height}, source width is ${source.width}")
+                Timber.d("Transforming source image with dimensions w:${source.width}, h:${source.height} to fit the view width $viewWidth")
+                if (viewWidth == 0 || source.height == 0 || source.width == 0) {
+                    Timber.d("Returning source image with dimensions w:${source.width}, h:${source.height}, target width is $viewWidth")
                     return source
                 }
                 val aspectRatio = source.height.toDouble() / source.width.toDouble()
-                val targetHeight = (targetWidth * aspectRatio).toInt()
-                val result = Bitmap.createScaledBitmap(source, targetWidth, targetHeight, false)
+                val targetHeight = (viewWidth * aspectRatio).toInt()
+                val result = Bitmap.createScaledBitmap(source, viewWidth, targetHeight, false)
                 if (result != source) {
                     // Same bitmap is returned if sizes are the same
                     source.recycle()
                 }
-                Timber.d("Returning transformed image")
+                Timber.d("Returning transformed image with new dimensions w:${source.width}, h:${source.height}")
                 return result
             }
 

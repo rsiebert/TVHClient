@@ -25,8 +25,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.preference.PreferenceManager
 import com.google.android.gms.cast.framework.*
@@ -45,7 +44,6 @@ import org.tvheadend.tvhclient.ui.features.information.StatusViewModel
 import org.tvheadend.tvhclient.ui.features.navigation.NavigationDrawer
 import org.tvheadend.tvhclient.ui.features.navigation.NavigationViewModel
 import org.tvheadend.tvhclient.ui.features.playback.external.CastSessionManagerListener
-import org.tvheadend.tvhclient.ui.features.playback.internal.PlaybackActivity
 import org.tvheadend.tvhclient.ui.features.programs.ProgramListFragment
 import org.tvheadend.tvhclient.ui.features.startup.StartupFragment
 import org.tvheadend.tvhclient.util.extensions.*
@@ -103,9 +101,9 @@ class MainActivity : AppCompatActivity(), ToolbarInterface, LayoutControlInterfa
         setSupportActionBar(toolbar)
 
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
-        baseViewModel = ViewModelProviders.of(this).get(BaseViewModel::class.java)
-        navigationViewModel = ViewModelProviders.of(this).get(NavigationViewModel::class.java)
-        statusViewModel = ViewModelProviders.of(this).get(StatusViewModel::class.java)
+        baseViewModel = ViewModelProvider(this).get(BaseViewModel::class.java)
+        navigationViewModel = ViewModelProvider(this).get(NavigationViewModel::class.java)
+        statusViewModel = ViewModelProvider(this).get(StatusViewModel::class.java)
 
         snackbarMessageReceiver = SnackbarMessageReceiver(baseViewModel)
         networkStatusReceiver = NetworkStatusReceiver(baseViewModel)
@@ -197,24 +195,33 @@ class MainActivity : AppCompatActivity(), ToolbarInterface, LayoutControlInterfa
             Timber.d("Delayed search timer elapsed, starting search")
         }
 
-        baseViewModel.startupCompleteLiveData.observe(this, Observer { event ->
+        baseViewModel.startupCompleteLiveData.observe(this,  { event ->
             val isComplete = event.getContentIfNotHandled() ?: false
             Timber.d("Received live data, startup complete value changed to $isComplete")
             if (isComplete) {
                 startupIsCompleteObserveMainLiveData()
             }
         })
+
+        // In case an orientation change occurred assume the startup is complete and start observing the
+        // other required live data. Without that navigation and connectivity changes would not work anymore
+        if (savedInstanceState != null) {
+            Timber.d("Orientation change occurred")
+            baseViewModel.setStartupComplete(true)
+        }
     }
 
     private fun startupIsCompleteObserveMainLiveData() {
-        baseViewModel.networkStatusLiveData.observe(this, Observer { event ->
+        Timber.d("Startup complete, observing other required live data")
+
+        baseViewModel.networkStatusLiveData.observe(this,  { event ->
             event.getContentIfNotHandled()?.let {
                 Timber.d("Network status changed to $it")
                 connectToServer(it)
             }
         })
 
-        baseViewModel.connectionToServerAvailableLiveData.observe(this, Observer { isAvailable ->
+        baseViewModel.connectionToServerAvailableLiveData.observe(this,  { isAvailable ->
             Timber.d("Connection to server availability changed to $isAvailable")
             invalidateOptionsMenu()
             statusViewModel.stopDiskSpaceUpdateHandler()
@@ -223,25 +230,25 @@ class MainActivity : AppCompatActivity(), ToolbarInterface, LayoutControlInterfa
             }
         })
 
-        navigationViewModel.getNavigationMenuId().observe(this, Observer { event ->
+        navigationViewModel.getNavigationMenuId().observe(this,  { event ->
             event.getContentIfNotHandled()?.let {
                 Timber.d("Navigation menu id changed to $it")
                 baseViewModel.clearSearchQuery()
                 navigationDrawer.handleDrawerItemSelected(it)
             }
         })
-        statusViewModel.showRunningRecordingCount.observe(this, Observer { show ->
+        statusViewModel.showRunningRecordingCount.observe(this,  { show ->
             showOrCancelNotificationProgramIsCurrentlyBeingRecorded(this, statusViewModel.runningRecordingCount, show)
         })
-        statusViewModel.showLowStorageSpace.observe(this, Observer { show ->
+        statusViewModel.showLowStorageSpace.observe(this,  { show ->
             showOrCancelNotificationDiskSpaceIsLow(this, statusViewModel.availableStorageSpace, show)
         })
-        baseViewModel.snackbarMessageLiveData.observe(this, Observer { event ->
+        baseViewModel.snackbarMessageLiveData.observe(this,  { event ->
             event.getContentIfNotHandled()?.let {
                 this.showSnackbarMessage(it)
             }
         })
-        baseViewModel.isUnlockedLiveData.observe(this, Observer { unlocked ->
+        baseViewModel.isUnlockedLiveData.observe(this,  { unlocked ->
             Timber.d("Received live data, unlocked changed to $unlocked")
             invalidateOptionsMenu()
             miniController.visibleOrGone(isUnlocked && sharedPreferences.getBoolean("casting_minicontroller_enabled", resources.getBoolean(R.bool.pref_default_casting_minicontroller_enabled)))

@@ -96,7 +96,7 @@ class TrackSelectionDialog : DialogFragment() {
         return dialogView
     }
 
-    private inner class FragmentAdapter internal constructor(fragmentManager: FragmentManager?) : FragmentPagerAdapter(fragmentManager!!, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
+    private inner class FragmentAdapter(fragmentManager: FragmentManager?) : FragmentPagerAdapter(fragmentManager!!, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
         override fun getItem(position: Int): Fragment {
             return tabFragments.valueAt(position)
         }
@@ -145,7 +145,7 @@ class TrackSelectionDialog : DialogFragment() {
             val parameters = trackSelector.parameters
             val trackSelectionDialog = TrackSelectionDialog()
 
-            trackSelectionDialog.init(mappedTrackInfo, parameters, DialogInterface.OnClickListener { _: DialogInterface?, _: Int ->
+            trackSelectionDialog.init(mappedTrackInfo, parameters) { _: DialogInterface?, _: Int ->
                 val builder = parameters.buildUpon()
                 for (i in 0 until mappedTrackInfo.rendererCount) {
                     builder.clearSelectionOverrides(i).setRendererDisabled(i, trackSelectionDialog.getIsDisabled(i))
@@ -155,7 +155,7 @@ class TrackSelectionDialog : DialogFragment() {
                     }
                 }
                 trackSelector.setParameters(builder)
-            })
+            }
             return trackSelectionDialog
         }
 
