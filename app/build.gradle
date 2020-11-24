@@ -92,24 +92,6 @@ android {
     }
 }
 
-def build_param = "${build}"
-
-if (build_param != "dev") {
-    // exclude the dev build in the production build
-    android.variantFilter { variant ->
-        if (variant.buildType.name == 'dev') {
-            variant.setIgnore(true)
-        }
-    }
-} else {
-    // exclude all other builds except the dev build
-    android.variantFilter { variant ->
-        if (variant.buildType.name != 'dev') {
-            variant.setIgnore(true)
-        }
-    }
-}
-
 dependencies {
     // Dependency on local binaries
     implementation fileTree(include: ['*.jar'], dir: 'libs')
