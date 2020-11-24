@@ -30,6 +30,10 @@ jobs:
         with:
           java-version: 1.8
 
+      - name: Rename google-services.json file
+        run: |
+          mv app/google-services-github.json app/google-services.json
+  
       # Step: Replace stuff in google services json file
       - uses: jwsi/secret-parser@v1
         with:
