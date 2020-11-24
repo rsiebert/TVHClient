@@ -73,10 +73,9 @@ class MainApplication : MultiDexApplication(), OptionsProvider, BillingUpdatesLi
 
         fireBaseAnalytics = FirebaseAnalytics.getInstance(this)
 
-        // Initialize the logging. Log to the console only when in debug mode.
-        if (BuildConfig.DEBUG || BuildConfig.DEBUG_LOG) {
-            Timber.plant(DebugTree())
-        }
+        // Initialize the logging
+        Timber.plant(DebugTree())
+
         // Log to a file when in release mode and the user has activated the setting
         if (!BuildConfig.DEBUG && sharedPreferences.getBoolean("debug_mode_enabled", resources.getBoolean(R.bool.pref_default_debug_mode_enabled))) {
             Timber.plant(FileLoggingTree(applicationContext))
