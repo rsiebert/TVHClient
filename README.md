@@ -1,7 +1,5 @@
 # TVHClient
 
-[![Build Status](https://travis-ci.org/rsiebert/TVHClient.svg?branch=develop)](https://travis-ci.org/rsiebert/TVHClient)
-
 [![Debug Build Status](https://github.com/rsiebert/TVHClient/workflows/Debug%20Build/badge.svg)](https://github.com/rsiebert/TVHClient/actions)
 
 This application allows you to fully control your TVHeadend server. 
