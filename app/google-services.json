@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "${{ secrets.PROJECT_NUMBER }}",
+    "firebase_url": "https://org-tvheadend-tvhclient.firebaseio.com",
+    "project_id": "org-tvheadend-tvhclient",
+    "storage_bucket": "org-tvheadend-tvhclient.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "${{ secrets.MOBILE_SDK_APP_ID }}",
+        "android_client_info": {
+          "package_name": "org.tvheadend.tvhclient"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "${{ secrets.OAUTH_CLIENT_ID }}",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "${{ secrets.API_KEY }}"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "${{ secrets.OAUTH_CLIENT_ID }}",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
