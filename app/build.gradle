@@ -99,9 +99,6 @@ android {
             ext.enableCrashlytics = false
             ext.alwaysUpdateBuildId = false
         }
-        dev {
-            initWith buildTypes.release
-        }
     }
 }
 
