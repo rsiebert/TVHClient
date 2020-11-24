@@ -33,8 +33,8 @@ jobs:
       # Step: Decode Google services configuration file
       - name: Decode google-services.json
         env:
-          FIREBASE_CONFIG: ${{ secrets.FIREBASE_CONFIG }}
-        run: echo $FIREBASE_CONFIG > app/google-services.json
+          FIREBASE_CONFIG: ${{ secrets.GOOGLE_SERVICES_CONFIG }}
+        run: echo $GOOGLE_SERVICES_CONFIG > app/google-services.json
 
       # Step: Assemble debug apk to send to firebase test lab
       - name: Assemble Debug APK
