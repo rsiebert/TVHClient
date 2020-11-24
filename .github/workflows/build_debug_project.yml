@@ -1,6 +1,6 @@
 # This is a basic workflow to help you get started with Actions
 
-name: CI
+name: Debug Build
 
 # Controls when the action will run. 
 on:
@@ -41,5 +41,5 @@ jobs:
       
       # Step: Assemble debug apk to send to firebase test lab
       - name: Assemble Debug APK
-        run: ./gradlew assembleStagingDebug
+        run: ./gradlew assembleDebug
       
