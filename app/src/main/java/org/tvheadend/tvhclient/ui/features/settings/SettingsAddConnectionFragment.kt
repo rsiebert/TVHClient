@@ -27,16 +27,18 @@ class SettingsAddConnectionFragment : SettingsConnectionBaseFragment() {
     }
 
     override fun save() {
-        val status = connectionValidator.isConnectionInputValid(settingsViewModel.connectionToEdit)
-        if (status == ConnectionValidator.ValidationStatus.SUCCESS) {
-            settingsViewModel.addConnection()
-            activity.let {
-                if (it is RemoveFragmentFromBackstackInterface) {
-                    it.removeFragmentFromBackstack()
+        when (val state = connectionValidator.isConnectionInputValid(settingsViewModel.connectionToEdit)) {
+            is ConnectionValidator.ValidationState.Success -> {
+                settingsViewModel.addConnection()
+                activity.let {
+                    if (it is RemoveFragmentFromBackstackInterface) {
+                        it.removeFragmentFromBackstack()
+                    }
                 }
             }
-        } else {
-            context?.sendSnackbarMessage(getErrorDescription(status))
+            is ConnectionValidator.ValidationState.Error -> {
+                context?.sendSnackbarMessage(getErrorDescription(state.reason))
+            }
         }
     }
 }
