@@ -1,10 +1,13 @@
 package org.tvheadend.tvhclient
 
 import android.os.Build
+import androidx.test.core.app.ApplicationProvider
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotEquals
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
+import org.robolectric.RuntimeEnvironment
 import org.robolectric.annotation.Config
 import org.tvheadend.tvhclient.ui.features.settings.ConnectionValidator
 
@@ -12,71 +15,72 @@ import org.tvheadend.tvhclient.ui.features.settings.ConnectionValidator
 @Config(sdk = [Build.VERSION_CODES.P])
 class ConnectionValidatorTest {
 
+    private val context = RuntimeEnvironment.systemContext;
     private val validator = ConnectionValidator()
 
     @Test
     fun connectionNameIsValid() {
-        assertEquals(ConnectionValidator.ValidationStatus.SUCCESS.toString(),
+        assertEquals(ConnectionValidator.ValidationState.Success().toString(),
                 validator.isConnectionNameValid("ServerName").toString())
     }
 
     @Test
     fun connectionNameIsEmpty() {
-        assertEquals(ConnectionValidator.ValidationStatus.ERROR_EMPTY_NAME.toString(),
+        assertNotEquals(ConnectionValidator.ValidationState.Success().toString(),
                 validator.isConnectionNameValid("").toString())
     }
 
     @Test
     fun connectionNameIsInvalid() {
-        assertEquals(ConnectionValidator.ValidationStatus.ERROR_INVALID_NAME.toString(),
+        assertNotEquals(ConnectionValidator.ValidationState.Success().toString(),
                 validator.isConnectionNameValid("Server/#:Name").toString())
     }
 
     @Test
     fun connectionUrlIsValid() {
-        assertEquals(ConnectionValidator.ValidationStatus.SUCCESS.toString(),
+        assertEquals(ConnectionValidator.ValidationState.Success().toString(),
                 validator.isConnectionUrlValid("http://myserver:8080").toString())
     }
 
     @Test
     fun connectionUrlIsEmpty() {
-        assertEquals(ConnectionValidator.ValidationStatus.ERROR_EMPTY_URL.toString(),
+        assertNotEquals(ConnectionValidator.ValidationState.Success().toString(),
                 validator.isConnectionUrlValid("").toString())
     }
 
     @Test
     fun connectionUrlSchemeMissing() {
-        assertEquals(ConnectionValidator.ValidationStatus.ERROR_MISSING_URL_SCHEME.toString(),
+        assertNotEquals(ConnectionValidator.ValidationState.Success().toString(),
                 validator.isConnectionUrlValid("://myserver:8080").toString())
     }
 
     @Test
     fun connectionUrlSchemeInvalid() {
-        assertEquals(ConnectionValidator.ValidationStatus.ERROR_WRONG_URL_SCHEME.toString(),
+        assertNotEquals(ConnectionValidator.ValidationState.Success().toString(),
                 validator.isConnectionUrlValid("htpp://myserver:8080").toString())
     }
 
     @Test
     fun connectionUrlHostInvalid() {
-        assertEquals(ConnectionValidator.ValidationStatus.ERROR_MISSING_URL_HOST.toString(),
+        assertNotEquals(ConnectionValidator.ValidationState.Success().toString(),
                 validator.isConnectionUrlValid("http://:8080").toString())
     }
 
     @Test
     fun connectionUrlPortInvalid() {
-        assertEquals(ConnectionValidator.ValidationStatus.ERROR_MISSING_URL_PORT.toString(),
+        assertNotEquals(ConnectionValidator.ValidationState.Success().toString(),
                 validator.isConnectionUrlValid("http://myserver").toString())
     }
 
     @Test
     fun connectionMacAddressIsValid() {
-        assertEquals(ConnectionValidator.ValidationStatus.SUCCESS.toString(),
+        assertEquals(ConnectionValidator.ValidationState.Success().toString(),
                 validator.isConnectionWolMacAddressValid("10-62-E5-EC-A5-6A").toString())
     }
 
     @Test
     fun connectionMacAddressIsInvalid() {
-        assertEquals(ConnectionValidator.ValidationStatus.ERROR_INVALID_MAC_ADDRESS.toString(),
+        assertNotEquals(ConnectionValidator.ValidationState.Success().toString(),
                 validator.isConnectionWolMacAddressValid("http://myserver:8080").toString())
     }
 }
