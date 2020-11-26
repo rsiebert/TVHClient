@@ -14,7 +14,7 @@ android {
     defaultConfig {
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 226
+        versionCode 227
         versionName "2.4.2"
 
         // Define the apk naming convention
@@ -22,8 +22,7 @@ android {
         setProperty("archivesBaseName", "${applicationId}-${versionName}-${versionCode}")
 
         // Set the default values for these build config fields
-        buildConfigField "String", "DEVELOPER_EMAIL", "\"\""
-        buildConfigField "String", "PUBLIC_KEY_SALT", "\"\""
+        buildConfigField "String", "DEVELOPER_EMAIL", "\"rsiebert80@gmail.com\""
         buildConfigField "Integer", "BUILD_VERSION", "$versionCode"
 
         // Include the build time and git commit hash in the crash reports
@@ -63,20 +62,6 @@ android {
 
     buildTypes {
         release {
-            // Show all features when true
-            buildConfigField "Boolean", "UNLOCKED", "false"
-            // Enable all logging, otherwise it is suppressed
-            buildConfigField "Boolean", "DEBUG_LOG", "true"
-
-            // The property file must exist in release mode so that the
-            // actual values can be assigned from the property file to these fields.
-            if (tvhHasProperty("developerEmail")) {
-                buildConfigField "String", "DEVELOPER_EMAIL", "\"" + tvhProperty("developerEmail") + "\""
-            }
-            if (tvhHasProperty("publicKeySalt")) {
-                buildConfigField "String", "PUBLIC_KEY_SALT", "\"" + tvhProperty("publicKeySalt") + "\""
-            }
-
             // Reduce the apk file size by enabling proguard
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
 
@@ -99,27 +84,6 @@ android {
             ext.enableCrashlytics = false
             ext.alwaysUpdateBuildId = false
         }
-        dev {
-            initWith buildTypes.release
-        }
-    }
-}
-
-def build_param = "${build}"
-
-if (build_param != "dev") {
-    // exclude the dev build in the production build
-    android.variantFilter { variant ->
-        if (variant.buildType.name == 'dev') {
-            variant.setIgnore(true)
-        }
-    }
-} else {
-    // exclude all other builds except the dev build
-    android.variantFilter { variant ->
-        if (variant.buildType.name != 'dev') {
-            variant.setIgnore(true)
-        }
     }
 }
 
@@ -138,7 +102,7 @@ dependencies {
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
     implementation 'androidx.annotation:annotation:1.1.0'
     implementation 'androidx.preference:preference-ktx:1.1.1'
-    implementation 'androidx.constraintlayout:constraintlayout:2.0.2'
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
     implementation 'androidx.viewpager2:viewpager2:1.0.0'
     implementation 'androidx.work:work-runtime:2.4.0'
     implementation "androidx.lifecycle:lifecycle-extensions:$lifecycle_version"
@@ -154,8 +118,8 @@ dependencies {
     implementation 'com.squareup.picasso:picasso:2.71828'
     implementation 'com.android.billingclient:billing:2.2.1'
     implementation 'com.google.android.gms:play-services-cast-framework:19.0.0'
-    implementation 'com.google.android.datatransport:transport-backend-cct:2.3.1'
-    implementation 'androidx.mediarouter:mediarouter:1.1.0'
+    implementation 'com.google.android.datatransport:transport-backend-cct:2.3.2'
+    implementation 'androidx.mediarouter:mediarouter:1.2.0'
 
     // Kotlin
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
@@ -170,9 +134,9 @@ dependencies {
     implementation 'com.mikepenz:materialdrawer:7.0.0-rc08'
 
     // Firebase Crash Reporting and Performance Monitoring
-    implementation 'com.google.firebase:firebase-analytics-ktx:17.6.0'
-    implementation 'com.google.firebase:firebase-crashlytics:17.2.2'
-    implementation 'com.google.firebase:firebase-perf:19.0.9'
+    implementation 'com.google.firebase:firebase-analytics-ktx:18.0.0'
+    implementation 'com.google.firebase:firebase-crashlytics:17.3.0'
+    implementation 'com.google.firebase:firebase-perf:19.0.10'
 
     // Dependency injection
     implementation "com.google.dagger:dagger:$dagger_version"
