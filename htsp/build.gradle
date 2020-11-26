@@ -7,8 +7,8 @@ android {
     defaultConfig {
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 7
-        versionName "1.1.1"
+        versionCode 8
+        versionName "1.2.0"
     }
 
     buildTypes {
@@ -40,7 +40,7 @@ ext {
 apply from: '../javadoc_library.gradle'
 
 ext {
-    releaseVersion = '1.0.1'
+    releaseVersion = '1.2.0'
     releaseArtifact = 'htsp'
     releaseGroupId = 'org.tvheadend.tvhclient.htsp'
     releaseDescription = 'Android HTSP Library used by TVHClient to communicate with TVHeadend'
