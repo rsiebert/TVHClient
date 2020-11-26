@@ -7,6 +7,8 @@ import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 import org.tvheadend.tvhclient.ui.features.settings.ConnectionValidator
+import org.tvheadend.tvhclient.ui.features.settings.ValidationFailureReason
+import org.tvheadend.tvhclient.ui.features.settings.ValidationResult
 
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [Build.VERSION_CODES.P])
@@ -16,67 +18,67 @@ class ConnectionValidatorTest {
 
     @Test
     fun connectionNameIsValid() {
-        assertEquals(ConnectionValidator.ValidationStatus.SUCCESS.toString(),
+        assertEquals(ValidationResult.Success().toString(),
                 validator.isConnectionNameValid("ServerName").toString())
     }
 
     @Test
     fun connectionNameIsEmpty() {
-        assertEquals(ConnectionValidator.ValidationStatus.ERROR_EMPTY_NAME.toString(),
+        assertEquals(ValidationResult.Failed(ValidationFailureReason.NameEmpty()).toString(),
                 validator.isConnectionNameValid("").toString())
     }
 
     @Test
     fun connectionNameIsInvalid() {
-        assertEquals(ConnectionValidator.ValidationStatus.ERROR_INVALID_NAME.toString(),
+        assertEquals(ValidationResult.Failed(ValidationFailureReason.NameInvalid()).toString(),
                 validator.isConnectionNameValid("Server/#:Name").toString())
     }
 
     @Test
     fun connectionUrlIsValid() {
-        assertEquals(ConnectionValidator.ValidationStatus.SUCCESS.toString(),
+        assertEquals(ValidationResult.Success().toString(),
                 validator.isConnectionUrlValid("http://myserver:8080").toString())
     }
 
     @Test
     fun connectionUrlIsEmpty() {
-        assertEquals(ConnectionValidator.ValidationStatus.ERROR_EMPTY_URL.toString(),
+        assertEquals(ValidationResult.Failed(ValidationFailureReason.UrlEmpty()).toString(),
                 validator.isConnectionUrlValid("").toString())
     }
 
     @Test
     fun connectionUrlSchemeMissing() {
-        assertEquals(ConnectionValidator.ValidationStatus.ERROR_MISSING_URL_SCHEME.toString(),
+        assertEquals(ValidationResult.Failed(ValidationFailureReason.UrlSchemeMissing()).toString(),
                 validator.isConnectionUrlValid("://myserver:8080").toString())
     }
 
     @Test
     fun connectionUrlSchemeInvalid() {
-        assertEquals(ConnectionValidator.ValidationStatus.ERROR_WRONG_URL_SCHEME.toString(),
+        assertEquals(ValidationResult.Failed(ValidationFailureReason.UrlSchemeWrong()).toString(),
                 validator.isConnectionUrlValid("htpp://myserver:8080").toString())
     }
 
     @Test
     fun connectionUrlHostInvalid() {
-        assertEquals(ConnectionValidator.ValidationStatus.ERROR_MISSING_URL_HOST.toString(),
+        assertEquals(ValidationResult.Failed(ValidationFailureReason.UrlHostMissing()).toString(),
                 validator.isConnectionUrlValid("http://:8080").toString())
     }
 
     @Test
     fun connectionUrlPortInvalid() {
-        assertEquals(ConnectionValidator.ValidationStatus.ERROR_MISSING_URL_PORT.toString(),
+        assertEquals(ValidationResult.Failed(ValidationFailureReason.UrlPortMissing()).toString(),
                 validator.isConnectionUrlValid("http://myserver").toString())
     }
 
     @Test
     fun connectionMacAddressIsValid() {
-        assertEquals(ConnectionValidator.ValidationStatus.SUCCESS.toString(),
+        assertEquals(ValidationResult.Success().toString(),
                 validator.isConnectionWolMacAddressValid("10-62-E5-EC-A5-6A").toString())
     }
 
     @Test
     fun connectionMacAddressIsInvalid() {
-        assertEquals(ConnectionValidator.ValidationStatus.ERROR_INVALID_MAC_ADDRESS.toString(),
+        assertEquals(ValidationResult.Failed(ValidationFailureReason.MacAddressInvalid()).toString(),
                 validator.isConnectionWolMacAddressValid("http://myserver:8080").toString())
     }
 }

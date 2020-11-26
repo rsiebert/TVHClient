@@ -132,20 +132,19 @@ abstract class SettingsConnectionBaseFragment : PreferenceFragmentCompat(), Back
 
     protected abstract fun save()
 
-    fun getErrorDescription(status: ConnectionValidator.ValidationStatus): String {
-        return when (status) {
-            ConnectionValidator.ValidationStatus.ERROR_EMPTY_NAME -> context?.resources?.getString(R.string.pref_name_error_invalid) ?: ""
-            ConnectionValidator.ValidationStatus.ERROR_INVALID_NAME -> context?.resources?.getString(R.string.pref_name_error_invalid) ?: ""
-            ConnectionValidator.ValidationStatus.ERROR_EMPTY_URL -> "The url must not be empty"
-            ConnectionValidator.ValidationStatus.ERROR_WRONG_URL_SCHEME -> "The url must start with http:// or https://"
-            ConnectionValidator.ValidationStatus.ERROR_MISSING_URL_SCHEME -> "The url must contain http:// or https://"
-            ConnectionValidator.ValidationStatus.ERROR_MISSING_URL_HOST -> "The url is missing a hostname"
-            ConnectionValidator.ValidationStatus.ERROR_MISSING_URL_PORT -> "The url is missing a port number"
-            ConnectionValidator.ValidationStatus.ERROR_INVALID_PORT_RANGE -> context?.resources?.getString(R.string.pref_port_error_invalid) ?: ""
-            ConnectionValidator.ValidationStatus.ERROR_UNNEEDED_CREDENTIALS -> "The url must not contain a username or password"
-            ConnectionValidator.ValidationStatus.ERROR_EMPTY_MAC_ADDRESS,
-            ConnectionValidator.ValidationStatus.ERROR_INVALID_MAC_ADDRESS -> context?.resources?.getString(R.string.pref_wol_address_invalid) ?: ""
-            ConnectionValidator.ValidationStatus.SUCCESS -> ""
+    fun getErrorDescription(reason: ValidationFailureReason, urlType: String = ""): String {
+        return when (reason) {
+            is ValidationFailureReason.NameEmpty -> context?.resources?.getString(R.string.pref_name_error_invalid) ?: ""
+            is ValidationFailureReason.NameInvalid -> context?.resources?.getString(R.string.pref_name_error_invalid) ?: ""
+            is ValidationFailureReason.UrlEmpty -> "The $urlType url must not be empty"
+            is ValidationFailureReason.UrlSchemeMissing -> "The $urlType url must start with http:// or https://"
+            is ValidationFailureReason.UrlSchemeWrong -> "The $urlType url must contain http:// or https://"
+            is ValidationFailureReason.UrlHostMissing -> "The $urlType url is missing a hostname"
+            is ValidationFailureReason.UrlPortMissing -> "The $urlType url is missing a port number"
+            is ValidationFailureReason.UrlPortInvalid -> context?.resources?.getString(R.string.pref_port_error_invalid) ?: ""
+            is ValidationFailureReason.UrlUnneededCredentials -> "The url must not contain a username or password"
+            is ValidationFailureReason.MacAddressEmpty -> context?.resources?.getString(R.string.pref_wol_address_invalid) ?: ""
+            is ValidationFailureReason.MacAddressInvalid -> context?.resources?.getString(R.string.pref_wol_address_invalid) ?: ""
         }
     }
 
@@ -192,38 +191,44 @@ abstract class SettingsConnectionBaseFragment : PreferenceFragmentCompat(), Back
     }
 
     private fun preferenceNameChanged(value: String) {
-        val status = connectionValidator.isConnectionNameValid(value)
-        if (status == ConnectionValidator.ValidationStatus.SUCCESS) {
-            settingsViewModel.connectionToEdit.name = value
-            namePreference.text = value
-            namePreference.summary = if (value.isEmpty()) getString(R.string.pref_name_sum) else value
-        } else {
-            namePreference.text = settingsViewModel.connectionToEdit.name
-            context?.sendSnackbarMessage(getErrorDescription(status))
+        when (val result = connectionValidator.isConnectionNameValid(value)) {
+            is ValidationResult.Success -> {
+                settingsViewModel.connectionToEdit.name = value
+                namePreference.text = value
+                namePreference.summary = if (value.isEmpty()) getString(R.string.pref_name_sum) else value
+            }
+            is ValidationResult.Failed -> {
+                namePreference.text = settingsViewModel.connectionToEdit.name
+                context?.sendSnackbarMessage(getErrorDescription(result.reason))
+            }
         }
     }
 
     private fun preferenceUrlChanged(value: String) {
-        val status = connectionValidator.isConnectionUrlValid(value)
-        if (status == ConnectionValidator.ValidationStatus.SUCCESS) {
-            settingsViewModel.connectionToEdit.serverUrl = value
-            serverUrlPreference.text = value
-            serverUrlPreference.summary = if (value.isEmpty()) getString(R.string.pref_server_url_sum) else value
-        } else {
-            serverUrlPreference.text = settingsViewModel.connectionToEdit.serverUrl
-            context?.sendSnackbarMessage(getErrorDescription(status))
+        when (val result = connectionValidator.isConnectionUrlValid(value)) {
+            is ValidationResult.Success -> {
+                settingsViewModel.connectionToEdit.serverUrl = value
+                serverUrlPreference.text = value
+                serverUrlPreference.summary = if (value.isEmpty()) getString(R.string.pref_server_url_sum) else value
+            }
+            is ValidationResult.Failed -> {
+                serverUrlPreference.text = settingsViewModel.connectionToEdit.serverUrl
+                context?.sendSnackbarMessage(getErrorDescription(result.reason, "connection"))
+            }
         }
     }
 
     private fun preferenceStreamingUrlChanged(value: String) {
-        val status = connectionValidator.isConnectionUrlValid(value)
-        if (status == ConnectionValidator.ValidationStatus.SUCCESS) {
-            settingsViewModel.connectionToEdit.streamingUrl = value
-            streamingUrlPreference.text = value
-            streamingUrlPreference.summary = if (value.isEmpty()) getString(R.string.pref_streaming_url_sum) else value
-        } else {
-            streamingUrlPreference.text = settingsViewModel.connectionToEdit.streamingUrl
-            context?.sendSnackbarMessage(getErrorDescription(status))
+        when (val result = connectionValidator.isConnectionUrlValid(value)) {
+            is ValidationResult.Success -> {
+                settingsViewModel.connectionToEdit.streamingUrl = value
+                streamingUrlPreference.text = value
+                streamingUrlPreference.summary = if (value.isEmpty()) getString(R.string.pref_streaming_url_sum) else value
+            }
+            is ValidationResult.Failed -> {
+                streamingUrlPreference.text = settingsViewModel.connectionToEdit.streamingUrl
+                context?.sendSnackbarMessage(getErrorDescription(result.reason, "playback"))
+            }
         }
     }
 
@@ -255,28 +260,32 @@ abstract class SettingsConnectionBaseFragment : PreferenceFragmentCompat(), Back
     }
 
     private fun preferenceWolMacAddressChanged(value: String) {
-        val status = connectionValidator.isConnectionWolMacAddressValid(value)
-        if (status == ConnectionValidator.ValidationStatus.SUCCESS) {
-            settingsViewModel.connectionToEdit.wolMacAddress = value
-            wolMacAddressPreference.text = value
-            wolMacAddressPreference.summary = if (value.isEmpty()) getString(R.string.pref_wol_address_sum) else value
-        } else {
-            wolMacAddressPreference.text = settingsViewModel.connectionToEdit.wolMacAddress
-            context?.sendSnackbarMessage(getErrorDescription(status))
+        when (val result = connectionValidator.isConnectionWolMacAddressValid(value)) {
+            is ValidationResult.Success -> {
+                settingsViewModel.connectionToEdit.wolMacAddress = value
+                wolMacAddressPreference.text = value
+                wolMacAddressPreference.summary = if (value.isEmpty()) getString(R.string.pref_wol_address_sum) else value
+            }
+            is ValidationResult.Failed -> {
+                wolMacAddressPreference.text = settingsViewModel.connectionToEdit.wolMacAddress
+                context?.sendSnackbarMessage(getErrorDescription(result.reason))
+            }
         }
     }
 
     private fun preferenceWolPortChanged(value: String) {
         try {
             val port = Integer.parseInt(value)
-            val status = connectionValidator.isConnectionWolPortValid(port)
-            if (status == ConnectionValidator.ValidationStatus.SUCCESS) {
-                settingsViewModel.connectionToEdit.wolPort = port
-                wolPortPreference.text = value
-                wolPortPreference.summary = getString(R.string.pref_wol_port_sum, port)
-            } else {
-                wolPortPreference.text = settingsViewModel.connectionToEdit.wolPort.toString()
-                context?.sendSnackbarMessage(getErrorDescription(status))
+            when (val result = connectionValidator.isConnectionWolPortValid(port)) {
+                is ValidationResult.Success -> {
+                    settingsViewModel.connectionToEdit.wolPort = port
+                    wolPortPreference.text = value
+                    wolPortPreference.summary = getString(R.string.pref_wol_port_sum, port)
+                }
+                is ValidationResult.Failed -> {
+                    wolPortPreference.text = settingsViewModel.connectionToEdit.wolPort.toString()
+                    context?.sendSnackbarMessage(getErrorDescription(result.reason))
+                }
             }
         } catch (e: NumberFormatException) {
             // NOP
