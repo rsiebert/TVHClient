@@ -3,11 +3,24 @@ package org.tvheadend.tvhclient.service
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import org.tvheadend.htsp.ConnectionStateResult
 import java.lang.ref.WeakReference
 
 class SyncStateReceiver(callback: Listener) : BroadcastReceiver() {
 
     private val callback: WeakReference<Listener> = WeakReference(callback)
+
+    sealed class SyncStateResult {
+        data class Initializing(val state: ConnectionStateResult): SyncStateResult()
+        data class Syncing(val state: SyncState): SyncStateResult()
+        data class Failed(val message: String): SyncStateResult()
+    }
+
+    sealed class SyncState {
+        data class Started(val message: String) : SyncState()
+        data class InProgress(val message: String) : SyncState()
+        data class Done(val message: String) : SyncState()
+    }
 
     enum class State {
         IDLE,
@@ -28,7 +41,7 @@ class SyncStateReceiver(callback: Listener) : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         if (callback.get() != null) {
             (callback.get() as Listener).onSyncStateChanged(
-                    intent.getSerializableExtra(STATE) as State,
+                    intent.getSerializableExtra(STATE) as SyncStateResult,
                     intent.getStringExtra(MESSAGE) ?: "",
                     intent.getStringExtra(DETAILS) ?: "")
         }
@@ -39,11 +52,11 @@ class SyncStateReceiver(callback: Listener) : BroadcastReceiver() {
          * Interface method that is called then a local broadcast was received
          * with the connection and synchronization state including any text messages
          *
-         * @param state   The current connection and synchronization state
+         * @param result   The current connection and synchronization state
          * @param message Main text message describing the state
          * @param details Additional text message to describe any details
          */
-        fun onSyncStateChanged(state: State, message: String, details: String)
+        fun onSyncStateChanged(result: SyncStateResult, message: String, details: String)
     }
 
     companion object {

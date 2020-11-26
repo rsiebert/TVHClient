@@ -29,6 +29,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.preference.PreferenceManager
 import com.google.android.gms.cast.framework.*
+import org.tvheadend.htsp.ConnectionStateResult
 import org.tvheadend.tvhclient.BuildConfig
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.service.HtspService
@@ -487,39 +488,56 @@ class MainActivity : AppCompatActivity(), ToolbarInterface, LayoutControlInterfa
         return true
     }
 
-    override fun onSyncStateChanged(state: SyncStateReceiver.State, message: String, details: String) {
-        when (state) {
-            SyncStateReceiver.State.IDLE -> {
-                Timber.d("Connection is idle")
+    override fun onSyncStateChanged(result: SyncStateReceiver.SyncStateResult, message: String, details: String) {
+        when (result) {
+            is SyncStateReceiver.SyncStateResult.Initializing -> {
+                when (result.state) {
+                    is ConnectionStateResult.Idle -> {
+                        Timber.d("Connection is idle")
+                    }
+                    is ConnectionStateResult.Closed -> {
+                        Timber.d("Connection failed or closed")
+                        sendSnackbarMessage(message)
+                        Timber.d("Setting connection to server not available")
+                        baseViewModel.setConnectionToServerAvailable(false)
+                    }
+                    is ConnectionStateResult.Connecting -> {
+                        Timber.d("Connecting")
+                        sendSnackbarMessage(message)
+                    }
+                    is ConnectionStateResult.Connected -> {
+                        Timber.d("Connected")
+                        sendSnackbarMessage(message)
+                        baseViewModel.setConnectionToServerAvailable(true)
+                    }
+                    is ConnectionStateResult.Failed -> {
+                        Timber.d("Connection failed or closed")
+                        sendSnackbarMessage(message)
+                        Timber.d("Setting connection to server not available")
+                        baseViewModel.setConnectionToServerAvailable(false)
+                    }
+                }
             }
-            SyncStateReceiver.State.CLOSED, SyncStateReceiver.State.FAILED -> {
-                Timber.d("Connection failed or closed")
-                sendSnackbarMessage(message)
-                Timber.d("Setting connection to server not available")
-                baseViewModel.setConnectionToServerAvailable(false)
+            is SyncStateReceiver.SyncStateResult.Syncing -> {
+                when (result.state) {
+                    is SyncStateReceiver.SyncState.Started -> {
+                        Timber.d("Sync started, showing progress bar")
+                        syncProgress.visible()
+                        sendSnackbarMessage(message)
+                    }
+                    is SyncStateReceiver.SyncState.InProgress -> {
+                        Timber.d("Sync in progress, updating progress bar")
+                        syncProgress.visible()
+                    }
+                    is SyncStateReceiver.SyncState.Done -> {
+                        Timber.d("Sync done, hiding progress bar")
+                        syncProgress.gone()
+                        sendSnackbarMessage(message)
+                    }
+                }
             }
-            SyncStateReceiver.State.CONNECTING -> {
-                Timber.d("Connecting")
-                sendSnackbarMessage(message)
-            }
-            SyncStateReceiver.State.CONNECTED -> {
-                Timber.d("Connected")
-                sendSnackbarMessage(message)
-                baseViewModel.setConnectionToServerAvailable(true)
-            }
-            SyncStateReceiver.State.SYNC_STARTED -> {
-                Timber.d("Sync started, showing progress bar")
-                syncProgress.visible()
-                sendSnackbarMessage(message)
-            }
-            SyncStateReceiver.State.SYNC_IN_PROGRESS -> {
-                Timber.d("Sync in progress, updating progress bar")
-                syncProgress.visible()
-            }
-            SyncStateReceiver.State.SYNC_DONE -> {
-                Timber.d("Sync done, hiding progress bar")
-                syncProgress.gone()
-                sendSnackbarMessage(message)
+            is SyncStateReceiver.SyncStateResult.Failed -> {
+
             }
         }
     }

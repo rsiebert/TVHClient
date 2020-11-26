@@ -1597,7 +1597,7 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
         })
     }
 
-    private fun sendSyncStateMessage(state: SyncStateReceiver.State, message: String, details: String = "") {
+    private fun sendSyncStateMessage(state: SyncStateReceiver.SyncStateResult, message: String, details: String = "") {
         val intent = Intent(SyncStateReceiver.ACTION)
         intent.putExtra(SyncStateReceiver.STATE, state)
         if (message.isNotEmpty()) {
