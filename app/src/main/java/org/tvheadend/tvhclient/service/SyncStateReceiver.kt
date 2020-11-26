@@ -10,6 +10,7 @@ class SyncStateReceiver(callback: Listener) : BroadcastReceiver() {
     private val callback: WeakReference<Listener> = WeakReference(callback)
 
     enum class State {
+        IDLE,
         CLOSED,
         CONNECTING,
         CONNECTED,

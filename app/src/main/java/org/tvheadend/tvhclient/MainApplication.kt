@@ -73,7 +73,7 @@ class MainApplication : MultiDexApplication(), OptionsProvider, BillingUpdatesLi
 
         fireBaseAnalytics = FirebaseAnalytics.getInstance(this)
 
-        // Initialize the logging
+        // Initialize the logging. Log to the console only when in debug mode.
         Timber.plant(DebugTree())
 
         // Log to a file when in release mode and the user has activated the setting

@@ -7,146 +7,113 @@ import java.util.regex.Pattern
 
 class ConnectionValidator {
 
-    sealed class ValidationState {
-        data class Success(val msg: String = "") : ValidationState()
-        data class Error(val reason: ErrorReasons) : ValidationState()
-    }
-
-    enum class ErrorReasons {
-        ERROR_CONNECTION_URL_EMPTY,
-        ERROR_CONNECTION_URL_MISSING_SCHEME,
-        ERROR_CONNECTION_URL_WRONG_SCHEME,
-        ERROR_CONNECTION_URL_MISSING_HOST,
-        ERROR_CONNECTION_URL_MISSING_PORT,
-        ERROR_PLAYBACK_URL_EMPTY,
-        ERROR_PLAYBACK_URL_MISSING_SCHEME,
-        ERROR_PLAYBACK_URL_WRONG_SCHEME,
-        ERROR_PLAYBACK_URL_MISSING_HOST,
-        ERROR_PLAYBACK_URL_MISSING_PORT,
-        ERROR_INVALID_PORT_RANGE,
-        ERROR_UNNEEDED_CREDENTIALS,
-        ERROR_EMPTY_NAME,
-        ERROR_INVALID_NAME,
-        ERROR_EMPTY_MAC_ADDRESS,
-        ERROR_INVALID_MAC_ADDRESS
-    }
-
-    fun isConnectionInputValid(connection: Connection): ValidationState {
+    fun isConnectionInputValid(connection: Connection): ValidationResult {
         Timber.d("Validating input before saving")
-
-        var state = isConnectionNameValid(connection.name)
-        if (state != ValidationState.Success()) {
-            return state
+        var status = isConnectionNameValid(connection.name)
+        if (status != ValidationResult.Success()) {
+            return status
         }
-        state = isConnectionUrlValid(connection.serverUrl)
-        if (state != ValidationState.Success()) {
-            return state
+        status = isConnectionUrlValid(connection.serverUrl)
+        if (status != ValidationResult.Success()) {
+            return status
         }
-        state = isPlaybackUrlValid(connection.streamingUrl)
-        if (state != ValidationState.Success()) {
-            return state
+        status = isConnectionUrlValid(connection.streamingUrl)
+        if (status != ValidationResult.Success()) {
+            return status
         }
         if (connection.isWolEnabled) {
-            state = isConnectionWolPortValid(connection.wolPort)
-            if (state != ValidationState.Success()) {
-                return state
+            status = isConnectionWolPortValid(connection.wolPort)
+            if (status != ValidationResult.Success()) {
+                return status
             }
-            state = isConnectionWolMacAddressValid(connection.wolMacAddress)
-            if (state != ValidationState.Success()) {
-                return state
+            status = isConnectionWolMacAddressValid(connection.wolMacAddress)
+            if (status != ValidationResult.Success()) {
+                return status
             }
         }
 
-        return ValidationState.Success()
+        return ValidationResult.Success()
     }
 
-    fun isConnectionNameValid(value: String?): ValidationState {
+    fun isConnectionNameValid(value: String?): ValidationResult {
         if (value.isNullOrEmpty()) {
-            return ValidationState.Error(ErrorReasons.ERROR_INVALID_NAME)
+            return ValidationResult.Failed(ValidationFailureReason.NameEmpty())
         }
         // Check if the name contains only valid characters.
         val pattern = Pattern.compile("^[0-9a-zA-Z_\\-.]*$")
         val matcher = pattern.matcher(value)
         return if (matcher.matches()) {
-            ValidationState.Success()
+            ValidationResult.Success()
         } else {
-            ValidationState.Error(ErrorReasons.ERROR_INVALID_NAME)
+            ValidationResult.Failed(ValidationFailureReason.NameInvalid())
         }
     }
 
-    fun isConnectionUrlValid(value: String?): ValidationState {
+    fun isConnectionUrlValid(value: String?): ValidationResult {
         // Do not allow an empty serverUrl
         if (value.isNullOrEmpty()) {
-            return ValidationState.Error(ErrorReasons.ERROR_CONNECTION_URL_EMPTY)
+            return ValidationResult.Failed(ValidationFailureReason.UrlEmpty())
         }
         val uri = Uri.parse(value)
         if (uri.scheme.isNullOrEmpty()) {
-            return ValidationState.Error(ErrorReasons.ERROR_CONNECTION_URL_MISSING_SCHEME)
+            return ValidationResult.Failed(ValidationFailureReason.UrlSchemeMissing())
         }
         if (uri.scheme != "http" && uri.scheme != "https") {
-            return ValidationState.Error(ErrorReasons.ERROR_CONNECTION_URL_WRONG_SCHEME)
+            return ValidationResult.Failed(ValidationFailureReason.UrlSchemeWrong())
         }
         if (uri.host.isNullOrEmpty()) {
-            return ValidationState.Error(ErrorReasons.ERROR_CONNECTION_URL_MISSING_HOST)
+            return ValidationResult.Failed(ValidationFailureReason.UrlHostMissing())
         }
         if (uri.port == -1) {
-            return ValidationState.Error(ErrorReasons.ERROR_CONNECTION_URL_MISSING_PORT)
+            return ValidationResult.Failed(ValidationFailureReason.UrlPortMissing())
         }
         if (uri.port < 0 || uri.port > 65535) {
-            return ValidationState.Error(ErrorReasons.ERROR_INVALID_PORT_RANGE)
+            return ValidationResult.Failed(ValidationFailureReason.UrlPortInvalid())
         }
         if (!uri.userInfo.isNullOrEmpty()) {
-            return ValidationState.Error(ErrorReasons.ERROR_UNNEEDED_CREDENTIALS)
+            return ValidationResult.Failed(ValidationFailureReason.UrlUnneededCredentials())
         }
-        return ValidationState.Success()
+        return ValidationResult.Success()
     }
 
-    fun isPlaybackUrlValid(value: String?): ValidationState {
-        // Do not allow an empty serverUrl
-        if (value.isNullOrEmpty()) {
-            return ValidationState.Error(ErrorReasons.ERROR_PLAYBACK_URL_EMPTY)
-        }
-        val uri = Uri.parse(value)
-        if (uri.scheme.isNullOrEmpty()) {
-            return ValidationState.Error(ErrorReasons.ERROR_PLAYBACK_URL_MISSING_SCHEME)
-        }
-        if (uri.scheme != "http" && uri.scheme != "https") {
-            return ValidationState.Error(ErrorReasons.ERROR_PLAYBACK_URL_WRONG_SCHEME)
-        }
-        if (uri.host.isNullOrEmpty()) {
-            return ValidationState.Error(ErrorReasons.ERROR_PLAYBACK_URL_MISSING_HOST)
-        }
-        if (uri.port == -1) {
-            return ValidationState.Error(ErrorReasons.ERROR_PLAYBACK_URL_MISSING_PORT)
-        }
-        if (uri.port < 0 || uri.port > 65535) {
-            return ValidationState.Error(ErrorReasons.ERROR_INVALID_PORT_RANGE)
-        }
-        if (!uri.userInfo.isNullOrEmpty()) {
-            return ValidationState.Error(ErrorReasons.ERROR_UNNEEDED_CREDENTIALS)
-        }
-        return ValidationState.Success()
-    }
-
-    fun isConnectionWolMacAddressValid(value: String?): ValidationState {
+    fun isConnectionWolMacAddressValid(value: String?): ValidationResult {
         // Do not allow an empty address
         if (value.isNullOrEmpty()) {
-            return ValidationState.Error(ErrorReasons.ERROR_INVALID_MAC_ADDRESS)
+            return ValidationResult.Failed(ValidationFailureReason.MacAddressEmpty())
         }
         // Check if the MAC address is valid
         val pattern = Pattern.compile("([0-9a-fA-F]{2}(?::|-|$)){6}")
         val matcher = pattern.matcher(value)
         return if (matcher.matches()) {
-            ValidationState.Success()
+            ValidationResult.Success()
         } else {
-            return ValidationState.Error(ErrorReasons.ERROR_INVALID_MAC_ADDRESS)
+            ValidationResult.Failed(ValidationFailureReason.MacAddressInvalid())
         }
     }
 
-    fun isConnectionWolPortValid(port: Int): ValidationState {
+    fun isConnectionWolPortValid(port: Int): ValidationResult {
         if (port < 0 || port > 65535) {
-            return ValidationState.Error(ErrorReasons.ERROR_INVALID_PORT_RANGE)
+            return ValidationResult.Failed(ValidationFailureReason.UrlPortInvalid())
         }
-        return ValidationState.Success()
+        return ValidationResult.Success()
     }
+}
+
+sealed class ValidationResult {
+    data class Success(val message: String = ""): ValidationResult()
+    data class Failed(val reason: ValidationFailureReason): ValidationResult()
+}
+
+sealed class ValidationFailureReason {
+    data class NameEmpty(val message: String = ""): ValidationFailureReason()
+    data class NameInvalid(val message: String = ""): ValidationFailureReason()
+    data class UrlEmpty(val message: String = ""): ValidationFailureReason()
+    data class UrlSchemeMissing(val message: String = ""): ValidationFailureReason()
+    data class UrlSchemeWrong(val message: String = ""): ValidationFailureReason()
+    data class UrlHostMissing(val message: String = ""): ValidationFailureReason()
+    data class UrlPortMissing(val message: String = ""): ValidationFailureReason()
+    data class UrlPortInvalid(val message: String = ""): ValidationFailureReason()
+    data class UrlUnneededCredentials(val message: String = ""): ValidationFailureReason()
+    data class MacAddressEmpty(val message: String = ""): ValidationFailureReason()
+    data class MacAddressInvalid(val message: String = ""): ValidationFailureReason()
 }

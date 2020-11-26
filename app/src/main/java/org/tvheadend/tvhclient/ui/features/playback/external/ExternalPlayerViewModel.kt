@@ -53,35 +53,31 @@ class ExternalPlayerViewModel(application: Application) : BaseViewModel(applicat
         }
     }
 
-    override fun onConnectionStateChange(state: HtspConnection.ConnectionState) {
-        when (state) {
-            HtspConnection.ConnectionState.FAILED,
-            HtspConnection.ConnectionState.FAILED_INTERRUPTED,
-            HtspConnection.ConnectionState.FAILED_CONNECTING_TO_SERVER,
-            HtspConnection.ConnectionState.FAILED_UNRESOLVED_ADDRESS,
-            HtspConnection.ConnectionState.FAILED_EXCEPTION_OPENING_SOCKET -> {
+    override fun onAuthenticationStateChange(result: AuthenticationStateResult) {
+        when (result) {
+            is AuthenticationStateResult.Idle -> {}
+            is AuthenticationStateResult.Authenticating -> {
+                Timber.d("Authenticating")
+            }
+            is AuthenticationStateResult.Authenticated -> {
+                Timber.d("Authenticated, starting player")
+                isConnected.postValue(true)
+            }
+            is AuthenticationStateResult.Failed -> {
+                Timber.d("Authorization failed")
+                isConnected.postValue(false)
+            }
+        }
+    }
+
+    override fun onConnectionStateChange(result: ConnectionStateResult) {
+        when (result) {
+            is ConnectionStateResult.Failed -> {
                 Timber.d("Connection failed")
                 isConnected.postValue(false)
             }
             else -> {
                 Timber.d("Connected, initializing or idle")
-            }
-        }
-    }
-
-    override fun onAuthenticationStateChange(state: HtspConnection.AuthenticationState) {
-        when (state) {
-            HtspConnection.AuthenticationState.FAILED,
-            HtspConnection.AuthenticationState.FAILED_BAD_CREDENTIALS -> {
-                Timber.d("Authorization failed")
-                isConnected.postValue(false)
-            }
-            HtspConnection.AuthenticationState.AUTHENTICATED -> {
-                Timber.d("Authenticated, starting player")
-                isConnected.postValue(true)
-            }
-            else -> {
-                Timber.d("Initializing or authenticating")
             }
         }
     }

@@ -27,8 +27,8 @@ class SettingsAddConnectionFragment : SettingsConnectionBaseFragment() {
     }
 
     override fun save() {
-        when (val state = connectionValidator.isConnectionInputValid(settingsViewModel.connectionToEdit)) {
-            is ConnectionValidator.ValidationState.Success -> {
+        when(val result = connectionValidator.isConnectionInputValid(settingsViewModel.connectionToEdit)) {
+            is ValidationResult.Success -> {
                 settingsViewModel.addConnection()
                 activity.let {
                     if (it is RemoveFragmentFromBackstackInterface) {
@@ -36,8 +36,8 @@ class SettingsAddConnectionFragment : SettingsConnectionBaseFragment() {
                     }
                 }
             }
-            is ConnectionValidator.ValidationState.Error -> {
-                context?.sendSnackbarMessage(getErrorDescription(state.reason))
+            is ValidationResult.Failed -> {
+                context?.sendSnackbarMessage(getErrorDescription(result.reason))
             }
         }
     }

@@ -107,14 +107,13 @@ class HtspIntentService : JobIntentService(), HtspConnectionStateListener {
         htspConnection.closeConnection()
     }
 
-    override fun onAuthenticationStateChange(state: HtspConnection.AuthenticationState) {
-        Timber.d("Authentication state changed to $state")
+    override fun onAuthenticationStateChange(result: AuthenticationStateResult) {
         synchronized(authenticationLock) {
             authenticationLock.notify()
         }
     }
 
-    override fun onConnectionStateChange(state: HtspConnection.ConnectionState) {
+    override fun onConnectionStateChange(result: ConnectionStateResult) {
         // NOP
     }
 

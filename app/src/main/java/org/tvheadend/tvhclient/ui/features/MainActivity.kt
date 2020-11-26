@@ -489,6 +489,9 @@ class MainActivity : AppCompatActivity(), ToolbarInterface, LayoutControlInterfa
 
     override fun onSyncStateChanged(state: SyncStateReceiver.State, message: String, details: String) {
         when (state) {
+            SyncStateReceiver.State.IDLE -> {
+                Timber.d("Connection is idle")
+            }
             SyncStateReceiver.State.CLOSED, SyncStateReceiver.State.FAILED -> {
                 Timber.d("Connection failed or closed")
                 sendSnackbarMessage(message)

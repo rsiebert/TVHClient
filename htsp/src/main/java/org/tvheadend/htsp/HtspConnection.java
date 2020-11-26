@@ -60,27 +60,6 @@ public class HtspConnection extends Thread implements HtspConnectionInterface {
         messageListeners.remove(listener);
     }
 
-    public enum AuthenticationState {
-        IDLE,
-        AUTHENTICATING,
-        AUTHENTICATED,
-        FAILED_BAD_CREDENTIALS,
-        FAILED
-    }
-
-    public enum ConnectionState {
-        IDLE,
-        CLOSED,
-        CONNECTING,
-        CONNECTED,
-        CLOSING,
-        FAILED,
-        FAILED_INTERRUPTED,
-        FAILED_UNRESOLVED_ADDRESS,
-        FAILED_CONNECTING_TO_SERVER,
-        FAILED_EXCEPTION_OPENING_SOCKET
-    }
-
     public HtspConnection(HtspConnectionData htspConnectionData,
                           @NonNull HtspConnectionStateListener connectionListener,
                           @Nullable HtspMessageListener messageListener) {
@@ -105,7 +84,7 @@ public class HtspConnection extends Thread implements HtspConnectionInterface {
     @Override
     public void openConnection() {
         Timber.i("Opening HTSP Connection");
-        connectionListener.onConnectionStateChange(ConnectionState.CONNECTING);
+        connectionListener.onConnectionStateChange(new ConnectionStateResult.Connecting());
 
         if (isRunning) {
             return;
@@ -156,23 +135,23 @@ public class HtspConnection extends Thread implements HtspConnectionInterface {
 
         } catch (UnknownHostException e) {
             Timber.d(e, "Unknown host exception while opening HTSP connection");
-            connectionListener.onConnectionStateChange(ConnectionState.FAILED_UNRESOLVED_ADDRESS);
+            connectionListener.onConnectionStateChange(new ConnectionStateResult.Failed(new ConnectionFailureReason.UnresolvedAddress()));
 
         } catch (ClosedByInterruptException e) {
             Timber.d(e, "Failed to open HTSP connection, interrupted");
-            connectionListener.onConnectionStateChange(ConnectionState.FAILED_INTERRUPTED);
+            connectionListener.onConnectionStateChange(new ConnectionStateResult.Failed(new ConnectionFailureReason.Interrupted()));
 
         } catch (UnresolvedAddressException e) {
             Timber.d(e, "Failed to resolve HTSP server address");
-            connectionListener.onConnectionStateChange(ConnectionState.FAILED_UNRESOLVED_ADDRESS);
+            connectionListener.onConnectionStateChange(new ConnectionStateResult.Failed(new ConnectionFailureReason.UnresolvedAddress()));
 
         } catch (UnsupportedAddressTypeException e) {
             Timber.d(e, "Type of HTSP server address is not supported");
-            connectionListener.onConnectionStateChange(ConnectionState.FAILED_UNRESOLVED_ADDRESS);
+            connectionListener.onConnectionStateChange(new ConnectionStateResult.Failed(new ConnectionFailureReason.UnresolvedAddress()));
 
         } catch (IOException e) {
             Timber.d(e, "Caught IOException while opening SocketChannel");
-            connectionListener.onConnectionStateChange(ConnectionState.FAILED_EXCEPTION_OPENING_SOCKET);
+            connectionListener.onConnectionStateChange(new ConnectionStateResult.Failed(new ConnectionFailureReason.SocketException()));
 
         } finally {
             lock.unlock();
@@ -184,7 +163,7 @@ public class HtspConnection extends Thread implements HtspConnectionInterface {
                     signal.wait(htspConnectionData.getConnectionTimeout());
                     if (socketChannel.isConnectionPending()) {
                         Timber.d("Timeout while waiting to connect to server");
-                        connectionListener.onConnectionStateChange(ConnectionState.FAILED);
+                        connectionListener.onConnectionStateChange(new ConnectionStateResult.Failed(new ConnectionFailureReason.Other()));
                         closeConnection();
                     }
                 } catch (InterruptedException e) {
@@ -231,9 +210,9 @@ public class HtspConnection extends Thread implements HtspConnectionInterface {
             isAuthenticated = response.getInteger("noaccess", 0) != 1;
             Timber.d("Authentication was successful: %s", isAuthenticated);
             if (!isAuthenticated) {
-                connectionListener.onAuthenticationStateChange(AuthenticationState.FAILED_BAD_CREDENTIALS);
+                connectionListener.onAuthenticationStateChange(new AuthenticationStateResult.Failed(new AuthenticationFailureReason.BadCredentials()));
             } else {
-                connectionListener.onAuthenticationStateChange(AuthenticationState.AUTHENTICATED);
+                connectionListener.onAuthenticationStateChange(new AuthenticationStateResult.Authenticated());
             }
             synchronized (authMessage) {
                 authMessage.notify();
@@ -276,7 +255,7 @@ public class HtspConnection extends Thread implements HtspConnectionInterface {
                 authMessage.wait(htspConnectionData.getConnectionTimeout());
                 if (!isAuthenticated) {
                     Timber.d("Timeout while waiting for authentication response");
-                    connectionListener.onAuthenticationStateChange(AuthenticationState.FAILED);
+                    connectionListener.onAuthenticationStateChange(new AuthenticationStateResult.Failed(new AuthenticationFailureReason.Other()));
                 }
             } catch (InterruptedException e) {
                 Timber.d(e, "Waiting for authentication message was interrupted.");
@@ -350,18 +329,18 @@ public class HtspConnection extends Thread implements HtspConnectionInterface {
     @Override
     public void run() {
         Timber.d("Starting HTSP connection thread");
-        connectionListener.onConnectionStateChange(ConnectionState.CONNECTED);
+        connectionListener.onConnectionStateChange(new ConnectionStateResult.Connected());
 
         while (isRunning) {
             try {
                 selector.select(5000);
             } catch (IOException e) {
                 Timber.d(e, "Failed to select from socket channel, I/O error occurred");
-                connectionListener.onConnectionStateChange(ConnectionState.FAILED);
+                connectionListener.onConnectionStateChange(new ConnectionStateResult.Failed(new ConnectionFailureReason.Other()));
                 isRunning = false;
             } catch (ClosedSelectorException e) {
                 Timber.d(e, "Failed to select from socket channel, selector is already closed");
-                connectionListener.onConnectionStateChange(ConnectionState.FAILED);
+                connectionListener.onConnectionStateChange(new ConnectionStateResult.Failed(new ConnectionFailureReason.Other()));
                 isRunning = false;
             }
 
@@ -427,7 +406,7 @@ public class HtspConnection extends Thread implements HtspConnectionInterface {
             SocketChannel sChannel = (SocketChannel) selKey.channel();
             int len = sChannel.read(inputByteBuffer);
             if (len < 0) {
-                connectionListener.onConnectionStateChange(ConnectionState.FAILED);
+                connectionListener.onConnectionStateChange(new ConnectionStateResult.Failed(new ConnectionFailureReason.Other()));
                 Timber.d("Could not read data from server");
                 throw new IOException();
             }
