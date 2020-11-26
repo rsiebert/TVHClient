@@ -15,11 +15,10 @@ import com.google.android.exoplayer2.upstream.DefaultAllocator
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
 import com.google.android.exoplayer2.video.VideoListener
 import org.tvheadend.data.entity.Channel
-import org.tvheadend.htsp.HtspConnection
-import org.tvheadend.htsp.HtspConnectionData
-import org.tvheadend.htsp.HtspConnectionStateListener
+import org.tvheadend.htsp.*
 import org.tvheadend.tvhclient.BuildConfig
 import org.tvheadend.tvhclient.R
+import org.tvheadend.tvhclient.service.SyncStateReceiver
 import org.tvheadend.tvhclient.ui.base.BaseViewModel
 import org.tvheadend.tvhclient.ui.features.playback.internal.utils.CustomEventLogger
 import org.tvheadend.tvhclient.ui.features.playback.internal.utils.VideoAspect
@@ -242,35 +241,31 @@ class PlayerViewModel(application: Application) : BaseViewModel(application), Ht
         }
     }
 
-    override fun onConnectionStateChange(state: HtspConnection.ConnectionState) {
-        when (state) {
-            HtspConnection.ConnectionState.FAILED,
-            HtspConnection.ConnectionState.FAILED_INTERRUPTED,
-            HtspConnection.ConnectionState.FAILED_CONNECTING_TO_SERVER,
-            HtspConnection.ConnectionState.FAILED_UNRESOLVED_ADDRESS,
-            HtspConnection.ConnectionState.FAILED_EXCEPTION_OPENING_SOCKET -> {
+    override fun onAuthenticationStateChange(result: AuthenticationStateResult) {
+        when (result) {
+            is AuthenticationStateResult.Idle -> {}
+            is AuthenticationStateResult.Authenticating -> {
+                Timber.d("Authenticating")
+            }
+            is AuthenticationStateResult.Authenticated -> {
+                Timber.d("Authenticated, starting player")
+                isConnected.postValue(true)
+            }
+            is AuthenticationStateResult.Failed -> {
+                Timber.d("Authorization failed")
+                isConnected.postValue(false)
+            }
+        }
+    }
+
+    override fun onConnectionStateChange(result: ConnectionStateResult) {
+        when (result) {
+            is ConnectionStateResult.Failed -> {
                 Timber.d("Connection failed")
                 isConnected.postValue(false)
             }
             else -> {
                 Timber.d("Connected, initializing or idle")
-            }
-        }
-    }
-
-    override fun onAuthenticationStateChange(state: HtspConnection.AuthenticationState) {
-        when (state) {
-            HtspConnection.AuthenticationState.FAILED,
-            HtspConnection.AuthenticationState.FAILED_BAD_CREDENTIALS -> {
-                Timber.d("Authorization failed")
-                isConnected.postValue(false)
-            }
-            HtspConnection.AuthenticationState.AUTHENTICATED -> {
-                Timber.d("Authenticated, starting player")
-                isConnected.postValue(true)
-            }
-            else -> {
-                Timber.d("Initializing or authenticating")
             }
         }
     }

@@ -220,66 +220,37 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
         return null
     }
 
-    override fun onAuthenticationStateChange(state: HtspConnection.AuthenticationState) {
-        Timber.d("Authentication state changed to $state")
-
-        when (state) {
-            HtspConnection.AuthenticationState.FAILED ->
-                sendSyncStateMessage(SyncStateReceiver.State.FAILED,
-                        getString(R.string.authentication_failed), "")
-
-            HtspConnection.AuthenticationState.FAILED_BAD_CREDENTIALS ->
-                sendSyncStateMessage(SyncStateReceiver.State.FAILED,
-                        getString(R.string.authentication_failed),
-                        getString(R.string.bad_username_or_password))
-
-            HtspConnection.AuthenticationState.AUTHENTICATED -> {
-                sendSyncStateMessage(SyncStateReceiver.State.CONNECTED,
-                        getString(R.string.connected_to_server), "")
+    override fun onAuthenticationStateChange(result: AuthenticationStateResult) {
+        when (result) {
+            is AuthenticationStateResult.Idle -> {}
+            is AuthenticationStateResult.Authenticating -> {}
+            is AuthenticationStateResult.Authenticated -> {
+                sendSyncStateMessage(SyncStateReceiver.State.CONNECTED,  getString(R.string.connected_to_server))
                 startAsyncCommunicationWithServer()
             }
-            else -> {
+            is AuthenticationStateResult.Failed -> {
+                when(result.reason) {
+                    is AuthenticationFailureReason.BadCredentials -> sendSyncStateMessage(SyncStateReceiver.State.FAILED, getString(R.string.authentication_failed), getString(R.string.bad_username_or_password))
+                    is AuthenticationFailureReason.Other -> sendSyncStateMessage(SyncStateReceiver.State.FAILED, getString(R.string.authentication_failed))
+                }
             }
         }
     }
 
-    override fun onConnectionStateChange(state: HtspConnection.ConnectionState) {
-        Timber.d("Simple HTSP connection state changed, state is $state")
-
-        when (state) {
-            HtspConnection.ConnectionState.FAILED ->
-                sendSyncStateMessage(SyncStateReceiver.State.FAILED,
-                        getString(R.string.connection_failed), "")
-
-            HtspConnection.ConnectionState.FAILED_CONNECTING_TO_SERVER ->
-                sendSyncStateMessage(SyncStateReceiver.State.FAILED,
-                        getString(R.string.connection_failed),
-                        getString(R.string.failed_connecting_to_server))
-
-            HtspConnection.ConnectionState.FAILED_EXCEPTION_OPENING_SOCKET ->
-                sendSyncStateMessage(SyncStateReceiver.State.FAILED,
-                        getString(R.string.connection_failed),
-                        getString(R.string.failed_opening_socket))
-
-            HtspConnection.ConnectionState.FAILED_INTERRUPTED ->
-                sendSyncStateMessage(SyncStateReceiver.State.FAILED,
-                        getString(R.string.connection_failed),
-                        getString(R.string.failed_during_connection_attempt))
-
-            HtspConnection.ConnectionState.FAILED_UNRESOLVED_ADDRESS ->
-                sendSyncStateMessage(SyncStateReceiver.State.FAILED,
-                        getString(R.string.connection_failed),
-                        getString(R.string.failed_to_resolve_address))
-
-            HtspConnection.ConnectionState.CONNECTING ->
-                sendSyncStateMessage(SyncStateReceiver.State.CONNECTING,
-                        getString(R.string.connecting_to_server), "")
-
-            HtspConnection.ConnectionState.CLOSED ->
-                sendSyncStateMessage(SyncStateReceiver.State.CLOSED,
-                        getString(R.string.connection_closed), "")
-
-            else -> {
+    override fun onConnectionStateChange(result: ConnectionStateResult) {
+        when (result) {
+            is ConnectionStateResult.Idle -> { }
+            is ConnectionStateResult.Closed -> sendSyncStateMessage(SyncStateReceiver.State.CLOSED, getString(R.string.connection_closed))
+            is ConnectionStateResult.Connecting -> sendSyncStateMessage(SyncStateReceiver.State.CONNECTING, getString(R.string.connecting_to_server))
+            is ConnectionStateResult.Connected -> sendSyncStateMessage(SyncStateReceiver.State.CONNECTED, result.message)
+            is ConnectionStateResult.Failed -> {
+                when (result.reason) {
+                    is ConnectionFailureReason.Interrupted -> sendSyncStateMessage(SyncStateReceiver.State.FAILED, getString(R.string.connection_failed), getString(R.string.failed_during_connection_attempt))
+                    is ConnectionFailureReason.UnresolvedAddress -> sendSyncStateMessage(SyncStateReceiver.State.FAILED, getString(R.string.connection_failed), getString(R.string.failed_to_resolve_address))
+                    is ConnectionFailureReason.ConnectingToServer -> sendSyncStateMessage(SyncStateReceiver.State.FAILED, getString(R.string.connection_failed), getString(R.string.failed_connecting_to_server))
+                    is ConnectionFailureReason.SocketException -> sendSyncStateMessage(SyncStateReceiver.State.FAILED, getString(R.string.connection_failed), getString(R.string.failed_opening_socket))
+                    is ConnectionFailureReason.Other -> sendSyncStateMessage(SyncStateReceiver.State.FAILED, getString(R.string.connection_failed), "")
+                }
             }
         }
     }
@@ -1626,13 +1597,13 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
         })
     }
 
-    private fun sendSyncStateMessage(state: SyncStateReceiver.State, message: String, details: String?) {
+    private fun sendSyncStateMessage(state: SyncStateReceiver.State, message: String, details: String = "") {
         val intent = Intent(SyncStateReceiver.ACTION)
         intent.putExtra(SyncStateReceiver.STATE, state)
         if (message.isNotEmpty()) {
             intent.putExtra(SyncStateReceiver.MESSAGE, message)
         }
-        if (!details.isNullOrEmpty()) {
+        if (details.isNotEmpty()) {
             intent.putExtra(SyncStateReceiver.DETAILS, details)
         }
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent)

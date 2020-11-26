@@ -2,7 +2,7 @@ package org.tvheadend.htsp
 
 interface HtspConnectionStateListener {
 
-    fun onAuthenticationStateChange(state: HtspConnection.AuthenticationState)
+    fun onAuthenticationStateChange(result: AuthenticationStateResult)
 
-    fun onConnectionStateChange(state: HtspConnection.ConnectionState)
+    fun onConnectionStateChange(result: ConnectionStateResult)
 }
