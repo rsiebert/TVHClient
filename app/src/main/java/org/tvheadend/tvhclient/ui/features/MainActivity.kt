@@ -29,11 +29,16 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.preference.PreferenceManager
 import com.google.android.gms.cast.framework.*
+import org.tvheadend.htsp.AuthenticationFailureReason
+import org.tvheadend.htsp.AuthenticationStateResult
+import org.tvheadend.htsp.ConnectionFailureReason
 import org.tvheadend.htsp.ConnectionStateResult
 import org.tvheadend.tvhclient.BuildConfig
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.service.HtspService
+import org.tvheadend.tvhclient.service.SyncState
 import org.tvheadend.tvhclient.service.SyncStateReceiver
+import org.tvheadend.tvhclient.service.SyncStateResult
 import org.tvheadend.tvhclient.ui.base.BaseViewModel
 import org.tvheadend.tvhclient.ui.common.*
 import org.tvheadend.tvhclient.ui.common.interfaces.*
@@ -488,56 +493,67 @@ class MainActivity : AppCompatActivity(), ToolbarInterface, LayoutControlInterfa
         return true
     }
 
-    override fun onSyncStateChanged(result: SyncStateReceiver.SyncStateResult, message: String, details: String) {
+    override fun onSyncStateChanged(result: SyncStateResult) {
         when (result) {
-            is SyncStateReceiver.SyncStateResult.Initializing -> {
-                when (result.state) {
+            is SyncStateResult.Connecting -> {
+                when (result.reason) {
                     is ConnectionStateResult.Idle -> {
                         Timber.d("Connection is idle")
                     }
                     is ConnectionStateResult.Closed -> {
                         Timber.d("Connection failed or closed")
-                        sendSnackbarMessage(message)
+                        sendSnackbarMessage(getString(R.string.connection_closed))
                         Timber.d("Setting connection to server not available")
                         baseViewModel.setConnectionToServerAvailable(false)
                     }
                     is ConnectionStateResult.Connecting -> {
                         Timber.d("Connecting")
-                        sendSnackbarMessage(message)
+                        sendSnackbarMessage(getString(R.string.connecting_to_server))
                     }
                     is ConnectionStateResult.Connected -> {
                         Timber.d("Connected")
-                        sendSnackbarMessage(message)
+                        sendSnackbarMessage(getString(R.string.connected_to_server))
                         baseViewModel.setConnectionToServerAvailable(true)
                     }
                     is ConnectionStateResult.Failed -> {
-                        Timber.d("Connection failed or closed")
-                        sendSnackbarMessage(message)
+                        when (result.reason.reason) {
+                            is ConnectionFailureReason.Interrupted -> sendSnackbarMessage(getString(R.string.failed_during_connection_attempt))
+                            is ConnectionFailureReason.UnresolvedAddress -> sendSnackbarMessage(getString(R.string.failed_to_resolve_address))
+                            is ConnectionFailureReason.ConnectingToServer -> sendSnackbarMessage(getString(R.string.failed_connecting_to_server))
+                            is ConnectionFailureReason.SocketException -> sendSnackbarMessage(getString(R.string.failed_opening_socket))
+                            is ConnectionFailureReason.Other -> sendSnackbarMessage(getString(R.string.connection_failed))
+                        }
                         Timber.d("Setting connection to server not available")
                         baseViewModel.setConnectionToServerAvailable(false)
                     }
                 }
             }
-            is SyncStateReceiver.SyncStateResult.Syncing -> {
-                when (result.state) {
-                    is SyncStateReceiver.SyncState.Started -> {
-                        Timber.d("Sync started, showing progress bar")
-                        syncProgress.visible()
-                        sendSnackbarMessage(message)
-                    }
-                    is SyncStateReceiver.SyncState.InProgress -> {
-                        Timber.d("Sync in progress, updating progress bar")
-                        syncProgress.visible()
-                    }
-                    is SyncStateReceiver.SyncState.Done -> {
-                        Timber.d("Sync done, hiding progress bar")
-                        syncProgress.gone()
-                        sendSnackbarMessage(message)
+            is SyncStateResult.Authenticating -> {
+                if (result.reason is AuthenticationStateResult.Failed) {
+                    when (result.reason.reason) {
+                        is AuthenticationFailureReason.BadCredentials -> sendSnackbarMessage(getString(R.string.bad_username_or_password))
+                        is AuthenticationFailureReason.Other -> sendSnackbarMessage(getString(R.string.authentication_failed))
                     }
                 }
             }
-            is SyncStateReceiver.SyncStateResult.Failed -> {
-
+            is SyncStateResult.Syncing -> {
+                when (result.state) {
+                    is SyncState.Started -> {
+                        Timber.d("Sync started, showing progress bar")
+                        syncProgress.visible()
+                        sendSnackbarMessage(getString(R.string.loading_data))
+                    }
+                    is SyncState.InProgress -> {
+                        Timber.d("Sync in progress, updating progress bar")
+                        syncProgress.visible()
+                        //sendSnackbarMessage(getString(R.string.saving_data))
+                    }
+                    is SyncState.Done -> {
+                        Timber.d("Sync done, hiding progress bar")
+                        syncProgress.gone()
+                        sendSnackbarMessage(getString(R.string.loading_data_done))
+                    }
+                }
             }
         }
     }

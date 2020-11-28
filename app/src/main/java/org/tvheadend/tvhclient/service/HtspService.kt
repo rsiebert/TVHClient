@@ -34,7 +34,6 @@ import org.tvheadend.tvhclient.util.worker.DatabaseCleanupWorker
 import org.tvheadend.tvhclient.util.worker.EpgDataUpdateWorker
 import timber.log.Timber
 import java.io.*
-import java.lang.NumberFormatException
 import java.net.URL
 import java.text.SimpleDateFormat
 import java.util.*
@@ -221,38 +220,14 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
     }
 
     override fun onAuthenticationStateChange(result: AuthenticationStateResult) {
-        when (result) {
-            is AuthenticationStateResult.Idle -> {}
-            is AuthenticationStateResult.Authenticating -> {}
-            is AuthenticationStateResult.Authenticated -> {
-                sendSyncStateMessage(SyncStateReceiver.State.CONNECTED,  getString(R.string.connected_to_server))
-                startAsyncCommunicationWithServer()
-            }
-            is AuthenticationStateResult.Failed -> {
-                when(result.reason) {
-                    is AuthenticationFailureReason.BadCredentials -> sendSyncStateMessage(SyncStateReceiver.State.FAILED, getString(R.string.authentication_failed), getString(R.string.bad_username_or_password))
-                    is AuthenticationFailureReason.Other -> sendSyncStateMessage(SyncStateReceiver.State.FAILED, getString(R.string.authentication_failed))
-                }
-            }
+        SyncStateResult.Authenticating(result)
+        if (result is AuthenticationStateResult.Authenticated) {
+            startAsyncCommunicationWithServer()
         }
     }
 
     override fun onConnectionStateChange(result: ConnectionStateResult) {
-        when (result) {
-            is ConnectionStateResult.Idle -> { }
-            is ConnectionStateResult.Closed -> sendSyncStateMessage(SyncStateReceiver.State.CLOSED, getString(R.string.connection_closed))
-            is ConnectionStateResult.Connecting -> sendSyncStateMessage(SyncStateReceiver.State.CONNECTING, getString(R.string.connecting_to_server))
-            is ConnectionStateResult.Connected -> sendSyncStateMessage(SyncStateReceiver.State.CONNECTED, result.message)
-            is ConnectionStateResult.Failed -> {
-                when (result.reason) {
-                    is ConnectionFailureReason.Interrupted -> sendSyncStateMessage(SyncStateReceiver.State.FAILED, getString(R.string.connection_failed), getString(R.string.failed_during_connection_attempt))
-                    is ConnectionFailureReason.UnresolvedAddress -> sendSyncStateMessage(SyncStateReceiver.State.FAILED, getString(R.string.connection_failed), getString(R.string.failed_to_resolve_address))
-                    is ConnectionFailureReason.ConnectingToServer -> sendSyncStateMessage(SyncStateReceiver.State.FAILED, getString(R.string.connection_failed), getString(R.string.failed_connecting_to_server))
-                    is ConnectionFailureReason.SocketException -> sendSyncStateMessage(SyncStateReceiver.State.FAILED, getString(R.string.connection_failed), getString(R.string.failed_opening_socket))
-                    is ConnectionFailureReason.Other -> sendSyncStateMessage(SyncStateReceiver.State.FAILED, getString(R.string.connection_failed), "")
-                }
-            }
-        }
+        sendSyncStateMessage(SyncStateResult.Connecting(result))
     }
 
     private fun startAsyncCommunicationWithServer() {
@@ -280,8 +255,7 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
         // Send the first sync message to any broadcast listeners
         if (syncRequired || syncEventsRequired) {
             Timber.d("Sending status that sync has started")
-            sendSyncStateMessage(SyncStateReceiver.State.SYNC_STARTED,
-                    getString(R.string.loading_data), "")
+            sendSyncStateMessage(SyncStateResult.Syncing(SyncState.Started()))
         }
         if (syncEventsRequired) {
             Timber.d("Enabling requesting of epg data")
@@ -305,8 +279,7 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
         Timber.d("Received initial sync data from server")
 
         if (syncRequired) {
-            sendSyncStateMessage(SyncStateReceiver.State.SYNC_IN_PROGRESS,
-                    getString(R.string.saving_data), "")
+            sendSyncStateMessage(SyncStateResult.Syncing(SyncState.InProgress()))
         }
 
         // Save the channels and tags only during a forced sync.
@@ -348,8 +321,7 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
         // The initial sync is considered to be done at this point.
         // Send the message to the listeners that the sync is done
         if (syncRequired || syncEventsRequired) {
-            sendSyncStateMessage(SyncStateReceiver.State.SYNC_DONE,
-                    getString(R.string.loading_data_done), "")
+            sendSyncStateMessage(SyncStateResult.Syncing(SyncState.Done()))
         }
 
         syncRequired = false
@@ -590,9 +562,7 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
         pendingChannelTagOps.add(updatedTag)
 
         if (syncRequired && pendingChannelTagOps.size % 10 == 0) {
-            sendSyncStateMessage(SyncStateReceiver.State.SYNC_IN_PROGRESS,
-                    getString(R.string.receiving_data),
-                    "Received ${pendingChannelTagOps.size} channel tags")
+            sendSyncStateMessage(SyncStateResult.Syncing(SyncState.InProgress("Received ${pendingChannelTagOps.size} channel tags")))
         }
     }
 
@@ -633,9 +603,7 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
         pendingChannelOps.add(channel)
 
         if (syncRequired && pendingChannelOps.size % 25 == 0) {
-            sendSyncStateMessage(SyncStateReceiver.State.SYNC_IN_PROGRESS,
-                    getString(R.string.receiving_data),
-                    "Received ${pendingChannelOps.size} channels")
+            sendSyncStateMessage(SyncStateResult.Syncing(SyncState.InProgress("Received ${pendingChannelOps.size} channels")))
         }
     }
 
@@ -688,9 +656,7 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
 
             if (syncRequired && pendingRecordingOps.size % 25 == 0) {
                 Timber.d("Sync is running, received ${pendingRecordingOps.size} recordings")
-                sendSyncStateMessage(SyncStateReceiver.State.SYNC_IN_PROGRESS,
-                        getString(R.string.receiving_data),
-                        "Received ${pendingRecordingOps.size} recordings")
+                sendSyncStateMessage(SyncStateResult.Syncing(SyncState.InProgress("Received ${pendingRecordingOps.size} recordings")))
             }
         } else {
             appRepository.recordingData.addItem(recording)
@@ -843,9 +809,7 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
 
             if (syncRequired && pendingEventOps.size % 50 == 0) {
                 Timber.d("Sync is running, received ${pendingEventOps.size} program guide events")
-                sendSyncStateMessage(SyncStateReceiver.State.SYNC_IN_PROGRESS,
-                        getString(R.string.receiving_data),
-                        "Received ${pendingEventOps.size} program guide events")
+                sendSyncStateMessage(SyncStateResult.Syncing(SyncState.InProgress("Received ${pendingEventOps.size} program guide events")))
             }
         } else {
             Timber.d("Adding event ${program.title}")
@@ -1597,7 +1561,8 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
         })
     }
 
-    private fun sendSyncStateMessage(state: SyncStateReceiver.SyncStateResult, message: String, details: String = "") {
+    private fun sendSyncStateMessage(state: SyncStateResult, message: String = "", details: String = "") {
+
         val intent = Intent(SyncStateReceiver.ACTION)
         intent.putExtra(SyncStateReceiver.STATE, state)
         if (message.isNotEmpty()) {
