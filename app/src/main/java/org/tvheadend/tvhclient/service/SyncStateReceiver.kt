@@ -3,35 +3,33 @@ package org.tvheadend.tvhclient.service
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.os.Parcelable
+import kotlinx.android.parcel.Parcelize
+import org.tvheadend.htsp.AuthenticationStateResult
 import org.tvheadend.htsp.ConnectionStateResult
 import java.lang.ref.WeakReference
+
+sealed class SyncStateResult : Parcelable {
+    @Parcelize
+    data class Connecting(val reason: ConnectionStateResult): SyncStateResult(), Parcelable
+    @Parcelize
+    data class Syncing(val state: SyncState): SyncStateResult(), Parcelable
+    @Parcelize
+    data class Authenticating(val reason: AuthenticationStateResult): SyncStateResult(), Parcelable
+}
+
+sealed class SyncState : Parcelable {
+    @Parcelize
+    data class Started(val message: String = "") : SyncState(), Parcelable
+    @Parcelize
+    data class InProgress(val message: String = "") : SyncState(), Parcelable
+    @Parcelize
+    data class Done(val message: String = "") : SyncState(), Parcelable
+}
 
 class SyncStateReceiver(callback: Listener) : BroadcastReceiver() {
 
     private val callback: WeakReference<Listener> = WeakReference(callback)
-
-    sealed class SyncStateResult {
-        data class Initializing(val state: ConnectionStateResult): SyncStateResult()
-        data class Syncing(val state: SyncState): SyncStateResult()
-        data class Failed(val message: String): SyncStateResult()
-    }
-
-    sealed class SyncState {
-        data class Started(val message: String) : SyncState()
-        data class InProgress(val message: String) : SyncState()
-        data class Done(val message: String) : SyncState()
-    }
-
-    enum class State {
-        IDLE,
-        CLOSED,
-        CONNECTING,
-        CONNECTED,
-        SYNC_STARTED,
-        SYNC_IN_PROGRESS,
-        SYNC_DONE,
-        FAILED
-    }
 
     /**
      * This receiver handles the data that was given from an intent via the LocalBroadcastManager.
@@ -41,9 +39,7 @@ class SyncStateReceiver(callback: Listener) : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         if (callback.get() != null) {
             (callback.get() as Listener).onSyncStateChanged(
-                    intent.getSerializableExtra(STATE) as SyncStateResult,
-                    intent.getStringExtra(MESSAGE) ?: "",
-                    intent.getStringExtra(DETAILS) ?: "")
+                    intent.getParcelableExtra(STATE) as SyncStateResult)
         }
     }
 
@@ -56,7 +52,7 @@ class SyncStateReceiver(callback: Listener) : BroadcastReceiver() {
          * @param message Main text message describing the state
          * @param details Additional text message to describe any details
          */
-        fun onSyncStateChanged(result: SyncStateResult, message: String, details: String)
+        fun onSyncStateChanged(result: SyncStateResult)
     }
 
     companion object {
