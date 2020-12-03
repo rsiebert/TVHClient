@@ -4,8 +4,6 @@ import android.os.Bundle
 import android.view.*
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
-import kotlinx.android.synthetic.main.details_fragment_header.*
-import kotlinx.android.synthetic.main.timer_recording_details_fragment.*
 import org.tvheadend.data.entity.TimerRecording
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.databinding.TimerRecordingDetailsFragmentBinding
@@ -20,11 +18,11 @@ class TimerRecordingDetailsFragment : BaseFragment(), RecordingRemovedInterface,
 
     private lateinit var timerRecordingViewModel: TimerRecordingViewModel
     private var recording: TimerRecording? = null
-    private lateinit var itemBinding: TimerRecordingDetailsFragmentBinding
+    private lateinit var binding: TimerRecordingDetailsFragmentBinding
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        itemBinding = DataBindingUtil.inflate(inflater, R.layout.timer_recording_details_fragment, container, false)
-        return itemBinding.root
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        binding = DataBindingUtil.inflate(inflater, R.layout.timer_recording_details_fragment, container, false)
+        return binding.root
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -48,17 +46,17 @@ class TimerRecordingDetailsFragment : BaseFragment(), RecordingRemovedInterface,
 
     private fun showRecordingDetails() {
         if (recording != null) {
-            itemBinding.recording = recording
-            itemBinding.htspVersion = htspVersion
-            itemBinding.isDualPane = isDualPane
+            binding.recording = recording
+            binding.htspVersion = htspVersion
+            binding.isDualPane = isDualPane
             // The toolbar is hidden as a default to prevent pressing any icons if no recording
             // has been loaded yet. The toolbar is shown here because a recording was loaded
-            nested_toolbar.visible()
+            binding.nestedToolbar.visible()
             activity?.invalidateOptionsMenu()
         } else {
-            scrollview.gone()
-            status.text = getString(R.string.error_loading_recording_details)
-            status.visible()
+            binding.scrollview.gone()
+            binding.status.text = getString(R.string.error_loading_recording_details)
+            binding.status.visible()
         }
     }
 
@@ -66,15 +64,15 @@ class TimerRecordingDetailsFragment : BaseFragment(), RecordingRemovedInterface,
         val recording = this.recording ?: return
         preparePopupOrToolbarSearchMenu(menu, recording.title, isConnectionToServerAvailable)
 
-        nested_toolbar.menu.findItem(R.id.menu_edit_recording)?.isVisible = true
-        nested_toolbar.menu.findItem(R.id.menu_remove_recording)?.isVisible = true
+        binding.nestedToolbar.menu.findItem(R.id.menu_edit_recording)?.isVisible = true
+        binding.nestedToolbar.menu.findItem(R.id.menu_remove_recording)?.isVisible = true
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
         inflater.inflate(R.menu.external_search_options_menu, menu)
-        nested_toolbar.inflateMenu(R.menu.recording_details_toolbar_menu)
-        nested_toolbar.setOnMenuItemClickListener { this.onOptionsItemSelected(it) }
+        binding.nestedToolbar.inflateMenu(R.menu.recording_details_toolbar_menu)
+        binding.nestedToolbar.setOnMenuItemClickListener { this.onOptionsItemSelected(it) }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
