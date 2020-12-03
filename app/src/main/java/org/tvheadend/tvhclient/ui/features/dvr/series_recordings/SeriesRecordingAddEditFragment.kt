@@ -6,13 +6,13 @@ import androidx.core.view.forEach
 import androidx.lifecycle.ViewModelProvider
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.list.listItemsSingleChoice
-import kotlinx.android.synthetic.main.series_recording_add_edit_fragment.*
 import org.tvheadend.data.entity.Channel
 import org.tvheadend.data.entity.ServerProfile
 import org.tvheadend.tvhclient.R
+import org.tvheadend.tvhclient.databinding.SeriesRecordingAddEditFragmentBinding
 import org.tvheadend.tvhclient.ui.base.BaseFragment
-import org.tvheadend.tvhclient.ui.common.interfaces.HideNavigationDrawerInterface
 import org.tvheadend.tvhclient.ui.common.interfaces.BackPressedInterface
+import org.tvheadend.tvhclient.ui.common.interfaces.HideNavigationDrawerInterface
 import org.tvheadend.tvhclient.ui.common.interfaces.LayoutControlInterface
 import org.tvheadend.tvhclient.ui.features.dvr.*
 import org.tvheadend.tvhclient.util.extensions.afterTextChanged
@@ -22,12 +22,15 @@ import timber.log.Timber
 
 class SeriesRecordingAddEditFragment : BaseFragment(), BackPressedInterface, RecordingConfigSelectedListener, DatePickerFragment.Listener, TimePickerFragment.Listener, HideNavigationDrawerInterface {
 
+    private lateinit var binding: SeriesRecordingAddEditFragmentBinding
     private lateinit var seriesRecordingViewModel: SeriesRecordingViewModel
     private lateinit var recordingProfilesList: Array<String>
     private var profile: ServerProfile? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.series_recording_add_edit_fragment, container, false)
+        //return inflater.inflate(R.layout.series_recording_add_edit_fragment, container, false)
+        binding = SeriesRecordingAddEditFragmentBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -58,122 +61,122 @@ class SeriesRecordingAddEditFragment : BaseFragment(), BackPressedInterface, Rec
     private fun updateUI() {
         val ctx = context ?: return
 
-        is_enabled.visibleOrGone(htspVersion >= 19)
-        is_enabled.isChecked = seriesRecordingViewModel.recording.isEnabled
+        binding.isEnabled.visibleOrGone(htspVersion >= 19)
+        binding.isEnabled.isChecked = seriesRecordingViewModel.recording.isEnabled
 
-        title.setText(seriesRecordingViewModel.recording.title)
-        name.setText(seriesRecordingViewModel.recording.name)
+        binding.title.setText(seriesRecordingViewModel.recording.title)
+        binding.name.setText(seriesRecordingViewModel.recording.name)
 
-        directory_label.visibleOrGone(htspVersion >= 19)
-        directory.visibleOrGone(htspVersion >= 19)
-        directory.setText(seriesRecordingViewModel.recording.directory)
+        binding.directoryLabel.visibleOrGone(htspVersion >= 19)
+        binding.directory.visibleOrGone(htspVersion >= 19)
+        binding.directory.setText(seriesRecordingViewModel.recording.directory)
 
-        channel_name.text = seriesRecordingViewModel.recording.channelName
+        binding.channelName.text = seriesRecordingViewModel.recording.channelName
                 ?: getString(R.string.all_channels)
-        channel_name.setOnClickListener {
+        binding.channelName.setOnClickListener {
             // Determine if the server supports recording on all channels
             val allowRecordingOnAllChannels = htspVersion >= 21
             handleChannelListSelection(ctx, seriesRecordingViewModel.getChannelList(), allowRecordingOnAllChannels, this@SeriesRecordingAddEditFragment)
         }
 
-        priority.text = getPriorityName(ctx, seriesRecordingViewModel.recording.priority)
-        priority.setOnClickListener {
+        binding.priority.text = getPriorityName(ctx, seriesRecordingViewModel.recording.priority)
+        binding.priority.setOnClickListener {
             handlePrioritySelection(ctx, seriesRecordingViewModel.recording.priority, this@SeriesRecordingAddEditFragment)
         }
 
-        dvr_config.visibleOrGone(recordingProfilesList.isNotEmpty())
-        dvr_config_label.visibleOrGone(recordingProfilesList.isNotEmpty())
+        binding.dvrConfig.visibleOrGone(recordingProfilesList.isNotEmpty())
+        binding.dvrConfigLabel.visibleOrGone(recordingProfilesList.isNotEmpty())
 
         if (recordingProfilesList.isNotEmpty()) {
-            dvr_config.text = recordingProfilesList[seriesRecordingViewModel.recordingProfileNameId]
-            dvr_config.setOnClickListener {
+            binding.dvrConfig.text = recordingProfilesList[seriesRecordingViewModel.recordingProfileNameId]
+            binding.dvrConfig.setOnClickListener {
                 handleRecordingProfileSelection(ctx, recordingProfilesList, seriesRecordingViewModel.recordingProfileNameId, this)
             }
         }
 
-        start_time.text = getTimeStringFromTimeInMillis(seriesRecordingViewModel.startTimeInMillis)
-        start_time.setOnClickListener {
+        binding.startTime.text = getTimeStringFromTimeInMillis(seriesRecordingViewModel.startTimeInMillis)
+        binding.startTime.setOnClickListener {
             handleTimeSelection(activity, seriesRecordingViewModel.startTimeInMillis, this@SeriesRecordingAddEditFragment, "startTime")
         }
 
-        start_window_time.text = getTimeStringFromTimeInMillis(seriesRecordingViewModel.startWindowTimeInMillis)
-        start_window_time.setOnClickListener {
+        binding.startWindowTime.text = getTimeStringFromTimeInMillis(seriesRecordingViewModel.startWindowTimeInMillis)
+        binding.startWindowTime.setOnClickListener {
             handleTimeSelection(activity, seriesRecordingViewModel.startWindowTimeInMillis, this@SeriesRecordingAddEditFragment, "startWindowTime")
         }
 
-        start_extra.setText(seriesRecordingViewModel.recording.startExtra.toString())
-        stop_extra.setText(seriesRecordingViewModel.recording.stopExtra.toString())
+        binding.startExtra.setText(seriesRecordingViewModel.recording.startExtra.toString())
+        binding.stopExtra.setText(seriesRecordingViewModel.recording.stopExtra.toString())
 
-        days_of_week.text = getSelectedDaysOfWeekText(ctx, seriesRecordingViewModel.recording.daysOfWeek)
-        days_of_week.setOnClickListener {
+        binding.daysOfWeek.text = getSelectedDaysOfWeekText(ctx, seriesRecordingViewModel.recording.daysOfWeek)
+        binding.daysOfWeek.setOnClickListener {
             handleDayOfWeekSelection(ctx, seriesRecordingViewModel.recording.daysOfWeek, this@SeriesRecordingAddEditFragment)
         }
 
-        minimum_duration.setText(if (seriesRecordingViewModel.recording.minDuration > 0) (seriesRecordingViewModel.recording.minDuration / 60).toString() else getString(R.string.duration_sum))
-        maximum_duration.setText(if (seriesRecordingViewModel.recording.maxDuration > 0) (seriesRecordingViewModel.recording.maxDuration / 60).toString() else getString(R.string.duration_sum))
+        binding.minimumDuration.setText(if (seriesRecordingViewModel.recording.minDuration > 0) (seriesRecordingViewModel.recording.minDuration / 60).toString() else getString(R.string.duration_sum))
+        binding.maximumDuration.setText(if (seriesRecordingViewModel.recording.maxDuration > 0) (seriesRecordingViewModel.recording.maxDuration / 60).toString() else getString(R.string.duration_sum))
 
-        time_enabled.isChecked = seriesRecordingViewModel.isTimeEnabled
-        handleTimeEnabledClick(time_enabled.isChecked)
+        binding.timeEnabled.isChecked = seriesRecordingViewModel.isTimeEnabled
+        handleTimeEnabledClick(binding.timeEnabled.isChecked)
 
-        time_enabled.setOnClickListener {
-            handleTimeEnabledClick(time_enabled.isChecked)
+        binding.timeEnabled.setOnClickListener {
+            handleTimeEnabledClick(binding.timeEnabled.isChecked)
         }
 
-        duplicate_detection_label.visibleOrGone(htspVersion >= 20)
-        duplicate_detection.visibleOrGone(htspVersion >= 20)
-        duplicate_detection.text = seriesRecordingViewModel.duplicateDetectionList[seriesRecordingViewModel.recording.dupDetect]
+        binding.duplicateDetectionLabel.visibleOrGone(htspVersion >= 20)
+        binding.duplicateDetection.visibleOrGone(htspVersion >= 20)
+        binding.duplicateDetection.text = seriesRecordingViewModel.duplicateDetectionList[seriesRecordingViewModel.recording.dupDetect]
 
-        duplicate_detection.setOnClickListener {
+        binding.duplicateDetection.setOnClickListener {
             handleDuplicateDetectionSelection(seriesRecordingViewModel.duplicateDetectionList, seriesRecordingViewModel.recording.dupDetect)
         }
 
-        title.afterTextChanged { seriesRecordingViewModel.recording.title = it }
-        name.afterTextChanged { seriesRecordingViewModel.recording.name = it }
-        directory.afterTextChanged { seriesRecordingViewModel.recording.directory = it }
-        minimum_duration.afterTextChanged {
+        binding.title.afterTextChanged { seriesRecordingViewModel.recording.title = it }
+        binding.name.afterTextChanged { seriesRecordingViewModel.recording.name = it }
+        binding.directory.afterTextChanged { seriesRecordingViewModel.recording.directory = it }
+        binding.minimumDuration.afterTextChanged {
             try {
                 seriesRecordingViewModel.recording.minDuration = Integer.valueOf(it)
             } catch (ex: NumberFormatException) {
                 seriesRecordingViewModel.recording.minDuration = 0
             }
         }
-        maximum_duration.afterTextChanged {
+        binding.maximumDuration.afterTextChanged {
             try {
                 seriesRecordingViewModel.recording.maxDuration = Integer.valueOf(it)
             } catch (ex: NumberFormatException) {
                 seriesRecordingViewModel.recording.maxDuration = 0
             }
         }
-        start_extra.afterTextChanged {
+        binding.startExtra.afterTextChanged {
             try {
                 seriesRecordingViewModel.recording.startExtra = java.lang.Long.valueOf(it)
             } catch (ex: NumberFormatException) {
                 seriesRecordingViewModel.recording.startExtra = 2
             }
         }
-        stop_extra.afterTextChanged {
+        binding.stopExtra.afterTextChanged {
             try {
                 seriesRecordingViewModel.recording.stopExtra = java.lang.Long.valueOf(it)
             } catch (ex: NumberFormatException) {
                 seriesRecordingViewModel.recording.stopExtra = 2
             }
         }
-        is_enabled.setOnCheckedChangeListener { _, isChecked ->
+        binding.isEnabled.setOnCheckedChangeListener { _, isChecked ->
             seriesRecordingViewModel.recording.isEnabled = isChecked
         }
     }
 
     private fun handleTimeEnabledClick(checked: Boolean) {
-        Timber.d("Setting time enabled ${time_enabled.isChecked}")
+        Timber.d("Setting time enabled ${binding.timeEnabled.isChecked}")
         seriesRecordingViewModel.isTimeEnabled = checked
 
-        start_time_label.visibleOrGone(checked)
-        start_time.visibleOrGone(checked)
-        start_time.isEnabled = checked
+        binding.startTimeLabel.visibleOrGone(checked)
+        binding.startTime.visibleOrGone(checked)
+        binding.startTime.isEnabled = checked
 
-        start_window_time_label.visibleOrGone(checked)
-        start_window_time.visibleOrGone(checked)
-        start_window_time.isEnabled = checked
+        binding.startWindowTimeLabel.visibleOrGone(checked)
+        binding.startWindowTime.visibleOrGone(checked)
+        binding.startWindowTime.isEnabled = checked
     }
 
     override fun onPrepareOptionsMenu(menu: Menu) {
@@ -227,8 +230,8 @@ class SeriesRecordingAddEditFragment : BaseFragment(), BackPressedInterface, Rec
         val intent = seriesRecordingViewModel.getIntentData(requireContext(), seriesRecordingViewModel.recording)
 
         // Add the recording profile if available and enabled
-        if (profile != null && htspVersion >= 16 && dvr_config.text.isNotEmpty()) {
-            intent.putExtra("configName", dvr_config.text.toString())
+        if (profile != null && htspVersion >= 16 && binding.dvrConfig.text.isNotEmpty()) {
+            intent.putExtra("configName", binding.dvrConfig.text.toString())
         }
 
         // Update the recording in case the id is not empty, otherwise add a new one.
@@ -260,18 +263,18 @@ class SeriesRecordingAddEditFragment : BaseFragment(), BackPressedInterface, Rec
 
     override fun onChannelSelected(channel: Channel) {
         seriesRecordingViewModel.recording.channelId = channel.id
-        channel_name.text = channel.name
+        binding.channelName.text = channel.name
     }
 
     override fun onPrioritySelected(which: Int) {
         seriesRecordingViewModel.recording.priority = which
         context?.let {
-            priority.text = getPriorityName(it, seriesRecordingViewModel.recording.priority)
+            binding.priority.text = getPriorityName(it, seriesRecordingViewModel.recording.priority)
         }
     }
 
     override fun onProfileSelected(which: Int) {
-        dvr_config.text = recordingProfilesList[which]
+        binding.dvrConfig.text = recordingProfilesList[which]
         seriesRecordingViewModel.recordingProfileNameId = which
     }
 
@@ -290,8 +293,8 @@ class SeriesRecordingAddEditFragment : BaseFragment(), BackPressedInterface, Rec
             }
         }
 
-        start_time.text = getTimeStringFromTimeInMillis(seriesRecordingViewModel.startTimeInMillis)
-        start_window_time.text = getTimeStringFromTimeInMillis(seriesRecordingViewModel.startWindowTimeInMillis)
+        binding.startTime.text = getTimeStringFromTimeInMillis(seriesRecordingViewModel.startTimeInMillis)
+        binding.startWindowTime.text = getTimeStringFromTimeInMillis(seriesRecordingViewModel.startWindowTimeInMillis)
     }
 
     override fun onDateSelected(milliSeconds: Long, tag: String?) {
@@ -301,13 +304,13 @@ class SeriesRecordingAddEditFragment : BaseFragment(), BackPressedInterface, Rec
     override fun onDaysSelected(selectedDays: Int) {
         seriesRecordingViewModel.recording.daysOfWeek = selectedDays
         context?.let {
-            days_of_week.text = getSelectedDaysOfWeekText(it, selectedDays)
+            binding.daysOfWeek.text = getSelectedDaysOfWeekText(it, selectedDays)
         }
     }
 
     private fun onDuplicateDetectionValueSelected(which: Int) {
         seriesRecordingViewModel.recording.dupDetect = which
-        duplicate_detection.text = seriesRecordingViewModel.duplicateDetectionList[which]
+        binding.duplicateDetection.text = seriesRecordingViewModel.duplicateDetectionList[which]
     }
 
     private fun handleDuplicateDetectionSelection(duplicateDetectionList: Array<String>, duplicateDetectionId: Int) {

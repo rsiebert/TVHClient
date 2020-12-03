@@ -8,9 +8,9 @@ import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import kotlinx.android.synthetic.main.recyclerview_fragment.*
 import org.tvheadend.data.entity.SeriesRecording
 import org.tvheadend.tvhclient.R
+import org.tvheadend.tvhclient.databinding.RecyclerviewFragmentBinding
 import org.tvheadend.tvhclient.ui.base.BaseFragment
 import org.tvheadend.tvhclient.ui.common.*
 import org.tvheadend.tvhclient.ui.common.interfaces.RecyclerViewClickInterface
@@ -23,11 +23,14 @@ import java.util.concurrent.CopyOnWriteArrayList
 
 class SeriesRecordingListFragment : BaseFragment(), RecyclerViewClickInterface, SearchRequestInterface, Filter.FilterListener {
 
+    private lateinit var binding: RecyclerviewFragmentBinding
     private lateinit var seriesRecordingViewModel: SeriesRecordingViewModel
     private lateinit var recyclerViewAdapter: SeriesRecordingRecyclerViewAdapter
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.recyclerview_fragment, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        //return inflater.inflate(R.layout.recyclerview_fragment, container, false)
+        binding = RecyclerviewFragmentBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -39,17 +42,17 @@ class SeriesRecordingListFragment : BaseFragment(), RecyclerViewClickInterface, 
         }
 
         recyclerViewAdapter = SeriesRecordingRecyclerViewAdapter(isDualPane, this, htspVersion)
-        recycler_view.layoutManager = LinearLayoutManager(activity)
-        recycler_view.adapter = recyclerViewAdapter
-        recycler_view.gone()
-        search_progress?.visibleOrGone(baseViewModel.isSearchActive)
+        binding.recyclerView.layoutManager = LinearLayoutManager(activity)
+        binding.recyclerView.adapter = recyclerViewAdapter
+        binding.recyclerView.gone()
+        binding.searchProgress.visibleOrGone(baseViewModel.isSearchActive)
 
         seriesRecordingViewModel.recordings.observe(viewLifecycleOwner,  { recordings ->
             if (recordings != null) {
                 recyclerViewAdapter.addItems(recordings)
                 observeSearchQuery()
             }
-            recycler_view?.visible()
+            binding.recyclerView.visible()
             showStatusInToolbar()
             activity?.invalidateOptionsMenu()
 
@@ -201,7 +204,7 @@ class SeriesRecordingListFragment : BaseFragment(), RecyclerViewClickInterface, 
     }
 
     override fun onFilterComplete(i: Int) {
-        search_progress?.gone()
+        binding.searchProgress.gone()
         showStatusInToolbar()
         // Preselect the first result item in the details screen
         if (isDualPane) {
