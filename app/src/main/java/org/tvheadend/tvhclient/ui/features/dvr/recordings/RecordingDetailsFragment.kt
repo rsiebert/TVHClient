@@ -2,10 +2,7 @@ package org.tvheadend.tvhclient.ui.features.dvr.recordings
 
 import android.os.Bundle
 import android.view.*
-import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
-import kotlinx.android.synthetic.main.details_fragment_header.*
-import kotlinx.android.synthetic.main.recording_details_fragment.*
 import org.tvheadend.data.entity.Recording
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.databinding.RecordingDetailsFragmentBinding
@@ -22,11 +19,12 @@ class RecordingDetailsFragment : BaseFragment(), RecordingRemovedInterface, Down
 
     private lateinit var recordingViewModel: RecordingViewModel
     private var recording: Recording? = null
-    private lateinit var itemBinding: RecordingDetailsFragmentBinding
+    private lateinit var binding: RecordingDetailsFragmentBinding
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        itemBinding = DataBindingUtil.inflate(inflater, R.layout.recording_details_fragment, container, false)
-        return itemBinding.root
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        //binding = DataBindingUtil.inflate(inflater, R.layout.recording_details_fragment, container, false)
+        binding = RecordingDetailsFragmentBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -54,32 +52,32 @@ class RecordingDetailsFragment : BaseFragment(), RecordingRemovedInterface, Down
 
     private fun showRecordingDetails() {
         if (recording != null) {
-            itemBinding.recording = recording
-            itemBinding.htspVersion = htspVersion
+            binding.recording = recording
+            binding.htspVersion = htspVersion
             // The toolbar is hidden as a default to prevent pressing any icons if no recording
             // has been loaded yet. The toolbar is shown here because a recording was loaded
-            nested_toolbar.visible()
+            binding.nestedToolbar.visible()
             activity?.invalidateOptionsMenu()
         } else {
-            scrollview.gone()
-            status.text = getString(R.string.error_loading_recording_details)
-            status.visible()
+            binding.scrollview.gone()
+            binding.status.text = getString(R.string.error_loading_recording_details)
+            binding.status.visible()
         }
     }
 
     override fun onPrepareOptionsMenu(menu: Menu) {
         val ctx = context ?: return
         val recording = recording ?: return
-        preparePopupOrToolbarMiscMenu(ctx, nested_toolbar.menu, null, isConnectionToServerAvailable, isUnlocked)
-        preparePopupOrToolbarRecordingMenu(ctx, nested_toolbar.menu, recording, isConnectionToServerAvailable, htspVersion, isUnlocked)
+        preparePopupOrToolbarMiscMenu(ctx, binding.nestedToolbar.menu, null, isConnectionToServerAvailable, isUnlocked)
+        preparePopupOrToolbarRecordingMenu(ctx, binding.nestedToolbar.menu, recording, isConnectionToServerAvailable, htspVersion, isUnlocked)
         preparePopupOrToolbarSearchMenu(menu, recording.title, isConnectionToServerAvailable)
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
         inflater.inflate(R.menu.external_search_options_menu, menu)
-        nested_toolbar.inflateMenu(R.menu.recording_details_toolbar_menu)
-        nested_toolbar.setOnMenuItemClickListener { this.onOptionsItemSelected(it) }
+        binding.nestedToolbar.inflateMenu(R.menu.recording_details_toolbar_menu)
+        binding.nestedToolbar.setOnMenuItemClickListener { this.onOptionsItemSelected(it) }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
