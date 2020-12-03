@@ -7,8 +7,8 @@ import androidx.core.view.forEach
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.afollestad.materialdialogs.MaterialDialog
-import kotlinx.android.synthetic.main.startup_fragment.*
 import org.tvheadend.tvhclient.R
+import org.tvheadend.tvhclient.databinding.StartupFragmentBinding
 import org.tvheadend.tvhclient.ui.base.BaseViewModel
 import org.tvheadend.tvhclient.ui.common.interfaces.HideNavigationDrawerInterface
 import org.tvheadend.tvhclient.ui.common.interfaces.LayoutControlInterface
@@ -20,14 +20,17 @@ import timber.log.Timber
 
 class StartupFragment : Fragment(), HideNavigationDrawerInterface {
 
+    private lateinit var binding: StartupFragmentBinding
     private lateinit var startupViewModel: StartupViewModel
     private lateinit var baseViewModel: BaseViewModel
     private var loadingDone = false
     private var connectionCount: Int = 0
     private var isConnectionActive = false
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.startup_fragment, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        //return inflater.inflate(R.layout.startup_fragment, container, false)
+        binding = StartupFragmentBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -58,10 +61,10 @@ class StartupFragment : Fragment(), HideNavigationDrawerInterface {
                 showStartupStatus()
             } else {
                 Timber.d("Connection count and active connection are still loading")
-                startup_status.visible()
-                startup_status.text = getString(R.string.initializing)
-                add_connection_button.gone()
-                list_connections_button.gone()
+                binding.startupStatus.visible()
+                binding.startupStatus.text = getString(R.string.initializing)
+                binding.addConnectionButton.gone()
+                binding.listConnectionsButton.gone()
             }
         })
     }
@@ -70,25 +73,25 @@ class StartupFragment : Fragment(), HideNavigationDrawerInterface {
         if (loadingDone) {
             if (!isConnectionActive && connectionCount == 0) {
                 Timber.d("No connection available, showing settings button")
-                startup_status.visible()
-                startup_status.text = getString(R.string.no_connection_available)
-                add_connection_button.visible()
-                add_connection_button.setOnClickListener { showSettingsAddNewConnection() }
-                list_connections_button.gone()
+                binding.startupStatus.visible()
+                binding.startupStatus.text = getString(R.string.no_connection_available)
+                binding.addConnectionButton.visible()
+                binding.addConnectionButton.setOnClickListener { showSettingsAddNewConnection() }
+                binding.listConnectionsButton.gone()
 
             } else if (!isConnectionActive && connectionCount > 0) {
                 Timber.d("No active connection available, showing settings button")
-                startup_status.visible()
-                startup_status.text = getString(R.string.no_connection_active_advice)
-                add_connection_button.gone()
-                list_connections_button.visible()
-                list_connections_button.setOnClickListener { showConnectionListSettings() }
+                binding.startupStatus.visible()
+                binding.startupStatus.text = getString(R.string.no_connection_active_advice)
+                binding.addConnectionButton.gone()
+                binding.listConnectionsButton.visible()
+                binding.listConnectionsButton.setOnClickListener { showConnectionListSettings() }
 
             } else {
                 Timber.d("Connection is available and active, showing contents")
-                startup_status.gone()
-                add_connection_button.gone()
-                list_connections_button.gone()
+                binding.startupStatus.gone()
+                binding.addConnectionButton.gone()
+                binding.listConnectionsButton.gone()
                 baseViewModel.setStartupComplete(true)
             }
         }

@@ -9,9 +9,9 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.afollestad.materialdialogs.MaterialDialog
-import kotlinx.android.synthetic.main.recyclerview_fragment.*
 import org.tvheadend.data.entity.Connection
 import org.tvheadend.tvhclient.R
+import org.tvheadend.tvhclient.databinding.RecyclerviewFragmentBinding
 import org.tvheadend.tvhclient.service.HtspService
 import org.tvheadend.tvhclient.ui.common.WakeOnLanTask
 import org.tvheadend.tvhclient.ui.common.interfaces.BackPressedInterface
@@ -21,6 +21,7 @@ import org.tvheadend.tvhclient.ui.features.MainActivity
 
 class SettingsListConnectionsFragment : Fragment(), BackPressedInterface, ActionMode.Callback, RecyclerViewClickInterface {
 
+    private lateinit var binding: RecyclerviewFragmentBinding
     private var activeConnectionId: Int = -1
     private var connectionHasChanged: Boolean = false
     private lateinit var toolbarInterface: ToolbarInterface
@@ -29,8 +30,10 @@ class SettingsListConnectionsFragment : Fragment(), BackPressedInterface, Action
 
     private var actionMode: ActionMode? = null
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.recyclerview_fragment, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        //return inflater.inflate(R.layout.recyclerview_fragment, container, false)
+        binding = RecyclerviewFragmentBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -43,8 +46,8 @@ class SettingsListConnectionsFragment : Fragment(), BackPressedInterface, Action
         }
 
         recyclerViewAdapter = ConnectionRecyclerViewAdapter(this)
-        recycler_view.layoutManager = LinearLayoutManager(activity)
-        recycler_view.adapter = recyclerViewAdapter
+        binding.recyclerView.layoutManager = LinearLayoutManager(activity)
+        binding.recyclerView.adapter = recyclerViewAdapter
 
         settingsViewModel.connectionListLiveData.observe(viewLifecycleOwner,  { connections ->
             if (connections != null) {

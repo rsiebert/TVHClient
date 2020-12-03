@@ -9,9 +9,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.ViewModelProvider
-import kotlinx.android.synthetic.main.status_fragment.*
 import org.tvheadend.data.entity.ServerStatus
 import org.tvheadend.tvhclient.R
+import org.tvheadend.tvhclient.databinding.StatusFragmentBinding
 import org.tvheadend.tvhclient.service.HtspService
 import org.tvheadend.tvhclient.ui.base.BaseFragment
 import org.tvheadend.tvhclient.ui.common.interfaces.LayoutControlInterface
@@ -20,12 +20,15 @@ import timber.log.Timber
 
 class StatusFragment : BaseFragment() {
 
+    private lateinit var binding: StatusFragmentBinding
     private lateinit var statusViewModel: StatusViewModel
     private lateinit var loadDataTask: Runnable
     private val loadDataHandler = Handler()
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.status_fragment, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        //return inflater.inflate(R.layout.status_fragment, container, false)
+        binding = StatusFragmentBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -76,40 +79,40 @@ class StatusFragment : BaseFragment() {
     private fun showStatus() {
 
         val text = "${connection.name} (${connection.serverUrl})"
-        connection_view.text = text
+        binding.connectionView.text = text
 
-        series_recordings_view.visibility = if (htspVersion >= 13) View.VISIBLE else View.GONE
-        timer_recordings_view.visibility = if (htspVersion >= 18 && isUnlocked) View.VISIBLE else View.GONE
+        binding.seriesRecordingsView.visibility = if (htspVersion >= 13) View.VISIBLE else View.GONE
+        binding.timerRecordingsView.visibility = if (htspVersion >= 18 && isUnlocked) View.VISIBLE else View.GONE
 
         statusViewModel.channelCount.observe(viewLifecycleOwner,  { count ->
             val channelCountText = "$count ${getString(R.string.available)}"
-            channels_view.text = channelCountText
+            binding.channelsView.text = channelCountText
         })
         statusViewModel.programCount.observe(viewLifecycleOwner,  { count ->
-            programs_view.text = resources.getQuantityString(R.plurals.programs, count ?: 0, count)
+            binding.programsView.text = resources.getQuantityString(R.plurals.programs, count ?: 0, count)
         })
         statusViewModel.seriesRecordingCount.observe(viewLifecycleOwner,  { count ->
-            series_recordings_view.text = resources.getQuantityString(R.plurals.series_recordings, count
+            binding.seriesRecordingsView.text = resources.getQuantityString(R.plurals.series_recordings, count
                     ?: 0, count)
         })
         statusViewModel.timerRecordingCount.observe(viewLifecycleOwner,  { count ->
-            timer_recordings_view.text = resources.getQuantityString(R.plurals.timer_recordings, count
+            binding.timerRecordingsView.text = resources.getQuantityString(R.plurals.timer_recordings, count
                     ?: 0, count)
         })
         statusViewModel.completedRecordingCount.observe(viewLifecycleOwner,  { count ->
-            completed_recordings_view.text = resources.getQuantityString(R.plurals.completed_recordings, count
+            binding.completedRecordingsView.text = resources.getQuantityString(R.plurals.completed_recordings, count
                     ?: 0, count)
         })
         statusViewModel.scheduledRecordingCount.observe(viewLifecycleOwner,  { count ->
-            upcoming_recordings_view.text = resources.getQuantityString(R.plurals.upcoming_recordings, count
+            binding.upcomingRecordingsView.text = resources.getQuantityString(R.plurals.upcoming_recordings, count
                     ?: 0, count)
         })
         statusViewModel.failedRecordingCount.observe(viewLifecycleOwner,  { count ->
-            failed_recordings_view.text = resources.getQuantityString(R.plurals.failed_recordings, count
+            binding.failedRecordingsView.text = resources.getQuantityString(R.plurals.failed_recordings, count
                     ?: 0, count)
         })
         statusViewModel.removedRecordingCount.observe(viewLifecycleOwner,  { count ->
-            removed_recordings_view.text = resources.getQuantityString(R.plurals.removed_recordings, count
+            binding.removedRecordingsView.text = resources.getQuantityString(R.plurals.removed_recordings, count
                     ?: 0, count)
         })
         statusViewModel.serverStatusLiveData.observe(viewLifecycleOwner,  { serverStatus ->
@@ -133,7 +136,7 @@ class StatusFragment : BaseFragment() {
                     }
                 }
                 // Show which programs are being recorded
-                currently_recording_view.text = if (currentRecText.isNotEmpty()) currentRecText.toString() else getString(R.string.nothing)
+                binding.currentlyRecordingView.text = if (currentRecText.isNotEmpty()) currentRecText.toString() else getString(R.string.nothing)
             }
         })
     }
@@ -150,7 +153,7 @@ class StatusFragment : BaseFragment() {
                 + serverStatus.serverName + " "
                 + serverStatus.serverVersion + ")")
 
-        server_api_version_view.text = version
+        binding.serverApiVersionView.text = version
 
         try {
             // Get the disc space values and convert them to megabytes
@@ -172,12 +175,12 @@ class StatusFragment : BaseFragment() {
             } else {
                 total.toString() + " MB " + getString(R.string.total)
             }
-            free_discspace_view.text = freeDiscSpace
-            total_discspace_view.text = totalDiscSpace
+            binding.freeDiscspaceView.text = freeDiscSpace
+            binding.totalDiscspaceView.text = totalDiscSpace
 
         } catch (e: Exception) {
-            free_discspace_view.setText(R.string.unknown)
-            total_discspace_view.setText(R.string.unknown)
+            binding.freeDiscspaceView.setText(R.string.unknown)
+            binding.totalDiscspaceView.setText(R.string.unknown)
         }
     }
 
