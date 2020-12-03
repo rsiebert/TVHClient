@@ -13,9 +13,9 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.input.input
-import kotlinx.android.synthetic.main.recyclerview_fragment.*
 import org.tvheadend.data.entity.ChannelTag
 import org.tvheadend.tvhclient.R
+import org.tvheadend.tvhclient.databinding.RecyclerviewFragmentBinding
 import org.tvheadend.tvhclient.ui.base.BaseFragment
 import org.tvheadend.tvhclient.ui.common.*
 import org.tvheadend.tvhclient.ui.common.interfaces.*
@@ -28,6 +28,7 @@ import timber.log.Timber
 
 class ChannelListFragment : BaseFragment(), RecyclerViewClickInterface, ChannelTimeSelectedInterface, ChannelTagIdsSelectedInterface, SearchRequestInterface, Filter.FilterListener, ShowProgramListFragmentInterface {
 
+    private lateinit var binding: RecyclerviewFragmentBinding
     private val dialogDismissHandler = Handler()
     private var dialogDismissRunnable: Runnable? = null
     private lateinit var programViewModel: ProgramViewModel
@@ -44,8 +45,9 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickInterface, ChannelT
     private lateinit var currentTimeUpdateTask: Runnable
     private val currentTimeUpdateHandler = Handler()
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.recyclerview_fragment, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        binding = RecyclerviewFragmentBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -59,11 +61,11 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickInterface, ChannelT
         }
 
         recyclerViewAdapter = ChannelRecyclerViewAdapter(channelViewModel, isDualPane, this)
-        recycler_view.layoutManager = LinearLayoutManager(activity)
-        recycler_view.adapter = recyclerViewAdapter
-        recycler_view.gone()
-        recycler_view.setHasFixedSize(true)
-        search_progress?.visibleOrGone(baseViewModel.isSearchActive)
+        binding.recyclerView.layoutManager = LinearLayoutManager(activity)
+        binding.recyclerView.adapter = recyclerViewAdapter
+        binding.recyclerView.gone()
+        binding.recyclerView.setHasFixedSize(true)
+        binding.searchProgress.visibleOrGone(baseViewModel.isSearchActive)
 
         Timber.d("Observing selected time")
         channelViewModel.selectedTime.observe(viewLifecycleOwner,  { time ->
@@ -90,7 +92,7 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickInterface, ChannelT
                 observeRecordings()
             }
 
-            recycler_view?.visible()
+            binding.recyclerView.visible()
             showStatusInToolbar()
             activity?.invalidateOptionsMenu()
 
@@ -243,7 +245,7 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickInterface, ChannelT
     override fun onTimeSelected(which: Int) {
         dialogDismissRunnable?.let { dialogDismissHandler.removeCallbacks(it) }
         channelViewModel.selectedTimeOffset = which
-        recycler_view?.gone()
+        binding.recyclerView.gone()
 
         // Add the selected list index as extra hours to the current time.
         // If the first index was selected then use the current time.
@@ -253,7 +255,7 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickInterface, ChannelT
     }
 
     override fun onChannelTagIdsSelected(ids: Set<Int>) {
-        recycler_view?.gone()
+        binding.recyclerView.gone()
         channelViewModel.setSelectedChannelTagIds(ids)
     }
 
@@ -398,7 +400,7 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickInterface, ChannelT
     }
 
     override fun onFilterComplete(count: Int) {
-        search_progress?.gone()
+        binding.searchProgress.gone()
         showStatusInToolbar()
         // Show the first search result item in the details screen
         if (isDualPane) {
