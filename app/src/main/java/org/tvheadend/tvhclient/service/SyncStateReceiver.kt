@@ -4,7 +4,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.os.Parcelable
-import kotlinx.android.parcel.Parcelize
+import kotlinx.parcelize.Parcelize
 import org.tvheadend.htsp.AuthenticationStateResult
 import org.tvheadend.htsp.ConnectionStateResult
 import java.lang.ref.WeakReference
