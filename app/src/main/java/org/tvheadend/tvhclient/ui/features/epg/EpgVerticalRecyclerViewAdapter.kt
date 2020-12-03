@@ -11,10 +11,10 @@ import androidx.lifecycle.LifecycleRegistry
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.extensions.LayoutContainer
-import kotlinx.android.synthetic.main.epg_vertical_recyclerview_adapter.*
 import org.tvheadend.data.entity.EpgChannel
 import org.tvheadend.data.entity.EpgProgram
 import org.tvheadend.tvhclient.R
+import org.tvheadend.tvhclient.databinding.EpgVerticalRecyclerviewAdapterBinding
 import org.tvheadend.tvhclient.util.extensions.gone
 import org.tvheadend.tvhclient.util.extensions.invisible
 import org.tvheadend.tvhclient.util.extensions.visible
@@ -26,8 +26,8 @@ internal class EpgVerticalRecyclerViewAdapter(private val activity: FragmentActi
     private var channelList = ArrayList<EpgChannel>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): EpgViewPagerViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(viewType, parent, false)
-        return EpgViewPagerViewHolder(view, activity, fragmentId, viewPool, epgViewModel)
+        val binding = EpgVerticalRecyclerviewAdapterBinding.inflate(LayoutInflater.from(parent.context))
+        return EpgViewPagerViewHolder(binding.root, binding, activity, fragmentId, viewPool, epgViewModel)
     }
 
     override fun onBindViewHolder(holder: EpgViewPagerViewHolder, position: Int) {
@@ -63,19 +63,20 @@ internal class EpgVerticalRecyclerViewAdapter(private val activity: FragmentActi
     }
 
     class EpgViewPagerViewHolder(override val containerView: View,
+                                 val binding: EpgVerticalRecyclerviewAdapterBinding,
                                  private val activity: FragmentActivity,
                                  fragmentId: Int,
                                  viewPool: RecyclerView.RecycledViewPool,
-                                 private val epgViewModel: EpgViewModel) : RecyclerView.ViewHolder(containerView), LayoutContainer, LifecycleOwner {
+                                 private val epgViewModel: EpgViewModel) : RecyclerView.ViewHolder(binding.root), LayoutContainer, LifecycleOwner {
 
         private val lifecycleRegistry = LifecycleRegistry(this)
         private val recyclerViewAdapter: EpgHorizontalChildRecyclerViewAdapter
 
         init {
-            horizontal_child_recycler_view.layoutManager = CustomHorizontalLayoutManager(containerView.context)
-            horizontal_child_recycler_view.setRecycledViewPool(viewPool)
+            binding.horizontalChildRecyclerView.layoutManager = CustomHorizontalLayoutManager(containerView.context)
+            binding.horizontalChildRecyclerView.setRecycledViewPool(viewPool)
             recyclerViewAdapter = EpgHorizontalChildRecyclerViewAdapter(epgViewModel, fragmentId)
-            horizontal_child_recycler_view.adapter = recyclerViewAdapter
+            binding.horizontalChildRecyclerView.adapter = recyclerViewAdapter
             lifecycleRegistry.currentState = Lifecycle.State.INITIALIZED
         }
 
@@ -93,19 +94,19 @@ internal class EpgVerticalRecyclerViewAdapter(private val activity: FragmentActi
 
         fun bindData(programs: List<EpgProgram>) {
 
-            horizontal_child_recycler_view.gone()
-            progress_bar.visible()
-            no_programs.gone()
+            binding.horizontalChildRecyclerView.gone()
+            binding.progressBar.visible()
+            binding.noPrograms.gone()
 
             if (programs.isNotEmpty()) {
                 recyclerViewAdapter.addItems(programs.toMutableList())
-                horizontal_child_recycler_view.visible()
-                progress_bar.gone()
-                no_programs.invisible()
+                binding.horizontalChildRecyclerView.visible()
+                binding.progressBar.gone()
+                binding.noPrograms.invisible()
             } else {
-                horizontal_child_recycler_view.invisible()
-                progress_bar.gone()
-                no_programs.visible()
+                binding.horizontalChildRecyclerView.invisible()
+                binding.progressBar.gone()
+                binding.noPrograms.visible()
             }
 
             epgViewModel.recordings.observe(activity, { recordings ->

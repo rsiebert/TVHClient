@@ -14,10 +14,10 @@ import androidx.recyclerview.widget.RecyclerView.SCROLL_STATE_IDLE
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
 import com.afollestad.materialdialogs.MaterialDialog
-import kotlinx.android.synthetic.main.epg_fragment.*
 import org.tvheadend.data.entity.ChannelTag
 import org.tvheadend.data.entity.EpgProgram
 import org.tvheadend.tvhclient.R
+import org.tvheadend.tvhclient.databinding.EpgFragmentBinding
 import org.tvheadend.tvhclient.ui.base.BaseFragment
 import org.tvheadend.tvhclient.ui.common.*
 import org.tvheadend.tvhclient.ui.common.interfaces.*
@@ -27,6 +27,7 @@ import timber.log.Timber
 
 class EpgFragment : BaseFragment(), EpgScrollInterface, RecyclerViewClickInterface, ChannelTimeSelectedInterface, ChannelTagIdsSelectedInterface, Filter.FilterListener, SearchRequestInterface, ShowProgramListFragmentInterface {
 
+    private lateinit var binding: EpgFragmentBinding
     private val dialogDismissHandler = Handler()
     private var dialogDismissRunnable: Runnable? = null
     private lateinit var epgViewModel: EpgViewModel
@@ -39,8 +40,10 @@ class EpgFragment : BaseFragment(), EpgScrollInterface, RecyclerViewClickInterfa
     private var channelTags: List<ChannelTag> = ArrayList()
     private var channelCount = 0
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.epg_fragment, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        //return inflater.inflate(R.layout.epg_fragment, container, false)
+        binding = EpgFragmentBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -53,10 +56,10 @@ class EpgFragment : BaseFragment(), EpgScrollInterface, RecyclerViewClickInterfa
 
         channelListRecyclerViewAdapter = EpgChannelListRecyclerViewAdapter(epgViewModel, this)
         channelListRecyclerViewLayoutManager = LinearLayoutManager(activity)
-        channel_list_recycler_view.layoutManager = channelListRecyclerViewLayoutManager
-        channel_list_recycler_view.adapter = channelListRecyclerViewAdapter
-        channel_list_recycler_view.setHasFixedSize(true)
-        channel_list_recycler_view.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+        binding.channelListRecyclerView.layoutManager = channelListRecyclerViewLayoutManager
+        binding.channelListRecyclerView.adapter = channelListRecyclerViewAdapter
+        binding.channelListRecyclerView.setHasFixedSize(true)
+        binding.channelListRecyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 super.onScrollStateChanged(recyclerView, newState)
                 if (newState != SCROLL_STATE_IDLE) {
@@ -79,9 +82,9 @@ class EpgFragment : BaseFragment(), EpgScrollInterface, RecyclerViewClickInterfa
         })
 
         viewPagerAdapter = EpgViewPagerAdapter(this, epgViewModel)
-        program_list_viewpager.adapter = viewPagerAdapter
-        program_list_viewpager.offscreenPageLimit = 2
-        program_list_viewpager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+        binding.programListViewpager.adapter = viewPagerAdapter
+        binding.programListViewpager.offscreenPageLimit = 2
+        binding.programListViewpager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)
                 for (i in position - 1..position + 1) {
@@ -110,9 +113,9 @@ class EpgFragment : BaseFragment(), EpgScrollInterface, RecyclerViewClickInterfa
         Timber.d("Observing epg channels")
         epgViewModel.epgChannels.observe(viewLifecycleOwner,  { channels ->
 
-            progress_bar?.gone()
-            channel_list_recycler_view?.visible()
-            program_list_viewpager?.visible()
+            binding.progressBar.gone()
+            binding.channelListRecyclerView.visible()
+            binding.programListViewpager.visible()
 
             if (channels != null) {
                 Timber.d("View model returned ${channels.size} epg channels")
@@ -215,7 +218,7 @@ class EpgFragment : BaseFragment(), EpgScrollInterface, RecyclerViewClickInterfa
     override fun onTimeSelected(which: Int) {
         dialogDismissRunnable?.let { dialogDismissHandler.removeCallbacks(it) }
         epgViewModel.selectedTimeOffset = which
-        program_list_viewpager?.currentItem = which
+        binding.programListViewpager.currentItem = which
 
         // Add the selected list index as extra hours to the current time.
         // If the first index was selected then use the current time.
@@ -225,9 +228,9 @@ class EpgFragment : BaseFragment(), EpgScrollInterface, RecyclerViewClickInterfa
     }
 
     override fun onChannelTagIdsSelected(ids: Set<Int>) {
-        channel_list_recycler_view?.gone()
-        program_list_viewpager?.gone()
-        progress_bar?.visible()
+        binding.channelListRecyclerView.gone()
+        binding.programListViewpager.gone()
+        binding.progressBar.visible()
         epgViewModel.setSelectedChannelTagIds(ids)
     }
 

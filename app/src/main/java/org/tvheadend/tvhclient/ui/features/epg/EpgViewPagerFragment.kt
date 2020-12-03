@@ -12,7 +12,6 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.SCROLL_STATE_IDLE
-import kotlinx.android.synthetic.main.epg_viewpager_fragment.*
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.databinding.EpgViewpagerFragmentBinding
 import org.tvheadend.tvhclient.util.extensions.visibleOrGone
@@ -38,14 +37,14 @@ class EpgViewPagerFragment : Fragment(), EpgScrollInterface {
     private var updateTimeIndicationHandler = Handler()
     private var updateTimeIndicationTask: Runnable? = null
     private lateinit var constraintSet: ConstraintSet
-    private lateinit var itemBinding: EpgViewpagerFragmentBinding
+    private lateinit var binding: EpgViewpagerFragmentBinding
     private var recyclerViewLinearLayoutManager: LinearLayoutManager? = null
     private var enableScrolling = false
     private var fragmentId = 0
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        itemBinding = DataBindingUtil.inflate(inflater, R.layout.epg_viewpager_fragment, container, false)
-        return itemBinding.root
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        binding = DataBindingUtil.inflate(inflater, R.layout.epg_viewpager_fragment, container, false)
+        return binding.root
     }
 
     override fun onDestroy() {
@@ -67,21 +66,21 @@ class EpgViewPagerFragment : Fragment(), EpgScrollInterface {
 
         // Required to show the vertical current time indication
         constraintSet = ConstraintSet()
-        constraintSet.clone(constraint_layout)
+        constraintSet.clone(binding.constraintLayout)
 
         // Get the id that defines the position of the fragment in the viewpager
         fragmentId = arguments?.getInt("fragmentId") ?: 0
 
-        itemBinding.startTime = epgViewModel.getStartTime(fragmentId)
-        itemBinding.endTime = epgViewModel.getEndTime(fragmentId)
+        binding.startTime = epgViewModel.getStartTime(fragmentId)
+        binding.endTime = epgViewModel.getEndTime(fragmentId)
 
         recyclerViewAdapter = EpgVerticalRecyclerViewAdapter(requireActivity(), epgViewModel, fragmentId)
         recyclerViewLinearLayoutManager = LinearLayoutManager(activity, RecyclerView.VERTICAL, false)
-        viewpager_recycler_view.layoutManager = recyclerViewLinearLayoutManager
-        viewpager_recycler_view.setHasFixedSize(true)
-        viewpager_recycler_view.adapter = recyclerViewAdapter
+        binding.viewpagerRecyclerView.layoutManager = recyclerViewLinearLayoutManager
+        binding.viewpagerRecyclerView.setHasFixedSize(true)
+        binding.viewpagerRecyclerView.adapter = recyclerViewAdapter
 
-        viewpager_recycler_view.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+        binding.viewpagerRecyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 super.onScrollStateChanged(recyclerView, newState)
                 if (newState != SCROLL_STATE_IDLE) {
@@ -123,7 +122,7 @@ class EpgViewPagerFragment : Fragment(), EpgScrollInterface {
             }
         })
 
-        current_time?.visibleOrGone(showTimeIndication)
+        binding.currentTime.visibleOrGone(showTimeIndication)
 
         if (showTimeIndication) {
             // Create the handler and the timer task that will update the
@@ -177,10 +176,10 @@ class EpgViewPagerFragment : Fragment(), EpgScrollInterface {
         Timber.d("Fragment id: $fragmentId, current time: $currentTime, start time: ${epgViewModel.getStartTime(fragmentId)}, offset: $offset, durationTime: $durationTime, pixelsPerMinute: ${epgViewModel.pixelsPerMinute}")
 
         // Set the left constraint of the time indication so it shows the actual time
-        current_time?.let {
+        binding.currentTime.let {
             constraintSet.connect(it.id, ConstraintSet.LEFT, ConstraintSet.PARENT_ID, ConstraintSet.LEFT, offset)
             constraintSet.connect(it.id, ConstraintSet.START, ConstraintSet.PARENT_ID, ConstraintSet.START, offset)
-            constraintSet.applyTo(constraint_layout)
+            constraintSet.applyTo(binding.constraintLayout)
         }
     }
 
