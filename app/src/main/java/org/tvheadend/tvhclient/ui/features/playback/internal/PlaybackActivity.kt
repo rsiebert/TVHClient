@@ -14,18 +14,21 @@ import android.hardware.SensorManager
 import android.os.Build
 import android.os.Bundle
 import android.view.Surface
+import android.view.SurfaceView
 import android.view.View
+import android.widget.FrameLayout
+import android.widget.ImageButton
+import android.widget.ImageView
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.preference.PreferenceManager
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.list.listItemsSingleChoice
 import com.google.android.exoplayer2.Player
+import com.google.android.exoplayer2.ui.PlayerView
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
-import kotlinx.android.synthetic.main.exo_player_control_view.*
-import kotlinx.android.synthetic.main.exo_player_view.*
-import kotlinx.android.synthetic.main.player_overlay_view.*
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.ui.common.onAttach
 import org.tvheadend.tvhclient.ui.common.setOptionalDescriptionText
@@ -41,6 +44,28 @@ import timber.log.Timber
 // TODO disable subtitles as a default
 
 class PlaybackActivity : AppCompatActivity() {
+
+    private lateinit var playerStatus: TextView
+    private lateinit var playerView: PlayerView
+    private lateinit var exoPlayerFrame: FrameLayout
+    private lateinit var exoPlayerSurfaceView: SurfaceView
+    private lateinit var remainingTime: TextView
+    private lateinit var elapsedTime: TextView
+    private lateinit var nextProgramTitle: TextView
+    private lateinit var programSubtitle: TextView
+    private lateinit var programTitle: TextView
+    private lateinit var channelName: TextView
+    private lateinit var channelIcon: ImageView
+    private lateinit var playerSettings: ImageButton
+    private lateinit var playerInformation: ImageButton
+    private lateinit var playerToggleFullscreen: ImageButton
+    private lateinit var playerAspectRatio: ImageButton
+    private lateinit var playPreviousChannel: ImageButton
+    private lateinit var playNextChannel: ImageButton
+    private lateinit var playerForward: ImageButton
+    private lateinit var playerPlay: ImageButton
+    private lateinit var playerPause: ImageButton
+    private lateinit var playerRewind: ImageButton
 
     private var timeshiftSupported: Boolean = false
     private lateinit var viewModel: PlayerViewModel
@@ -60,8 +85,37 @@ class PlaybackActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         setTheme(getThemeId(this))
         super.onCreate(savedInstanceState)
+        //playerBinding = PlayerOverlayViewBinding.inflate(layoutInflater)
+        //playerControlBinding = ExoPlayerControlViewBinding.inflate(layoutInflater)
+        //playerViewBinding = ExoPlayerViewBinding.inflate(layoutInflater)
+        //val view = playerBinding.root
         setContentView(R.layout.player_overlay_view)
         Timber.d("Creating")
+
+        playerView = findViewById<View>(R.id.player_view) as PlayerView
+        playerStatus = findViewById<View>(R.id.player_status) as TextView
+
+        exoPlayerSurfaceView = findViewById<View>(R.id.exo_player_surface_view) as SurfaceView
+        exoPlayerFrame = findViewById<View>(R.id.exo_player_frame) as FrameLayout
+
+        channelIcon = findViewById<View>(R.id.channel_icon) as ImageView
+        channelName = findViewById<View>(R.id.channel_name) as TextView
+        programTitle = findViewById<View>(R.id.program_title) as TextView
+        programSubtitle = findViewById<View>(R.id.program_subtitle) as TextView
+        nextProgramTitle = findViewById<View>(R.id.next_program_title) as TextView
+        elapsedTime = findViewById<View>(R.id.elapsed_time) as TextView
+        remainingTime = findViewById<View>(R.id.remaining_time) as TextView
+
+        playerRewind = findViewById<View>(R.id.player_rewind) as ImageButton
+        playerPause = findViewById<View>(R.id.player_pause) as ImageButton
+        playerPlay = findViewById<View>(R.id.player_play) as ImageButton
+        playerForward = findViewById<View>(R.id.player_forward) as ImageButton
+        playNextChannel = findViewById<View>(R.id.play_next_channel) as ImageButton
+        playPreviousChannel = findViewById<View>(R.id.play_previous_channel) as ImageButton
+        playerAspectRatio = findViewById<View>(R.id.player_aspect_ratio) as ImageButton
+        playerToggleFullscreen = findViewById<View>(R.id.player_toggle_fullscreen) as ImageButton
+        playerInformation = findViewById<View>(R.id.player_information) as ImageButton
+        playerSettings = findViewById<View>(R.id.player_settings) as ImageButton
 
         timeshiftSupported = PreferenceManager.getDefaultSharedPreferences(this)
                 .getBoolean("timeshift_enabled", resources.getBoolean(R.bool.pref_default_timeshift_enabled))
@@ -111,48 +165,48 @@ class PlaybackActivity : AppCompatActivity() {
             }
         }
 
-        status.setText(R.string.connecting_to_server)
-        player_rewind?.invisible()
-        player_pause?.invisible()
-        player_play?.invisible()
-        player_forward?.invisible()
-        play_next_channel?.invisible()
-        play_previous_channel?.invisible()
-        player_aspect_ratio?.invisible()
-        player_toggle_fullscreen?.invisible()
-        player_information?.invisible()
-        player_settings?.invisible()
+        playerStatus.setText(R.string.connecting_to_server)
+        playerRewind.invisible()
+        playerPause.invisible()
+        playerPlay.invisible()
+        playerForward.invisible()
+        playNextChannel.invisible()
+        playPreviousChannel.invisible()
+        playerAspectRatio.invisible()
+        playerToggleFullscreen.invisible()
+        playerInformation.invisible()
+        playerSettings.invisible()
 
-        player_play?.setOnClickListener { onPlayButtonSelected() }
-        player_pause?.setOnClickListener { onPauseButtonSelected() }
-        player_rewind?.setOnClickListener { onRewindButtonSelected() }
-        player_forward?.setOnClickListener { onForwardButtonSelected() }
-        player_settings?.setOnClickListener { onSettingsButtonSelected() }
-        player_information?.setOnClickListener { onInformationButtonSelected() }
-        player_aspect_ratio?.setOnClickListener { onChangeAspectRatioSelected() }
-        player_toggle_fullscreen?.setOnClickListener { onToggleFullscreenSelected() }
-        play_next_channel?.setOnClickListener { onPlayNextChannelButtonSelected() }
-        play_previous_channel?.setOnClickListener { onPlayPreviousChannelButtonSelected() }
+        playerPlay.setOnClickListener { onPlayButtonSelected() }
+        playerPause.setOnClickListener { onPauseButtonSelected() }
+        playerRewind.setOnClickListener { onRewindButtonSelected() }
+        playerForward.setOnClickListener { onForwardButtonSelected() }
+        playerSettings.setOnClickListener { onSettingsButtonSelected() }
+        playerInformation.setOnClickListener { onInformationButtonSelected() }
+        playerAspectRatio.setOnClickListener { onChangeAspectRatioSelected() }
+        playerToggleFullscreen.setOnClickListener { onToggleFullscreenSelected() }
+        playNextChannel.setOnClickListener { onPlayNextChannelButtonSelected() }
+        playPreviousChannel.setOnClickListener { onPlayPreviousChannelButtonSelected() }
 
         Timber.d("Getting view model")
         viewModel = ViewModelProvider(this).get(PlayerViewModel::class.java)
-        viewModel.player.setVideoSurfaceView(exo_player_surface_view)
-        player_view.player = viewModel.player
+        viewModel.player.setVideoSurfaceView(exoPlayerSurfaceView)
+        playerView.player = viewModel.player
 
         Timber.d("Observing authentication status")
         viewModel.isConnected.observe(this, { isConnected ->
             if (isConnected) {
                 if (!viewModel.isPlaybackProfileSelected(intent.extras)) {
                     Timber.d("No playback profile was selected")
-                    status?.setText(R.string.no_playback_profile_selected)
+                    playerStatus.setText(R.string.no_playback_profile_selected)
                 } else {
                     Timber.d("Connected to server")
-                    status?.setText(R.string.connected_to_server)
+                    playerStatus.setText(R.string.connected_to_server)
                     viewModel.loadMediaSource(applicationContext, intent.extras)
                 }
             } else {
                 Timber.d("Not connected to server")
-                status?.setText(R.string.connection_failed)
+                playerStatus.setText(R.string.connection_failed)
             }
         })
 
@@ -168,22 +222,22 @@ class PlaybackActivity : AppCompatActivity() {
             Timber.d("Received player playback state $state")
             when (state) {
                 Player.STATE_IDLE -> {
-                    status?.visible()
-                    exo_player_surface_view?.gone()
+                    playerStatus.visible()
+                    exoPlayerSurfaceView.gone()
                 }
                 Player.STATE_BUFFERING -> {
-                    status?.visible()
-                    exo_player_surface_view?.gone()
-                    status?.setText(R.string.player_is_loading_more_data)
+                    playerStatus.visible()
+                    exoPlayerSurfaceView.gone()
+                    playerStatus.setText(R.string.player_is_loading_more_data)
                 }
                 Player.STATE_READY, Player.STATE_ENDED -> {
-                    status?.gone()
-                    exo_player_surface_view?.visible()
+                    playerStatus.gone()
+                    exoPlayerSurfaceView.visible()
 
-                    player_aspect_ratio?.visible()
-                    player_toggle_fullscreen?.visible()
-                    player_information?.visible()
-                    player_settings?.visible()
+                    playerAspectRatio.visible()
+                    playerToggleFullscreen.visible()
+                    playerInformation.visible()
+                    playerSettings.visible()
                 }
             }
         })
@@ -191,17 +245,17 @@ class PlaybackActivity : AppCompatActivity() {
         Timber.d("Observing player is playing state")
         viewModel.playerIsPlaying.observe(this, { isPlaying ->
             Timber.d("Received player is playing $isPlaying")
-            player_play?.visibleOrInvisible(!isPlaying)
-            player_pause?.visibleOrInvisible(isPlaying)
-            player_forward?.visibleOrInvisible(isPlaying && timeshiftSupported)
-            player_rewind?.visibleOrInvisible(isPlaying && timeshiftSupported)
+            playerPlay.visibleOrInvisible(!isPlaying)
+            playerPause.visibleOrInvisible(isPlaying)
+            playerForward.visibleOrInvisible(isPlaying && timeshiftSupported)
+            playerRewind.visibleOrInvisible(isPlaying && timeshiftSupported)
         })
 
         Timber.d("Observing live TV playing")
         viewModel.liveTvIsPlaying.observe(this, { isPlaying ->
             Timber.d("Received live TV is playing $isPlaying")
-            play_previous_channel?.visibleOrGone(isPlaying)
-            play_next_channel?.visibleOrGone(isPlaying)
+            playPreviousChannel.visibleOrGone(isPlaying)
+            playNextChannel.visibleOrGone(isPlaying)
         })
 
         Timber.d("Observing playback information")
@@ -209,42 +263,42 @@ class PlaybackActivity : AppCompatActivity() {
             Timber.d("Received channel icon $icon")
             Picasso.get()
                     .load(getIconUrl(this, icon))
-                    .into(channel_icon, object : Callback {
+                    .into(channelIcon, object : Callback {
                         override fun onSuccess() {
-                            channel_name?.gone()
-                            channel_icon?.visible()
+                            channelName.gone()
+                            channelIcon.visible()
                         }
 
                         override fun onError(e: Exception) {
-                            channel_name?.visible()
-                            channel_icon?.gone()
+                            channelName.visible()
+                            channelIcon.gone()
                         }
                     })
         })
 
-        viewModel.channelName.observe(this, { channelName ->
-            Timber.d("Received channel name $channelName")
-            channel_name?.text = if (!channelName.isNullOrEmpty()) channelName else getString(R.string.all_channels)
+        viewModel.channelName.observe(this, { name ->
+            Timber.d("Received channel name $name")
+            channelName.text = if (!name.isNullOrEmpty()) name else getString(R.string.all_channels)
         })
         viewModel.title.observe(this, { title ->
             Timber.d("Received title $title")
-            setOptionalDescriptionText(program_title, title)
+            setOptionalDescriptionText(programTitle, title)
         })
         viewModel.subtitle.observe(this, { subtitle ->
             Timber.d("Received subtitle $subtitle")
-            setOptionalDescriptionText(program_subtitle, subtitle)
-            program_subtitle?.visibleOrGone(subtitle.isNotEmpty())
+            setOptionalDescriptionText(programSubtitle, subtitle)
+            programSubtitle.visibleOrGone(subtitle.isNotEmpty())
         })
         viewModel.nextTitle.observe(this, { nextTitle ->
             Timber.d("Received next title $nextTitle")
-            setOptionalDescriptionText(next_program_title, nextTitle)
-            next_program_title?.visibleOrGone(nextTitle.isNotEmpty())
+            setOptionalDescriptionText(nextProgramTitle, nextTitle)
+            nextProgramTitle.visibleOrGone(nextTitle.isNotEmpty())
         })
-        viewModel.elapsedTime.observe(this, { elapsedTime ->
-            elapsed_time?.text = elapsedTime
+        viewModel.elapsedTime.observe(this, { time ->
+            elapsedTime.text = time
         })
-        viewModel.remainingTime.observe(this, { remainingTime ->
-            remaining_time?.text = remainingTime
+        viewModel.remainingTime.observe(this, { time ->
+            remainingTime.text = time
         })
     }
 
@@ -300,11 +354,11 @@ class PlaybackActivity : AppCompatActivity() {
         when (newConfig.orientation) {
             Configuration.ORIENTATION_PORTRAIT -> {
                 Timber.d("Player is in portrait mode")
-                player_toggle_fullscreen?.setImageResource(R.drawable.ic_player_fullscreen)
+                playerToggleFullscreen.setImageResource(R.drawable.ic_player_fullscreen)
             }
             Configuration.ORIENTATION_LANDSCAPE -> {
                 Timber.d("Player is in landscape mode")
-                player_toggle_fullscreen?.setImageResource(R.drawable.ic_player_fullscreen_exit)
+                playerToggleFullscreen.setImageResource(R.drawable.ic_player_fullscreen_exit)
             }
         }
 
@@ -341,7 +395,7 @@ class PlaybackActivity : AppCompatActivity() {
             Timber.d("New landscape video dimensions are $width:$height")
         }
 
-        exo_player_frame?.let {
+        exoPlayerFrame.let {
             val layoutParams = it.layoutParams
             layoutParams.width = width
             layoutParams.height = height
@@ -471,7 +525,7 @@ class PlaybackActivity : AppCompatActivity() {
 
     override fun onPictureInPictureModeChanged(isInPictureInPictureMode: Boolean, newConfig: Configuration) {
         Timber.d("PIP mode entered $isInPictureInPictureMode")
-        player_view.useController = !isInPictureInPictureMode
+        playerView.useController = !isInPictureInPictureMode
         viewModel.pipModeActive = isInPictureInPictureMode
         super.onPictureInPictureModeChanged(isInPictureInPictureMode, newConfig)
     }
