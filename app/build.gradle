@@ -53,7 +53,6 @@ android {
         dataBinding = true
         viewBinding true
     }
-    androidExtensions.experimental = true
 
     compileOptions {
         sourceCompatibility = rootProject.ext.javaCompatibility
@@ -74,13 +73,22 @@ android {
                 instrumentationEnabled false
             }
 
+            // Enables code shrinking, obfuscation, and optimization for only
+            // your project's release build type.
             minifyEnabled true
+
+            // Enables resource shrinking, which is performed by the
+            // Android Gradle plugin.
+            shrinkResources true
+
             firebaseCrashlytics {
                 mappingFileUploadEnabled true
             }
         }
         debug {
             initWith buildTypes.release
+            minifyEnabled false
+            shrinkResources false
 
             // Set this flag to 'false' to disable crashlytics
             // in debug builds and to decrease up build times
