@@ -9,8 +9,8 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.afollestad.materialdialogs.MaterialDialog
-import kotlinx.android.synthetic.main.play_activity.*
 import org.tvheadend.tvhclient.R
+import org.tvheadend.tvhclient.databinding.PlayActivityBinding
 import org.tvheadend.tvhclient.ui.common.onAttach
 import org.tvheadend.tvhclient.util.extensions.gone
 import org.tvheadend.tvhclient.util.getThemeId
@@ -18,34 +18,37 @@ import timber.log.Timber
 
 abstract class BasePlaybackActivity : AppCompatActivity() {
 
+    lateinit var binding: PlayActivityBinding
     lateinit var viewModel: ExternalPlayerViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         setTheme(getThemeId(this))
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.play_activity)
+        binding = PlayActivityBinding.inflate(layoutInflater)
+        val view = binding.root
+        setContentView(view)
 
-        status.setText(R.string.connecting_to_server)
+        binding.status.setText(R.string.connecting_to_server)
 
         viewModel = ViewModelProvider(this).get(ExternalPlayerViewModel::class.java)
 
         viewModel.isConnected.observe(this,  { isConnected ->
             if (isConnected) {
                 Timber.d("Received live data, connected to server, requesting ticket")
-                status.setText(R.string.requesting_playback_information)
+                binding.status.setText(R.string.requesting_playback_information)
                 viewModel.requestTicketFromServer(intent.extras)
             } else {
                 Timber.d("Received live data, not connected to server")
-                progress_bar.gone()
-                status.setText(R.string.connection_failed)
+                binding.progressBar.gone()
+                binding.status.setText(R.string.connection_failed)
             }
         })
 
         viewModel.isTicketReceived.observe(this,  { isTicketReceived ->
             Timber.d("Received ticket $isTicketReceived")
             if (isTicketReceived) {
-                progress_bar.gone()
-                status.text = getString(R.string.connected_to_server)
+                binding.progressBar.gone()
+                binding.status.text = getString(R.string.connected_to_server)
                 onTicketReceived()
             }
         })
@@ -69,7 +72,7 @@ abstract class BasePlaybackActivity : AppCompatActivity() {
                 finish()
             } else {
                 Timber.d("List of available activities is empty, can't start external media player")
-                status.setText(R.string.no_media_player)
+                binding.status.setText(R.string.no_media_player)
 
                 // Show a confirmation dialog before deleting the recording
                 MaterialDialog(this@BasePlaybackActivity).show {

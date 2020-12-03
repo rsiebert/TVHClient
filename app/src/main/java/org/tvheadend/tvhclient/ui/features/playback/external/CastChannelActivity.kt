@@ -7,7 +7,6 @@ import com.google.android.gms.cast.MediaLoadOptions
 import com.google.android.gms.cast.MediaMetadata
 import com.google.android.gms.cast.framework.media.RemoteMediaClient
 import com.google.android.gms.common.images.WebImage
-import kotlinx.android.synthetic.main.play_activity.*
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.util.extensions.getCastSession
 import org.tvheadend.tvhclient.util.extensions.gone
@@ -19,8 +18,8 @@ class CastChannelActivity : BasePlaybackActivity() {
 
         val castSession = this.getCastSession()
         if (castSession == null) {
-            progress_bar.gone()
-            status.text = getString(R.string.no_cast_session)
+            binding.progressBar.gone()
+            binding.status.text = getString(R.string.no_cast_session)
             return
         }
 
@@ -43,8 +42,8 @@ class CastChannelActivity : BasePlaybackActivity() {
 
         val castingProfileId = viewModel.getServerStatus().castingServerProfileId
         if (castingProfileId == 0) {
-            progress_bar.gone()
-            status.text = getString(R.string.error_starting_playback_no_profile)
+            binding.progressBar.gone()
+            binding.status.text = getString(R.string.error_starting_playback_no_profile)
             return
         }
 
@@ -59,8 +58,8 @@ class CastChannelActivity : BasePlaybackActivity() {
 
         val remoteMediaClient = castSession.remoteMediaClient
         if (remoteMediaClient == null) {
-            progress_bar.gone()
-            status.setText(R.string.cast_error_no_media_client_available)
+            binding.progressBar.gone()
+            binding.status.setText(R.string.cast_error_no_media_client_available)
             return
         }
 
