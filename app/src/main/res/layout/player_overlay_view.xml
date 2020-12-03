@@ -30,7 +30,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/status"
+        android:id="@+id/player_status"
         style="?attr/TitleFont"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
