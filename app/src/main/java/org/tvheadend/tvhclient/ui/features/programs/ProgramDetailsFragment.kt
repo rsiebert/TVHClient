@@ -2,10 +2,7 @@ package org.tvheadend.tvhclient.ui.features.programs
 
 import android.os.Bundle
 import android.view.*
-import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
-import kotlinx.android.synthetic.main.details_fragment_header.*
-import kotlinx.android.synthetic.main.program_details_fragment.*
 import org.tvheadend.data.entity.Program
 import org.tvheadend.data.entity.Recording
 import org.tvheadend.tvhclient.R
@@ -24,19 +21,20 @@ class ProgramDetailsFragment : BaseFragment(), ClearSearchResultsOrPopBackStackI
     private var program: Program? = null
     private var recording: Recording? = null
     private var programIdToBeEditedWhenBeingRecorded = 0
-    lateinit var itemBinding: ProgramDetailsFragmentBinding
+    private lateinit var binding: ProgramDetailsFragmentBinding
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        itemBinding = DataBindingUtil.inflate(inflater, R.layout.program_details_fragment, container, false)
-        itemBinding.layout.viewTreeObserver.addOnPreDrawListener(object : ViewTreeObserver.OnPreDrawListener {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        //binding = DataBindingUtil.inflate(inflater, R.layout.program_details_fragment, container, false)
+        binding = ProgramDetailsFragmentBinding.inflate(inflater, container, false)
+        binding.layout.viewTreeObserver.addOnPreDrawListener(object : ViewTreeObserver.OnPreDrawListener {
             override fun onPreDraw(): Boolean {
-                itemBinding.layout.viewTreeObserver.removeOnPreDrawListener(this)
-                itemBinding.viewWidth = itemBinding.layout.measuredWidth
-                Timber.d("Width of program details layout is %s", itemBinding.layout.measuredWidth)
+                binding.layout.viewTreeObserver.removeOnPreDrawListener(this)
+                binding.viewWidth = binding.layout.measuredWidth
+                Timber.d("Width of program details layout is %s", binding.layout.measuredWidth)
                 return true
             }
         })
-        return itemBinding.root
+        return binding.root
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -57,14 +55,14 @@ class ProgramDetailsFragment : BaseFragment(), ClearSearchResultsOrPopBackStackI
         }
 
         Timber.d("Observing program")
-        programViewModel.program.observe(viewLifecycleOwner,  {
+        programViewModel.program.observe(viewLifecycleOwner, {
             Timber.d("View model returned a program")
             program = it
             showProgramDetails()
         })
 
         Timber.d("Observing recordings")
-        programViewModel.recordings.observe(viewLifecycleOwner,  { recordings ->
+        programViewModel.recordings.observe(viewLifecycleOwner, { recordings ->
             if (recordings != null) {
                 Timber.d("View model returned ${recordings.size} recordings")
                 showRecordingStatusOfProgram(recordings)
@@ -74,16 +72,16 @@ class ProgramDetailsFragment : BaseFragment(), ClearSearchResultsOrPopBackStackI
 
     private fun showProgramDetails() {
         if (program != null) {
-            itemBinding.program = program
-            itemBinding.viewModel = programViewModel
+            binding.program = program
+            binding.viewModel = programViewModel
             // The toolbar is hidden as a default to prevent pressing any icons if no recording
             // has been loaded yet. The toolbar is shown here because a recording was loaded
-            nested_toolbar.visible()
+            binding.nestedToolbar.visible()
             activity?.invalidateOptionsMenu()
         } else {
-            scrollview.gone()
-            status.text = getString(R.string.error_loading_program_details)
-            status.visible()
+            binding.scrollview.gone()
+            binding.status.text = getString(R.string.error_loading_program_details)
+            binding.status.visible()
         }
     }
 
@@ -116,7 +114,7 @@ class ProgramDetailsFragment : BaseFragment(), ClearSearchResultsOrPopBackStackI
         // Update the state of the recording (if there is one)
         // and also the menu items in the nested toolbar
         program?.recording = recording
-        itemBinding.program = program
+        binding.program = program
         activity?.invalidateOptionsMenu()
     }
 
@@ -127,15 +125,15 @@ class ProgramDetailsFragment : BaseFragment(), ClearSearchResultsOrPopBackStackI
         menu.findItem(R.id.menu_play)?.isVisible = false
 
         preparePopupOrToolbarSearchMenu(menu, program?.title, isConnectionToServerAvailable)
-        preparePopupOrToolbarRecordingMenu(ctx, nested_toolbar.menu, program?.recording, isConnectionToServerAvailable, htspVersion, isUnlocked)
-        preparePopupOrToolbarMiscMenu(ctx, nested_toolbar.menu, program, isConnectionToServerAvailable, isUnlocked)
+        preparePopupOrToolbarRecordingMenu(ctx, binding.nestedToolbar.menu, program?.recording, isConnectionToServerAvailable, htspVersion, isUnlocked)
+        preparePopupOrToolbarMiscMenu(ctx, binding.nestedToolbar.menu, program, isConnectionToServerAvailable, isUnlocked)
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
         inflater.inflate(R.menu.external_search_options_menu, menu)
-        nested_toolbar.inflateMenu(R.menu.program_popup_and_toolbar_menu)
-        nested_toolbar.setOnMenuItemClickListener { this.onOptionsItemSelected(it) }
+        binding.nestedToolbar.inflateMenu(R.menu.program_popup_and_toolbar_menu)
+        binding.nestedToolbar.setOnMenuItemClickListener { this.onOptionsItemSelected(it) }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

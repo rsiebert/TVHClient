@@ -9,9 +9,9 @@ import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import kotlinx.android.synthetic.main.recyclerview_fragment.*
 import org.tvheadend.data.entity.Recording
 import org.tvheadend.tvhclient.R
+import org.tvheadend.tvhclient.databinding.RecyclerviewFragmentBinding
 import org.tvheadend.tvhclient.service.HtspService
 import org.tvheadend.tvhclient.ui.base.BaseFragment
 import org.tvheadend.tvhclient.ui.common.*
@@ -26,6 +26,7 @@ import timber.log.Timber
 
 class ProgramListFragment : BaseFragment(), RecyclerViewClickInterface, LastProgramVisibleListener, SearchRequestInterface, Filter.FilterListener, ClearSearchResultsOrPopBackStackInterface {
 
+    private lateinit var binding: RecyclerviewFragmentBinding
     lateinit var recyclerViewAdapter: ProgramRecyclerViewAdapter
     private lateinit var programViewModel: ProgramViewModel
     private var loadingMoreProgramAllowed: Boolean = false
@@ -33,8 +34,10 @@ class ProgramListFragment : BaseFragment(), RecyclerViewClickInterface, LastProg
     private var lastProgramItemCount = 0
     private var channelId = 0
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.recyclerview_fragment, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        //return inflater.inflate(R.layout.recyclerview_fragment, container, false)
+        binding = RecyclerviewFragmentBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -52,10 +55,10 @@ class ProgramListFragment : BaseFragment(), RecyclerViewClickInterface, LastProg
         programViewModel.showProgramChannelIcon = baseViewModel.isSearchActive && channelId == 0
 
         recyclerViewAdapter = ProgramRecyclerViewAdapter(programViewModel, this, this)
-        recycler_view.layoutManager = LinearLayoutManager(activity)
-        recycler_view.adapter = recyclerViewAdapter
-        recycler_view.gone()
-        search_progress?.visibleOrGone(baseViewModel.isSearchActive)
+        binding.recyclerView.layoutManager = LinearLayoutManager(activity)
+        binding.recyclerView.adapter = recyclerViewAdapter
+        binding.recyclerView.gone()
+        binding.searchProgress.visibleOrGone(baseViewModel.isSearchActive)
 
         Timber.d("Observing programs")
         programViewModel.programs.observe(viewLifecycleOwner,  { progs ->
@@ -66,7 +69,7 @@ class ProgramListFragment : BaseFragment(), RecyclerViewClickInterface, LastProg
                 observeRecordings()
             }
 
-            recycler_view?.visible()
+            binding.recyclerView.visible()
             showStatusInToolbar()
             activity?.invalidateOptionsMenu()
         })
@@ -251,7 +254,7 @@ class ProgramListFragment : BaseFragment(), RecyclerViewClickInterface, LastProg
 
     override fun onFilterComplete(count: Int) {
         showStatusInToolbar()
-        search_progress?.gone()
+        binding.searchProgress.gone()
     }
 
     private fun showStatusInToolbar() {
