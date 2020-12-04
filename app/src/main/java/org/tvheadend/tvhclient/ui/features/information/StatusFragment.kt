@@ -12,7 +12,7 @@ import androidx.lifecycle.ViewModelProvider
 import org.tvheadend.data.entity.ServerStatus
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.databinding.StatusFragmentBinding
-import org.tvheadend.tvhclient.service.HtspService
+import org.tvheadend.tvhclient.service.ConnectionService
 import org.tvheadend.tvhclient.ui.base.BaseFragment
 import org.tvheadend.tvhclient.ui.common.interfaces.LayoutControlInterface
 import org.tvheadend.tvhclient.ui.features.dvr.recordings.RecordingViewModel
@@ -53,7 +53,7 @@ class StatusFragment : BaseFragment() {
                         && runningAppProcessInfo.importance <= ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND) {
 
                     Timber.d("Application is in the foreground, starting service to get updated subscriptions and input information")
-                    val intent = Intent(activity, HtspService::class.java)
+                    val intent = Intent(activity, ConnectionService::class.java)
                     intent.action = "getSubscriptions"
                     activity?.startService(intent)
                     intent.action = "getInputs"

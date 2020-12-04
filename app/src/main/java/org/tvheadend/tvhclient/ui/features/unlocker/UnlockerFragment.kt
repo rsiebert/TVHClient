@@ -9,7 +9,7 @@ import com.afollestad.materialdialogs.MaterialDialog
 import com.android.billingclient.api.Purchase
 import org.tvheadend.tvhclient.MainApplication
 import org.tvheadend.tvhclient.R
-import org.tvheadend.tvhclient.service.HtspService
+import org.tvheadend.tvhclient.service.ConnectionService
 import org.tvheadend.tvhclient.ui.features.MainActivity
 import org.tvheadend.tvhclient.ui.features.information.WebViewFragment
 import org.tvheadend.tvhclient.util.billing.BillingHandler
@@ -96,7 +96,7 @@ class UnlockerFragment : WebViewFragment(), BillingUpdatesListener {
 
     private fun restartApplication() {
         context?.let {
-            it.stopService(Intent(it, HtspService::class.java))
+            it.stopService(Intent(it, ConnectionService::class.java))
             val intent = Intent(it, MainActivity::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             it.startActivity(intent)

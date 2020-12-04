@@ -5,8 +5,8 @@ import org.tvheadend.data.di.FeatureScope
 import org.tvheadend.tvhclient.MainApplication
 import org.tvheadend.tvhclient.di.module.ContextModule
 import org.tvheadend.tvhclient.di.module.SharedPreferencesModule
-import org.tvheadend.tvhclient.service.HtspIntentService
-import org.tvheadend.tvhclient.service.HtspService
+import org.tvheadend.tvhclient.service.ConnectionIntentService
+import org.tvheadend.tvhclient.service.ConnectionService
 import org.tvheadend.tvhclient.ui.base.BaseFragment
 import org.tvheadend.tvhclient.ui.base.BaseViewModel
 import org.tvheadend.tvhclient.ui.features.settings.SettingsActivity
@@ -22,8 +22,8 @@ import org.tvheadend.tvhclient.util.billing.BillingManager
 interface MainComponent {
 
     fun inject(mainApplication: MainApplication)
-    fun inject(htspService: HtspService)
-    fun inject(htspIntentService: HtspIntentService)
+    fun inject(connectionService: ConnectionService)
+    fun inject(connectionIntentService: ConnectionIntentService)
     fun inject(settingsActivity: SettingsActivity)
     fun inject(baseFragment: BaseFragment)
     fun inject(baseViewModel: BaseViewModel)

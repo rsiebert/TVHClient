@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import org.tvheadend.data.entity.Recording
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.databinding.RecyclerviewFragmentBinding
-import org.tvheadend.tvhclient.service.HtspService
+import org.tvheadend.tvhclient.service.ConnectionService
 import org.tvheadend.tvhclient.ui.base.BaseFragment
 import org.tvheadend.tvhclient.ui.common.*
 import org.tvheadend.tvhclient.ui.common.interfaces.ClearSearchResultsOrPopBackStackInterface
@@ -239,7 +239,7 @@ class ProgramListFragment : BaseFragment(), RecyclerViewClickInterface, LastProg
         lastProgram?.let {
             Timber.d("Loading more programs after ${lastProgram.title}")
 
-            val intent = Intent(activity, HtspService::class.java)
+            val intent = Intent(activity, ConnectionService::class.java)
             intent.action = "getEvents"
             intent.putExtra("eventId", lastProgram.nextEventId)
             intent.putExtra("channelId", lastProgram.channelId)

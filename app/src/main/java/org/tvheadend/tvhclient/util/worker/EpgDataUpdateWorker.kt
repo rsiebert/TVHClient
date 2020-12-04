@@ -4,7 +4,7 @@ import android.content.Context
 import android.content.Intent
 import androidx.work.Worker
 import androidx.work.WorkerParameters
-import org.tvheadend.tvhclient.service.HtspIntentService
+import org.tvheadend.tvhclient.service.ConnectionIntentService
 import timber.log.Timber
 
 class EpgDataUpdateWorker(context: Context, workerParams: WorkerParameters) : Worker(context, workerParams) {
@@ -19,7 +19,7 @@ class EpgDataUpdateWorker(context: Context, workerParams: WorkerParameters) : Wo
         val intent = Intent()
         intent.action = "getMoreEvents"
         intent.putExtra("numFollowing", 250)
-        HtspIntentService.enqueueWork(applicationContext, intent)
+        ConnectionIntentService.enqueueWork(applicationContext, intent)
         return Result.success()
     }
 }

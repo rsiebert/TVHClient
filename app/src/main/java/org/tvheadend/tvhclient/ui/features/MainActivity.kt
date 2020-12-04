@@ -35,7 +35,7 @@ import org.tvheadend.htsp.ConnectionFailureReason
 import org.tvheadend.htsp.ConnectionStateResult
 import org.tvheadend.tvhclient.BuildConfig
 import org.tvheadend.tvhclient.R
-import org.tvheadend.tvhclient.service.HtspService
+import org.tvheadend.tvhclient.service.ConnectionService
 import org.tvheadend.tvhclient.service.SyncState
 import org.tvheadend.tvhclient.service.SyncStateReceiver
 import org.tvheadend.tvhclient.service.SyncStateResult
@@ -561,7 +561,7 @@ class MainActivity : AppCompatActivity(), ToolbarInterface, LayoutControlInterfa
     private fun connectToServer(status: NetworkStatus) {
         val activityManager = getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
         val runningAppProcessInfo = activityManager.runningAppProcesses?.get(0)
-        val intent = Intent(this, HtspService::class.java)
+        val intent = Intent(this, ConnectionService::class.java)
 
         if (runningAppProcessInfo != null
                 && runningAppProcessInfo.importance <= ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND) {

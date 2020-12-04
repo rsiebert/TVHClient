@@ -14,7 +14,7 @@ import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.list.listItemsSingleChoice
 import org.tvheadend.data.entity.*
 import org.tvheadend.tvhclient.R
-import org.tvheadend.tvhclient.service.HtspService
+import org.tvheadend.tvhclient.service.ConnectionService
 import org.tvheadend.tvhclient.ui.base.BaseViewModel
 import org.tvheadend.tvhclient.ui.common.interfaces.RecordingRemovedInterface
 import org.tvheadend.tvhclient.ui.features.dvr.recordings.RecordingAddEditFragment
@@ -146,7 +146,7 @@ fun showConfirmationToReconnectToServer(context: Context, viewModel: BaseViewMod
 }
 
 fun recordSelectedProgram(context: Context, eventId: Int, profile: ServerProfile?, htspVersion: Int): Boolean {
-    val intent = Intent(context, HtspService::class.java)
+    val intent = Intent(context, ConnectionService::class.java)
     intent.action = "addDvrEntry"
     intent.putExtra("eventId", eventId)
 
@@ -158,7 +158,7 @@ fun recordSelectedProgram(context: Context, eventId: Int, profile: ServerProfile
 }
 
 fun recordSelectedProgramAsSeriesRecording(context: Context, title: String?, channelId: Int, profile: ServerProfile?, htspVersion: Int): Boolean {
-    val intent = Intent(context, HtspService::class.java)
+    val intent = Intent(context, ConnectionService::class.java)
     intent.action = "addAutorecEntry"
     intent.putExtra("title", title)
     intent.putExtra("channelId", channelId)
@@ -185,7 +185,7 @@ fun showConfirmationToStopSelectedRecording(context: Context, recording: Recordi
 }
 
 private fun stopSelectedRecording(context: Context, recording: Recording, callback: RecordingRemovedInterface?) {
-    val intent = Intent(context, HtspService::class.java)
+    val intent = Intent(context, ConnectionService::class.java)
     intent.action = "stopDvrEntry"
     intent.putExtra("id", recording.id)
     context.startService(intent)
@@ -207,7 +207,7 @@ fun showConfirmationToRemoveSelectedRecording(context: Context, recording: Recor
 }
 
 private fun removeSelectedRecording(context: Context, recording: Recording, callback: RecordingRemovedInterface?) {
-    val intent = Intent(context, HtspService::class.java)
+    val intent = Intent(context, ConnectionService::class.java)
     intent.action = "deleteDvrEntry"
     intent.putExtra("id", recording.id)
     context.startService(intent)
@@ -229,7 +229,7 @@ fun showConfirmationToCancelSelectedRecording(context: Context, recording: Recor
 }
 
 private fun cancelSelectedRecording(context: Context, recording: Recording, callback: RecordingRemovedInterface?) {
-    val intent = Intent(context, HtspService::class.java)
+    val intent = Intent(context, ConnectionService::class.java)
     intent.action = "cancelDvrEntry"
     intent.putExtra("id", recording.id)
     context.startService(intent)
@@ -310,7 +310,7 @@ fun showConfirmationToRemoveSelectedSeriesRecording(context: Context, recording:
 }
 
 private fun removeSelectedSeriesRecording(context: Context, recording: SeriesRecording, callback: RecordingRemovedInterface?) {
-    val intent = Intent(context, HtspService::class.java)
+    val intent = Intent(context, ConnectionService::class.java)
     intent.action = "deleteAutorecEntry"
     intent.putExtra("id", recording.id)
     context.startService(intent)
@@ -335,7 +335,7 @@ fun showConfirmationToRemoveSelectedTimerRecording(context: Context, recording: 
 }
 
 private fun removeSelectedTimerRecording(context: Context, recording: TimerRecording, callback: RecordingRemovedInterface?) {
-    val intent = Intent(context, HtspService::class.java)
+    val intent = Intent(context, ConnectionService::class.java)
     intent.action = "deleteTimerecEntry"
     intent.putExtra("id", recording.id)
     context.startService(intent)
@@ -358,7 +358,7 @@ private fun removeAllRecordings(context: Context, items: List<Recording>) {
     object : Thread() {
         override fun run() {
             for (item in items) {
-                val intent = Intent(context, HtspService::class.java)
+                val intent = Intent(context, ConnectionService::class.java)
                 intent.putExtra("id", item.id)
                 if (item.isRecording || item.isScheduled) {
                     intent.action = "cancelDvrEntry"
@@ -392,7 +392,7 @@ private fun removeAllSeriesRecordings(context: Context, items: List<SeriesRecord
     object : Thread() {
         override fun run() {
             for ((id) in items) {
-                val intent = Intent(context, HtspService::class.java)
+                val intent = Intent(context, ConnectionService::class.java)
                 intent.action = "deleteAutorecEntry"
                 intent.putExtra("id", id)
                 context.startService(intent)
@@ -422,7 +422,7 @@ private fun removeAllTimerRecordings(context: Context, items: List<TimerRecordin
     object : Thread() {
         override fun run() {
             for ((id) in items) {
-                val intent = Intent(context, HtspService::class.java)
+                val intent = Intent(context, ConnectionService::class.java)
                 intent.action = "deleteTimerecEntry"
                 intent.putExtra("id", id)
                 context.startService(intent)
@@ -453,7 +453,7 @@ fun recordSelectedProgramWithCustomProfile(context: Context, eventId: Int, chann
     MaterialDialog(context).show {
         title(R.string.select_dvr_config)
         listItemsSingleChoice(items = serverProfileNames.toList(), initialSelection = dvrConfigNameValue) { _, index, _ ->
-            val intent = Intent(context, HtspService::class.java)
+            val intent = Intent(context, ConnectionService::class.java)
             intent.action = "addDvrEntry"
             intent.putExtra("eventId", eventId)
             intent.putExtra("channelId", channelId)

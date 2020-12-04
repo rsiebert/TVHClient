@@ -7,7 +7,7 @@ import androidx.core.app.NotificationManagerCompat
 import androidx.work.Worker
 import androidx.work.WorkerParameters
 import org.tvheadend.tvhclient.R
-import org.tvheadend.tvhclient.service.HtspService
+import org.tvheadend.tvhclient.service.ConnectionService
 import org.tvheadend.tvhclient.ui.common.getNotificationBuilder
 import timber.log.Timber
 import java.text.SimpleDateFormat
@@ -27,7 +27,7 @@ class RecordingNotificationWorker(val context: Context, workerParams: WorkerPara
         Timber.d("Received notification broadcast for recording $dvrTitle")
 
         // Create the intent that handles the cancelling of the scheduled recording
-        val recordIntent = Intent(context, HtspService::class.java)
+        val recordIntent = Intent(context, ConnectionService::class.java)
         recordIntent.action = "cancelDvrEntry"
         recordIntent.putExtra("id", dvrId)
         val cancelRecordingPendingIntent = PendingIntent.getService(context, 0, recordIntent, PendingIntent.FLAG_UPDATE_CURRENT)

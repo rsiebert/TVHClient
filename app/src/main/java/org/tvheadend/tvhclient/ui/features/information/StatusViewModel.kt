@@ -13,7 +13,7 @@ import org.tvheadend.data.entity.Input
 import org.tvheadend.data.entity.ServerStatus
 import org.tvheadend.data.entity.Subscription
 import org.tvheadend.tvhclient.R
-import org.tvheadend.tvhclient.service.HtspService
+import org.tvheadend.tvhclient.service.ConnectionService
 import org.tvheadend.tvhclient.ui.base.BaseViewModel
 import timber.log.Timber
 
@@ -76,7 +76,7 @@ class StatusViewModel(application: Application) : BaseViewModel(application), Sh
                     && runningAppProcessInfo.importance <= ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND) {
 
                 Timber.d("Application is in the foreground, starting service to get disk space ")
-                val intent = Intent(application.applicationContext, HtspService::class.java)
+                val intent = Intent(application.applicationContext, ConnectionService::class.java)
                 intent.action = "getDiskSpace"
                 application.applicationContext.startService(intent)
             }

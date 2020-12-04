@@ -35,7 +35,7 @@ import org.tvheadend.htsp.HtspConnection;
 import org.tvheadend.htsp.HtspMessage;
 import org.tvheadend.htsp.HtspMessageListener;
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.service.HtspService;
+import org.tvheadend.tvhclient.service.ConnectionService;
 
 import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
@@ -65,7 +65,7 @@ public class HtspSubscriptionDataSource implements DataSource, Closeable, HtspMe
     private DataSpec dataSpec;
     private final int dataSourceNumber;
     private final int subscriptionId;
-    private ByteBuffer byteBuffer;
+    private final ByteBuffer byteBuffer;
     private int timeshiftPeriod = 0;
     private final ReentrantLock lock = new ReentrantLock();
     private boolean subscriptionStarted = false;
@@ -336,7 +336,7 @@ public class HtspSubscriptionDataSource implements DataSource, Closeable, HtspMe
 
     public void resume() {
         Timber.d("Resuming subscription data source " + dataSourceNumber + ")");
-        Intent intent = new Intent(context, HtspService.class);
+        Intent intent = new Intent(context, ConnectionService.class);
         intent.putExtra("method", "subscriptionSpeed");
         intent.putExtra("subscriptionId", subscriptionId);
         intent.putExtra("speed", 100);

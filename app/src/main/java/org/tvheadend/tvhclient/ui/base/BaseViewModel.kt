@@ -11,7 +11,7 @@ import androidx.preference.PreferenceManager
 import org.tvheadend.data.AppRepository
 import org.tvheadend.data.entity.Connection
 import org.tvheadend.tvhclient.MainApplication
-import org.tvheadend.tvhclient.service.HtspService
+import org.tvheadend.tvhclient.service.ConnectionService
 import org.tvheadend.tvhclient.ui.common.NetworkStatus
 import org.tvheadend.tvhclient.ui.common.interfaces.NetworkStatusInterface
 import org.tvheadend.tvhclient.ui.common.interfaces.SnackbarMessageInterface
@@ -92,7 +92,7 @@ open class BaseViewModel(application: Application) : AndroidViewModel(applicatio
             if (isSyncRequired) {
                 appRepository.connectionData.setSyncRequiredForActiveConnection()
             }
-            context.stopService(Intent(context, HtspService::class.java))
+            context.stopService(Intent(context, ConnectionService::class.java))
             val intent = Intent(context, MainActivity::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             context.startActivity(intent)

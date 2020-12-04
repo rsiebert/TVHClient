@@ -19,8 +19,8 @@ import com.squareup.picasso.Picasso
 import org.tvheadend.data.source.MiscDataSource
 import org.tvheadend.tvhclient.BuildConfig
 import org.tvheadend.tvhclient.R
-import org.tvheadend.tvhclient.service.HtspIntentService
-import org.tvheadend.tvhclient.service.HtspService
+import org.tvheadend.tvhclient.service.ConnectionIntentService
+import org.tvheadend.tvhclient.service.ConnectionService
 import org.tvheadend.tvhclient.ui.common.SuggestionProvider
 import org.tvheadend.tvhclient.ui.common.interfaces.ToolbarInterface
 import org.tvheadend.tvhclient.ui.features.MainActivity
@@ -122,7 +122,7 @@ class SettingsAdvancedFragment : PreferenceFragmentCompat(), Preference.OnPrefer
             val intent = Intent()
             intent.action = "getMoreEvents"
             intent.putExtra("numFollowing", 250)
-            HtspIntentService.enqueueWork(it, intent)
+            ConnectionIntentService.enqueueWork(it, intent)
         }
     }
 
@@ -290,7 +290,7 @@ class SettingsAdvancedFragment : PreferenceFragmentCompat(), Preference.OnPrefer
     override fun onDatabaseCleared() {
         Timber.d("Database has been cleared, stopping service and restarting application")
         context?.let {
-            it.stopService(Intent(it, HtspService::class.java))
+            it.stopService(Intent(it, ConnectionService::class.java))
             settingsViewModel.setSyncRequiredForActiveConnection()
 
             val intent = Intent(it, MainActivity::class.java)

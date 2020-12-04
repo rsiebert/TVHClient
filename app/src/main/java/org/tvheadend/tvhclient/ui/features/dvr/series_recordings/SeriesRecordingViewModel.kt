@@ -10,7 +10,7 @@ import org.tvheadend.data.entity.Channel
 import org.tvheadend.data.entity.SeriesRecording
 import org.tvheadend.data.entity.ServerProfile
 import org.tvheadend.tvhclient.R
-import org.tvheadend.tvhclient.service.HtspService
+import org.tvheadend.tvhclient.service.ConnectionService
 import org.tvheadend.tvhclient.ui.base.BaseViewModel
 import timber.log.Timber
 import java.util.*
@@ -32,7 +32,7 @@ class SeriesRecordingViewModel(application: Application) : BaseViewModel(applica
      * Returns an intent with the recording data
      */
     fun getIntentData(context: Context, recording: SeriesRecording): Intent {
-        val intent = Intent(context, HtspService::class.java)
+        val intent = Intent(context, ConnectionService::class.java)
         intent.putExtra("title", recording.title)
         intent.putExtra("name", recording.name)
         intent.putExtra("directory", recording.directory)

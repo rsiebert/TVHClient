@@ -12,7 +12,7 @@ import org.tvheadend.data.entity.Channel
 import org.tvheadend.data.entity.Recording
 import org.tvheadend.data.entity.ServerProfile
 import org.tvheadend.tvhclient.R
-import org.tvheadend.tvhclient.service.HtspService
+import org.tvheadend.tvhclient.service.ConnectionService
 import org.tvheadend.tvhclient.ui.base.BaseViewModel
 import timber.log.Timber
 
@@ -39,7 +39,7 @@ class RecordingViewModel(application: Application) : BaseViewModel(application),
     private val defaultHideDuplicateScheduledRecordings = application.applicationContext.resources.getBoolean(R.bool.pref_default_hide_duplicate_scheduled_recordings_enabled)
 
     fun getIntentData(context: Context, recording: Recording): Intent {
-        val intent = Intent(context, HtspService::class.java)
+        val intent = Intent(context, ConnectionService::class.java)
         intent.putExtra("title", recording.title)
         intent.putExtra("subtitle", recording.subtitle)
         intent.putExtra("summary", recording.summary)

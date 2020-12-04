@@ -7,7 +7,7 @@ import androidx.core.app.NotificationManagerCompat
 import androidx.work.Worker
 import androidx.work.WorkerParameters
 import org.tvheadend.tvhclient.R
-import org.tvheadend.tvhclient.service.HtspService
+import org.tvheadend.tvhclient.service.ConnectionService
 import org.tvheadend.tvhclient.ui.common.getNotificationBuilder
 import org.tvheadend.tvhclient.ui.features.programs.ProgramDetailsActivity
 import timber.log.Timber
@@ -37,7 +37,7 @@ class ProgramNotificationWorker(val context: Context, workerParams: WorkerParame
         val detailsPendingIntent = PendingIntent.getActivity(context, 0, detailsIntent, PendingIntent.FLAG_UPDATE_CURRENT)
 
         // Create the intent that handles the scheduling of the program
-        val recordIntent = Intent(context, HtspService::class.java)
+        val recordIntent = Intent(context, ConnectionService::class.java)
         recordIntent.action = "addDvrEntry"
         recordIntent.putExtra("eventId", eventId)
         if (!configName.isNullOrEmpty()) {

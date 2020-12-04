@@ -88,10 +88,10 @@
             android:supportsPictureInPicture="true" />
 
         <service
-            android:name="org.tvheadend.tvhclient.service.HtspService"
+            android:name="org.tvheadend.tvhclient.service.ConnectionService"
             android:exported="false" />
         <service
-            android:name="org.tvheadend.tvhclient.service.HtspIntentService"
+            android:name="org.tvheadend.tvhclient.service.ConnectionIntentService"
             android:exported="false"
             android:permission="android.permission.BIND_JOB_SERVICE" />
 

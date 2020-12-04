@@ -12,7 +12,7 @@ import com.afollestad.materialdialogs.MaterialDialog
 import org.tvheadend.data.entity.Connection
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.databinding.RecyclerviewFragmentBinding
-import org.tvheadend.tvhclient.service.HtspService
+import org.tvheadend.tvhclient.service.ConnectionService
 import org.tvheadend.tvhclient.ui.common.WakeOnLanTask
 import org.tvheadend.tvhclient.ui.common.interfaces.BackPressedInterface
 import org.tvheadend.tvhclient.ui.common.interfaces.RecyclerViewClickInterface
@@ -189,7 +189,7 @@ class SettingsListConnectionsFragment : Fragment(), BackPressedInterface, Action
     }
 
     private fun updateConnectionAndRestartApplication() {
-        context?.stopService(Intent(context, HtspService::class.java))
+        context?.stopService(Intent(context, ConnectionService::class.java))
         val intent = Intent(context, MainActivity::class.java)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         context?.startActivity(intent)
