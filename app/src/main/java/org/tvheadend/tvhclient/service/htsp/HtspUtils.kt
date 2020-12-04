@@ -1,4 +1,4 @@
-package org.tvheadend.tvhclient.service
+package org.tvheadend.tvhclient.service.htsp
 
 import android.content.Intent
 import org.tvheadend.data.entity.*
