@@ -35,7 +35,6 @@ class ProgramListFragment : BaseFragment(), RecyclerViewClickInterface, LastProg
     private var channelId = 0
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        //return inflater.inflate(R.layout.recyclerview_fragment, container, false)
         binding = RecyclerviewFragmentBinding.inflate(inflater, container, false)
         return binding.root
     }

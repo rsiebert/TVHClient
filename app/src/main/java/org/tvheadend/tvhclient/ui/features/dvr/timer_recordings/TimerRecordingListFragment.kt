@@ -28,7 +28,6 @@ class TimerRecordingListFragment : BaseFragment(), RecyclerViewClickInterface, S
     private lateinit var recyclerViewAdapter: TimerRecordingRecyclerViewAdapter
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        //return inflater.inflate(R.layout.recyclerview_fragment, container, false)
         binding = RecyclerviewFragmentBinding.inflate(inflater, container, false)
         return binding.root
 

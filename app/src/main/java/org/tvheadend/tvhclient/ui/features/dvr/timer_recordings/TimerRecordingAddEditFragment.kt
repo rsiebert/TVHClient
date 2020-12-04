@@ -28,7 +28,6 @@ class TimerRecordingAddEditFragment : BaseFragment(), BackPressedInterface, Reco
     private var profile: ServerProfile? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        //return inflater.inflate(R.layout.timer_recording_add_edit_fragment, container, false)
         binding = TimerRecordingAddEditFragmentBinding.inflate(inflater, container, false)
         return binding.root
     }

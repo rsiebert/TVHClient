@@ -22,7 +22,6 @@ class RecordingDetailsFragment : BaseFragment(), RecordingRemovedInterface, Down
     private lateinit var binding: RecordingDetailsFragmentBinding
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        //binding = DataBindingUtil.inflate(inflater, R.layout.recording_details_fragment, container, false)
         binding = RecordingDetailsFragmentBinding.inflate(inflater, container, false)
         return binding.root
     }

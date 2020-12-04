@@ -27,8 +27,7 @@ class SeriesRecordingAddEditFragment : BaseFragment(), BackPressedInterface, Rec
     private lateinit var recordingProfilesList: Array<String>
     private var profile: ServerProfile? = null
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        //return inflater.inflate(R.layout.series_recording_add_edit_fragment, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = SeriesRecordingAddEditFragmentBinding.inflate(inflater, container, false)
         return binding.root
     }

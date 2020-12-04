@@ -28,7 +28,6 @@ class StartupFragment : Fragment(), HideNavigationDrawerInterface {
     private var isConnectionActive = false
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        //return inflater.inflate(R.layout.startup_fragment, container, false)
         binding = StartupFragmentBinding.inflate(inflater, container, false)
         return binding.root
     }

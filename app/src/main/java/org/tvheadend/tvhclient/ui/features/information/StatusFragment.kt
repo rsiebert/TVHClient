@@ -26,7 +26,6 @@ class StatusFragment : BaseFragment() {
     private val loadDataHandler = Handler()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        //return inflater.inflate(R.layout.status_fragment, container, false)
         binding = StatusFragmentBinding.inflate(inflater, container, false)
         return binding.root
     }

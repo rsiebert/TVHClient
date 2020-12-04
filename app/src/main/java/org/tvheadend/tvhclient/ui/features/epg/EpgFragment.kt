@@ -41,7 +41,6 @@ class EpgFragment : BaseFragment(), EpgScrollInterface, RecyclerViewClickInterfa
     private var channelCount = 0
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        //return inflater.inflate(R.layout.epg_fragment, container, false)
         binding = EpgFragmentBinding.inflate(inflater, container, false)
         return binding.root
     }
