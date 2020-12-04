@@ -48,9 +48,7 @@ class SyncStateReceiver(callback: Listener) : BroadcastReceiver() {
          * Interface method that is called then a local broadcast was received
          * with the connection and synchronization state including any text messages
          *
-         * @param result   The current connection and synchronization state
-         * @param message Main text message describing the state
-         * @param details Additional text message to describe any details
+         * @param result The current connection and synchronization state
          */
         fun onSyncStateChanged(result: SyncStateResult)
     }
