@@ -18,7 +18,7 @@ class WakeOnLanTask(context: Context, private val connection: Connection) : Asyn
     private val context: WeakReference<Context> = WeakReference(context)
     private var exception: Exception? = null
 
-    override fun doInBackground(vararg params: String): Int? {
+    override fun doInBackground(vararg params: String): Int {
         // Exit if the MAC address is not ok, this should never happen because
         // it is already validated in the settings
         if (!validateMacAddress(connection.wolMacAddress)) {

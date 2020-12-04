@@ -31,7 +31,7 @@ class InputDataSource(@Suppress("unused") private val db: AppRoomDatabase) : Dat
         return inputs
     }
 
-    override fun getItemById(id: Any): Input? {
+    override fun getItemById(id: Any): Input {
         return inputs[id as Int]
     }
 

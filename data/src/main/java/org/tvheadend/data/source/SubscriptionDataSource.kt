@@ -31,7 +31,7 @@ class SubscriptionDataSource(@Suppress("unused") private val db: AppRoomDatabase
         return subscriptions
     }
 
-    override fun getItemById(id: Any): Subscription? {
+    override fun getItemById(id: Any): Subscription {
         return subscriptions[id as Int]
     }
 

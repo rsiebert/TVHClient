@@ -70,7 +70,7 @@ class TrackInformationDialog : DialogFragment() {
                 "Audio:\n$audioInfo"
     }
 
-    private fun getPlayerStateString(): String? {
+    private fun getPlayerStateString(): String {
         return when (playbackState) {
             Player.STATE_BUFFERING -> "buffering"
             Player.STATE_ENDED -> "ended"
@@ -80,7 +80,7 @@ class TrackInformationDialog : DialogFragment() {
         }
     }
 
-    private fun getPixelAspectRatioString(pixelAspectRatio: Float?): String? {
+    private fun getPixelAspectRatioString(pixelAspectRatio: Float?): String {
         return if (pixelAspectRatio == Format.NO_VALUE.toFloat()) " no value" else " ${String.format(Locale.US, "%.02f", pixelAspectRatio)}"
     }
 

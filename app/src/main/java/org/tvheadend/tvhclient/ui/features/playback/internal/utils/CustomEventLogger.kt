@@ -97,7 +97,7 @@ class CustomEventLogger(private val trackSelector: MappingTrackSelector) : Analy
         }
     }
 
-    private fun getTrackStatusString(enabled: Boolean): String? {
+    private fun getTrackStatusString(enabled: Boolean): String {
         return if (enabled) "yes" else "no"
     }
 }
