@@ -1,15 +1,14 @@
-package org.tvheadend.tvhclient.service
+package org.tvheadend.tvhclient.service.htsp
 
 import android.app.NotificationManager
 import android.app.Service
 import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.os.IBinder
 import androidx.core.app.NotificationManagerCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import androidx.preference.PreferenceManager
 import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequest
 import androidx.work.WorkManager
@@ -17,13 +16,10 @@ import org.json.JSONException
 import org.json.JSONObject
 import org.tvheadend.data.AppRepository
 import org.tvheadend.data.entity.*
-import org.tvheadend.data.entity.ServerProfile.Companion.HTSP_PROFILE
-import org.tvheadend.data.entity.ServerProfile.Companion.HTTP_PROFILE
-import org.tvheadend.data.entity.ServerProfile.Companion.RECORDING_PROFILE
 import org.tvheadend.htsp.*
 import org.tvheadend.tvhclient.BuildConfig
-import org.tvheadend.tvhclient.MainApplication
 import org.tvheadend.tvhclient.R
+import org.tvheadend.tvhclient.service.*
 import org.tvheadend.tvhclient.ui.common.addNotificationScheduledRecordingStarts
 import org.tvheadend.tvhclient.ui.common.removeNotificationById
 import org.tvheadend.tvhclient.util.convertUrlToHashString
@@ -40,20 +36,13 @@ import java.util.*
 import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledExecutorService
 import java.util.concurrent.TimeUnit
-import javax.inject.Inject
 import kotlin.math.floor
 import kotlin.math.max
 
-class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener {
+class HtspServiceHandler(val context: Context, val appRepository: AppRepository, val connection: Connection) : ConnectionService.ServiceInterface, HtspConnectionStateListener, HtspMessageListener {
 
-    @Inject
-    lateinit var appRepository: AppRepository
-
-    @Inject
-    lateinit var sharedPreferences: SharedPreferences
-
-    private lateinit var htspConnectionData: HtspConnectionData
-    private lateinit var connection: Connection
+    private val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
+    private var htspConnectionData: HtspConnectionData
     private var htspVersion: Int = 13
     private var htspConnection: HtspConnection? = null
     private val execService: ScheduledExecutorService = Executors.newScheduledThreadPool(10)
@@ -63,29 +52,23 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
     private val pendingChannelTagOps = ArrayList<ChannelTag>()
     private val pendingRecordingOps = ArrayList<Recording>()
 
-    private lateinit var pendingHtspProfiles: MutableList<ServerProfile>
-    private lateinit var pendingHttpProfiles: MutableList<ServerProfile>
-    private lateinit var pendingRecordingProfiles: MutableList<ServerProfile>
+    private var pendingHtspProfiles: MutableList<ServerProfile>
+    private var pendingHttpProfiles: MutableList<ServerProfile>
+    private var pendingRecordingProfiles: MutableList<ServerProfile>
 
     private var initialSyncWithServerRunning: Boolean = false
     private var syncEventsRequired: Boolean = false
     private var syncRequired: Boolean = false
     private var firstEventReceived = false
 
-    override fun onCreate() {
-        Timber.d("Starting service")
-        MainApplication.component.inject(this)
-
-        connection = appRepository.connectionData.activeItem
-        Timber.d("Loaded connection ${connection.name}")
-
+    init {
         htspConnectionData = HtspConnectionData(
                 connection.username,
                 connection.password,
                 connection.serverUrl,
                 BuildConfig.VERSION_NAME,
                 BuildConfig.VERSION_CODE,
-                Integer.valueOf(sharedPreferences.getString("connection_timeout", resources.getString(R.string.pref_default_connection_timeout))!!) * 1000
+                Integer.valueOf(sharedPreferences.getString("connection_timeout", context.resources.getString(R.string.pref_default_connection_timeout))!!) * 1000
         )
 
         pendingHtspProfiles = appRepository.serverProfileData.htspPlaybackProfiles.toMutableList()
@@ -98,10 +81,10 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
         Timber.d("Loaded ${pendingRecordingProfiles.size} recording profiles")
     }
 
-    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        val action = intent?.action ?: return START_NOT_STICKY
+    override fun onStartCommand(intent: Intent?): Int {
+        val action = intent?.action ?: return Service.START_NOT_STICKY
         if (action.isEmpty()) {
-            return START_NOT_STICKY
+            return Service.START_NOT_STICKY
         }
         Timber.d("Received command $action for service")
 
@@ -163,7 +146,7 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
                 }
             }
         }
-        return START_NOT_STICKY
+        return Service.START_NOT_STICKY
     }
 
     override fun onDestroy() {
@@ -215,10 +198,6 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
         }
     }
 
-    override fun onBind(intent: Intent): IBinder? {
-        return null
-    }
-
     override fun onAuthenticationStateChange(result: AuthenticationStateResult) {
         SyncStateResult.Authenticating(result)
         if (result is AuthenticationStateResult.Authenticated) {
@@ -243,7 +222,7 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
         val enableAsyncMetadataRequest = HtspMessage()
         enableAsyncMetadataRequest.method = "enableAsyncMetadata"
 
-        val epgMaxTime = java.lang.Long.parseLong(sharedPreferences.getString("epg_max_time", resources.getString(R.string.pref_default_epg_max_time))!!)
+        val epgMaxTime = java.lang.Long.parseLong(sharedPreferences.getString("epg_max_time", context.resources.getString(R.string.pref_default_epg_max_time))!!)
         val currentTimeInSeconds = System.currentTimeMillis() / 1000L
         val lastUpdateTime = connection.lastUpdate
 
@@ -338,7 +317,7 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
             val updateEpgWorker = OneTimeWorkRequest.Builder(EpgDataUpdateWorker::class.java)
                     .setInitialDelay(15, TimeUnit.SECONDS)
                     .build()
-            WorkManager.getInstance(this.applicationContext).enqueueUniqueWork(EpgDataUpdateWorker.WORK_NAME, ExistingWorkPolicy.APPEND, updateEpgWorker)
+            WorkManager.getInstance(context.applicationContext).enqueueUniqueWork(EpgDataUpdateWorker.WORK_NAME, ExistingWorkPolicy.APPEND, updateEpgWorker)
         } else {
             val sdf = SimpleDateFormat("dd.MM.yyyy HH.mm", Locale.US)
             Timber.d("Last loading of epg data was at ${sdf.format(connection.lastUpdate * 1000L)}")
@@ -348,7 +327,7 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
         val databaseCleanupWorker = OneTimeWorkRequest.Builder(DatabaseCleanupWorker::class.java)
                 .setInitialDelay(1, TimeUnit.MINUTES)
                 .build()
-        WorkManager.getInstance(this.applicationContext).enqueueUniqueWork(DatabaseCleanupWorker.WORK_NAME, ExistingWorkPolicy.KEEP, databaseCleanupWorker)
+        WorkManager.getInstance(context.applicationContext).enqueueUniqueWork(DatabaseCleanupWorker.WORK_NAME, ExistingWorkPolicy.KEEP, databaseCleanupWorker)
     }
 
     /**
@@ -367,6 +346,7 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
 
         setDefaultProfileSelection()
     }
+
 
     private fun getDiscSpace() {
         val request = HtspMessage()
@@ -662,7 +642,7 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
             appRepository.recordingData.addItem(recording)
         }
 
-        addNotificationScheduledRecordingStarts(this, recording)
+        addNotificationScheduledRecordingStarts(context, recording)
     }
 
     /**
@@ -676,11 +656,11 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
         val updatedRecording = convertMessageToRecordingModel(recording, msg)
         appRepository.recordingData.updateItem(updatedRecording)
 
-        removeNotificationById(this, recording.id)
-        if (sharedPreferences.getBoolean("notifications_enabled", resources.getBoolean(R.bool.pref_default_notifications_enabled))) {
+        removeNotificationById(context, recording.id)
+        if (sharedPreferences.getBoolean("notifications_enabled", context.resources.getBoolean(R.bool.pref_default_notifications_enabled))) {
             if (!recording.isScheduled && !recording.isRecording) {
                 Timber.d("Removing notification for recording ${recording.title}")
-                (getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager).cancel(recording.id)
+                (context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager).cancel(recording.id)
             }
         }
     }
@@ -876,11 +856,11 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
         if (message.containsKey("profiles")) {
             for (obj in message.getList("profiles")) {
                 val msg = obj as HtspMessage
-                addProfile(msg.getString("name"), msg.getString("uuid"), msg.getString("comment"), HTSP_PROFILE, pendingHtspProfiles)
+                addProfile(msg.getString("name"), msg.getString("uuid"), msg.getString("comment"), ServerProfile.HTSP_PROFILE, pendingHtspProfiles)
             }
         }
         // Add the minimum mandatory profiles if they do not exist already
-        addProfile(name = "htsp", type = HTSP_PROFILE, profiles = pendingHtspProfiles)
+        addProfile(name = "htsp", type = ServerProfile.HTSP_PROFILE, profiles = pendingHtspProfiles)
 
         Timber.d("Adding ${pendingHtspProfiles.size} htsp profiles")
         appRepository.serverProfileData.addItems(pendingHtspProfiles)
@@ -899,7 +879,7 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
                         while (i < totalObject) {
                             val profile = entries.getJSONObject(i)
                             if (profile.has("key") && profile.has("val")) {
-                                addProfile(profile.getString("val"), profile.getString("key"), "", HTTP_PROFILE, pendingHttpProfiles)
+                                addProfile(profile.getString("val"), profile.getString("key"), "", ServerProfile.HTTP_PROFILE, pendingHttpProfiles)
                             }
                             i++
                         }
@@ -912,9 +892,9 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
             Timber.d("No http playback profile data available")
         }
         // Add the minimum mandatory profiles if they do not exist already
-        addProfile(name = "matroska", type = HTTP_PROFILE, profiles = pendingHttpProfiles)
-        addProfile(name = "audio", type = HTTP_PROFILE, profiles = pendingHttpProfiles)
-        addProfile(name = "pass", type = HTTP_PROFILE, profiles = pendingHttpProfiles)
+        addProfile(name = "matroska", type = ServerProfile.HTTP_PROFILE, profiles = pendingHttpProfiles)
+        addProfile(name = "audio", type = ServerProfile.HTTP_PROFILE, profiles = pendingHttpProfiles)
+        addProfile(name = "pass", type = ServerProfile.HTTP_PROFILE, profiles = pendingHttpProfiles)
 
         Timber.d("Adding ${pendingHttpProfiles.size} http profiles")
         appRepository.serverProfileData.addItems(pendingHttpProfiles)
@@ -1028,7 +1008,7 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
             for (obj in message.getList("dvrconfigs")) {
                 val msg = obj as HtspMessage
                 val name = msg.getString("name")
-                addProfile(if (name.isNullOrEmpty()) "Default Profile" else name, msg.getString("uuid"), msg.getString("comment"), RECORDING_PROFILE, pendingRecordingProfiles)
+                addProfile(if (name.isNullOrEmpty()) "Default Profile" else name, msg.getString("uuid"), msg.getString("comment"), ServerProfile.RECORDING_PROFILE, pendingRecordingProfiles)
             }
         }
         Timber.d("Adding ${pendingRecordingProfiles.size} recording profiles")
@@ -1185,7 +1165,7 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
             return
         }
 
-        val file = File(cacheDir, convertUrlToHashString(url) + ".png")
+        val file = File(context.cacheDir, convertUrlToHashString(url) + ".png")
         if (file.exists()) {
             Timber.d("Icon file ${file.absolutePath} exists already")
             return
@@ -1212,7 +1192,7 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
             inputStream = HtspFileInputStream(htspConnection, url)
         }
 
-        val scale = resources.displayMetrics.density
+        val scale = context.resources.displayMetrics.density
         val width = (64 * scale).toInt()
         val height = (64 * scale).toInt()
 
@@ -1242,7 +1222,7 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
         if (iconUrl.isNullOrEmpty()) {
             return
         }
-        val url = getIconUrl(this, iconUrl)
+        val url = getIconUrl(context, iconUrl)
         val file = File(url)
         if (!file.exists() || !file.delete()) {
             Timber.d("Could not delete icon ${file.name}")
@@ -1296,7 +1276,7 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
                 onGetEvents(response, intent)
                 if (showMessage) {
                     Timber.d("Showing message")
-                    applicationContext?.sendSnackbarMessage(getString(R.string.loading_more_programs_finished))
+                    context.applicationContext?.sendSnackbarMessage(context.getString(R.string.loading_more_programs_finished))
                 }
             }
         })
@@ -1383,14 +1363,14 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
         htspConnection?.sendMessage(request, object : HtspResponseListener {
             override fun handleResponse(response: HtspMessage) {
                 if (response.getInteger("success", 0) == 1) {
-                    applicationContext?.sendSnackbarMessage(getString(R.string.success_adding_recording))
+                    context.applicationContext?.sendSnackbarMessage(context.getString(R.string.success_adding_recording))
                 } else {
-                    applicationContext?.sendSnackbarMessage(getString(R.string.error_adding_recording, response.getString("error", "")))
+                    context.applicationContext?.sendSnackbarMessage(context.getString(R.string.error_adding_recording, response.getString("error", "")))
                 }
             }
         })
 
-        val notificationManager = NotificationManagerCompat.from(this)
+        val notificationManager = NotificationManagerCompat.from(context)
         notificationManager.cancel(intent.getIntExtra("eventId", 0))
     }
 
@@ -1402,9 +1382,9 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
         htspConnection?.sendMessage(request, object : HtspResponseListener {
             override fun handleResponse(response: HtspMessage) {
                 if (response.getInteger("success", 0) == 1) {
-                    applicationContext?.sendSnackbarMessage(getString(R.string.success_updating_recording))
+                    context.applicationContext?.sendSnackbarMessage(context.getString(R.string.success_updating_recording))
                 } else {
-                    applicationContext?.sendSnackbarMessage(getString(R.string.error_updating_recording, response.getString("error", "")))
+                    context.applicationContext?.sendSnackbarMessage(context.getString(R.string.error_updating_recording, response.getString("error", "")))
                 }
             }
         })
@@ -1419,14 +1399,14 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
             override fun handleResponse(response: HtspMessage) {
                 Timber.d("Response is not null")
                 if (response.getInteger("success", 0) == 1) {
-                    applicationContext?.sendSnackbarMessage(getString(R.string.success_removing_recording))
+                    context.applicationContext?.sendSnackbarMessage(context.getString(R.string.success_removing_recording))
                 } else {
-                    applicationContext?.sendSnackbarMessage(getString(R.string.error_removing_recording, response.getString("error", "")))
+                    context.applicationContext?.sendSnackbarMessage(context.getString(R.string.error_removing_recording, response.getString("error", "")))
                 }
             }
         })
 
-        val notificationManager = NotificationManagerCompat.from(this)
+        val notificationManager = NotificationManagerCompat.from(context)
         notificationManager.cancel(intent.getIntExtra("id", 0))
     }
 
@@ -1439,9 +1419,9 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
         htspConnection?.sendMessage(request, object : HtspResponseListener {
             override fun handleResponse(response: HtspMessage) {
                 if (response.getInteger("success", 0) == 1) {
-                    applicationContext?.sendSnackbarMessage(getString(successMessage))
+                    context.applicationContext?.sendSnackbarMessage(context.getString(successMessage))
                 } else {
-                    applicationContext?.sendSnackbarMessage(getString(errorMessage, response.getString("error", "")))
+                    context.applicationContext?.sendSnackbarMessage(context.getString(errorMessage, response.getString("error", "")))
                 }
             }
         })
@@ -1469,9 +1449,9 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
         htspConnection?.sendMessage(request, object : HtspResponseListener {
             override fun handleResponse(response: HtspMessage) {
                 if (response.getInteger("success", 0) == 1) {
-                    applicationContext?.sendSnackbarMessage(getString(R.string.success_removing_recording))
+                    context.applicationContext?.sendSnackbarMessage(context.getString(R.string.success_removing_recording))
                 } else {
-                    applicationContext?.sendSnackbarMessage(getString(R.string.error_removing_recording, response.getString("error", "")))
+                    context.applicationContext?.sendSnackbarMessage(context.getString(R.string.error_removing_recording, response.getString("error", "")))
                 }
             }
         })
@@ -1484,9 +1464,9 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
         htspConnection?.sendMessage(request, object : HtspResponseListener {
             override fun handleResponse(response: HtspMessage) {
                 if (response.getInteger("success", 0) == 1) {
-                    applicationContext?.sendSnackbarMessage(getString(R.string.success_adding_recording))
+                    context.applicationContext?.sendSnackbarMessage(context.getString(R.string.success_adding_recording))
                 } else {
-                    applicationContext?.sendSnackbarMessage(getString(R.string.error_adding_recording, response.getString("error", "")))
+                    context.applicationContext?.sendSnackbarMessage(context.getString(R.string.error_adding_recording, response.getString("error", "")))
                 }
             }
         })
@@ -1512,9 +1492,9 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
                     addTimerrecEntry(intent)
                 } else {
                     if (success) {
-                        applicationContext?.sendSnackbarMessage(getString(R.string.success_updating_recording))
+                        context.applicationContext?.sendSnackbarMessage(context.getString(R.string.success_updating_recording))
                     } else {
-                        applicationContext?.sendSnackbarMessage(getString(R.string.error_updating_recording, response.getString("error", "")))
+                        context.applicationContext?.sendSnackbarMessage(context.getString(R.string.error_updating_recording, response.getString("error", "")))
                     }
                 }
             }
@@ -1529,9 +1509,9 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
         htspConnection?.sendMessage(request, object : HtspResponseListener {
             override fun handleResponse(response: HtspMessage) {
                 if (response.getInteger("success", 0) == 1) {
-                    applicationContext?.sendSnackbarMessage(getString(R.string.success_removing_recording))
+                    context.applicationContext?.sendSnackbarMessage(context.getString(R.string.success_removing_recording))
                 } else {
-                    applicationContext?.sendSnackbarMessage(getString(R.string.error_removing_recording, response.getString("error", "")))
+                    context.applicationContext?.sendSnackbarMessage(context.getString(R.string.error_removing_recording, response.getString("error", "")))
                 }
             }
         })
@@ -1556,7 +1536,7 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
                 val ticketIntent = Intent("ticket")
                 ticketIntent.putExtra("path", response.getString("path"))
                 ticketIntent.putExtra("ticket", response.getString("ticket"))
-                LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(ticketIntent)
+                LocalBroadcastManager.getInstance(context.applicationContext).sendBroadcast(ticketIntent)
             }
         })
     }
@@ -1571,6 +1551,6 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
         if (details.isNotEmpty()) {
             intent.putExtra(SyncStateReceiver.DETAILS, details)
         }
-        LocalBroadcastManager.getInstance(this).sendBroadcast(intent)
+        LocalBroadcastManager.getInstance(context).sendBroadcast(intent)
     }
 }
