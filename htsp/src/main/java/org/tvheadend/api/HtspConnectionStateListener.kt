@@ -1,4 +1,4 @@
-package org.tvheadend.htsp
+package org.tvheadend.api
 
 interface HtspConnectionStateListener {
 

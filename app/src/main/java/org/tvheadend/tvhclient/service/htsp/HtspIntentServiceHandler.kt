@@ -6,6 +6,10 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.preference.PreferenceManager
+import org.tvheadend.api.AuthenticationStateResult
+import org.tvheadend.api.ConnectionStateResult
+import org.tvheadend.api.HtspConnectionStateListener
+import org.tvheadend.api.HtspResponseListener
 import org.tvheadend.data.entity.Connection
 import org.tvheadend.data.entity.Program
 import org.tvheadend.data.entity.ServerStatus

@@ -14,6 +14,9 @@ import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
 import com.google.android.exoplayer2.upstream.DefaultAllocator
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
 import com.google.android.exoplayer2.video.VideoListener
+import org.tvheadend.api.AuthenticationStateResult
+import org.tvheadend.api.ConnectionStateResult
+import org.tvheadend.api.HtspConnectionStateListener
 import org.tvheadend.data.entity.Channel
 import org.tvheadend.htsp.*
 import org.tvheadend.tvhclient.BuildConfig

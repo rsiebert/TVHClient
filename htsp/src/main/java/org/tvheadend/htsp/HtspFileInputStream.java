@@ -3,6 +3,7 @@ package org.tvheadend.htsp;
 import androidx.annotation.NonNull;
 
 import org.jetbrains.annotations.NotNull;
+import org.tvheadend.api.HtspResponseListener;
 
 import java.io.IOException;
 import java.io.InputStream;

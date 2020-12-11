@@ -7,8 +7,8 @@ import com.google.android.exoplayer2.upstream.DataSpec
 import com.google.android.exoplayer2.upstream.TransferListener
 import org.tvheadend.htsp.HtspConnection
 import org.tvheadend.htsp.HtspMessage
-import org.tvheadend.htsp.HtspMessageListener
-import org.tvheadend.htsp.HtspResponseListener
+import org.tvheadend.api.HtspMessageListener
+import org.tvheadend.api.HtspResponseListener
 import timber.log.Timber
 import java.io.Closeable
 import java.nio.ByteBuffer

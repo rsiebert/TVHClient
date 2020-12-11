@@ -1,4 +1,6 @@
-package org.tvheadend.htsp
+package org.tvheadend.api
+
+import org.tvheadend.htsp.HtspMessage
 
 internal interface HtspConnectionInterface {
     fun addMessageListener(listener: HtspMessageListener)

@@ -5,6 +5,10 @@ import android.net.Uri
 import android.os.Bundle
 import androidx.lifecycle.MutableLiveData
 import androidx.preference.PreferenceManager
+import org.tvheadend.api.AuthenticationStateResult
+import org.tvheadend.api.ConnectionStateResult
+import org.tvheadend.api.HtspConnectionStateListener
+import org.tvheadend.api.HtspResponseListener
 import org.tvheadend.data.entity.Channel
 import org.tvheadend.data.entity.Recording
 import org.tvheadend.data.entity.ServerProfile

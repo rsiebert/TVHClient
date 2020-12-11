@@ -1,4 +1,4 @@
-package org.tvheadend.htsp
+package org.tvheadend.api
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize

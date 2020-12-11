@@ -6,6 +6,15 @@ import android.util.SparseArray;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import org.tvheadend.api.AuthenticationFailureReason;
+import org.tvheadend.api.AuthenticationStateResult;
+import org.tvheadend.api.ConnectionFailureReason;
+import org.tvheadend.api.ConnectionStateResult;
+import org.tvheadend.api.HtspConnectionInterface;
+import org.tvheadend.api.HtspConnectionStateListener;
+import org.tvheadend.api.HtspMessageListener;
+import org.tvheadend.api.HtspResponseListener;
+
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;

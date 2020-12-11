@@ -5,8 +5,8 @@ import android.content.Context
 import android.content.Intent
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
-import org.tvheadend.htsp.AuthenticationStateResult
-import org.tvheadend.htsp.ConnectionStateResult
+import org.tvheadend.api.AuthenticationStateResult
+import org.tvheadend.api.ConnectionStateResult
 import java.lang.ref.WeakReference
 
 sealed class SyncStateResult : Parcelable {

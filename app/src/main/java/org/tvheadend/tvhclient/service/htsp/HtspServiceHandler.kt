@@ -14,6 +14,7 @@ import androidx.work.OneTimeWorkRequest
 import androidx.work.WorkManager
 import org.json.JSONException
 import org.json.JSONObject
+import org.tvheadend.api.*
 import org.tvheadend.data.AppRepository
 import org.tvheadend.data.entity.*
 import org.tvheadend.htsp.*

@@ -29,10 +29,10 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.preference.PreferenceManager
 import com.google.android.gms.cast.framework.*
-import org.tvheadend.htsp.AuthenticationFailureReason
-import org.tvheadend.htsp.AuthenticationStateResult
-import org.tvheadend.htsp.ConnectionFailureReason
-import org.tvheadend.htsp.ConnectionStateResult
+import org.tvheadend.api.AuthenticationFailureReason
+import org.tvheadend.api.AuthenticationStateResult
+import org.tvheadend.api.ConnectionFailureReason
+import org.tvheadend.api.ConnectionStateResult
 import org.tvheadend.tvhclient.BuildConfig
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.service.ConnectionService
