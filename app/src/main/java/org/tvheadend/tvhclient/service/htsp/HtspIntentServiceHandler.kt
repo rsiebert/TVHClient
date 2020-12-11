@@ -33,7 +33,7 @@ class HtspIntentServiceHandler(val context: Context, val appRepository: AppRepos
     private val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
     private val execService: ScheduledExecutorService = Executors.newScheduledThreadPool(10)
     private val htspConnection: HtspConnection
-    private val serverStatus: ServerStatus
+    private val serverStatus: ServerStatus = appRepository.serverStatusData.activeItem
     private var htspVersion: Int = 13
 
     private val pendingEventOps = ArrayList<Program>()
@@ -41,7 +41,6 @@ class HtspIntentServiceHandler(val context: Context, val appRepository: AppRepos
     private val responseLock = Object()
 
     init {
-        serverStatus = appRepository.serverStatusData.activeItem
         htspVersion = serverStatus.htspVersion
 
         val htspConnectionData = HtspConnectionData(
