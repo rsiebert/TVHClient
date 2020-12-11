@@ -2,7 +2,7 @@ package org.tvheadend.api
 
 import org.tvheadend.htsp.HtspMessage
 
-interface HtspMessageListener {
+interface ServerMessageListener {
 
     fun onMessage(response: HtspMessage)
 }

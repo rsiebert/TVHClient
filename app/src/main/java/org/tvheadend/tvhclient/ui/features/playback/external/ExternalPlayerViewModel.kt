@@ -7,8 +7,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.preference.PreferenceManager
 import org.tvheadend.api.AuthenticationStateResult
 import org.tvheadend.api.ConnectionStateResult
-import org.tvheadend.api.HtspConnectionStateListener
-import org.tvheadend.api.HtspResponseListener
+import org.tvheadend.api.ServerConnectionStateListener
+import org.tvheadend.api.ServerResponseListener
 import org.tvheadend.data.entity.Channel
 import org.tvheadend.data.entity.Recording
 import org.tvheadend.data.entity.ServerProfile
@@ -23,7 +23,7 @@ import java.util.concurrent.ExecutionException
 import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledExecutorService
 
-class ExternalPlayerViewModel(application: Application) : BaseViewModel(application), HtspConnectionStateListener {
+class ExternalPlayerViewModel(application: Application) : BaseViewModel(application), ServerConnectionStateListener {
 
     // Connection related
     private val execService: ScheduledExecutorService = Executors.newScheduledThreadPool(10)
@@ -109,7 +109,7 @@ class ExternalPlayerViewModel(application: Application) : BaseViewModel(applicat
             Timber.d("Requesting ticket for recording id $dvrId")
             request["dvrId"] = dvrId
         }
-        htspConnection.sendMessage(request, object : HtspResponseListener {
+        htspConnection.sendMessage(request, object : ServerResponseListener {
             override fun handleResponse(response: HtspMessage) {
                 path = response.getString("path", "")
                 ticket = response.getString("ticket", "")

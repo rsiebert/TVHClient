@@ -1,6 +1,6 @@
 package org.tvheadend.api
 
-interface HtspConnectionStateListener {
+interface ServerConnectionStateListener {
 
     fun onAuthenticationStateChange(result: AuthenticationStateResult)
 

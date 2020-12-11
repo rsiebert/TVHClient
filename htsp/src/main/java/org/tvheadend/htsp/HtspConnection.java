@@ -10,10 +10,10 @@ import org.tvheadend.api.AuthenticationFailureReason;
 import org.tvheadend.api.AuthenticationStateResult;
 import org.tvheadend.api.ConnectionFailureReason;
 import org.tvheadend.api.ConnectionStateResult;
-import org.tvheadend.api.HtspConnectionInterface;
-import org.tvheadend.api.HtspConnectionStateListener;
-import org.tvheadend.api.HtspMessageListener;
-import org.tvheadend.api.HtspResponseListener;
+import org.tvheadend.api.ServerConnectionInterface;
+import org.tvheadend.api.ServerConnectionStateListener;
+import org.tvheadend.api.ServerMessageListener;
+import org.tvheadend.api.ServerResponseListener;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -41,7 +41,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import timber.log.Timber;
 
-public class HtspConnection extends Thread implements HtspConnectionInterface {
+public class HtspConnection extends Thread implements ServerConnectionInterface {
 
     private final HtspConnectionData htspConnectionData;
 
@@ -51,27 +51,27 @@ public class HtspConnection extends Thread implements HtspConnectionInterface {
     private final ByteBuffer inputByteBuffer;
     private int seq;
 
-    private final HtspConnectionStateListener connectionListener;
-    private final Set<HtspMessageListener> messageListeners = new HashSet<>();
-    private final SparseArray<HtspResponseListener> responseHandlers;
+    private final ServerConnectionStateListener connectionListener;
+    private final Set<ServerMessageListener> messageListeners = new HashSet<>();
+    private final SparseArray<ServerResponseListener> responseHandlers;
     private final LinkedList<HtspMessage> messageQueue;
     private boolean isConnecting = false;
     private boolean isAuthenticated = false;
     private Selector selector;
 
     @Override
-    public void addMessageListener(@NonNull HtspMessageListener listener) {
+    public void addMessageListener(@NonNull ServerMessageListener listener) {
         messageListeners.add(listener);
     }
 
     @Override
-    public void removeMessageListener(@NonNull HtspMessageListener listener) {
+    public void removeMessageListener(@NonNull ServerMessageListener listener) {
         messageListeners.remove(listener);
     }
 
     public HtspConnection(HtspConnectionData htspConnectionData,
-                          @NonNull HtspConnectionStateListener connectionListener,
-                          @Nullable HtspMessageListener messageListener) {
+                          @NonNull ServerConnectionStateListener connectionListener,
+                          @Nullable ServerMessageListener messageListener) {
         Timber.d("Initializing HTSP connection thread");
 
         this.htspConnectionData = htspConnectionData;
@@ -215,7 +215,7 @@ public class HtspConnection extends Thread implements HtspConnectionInterface {
         authMessage.setMethod("authenticate");
         authMessage.put("username", htspConnectionData.getUsername());
 
-        final HtspResponseListener authHandler = response -> {
+        final ServerResponseListener authHandler = response -> {
             isAuthenticated = response.getInteger("noaccess", 0) != 1;
             Timber.d("Authentication was successful: %s", isAuthenticated);
             if (!isAuthenticated) {
@@ -241,7 +241,7 @@ public class HtspConnection extends Thread implements HtspConnectionInterface {
         sendMessage(helloMessage, response -> {
 
             response.setMethod("serverStatus");
-            for (HtspMessageListener listener : messageListeners) {
+            for (ServerMessageListener listener : messageListeners) {
                 listener.onMessage(response);
             }
 
@@ -278,7 +278,7 @@ public class HtspConnection extends Thread implements HtspConnectionInterface {
     }
 
     @Override
-    public void sendMessage(@NonNull HtspMessage message, @Nullable HtspResponseListener listener) {
+    public void sendMessage(@NonNull HtspMessage message, @Nullable ServerResponseListener listener) {
         if (isNotConnected()) {
             Timber.d("Not sending message, not connected to server");
 
@@ -437,7 +437,7 @@ public class HtspConnection extends Thread implements HtspConnectionInterface {
     private void handleMessage(HtspMessage msg) {
         if (msg.containsKey("seq")) {
             int respSeq = msg.getInteger("seq");
-            HtspResponseListener handler = responseHandlers.get(respSeq);
+            ServerResponseListener handler = responseHandlers.get(respSeq);
             responseHandlers.remove(respSeq);
 
             if (handler != null) {
@@ -448,7 +448,7 @@ public class HtspConnection extends Thread implements HtspConnectionInterface {
             }
         }
 
-        for (HtspMessageListener listener : messageListeners) {
+        for (ServerMessageListener listener : messageListeners) {
             listener.onMessage(msg);
         }
     }

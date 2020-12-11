@@ -7,8 +7,8 @@ import com.google.android.exoplayer2.upstream.DataSpec
 import com.google.android.exoplayer2.upstream.TransferListener
 import org.tvheadend.htsp.HtspConnection
 import org.tvheadend.htsp.HtspMessage
-import org.tvheadend.api.HtspMessageListener
-import org.tvheadend.api.HtspResponseListener
+import org.tvheadend.api.ServerMessageListener
+import org.tvheadend.api.ServerResponseListener
 import timber.log.Timber
 import java.io.Closeable
 import java.nio.ByteBuffer
@@ -18,7 +18,7 @@ import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.withLock
 import kotlin.math.min
 
-class HtspFileInputStreamDataSource private constructor(val connection: HtspConnection) : DataSource, Closeable, HtspMessageListener, HtspDataSourceInterface {
+class HtspFileInputStreamDataSource private constructor(val connection: HtspConnection) : DataSource, Closeable, ServerMessageListener, HtspDataSourceInterface {
 
     private val dataSourceCount = AtomicInteger()
 
@@ -106,7 +106,7 @@ class HtspFileInputStreamDataSource private constructor(val connection: HtspConn
         val lock = ReentrantLock()
         val condition = lock.newCondition()
 
-        val fileReadHandler = object : HtspResponseListener {
+        val fileReadHandler = object : ServerResponseListener {
             override fun handleResponse(response: HtspMessage) {
                 if (response.containsKey("error")) {
                     val error = response.getString("error")
@@ -128,7 +128,7 @@ class HtspFileInputStreamDataSource private constructor(val connection: HtspConn
         fileOpenRequest["method"] = "fileOpen"
         fileOpenRequest["file"] = fileName
 
-        htspConnection.sendMessage(fileOpenRequest, object : HtspResponseListener {
+        htspConnection.sendMessage(fileOpenRequest, object : ServerResponseListener {
             override fun handleResponse(response: HtspMessage) {
                 if (response.containsKey("error")) {
                     val error = response.getString("error")
@@ -246,7 +246,7 @@ class HtspFileInputStreamDataSource private constructor(val connection: HtspConn
         val lock = ReentrantLock()
         val condition = lock.newCondition()
 
-        htspConnection.sendMessage(request, object : HtspResponseListener {
+        htspConnection.sendMessage(request, object : ServerResponseListener {
             override fun handleResponse(response: HtspMessage) {
                 if (response.containsKey("error")) {
                     val error = response.getString("error")

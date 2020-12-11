@@ -40,7 +40,7 @@ import java.util.concurrent.TimeUnit
 import kotlin.math.floor
 import kotlin.math.max
 
-class HtspServiceHandler(val context: Context, val appRepository: AppRepository, val connection: Connection) : ConnectionService.ServiceInterface, HtspConnectionStateListener, HtspMessageListener {
+class HtspServiceHandler(val context: Context, val appRepository: AppRepository, val connection: Connection) : ConnectionService.ServiceInterface, ServerConnectionStateListener, ServerMessageListener {
 
     private val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
     private var htspConnectionData: HtspConnectionData
@@ -248,7 +248,7 @@ class HtspServiceHandler(val context: Context, val appRepository: AppRepository,
             enableAsyncMetadataRequest["lastUpdate"] = currentTimeInSeconds - 12 * 60 * 60
         }
 
-        htspConnection?.sendMessage(enableAsyncMetadataRequest, object : HtspResponseListener {
+        htspConnection?.sendMessage(enableAsyncMetadataRequest, object : ServerResponseListener {
             override fun handleResponse(response: HtspMessage) {
                 Timber.d("Received response for enableAsyncMetadata")
             }
@@ -352,7 +352,7 @@ class HtspServiceHandler(val context: Context, val appRepository: AppRepository,
     private fun getDiscSpace() {
         val request = HtspMessage()
         request.method = "getDiskSpace"
-        htspConnection?.sendMessage(request, object : HtspResponseListener {
+        htspConnection?.sendMessage(request, object : ServerResponseListener {
             override fun handleResponse(response: HtspMessage) {
                 onDiskSpace(response)
             }
@@ -362,7 +362,7 @@ class HtspServiceHandler(val context: Context, val appRepository: AppRepository,
     private fun getSystemTime() {
         val request = HtspMessage()
         request.method = "getSysTime"
-        htspConnection?.sendMessage(request, object : HtspResponseListener {
+        htspConnection?.sendMessage(request, object : ServerResponseListener {
             override fun handleResponse(response: HtspMessage) {
                 onSystemTime(response)
             }
@@ -372,7 +372,7 @@ class HtspServiceHandler(val context: Context, val appRepository: AppRepository,
     private fun getDvrConfigs() {
         val request = HtspMessage()
         request.method = "getDvrConfigs"
-        htspConnection?.sendMessage(request, object : HtspResponseListener {
+        htspConnection?.sendMessage(request, object : ServerResponseListener {
             override fun handleResponse(response: HtspMessage) {
                 onDvrConfigs(response)
             }
@@ -382,7 +382,7 @@ class HtspServiceHandler(val context: Context, val appRepository: AppRepository,
     private fun getProfiles() {
         val request = HtspMessage()
         request.method = "getProfiles"
-        htspConnection?.sendMessage(request, object : HtspResponseListener {
+        htspConnection?.sendMessage(request, object : ServerResponseListener {
             override fun handleResponse(response: HtspMessage) {
                 onHtspProfiles(response)
             }
@@ -394,7 +394,7 @@ class HtspServiceHandler(val context: Context, val appRepository: AppRepository,
             val request = HtspMessage()
             request.method = "api"
             request["path"] = "profile/list"
-            htspConnection?.sendMessage(request, object : HtspResponseListener {
+            htspConnection?.sendMessage(request, object : ServerResponseListener {
                 override fun handleResponse(response: HtspMessage) {
                     onHttpProfiles(response)
                 }
@@ -409,7 +409,7 @@ class HtspServiceHandler(val context: Context, val appRepository: AppRepository,
             val request = HtspMessage()
             request.method = "api"
             request["path"] = "status/subscriptions"
-            htspConnection?.sendMessage(request, object : HtspResponseListener {
+            htspConnection?.sendMessage(request, object : ServerResponseListener {
                 override fun handleResponse(response: HtspMessage) {
                     Timber.d("Received response to status/subscriptions")
                     onSubscriptions(response)
@@ -425,7 +425,7 @@ class HtspServiceHandler(val context: Context, val appRepository: AppRepository,
             val request = HtspMessage()
             request.method = "api"
             request["path"] = "status/inputs"
-            htspConnection?.sendMessage(request, object : HtspResponseListener {
+            htspConnection?.sendMessage(request, object : ServerResponseListener {
                 override fun handleResponse(response: HtspMessage) {
                     Timber.d("Received response to status/inputs")
                     onInputs(response)
@@ -1235,7 +1235,7 @@ class HtspServiceHandler(val context: Context, val appRepository: AppRepository,
         request["method"] = "getChannel"
         request["channelId"] = intent.getIntExtra("channelId", 0)
 
-        htspConnection?.sendMessage(request, object : HtspResponseListener {
+        htspConnection?.sendMessage(request, object : ServerResponseListener {
             override fun handleResponse(response: HtspMessage) {
                 // Update the icon if required
                 val icon = response.getString("channelIcon", null)
@@ -1255,7 +1255,7 @@ class HtspServiceHandler(val context: Context, val appRepository: AppRepository,
         request["method"] = "getEvent"
         request["eventId"] = intent.getIntExtra("eventId", 0)
 
-        htspConnection?.sendMessage(request, object : HtspResponseListener {
+        htspConnection?.sendMessage(request, object : ServerResponseListener {
             override fun handleResponse(response: HtspMessage) {
                 val program = convertMessageToProgramModel(Program(), response)
                 appRepository.programData.addItem(program)
@@ -1272,7 +1272,7 @@ class HtspServiceHandler(val context: Context, val appRepository: AppRepository,
     private fun getEvents(intent: Intent) {
         val showMessage = intent.getBooleanExtra("showMessage", false)
         val request = convertIntentToEventMessage(intent)
-        htspConnection?.sendMessage(request, object : HtspResponseListener {
+        htspConnection?.sendMessage(request, object : ServerResponseListener {
             override fun handleResponse(response: HtspMessage) {
                 onGetEvents(response, intent)
                 if (showMessage) {
@@ -1332,7 +1332,7 @@ class HtspServiceHandler(val context: Context, val appRepository: AppRepository,
 
     private fun getEpgQuery(intent: Intent) {
         val request = convertIntentToEpgQueryMessage(intent)
-        htspConnection?.sendMessage(request, object : HtspResponseListener {
+        htspConnection?.sendMessage(request, object : ServerResponseListener {
             override fun handleResponse(response: HtspMessage) {
                 // Contains the ids of those events that were returned by the query
                 val eventIdList = ArrayList<Int>()
@@ -1361,7 +1361,7 @@ class HtspServiceHandler(val context: Context, val appRepository: AppRepository,
         val request = convertIntentToDvrMessage(intent, htspVersion)
         request["method"] = "addDvrEntry"
 
-        htspConnection?.sendMessage(request, object : HtspResponseListener {
+        htspConnection?.sendMessage(request, object : ServerResponseListener {
             override fun handleResponse(response: HtspMessage) {
                 if (response.getInteger("success", 0) == 1) {
                     context.applicationContext?.sendSnackbarMessage(context.getString(R.string.success_adding_recording))
@@ -1380,7 +1380,7 @@ class HtspServiceHandler(val context: Context, val appRepository: AppRepository,
         request["method"] = "updateDvrEntry"
         request["id"] = intent.getIntExtra("id", 0)
 
-        htspConnection?.sendMessage(request, object : HtspResponseListener {
+        htspConnection?.sendMessage(request, object : ServerResponseListener {
             override fun handleResponse(response: HtspMessage) {
                 if (response.getInteger("success", 0) == 1) {
                     context.applicationContext?.sendSnackbarMessage(context.getString(R.string.success_updating_recording))
@@ -1396,7 +1396,7 @@ class HtspServiceHandler(val context: Context, val appRepository: AppRepository,
         request["method"] = intent.action
         request["id"] = intent.getIntExtra("id", 0)
 
-        htspConnection?.sendMessage(request, object : HtspResponseListener {
+        htspConnection?.sendMessage(request, object : ServerResponseListener {
             override fun handleResponse(response: HtspMessage) {
                 Timber.d("Response is not null")
                 if (response.getInteger("success", 0) == 1) {
@@ -1417,7 +1417,7 @@ class HtspServiceHandler(val context: Context, val appRepository: AppRepository,
         val request = convertIntentToAutorecMessage(intent, htspVersion)
         request["method"] = "addAutorecEntry"
 
-        htspConnection?.sendMessage(request, object : HtspResponseListener {
+        htspConnection?.sendMessage(request, object : ServerResponseListener {
             override fun handleResponse(response: HtspMessage) {
                 if (response.getInteger("success", 0) == 1) {
                     context.applicationContext?.sendSnackbarMessage(context.getString(successMessage))
@@ -1433,7 +1433,7 @@ class HtspServiceHandler(val context: Context, val appRepository: AppRepository,
         request["method"] = "deleteAutorecEntry"
         request["id"] = intent.getStringExtra("id")
 
-        htspConnection?.sendMessage(request, object : HtspResponseListener {
+        htspConnection?.sendMessage(request, object : ServerResponseListener {
             override fun handleResponse(response: HtspMessage) {
                 addAutorecEntry(intent,
                         R.string.success_updating_recording,
@@ -1447,7 +1447,7 @@ class HtspServiceHandler(val context: Context, val appRepository: AppRepository,
         request["method"] = "deleteAutorecEntry"
         request["id"] = intent.getStringExtra("id")
 
-        htspConnection?.sendMessage(request, object : HtspResponseListener {
+        htspConnection?.sendMessage(request, object : ServerResponseListener {
             override fun handleResponse(response: HtspMessage) {
                 if (response.getInteger("success", 0) == 1) {
                     context.applicationContext?.sendSnackbarMessage(context.getString(R.string.success_removing_recording))
@@ -1462,7 +1462,7 @@ class HtspServiceHandler(val context: Context, val appRepository: AppRepository,
         val request = convertIntentToTimerecMessage(intent, htspVersion)
         request["method"] = "addTimerecEntry"
 
-        htspConnection?.sendMessage(request, object : HtspResponseListener {
+        htspConnection?.sendMessage(request, object : ServerResponseListener {
             override fun handleResponse(response: HtspMessage) {
                 if (response.getInteger("success", 0) == 1) {
                     context.applicationContext?.sendSnackbarMessage(context.getString(R.string.success_adding_recording))
@@ -1483,7 +1483,7 @@ class HtspServiceHandler(val context: Context, val appRepository: AppRepository,
         }
         request["id"] = intent.getStringExtra("id")
 
-        htspConnection?.sendMessage(request, object : HtspResponseListener {
+        htspConnection?.sendMessage(request, object : ServerResponseListener {
             override fun handleResponse(response: HtspMessage) {
                 // Handle the response here because the "updateTimerecEntry" call does
                 // not exist on the server. First delete the entry and if this was
@@ -1507,7 +1507,7 @@ class HtspServiceHandler(val context: Context, val appRepository: AppRepository,
         request["method"] = "deleteTimerecEntry"
         request["id"] = intent.getStringExtra("id")
 
-        htspConnection?.sendMessage(request, object : HtspResponseListener {
+        htspConnection?.sendMessage(request, object : ServerResponseListener {
             override fun handleResponse(response: HtspMessage) {
                 if (response.getInteger("success", 0) == 1) {
                     context.applicationContext?.sendSnackbarMessage(context.getString(R.string.success_removing_recording))
@@ -1531,7 +1531,7 @@ class HtspServiceHandler(val context: Context, val appRepository: AppRepository,
             request["dvrId"] = dvrId
         }
 
-        htspConnection?.sendMessage(request, object : HtspResponseListener {
+        htspConnection?.sendMessage(request, object : ServerResponseListener {
             override fun handleResponse(response: HtspMessage) {
                 Timber.d("Response is not null")
                 val ticketIntent = Intent("ticket")

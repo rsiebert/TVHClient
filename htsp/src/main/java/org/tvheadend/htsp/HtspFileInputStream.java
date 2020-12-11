@@ -3,7 +3,7 @@ package org.tvheadend.htsp;
 import androidx.annotation.NonNull;
 
 import org.jetbrains.annotations.NotNull;
-import org.tvheadend.api.HtspResponseListener;
+import org.tvheadend.api.ServerResponseListener;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -46,7 +46,7 @@ public class HtspFileInputStream extends InputStream {
         offset = 0;
     }
 
-    static class FileOpenResponse implements HtspResponseListener {
+    static class FileOpenResponse implements ServerResponseListener {
         int id;
         long size;
         long time;
@@ -60,7 +60,7 @@ public class HtspFileInputStream extends InputStream {
         }
     }
 
-    static class FileReadResponse implements HtspResponseListener {
+    static class FileReadResponse implements ServerResponseListener {
         byte[] data;
 
         @Override
@@ -70,7 +70,7 @@ public class HtspFileInputStream extends InputStream {
         }
     }
 
-    static class FileCloseResponse implements HtspResponseListener {
+    static class FileCloseResponse implements ServerResponseListener {
 
         @Override
         public void handleResponse(@NotNull HtspMessage response) {

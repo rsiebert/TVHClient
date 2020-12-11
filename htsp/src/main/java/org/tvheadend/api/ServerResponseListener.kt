@@ -2,7 +2,7 @@ package org.tvheadend.api
 
 import org.tvheadend.htsp.HtspMessage
 
-interface HtspResponseListener {
+interface ServerResponseListener {
 
     fun handleResponse(response: HtspMessage)
 }

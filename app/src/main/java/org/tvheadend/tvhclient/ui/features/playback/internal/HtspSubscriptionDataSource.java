@@ -33,7 +33,7 @@ import com.google.android.exoplayer2.upstream.TransferListener;
 import org.jetbrains.annotations.NotNull;
 import org.tvheadend.htsp.HtspConnection;
 import org.tvheadend.htsp.HtspMessage;
-import org.tvheadend.api.HtspMessageListener;
+import org.tvheadend.api.ServerMessageListener;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.service.ConnectionService;
 
@@ -51,7 +51,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import timber.log.Timber;
 
-public class HtspSubscriptionDataSource implements DataSource, Closeable, HtspMessageListener, HtspDataSourceInterface {
+public class HtspSubscriptionDataSource implements DataSource, Closeable, ServerMessageListener, HtspDataSourceInterface {
 
     private static final AtomicInteger dataSourceCount = new AtomicInteger();
     private static final AtomicInteger subscriptionCount = new AtomicInteger();

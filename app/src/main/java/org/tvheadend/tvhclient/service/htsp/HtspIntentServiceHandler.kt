@@ -8,8 +8,8 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.preference.PreferenceManager
 import org.tvheadend.api.AuthenticationStateResult
 import org.tvheadend.api.ConnectionStateResult
-import org.tvheadend.api.HtspConnectionStateListener
-import org.tvheadend.api.HtspResponseListener
+import org.tvheadend.api.ServerConnectionStateListener
+import org.tvheadend.api.ServerResponseListener
 import org.tvheadend.data.entity.Connection
 import org.tvheadend.data.entity.Program
 import org.tvheadend.data.entity.ServerStatus
@@ -28,7 +28,7 @@ import java.util.concurrent.ScheduledExecutorService
 import kotlin.math.floor
 import kotlin.math.max
 
-class HtspIntentServiceHandler(val context: Context, val appRepository: AppRepository, val connection: Connection) : ConnectionIntentService.ServiceInterface, HtspConnectionStateListener {
+class HtspIntentServiceHandler(val context: Context, val appRepository: AppRepository, val connection: Connection) : ConnectionIntentService.ServiceInterface, ServerConnectionStateListener {
 
     private val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
     private val execService: ScheduledExecutorService = Executors.newScheduledThreadPool(10)
@@ -144,7 +144,7 @@ class HtspIntentServiceHandler(val context: Context, val appRepository: AppRepos
             request["dvrId"] = dvrId
         }
 
-        htspConnection.sendMessage(request, object : HtspResponseListener {
+        htspConnection.sendMessage(request, object : ServerResponseListener {
             override fun handleResponse(response: HtspMessage) {
                 Timber.d("Response is not null")
                 val ticketIntent = Intent("ticket")
@@ -366,7 +366,7 @@ class HtspIntentServiceHandler(val context: Context, val appRepository: AppRepos
             }
 
             val request = convertIntentToEventMessage(msgIntent)
-            htspConnection.sendMessage(request, object : HtspResponseListener {
+            htspConnection.sendMessage(request, object : ServerResponseListener {
                 override fun handleResponse(response: HtspMessage) {
                     onGetEvents(response, msgIntent)
                     // Release the lock so that all data can be saved

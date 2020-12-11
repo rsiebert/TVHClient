@@ -16,7 +16,7 @@ import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
 import com.google.android.exoplayer2.video.VideoListener
 import org.tvheadend.api.AuthenticationStateResult
 import org.tvheadend.api.ConnectionStateResult
-import org.tvheadend.api.HtspConnectionStateListener
+import org.tvheadend.api.ServerConnectionStateListener
 import org.tvheadend.data.entity.Channel
 import org.tvheadend.htsp.*
 import org.tvheadend.tvhclient.BuildConfig
@@ -32,7 +32,7 @@ import java.util.concurrent.ScheduledExecutorService
 import kotlin.math.max
 
 
-class PlayerViewModel(application: Application) : BaseViewModel(application), HtspConnectionStateListener, VideoListener, Player.EventListener {
+class PlayerViewModel(application: Application) : BaseViewModel(application), ServerConnectionStateListener, VideoListener, Player.EventListener {
 
     private var channelId: Int = 0
     private val channelList: List<Channel>

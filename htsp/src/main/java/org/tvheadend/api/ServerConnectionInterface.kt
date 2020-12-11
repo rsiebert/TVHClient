@@ -2,9 +2,9 @@ package org.tvheadend.api
 
 import org.tvheadend.htsp.HtspMessage
 
-internal interface HtspConnectionInterface {
-    fun addMessageListener(listener: HtspMessageListener)
-    fun removeMessageListener(listener: HtspMessageListener)
+internal interface ServerConnectionInterface {
+    fun addMessageListener(listener: ServerMessageListener)
+    fun removeMessageListener(listener: ServerMessageListener)
 
     // synchronized, non blocking connect
     fun openConnection()
@@ -14,6 +14,6 @@ internal interface HtspConnectionInterface {
     // synchronized, blocking auth
     fun authenticate()
     fun sendMessage(message: HtspMessage)
-    fun sendMessage(message: HtspMessage, listener: HtspResponseListener?)
+    fun sendMessage(message: HtspMessage, listener: ServerResponseListener?)
     fun closeConnection()
 }
