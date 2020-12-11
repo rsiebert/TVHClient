@@ -51,7 +51,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import timber.log.Timber;
 
-public class HtspSubscriptionDataSource implements DataSource, Closeable, ServerMessageListener, HtspDataSourceInterface {
+public class HtspSubscriptionDataSource implements DataSource, Closeable, ServerMessageListener<HtspMessage>, HtspDataSourceInterface {
 
     private static final AtomicInteger dataSourceCount = new AtomicInteger();
     private static final AtomicInteger subscriptionCount = new AtomicInteger();

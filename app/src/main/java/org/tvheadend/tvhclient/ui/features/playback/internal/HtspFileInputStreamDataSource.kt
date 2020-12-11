@@ -18,7 +18,7 @@ import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.withLock
 import kotlin.math.min
 
-class HtspFileInputStreamDataSource private constructor(val connection: HtspConnection) : DataSource, Closeable, ServerMessageListener, HtspDataSourceInterface {
+class HtspFileInputStreamDataSource private constructor(val connection: HtspConnection) : DataSource, Closeable, ServerMessageListener<HtspMessage>, HtspDataSourceInterface {
 
     private val dataSourceCount = AtomicInteger()
 
@@ -106,7 +106,7 @@ class HtspFileInputStreamDataSource private constructor(val connection: HtspConn
         val lock = ReentrantLock()
         val condition = lock.newCondition()
 
-        val fileReadHandler = object : ServerResponseListener {
+        val fileReadHandler = object : ServerResponseListener<HtspMessage> {
             override fun handleResponse(response: HtspMessage) {
                 if (response.containsKey("error")) {
                     val error = response.getString("error")
@@ -128,7 +128,7 @@ class HtspFileInputStreamDataSource private constructor(val connection: HtspConn
         fileOpenRequest["method"] = "fileOpen"
         fileOpenRequest["file"] = fileName
 
-        htspConnection.sendMessage(fileOpenRequest, object : ServerResponseListener {
+        htspConnection.sendMessage(fileOpenRequest, object : ServerResponseListener<HtspMessage> {
             override fun handleResponse(response: HtspMessage) {
                 if (response.containsKey("error")) {
                     val error = response.getString("error")
@@ -246,7 +246,7 @@ class HtspFileInputStreamDataSource private constructor(val connection: HtspConn
         val lock = ReentrantLock()
         val condition = lock.newCondition()
 
-        htspConnection.sendMessage(request, object : ServerResponseListener {
+        htspConnection.sendMessage(request, object : ServerResponseListener<HtspMessage> {
             override fun handleResponse(response: HtspMessage) {
                 if (response.containsKey("error")) {
                     val error = response.getString("error")

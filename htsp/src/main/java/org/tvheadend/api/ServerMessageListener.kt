@@ -1,8 +1,6 @@
 package org.tvheadend.api
 
-import org.tvheadend.htsp.HtspMessage
+interface ServerMessageListener<T> {
 
-interface ServerMessageListener {
-
-    fun onMessage(response: HtspMessage)
+    fun onMessage(response: T)
 }

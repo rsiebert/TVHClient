@@ -144,7 +144,7 @@ class HtspIntentServiceHandler(val context: Context, val appRepository: AppRepos
             request["dvrId"] = dvrId
         }
 
-        htspConnection.sendMessage(request, object : ServerResponseListener {
+        htspConnection.sendMessage(request, object : ServerResponseListener<HtspMessage> {
             override fun handleResponse(response: HtspMessage) {
                 Timber.d("Response is not null")
                 val ticketIntent = Intent("ticket")
@@ -366,7 +366,7 @@ class HtspIntentServiceHandler(val context: Context, val appRepository: AppRepos
             }
 
             val request = convertIntentToEventMessage(msgIntent)
-            htspConnection.sendMessage(request, object : ServerResponseListener {
+            htspConnection.sendMessage(request, object : ServerResponseListener<HtspMessage> {
                 override fun handleResponse(response: HtspMessage) {
                     onGetEvents(response, msgIntent)
                     // Release the lock so that all data can be saved

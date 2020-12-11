@@ -41,7 +41,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import timber.log.Timber;
 
-public class HtspConnection extends Thread implements ServerConnectionInterface {
+public class HtspConnection extends Thread implements ServerConnectionInterface<HtspMessage> {
 
     private final HtspConnectionData htspConnectionData;
 
@@ -52,26 +52,26 @@ public class HtspConnection extends Thread implements ServerConnectionInterface 
     private int seq;
 
     private final ServerConnectionStateListener connectionListener;
-    private final Set<ServerMessageListener> messageListeners = new HashSet<>();
-    private final SparseArray<ServerResponseListener> responseHandlers;
+    private final Set<ServerMessageListener<HtspMessage>> messageListeners = new HashSet<>();
+    private final SparseArray<ServerResponseListener<HtspMessage>> responseHandlers;
     private final LinkedList<HtspMessage> messageQueue;
     private boolean isConnecting = false;
     private boolean isAuthenticated = false;
     private Selector selector;
 
     @Override
-    public void addMessageListener(@NonNull ServerMessageListener listener) {
+    public void addMessageListener(@NonNull ServerMessageListener<HtspMessage> listener) {
         messageListeners.add(listener);
     }
 
     @Override
-    public void removeMessageListener(@NonNull ServerMessageListener listener) {
+    public void removeMessageListener(@NonNull ServerMessageListener<HtspMessage> listener) {
         messageListeners.remove(listener);
     }
 
     public HtspConnection(HtspConnectionData htspConnectionData,
                           @NonNull ServerConnectionStateListener connectionListener,
-                          @Nullable ServerMessageListener messageListener) {
+                          @Nullable ServerMessageListener<HtspMessage> messageListener) {
         Timber.d("Initializing HTSP connection thread");
 
         this.htspConnectionData = htspConnectionData;
@@ -215,7 +215,7 @@ public class HtspConnection extends Thread implements ServerConnectionInterface 
         authMessage.setMethod("authenticate");
         authMessage.put("username", htspConnectionData.getUsername());
 
-        final ServerResponseListener authHandler = response -> {
+        final ServerResponseListener<HtspMessage> authHandler = response -> {
             isAuthenticated = response.getInteger("noaccess", 0) != 1;
             Timber.d("Authentication was successful: %s", isAuthenticated);
             if (!isAuthenticated) {
@@ -241,7 +241,7 @@ public class HtspConnection extends Thread implements ServerConnectionInterface 
         sendMessage(helloMessage, response -> {
 
             response.setMethod("serverStatus");
-            for (ServerMessageListener listener : messageListeners) {
+            for (ServerMessageListener<HtspMessage> listener : messageListeners) {
                 listener.onMessage(response);
             }
 
@@ -278,7 +278,7 @@ public class HtspConnection extends Thread implements ServerConnectionInterface 
     }
 
     @Override
-    public void sendMessage(@NonNull HtspMessage message, @Nullable ServerResponseListener listener) {
+    public void sendMessage(@NonNull HtspMessage message, @Nullable ServerResponseListener<HtspMessage> listener) {
         if (isNotConnected()) {
             Timber.d("Not sending message, not connected to server");
 
@@ -437,7 +437,7 @@ public class HtspConnection extends Thread implements ServerConnectionInterface 
     private void handleMessage(HtspMessage msg) {
         if (msg.containsKey("seq")) {
             int respSeq = msg.getInteger("seq");
-            ServerResponseListener handler = responseHandlers.get(respSeq);
+            ServerResponseListener<HtspMessage> handler = responseHandlers.get(respSeq);
             responseHandlers.remove(respSeq);
 
             if (handler != null) {
@@ -448,7 +448,7 @@ public class HtspConnection extends Thread implements ServerConnectionInterface 
             }
         }
 
-        for (ServerMessageListener listener : messageListeners) {
+        for (ServerMessageListener<HtspMessage> listener : messageListeners) {
             listener.onMessage(msg);
         }
     }

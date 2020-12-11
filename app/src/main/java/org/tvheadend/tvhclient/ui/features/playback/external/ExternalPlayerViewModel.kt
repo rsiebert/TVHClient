@@ -109,7 +109,7 @@ class ExternalPlayerViewModel(application: Application) : BaseViewModel(applicat
             Timber.d("Requesting ticket for recording id $dvrId")
             request["dvrId"] = dvrId
         }
-        htspConnection.sendMessage(request, object : ServerResponseListener {
+        htspConnection.sendMessage(request, object : ServerResponseListener<HtspMessage> {
             override fun handleResponse(response: HtspMessage) {
                 path = response.getString("path", "")
                 ticket = response.getString("ticket", "")
