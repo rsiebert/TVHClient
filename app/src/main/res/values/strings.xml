@@ -402,4 +402,6 @@
     <string name="program_has_already_started">Program has already started</string>
     <string name="pref_load_more_epg_data">Load more epg data</string>
     <string name="error_loading_information">Error loading required information</string>
+    <string name="pref_connection_type">Connection Type</string>
+    <string name="pref_connection_type_sum">Select how you want to connect to the server</string>
 </resources>
