@@ -40,7 +40,7 @@ import java.util.concurrent.TimeUnit
 import kotlin.math.floor
 import kotlin.math.max
 
-class HtspServiceHandler(val context: Context, val appRepository: AppRepository, val connection: Connection) : ConnectionService.ServiceInterface, ServerConnectionStateListener, ServerMessageListener<HtspMessage> {
+class HtspServiceHandler(val context: Context, val appRepository: AppRepository, val connection: Connection) : ConnectionService.ServiceInterface, ServerConnectionStateListener, ServerMessageListener<HtspMessage>, ServerRequestInterface {
 
     private val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
     private var htspConnectionData: HtspConnectionData
@@ -122,7 +122,9 @@ class HtspServiceHandler(val context: Context, val appRepository: AppRepository,
                             "epgQuery" -> getEpgQuery(intent)
                             "addDvrEntry" -> addDvrEntry(intent)
                             "updateDvrEntry" -> updateDvrEntry(intent)
-                            "cancelDvrEntry", "deleteDvrEntry", "stopDvrEntry" -> removeDvrEntry(intent)
+                            "cancelDvrEntry" -> cancelDvrEntry(intent)
+                            "deleteDvrEntry" -> deleteDvrEntry(intent)
+                            "stopDvrEntry" -> stopDvrEntry(intent)
                             "addAutorecEntry" -> addAutorecEntry(intent)
                             "updateAutorecEntry" -> updateAutorecEntry(intent)
                             "deleteAutorecEntry" -> deleteAutorecEntry(intent)
@@ -349,7 +351,7 @@ class HtspServiceHandler(val context: Context, val appRepository: AppRepository,
     }
 
 
-    private fun getDiscSpace() {
+    override fun getDiscSpace() {
         val request = HtspMessage()
         request.method = "getDiskSpace"
         htspConnection?.sendMessage(request, object : ServerResponseListener<HtspMessage> {
@@ -359,7 +361,7 @@ class HtspServiceHandler(val context: Context, val appRepository: AppRepository,
         })
     }
 
-    private fun getSystemTime() {
+    override fun getSystemTime() {
         val request = HtspMessage()
         request.method = "getSysTime"
         htspConnection?.sendMessage(request, object : ServerResponseListener<HtspMessage> {
@@ -369,7 +371,7 @@ class HtspServiceHandler(val context: Context, val appRepository: AppRepository,
         })
     }
 
-    private fun getDvrConfigs() {
+    override fun getDvrConfigs() {
         val request = HtspMessage()
         request.method = "getDvrConfigs"
         htspConnection?.sendMessage(request, object : ServerResponseListener<HtspMessage> {
@@ -379,7 +381,7 @@ class HtspServiceHandler(val context: Context, val appRepository: AppRepository,
         })
     }
 
-    private fun getProfiles() {
+    override fun getProfiles() {
         val request = HtspMessage()
         request.method = "getProfiles"
         htspConnection?.sendMessage(request, object : ServerResponseListener<HtspMessage> {
@@ -404,7 +406,7 @@ class HtspServiceHandler(val context: Context, val appRepository: AppRepository,
         }
     }
 
-    private fun getSubscriptions() {
+    override fun getSubscriptions() {
         if (htspVersion >= 26) {
             val request = HtspMessage()
             request.method = "api"
@@ -420,7 +422,7 @@ class HtspServiceHandler(val context: Context, val appRepository: AppRepository,
         }
     }
 
-    private fun getInputs() {
+    override fun getInputs() {
         if (htspVersion >= 26) {
             val request = HtspMessage()
             request.method = "api"
@@ -1230,7 +1232,7 @@ class HtspServiceHandler(val context: Context, val appRepository: AppRepository,
         }
     }
 
-    private fun getChannel(intent: Intent) {
+    override fun getChannel(intent: Intent) {
         val request = HtspMessage()
         request["method"] = "getChannel"
         request["channelId"] = intent.getIntExtra("channelId", 0)
@@ -1250,7 +1252,7 @@ class HtspServiceHandler(val context: Context, val appRepository: AppRepository,
         })
     }
 
-    private fun getEvent(intent: Intent) {
+    override fun getEvent(intent: Intent) {
         val request = HtspMessage()
         request["method"] = "getEvent"
         request["eventId"] = intent.getIntExtra("eventId", 0)
@@ -1269,7 +1271,7 @@ class HtspServiceHandler(val context: Context, val appRepository: AppRepository,
      *
      * @param intent Intent with the request message fields
      */
-    private fun getEvents(intent: Intent) {
+    override fun getEvents(intent: Intent) {
         val showMessage = intent.getBooleanExtra("showMessage", false)
         val request = convertIntentToEventMessage(intent)
         htspConnection?.sendMessage(request, object : ServerResponseListener<HtspMessage> {
@@ -1291,7 +1293,7 @@ class HtspServiceHandler(val context: Context, val appRepository: AppRepository,
      *
      * @param intent The intent with the parameters e.g. to define how many events shall be loaded
      */
-    private fun getMoreEvents(intent: Intent) {
+    override fun getMoreEvents(intent: Intent) {
 
         val numberOfProgramsToLoad = intent.getIntExtra("numFollowing", 0)
         val channelList = appRepository.channelData.getItems()
@@ -1330,7 +1332,7 @@ class HtspServiceHandler(val context: Context, val appRepository: AppRepository,
         pendingEventOps.clear()
     }
 
-    private fun getEpgQuery(intent: Intent) {
+    override fun getEpgQuery(intent: Intent) {
         val request = convertIntentToEpgQueryMessage(intent)
         htspConnection?.sendMessage(request, object : ServerResponseListener<HtspMessage> {
             override fun handleResponse(response: HtspMessage) {
@@ -1357,7 +1359,7 @@ class HtspServiceHandler(val context: Context, val appRepository: AppRepository,
         })
     }
 
-    private fun addDvrEntry(intent: Intent) {
+    override fun addDvrEntry(intent: Intent) {
         val request = convertIntentToDvrMessage(intent, htspVersion)
         request["method"] = "addDvrEntry"
 
@@ -1375,7 +1377,7 @@ class HtspServiceHandler(val context: Context, val appRepository: AppRepository,
         notificationManager.cancel(intent.getIntExtra("eventId", 0))
     }
 
-    private fun updateDvrEntry(intent: Intent) {
+    override fun updateDvrEntry(intent: Intent) {
         val request = convertIntentToDvrMessage(intent, htspVersion)
         request["method"] = "updateDvrEntry"
         request["id"] = intent.getIntExtra("id", 0)
@@ -1389,6 +1391,18 @@ class HtspServiceHandler(val context: Context, val appRepository: AppRepository,
                 }
             }
         })
+    }
+
+    override fun cancelDvrEntry(intent: Intent) {
+        removeDvrEntry(intent)
+    }
+
+    override fun stopDvrEntry(intent: Intent) {
+        removeDvrEntry(intent)
+    }
+
+    override fun deleteDvrEntry(intent: Intent) {
+        removeDvrEntry(intent)
     }
 
     private fun removeDvrEntry(intent: Intent) {
@@ -1411,7 +1425,11 @@ class HtspServiceHandler(val context: Context, val appRepository: AppRepository,
         notificationManager.cancel(intent.getIntExtra("id", 0))
     }
 
-    private fun addAutorecEntry(intent: Intent,
+    override fun addAutorecEntry(intent: Intent) {
+        addOrUpdateAutorecEntry(intent)
+    }
+
+    private fun addOrUpdateAutorecEntry(intent: Intent,
                                 successMessage: Int = R.string.success_adding_recording,
                                 errorMessage: Int = R.string.error_adding_recording) {
         val request = convertIntentToAutorecMessage(intent, htspVersion)
@@ -1428,21 +1446,21 @@ class HtspServiceHandler(val context: Context, val appRepository: AppRepository,
         })
     }
 
-    private fun updateAutorecEntry(intent: Intent) {
+    override fun updateAutorecEntry(intent: Intent) {
         val request = HtspMessage()
         request["method"] = "deleteAutorecEntry"
         request["id"] = intent.getStringExtra("id")
 
         htspConnection?.sendMessage(request, object : ServerResponseListener<HtspMessage> {
             override fun handleResponse(response: HtspMessage) {
-                addAutorecEntry(intent,
+                addOrUpdateAutorecEntry(intent,
                         R.string.success_updating_recording,
                         R.string.error_updating_recording)
             }
         })
     }
 
-    private fun deleteAutorecEntry(intent: Intent) {
+    override fun deleteAutorecEntry(intent: Intent) {
         val request = HtspMessage()
         request["method"] = "deleteAutorecEntry"
         request["id"] = intent.getStringExtra("id")
@@ -1458,7 +1476,7 @@ class HtspServiceHandler(val context: Context, val appRepository: AppRepository,
         })
     }
 
-    private fun addTimerrecEntry(intent: Intent) {
+    override fun addTimerrecEntry(intent: Intent) {
         val request = convertIntentToTimerecMessage(intent, htspVersion)
         request["method"] = "addTimerecEntry"
 
@@ -1473,7 +1491,7 @@ class HtspServiceHandler(val context: Context, val appRepository: AppRepository,
         })
     }
 
-    private fun updateTimerrecEntry(intent: Intent) {
+    override fun updateTimerrecEntry(intent: Intent) {
         var request = HtspMessage()
         if (htspVersion >= 25) {
             request = convertIntentToTimerecMessage(intent, htspVersion)
@@ -1502,7 +1520,7 @@ class HtspServiceHandler(val context: Context, val appRepository: AppRepository,
         })
     }
 
-    private fun deleteTimerrecEntry(intent: Intent) {
+    override fun deleteTimerrecEntry(intent: Intent) {
         val request = HtspMessage()
         request["method"] = "deleteTimerecEntry"
         request["id"] = intent.getStringExtra("id")
@@ -1518,7 +1536,7 @@ class HtspServiceHandler(val context: Context, val appRepository: AppRepository,
         })
     }
 
-    private fun getTicket(intent: Intent) {
+    override fun getTicket(intent: Intent) {
         val channelId = intent.getIntExtra("channelId", 0).toLong()
         val dvrId = intent.getIntExtra("dvrId", 0).toLong()
 
