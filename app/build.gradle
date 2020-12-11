@@ -171,7 +171,7 @@ dependencies {
     implementation "org.tvheadend.tvhclient.exoplayer:extension-ffmpeg:$exoplayer_version"
     //implementation "org.tvheadend.tvhclient.htsp:htsp:1.2.0"
     //implementation "org.tvheadend.tvhclient.data:data:2.1.3"
-    implementation project(':htsp')
+    implementation project(':server_api')
     implementation project(':data')
 
     // ----------------------------------------------------------------------------
