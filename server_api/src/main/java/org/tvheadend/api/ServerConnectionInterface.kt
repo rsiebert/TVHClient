@@ -11,5 +11,7 @@ internal interface ServerConnectionInterface<T> {
 
     // synchronized, blocking auth
     fun authenticate()
+    fun sendMessage(message: T)
+    fun sendMessage(message: T, listener: ServerResponseListener<T>?)
     fun closeConnection()
 }
