@@ -28,7 +28,6 @@ android {
         }
         debug {
             initWith buildTypes.release
-            minifyEnabled false
         }
     }
     compileOptions {
