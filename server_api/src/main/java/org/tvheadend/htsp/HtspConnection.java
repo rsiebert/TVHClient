@@ -243,7 +243,7 @@ public class HtspConnection extends Thread implements ServerConnectionInterface<
 
             response.setMethod("serverStatus");
             for (ServerMessageListener<HtspMessage> listener : messageListeners) {
-                listener.onMessage(response);
+                listener.onMessage(response, response.getMethod());
             }
 
             MessageDigest md;
@@ -450,7 +450,7 @@ public class HtspConnection extends Thread implements ServerConnectionInterface<
         }
 
         for (ServerMessageListener<HtspMessage> listener : messageListeners) {
-            listener.onMessage(msg);
+            listener.onMessage(msg, msg.getMethod());
         }
     }
 }
