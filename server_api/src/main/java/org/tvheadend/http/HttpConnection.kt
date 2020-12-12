@@ -7,6 +7,7 @@ import com.burgstaller.okhttp.digest.Credentials
 import com.burgstaller.okhttp.digest.DigestAuthenticator
 import okhttp3.OkHttpClient
 import okhttp3.Request
+import org.json.JSONException
 import org.json.JSONObject
 import org.tvheadend.api.*
 import org.tvheadend.api.ConnectionStateResult.Connected
@@ -66,7 +67,6 @@ class HttpConnection(private val httpConnectionData: HttpConnectionData,
         try {
             Timber.d("Building request with url ${httpConnectionData.url}")
             val request = Request.Builder().url("${httpConnectionData.url}").build()
-
             client.newCall(request).execute().use { response ->
 
                 for ((name, value) in response.headers) {
@@ -91,7 +91,6 @@ class HttpConnection(private val httpConnectionData: HttpConnectionData,
                     }
                 } else {
                     Timber.d("Response was successful, connection thread can be started")
-                    connectionListener.onAuthenticationStateChange(AuthenticationStateResult.Authenticated())
                     isRunning = true
                     isConnecting = false
                     isAuthenticated = true
@@ -116,7 +115,11 @@ class HttpConnection(private val httpConnectionData: HttpConnectionData,
     override var isAuthenticated: Boolean = false
 
     override fun authenticate() {
-        // NOP
+        if (isAuthenticated) {
+            connectionListener.onAuthenticationStateChange(AuthenticationStateResult.Authenticated())
+        } else {
+            connectionListener.onAuthenticationStateChange(AuthenticationStateResult.Failed(AuthenticationFailureReason.BadCredentials()))
+        }
     }
 
     override fun sendMessage(message: Request) {
@@ -129,6 +132,7 @@ class HttpConnection(private val httpConnectionData: HttpConnectionData,
             // TODO create json response not connected ...
         }
 
+        Timber.d("Adding message with tag '${message.tag().toString()}' to message queue")
         responseHandlers[message.tag().toString()] = listener
         messageQueue.add(message)
     }
@@ -152,13 +156,17 @@ class HttpConnection(private val httpConnectionData: HttpConnectionData,
                 val request: Request? = messageQueue.poll()
                 if (request != null) {
                     client.newCall(request).execute().use { response ->
-                        Timber.d("Received response code ${response.code}")
-                        Timber.d("Received response body ${response.body.toString()}")
+                        val responseString = response.body!!.string()
+                        Timber.d("Received response code ${response.code}, body $responseString")
                         if (response.isSuccessful) {
-                            handleMessage(JSONObject(response.body.toString()), request.tag().toString())
+                            handleMessage(JSONObject(responseString), request.tag().toString())
                         }
                     }
                 }
+            } catch (e: JSONException) {
+                Timber.d(e, "Could not parse JSON data")
+                connectionListener.onConnectionStateChange(ConnectionStateResult.Failed(ConnectionFailureReason.Other()))
+                isRunning = false
             } catch (e: IllegalStateException) {
                 Timber.d(e, "Caught illegal state exception, call has already been executed")
                 connectionListener.onConnectionStateChange(ConnectionStateResult.Failed(ConnectionFailureReason.SocketException()))
@@ -176,15 +184,17 @@ class HttpConnection(private val httpConnectionData: HttpConnectionData,
     }
 
     private fun handleMessage(msg: JSONObject, tag: String) {
-        Timber.d("Handling message with tag $tag")
+        Timber.d("Handling message for tag $tag")
         val handler: ServerResponseListener<JSONObject>? = responseHandlers[tag]
         responseHandlers.remove(tag)
         if (handler != null) {
+            Timber.d("Sending message with tag $tag to handler")
             synchronized(handler) { handler.handleResponse(msg) }
             return
         }
         for (listener in messageListeners) {
-            listener.onMessage(msg)
+            Timber.d("Sending message with tag $tag to all listeners")
+            listener.onMessage(msg, tag)
         }
     }
 }
