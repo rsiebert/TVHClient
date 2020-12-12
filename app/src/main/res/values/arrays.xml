@@ -357,8 +357,8 @@
         <item>691200</item>
     </string-array>
 
-    <string-array name="connection_type_names">
-        <item>HTS (Home TV Streaming)</item>
+    <string-array name="connection_type">
+        <item>HTSP (Default)</item>
         <item>HTTP</item>
     </string-array>
 
