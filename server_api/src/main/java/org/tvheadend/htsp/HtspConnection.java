@@ -11,7 +11,6 @@ import org.tvheadend.api.AuthenticationStateResult;
 import org.tvheadend.api.ConnectionFailureReason;
 import org.tvheadend.api.ConnectionStateResult;
 import org.tvheadend.api.ServerConnectionInterface;
-import org.tvheadend.api.ServerConnectionMessageInterface;
 import org.tvheadend.api.ServerConnectionStateListener;
 import org.tvheadend.api.ServerMessageListener;
 import org.tvheadend.api.ServerResponseListener;
@@ -42,7 +41,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import timber.log.Timber;
 
-public class HtspConnection extends Thread implements ServerConnectionInterface<HtspMessage>, ServerConnectionMessageInterface<HtspMessage, HtspMessage> {
+public class HtspConnection extends Thread implements ServerConnectionInterface<HtspMessage> {
 
     private final HtspConnectionData htspConnectionData;
 
