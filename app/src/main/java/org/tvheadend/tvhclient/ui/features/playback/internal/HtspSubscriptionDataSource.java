@@ -268,7 +268,8 @@ public class HtspSubscriptionDataSource implements DataSource, Closeable, Server
     }
 
     @Override
-    public void onMessage(@NotNull HtspMessage message, @NonNull String method) {
+    public void onMessage(@NotNull HtspMessage message) {
+        String method = message.getMethod();
         switch (method) {
             case "subscriptionStart":
             case "muxpkt":

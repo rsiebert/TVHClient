@@ -205,7 +205,7 @@ class HtspFileInputStreamDataSource private constructor(val connection: HtspConn
         Timber.d("Closing file input data source $dataSourceNumber)")
     }
 
-    override fun onMessage(response: HtspMessage, method: String) {
+    override fun onMessage(response: HtspMessage) {
         // NOP
     }
 

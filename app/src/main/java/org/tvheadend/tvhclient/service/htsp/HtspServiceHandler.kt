@@ -169,8 +169,8 @@ class HtspServiceHandler(val context: Context, val appRepository: AppRepository,
         }
     }
 
-    override fun onMessage(response: HtspMessage, method: String) {
-        when (method) {
+    override fun onMessage(response: HtspMessage) {
+        when (response.method) {
             "tagAdd" -> onTagAdd(response)
             "tagUpdate" -> onTagUpdate(response)
             "tagDelete" -> onTagDelete(response)

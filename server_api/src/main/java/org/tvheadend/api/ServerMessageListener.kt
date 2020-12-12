@@ -2,5 +2,5 @@ package org.tvheadend.api
 
 interface ServerMessageListener<T> {
 
-    fun onMessage(response: T, method: String)
+    fun onMessage(response: T)
 }
