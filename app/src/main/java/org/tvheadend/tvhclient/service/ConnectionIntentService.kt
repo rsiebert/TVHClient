@@ -34,7 +34,7 @@ class ConnectionIntentService : JobIntentService() {
         connection = appRepository.connectionData.activeItem
 
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
-        when (sharedPreferences.getString("connection_type", resources.getString(R.string.pref_default_connection_type))) {
+        when (sharedPreferences.getString("connection_type", context.resources.getString(R.string.pref_default_connection_type))) {
             "htsp" -> serviceHandler = HtspIntentServiceHandler(context, appRepository, connection)
             "http" -> serviceHandler = HttpIntentServiceHandler(context, appRepository, connection)
         }
