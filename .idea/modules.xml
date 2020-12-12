@@ -5,7 +5,7 @@
       <module fileurl="file://$PROJECT_DIR$/TVHClient.iml" filepath="$PROJECT_DIR$/TVHClient.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/TVHClient.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/TVHClient.app.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/data/TVHClient.data.iml" filepath="$PROJECT_DIR$/.idea/modules/data/TVHClient.data.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/htsp/TVHClient.server_api.iml" filepath="$PROJECT_DIR$/.idea/modules/htsp/TVHClient.server_api.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/htsp/TVHClient.htsp.iml" filepath="$PROJECT_DIR$/.idea/modules/htsp/TVHClient.htsp.iml" />
     </modules>
   </component>
 </project>
