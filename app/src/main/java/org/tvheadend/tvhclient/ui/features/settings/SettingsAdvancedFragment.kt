@@ -40,6 +40,7 @@ class SettingsAdvancedFragment : PreferenceFragmentCompat(), Preference.OnPrefer
     private var notifyRunningRecordingCountEnabledPreference: SwitchPreference? = null
     private var notifyLowStorageSpaceEnabledPreference: SwitchPreference? = null
     private var connectionTimeoutPreference: EditTextPreference? = null
+    private var connectionTypePreference: ListPreference? = null
     lateinit var sharedPreferences: SharedPreferences
     lateinit var settingsViewModel: SettingsViewModel
 
@@ -58,9 +59,13 @@ class SettingsAdvancedFragment : PreferenceFragmentCompat(), Preference.OnPrefer
         findPreference<Preference>("clear_icon_cache")?.onPreferenceClickListener = this
         findPreference<Preference>("load_more_epg_data")?.onPreferenceClickListener = this
 
+
         notificationsEnabledPreference = findPreference("notifications_enabled")
         notifyRunningRecordingCountEnabledPreference = findPreference("notify_running_recording_count_enabled")
         notifyLowStorageSpaceEnabledPreference = findPreference("notify_low_storage_space_enabled")
+
+        connectionTypePreference = findPreference("connection_type")
+        connectionTypePreference?.onPreferenceChangeListener = this
 
         connectionTimeoutPreference = findPreference("connection_timeout")
         connectionTimeoutPreference?.onPreferenceChangeListener = this
@@ -85,6 +90,11 @@ class SettingsAdvancedFragment : PreferenceFragmentCompat(), Preference.OnPrefer
             it.onPreferenceClickListener = this
             it.isEnabled = settingsViewModel.isUnlocked
         }
+
+        connectionTypePreference?.also {
+            it.onPreferenceClickListener = this
+            it.isEnabled = settingsViewModel.isUnlocked
+        }
     }
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
@@ -94,6 +104,15 @@ class SettingsAdvancedFragment : PreferenceFragmentCompat(), Preference.OnPrefer
     override fun onResume() {
         super.onResume()
         sharedPreferences.registerOnSharedPreferenceChangeListener(this)
+        val value = sharedPreferences.getString("connection_type", getString(R.string.pref_default_connection_type))!!
+        updateConnectionTypeSummary(value)
+    }
+
+    private fun updateConnectionTypeSummary(value: String) {
+        Timber.d("Updating connection type summary")
+        val index = connectionTypePreference?.findIndexOfValue(value) ?: 0
+        val text = resources.getStringArray(R.array.connection_type_names)[index]
+        connectionTypePreference?.summary = getString(R.string.pref_connection_type_sum, text)
     }
 
     override fun onPause() {
@@ -267,6 +286,10 @@ class SettingsAdvancedFragment : PreferenceFragmentCompat(), Preference.OnPrefer
                     context?.sendSnackbarMessage("The value must be an integer greater 0")
                     return false
                 }
+            "connection_type" -> {
+                updateConnectionTypeSummary(newValue as String)
+                return true
+            }
             else -> return true
         }
     }
