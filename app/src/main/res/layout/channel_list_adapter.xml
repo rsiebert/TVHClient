@@ -93,10 +93,8 @@
             android:onClick="@{(view) -> callback.onClick(view, position)}"
             app:iconName="@{channel.name}"
             app:iconUrl="@{channel.icon}"
-            app:layout_constraintBottom_toBottomOf="@+id/icon"
             app:layout_constraintStart_toEndOf="@+id/genre"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.0" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/channel_number"
