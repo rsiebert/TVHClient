@@ -23,7 +23,7 @@
         <ListPreference
             android:defaultValue="@string/pref_default_connection_type"
             android:dialogTitle="@string/pref_connection_type"
-            android:entries="@array/connection_type"
+            android:entries="@array/connection_type_names"
             android:entryValues="@array/connection_type_values"
             android:key="connection_type"
             android:summary="@string/pref_connection_type_sum"
