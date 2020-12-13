@@ -32,7 +32,6 @@
     <bool name="pref_default_notify_running_recording_count_enabled">false</bool>
     <bool name="pref_default_notify_low_storage_space_enabled">false</bool>
     <string name="pref_default_low_storage_space_threshold" translatable="false">1</string>
-    <string name="pref_default_connection_type" translatable="false">htsp</string>
 
     <!-- Default UI preference values -->
     <string name="pref_default_start_screen" translatable="false">0</string>
