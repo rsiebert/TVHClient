@@ -20,14 +20,6 @@
             android:inputType="number"
             android:summary="@string/pref_connection_timeout_sum"
             android:title="@string/pref_connection_timeout" />
-        <ListPreference
-            android:defaultValue="@string/pref_default_connection_type"
-            android:dialogTitle="@string/pref_connection_type"
-            android:entries="@array/connection_type"
-            android:entryValues="@array/connection_type_values"
-            android:key="connection_type"
-            android:summary="@string/pref_connection_type_sum"
-            android:title="@string/pref_connection_type" />
     </PreferenceCategory>
 
     <PreferenceCategory android:title="EPG">
