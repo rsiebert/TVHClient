@@ -18,6 +18,9 @@ import org.tvheadend.tvhclient.BuildConfig
 import org.tvheadend.tvhclient.R
 import org.tvheadend.data.AppRepository
 import org.tvheadend.tvhclient.service.ConnectionIntentService
+import org.tvheadend.tvhclient.service.ServerTicketReceiver
+import org.tvheadend.tvhclient.service.SyncStateReceiver
+import org.tvheadend.tvhclient.service.SyncStateResult
 import org.tvheadend.tvhclient.util.convertUrlToHashString
 import timber.log.Timber
 import java.io.*
@@ -33,7 +36,7 @@ class HtspIntentServiceHandler(val context: Context, val appRepository: AppRepos
     private val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
     private val execService: ScheduledExecutorService = Executors.newScheduledThreadPool(10)
     private val htspConnection: HtspConnection
-    private val serverStatus: ServerStatus
+    private val serverStatus: ServerStatus = appRepository.serverStatusData.activeItem
     private var htspVersion: Int = 13
 
     private val pendingEventOps = ArrayList<Program>()
@@ -41,7 +44,6 @@ class HtspIntentServiceHandler(val context: Context, val appRepository: AppRepos
     private val responseLock = Object()
 
     init {
-        serverStatus = appRepository.serverStatusData.activeItem
         htspVersion = serverStatus.htspVersion
 
         val htspConnectionData = HtspConnectionData(
@@ -103,10 +105,11 @@ class HtspIntentServiceHandler(val context: Context, val appRepository: AppRepos
         synchronized(authenticationLock) {
             authenticationLock.notify()
         }
+        sendSyncStateMessage(SyncStateResult.Authenticating(result))
     }
 
     override fun onConnectionStateChange(result: ConnectionStateResult) {
-        // NOP
+        sendSyncStateMessage(SyncStateResult.Connecting(result))
     }
 
     /**
@@ -146,10 +149,9 @@ class HtspIntentServiceHandler(val context: Context, val appRepository: AppRepos
 
         htspConnection.sendMessage(request, object : ServerResponseListener<HtspMessage> {
             override fun handleResponse(response: HtspMessage) {
-                Timber.d("Response is not null")
-                val ticketIntent = Intent("ticket")
-                ticketIntent.putExtra("path", response.getString("path"))
-                ticketIntent.putExtra("ticket", response.getString("ticket"))
+                val ticketIntent = Intent(ServerTicketReceiver.ACTION)
+                ticketIntent.putExtra(ServerTicketReceiver.PATH, response.getString("path"))
+                ticketIntent.putExtra(ServerTicketReceiver.TICKET, response.getString("ticket"))
                 LocalBroadcastManager.getInstance(context.applicationContext).sendBroadcast(ticketIntent)
             }
         })
@@ -396,5 +398,19 @@ class HtspIntentServiceHandler(val context: Context, val appRepository: AppRepos
         appRepository.programData.addItems(pendingEventOps)
         Timber.d("Saved ${pendingEventOps.size} events for all channels. Database contains ${appRepository.programData.itemCount} events")
         pendingEventOps.clear()
+    }
+
+    // TODO consolidate, identical method in the oder handler
+    private fun sendSyncStateMessage(state: SyncStateResult, message: String = "", details: String = "") {
+
+        val intent = Intent(SyncStateReceiver.ACTION)
+        intent.putExtra(SyncStateReceiver.STATE, state)
+        if (message.isNotEmpty()) {
+            intent.putExtra(SyncStateReceiver.MESSAGE, message)
+        }
+        if (details.isNotEmpty()) {
+            intent.putExtra(SyncStateReceiver.DETAILS, details)
+        }
+        LocalBroadcastManager.getInstance(context).sendBroadcast(intent)
     }
 }
