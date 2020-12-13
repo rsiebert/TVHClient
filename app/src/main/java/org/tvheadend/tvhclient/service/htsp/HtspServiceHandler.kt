@@ -200,7 +200,7 @@ class HtspServiceHandler(val context: Context, val appRepository: AppRepository,
     }
 
     override fun onAuthenticationStateChange(result: AuthenticationStateResult) {
-        SyncStateResult.Authenticating(result)
+        sendSyncStateMessage(SyncStateResult.Authenticating(result))
         if (result is AuthenticationStateResult.Authenticated) {
             startAsyncCommunicationWithServer()
         }
@@ -1534,9 +1534,9 @@ class HtspServiceHandler(val context: Context, val appRepository: AppRepository,
         htspConnection?.sendMessage(request, object : ServerResponseListener<HtspMessage> {
             override fun handleResponse(response: HtspMessage) {
                 Timber.d("Response is not null")
-                val ticketIntent = Intent("ticket")
-                ticketIntent.putExtra("path", response.getString("path"))
-                ticketIntent.putExtra("ticket", response.getString("ticket"))
+                val ticketIntent = Intent(ServerTicketReceiver.ACTION)
+                ticketIntent.putExtra(ServerTicketReceiver.PATH, response.getString("path"))
+                ticketIntent.putExtra(ServerTicketReceiver.TICKET, response.getString("ticket"))
                 LocalBroadcastManager.getInstance(context.applicationContext).sendBroadcast(ticketIntent)
             }
         })
