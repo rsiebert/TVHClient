@@ -3,7 +3,7 @@ apply from: 'properties.gradle'
 
 buildscript {
     ext {
-        kotlin_version = '1.4.20'
+        kotlin_version = '1.4.21'
         compileSdkVersion = 29
         minSdkVersion = 16
         targetSdkVersion = 29
