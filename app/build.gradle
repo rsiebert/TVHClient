@@ -81,7 +81,7 @@ android {
 
             // Enables resource shrinking, which is performed by the
             // Android Gradle plugin.
-            shrinkResources true
+            shrinkResources false
 
             firebaseCrashlytics {
                 mappingFileUploadEnabled true
@@ -89,7 +89,6 @@ android {
         }
         debug {
             initWith buildTypes.release
-            shrinkResources false
 
             // Set this flag to 'false' to disable crashlytics
             // in debug builds and to decrease up build times
