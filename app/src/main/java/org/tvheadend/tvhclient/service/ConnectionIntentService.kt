@@ -23,7 +23,7 @@ class ConnectionIntentService : JobIntentService() {
     lateinit var sharedPreferences: SharedPreferences
 
     private var connection: Connection
-    private lateinit var serviceHandler: ServiceInterface
+    private var serviceHandler: ServiceInterface
 
     init {
         Timber.d("Starting intent service")
