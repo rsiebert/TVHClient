@@ -196,7 +196,7 @@ class HtspFileInputStreamDataSource private constructor(val connection: HtspConn
         return dataSpec.uri
     }
 
-    override fun getResponseHeaders(): Map<String, List<String>>? {
+    override fun getResponseHeaders(): Map<String, List<String>> {
         Timber.d("Returning response headers")
         return emptyMap()
     }
