@@ -4,13 +4,10 @@ import android.app.Service
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.IBinder
-import androidx.preference.PreferenceManager
 import org.tvheadend.data.AppRepository
 import org.tvheadend.data.entity.Connection
 import org.tvheadend.tvhclient.MainApplication
-import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.service.htsp.HtspServiceHandler
-import org.tvheadend.tvhclient.service.http.HttpServiceHandler
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -30,13 +27,7 @@ class ConnectionService : Service() {
         MainApplication.component.inject(this)
 
         connection = appRepository.connectionData.activeItem
-        Timber.d("Loaded connection ${connection.name}")
-
-        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
-        when (sharedPreferences.getString("connection_type", resources.getString(R.string.pref_default_connection_type))) {
-            "htsp" -> serviceHandler = HtspServiceHandler(this, appRepository, connection)
-            "http" -> serviceHandler = HttpServiceHandler(this, appRepository, connection)
-        }
+        serviceHandler = HtspServiceHandler(this, appRepository, connection)
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
