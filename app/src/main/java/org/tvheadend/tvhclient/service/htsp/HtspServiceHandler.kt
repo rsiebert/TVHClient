@@ -88,7 +88,7 @@ class HtspServiceHandler(val context: Context, val appRepository: AppRepository,
         if (action.isEmpty()) {
             return Service.START_NOT_STICKY
         }
-        Timber.d("Received command $action for service")
+        Timber.d("Received command $action for service handler")
 
         when (action) {
             "connect" -> {
@@ -152,7 +152,7 @@ class HtspServiceHandler(val context: Context, val appRepository: AppRepository,
     }
 
     override fun onDestroy() {
-        Timber.d("Stopping service")
+        Timber.d("Stopping service handler")
         execService.shutdown()
         htspConnection?.closeConnection()
     }

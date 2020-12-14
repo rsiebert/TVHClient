@@ -65,7 +65,6 @@ class HtspIntentServiceHandler(val context: Context, val appRepository: AppRepos
     }
 
     override fun onHandleWork(intent: Intent) {
-
         val action = intent.action
         if (action == null || action.isEmpty()) {
             return
@@ -84,7 +83,7 @@ class HtspIntentServiceHandler(val context: Context, val appRepository: AppRepos
             return
         }
 
-        Timber.d("Executing command $action for service")
+        Timber.d("Executing command $action for service handler")
         when (action) {
             "getMoreEvents" -> getMoreEvents(intent)
             "loadChannelIcons" -> loadAllChannelIcons()
@@ -97,7 +96,7 @@ class HtspIntentServiceHandler(val context: Context, val appRepository: AppRepos
     }
 
     override fun onDestroy() {
-        Timber.d("Stopping service")
+        Timber.d("Stopping service handler")
         execService.shutdown()
         htspConnection.closeConnection()
     }
