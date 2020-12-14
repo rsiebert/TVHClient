@@ -29,7 +29,6 @@ import timber.log.Timber
 
 abstract class BasePlaybackActivity : AppCompatActivity(), SyncStateReceiver.Listener, ServerTicketReceiver.Listener {
 
-    private lateinit var snackbarMessageReceiver: SnackbarMessageReceiver
     private lateinit var serverTicketReceiver: ServerTicketReceiver
     private lateinit var syncStateReceiver: SyncStateReceiver
     lateinit var binding: PlayActivityBinding
@@ -42,22 +41,9 @@ abstract class BasePlaybackActivity : AppCompatActivity(), SyncStateReceiver.Lis
         val view = binding.root
         setContentView(view)
 
-        binding.status.setText(R.string.connecting_to_server)
-
         viewModel = ViewModelProvider(this).get(ExternalPlayerViewModel::class.java)
-        snackbarMessageReceiver = SnackbarMessageReceiver(viewModel)
         syncStateReceiver = SyncStateReceiver(this)
         serverTicketReceiver = ServerTicketReceiver(this)
-
-        binding.status.setText(R.string.requesting_playback_information)
-        intent.action = "getTicket"
-        ConnectionIntentService.enqueueWork(this, intent)
-
-        viewModel.snackbarMessageLiveData.observe(this,  { event ->
-            event.getContentIfNotHandled()?.let {
-                this.showSnackbarMessage(it)
-            }
-        })
     }
 
     override fun attachBaseContext(context: Context) {
@@ -67,18 +53,18 @@ abstract class BasePlaybackActivity : AppCompatActivity(), SyncStateReceiver.Lis
     public override fun onStart() {
         super.onStart()
         LocalBroadcastManager.getInstance(this).registerReceiver(syncStateReceiver, IntentFilter(SyncStateReceiver.ACTION))
-        LocalBroadcastManager.getInstance(this).registerReceiver(snackbarMessageReceiver, IntentFilter(SnackbarMessageReceiver.SNACKBAR_ACTION))
         LocalBroadcastManager.getInstance(this).registerReceiver(serverTicketReceiver, IntentFilter(ServerTicketReceiver.ACTION))
     }
 
     public override fun onResume() {
         super.onResume()
+        intent.action = "getTicket"
         ConnectionIntentService.enqueueWork(this, intent)
     }
+
     public override fun onStop() {
         super.onStop()
         LocalBroadcastManager.getInstance(this).unregisterReceiver(serverTicketReceiver)
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(snackbarMessageReceiver)
         LocalBroadcastManager.getInstance(this).unregisterReceiver(syncStateReceiver)
     }
 
@@ -127,43 +113,42 @@ abstract class BasePlaybackActivity : AppCompatActivity(), SyncStateReceiver.Lis
                 when (result.reason) {
                     is ConnectionStateResult.Idle -> {
                         Timber.d("Connection is idle")
+                        binding.progressBar.gone()
                     }
                     is ConnectionStateResult.Closed -> {
                         Timber.d("Connection failed or closed")
                         binding.progressBar.gone()
                         binding.status.setText(R.string.connection_failed)
-                        sendSnackbarMessage(getString(R.string.connection_closed))
-                        Timber.d("Setting connection to server not available")
                     }
                     is ConnectionStateResult.Connecting -> {
                         Timber.d("Connecting")
-                        binding.status.setText(R.string.requesting_playback_information)
-                        sendSnackbarMessage(getString(R.string.connecting_to_server))
+                        binding.status.setText(R.string.connecting_to_server)
                     }
                     is ConnectionStateResult.Connected -> {
                         Timber.d("Connected")
                         binding.progressBar.gone()
                         binding.status.text = getString(R.string.connected_to_server)
-                        sendSnackbarMessage(getString(R.string.connected_to_server))
                     }
                     is ConnectionStateResult.Failed -> {
+                        Timber.d("Connected failed")
                         binding.progressBar.gone()
-                        binding.status.setText(R.string.connection_failed)
                         when (result.reason.reason) {
-                            is ConnectionFailureReason.Interrupted -> sendSnackbarMessage(getString(R.string.failed_during_connection_attempt))
-                            is ConnectionFailureReason.UnresolvedAddress -> sendSnackbarMessage(getString(R.string.failed_to_resolve_address))
-                            is ConnectionFailureReason.ConnectingToServer -> sendSnackbarMessage(getString(R.string.failed_connecting_to_server))
-                            is ConnectionFailureReason.SocketException -> sendSnackbarMessage(getString(R.string.failed_opening_socket))
-                            is ConnectionFailureReason.Other -> sendSnackbarMessage(getString(R.string.connection_failed))
+                            is ConnectionFailureReason.Interrupted -> binding.status.text = getString(R.string.failed_during_connection_attempt)
+                            is ConnectionFailureReason.UnresolvedAddress -> binding.status.text = getString(R.string.failed_to_resolve_address)
+                            is ConnectionFailureReason.ConnectingToServer -> binding.status.text = getString(R.string.failed_connecting_to_server)
+                            is ConnectionFailureReason.SocketException -> binding.status.text = getString(R.string.failed_opening_socket)
+                            is ConnectionFailureReason.Other -> binding.status.text = getString(R.string.connection_failed)
                         }
                     }
                 }
             }
             is SyncStateResult.Authenticating -> {
                 if (result.reason is AuthenticationStateResult.Failed) {
+                    Timber.d("Authentication failed")
+                    binding.progressBar.gone()
                     when (result.reason.reason) {
-                        is AuthenticationFailureReason.BadCredentials -> sendSnackbarMessage(getString(R.string.bad_username_or_password))
-                        is AuthenticationFailureReason.Other -> sendSnackbarMessage(getString(R.string.authentication_failed))
+                        is AuthenticationFailureReason.BadCredentials -> binding.status.text = getString(R.string.bad_username_or_password)
+                        is AuthenticationFailureReason.Other -> binding.status.text = getString(R.string.authentication_failed)
                     }
                 }
             }
