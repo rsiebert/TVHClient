@@ -22,6 +22,7 @@ import org.tvheadend.tvhclient.service.ServerTicketReceiver
 import org.tvheadend.tvhclient.service.SyncStateReceiver
 import org.tvheadend.tvhclient.service.SyncStateResult
 import org.tvheadend.tvhclient.util.convertUrlToHashString
+import org.tvheadend.tvhclient.util.extensions.sendSyncStateMessage
 import timber.log.Timber
 import java.io.*
 import java.net.URL
@@ -105,11 +106,11 @@ class HtspIntentServiceHandler(val context: Context, val appRepository: AppRepos
         synchronized(authenticationLock) {
             authenticationLock.notify()
         }
-        sendSyncStateMessage(SyncStateResult.Authenticating(result))
+        context.sendSyncStateMessage(SyncStateResult.Authenticating(result))
     }
 
     override fun onConnectionStateChange(result: ConnectionStateResult) {
-        sendSyncStateMessage(SyncStateResult.Connecting(result))
+        context.sendSyncStateMessage(SyncStateResult.Connecting(result))
     }
 
     /**
@@ -398,19 +399,5 @@ class HtspIntentServiceHandler(val context: Context, val appRepository: AppRepos
         appRepository.programData.addItems(pendingEventOps)
         Timber.d("Saved ${pendingEventOps.size} events for all channels. Database contains ${appRepository.programData.itemCount} events")
         pendingEventOps.clear()
-    }
-
-    // TODO consolidate, identical method in the oder handler
-    private fun sendSyncStateMessage(state: SyncStateResult, message: String = "", details: String = "") {
-
-        val intent = Intent(SyncStateReceiver.ACTION)
-        intent.putExtra(SyncStateReceiver.STATE, state)
-        if (message.isNotEmpty()) {
-            intent.putExtra(SyncStateReceiver.MESSAGE, message)
-        }
-        if (details.isNotEmpty()) {
-            intent.putExtra(SyncStateReceiver.DETAILS, details)
-        }
-        LocalBroadcastManager.getInstance(context).sendBroadcast(intent)
     }
 }

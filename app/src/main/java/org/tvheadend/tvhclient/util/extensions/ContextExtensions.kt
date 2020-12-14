@@ -8,6 +8,8 @@ import com.google.android.gms.cast.framework.CastSession
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.material.snackbar.Snackbar
+import org.tvheadend.tvhclient.service.SyncStateReceiver
+import org.tvheadend.tvhclient.service.SyncStateResult
 import org.tvheadend.tvhclient.ui.common.SnackbarMessageReceiver
 import timber.log.Timber
 
@@ -45,4 +47,17 @@ fun Context.getCastContext(): CastContext? {
         }
     }
     return null
+}
+
+fun Context.sendSyncStateMessage(state: SyncStateResult, message: String = "", details: String = "") {
+
+    val intent = Intent(SyncStateReceiver.ACTION)
+    intent.putExtra(SyncStateReceiver.STATE, state)
+    if (message.isNotEmpty()) {
+        intent.putExtra(SyncStateReceiver.MESSAGE, message)
+    }
+    if (details.isNotEmpty()) {
+        intent.putExtra(SyncStateReceiver.DETAILS, details)
+    }
+    LocalBroadcastManager.getInstance(this).sendBroadcast(intent)
 }

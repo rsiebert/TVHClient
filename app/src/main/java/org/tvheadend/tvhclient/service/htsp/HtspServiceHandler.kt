@@ -26,6 +26,7 @@ import org.tvheadend.tvhclient.ui.common.removeNotificationById
 import org.tvheadend.tvhclient.util.convertUrlToHashString
 import org.tvheadend.tvhclient.util.extensions.isEqualTo
 import org.tvheadend.tvhclient.util.extensions.sendSnackbarMessage
+import org.tvheadend.tvhclient.util.extensions.sendSyncStateMessage
 import org.tvheadend.tvhclient.util.getIconUrl
 import org.tvheadend.tvhclient.util.worker.DatabaseCleanupWorker
 import org.tvheadend.tvhclient.util.worker.EpgDataUpdateWorker
@@ -200,14 +201,14 @@ class HtspServiceHandler(val context: Context, val appRepository: AppRepository,
     }
 
     override fun onAuthenticationStateChange(result: AuthenticationStateResult) {
-        sendSyncStateMessage(SyncStateResult.Authenticating(result))
+        context.sendSyncStateMessage(SyncStateResult.Authenticating(result))
         if (result is AuthenticationStateResult.Authenticated) {
             startAsyncCommunicationWithServer()
         }
     }
 
     override fun onConnectionStateChange(result: ConnectionStateResult) {
-        sendSyncStateMessage(SyncStateResult.Connecting(result))
+        context.sendSyncStateMessage(SyncStateResult.Connecting(result))
     }
 
     private fun startAsyncCommunicationWithServer() {
@@ -235,7 +236,7 @@ class HtspServiceHandler(val context: Context, val appRepository: AppRepository,
         // Send the first sync message to any broadcast listeners
         if (syncRequired || syncEventsRequired) {
             Timber.d("Sending status that sync has started")
-            sendSyncStateMessage(SyncStateResult.Syncing(SyncState.Started()))
+            context.sendSyncStateMessage(SyncStateResult.Syncing(SyncState.Started()))
         }
         if (syncEventsRequired) {
             Timber.d("Enabling requesting of epg data")
@@ -259,7 +260,7 @@ class HtspServiceHandler(val context: Context, val appRepository: AppRepository,
         Timber.d("Received initial sync data from server")
 
         if (syncRequired) {
-            sendSyncStateMessage(SyncStateResult.Syncing(SyncState.InProgress()))
+            context.sendSyncStateMessage(SyncStateResult.Syncing(SyncState.InProgress()))
         }
 
         // Save the channels and tags only during a forced sync.
@@ -301,7 +302,7 @@ class HtspServiceHandler(val context: Context, val appRepository: AppRepository,
         // The initial sync is considered to be done at this point.
         // Send the message to the listeners that the sync is done
         if (syncRequired || syncEventsRequired) {
-            sendSyncStateMessage(SyncStateResult.Syncing(SyncState.Done()))
+            context.sendSyncStateMessage(SyncStateResult.Syncing(SyncState.Done()))
         }
 
         syncRequired = false
@@ -543,7 +544,7 @@ class HtspServiceHandler(val context: Context, val appRepository: AppRepository,
         pendingChannelTagOps.add(updatedTag)
 
         if (syncRequired && pendingChannelTagOps.size % 10 == 0) {
-            sendSyncStateMessage(SyncStateResult.Syncing(SyncState.InProgress("Received ${pendingChannelTagOps.size} channel tags")))
+            context.sendSyncStateMessage(SyncStateResult.Syncing(SyncState.InProgress("Received ${pendingChannelTagOps.size} channel tags")))
         }
     }
 
@@ -584,7 +585,7 @@ class HtspServiceHandler(val context: Context, val appRepository: AppRepository,
         pendingChannelOps.add(channel)
 
         if (syncRequired && pendingChannelOps.size % 25 == 0) {
-            sendSyncStateMessage(SyncStateResult.Syncing(SyncState.InProgress("Received ${pendingChannelOps.size} channels")))
+            context.sendSyncStateMessage(SyncStateResult.Syncing(SyncState.InProgress("Received ${pendingChannelOps.size} channels")))
         }
     }
 
@@ -637,7 +638,7 @@ class HtspServiceHandler(val context: Context, val appRepository: AppRepository,
 
             if (syncRequired && pendingRecordingOps.size % 25 == 0) {
                 Timber.d("Sync is running, received ${pendingRecordingOps.size} recordings")
-                sendSyncStateMessage(SyncStateResult.Syncing(SyncState.InProgress("Received ${pendingRecordingOps.size} recordings")))
+                context.sendSyncStateMessage(SyncStateResult.Syncing(SyncState.InProgress("Received ${pendingRecordingOps.size} recordings")))
             }
         } else {
             appRepository.recordingData.addItem(recording)
@@ -790,7 +791,7 @@ class HtspServiceHandler(val context: Context, val appRepository: AppRepository,
 
             if (syncRequired && pendingEventOps.size % 50 == 0) {
                 Timber.d("Sync is running, received ${pendingEventOps.size} program guide events")
-                sendSyncStateMessage(SyncStateResult.Syncing(SyncState.InProgress("Received ${pendingEventOps.size} program guide events")))
+                context.sendSyncStateMessage(SyncStateResult.Syncing(SyncState.InProgress("Received ${pendingEventOps.size} program guide events")))
             }
         } else {
             Timber.d("Adding event ${program.title}")
@@ -1540,18 +1541,5 @@ class HtspServiceHandler(val context: Context, val appRepository: AppRepository,
                 LocalBroadcastManager.getInstance(context.applicationContext).sendBroadcast(ticketIntent)
             }
         })
-    }
-
-    private fun sendSyncStateMessage(state: SyncStateResult, message: String = "", details: String = "") {
-
-        val intent = Intent(SyncStateReceiver.ACTION)
-        intent.putExtra(SyncStateReceiver.STATE, state)
-        if (message.isNotEmpty()) {
-            intent.putExtra(SyncStateReceiver.MESSAGE, message)
-        }
-        if (details.isNotEmpty()) {
-            intent.putExtra(SyncStateReceiver.DETAILS, details)
-        }
-        LocalBroadcastManager.getInstance(context).sendBroadcast(intent)
     }
 }
