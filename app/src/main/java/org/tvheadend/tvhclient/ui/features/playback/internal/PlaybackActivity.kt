@@ -83,10 +83,6 @@ class PlaybackActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         setTheme(getThemeId(this))
         super.onCreate(savedInstanceState)
-        //playerBinding = PlayerOverlayViewBinding.inflate(layoutInflater)
-        //playerControlBinding = ExoPlayerControlViewBinding.inflate(layoutInflater)
-        //playerViewBinding = ExoPlayerViewBinding.inflate(layoutInflater)
-        //val view = playerBinding.root
         setContentView(R.layout.player_overlay_view)
         Timber.d("Creating")
 

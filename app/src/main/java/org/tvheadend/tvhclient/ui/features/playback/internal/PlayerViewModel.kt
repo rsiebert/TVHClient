@@ -109,6 +109,7 @@ class PlayerViewModel(application: Application) : BaseViewModel(application), Se
         }
 
         trackSelector = DefaultTrackSelector(application.applicationContext, AdaptiveTrackSelection.Factory())
+        trackSelector.buildUponParameters().setRendererDisabled(C.TRACK_TYPE_TEXT, true)
         if (sharedPreferences.getBoolean("audio_tunneling_enabled", defaultAudioTunnelingEnabled)) {
             trackSelector.buildUponParameters().setTunnelingAudioSessionId(C.generateAudioSessionIdV21(application.applicationContext))
         }
