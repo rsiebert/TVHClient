@@ -41,8 +41,6 @@ import org.tvheadend.tvhclient.util.getIconUrl
 import org.tvheadend.tvhclient.util.getThemeId
 import timber.log.Timber
 
-// TODO disable subtitles as a default
-
 class PlaybackActivity : AppCompatActivity() {
 
     private lateinit var playerStatus: TextView
