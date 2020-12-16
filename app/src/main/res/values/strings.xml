@@ -13,6 +13,8 @@
     <string name="any">Any</string>
     <string name="app_name">TVHClient</string>
     <string name="authentication_failed">Authentication failed</string>
+    <string name="authentication_successful">Authentication successful</string>
+    <string name="authentication_in_progress">Authentication in progress</string>
     <string name="available">Available</string>
     <string name="bad_username_or_password">Wrong username or password</string>
     <string name="cancel">Cancel</string>
