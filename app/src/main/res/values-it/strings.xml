@@ -129,7 +129,7 @@ Verifica che siano soddsifatti i requisiti descritti nelle impostazioni trasmiss
     <string name="part">Parte</string>
     <string name="play">Riproduci</string>
     <string name="playback">Riproduzione</string>
-    <string name="player_is_loading_more_data">Per favore aspetta, il giocatore sta caricando più dati…</string>
+    <string name="player_is_loading_more_data">Attendere prego, buffering in corso</string>
     <string name="pref_advanced_settings">Impostazioni avanzate</string>
     <string name="pref_cast_profiles">Profili riproduzione trasmissione</string>
     <string name="pref_cast_profiles_sum">Seleziona un profilo che verrà usato per trasmettere un canale o un programma registrato a chromecast o dispositivi simili.</string>
