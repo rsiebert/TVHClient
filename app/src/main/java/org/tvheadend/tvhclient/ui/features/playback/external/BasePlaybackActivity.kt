@@ -143,19 +143,12 @@ abstract class BasePlaybackActivity : AppCompatActivity(), SyncStateReceiver.Lis
                 }
             }
             is SyncStateResult.Authenticating -> {
-                when (result.reason) {
-                    is AuthenticationStateResult.Idle -> {}
-                    is AuthenticationStateResult.Authenticating -> binding.status.text = getString(R.string.authentication_successful)
-                    is AuthenticationStateResult.Authenticated -> {
-                        binding.progressBar.gone()
-                        binding.status.text = getString(R.string.authentication_successful)
-                    }
-                    is AuthenticationStateResult.Failed -> {
-                        binding.progressBar.gone()
-                        when (result.reason.reason) {
-                            is AuthenticationFailureReason.BadCredentials -> binding.status.text = getString(R.string.bad_username_or_password)
-                            is AuthenticationFailureReason.Other -> binding.status.text = getString(R.string.authentication_failed)
-                        }
+                if (result.reason is AuthenticationStateResult.Failed) {
+                    Timber.d("Authentication failed")
+                    binding.progressBar.gone()
+                    when (result.reason.reason) {
+                        is AuthenticationFailureReason.BadCredentials -> binding.status.text = getString(R.string.bad_username_or_password)
+                        is AuthenticationFailureReason.Other -> binding.status.text = getString(R.string.authentication_failed)
                     }
                 }
             }
