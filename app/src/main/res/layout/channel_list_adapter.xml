@@ -107,8 +107,8 @@
             android:ellipsize="end"
             android:gravity="center"
             android:singleLine="true"
-            android:text="@{channel.displayNumber}"
             android:visibility="@{safeUnbox(viewModel.showChannelNumber) ? View.VISIBLE : View.GONE}"
+            app:channelNumber="@{channel.displayNumber}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@+id/genre"
             tools:text="@tools:sample/us_zipcodes" />

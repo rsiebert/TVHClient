@@ -447,6 +447,17 @@ fun setChannelIcon(view: ImageView, iconUrl: String?) {
     }
 }
 
+@BindingAdapter("channelNumber")
+fun setChannelNumber(view: TextView, number: String?) {
+    if (!number.isNullOrEmpty()) {
+        if (number.endsWith(".0")) {
+            view.text = number.substringBefore(".")
+        } else {
+            view.text = number
+        }
+    }
+}
+
 @BindingAdapter("iconName", "iconUrl", "iconVisibility")
 fun setChannelName(view: TextView, name: String?, iconUrl: String?, visible: Boolean) {
     if (visible) {
