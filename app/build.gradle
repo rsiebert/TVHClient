@@ -16,8 +16,8 @@ android {
     defaultConfig {
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 228
-        versionName "2.4.2"
+        versionCode 229
+        versionName "2.4.3"
 
         // Define the apk naming convention
         applicationId "org.tvheadend.tvhclient"
