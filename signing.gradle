@@ -1,27 +1,25 @@
+def keystoreProperties = new Properties()
+keystoreProperties.load(new FileInputStream(rootProject.file("keystore.properties")))
+
 android {
     signingConfigs {
-        if (tvhHasProperty("keystoreFile")) {
-            release {
-                storeFile file(tvhProperty("keystoreFile"))
-                storePassword tvhProperty("keystorePassword")
-                keyAlias tvhProperty("keyAlias")
-                keyPassword tvhProperty("keyPassword")
-            }
+        release {
+            storeFile file(keystoreProperties['releaseKeystoreFile'])
+            storePassword keystoreProperties['releaseKeystorePassword']
+            keyAlias keystoreProperties['releaseKeyAlias']
+            keyPassword keystoreProperties['releaseKeyPassword']
         }
-
         debug {
-            storeFile rootProject.file("debug-keystore.jks")
-            storePassword "password"
-            keyAlias "android debug key"
-            keyPassword "password"
+            storeFile file(keystoreProperties['debugKeystoreFile'])
+            storePassword keystoreProperties['debugKeystorePassword']
+            keyAlias keystoreProperties['debugKeyAlias']
+            keyPassword keystoreProperties['debugKeyPassword']
         }
     }
 
     buildTypes {
-        if (tvhHasProperty("keystoreFile")) {
-            release {
-                signingConfig signingConfigs.release
-            }
+        release {
+            signingConfig signingConfigs.release
         }
 
         debug {
