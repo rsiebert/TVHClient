@@ -72,7 +72,9 @@ class BillingManager(private val billingUpdatesListener: BillingUpdatesListener)
                 val subscriptionResult = billingClient.queryPurchases(SkuType.SUBS)
                 if (subscriptionResult.responseCode == BillingClient.BillingResponseCode.OK) {
                     Timber.d("Adding available subscriptions")
-                    purchasesResult.purchasesList?.addAll(subscriptionResult.purchasesList)
+                    subscriptionResult.purchasesList?.let {
+                        purchasesResult.purchasesList?.addAll(it)
+                    }
                 } else {
                     Timber.d("Error while querying for available subscriptions")
                 }
@@ -149,8 +151,8 @@ class BillingManager(private val billingUpdatesListener: BillingUpdatesListener)
         billingClient.querySkuDetailsAsync(params) { billingResult, list ->
             when (billingResult.responseCode) {
                 BillingClient.BillingResponseCode.OK -> {
-                    Timber.d("Received details of ${list.size} purchase items")
-                    list.forEach {
+                    Timber.d("Received details of ${list?.size} purchase items")
+                    list?.forEach {
                         Timber.d("Received details of purchase item ${it.sku}")
                         skuDetailsList[it.sku] = it
                     }
@@ -200,10 +202,13 @@ class BillingManager(private val billingUpdatesListener: BillingUpdatesListener)
     fun initiatePurchaseFlow(activity: Activity?, skuId: String?) {
         Timber.d("Initiating purchase flow for $skuId")
         val purchaseFlowRequest = Runnable {
-            val mParams: BillingFlowParams = BillingFlowParams.newBuilder()
-                    .setSkuDetails(skuDetailsList[skuId])
-                    .build()
-            billingClient.launchBillingFlow(activity, mParams)
+            val skuDetails = skuDetailsList[skuId]
+            if (skuDetails != null && activity != null) {
+                val mParams: BillingFlowParams = BillingFlowParams.newBuilder()
+                        .setSkuDetails(skuDetails)
+                        .build()
+                billingClient.launchBillingFlow(activity, mParams)
+            }
         }
         executeServiceRequest(purchaseFlowRequest)
     }
