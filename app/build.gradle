@@ -10,13 +10,16 @@ plugins {
 
 apply from: '../signing.gradle'
 
+def appProperties = new Properties()
+appProperties.load(new FileInputStream(rootProject.file("tvhclient.properties")))
+
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
 
     defaultConfig {
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 229
+        versionCode 230
         versionName "2.4.3"
 
         // Define the apk naming convention
@@ -24,7 +27,7 @@ android {
         setProperty("archivesBaseName", "${applicationId}-${versionName}-${versionCode}")
 
         // Set the default values for these build config fields
-        buildConfigField "String", "DEVELOPER_EMAIL", "\"rsiebert80@gmail.com\""
+        buildConfigField "String", "DEVELOPER_EMAIL", "\"${appProperties['developerEmail']}\""
         buildConfigField "Integer", "BUILD_VERSION", "$versionCode"
 
         // Include the build time and git commit hash in the crash reports
@@ -34,7 +37,7 @@ android {
         buildConfigField "String", "GIT_SHA", "\"${gitSha}\""
 
         // The cast ID that the app shall use
-        buildConfigField "String", "CAST_ID", "\"0531DF56\""
+        buildConfigField "String", "CAST_ID", "\"${appProperties['castId']}\""
 
         // Support vector drawable and animated vector drawable on devices
         // running platform versions lower than Android 5.0 (API level 21)
@@ -43,7 +46,7 @@ android {
         multiDexEnabled true
 
         lintOptions {
-            // Do not check for lint errors to reduce the  build time.
+            // Do not check for lint errors to reduce the build time.
             // Lint checks will be done manually before a release
             checkReleaseBuilds false
         }
@@ -68,32 +71,9 @@ android {
         release {
             // Reduce the apk file size by enabling proguard
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-
-            FirebasePerformance {
-                // Set this flag to 'false' to disable @AddTrace annotation processing and
-                // automatic HTTP/S network request monitoring for a specific build variant at compile time.
-                instrumentationEnabled false
-            }
-
-            // Enables code shrinking, obfuscation, and optimization for only
-            // your project's release build type.
-            minifyEnabled false
-
-            // Enables resource shrinking, which is performed by the
-            // Android Gradle plugin.
-            shrinkResources false
-
-            firebaseCrashlytics {
-                mappingFileUploadEnabled true
-            }
         }
         debug {
             initWith buildTypes.release
-
-            // Set this flag to 'false' to disable crashlytics
-            // in debug builds and to decrease up build times
-            ext.enableCrashlytics = false
-            ext.alwaysUpdateBuildId = false
         }
     }
 }
