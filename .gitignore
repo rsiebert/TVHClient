@@ -1,7 +1,8 @@
 # Local configuration files
 release-keystore.jks
+keystore.properties
+tvhclient.properties
 local.properties
-local-tvhclient.properties
 
 /app/google-services.json
 /app/schemas/
@@ -10,6 +11,7 @@ local-tvhclient.properties
 
 ### Android ###
 # Generated files
+app/release/
 bin/
 gen/
 # Gradle files
