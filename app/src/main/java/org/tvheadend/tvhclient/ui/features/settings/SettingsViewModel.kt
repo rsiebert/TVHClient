@@ -13,6 +13,7 @@ import org.tvheadend.data.entity.Connection
 import org.tvheadend.data.entity.ServerProfile
 import org.tvheadend.data.entity.ServerStatus
 import org.tvheadend.data.source.MiscDataSource
+import org.tvheadend.tvhclient.BuildConfig
 import org.tvheadend.tvhclient.MainApplication
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.ui.common.interfaces.SnackbarMessageInterface
@@ -93,7 +94,7 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
 
     init {
         inject()
-        isUnlocked = appRepository.getIsUnlocked()
+        isUnlocked = appRepository.getIsUnlocked() || BuildConfig.OVERRIDE_UNLOCKED
         isUnlockedLiveData = appRepository.getIsUnlockedLiveData()
         connectionToEdit = appRepository.connectionData.activeItem
         activeConnectionLiveData = appRepository.connectionData.liveDataActiveItem
