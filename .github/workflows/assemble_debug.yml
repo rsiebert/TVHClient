@@ -34,6 +34,14 @@ jobs:
         run: |
           mv app/google-services-github.json app/google-services.json
   
+      - name: Rename keystore.properties file
+        run: |
+          mv keystore-github.properties keystore.properties
+          
+      - name: Rename tvhclient.properties file
+        run: |
+          mv tvhclient-github.properties tvhclient.properties
+          
       # Step: Replace stuff in google services json file
       - uses: jwsi/secret-parser@v1
         with:
