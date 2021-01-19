@@ -1,3 +1,7 @@
+$ 2.4.4
+  % VERSION 2.4.4
+  _ 18.01.2021
+    * Removed unused okhttp library which caused some issues on older devices
 $ 2.4.3
   % VERSION 2.4.3
   _ 28.12.2020
