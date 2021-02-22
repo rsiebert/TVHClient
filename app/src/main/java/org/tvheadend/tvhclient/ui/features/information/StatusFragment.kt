@@ -159,17 +159,14 @@ class StatusFragment : BaseFragment() {
             val free = serverStatus.freeDiskSpace / 1024 / 1024
             val total = serverStatus.totalDiskSpace / 1024 / 1024
 
-            val freeDiscSpace: String
-            val totalDiscSpace: String
-
             // Show the free amount of disc space as GB or MB
-            freeDiscSpace = if (free > 1024) {
+            val freeDiscSpace: String = if (free > 1024) {
                 (free / 1024).toString() + " GB " + getString(R.string.available)
             } else {
                 free.toString() + " MB " + getString(R.string.available)
             }
             // Show the total amount of disc space as GB or MB
-            totalDiscSpace = if (total > 1024) {
+            val totalDiscSpace: String = if (total > 1024) {
                 (total / 1024).toString() + " GB " + getString(R.string.total)
             } else {
                 total.toString() + " MB " + getString(R.string.total)

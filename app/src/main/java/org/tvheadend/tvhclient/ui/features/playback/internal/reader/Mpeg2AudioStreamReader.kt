@@ -40,9 +40,7 @@ internal class Mpeg2AudioStreamReader : PlainStreamReader(C.TRACK_TYPE_AUDIO) {
             audioVersion = stream.getInteger("audio_version")
         }
 
-        val mimeType: String
-
-        mimeType = when (audioVersion) {
+        val mimeType: String = when (audioVersion) {
             1 -> MimeTypes.AUDIO_MPEG_L1    // MP1 Audio - V.Unlikely these days
             2 -> MimeTypes.AUDIO_MPEG_L2    // MP2 Audio - Pretty common in DVB streams
             3 -> MimeTypes.AUDIO_MPEG       // MP3 Audio - Pretty common in IPTV streams

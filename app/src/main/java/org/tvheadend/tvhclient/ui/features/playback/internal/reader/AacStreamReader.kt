@@ -42,9 +42,8 @@ internal class AacStreamReader : StreamReader {
         val pts = message.getLong("pts")
         val payload = message.getByteArray("payload")
         val pba = ParsableByteArray(payload)
-        val skipLength: Int
 
-        skipLength = if (hasCrc(payload[1])) {
+        val skipLength: Int = if (hasCrc(payload[1])) {
             // Have a CRC
             ADTS_HEADER_SIZE + ADTS_CRC_SIZE
         } else {

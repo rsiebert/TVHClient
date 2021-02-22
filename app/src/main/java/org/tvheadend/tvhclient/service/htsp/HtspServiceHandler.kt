@@ -44,7 +44,14 @@ import kotlin.math.max
 class HtspServiceHandler(val context: Context, val appRepository: AppRepository, val connection: Connection) : ConnectionService.ServiceInterface, ServerConnectionStateListener, ServerMessageListener<HtspMessage> {
 
     private val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
-    private var htspConnectionData: HtspConnectionData
+    private var htspConnectionData: HtspConnectionData = HtspConnectionData(
+            connection.username,
+            connection.password,
+            connection.serverUrl,
+            BuildConfig.VERSION_NAME,
+            BuildConfig.VERSION_CODE,
+            Integer.valueOf(sharedPreferences.getString("connection_timeout", context.resources.getString(R.string.pref_default_connection_timeout))!!) * 1000
+    )
     private var htspVersion: Int = 13
     private var htspConnection: HtspConnection? = null
     private val execService: ScheduledExecutorService = Executors.newScheduledThreadPool(10)
@@ -54,34 +61,14 @@ class HtspServiceHandler(val context: Context, val appRepository: AppRepository,
     private val pendingChannelTagOps = ArrayList<ChannelTag>()
     private val pendingRecordingOps = ArrayList<Recording>()
 
-    private var pendingHtspProfiles: MutableList<ServerProfile>
-    private var pendingHttpProfiles: MutableList<ServerProfile>
-    private var pendingRecordingProfiles: MutableList<ServerProfile>
+    private var pendingHtspProfiles: MutableList<ServerProfile> = appRepository.serverProfileData.htspPlaybackProfiles.toMutableList()
+    private var pendingHttpProfiles: MutableList<ServerProfile> = appRepository.serverProfileData.httpPlaybackProfiles.toMutableList()
+    private var pendingRecordingProfiles: MutableList<ServerProfile> = appRepository.serverProfileData.recordingProfiles.toMutableList()
 
     private var initialSyncWithServerRunning: Boolean = false
     private var syncEventsRequired: Boolean = false
     private var syncRequired: Boolean = false
     private var firstEventReceived = false
-
-    init {
-        htspConnectionData = HtspConnectionData(
-                connection.username,
-                connection.password,
-                connection.serverUrl,
-                BuildConfig.VERSION_NAME,
-                BuildConfig.VERSION_CODE,
-                Integer.valueOf(sharedPreferences.getString("connection_timeout", context.resources.getString(R.string.pref_default_connection_timeout))!!) * 1000
-        )
-
-        pendingHtspProfiles = appRepository.serverProfileData.htspPlaybackProfiles.toMutableList()
-        Timber.d("Loaded ${pendingHtspProfiles.size} htsp profiles")
-
-        pendingHttpProfiles = appRepository.serverProfileData.httpPlaybackProfiles.toMutableList()
-        Timber.d("Loaded ${pendingHttpProfiles.size} http profiles")
-
-        pendingRecordingProfiles = appRepository.serverProfileData.recordingProfiles.toMutableList()
-        Timber.d("Loaded ${pendingRecordingProfiles.size} recording profiles")
-    }
 
     override fun onStartCommand(intent: Intent?): Int {
         val action = intent?.action ?: return Service.START_NOT_STICKY
