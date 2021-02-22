@@ -30,8 +30,8 @@ abstract class BaseFragment : Fragment() {
     protected var isConnectionToServerAvailable: Boolean = false
     protected lateinit var connection: Connection
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
         MainApplication.component.inject(this)
 
         if (activity is ToolbarInterface) {
