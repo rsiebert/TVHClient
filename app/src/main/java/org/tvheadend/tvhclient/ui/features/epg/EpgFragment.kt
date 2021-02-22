@@ -45,8 +45,8 @@ class EpgFragment : BaseFragment(), EpgScrollInterface, RecyclerViewClickInterfa
         return binding.root
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         epgViewModel = ViewModelProvider(requireActivity()).get(EpgViewModel::class.java)
 
         if (activity is LayoutControlInterface) {

@@ -3,14 +3,15 @@ package org.tvheadend.tvhclient.ui.features.dvr.recordings
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.ui.common.showCompletedRecordingSortOrderSelectionDialog
 import timber.log.Timber
 
 class CompletedRecordingListFragment : RecordingListFragment() {
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         Timber.d("Observing recordings")
         recordingViewModel.completedRecordings.observe(viewLifecycleOwner,  { recordings ->

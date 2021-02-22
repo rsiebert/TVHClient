@@ -33,8 +33,8 @@ abstract class RecordingListFragment : BaseFragment(), RecyclerViewClickInterfac
         return binding.root
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         recordingViewModel = ViewModelProvider(requireActivity()).get(RecordingViewModel::class.java)
 
         arguments?.let {

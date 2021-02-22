@@ -166,7 +166,7 @@ class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceClic
             Timber.d("Android API version is ${Build.VERSION.SDK_INT}, showing folder selection dialog")
             // Show the folder chooser dialog which defaults to the external storage dir
             MaterialDialog(context).show {
-                folderChooser { _, file ->
+                folderChooser(context) { _, file ->
                     Timber.d("Folder ${file.absolutePath}, ${file.name} was selected")
                     val strippedPath = file.absolutePath.replace(Environment.getExternalStorageDirectory().absolutePath, "")
                     sharedPreferences.edit().putString("download_directory", strippedPath).apply()

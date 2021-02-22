@@ -32,8 +32,8 @@ class TimerRecordingAddEditFragment : BaseFragment(), BackPressedInterface, Reco
         return binding.root
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         timerRecordingViewModel = ViewModelProvider(requireActivity()).get(TimerRecordingViewModel::class.java)
 
         if (activity is LayoutControlInterface) {

@@ -30,8 +30,8 @@ class StatusFragment : BaseFragment() {
         return binding.root
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         statusViewModel = ViewModelProvider(requireActivity()).get(StatusViewModel::class.java)
 
         if (activity is LayoutControlInterface) {

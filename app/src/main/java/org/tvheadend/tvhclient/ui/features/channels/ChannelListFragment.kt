@@ -50,8 +50,8 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickInterface, ChannelT
         return binding.root
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         channelViewModel = ViewModelProvider(requireActivity()).get(ChannelViewModel::class.java)
         programViewModel = ViewModelProvider(requireActivity()).get(ProgramViewModel::class.java)
 
