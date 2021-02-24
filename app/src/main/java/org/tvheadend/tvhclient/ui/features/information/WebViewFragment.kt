@@ -34,8 +34,8 @@ open class WebViewFragment : Fragment(), FileContentsLoadedInterface {
         return view
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         if (activity is ToolbarInterface) {
             toolbarInterface = activity as ToolbarInterface

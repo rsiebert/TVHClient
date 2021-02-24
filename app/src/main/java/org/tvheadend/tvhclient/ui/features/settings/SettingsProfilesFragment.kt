@@ -1,6 +1,7 @@
 package org.tvheadend.tvhclient.ui.features.settings
 
 import android.os.Bundle
+import android.view.View
 import androidx.lifecycle.ViewModelProvider
 import androidx.preference.ListPreference
 import androidx.preference.PreferenceFragmentCompat
@@ -20,8 +21,8 @@ class SettingsProfilesFragment : PreferenceFragmentCompat() {
     private lateinit var castingProfilesPreference: ListPreference
     lateinit var settingsViewModel: SettingsViewModel
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         settingsViewModel = ViewModelProvider(activity as SettingsActivity).get(SettingsViewModel::class.java)
 
         val toolbarInterface = (activity as ToolbarInterface)

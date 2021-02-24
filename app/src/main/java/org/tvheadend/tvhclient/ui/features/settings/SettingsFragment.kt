@@ -5,10 +5,8 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
-import android.os.Build
-import android.os.Bundle
-import android.os.Environment
-import android.os.Handler
+import android.os.*
+import android.view.View
 import androidx.core.app.ActivityCompat
 import androidx.core.app.TaskStackBuilder
 import androidx.fragment.app.FragmentActivity
@@ -29,8 +27,8 @@ class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceClic
     lateinit var sharedPreferences: SharedPreferences
     lateinit var settingsViewModel: SettingsViewModel
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         PreferenceManager.setDefaultValues(activity, R.xml.preferences, false)
         settingsViewModel = ViewModelProvider(activity as SettingsActivity).get(SettingsViewModel::class.java)
 
@@ -90,7 +88,7 @@ class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceClic
                 && permissions[0] == "android.permission.READ_EXTERNAL_STORAGE") {
             // The delay is needed, otherwise an illegalStateException would be thrown. This is
             // a known bug in android. Until it is fixed this workaround is required.
-            Handler().postDelayed({
+            Handler(Looper.getMainLooper()).postDelayed({
                 activity?.let { showFolderSelectionDialog(it) }
             }, 200)
         }

@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
+import android.view.View
 import androidx.lifecycle.ViewModelProvider
 import androidx.preference.EditTextPreference
 import androidx.preference.Preference
@@ -32,8 +33,8 @@ abstract class SettingsConnectionBaseFragment : PreferenceFragmentCompat(), Back
     private lateinit var wolEnabledPreference: SwitchPreference
     private lateinit var wolUseBroadcastEnabled: SwitchPreference
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         if (activity is ToolbarInterface) {
             toolbarInterface = activity as ToolbarInterface
