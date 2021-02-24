@@ -9,10 +9,7 @@ import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.database.Cursor
-import android.os.Build
-import android.os.Bundle
-import android.os.Handler
-import android.os.StrictMode
+import android.os.*
 import android.provider.SearchRecentSuggestions
 import android.view.KeyEvent
 import android.view.Menu
@@ -26,6 +23,7 @@ import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.preference.PreferenceManager
 import com.google.android.gms.cast.framework.*
@@ -85,7 +83,7 @@ class MainActivity : AppCompatActivity(), ToolbarInterface, LayoutControlInterfa
     private var isDualPane: Boolean = false
 
     private lateinit var queryTextSubmitTask: Runnable
-    private val delayedQueryTextSubmitHandler = Handler()
+    private val delayedQueryTextSubmitHandler = Handler(Looper.getMainLooper())
 
     private lateinit var miniController: View
 
@@ -327,7 +325,7 @@ class MainActivity : AppCompatActivity(), ToolbarInterface, LayoutControlInterfa
 
         mediaRouteMenuItem?.let {
             if (it.isVisible) {
-                Handler().post {
+                Handler(Looper.getMainLooper()).post {
                     introductoryOverlay = IntroductoryOverlay.Builder(
                             this@MainActivity, mediaRouteMenuItem)
                             .setTitleText(getString(R.string.intro_overlay_text))
@@ -429,7 +427,7 @@ class MainActivity : AppCompatActivity(), ToolbarInterface, LayoutControlInterfa
             }
             R.id.menu_reconnect_to_server -> showConfirmationToReconnectToServer(this, baseViewModel)
             R.id.menu_send_wake_on_lan_packet -> {
-                WakeOnLanTask(this, baseViewModel.connection).execute()
+                WakeOnLanTask(this, baseViewModel.connection)
                 true
             }
             else -> super.onOptionsItemSelected(item)
