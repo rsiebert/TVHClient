@@ -5,6 +5,7 @@ import android.content.Context
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
+import android.os.Looper
 import androidx.lifecycle.MutableLiveData
 import com.google.android.exoplayer2.*
 import com.google.android.exoplayer2.ExoPlaybackException
@@ -70,7 +71,7 @@ class PlayerViewModel(application: Application) : BaseViewModel(application), Se
 
     // Handler and runnable to update the playback information every second
     private lateinit var timeUpdateRunnable: Runnable
-    private val timeUpdateHandler = Handler()
+    private val timeUpdateHandler = Handler(Looper.getMainLooper())
 
     var pipModeActive: Boolean = false
 

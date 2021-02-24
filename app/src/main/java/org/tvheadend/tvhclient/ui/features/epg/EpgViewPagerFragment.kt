@@ -2,6 +2,7 @@ package org.tvheadend.tvhclient.ui.features.epg
 
 import android.os.Bundle
 import android.os.Handler
+import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -32,9 +33,9 @@ class EpgViewPagerFragment : Fragment(), EpgScrollInterface {
             return fragmentId == 0
         }
 
-    private var updateViewHandler = Handler()
+    private var updateViewHandler = Handler(Looper.getMainLooper())
     private var updateViewTask: Runnable? = null
-    private var updateTimeIndicationHandler = Handler()
+    private var updateTimeIndicationHandler = Handler(Looper.getMainLooper())
     private var updateTimeIndicationTask: Runnable? = null
     private lateinit var constraintSet: ConstraintSet
     private lateinit var binding: EpgViewpagerFragmentBinding
@@ -59,8 +60,8 @@ class EpgViewPagerFragment : Fragment(), EpgScrollInterface {
         }
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         Timber.d("Initializing")
         epgViewModel = ViewModelProvider(requireActivity()).get(EpgViewModel::class.java)
 
@@ -101,8 +102,8 @@ class EpgViewPagerFragment : Fragment(), EpgScrollInterface {
                 if (enableScrolling) {
                     activity?.let {
                         val position = recyclerViewLinearLayoutManager?.findFirstVisibleItemPosition() ?: -1
-                        val view = recyclerViewLinearLayoutManager?.getChildAt(0)
-                        val offset = if (view == null) 0 else view.top - recyclerView.paddingTop
+                        val childView = recyclerViewLinearLayoutManager?.getChildAt(0)
+                        val offset = if (childView == null) 0 else childView.top - recyclerView.paddingTop
                         val fragment = it.supportFragmentManager.findFragmentById(R.id.main)
                         if (fragment is EpgScrollInterface && position >= 0) {
                             (fragment as EpgScrollInterface).onScroll(position, offset)

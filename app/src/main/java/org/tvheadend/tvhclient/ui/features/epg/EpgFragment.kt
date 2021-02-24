@@ -2,6 +2,7 @@ package org.tvheadend.tvhclient.ui.features.epg
 
 import android.os.Bundle
 import android.os.Handler
+import android.os.Looper
 import android.util.DisplayMetrics
 import android.view.*
 import android.widget.Filter
@@ -28,7 +29,7 @@ import timber.log.Timber
 class EpgFragment : BaseFragment(), EpgScrollInterface, RecyclerViewClickInterface, ChannelTimeSelectedInterface, ChannelTagIdsSelectedInterface, Filter.FilterListener, SearchRequestInterface, ShowProgramListFragmentInterface {
 
     private lateinit var binding: EpgFragmentBinding
-    private val dialogDismissHandler = Handler()
+    private val dialogDismissHandler = Handler(Looper.getMainLooper())
     private var dialogDismissRunnable: Runnable? = null
     private lateinit var epgViewModel: EpgViewModel
     private lateinit var channelListRecyclerViewAdapter: EpgChannelListRecyclerViewAdapter

@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Handler
+import android.os.Looper
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import org.tvheadend.data.entity.Channel
@@ -38,7 +39,7 @@ class StatusViewModel(application: Application) : BaseViewModel(application), Sh
     val inputs: LiveData<List<Input>> = appRepository.inputData.getLiveDataItems()
 
     private lateinit var discSpaceUpdateTask: Runnable
-    private val diskSpaceUpdateHandler = Handler()
+    private val diskSpaceUpdateHandler = Handler(Looper.getMainLooper())
 
     private val defaultNotifyRunningRecordingCount = application.applicationContext.resources.getBoolean(R.bool.pref_default_notify_running_recording_count_enabled)
     private val defaultNotifyLowStorageSpace = application.applicationContext.resources.getBoolean(R.bool.pref_default_notify_low_storage_space_enabled)

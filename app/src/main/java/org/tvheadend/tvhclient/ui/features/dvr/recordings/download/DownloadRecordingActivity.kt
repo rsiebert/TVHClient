@@ -11,6 +11,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Environment
 import android.os.Handler
+import android.os.Looper
 import android.util.Base64
 import androidx.core.app.ActivityCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
@@ -101,7 +102,7 @@ class DownloadRecordingActivity : BasePlaybackActivity() {
         // Check after a certain delay the status of the download and that for
         // example the download has not failed due to insufficient storage space.
         // The download manager does not sent a broadcast if this error occurs.
-        Handler().postDelayed({ this.showDownloadStatusMessage(this, recording) }, 3000)
+        Handler(Looper.getMainLooper()).postDelayed({ this.showDownloadStatusMessage(this, recording) }, 3000)
     }
 
     private fun getRecordingTitle(recording: Recording): String {

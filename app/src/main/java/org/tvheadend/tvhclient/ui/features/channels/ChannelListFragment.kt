@@ -3,6 +3,7 @@ package org.tvheadend.tvhclient.ui.features.channels
 import android.content.Context
 import android.os.Bundle
 import android.os.Handler
+import android.os.Looper
 import android.view.*
 import android.widget.Filter
 import androidx.appcompat.widget.PopupMenu
@@ -29,7 +30,7 @@ import timber.log.Timber
 class ChannelListFragment : BaseFragment(), RecyclerViewClickInterface, ChannelTimeSelectedInterface, ChannelTagIdsSelectedInterface, SearchRequestInterface, Filter.FilterListener, ShowProgramListFragmentInterface {
 
     private lateinit var binding: RecyclerviewFragmentBinding
-    private val dialogDismissHandler = Handler()
+    private val dialogDismissHandler = Handler(Looper.getMainLooper())
     private var dialogDismissRunnable: Runnable? = null
     private lateinit var programViewModel: ProgramViewModel
     private lateinit var recyclerViewAdapter: ChannelRecyclerViewAdapter
@@ -43,7 +44,7 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickInterface, ChannelT
     private var channelTags: List<ChannelTag> = ArrayList()
     private var selectedTime: Long = 0
     private lateinit var currentTimeUpdateTask: Runnable
-    private val currentTimeUpdateHandler = Handler()
+    private val currentTimeUpdateHandler = Handler(Looper.getMainLooper())
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = RecyclerviewFragmentBinding.inflate(inflater, container, false)

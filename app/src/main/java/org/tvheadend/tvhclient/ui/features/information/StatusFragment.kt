@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
+import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -23,7 +24,7 @@ class StatusFragment : BaseFragment() {
     private lateinit var binding: StatusFragmentBinding
     private lateinit var statusViewModel: StatusViewModel
     private lateinit var loadDataTask: Runnable
-    private val loadDataHandler = Handler()
+    private val loadDataHandler = Handler(Looper.getMainLooper())
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = StatusFragmentBinding.inflate(inflater, container, false)
