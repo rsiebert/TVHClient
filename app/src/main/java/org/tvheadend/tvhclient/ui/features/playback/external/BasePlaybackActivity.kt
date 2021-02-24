@@ -78,7 +78,7 @@ abstract class BasePlaybackActivity : AppCompatActivity() {
                 MaterialDialog(this@BasePlaybackActivity).show {
                     title(R.string.no_media_player)
                     message(R.string.show_play_store)
-                    positiveButton(android.R.string.yes) {
+                    positiveButton(android.R.string.ok) {
                         try {
                             Timber.d("Opening play store to download external players")
                             val installIntent = Intent(Intent.ACTION_VIEW)
@@ -90,7 +90,7 @@ abstract class BasePlaybackActivity : AppCompatActivity() {
                             finish()
                         }
                     }
-                    negativeButton(android.R.string.no) { finish() }
+                    negativeButton(android.R.string.cancel) { finish() }
                 }
             }
         }
