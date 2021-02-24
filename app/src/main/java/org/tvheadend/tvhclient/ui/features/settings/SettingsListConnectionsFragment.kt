@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.view.*
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.afollestad.materialdialogs.MaterialDialog
 import org.tvheadend.data.entity.Connection
@@ -95,7 +96,7 @@ class SettingsListConnectionsFragment : Fragment(), BackPressedInterface, Action
             R.id.menu_set_connection_not_active -> setConnectionActiveOrInactive(connection, mode, false)
             R.id.menu_edit_connection -> editConnection(connection, mode)
             R.id.menu_send_wol -> {
-                WakeOnLanTask(ctx, connection).execute()
+                WakeOnLanTask(lifecycleScope, ctx, connection)
                 mode.finish()
                 true
             }

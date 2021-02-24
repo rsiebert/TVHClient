@@ -427,7 +427,7 @@ class MainActivity : AppCompatActivity(), ToolbarInterface, LayoutControlInterfa
             }
             R.id.menu_reconnect_to_server -> showConfirmationToReconnectToServer(this, baseViewModel)
             R.id.menu_send_wake_on_lan_packet -> {
-                WakeOnLanTask(this, baseViewModel.connection)
+                WakeOnLanTask(lifecycleScope, this, baseViewModel.connection)
                 true
             }
             else -> super.onOptionsItemSelected(item)

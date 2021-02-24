@@ -2,71 +2,103 @@ package org.tvheadend.tvhclient.ui.common
 
 import android.content.Context
 import android.net.Uri
-import android.os.AsyncTask
+import androidx.lifecycle.LifecycleCoroutineScope
 import org.tvheadend.data.entity.Connection
 import org.tvheadend.tvhclient.R
+import org.tvheadend.tvhclient.util.extensions.executeAsyncTask
 import org.tvheadend.tvhclient.util.extensions.sendSnackbarMessage
 import timber.log.Timber
-import java.lang.ref.WeakReference
 import java.net.DatagramPacket
 import java.net.DatagramSocket
 import java.net.InetAddress
 import java.util.regex.Pattern
 
-class WakeOnLanTask(context: Context, private val connection: Connection) : AsyncTask<String, Void, Int>() {
+class WakeOnLanTask(lifecycleScope: LifecycleCoroutineScope, context: Context, private val connection: Connection) {
 
-    private val context: WeakReference<Context> = WeakReference(context)
     private var exception: Exception? = null
 
-    override fun doInBackground(vararg params: String): Int {
-        // Exit if the MAC address is not ok, this should never happen because
-        // it is already validated in the settings
-        if (!validateMacAddress(connection.wolMacAddress)) {
-            return WOL_INVALID_MAC
-        }
-        // Get the MAC address parts from the string
-        val macBytes = getMacBytes(connection.wolMacAddress ?: "")
-
-        // Assemble the byte array that the WOL consists of
-        val bytes = ByteArray(6 + 16 * macBytes.size)
-        for (i in 0..5) {
-            bytes[i] = 0xff.toByte()
-        }
-        // Copy the elements from macBytes to i
-        var i = 6
-        while (i < bytes.size) {
-            System.arraycopy(macBytes, 0, bytes, i, macBytes.size)
-            i += macBytes.size
-        }
-
-        try {
-            val uri = Uri.parse(connection.serverUrl)
-            val address: InetAddress
-            if (!connection.isWolUseBroadcast) {
-                address = InetAddress.getByName(uri.host)
-                Timber.d("Sending WOL packet to $address")
+    init {
+        lifecycleScope.executeAsyncTask(onPreExecute = {
+            // ... runs in Main Thread
+            Timber.d("onPreExecute")
+        }, doInBackground = {
+            Timber.d("doInBackground")
+            var status: Int
+            // ... runs in Worker(Background) Thread
+            // Exit if the MAC address is not ok, this should never happen because
+            // it is already validated in the settings
+            if (!validateMacAddress(connection.wolMacAddress)) {
+                status = WOL_INVALID_MAC
             } else {
-                // Replace the last number by 255 to send the packet as a broadcast
-                val ipAddress = InetAddress.getByName(uri.host).address
-                ipAddress[3] = 255.toByte()
-                address = InetAddress.getByAddress(ipAddress)
-                Timber.d("Sending WOL packet as broadcast to $address")
-            }
-            val packet = DatagramPacket(bytes, bytes.size, address, connection.wolPort)
-            val socket = DatagramSocket()
-            socket.send(packet)
-            socket.close()
+                // Get the MAC address parts from the string
+                val macBytes = getMacBytes(connection.wolMacAddress ?: "")
 
-            return if (!connection.isWolUseBroadcast) {
-                WOL_SEND
-            } else {
-                WOL_SEND_BROADCAST
-            }
-        } catch (e: Exception) {
-            this.exception = e
-            return WOL_ERROR
-        }
+                // Assemble the byte array that the WOL consists of
+                val bytes = ByteArray(6 + 16 * macBytes.size)
+                for (i in 0..5) {
+                    bytes[i] = 0xff.toByte()
+                }
+                // Copy the elements from macBytes to i
+                var i = 6
+                while (i < bytes.size) {
+                    System.arraycopy(macBytes, 0, bytes, i, macBytes.size)
+                    i += macBytes.size
+                }
 
+                try {
+                    val uri = Uri.parse(connection.serverUrl)
+                    val address: InetAddress
+                    if (!connection.isWolUseBroadcast) {
+                        address = InetAddress.getByName(uri.host)
+                        Timber.d("Sending WOL packet to $address")
+                    } else {
+                        // Replace the last number by 255 to send the packet as a broadcast
+                        val ipAddress = InetAddress.getByName(uri.host).address
+                        ipAddress[3] = 255.toByte()
+                        address = InetAddress.getByAddress(ipAddress)
+                        Timber.d("Sending WOL packet as broadcast to $address")
+                    }
+                    val packet = DatagramPacket(bytes, bytes.size, address, connection.wolPort)
+                    val socket = DatagramSocket()
+                    socket.send(packet)
+                    socket.close()
+
+                    status = if (!connection.isWolUseBroadcast) {
+                        WOL_SEND
+                    } else {
+                        WOL_SEND_BROADCAST
+                    }
+                } catch (e: Exception) {
+                    this.exception = e
+                    status = WOL_ERROR
+                }
+            }
+            status // send data to "onPostExecute"
+        }, onPostExecute = {
+            // runs in Main Thread
+            Timber.d("onPostExecute")
+            // ... here "it" is the data returned from "doInBackground"
+            val message: String
+            when (it) {
+                WOL_SEND -> {
+                    Timber.d("Successfully sent WOL packet to ${connection.wolMacAddress}:${connection.port}")
+                    message = context.getString(R.string.wol_send, "${connection.wolMacAddress}:${connection.port}")
+                }
+                WOL_SEND_BROADCAST -> {
+                    Timber.d("Successfully sent WOL packet as a broadcast to ${connection.wolMacAddress}")
+                    message = context.getString(R.string.wol_send_broadcast, connection.wolMacAddress)
+                }
+                WOL_INVALID_MAC -> {
+                    Timber.d("Can't send WOL packet, the MAC-address is not valid")
+                    message = context.getString(R.string.wol_address_invalid)
+                }
+                else -> {
+                    Timber.d("Error sending WOL packet to ${connection.wolMacAddress}:${connection.port}")
+                    message = context.getString(R.string.wol_error, "${connection.wolMacAddress}:${connection.port}", exception?.localizedMessage)
+                }
+            }
+            context.sendSnackbarMessage(message)
+        })
     }
 
     /**
@@ -101,36 +133,6 @@ class WakeOnLanTask(context: Context, private val connection: Connection) : Asyn
             macBytes[i] = Integer.parseInt(hex[i], 16).toByte()
         }
         return macBytes
-    }
-
-    /**
-     * Depending on the wake on LAN status the toast with the success or error
-     * message is shown to the user
-     */
-    override fun onPostExecute(result: Int?) {
-        val ctx = context.get()
-        if (ctx != null) {
-            val message: String
-            when (result) {
-                WOL_SEND -> {
-                    Timber.d("Successfully sent WOL packet to ${connection.wolMacAddress}:${connection.port}")
-                    message = ctx.getString(R.string.wol_send, "${connection.wolMacAddress}:${connection.port}")
-                }
-                WOL_SEND_BROADCAST -> {
-                    Timber.d("Successfully sent WOL packet as a broadcast to ${connection.wolMacAddress}")
-                    message = ctx.getString(R.string.wol_send_broadcast, connection.wolMacAddress)
-                }
-                WOL_INVALID_MAC -> {
-                    Timber.d("Can't send WOL packet, the MAC-address is not valid")
-                    message = ctx.getString(R.string.wol_address_invalid)
-                }
-                else -> {
-                    Timber.d("Error sending WOL packet to ${connection.wolMacAddress}:${connection.port}")
-                    message = ctx.getString(R.string.wol_error, "${connection.wolMacAddress}:${connection.port}", exception?.localizedMessage)
-                }
-            }
-            ctx.sendSnackbarMessage(message)
-        }
     }
 
     companion object {
