@@ -3,6 +3,7 @@ package org.tvheadend.tvhclient.ui.base
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.MenuItem
+import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.ViewModelProvider
@@ -30,8 +31,8 @@ abstract class BaseFragment : Fragment() {
     protected var isConnectionToServerAvailable: Boolean = false
     protected lateinit var connection: Connection
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         MainApplication.component.inject(this)
 
         if (activity is ToolbarInterface) {
