@@ -37,9 +37,9 @@ class SyncStateReceiver(callback: Listener) : BroadcastReceiver() {
      * via the "details" extra.
      */
     override fun onReceive(context: Context, intent: Intent) {
-        if (callback.get() != null) {
-            (callback.get() as Listener).onSyncStateChanged(
-                    intent.getParcelableExtra(STATE) as SyncStateResult)
+        val state: SyncStateResult? = intent.getParcelableExtra(STATE)
+        if (state != null) {
+            callback.get()?.onSyncStateChanged(state)
         }
     }
 
