@@ -18,12 +18,6 @@ class ServerProfileDataSource(private val db: AppRoomDatabase) : DataSourceInter
     val recordingProfileNames: Array<String>
         get() = getProfileNames(recordingProfiles)
 
-    val htspPlaybackProfileNames: Array<String>
-        get() = getProfileNames(htspPlaybackProfiles)
-
-    val httpPlaybackProfileNames: Array<String>
-        get() = getProfileNames(httpPlaybackProfiles)
-
     val recordingProfiles: List<ServerProfile>
         get() {
             val serverProfiles = ArrayList<ServerProfile>()
