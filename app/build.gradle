@@ -74,6 +74,7 @@ android {
         }
         debug {
             initWith buildTypes.release
+            buildConfigField "Boolean", "OVERRIDE_UNLOCKED", "true"
         }
     }
 }

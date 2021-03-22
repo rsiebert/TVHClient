@@ -10,6 +10,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.preference.PreferenceManager
 import org.tvheadend.data.AppRepository
 import org.tvheadend.data.entity.Connection
+import org.tvheadend.tvhclient.BuildConfig
 import org.tvheadend.tvhclient.MainApplication
 import org.tvheadend.tvhclient.service.ConnectionService
 import org.tvheadend.tvhclient.ui.common.NetworkStatus
@@ -73,7 +74,7 @@ open class BaseViewModel(application: Application) : AndroidViewModel(applicatio
         inject()
         startupCompleteLiveData.value = Event(false)
 
-        isUnlocked = appRepository.getIsUnlocked()
+        isUnlocked = appRepository.getIsUnlocked() || BuildConfig.OVERRIDE_UNLOCKED
         isUnlockedLiveData = appRepository.getIsUnlockedLiveData()
         connection = appRepository.connectionData.activeItem
         htspVersion = appRepository.serverStatusData.activeItem.htspVersion
