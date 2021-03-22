@@ -71,10 +71,10 @@ android {
         release {
             // Reduce the apk file size by enabling proguard
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            buildConfigField "Boolean", "OVERRIDE_UNLOCKED", "false"
         }
         debug {
             initWith buildTypes.release
-            buildConfigField "Boolean", "OVERRIDE_UNLOCKED", "true"
         }
     }
 }
