@@ -1,7 +1,9 @@
 $ 2.4.5
   % VERSION 2.4.5
-  _ 29.01.2021
-    * ?
+  _ 22.03.2021
+    * Show the date and not the name of day in the program guide
+    * Support for Android API 30
+    * Internal improvements
 $ 2.4.4
   % VERSION 2.4.4
   _ 18.01.2021
