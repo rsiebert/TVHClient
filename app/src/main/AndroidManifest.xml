@@ -96,7 +96,7 @@
             android:permission="android.permission.BIND_JOB_SERVICE" />
 
         <provider
-            android:name="org.tvheadend.tvhclient.ui.common.SuggestionProvider"
+            android:name=".ui.common.SuggestionProvider"
             android:authorities="org.tvheadend.tvhclient.ui.common.SuggestionProvider"
             android:exported="false" />
         <provider
