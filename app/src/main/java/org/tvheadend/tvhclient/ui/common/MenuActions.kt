@@ -1,6 +1,7 @@
 package org.tvheadend.tvhclient.ui.common
 
 
+import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -559,17 +560,21 @@ fun playOrCastRecording(context: Context, recordingId: Int, isUnlocked: Boolean)
 fun searchTitleOnYoutube(context: Context, title: String?): Boolean {
     try {
         val url = URLEncoder.encode(title, "utf-8")
-        // Search for the given title using the installed youtube application
-        var intent = Intent(Intent.ACTION_SEARCH, Uri.parse("vnd.youtube:"))
-        intent.putExtra("query", url)
-        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-        val packageManager = context.packageManager
-        if (packageManager.queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY).isEmpty()) {
-            // No app is installed, fall back to the website version
-            intent = Intent(Intent.ACTION_VIEW)
+        try {
+            // Search for the given title using the installed youtube application
+            val intent = Intent(Intent.ACTION_SEARCH, Uri.parse("vnd.youtube:"))
+            intent.putExtra("query", url)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+            context.startActivity(intent)
+
+        } catch (ex: ActivityNotFoundException) {
+            // No youtube app was found, use the browser
+            val intent = Intent(Intent.ACTION_VIEW)
+            intent.putExtra("query", url)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
             intent.data = Uri.parse("https://www.youtube.com/results?search_query=$url")
+            context.startActivity(intent)
         }
-        context.startActivity(intent)
     } catch (e: UnsupportedEncodingException) {
         // NOP
     }
@@ -594,9 +599,9 @@ fun searchTitleOnImdbWebsite(context: Context, title: String?): Boolean {
     try {
         val url = URLEncoder.encode(title, "utf-8")
         val intent = Intent(Intent.ACTION_VIEW, Uri.parse("imdb:///find?s=tt&q=$url"))
-        if (intent.resolveActivity(context.packageManager) != null) {
+        try {
             context.startActivity(intent)
-        } else {
+        } catch  (ex: ActivityNotFoundException) {
             intent.data = Uri.parse("http://www.imdb.com/find?s=tt&q=$url")
             context.startActivity(intent)
         }
