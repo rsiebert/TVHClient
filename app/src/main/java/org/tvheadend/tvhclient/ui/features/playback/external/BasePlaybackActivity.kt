@@ -1,5 +1,6 @@
 package org.tvheadend.tvhclient.ui.features.playback.external
 
+import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -65,12 +66,11 @@ abstract class BasePlaybackActivity : AppCompatActivity() {
         // Start playing the video in the UI thread
         this.runOnUiThread {
             Timber.d("Getting list of activities that can play the intent")
-            val activities: List<ResolveInfo> = packageManager.queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY)
-            if (activities.isNotEmpty()) {
+            try {
                 Timber.d("Found activities, starting external player")
                 startActivity(intent)
                 finish()
-            } else {
+            } catch (ex: ActivityNotFoundException) {
                 Timber.d("List of available activities is empty, can't start external media player")
                 binding.status.setText(R.string.no_media_player)
 
