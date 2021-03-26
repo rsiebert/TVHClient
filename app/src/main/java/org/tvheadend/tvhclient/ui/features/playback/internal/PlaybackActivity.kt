@@ -345,6 +345,7 @@ class PlaybackActivity : AppCompatActivity() {
         if (ratio != null) {
             updateVideoAspectRatio(ratio)
         }
+        @Suppress("DEPRECATION")
         when (newConfig.orientation) {
             Configuration.ORIENTATION_PORTRAIT -> {
                 Timber.d("Player is in portrait mode")
@@ -367,11 +368,20 @@ class PlaybackActivity : AppCompatActivity() {
     private fun updateVideoAspectRatio(videoAspect: VideoAspect) {
         Timber.d("Updating video dimensions")
 
-        val display = windowManager.defaultDisplay
-        val size = Point()
-        display.getSize(size)
-        val screenWidth = size.x
-        val screenHeight = size.y
+        val screenWidth: Int
+        val screenHeight: Int
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            val bounds = windowManager.currentWindowMetrics.bounds
+            screenWidth = bounds.width()
+            screenHeight = bounds.height()
+        } else {
+            val size = Point()
+            @Suppress("DEPRECATION")
+            windowManager.defaultDisplay.getSize(size)
+            screenWidth = size.x
+            screenHeight = size.y
+        }
 
         var width = videoAspect.width
         var height = videoAspect.height
@@ -456,6 +466,7 @@ class PlaybackActivity : AppCompatActivity() {
     }
 
     private fun onToggleFullscreenSelected() {
+        @Suppress("DEPRECATION")
         when (resources.configuration.orientation) {
             Configuration.ORIENTATION_PORTRAIT -> {
                 forceOrientation = true
