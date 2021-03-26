@@ -354,6 +354,12 @@ class PlaybackActivity : AppCompatActivity() {
                 Timber.d("Player is in landscape mode")
                 playerToggleFullscreen.setImageResource(R.drawable.ic_player_fullscreen_exit)
             }
+            Configuration.ORIENTATION_SQUARE -> {
+                Timber.d("Player is in square mode")
+            }
+            Configuration.ORIENTATION_UNDEFINED -> {
+                Timber.d("Player is in undefined mode")
+            }
         }
 
     }
@@ -458,6 +464,12 @@ class PlaybackActivity : AppCompatActivity() {
             Configuration.ORIENTATION_LANDSCAPE -> {
                 forceOrientation = false
                 requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+            }
+            Configuration.ORIENTATION_SQUARE -> {
+
+            }
+            Configuration.ORIENTATION_UNDEFINED -> {
+
             }
         }
     }
