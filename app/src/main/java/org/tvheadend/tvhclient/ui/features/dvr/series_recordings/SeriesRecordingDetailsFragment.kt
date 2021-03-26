@@ -49,7 +49,11 @@ class SeriesRecordingDetailsFragment : BaseFragment(), RecordingRemovedInterface
             binding.recording = it
             binding.htspVersion = htspVersion
             binding.isDualPane = isDualPane
-            binding.duplicateDetectionText = seriesRecordingViewModel.duplicateDetectionList[it.dupDetect]
+            binding.duplicateDetectionText = if (it.dupDetect < seriesRecordingViewModel.duplicateDetectionList.size) {
+                seriesRecordingViewModel.duplicateDetectionList[it.dupDetect]
+            } else {
+                seriesRecordingViewModel.duplicateDetectionList[0]
+            }
             // The toolbar is hidden as a default to prevent pressing any icons if no recording
             // has been loaded yet. The toolbar is shown here because a recording was loaded
             binding.nestedToolbar.visible()
