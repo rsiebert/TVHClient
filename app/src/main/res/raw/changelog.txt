@@ -1,3 +1,8 @@
+$ 2.4.6
+  % VERSION 2.4.6
+  _ 24.03.2021
+    * Use an IPv4 address for the socket connection
+    * Internal improvements
 $ 2.4.5
   % VERSION 2.4.5
   _ 22.03.2021
