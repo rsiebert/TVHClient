@@ -17,6 +17,9 @@ import org.tvheadend.api.ServerMessageListener;
 import org.tvheadend.api.ServerResponseListener;
 
 import java.io.IOException;
+import java.net.Inet4Address;
+import java.net.Inet6Address;
+import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
@@ -117,8 +120,24 @@ public class HtspConnection extends Thread implements ServerConnectionInterface<
 
             Timber.d("Parsing url " + htspConnectionData.getServerUrl() + " to get required host and port information");
             Uri uri = Uri.parse(htspConnectionData.getServerUrl());
-            InetSocketAddress inetSocketAddress = new InetSocketAddress(uri.getHost(), uri.getPort());
 
+            Timber.d("Getting inet address from hostname");
+            InetAddress address = InetAddress.getByName(uri.getHost());
+            if (address instanceof Inet6Address) {
+                Timber.d("Found ipv6 address, looking for ipv4 %s", address);
+                InetAddress[] inetAddressArray = InetAddress.getAllByName(uri.getHost());
+                for (InetAddress inetAddress : inetAddressArray) {
+                    if (inetAddress instanceof Inet4Address) {
+                        address = inetAddress;
+                        Timber.d("Found ipv4 %s", address);
+                        break;
+                    }
+                }
+            } else {
+                Timber.d("Found ipv4 address");
+            }
+
+            InetSocketAddress inetSocketAddress  = new InetSocketAddress(address, uri.getPort());
             if (!socketChannel.connect(inetSocketAddress)) {
                 Timber.d("Socket did not yet finish connecting, calling finishConnect()");
                 socketChannel.finishConnect();
