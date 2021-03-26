@@ -4,6 +4,7 @@ import android.app.Application
 import android.net.Uri
 import android.os.Bundle
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
 import androidx.preference.PreferenceManager
 import org.tvheadend.api.AuthenticationStateResult
 import org.tvheadend.api.ConnectionStateResult
@@ -128,7 +129,7 @@ class ExternalPlayerViewModel(application: Application) : BaseViewModel(applicat
         if (convertHostnameToAddress && !hostname.isNullOrEmpty()) {
             Timber.d("Convert hostname $hostname to IP address")
             try {
-                hostname = ConvertHostnameToAddressTask(hostname).execute().get()
+                hostname = ConvertHostnameToAddressTask(viewModelScope, hostname).toString()
             } catch (e: InterruptedException) {
                 Timber.d(e, "Could not execute task to get ip address from $hostname")
             } catch (e: ExecutionException) {
