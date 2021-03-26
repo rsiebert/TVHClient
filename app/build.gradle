@@ -19,8 +19,8 @@ android {
     defaultConfig {
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 232
-        versionName "2.4.5"
+        versionCode 233
+        versionName "2.4.6"
 
         // Define the apk naming convention
         applicationId "org.tvheadend.tvhclient"
@@ -150,7 +150,7 @@ dependencies {
     implementation "org.tvheadend.tvhclient.exoplayer:exoplayer-core:$exoplayer_version"
     implementation "org.tvheadend.tvhclient.exoplayer:exoplayer-dash:$exoplayer_version"
     implementation "org.tvheadend.tvhclient.exoplayer:extension-ffmpeg:$exoplayer_version"
-    //implementation "org.tvheadend.tvhclient.htsp:htsp:1.2.0"
+    //implementation "org.tvheadend.tvhclient.htsp:htsp:1.2.1"
     //implementation "org.tvheadend.tvhclient.data:data:2.1.3"
     implementation project(':htsp')
     implementation project(':data')
@@ -158,28 +158,11 @@ dependencies {
     // ----------------------------------------------------------------------------
     // Define versions for testing dependencies
     def junit_version = '4.13.2'
-    def androidx_junit_version = '1.1.2'
     def androidx_test_version = '1.3.0'
-    def espresso_version = '3.3.0'
 
     // Required dependencies for unit testing
     testImplementation "junit:junit:$junit_version"
     testImplementation "androidx.test:core:$androidx_test_version"
-    testImplementation "androidx.test:runner:$androidx_test_version"
-    testImplementation "androidx.test:rules:$androidx_test_version"
-    testImplementation "androidx.test.ext:junit:$androidx_junit_version"
-    testImplementation 'org.robolectric:robolectric:4.5.1'
-
-    // Required dependencies for UI Testing
-    androidTestImplementation "junit:junit:$junit_version"
-    androidTestImplementation "androidx.test:core:$androidx_test_version"
-    androidTestImplementation "androidx.test:runner:$androidx_test_version"
-    androidTestImplementation "androidx.test:rules:$androidx_test_version"
-    androidTestImplementation "androidx.test.ext:junit:$androidx_junit_version"
-    androidTestImplementation "androidx.test.espresso:espresso-core:$espresso_version"
-    androidTestImplementation "androidx.test.espresso:espresso-contrib:$espresso_version"
-    androidTestImplementation "androidx.test.espresso:espresso-intents:$espresso_version"
-    androidTestImplementation 'com.google.truth:truth:1.1.2'
 }
 
 apply plugin: 'com.google.gms.google-services'
