@@ -11,8 +11,6 @@ class PlayRecordingActivity : BasePlaybackActivity() {
 
     override fun onTicketReceived() {
         val url = viewModel.getPlaybackUrl()
-        Timber.d("Playing recording from server with url $url")
-
         val intent = Intent(Intent.ACTION_VIEW)
         val title = viewModel.recording?.title ?: ""
         intent.putExtra("itemTitle", title)
@@ -25,10 +23,10 @@ class PlayRecordingActivity : BasePlaybackActivity() {
 
         if (file.exists() && viewModel.isUnlocked) {
             Timber.d("Playing recording from local file ${file.absolutePath}")
-            intent.setDataAndType(Uri.parse(file.absolutePath), "video/*")
+            intent.setDataAndType(Uri.parse(file.absolutePath), "video/mp4")
         } else {
             Timber.d("Playing recording from server with url: $url")
-            intent.setDataAndType(Uri.parse(url), "video/*")
+            intent.setDataAndType(Uri.parse(url), "video/mp4")
         }
         startExternalPlayer(intent)
     }

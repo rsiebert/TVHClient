@@ -8,15 +8,14 @@ class PlayChannelActivity : BasePlaybackActivity() {
 
     override fun onTicketReceived() {
         val url = viewModel.getPlaybackUrl()
-        Timber.d("Playing channel from server with url $url")
-
         val intent = Intent(Intent.ACTION_VIEW)
-        intent.setDataAndType(Uri.parse(url), "video/*")
+        intent.setDataAndType(Uri.parse(url), "video/mp4")
 
         if (!viewModel.channel?.name.isNullOrEmpty()) {
             intent.putExtra("itemTitle", viewModel.channel?.name)
             intent.putExtra("title", viewModel.channel?.name)
         }
+        Timber.d("Playing channel from server with url $url")
         startExternalPlayer(intent)
     }
 }
