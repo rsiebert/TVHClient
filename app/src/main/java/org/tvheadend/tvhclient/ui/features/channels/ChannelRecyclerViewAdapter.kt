@@ -4,9 +4,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.Filter
 import android.widget.Filterable
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.LifecycleRegistry
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import org.tvheadend.data.entity.Channel
@@ -18,7 +16,7 @@ import org.tvheadend.tvhclient.util.extensions.isEqualTo
 import java.util.*
 import java.util.concurrent.CopyOnWriteArrayList
 
-class ChannelRecyclerViewAdapter internal constructor(private val viewModel: ChannelViewModel, private val isDualPane: Boolean, private val clickCallback: RecyclerViewClickInterface) : RecyclerView.Adapter<ChannelRecyclerViewAdapter.ChannelViewHolder>(), Filterable {
+class ChannelRecyclerViewAdapter internal constructor(private val viewModel: ChannelViewModel, private val isDualPane: Boolean, private val clickCallback: RecyclerViewClickInterface, private val lifecycleOwner: LifecycleOwner) : RecyclerView.Adapter<ChannelRecyclerViewAdapter.ChannelViewHolder>(), Filterable {
 
     private val recordingList = ArrayList<Recording>()
     private val channelList = ArrayList<Channel>()
@@ -29,7 +27,7 @@ class ChannelRecyclerViewAdapter internal constructor(private val viewModel: Cha
         val layoutInflater = LayoutInflater.from(parent.context)
         val itemBinding = ChannelListAdapterBinding.inflate(layoutInflater, parent, false)
         val viewHolder = ChannelViewHolder(itemBinding, viewModel, isDualPane)
-        itemBinding.lifecycleOwner = viewHolder
+        itemBinding.lifecycleOwner = lifecycleOwner
         return viewHolder
     }
 
@@ -157,37 +155,9 @@ class ChannelRecyclerViewAdapter internal constructor(private val viewModel: Cha
         }
     }
 
-    override fun onViewAttachedToWindow(holder: ChannelViewHolder) {
-        super.onViewAttachedToWindow(holder)
-        holder.markAttach()
-    }
-
-    override fun onViewDetachedFromWindow(holder: ChannelViewHolder) {
-        super.onViewDetachedFromWindow(holder)
-        holder.markDetach()
-    }
-
     class ChannelViewHolder(private val binding: ChannelListAdapterBinding,
                             private val viewModel: ChannelViewModel,
-                            private val isDualPane: Boolean) : RecyclerView.ViewHolder(binding.root), LifecycleOwner {
-
-        private val lifecycleRegistry = LifecycleRegistry(this)
-
-        init {
-            lifecycleRegistry.currentState = Lifecycle.State.INITIALIZED
-        }
-
-        fun markAttach() {
-            lifecycleRegistry.currentState = Lifecycle.State.STARTED
-        }
-
-        fun markDetach() {
-            lifecycleRegistry.currentState = Lifecycle.State.DESTROYED
-        }
-
-        override fun getLifecycle(): Lifecycle {
-            return lifecycleRegistry
-        }
+                            private val isDualPane: Boolean) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(channel: Channel, position: Int, isSelected: Boolean, clickCallback: RecyclerViewClickInterface) {
             binding.channel = channel

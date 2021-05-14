@@ -12,7 +12,7 @@ import org.tvheadend.tvhclient.databinding.ConnectionListAdapterBinding
 import org.tvheadend.tvhclient.ui.common.interfaces.RecyclerViewClickInterface
 import java.util.*
 
-class ConnectionRecyclerViewAdapter internal constructor(private val clickCallback: RecyclerViewClickInterface) : RecyclerView.Adapter<ConnectionRecyclerViewAdapter.ConnectionViewHolder>() {
+class ConnectionRecyclerViewAdapter internal constructor(private val clickCallback: RecyclerViewClickInterface, private val lifecycleOwner: LifecycleOwner) : RecyclerView.Adapter<ConnectionRecyclerViewAdapter.ConnectionViewHolder>() {
 
     private var connectionList: MutableList<Connection> = ArrayList()
     var selectedPosition = 0
@@ -22,7 +22,7 @@ class ConnectionRecyclerViewAdapter internal constructor(private val clickCallba
         val layoutInflater = LayoutInflater.from(parent.context)
         val itemBinding = ConnectionListAdapterBinding.inflate(layoutInflater, parent, false)
         val viewHolder = ConnectionViewHolder(itemBinding)
-        itemBinding.lifecycleOwner = viewHolder
+        itemBinding.lifecycleOwner = lifecycleOwner
         return viewHolder
     }
 
@@ -65,35 +65,7 @@ class ConnectionRecyclerViewAdapter internal constructor(private val clickCallba
         }
     }
 
-    override fun onViewAttachedToWindow(holder: ConnectionViewHolder) {
-        super.onViewAttachedToWindow(holder)
-        holder.markAttach()
-    }
-
-    override fun onViewDetachedFromWindow(holder: ConnectionViewHolder) {
-        super.onViewDetachedFromWindow(holder)
-        holder.markDetach()
-    }
-
-    class ConnectionViewHolder(private val binding: ConnectionListAdapterBinding) : RecyclerView.ViewHolder(binding.root), LifecycleOwner {
-
-        private val lifecycleRegistry = LifecycleRegistry(this)
-
-        init {
-            lifecycleRegistry.currentState = Lifecycle.State.INITIALIZED
-        }
-
-        fun markAttach() {
-            lifecycleRegistry.currentState = Lifecycle.State.STARTED
-        }
-
-        fun markDetach() {
-            lifecycleRegistry.currentState = Lifecycle.State.DESTROYED
-        }
-
-        override fun getLifecycle(): Lifecycle {
-            return lifecycleRegistry
-        }
+    class ConnectionViewHolder(private val binding: ConnectionListAdapterBinding) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(connection: Connection, position: Int, clickCallback: RecyclerViewClickInterface) {
             binding.connection = connection

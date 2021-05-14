@@ -5,9 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.FragmentActivity
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.LifecycleRegistry
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.extensions.LayoutContainer
@@ -20,14 +18,14 @@ import org.tvheadend.tvhclient.util.extensions.invisible
 import org.tvheadend.tvhclient.util.extensions.visible
 import timber.log.Timber
 
-internal class EpgVerticalRecyclerViewAdapter(private val activity: FragmentActivity, private val epgViewModel: EpgViewModel, private val fragmentId: Int) : RecyclerView.Adapter<EpgVerticalRecyclerViewAdapter.EpgViewPagerViewHolder>() {
+internal class EpgVerticalRecyclerViewAdapter(private val activity: FragmentActivity, private val epgViewModel: EpgViewModel, private val fragmentId: Int, private val lifecycleOwner: LifecycleOwner) : RecyclerView.Adapter<EpgVerticalRecyclerViewAdapter.EpgViewPagerViewHolder>() {
 
     private val viewPool: RecyclerView.RecycledViewPool = RecyclerView.RecycledViewPool()
     private var channelList = ArrayList<EpgChannel>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): EpgViewPagerViewHolder {
         val binding = EpgVerticalRecyclerviewAdapterBinding.inflate(LayoutInflater.from(parent.context))
-        return EpgViewPagerViewHolder(binding.root, binding, activity, fragmentId, viewPool, epgViewModel)
+        return EpgViewPagerViewHolder(binding.root, binding, activity, fragmentId, viewPool, epgViewModel, lifecycleOwner)
     }
 
     override fun onBindViewHolder(holder: EpgViewPagerViewHolder, position: Int) {
@@ -52,44 +50,21 @@ internal class EpgVerticalRecyclerViewAdapter(private val activity: FragmentActi
         notifyDataSetChanged()
     }
 
-    override fun onViewAttachedToWindow(holder: EpgViewPagerViewHolder) {
-        super.onViewAttachedToWindow(holder)
-        holder.markAttach()
-    }
-
-    override fun onViewDetachedFromWindow(holder: EpgViewPagerViewHolder) {
-        super.onViewDetachedFromWindow(holder)
-        holder.markDetach()
-    }
-
     class EpgViewPagerViewHolder(override val containerView: View,
                                  val binding: EpgVerticalRecyclerviewAdapterBinding,
                                  private val activity: FragmentActivity,
                                  fragmentId: Int,
                                  viewPool: RecyclerView.RecycledViewPool,
-                                 private val epgViewModel: EpgViewModel) : RecyclerView.ViewHolder(binding.root), LayoutContainer, LifecycleOwner {
+                                 private val epgViewModel: EpgViewModel,
+                                 lifecycleOwner: LifecycleOwner) : RecyclerView.ViewHolder(binding.root), LayoutContainer {
 
-        private val lifecycleRegistry = LifecycleRegistry(this)
         private val recyclerViewAdapter: EpgHorizontalChildRecyclerViewAdapter
 
         init {
             binding.horizontalChildRecyclerView.layoutManager = CustomHorizontalLayoutManager(containerView.context)
             binding.horizontalChildRecyclerView.setRecycledViewPool(viewPool)
-            recyclerViewAdapter = EpgHorizontalChildRecyclerViewAdapter(epgViewModel, fragmentId)
+            recyclerViewAdapter = EpgHorizontalChildRecyclerViewAdapter(epgViewModel, fragmentId, lifecycleOwner)
             binding.horizontalChildRecyclerView.adapter = recyclerViewAdapter
-            lifecycleRegistry.currentState = Lifecycle.State.INITIALIZED
-        }
-
-        fun markAttach() {
-            lifecycleRegistry.currentState = Lifecycle.State.STARTED
-        }
-
-        fun markDetach() {
-            lifecycleRegistry.currentState = Lifecycle.State.DESTROYED
-        }
-
-        override fun getLifecycle(): Lifecycle {
-            return lifecycleRegistry
         }
 
         fun bindData(programs: List<EpgProgram>) {

@@ -18,7 +18,7 @@ import org.tvheadend.tvhclient.util.extensions.isEqualTo
 import java.util.*
 import java.util.concurrent.CopyOnWriteArrayList
 
-class ProgramRecyclerViewAdapter internal constructor(private val viewModel: ProgramViewModel, private val clickCallback: RecyclerViewClickInterface, private val onLastProgramVisibleListener: LastProgramVisibleListener) : RecyclerView.Adapter<ProgramRecyclerViewAdapter.ProgramViewHolder>(), Filterable {
+class ProgramRecyclerViewAdapter internal constructor(private val viewModel: ProgramViewModel, private val clickCallback: RecyclerViewClickInterface, private val onLastProgramVisibleListener: LastProgramVisibleListener, private val lifecycleOwner: LifecycleOwner) : RecyclerView.Adapter<ProgramRecyclerViewAdapter.ProgramViewHolder>(), Filterable {
 
     private val programList = ArrayList<ProgramInterface>()
     private var programListFiltered: MutableList<ProgramInterface> = ArrayList()
@@ -28,7 +28,7 @@ class ProgramRecyclerViewAdapter internal constructor(private val viewModel: Pro
         val layoutInflater = LayoutInflater.from(parent.context)
         val itemBinding = ProgramListAdapterBinding.inflate(layoutInflater, parent, false)
         val viewHolder = ProgramViewHolder(itemBinding, viewModel)
-        itemBinding.lifecycleOwner = viewHolder
+        itemBinding.lifecycleOwner = lifecycleOwner
         return viewHolder
     }
 
@@ -149,35 +149,7 @@ class ProgramRecyclerViewAdapter internal constructor(private val viewModel: Pro
         }
     }
 
-    override fun onViewAttachedToWindow(holder: ProgramViewHolder) {
-        super.onViewAttachedToWindow(holder)
-        holder.markAttach()
-    }
-
-    override fun onViewDetachedFromWindow(holder: ProgramViewHolder) {
-        super.onViewDetachedFromWindow(holder)
-        holder.markDetach()
-    }
-
-    class ProgramViewHolder(private val binding: ProgramListAdapterBinding, private val viewModel: ProgramViewModel) : RecyclerView.ViewHolder(binding.root), LifecycleOwner {
-
-        private val lifecycleRegistry = LifecycleRegistry(this)
-
-        init {
-            lifecycleRegistry.currentState = Lifecycle.State.INITIALIZED
-        }
-
-        fun markAttach() {
-            lifecycleRegistry.currentState = Lifecycle.State.STARTED
-        }
-
-        fun markDetach() {
-            lifecycleRegistry.currentState = Lifecycle.State.DESTROYED
-        }
-
-        override fun getLifecycle(): Lifecycle {
-            return lifecycleRegistry
-        }
+    class ProgramViewHolder(private val binding: ProgramListAdapterBinding, private val viewModel: ProgramViewModel) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(program: ProgramInterface, position: Int, clickCallback: RecyclerViewClickInterface) {
             binding.program = program

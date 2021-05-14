@@ -54,7 +54,7 @@ class EpgFragment : BaseFragment(), EpgScrollInterface, RecyclerViewClickInterfa
             (activity as LayoutControlInterface).forceSingleScreenLayout()
         }
 
-        channelListRecyclerViewAdapter = EpgChannelListRecyclerViewAdapter(epgViewModel, this)
+        channelListRecyclerViewAdapter = EpgChannelListRecyclerViewAdapter(epgViewModel, this, viewLifecycleOwner)
         channelListRecyclerViewLayoutManager = LinearLayoutManager(activity)
         binding.channelListRecyclerView.layoutManager = channelListRecyclerViewLayoutManager
         binding.channelListRecyclerView.adapter = channelListRecyclerViewAdapter

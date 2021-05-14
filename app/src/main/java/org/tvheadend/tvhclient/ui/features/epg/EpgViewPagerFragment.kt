@@ -75,7 +75,7 @@ class EpgViewPagerFragment : Fragment(), EpgScrollInterface {
         binding.startTime = epgViewModel.getStartTime(fragmentId)
         binding.endTime = epgViewModel.getEndTime(fragmentId)
 
-        recyclerViewAdapter = EpgVerticalRecyclerViewAdapter(requireActivity(), epgViewModel, fragmentId)
+        recyclerViewAdapter = EpgVerticalRecyclerViewAdapter(requireActivity(), epgViewModel, fragmentId, viewLifecycleOwner)
         recyclerViewLinearLayoutManager = LinearLayoutManager(activity, RecyclerView.VERTICAL, false)
         binding.viewpagerRecyclerView.layoutManager = recyclerViewLinearLayoutManager
         binding.viewpagerRecyclerView.setHasFixedSize(true)

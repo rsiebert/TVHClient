@@ -12,7 +12,7 @@ import org.tvheadend.tvhclient.databinding.EpgChannelRecyclerviewAdapterBinding
 import org.tvheadend.tvhclient.ui.common.interfaces.RecyclerViewClickInterface
 import java.util.*
 
-class EpgChannelListRecyclerViewAdapter(private val viewModel: EpgViewModel, private val clickCallback: RecyclerViewClickInterface) : RecyclerView.Adapter<EpgChannelListRecyclerViewAdapter.EpgChannelViewHolder>() {
+class EpgChannelListRecyclerViewAdapter(private val viewModel: EpgViewModel, private val clickCallback: RecyclerViewClickInterface, private val lifecycleOwner: LifecycleOwner) : RecyclerView.Adapter<EpgChannelListRecyclerViewAdapter.EpgChannelViewHolder>() {
 
     private val channelList = ArrayList<EpgChannel>()
 
@@ -20,7 +20,7 @@ class EpgChannelListRecyclerViewAdapter(private val viewModel: EpgViewModel, pri
         val layoutInflater = LayoutInflater.from(parent.context)
         val itemBinding = EpgChannelRecyclerviewAdapterBinding.inflate(layoutInflater, parent, false)
         val viewHolder = EpgChannelViewHolder(itemBinding, viewModel)
-        itemBinding.lifecycleOwner = viewHolder
+        itemBinding.lifecycleOwner = lifecycleOwner
         return viewHolder
     }
 
@@ -52,36 +52,8 @@ class EpgChannelListRecyclerViewAdapter(private val viewModel: EpgViewModel, pri
         }
     }
 
-    override fun onViewAttachedToWindow(holder: EpgChannelViewHolder) {
-        super.onViewAttachedToWindow(holder)
-        holder.markAttach()
-    }
-
-    override fun onViewDetachedFromWindow(holder: EpgChannelViewHolder) {
-        super.onViewDetachedFromWindow(holder)
-        holder.markDetach()
-    }
-
     class EpgChannelViewHolder(private val binding: EpgChannelRecyclerviewAdapterBinding,
-                               private val viewModel: EpgViewModel) : RecyclerView.ViewHolder(binding.root), LifecycleOwner {
-
-        private val lifecycleRegistry = LifecycleRegistry(this)
-
-        init {
-            lifecycleRegistry.currentState = Lifecycle.State.INITIALIZED
-        }
-
-        fun markAttach() {
-            lifecycleRegistry.currentState = Lifecycle.State.STARTED
-        }
-
-        fun markDetach() {
-            lifecycleRegistry.currentState = Lifecycle.State.DESTROYED
-        }
-
-        override fun getLifecycle(): Lifecycle {
-            return lifecycleRegistry
-        }
+                               private val viewModel: EpgViewModel) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(channel: EpgChannel, position: Int, clickCallback: RecyclerViewClickInterface) {
             binding.channel = channel
