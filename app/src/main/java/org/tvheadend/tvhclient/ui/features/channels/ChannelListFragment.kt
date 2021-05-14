@@ -61,7 +61,7 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickInterface, ChannelT
             channelViewModel.selectedTimeOffset = it.getInt("timeOffset")
         }
 
-        recyclerViewAdapter = ChannelRecyclerViewAdapter(channelViewModel, isDualPane, this)
+        recyclerViewAdapter = ChannelRecyclerViewAdapter(channelViewModel, isDualPane, this, viewLifecycleOwner)
         binding.recyclerView.layoutManager = LinearLayoutManager(activity)
         binding.recyclerView.adapter = recyclerViewAdapter
         binding.recyclerView.gone()

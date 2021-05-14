@@ -1,6 +1,7 @@
 package org.tvheadend.tvhclient.ui.features.settings
 
 import android.os.Bundle
+import android.view.View
 import org.tvheadend.data.entity.Connection
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.util.extensions.sendSnackbarMessage
@@ -8,8 +9,8 @@ import timber.log.Timber
 
 class SettingsAddConnectionFragment : SettingsConnectionBaseFragment() {
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         toolbarInterface.setTitle(getString(R.string.add_connection))
         toolbarInterface.setSubtitle("")
 

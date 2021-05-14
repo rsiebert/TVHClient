@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
+import android.view.View
 import com.afollestad.materialdialogs.MaterialDialog
 import com.android.billingclient.api.Purchase
 import org.tvheadend.tvhclient.MainApplication
@@ -24,8 +25,8 @@ class UnlockerFragment : WebViewFragment(), BillingUpdatesListener {
     private lateinit var billingHandler: BillingHandler
     private var isUnlocked: Boolean = false
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         toolbarInterface.setTitle(getString(R.string.pref_unlocker))
         toolbarInterface.setSubtitle("")

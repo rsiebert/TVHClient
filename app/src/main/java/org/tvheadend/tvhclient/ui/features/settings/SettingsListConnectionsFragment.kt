@@ -36,8 +36,8 @@ class SettingsListConnectionsFragment : Fragment(), BackPressedInterface, Action
         return binding.root
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         settingsViewModel = ViewModelProvider(activity as SettingsActivity).get(SettingsViewModel::class.java)
 
         if (activity is ToolbarInterface) {
@@ -45,7 +45,7 @@ class SettingsListConnectionsFragment : Fragment(), BackPressedInterface, Action
             toolbarInterface.setTitle(getString(R.string.pref_connections))
         }
 
-        recyclerViewAdapter = ConnectionRecyclerViewAdapter(this)
+        recyclerViewAdapter = ConnectionRecyclerViewAdapter(this, viewLifecycleOwner)
         binding.recyclerView.layoutManager = LinearLayoutManager(activity)
         binding.recyclerView.adapter = recyclerViewAdapter
 

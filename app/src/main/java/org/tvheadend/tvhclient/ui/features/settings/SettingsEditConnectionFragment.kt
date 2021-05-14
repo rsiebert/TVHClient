@@ -1,13 +1,14 @@
 package org.tvheadend.tvhclient.ui.features.settings
 
 import android.os.Bundle
+import android.view.View
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.util.extensions.sendSnackbarMessage
 
 class SettingsEditConnectionFragment : SettingsConnectionBaseFragment() {
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         toolbarInterface.setTitle(getString(R.string.edit_connection))
 
         if (savedInstanceState == null) {

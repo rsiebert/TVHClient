@@ -53,7 +53,7 @@ class ProgramListFragment : BaseFragment(), RecyclerViewClickInterface, LastProg
         // Show the channel icons when a search is active and all channels shall be searched
         programViewModel.showProgramChannelIcon = baseViewModel.isSearchActive && channelId == 0
 
-        recyclerViewAdapter = ProgramRecyclerViewAdapter(programViewModel, this, this)
+        recyclerViewAdapter = ProgramRecyclerViewAdapter(programViewModel, this, this, viewLifecycleOwner)
         binding.recyclerView.layoutManager = LinearLayoutManager(activity)
         binding.recyclerView.adapter = recyclerViewAdapter
         binding.recyclerView.gone()
