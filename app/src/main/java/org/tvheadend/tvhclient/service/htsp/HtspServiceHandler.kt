@@ -300,8 +300,8 @@ class HtspServiceHandler(val context: Context, val appRepository: AppRepository,
     }
 
     private fun startBackgroundWorkers() {
-        Timber.d("Checking if epg data worker was started at least 12 hours ago")
-        if (System.currentTimeMillis() / 1000L - connection.lastUpdate > (12 * 60 * 60)) {
+        Timber.d("Checking if epg data worker was started at least 15 minutes ago")
+        if (System.currentTimeMillis() / 1000L - connection.lastUpdate > (15 * 60)) {
             Timber.d("Starting background worker in 15 seconds to load more epg data.")
             val updateEpgWorker = OneTimeWorkRequest.Builder(EpgDataUpdateWorker::class.java)
                     .setInitialDelay(15, TimeUnit.SECONDS)
