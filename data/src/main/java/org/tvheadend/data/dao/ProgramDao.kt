@@ -101,6 +101,23 @@ internal interface ProgramDao {
             " ORDER BY start DESC LIMIT 1")
     fun loadLastProgramFromChannelSync(channelId: Int): ProgramEntity?
 
+    @Query("SELECT p.id, " +
+            "p.title, " +
+            "p.subtitle, " +
+            "p.start, " +
+            "p.stop, " +
+            "p.channel_id, " +
+            "p.connection_id, " +
+            "p.content_type " +
+            "FROM programs AS p " +
+            "LEFT JOIN channels AS c ON c.id = channel_id " +
+            " WHERE $CONNECTION_IS_ACTIVE" +
+            " AND p.channel_id = :channelId " +
+            " GROUP BY title, subtitle" +
+            " HAVING COUNT(*) > 1" +
+            " ORDER BY title, start DESC LIMIT 1")
+    fun loadDuplicateProgramsSync(channelId: Int): List<EpgProgramEntity>
+
     @Query("DELETE FROM programs " + "WHERE stop < :time")
     fun deleteProgramsByTime(time: Long)
 

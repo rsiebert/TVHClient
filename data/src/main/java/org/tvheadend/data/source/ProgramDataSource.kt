@@ -130,4 +130,12 @@ class ProgramDataSource(private val db: AppRoomDatabase) : DataSourceInterface<P
         }
         return programs
     }
+
+    fun getDuplicatePrograms(channelId: Int): List<EpgProgram> {
+        val programs = ArrayList<EpgProgram>()
+        runBlocking(Dispatchers.IO) {
+            programs.addAll(db.programDao.loadDuplicateProgramsSync(channelId).map { it.toEpgProgram() })
+        }
+        return programs
+    }
 }
