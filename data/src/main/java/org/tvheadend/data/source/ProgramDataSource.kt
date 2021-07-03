@@ -17,7 +17,7 @@ class ProgramDataSource(private val db: AppRoomDatabase) : DataSourceInterface<P
 
     val itemCount: Int
         get() {
-            var count = 0
+            var count: Int
             runBlocking(Dispatchers.IO) {
                 count = db.programDao.itemCountSync
             }
@@ -71,7 +71,7 @@ class ProgramDataSource(private val db: AppRoomDatabase) : DataSourceInterface<P
     }
 
     override fun getItemById(id: Any): Program? {
-        var program: Program? = null
+        var program: Program?
         runBlocking(Dispatchers.IO) {
             program = db.programDao.loadProgramByIdSync(id as Int)?.toProgram()
         }
@@ -107,7 +107,7 @@ class ProgramDataSource(private val db: AppRoomDatabase) : DataSourceInterface<P
     }
 
     fun getLastItemByChannelId(channelId: Int): Program? {
-        var program: Program? = null
+        var program: Program?
         runBlocking(Dispatchers.IO) {
             program = db.programDao.loadLastProgramFromChannelSync(channelId)?.toProgram()
         }
