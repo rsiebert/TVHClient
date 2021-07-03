@@ -41,7 +41,7 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
     // Support library basics
-    implementation 'androidx.appcompat:appcompat:1.2.0'
+    implementation 'androidx.appcompat:appcompat:1.3.0'
     implementation 'androidx.preference:preference-ktx:1.1.1'
 
     // Android Room
@@ -54,7 +54,7 @@ dependencies {
     implementation 'com.jakewharton.timber:timber:4.7.1'
 
     // Dependency injection
-    def dagger_version = '2.32'
+    def dagger_version = '2.37'
     implementation "com.google.dagger:dagger:$dagger_version"
     kapt "com.google.dagger:dagger-compiler:$dagger_version"
 }
