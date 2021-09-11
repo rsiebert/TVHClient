@@ -79,8 +79,8 @@ class RecordingRecyclerViewAdapter internal constructor(private val viewModel: R
                         val title = recording.title ?: ""
                         val subtitle = recording.subtitle ?: ""
                         when {
-                            title.toLowerCase(Locale.getDefault()).contains(charString.toLowerCase(Locale.getDefault())) -> filteredList.add(recording)
-                            subtitle.toLowerCase(Locale.getDefault()).contains(charString.toLowerCase(Locale.getDefault())) -> filteredList.add(recording)
+                            title.lowercase().contains(charString.lowercase()) -> filteredList.add(recording)
+                            subtitle.lowercase().contains(charString.lowercase()) -> filteredList.add(recording)
                         }
                     }
                 } else {

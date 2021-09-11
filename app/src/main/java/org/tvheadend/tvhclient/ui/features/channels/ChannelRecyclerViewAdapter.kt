@@ -90,7 +90,7 @@ class ChannelRecyclerViewAdapter internal constructor(private val viewModel: Cha
                     for (channel in CopyOnWriteArrayList(channelList)) {
                         val name = channel.name ?: ""
                         when {
-                            name.toLowerCase(Locale.getDefault()).contains(charString.toLowerCase(Locale.getDefault())) -> filteredList.add(channel)
+                            name.lowercase().contains(charString.lowercase()) -> filteredList.add(channel)
                         }
                     }
                 } else {

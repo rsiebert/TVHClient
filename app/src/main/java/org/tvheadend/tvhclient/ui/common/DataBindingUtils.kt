@@ -80,25 +80,24 @@ fun setSeriesInfoText(view: TextView, program: ProgramInterface?) {
         } else {
             if (program.seasonNumber > 0) {
                 seriesInfo += String.format(Locale.getDefault(), "%s %02d",
-                        season.toLowerCase(Locale.getDefault()), program.seasonNumber)
+                        season.lowercase(), program.seasonNumber)
             }
             if (program.episodeNumber > 0) {
                 if (seriesInfo.isNotEmpty()) {
                     seriesInfo += ", "
                 }
                 seriesInfo += String.format(Locale.getDefault(), "%s %02d",
-                        episode.toLowerCase(Locale.getDefault()), program.episodeNumber)
+                        episode.lowercase(), program.episodeNumber)
             }
             if (program.partNumber > 0) {
                 if (seriesInfo.isNotEmpty()) {
                     seriesInfo += ", "
                 }
                 seriesInfo += String.format(Locale.getDefault(), "%s %d",
-                        part.toLowerCase(Locale.getDefault()), program.partNumber)
+                        part.lowercase(), program.partNumber)
             }
             if (seriesInfo.isNotEmpty()) {
-                seriesInfo = seriesInfo.substring(0, 1).toUpperCase(
-                        Locale.getDefault()) + seriesInfo.substring(1)
+                seriesInfo = seriesInfo.substring(0, 1).uppercase() + seriesInfo.substring(1)
             }
         }
     }

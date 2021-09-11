@@ -82,8 +82,8 @@ class TimerRecordingRecyclerViewAdapter internal constructor(private val isDualP
                         val title = recording.title ?: ""
                         val name = recording.name ?: ""
                         when {
-                            title.toLowerCase(Locale.getDefault()).contains(charString.toLowerCase(Locale.getDefault())) -> filteredList.add(recording)
-                            name.toLowerCase(Locale.getDefault()).contains(charString.toLowerCase(Locale.getDefault())) -> filteredList.add(recording)
+                            title.lowercase().contains(charString.lowercase()) -> filteredList.add(recording)
+                            name.lowercase().contains(charString.lowercase()) -> filteredList.add(recording)
                         }
                     }
                 } else {
