@@ -75,7 +75,7 @@ class ServerStatusDataSource(private val db: AppRoomDatabase) : DataSourceInterf
     }
 
     override fun getItemById(id: Any): ServerStatus? {
-        var serverStatus: ServerStatus? = null
+        var serverStatus: ServerStatus?
         runBlocking(Dispatchers.IO) {
             serverStatus = db.serverStatusDao.loadServerStatusByIdSync(id as Int)?.toServerStatus()
         }

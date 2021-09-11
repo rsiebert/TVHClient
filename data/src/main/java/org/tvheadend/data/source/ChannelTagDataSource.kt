@@ -21,7 +21,7 @@ class ChannelTagDataSource(private val db: AppRoomDatabase) : DataSourceInterfac
 
     val itemCount: Int
         get() {
-            var count = 0
+            var count: Int
             runBlocking(Dispatchers.IO) {
                 count = db.channelTagDao.itemCountSync
             }
@@ -73,7 +73,7 @@ class ChannelTagDataSource(private val db: AppRoomDatabase) : DataSourceInterfac
     }
 
     override fun getItemById(id: Any): ChannelTag? {
-        var channelTag: ChannelTag? = null
+        var channelTag: ChannelTag?
         runBlocking(Dispatchers.IO) {
             channelTag = db.channelTagDao.loadChannelTagByIdSync(id as Int)?.toChannelTag()
         }

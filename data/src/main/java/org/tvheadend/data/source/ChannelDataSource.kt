@@ -51,7 +51,7 @@ class ChannelDataSource(private val db: AppRoomDatabase) : DataSourceInterface<C
     }
 
     override fun getItemById(id: Any): Channel? {
-        var channel: Channel? = null
+        var channel: Channel?
         runBlocking(Dispatchers.IO) {
             channel = db.channelDao.loadChannelByIdSync(id as Int)?.toChannel()
         }
@@ -71,7 +71,7 @@ class ChannelDataSource(private val db: AppRoomDatabase) : DataSourceInterface<C
     }
 
     fun getItemByIdWithPrograms(id: Int, selectedTime: Long): Channel? {
-        var channel: Channel? = null
+        var channel: Channel?
         runBlocking(Dispatchers.IO) {
             channel = db.channelDao.loadChannelByIdWithProgramsSync(id, selectedTime)?.toChannel()
         }
