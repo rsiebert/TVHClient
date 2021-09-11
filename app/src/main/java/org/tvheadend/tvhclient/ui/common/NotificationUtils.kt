@@ -19,6 +19,8 @@ import org.tvheadend.tvhclient.util.extensions.sendSnackbarMessage
 import org.tvheadend.tvhclient.util.worker.ProgramNotificationWorker
 import org.tvheadend.tvhclient.util.worker.RecordingNotificationWorker
 import timber.log.Timber
+import java.text.SimpleDateFormat
+import java.util.*
 import java.util.concurrent.TimeUnit
 
 /**
@@ -32,10 +34,11 @@ import java.util.concurrent.TimeUnit
 fun getNotificationTime(context: Context, startTime: Long): Long {
 
     val offset = Integer.valueOf(PreferenceManager.getDefaultSharedPreferences(context).getString("notification_lead_time", context.resources.getString(R.string.pref_default_notification_lead_time))!!)
-    val notificationTime = startTime - offset * 1000 * 60
-    val currentTime = System.currentTimeMillis()
+    val notificationTime = startTime - (offset * 1000 * 60)
+    val currentTime = Calendar.getInstance().timeInMillis
+    val sdf = SimpleDateFormat("HH:mm", Locale.US)
 
-    Timber.d("Notification time is $notificationTime ms, startTime is $startTime ms, offset is $offset minutes")
+    Timber.d("Notification time is ${sdf.format(notificationTime)} ms, startTime is ${sdf.format(startTime)} ms, offset is $offset minutes")
     return notificationTime - currentTime
 }
 
