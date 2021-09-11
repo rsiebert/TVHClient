@@ -8,6 +8,7 @@ import java.net.UnknownHostException
 
 class ConvertHostnameToAddressTask(lifecycleScope: CoroutineScope, private val hostname: String) {
 
+    private var convertedHostname = hostname
     init {
         lifecycleScope.executeAsyncTask(onPreExecute = {
             // ... runs in Main Thread
@@ -15,14 +16,14 @@ class ConvertHostnameToAddressTask(lifecycleScope: CoroutineScope, private val h
         }, doInBackground = {
             Timber.d("doInBackground")
             try {
-                InetAddress.getByName(hostname).hostAddress
+                convertedHostname = InetAddress.getByName(hostname).hostAddress
             } catch (e: UnknownHostException) {
                 Timber.d(e, "Could not get ip address from $hostname, using hostname as fallback")
-                hostname
             }
         }, onPostExecute = {
             // runs in Main Thread
             Timber.d("onPostExecute")
+            convertedHostname
         })
     }
 }
