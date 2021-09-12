@@ -101,21 +101,11 @@ internal interface ProgramDao {
             " ORDER BY start DESC LIMIT 1")
     fun loadLastProgramFromChannelSync(channelId: Int): ProgramEntity?
 
-    @Query("SELECT p.id, " +
-            "p.title, " +
-            "p.subtitle, " +
-            "p.start, " +
-            "p.stop, " +
-            "p.channel_id, " +
-            "p.connection_id, " +
-            "p.content_type " +
-            "FROM programs AS p " +
-            "LEFT JOIN channels AS c ON c.id = channel_id " +
+    @Query(EPG_PROGRAM_BASE_QUERY +
             " WHERE $CONNECTION_IS_ACTIVE" +
             " AND p.channel_id = :channelId " +
             " GROUP BY title, subtitle" +
-            " HAVING COUNT(*) > 1" +
-            " ORDER BY title, start DESC LIMIT 1")
+            " ORDER BY title, start DESC")
     fun loadDuplicateProgramsSync(channelId: Int): List<EpgProgramEntity>
 
     @Query("DELETE FROM programs " + "WHERE stop < :time")
@@ -158,10 +148,12 @@ internal interface ProgramDao {
                 "LEFT JOIN channels AS c ON c.id = p.channel_id "
 
         const val EPG_PROGRAM_BASE_QUERY = "SELECT p.id, " +
-                "p.title, p.subtitle, " +
+                "p.title, " +
+                "p.subtitle, " +
                 "p.channel_id, " +
                 "p.connection_id, " +
-                "p.start, p.stop, " +
+                "p.start, " +
+                "p.stop, " +
                 "p.content_type " +
                 "FROM programs AS p " +
                 "LEFT JOIN channels AS c ON c.id = channel_id "

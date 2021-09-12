@@ -12,6 +12,7 @@ import org.tvheadend.api.ServerConnectionStateListener
 import org.tvheadend.api.ServerResponseListener
 import org.tvheadend.data.AppRepository
 import org.tvheadend.data.entity.Connection
+import org.tvheadend.data.entity.EpgProgram
 import org.tvheadend.data.entity.Program
 import org.tvheadend.data.entity.ServerStatus
 import org.tvheadend.htsp.HtspConnection
@@ -228,18 +229,15 @@ class HtspIntentServiceHandler(val context: Context, val appRepository: AppRepos
         val duplicatePrograms = Vector<Int>()
         val channels = appRepository.channelData.getItems()
         channels.forEach { channel ->
-            val programs = appRepository.programData.getItemsByChannelId(channel.id)
-            var lastProgram = Program()
+            val programs = appRepository.programData.getDuplicatePrograms(channel.id)
+            Timber.d("Loaded ${programs.size} duplicate programs for channel ${channel.name}")
+
+            var lastProgram = EpgProgram()
             programs.forEach { program ->
                 if (lastProgram.title == program.title
                         && lastProgram.subtitle == program.subtitle
                         && lastProgram.summary == program.summary
                         && lastProgram.description == program.description
-                        && lastProgram.contentType == program.contentType
-                        && lastProgram.seasonCount == program.seasonCount
-                        && lastProgram.seasonNumber == program.seasonNumber
-                        && lastProgram.episodeCount == program.episodeCount
-                        && lastProgram.episodeNumber == program.episodeNumber
                         && lastProgram.channelId == program.channelId
                         && lastProgram.modifiedTime != program.modifiedTime) {
 
@@ -251,7 +249,6 @@ class HtspIntentServiceHandler(val context: Context, val appRepository: AppRepos
                         duplicatePrograms.add(program.eventId)
                     }
                 }
-
                 lastProgram = program
             }
         }
