@@ -4,8 +4,9 @@ import android.app.Application
 import android.net.Uri
 import android.os.Bundle
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.viewModelScope
 import androidx.preference.PreferenceManager
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.runBlocking
 import org.tvheadend.api.AuthenticationStateResult
 import org.tvheadend.api.ConnectionStateResult
 import org.tvheadend.api.ServerConnectionStateListener
@@ -19,6 +20,8 @@ import org.tvheadend.tvhclient.BuildConfig
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.ui.base.BaseViewModel
 import timber.log.Timber
+import java.net.InetAddress
+import java.net.UnknownHostException
 import java.util.concurrent.ExecutionException
 import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledExecutorService
@@ -125,10 +128,19 @@ class ExternalPlayerViewModel(application: Application) : BaseViewModel(applicat
         // be played on a chromecast
         val uri = Uri.parse(connection.streamingUrl)
         var hostname = uri.host
-        if (convertHostnameToAddress && !hostname.isNullOrEmpty()) {
+        if (convertHostnameToAddress) {
             Timber.d("Convert hostname $hostname to IP address")
             try {
-                hostname = ConvertHostnameToAddressTask(viewModelScope, hostname).toString()
+                runBlocking(Dispatchers.IO) {
+                    try {
+                        if (!hostname.isNullOrEmpty()) {
+                            Timber.d("Tying to convert hostname to address")
+                            hostname = InetAddress.getByName(hostname).hostAddress
+                        }
+                    } catch (e: UnknownHostException) {
+                        Timber.d(e, "Could not get ip address from $hostname, using hostname as fallback")
+                    }
+                }
             } catch (e: InterruptedException) {
                 Timber.d(e, "Could not execute task to get ip address from $hostname")
             } catch (e: ExecutionException) {
