@@ -1,8 +1,9 @@
 $ 2.4.7
   % VERSION 2.4.7
-  _ 14.05.2021
+  _ 10.10.2021
     * Improved the automatic removal of duplicate programs
     * Show notifications when the app is not active
+    * Fixed url conversion required for casting
 $ 2.4.6
   % VERSION 2.4.6
   _ 24.03.2021
