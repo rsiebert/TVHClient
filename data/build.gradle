@@ -52,7 +52,7 @@ dependencies {
     implementation 'com.jakewharton.timber:timber:5.0.1'
 
     // Dependency injection
-    def dagger_version = '2.38.1'
+    def dagger_version = '2.39.1'
     implementation "com.google.dagger:dagger:$dagger_version"
     kapt "com.google.dagger:dagger-compiler:$dagger_version"
 }
