@@ -24,9 +24,11 @@ class CastRecordingActivity : BasePlaybackActivity() {
         }
 
         val recording = viewModel.recording ?: return
+        val recordingTitle : String = recording.title ?: ""
+        val recordingSubtitle : String = recording.subtitle ?: ""
         val movieMetadata = MediaMetadata(MediaMetadata.MEDIA_TYPE_MOVIE)
-        movieMetadata.putString(MediaMetadata.KEY_TITLE, recording.title)
-        movieMetadata.putString(MediaMetadata.KEY_SUBTITLE, recording.subtitle)
+        movieMetadata.putString(MediaMetadata.KEY_TITLE, recordingTitle)
+        movieMetadata.putString(MediaMetadata.KEY_SUBTITLE, recordingSubtitle)
 
         val icon = recording.channelIcon
         if (!icon.isNullOrEmpty()) {

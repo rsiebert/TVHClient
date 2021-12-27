@@ -287,8 +287,8 @@ class MainActivity : AppCompatActivity(), ToolbarInterface, LayoutControlInterfa
     public override fun onPause() {
         castContext?.let {
             try {
-                it.removeCastStateListener(castStateListener)
-                it.sessionManager.removeSessionManagerListener(castSessionManagerListener, CastSession::class.java)
+                it.removeCastStateListener(castStateListener!!)
+                it.sessionManager.removeSessionManagerListener(castSessionManagerListener!!, CastSession::class.java)
             } catch (e: IllegalStateException) {
                 Timber.e(e, "Could not remove cast state listener or get cast session manager")
             }
@@ -327,7 +327,7 @@ class MainActivity : AppCompatActivity(), ToolbarInterface, LayoutControlInterfa
             if (it.isVisible) {
                 Handler(Looper.getMainLooper()).post {
                     introductoryOverlay = IntroductoryOverlay.Builder(
-                            this@MainActivity, mediaRouteMenuItem)
+                            this@MainActivity, it)
                             .setTitleText(getString(R.string.intro_overlay_text))
                             .setOverlayColor(R.color.primary)
                             .setSingleTime()
@@ -485,7 +485,8 @@ class MainActivity : AppCompatActivity(), ToolbarInterface, LayoutControlInterfa
 
         val cursor = searchView?.suggestionsAdapter?.getItem(position) as Cursor?
         cursor?.let {
-            val suggestion = cursor.getString(cursor.getColumnIndex(SearchManager.SUGGEST_COLUMN_TEXT_1))
+            val index = cursor.getColumnIndex(SearchManager.SUGGEST_COLUMN_TEXT_1)
+            val suggestion = cursor.getString(index)
             searchView?.setQuery(suggestion, true)
         }
         return true
