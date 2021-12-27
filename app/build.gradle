@@ -64,7 +64,7 @@ android {
         targetCompatibility = rootProject.ext.javaCompatibility
     }
 
-    kotlinOptions.jvmTarget = JavaVersion.VERSION_1_8.toString()
+    kotlinOptions.jvmTarget = rootProject.ext.javaCompatibility.toString()
     testOptions.unitTests.includeAndroidResources = true
 
     buildTypes {
@@ -126,9 +126,9 @@ dependencies {
     implementation 'com.mikepenz:materialdrawer:7.0.0'
 
     // Firebase Crash Reporting and Performance Monitoring
-    implementation 'com.google.firebase:firebase-analytics-ktx:20.0.2'
-    implementation 'com.google.firebase:firebase-crashlytics:18.2.6'
-    implementation 'com.google.firebase:firebase-perf:20.0.4'
+    implementation 'com.google.firebase:firebase-analytics-ktx:19.0.1'
+    implementation 'com.google.firebase:firebase-crashlytics:18.2.1'
+    implementation 'com.google.firebase:firebase-perf:20.0.2'
 
     // Dependency injection
     implementation "com.google.dagger:dagger:$dagger_version"

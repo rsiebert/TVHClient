@@ -24,6 +24,7 @@ android {
         sourceCompatibility = rootProject.ext.javaCompatibility
         targetCompatibility = rootProject.ext.javaCompatibility
     }
+    kotlinOptions.jvmTarget = rootProject.ext.javaCompatibility.toString()
 }
 
 dependencies {
