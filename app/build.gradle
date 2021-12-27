@@ -19,7 +19,7 @@ android {
     defaultConfig {
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 236
+        versionCode 237
         versionName "2.4.7"
 
         // Define the apk naming convention
