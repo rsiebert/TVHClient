@@ -48,7 +48,7 @@ class EpgFragment : BaseFragment(), EpgScrollInterface, RecyclerViewClickInterfa
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        epgViewModel = ViewModelProvider(requireActivity()).get(EpgViewModel::class.java)
+        epgViewModel = ViewModelProvider(requireActivity())[EpgViewModel::class.java]
 
         if (activity is LayoutControlInterface) {
             (activity as LayoutControlInterface).forceSingleScreenLayout()

@@ -53,8 +53,8 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickInterface, ChannelT
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        channelViewModel = ViewModelProvider(requireActivity()).get(ChannelViewModel::class.java)
-        programViewModel = ViewModelProvider(requireActivity()).get(ProgramViewModel::class.java)
+        channelViewModel = ViewModelProvider(requireActivity())[ChannelViewModel::class.java]
+        programViewModel = ViewModelProvider(requireActivity())[ProgramViewModel::class.java]
 
         arguments?.let {
             channelViewModel.selectedListPosition = it.getInt("listPosition")

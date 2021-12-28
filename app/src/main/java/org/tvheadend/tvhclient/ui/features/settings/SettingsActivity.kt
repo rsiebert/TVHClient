@@ -38,7 +38,7 @@ class SettingsActivity : AppCompatActivity(), RemoveFragmentFromBackstackInterfa
         setSupportActionBar(findViewById(R.id.toolbar))
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        settingsViewModel = ViewModelProvider(this).get(SettingsViewModel::class.java)
+        settingsViewModel = ViewModelProvider(this)[SettingsViewModel::class.java]
         snackbarMessageReceiver = SnackbarMessageReceiver(settingsViewModel)
 
         // If the user wants to go directly to a sub setting screen like the connections

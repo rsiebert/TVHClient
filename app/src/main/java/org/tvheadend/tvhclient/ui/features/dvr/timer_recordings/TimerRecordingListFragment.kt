@@ -35,7 +35,7 @@ class TimerRecordingListFragment : BaseFragment(), RecyclerViewClickInterface, S
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        timerRecordingViewModel = ViewModelProvider(requireActivity()).get(TimerRecordingViewModel::class.java)
+        timerRecordingViewModel = ViewModelProvider(requireActivity())[TimerRecordingViewModel::class.java]
 
         arguments?.let {
             timerRecordingViewModel.selectedListPosition = it.getInt("listPosition")

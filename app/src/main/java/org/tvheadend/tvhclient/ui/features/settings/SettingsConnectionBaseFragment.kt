@@ -40,7 +40,7 @@ abstract class SettingsConnectionBaseFragment : PreferenceFragmentCompat(), Back
             toolbarInterface = activity as ToolbarInterface
         }
 
-        settingsViewModel = ViewModelProvider(activity as SettingsActivity).get(SettingsViewModel::class.java)
+        settingsViewModel = ViewModelProvider(activity as SettingsActivity)[SettingsViewModel::class.java]
         setHasOptionsMenu(true)
 
         // Get the connectivity preferences for later usage

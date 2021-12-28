@@ -2,9 +2,7 @@ package org.tvheadend.tvhclient.ui.features.epg
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.LifecycleRegistry
 import androidx.recyclerview.widget.RecyclerView
 import org.tvheadend.data.entity.EpgChannel
 import org.tvheadend.tvhclient.R

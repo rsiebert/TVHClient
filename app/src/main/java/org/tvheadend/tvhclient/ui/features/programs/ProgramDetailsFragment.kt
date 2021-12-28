@@ -39,7 +39,7 @@ class ProgramDetailsFragment : BaseFragment(), ClearSearchResultsOrPopBackStackI
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        programViewModel = ViewModelProvider(requireActivity()).get(ProgramViewModel::class.java)
+        programViewModel = ViewModelProvider(requireActivity())[ProgramViewModel::class.java]
 
         if (activity is LayoutControlInterface) {
             (activity as LayoutControlInterface).forceSingleScreenLayout()

@@ -183,7 +183,7 @@ class PlaybackActivity : AppCompatActivity() {
         playPreviousChannel.setOnClickListener { onPlayPreviousChannelButtonSelected() }
 
         Timber.d("Getting view model")
-        viewModel = ViewModelProvider(this).get(PlayerViewModel::class.java)
+        viewModel = ViewModelProvider(this)[PlayerViewModel::class.java]
         viewModel.player.setVideoSurfaceView(exoPlayerSurfaceView)
         playerView.player = viewModel.player
 

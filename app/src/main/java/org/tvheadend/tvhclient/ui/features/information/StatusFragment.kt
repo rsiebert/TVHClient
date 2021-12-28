@@ -33,7 +33,7 @@ class StatusFragment : BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        statusViewModel = ViewModelProvider(requireActivity()).get(StatusViewModel::class.java)
+        statusViewModel = ViewModelProvider(requireActivity())[StatusViewModel::class.java]
 
         if (activity is LayoutControlInterface) {
             (activity as LayoutControlInterface).forceSingleScreenLayout()
@@ -122,7 +122,7 @@ class StatusFragment : BaseFragment() {
         })
 
         // Get the programs that are currently being recorded
-        val recordingViewModel = ViewModelProvider(this).get(RecordingViewModel::class.java)
+        val recordingViewModel = ViewModelProvider(this)[RecordingViewModel::class.java]
         recordingViewModel.scheduledRecordings.observe(viewLifecycleOwner,  { recordings ->
             if (recordings != null) {
                 val currentRecText = StringBuilder()

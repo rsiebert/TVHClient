@@ -4,7 +4,6 @@ package org.tvheadend.tvhclient.ui.common
 import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.net.Uri
 import android.view.Menu
 import androidx.core.view.children

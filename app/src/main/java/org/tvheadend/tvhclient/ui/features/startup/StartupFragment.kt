@@ -34,8 +34,8 @@ class StartupFragment : Fragment(), HideNavigationDrawerInterface {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        startupViewModel = ViewModelProvider(requireActivity()).get(StartupViewModel::class.java)
-        baseViewModel = ViewModelProvider(requireActivity()).get(BaseViewModel::class.java)
+        startupViewModel = ViewModelProvider(requireActivity())[StartupViewModel::class.java]
+        baseViewModel = ViewModelProvider(requireActivity())[BaseViewModel::class.java]
 
         if (activity is LayoutControlInterface) {
             (activity as LayoutControlInterface).forceSingleScreenLayout()

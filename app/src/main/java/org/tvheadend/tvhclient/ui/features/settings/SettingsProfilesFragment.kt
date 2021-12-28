@@ -23,7 +23,7 @@ class SettingsProfilesFragment : PreferenceFragmentCompat() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        settingsViewModel = ViewModelProvider(activity as SettingsActivity).get(SettingsViewModel::class.java)
+        settingsViewModel = ViewModelProvider(activity as SettingsActivity)[SettingsViewModel::class.java]
 
         val toolbarInterface = (activity as ToolbarInterface)
         toolbarInterface.setTitle(getString(R.string.pref_profiles))

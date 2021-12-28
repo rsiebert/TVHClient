@@ -3,8 +3,6 @@ package org.tvheadend.tvhclient.ui.features.playback.external
 import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
-import android.content.pm.ResolveInfo
 import android.net.Uri
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
@@ -31,7 +29,7 @@ abstract class BasePlaybackActivity : AppCompatActivity() {
 
         binding.status.setText(R.string.connecting_to_server)
 
-        viewModel = ViewModelProvider(this).get(ExternalPlayerViewModel::class.java)
+        viewModel = ViewModelProvider(this)[ExternalPlayerViewModel::class.java]
 
         viewModel.isConnected.observe(this,  { isConnected ->
             if (isConnected) {

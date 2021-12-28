@@ -34,7 +34,7 @@ class SeriesRecordingListFragment : BaseFragment(), RecyclerViewClickInterface, 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        seriesRecordingViewModel = ViewModelProvider(requireActivity()).get(SeriesRecordingViewModel::class.java)
+        seriesRecordingViewModel = ViewModelProvider(requireActivity())[SeriesRecordingViewModel::class.java]
 
         arguments?.let {
             seriesRecordingViewModel.selectedListPosition = it.getInt("listPosition")

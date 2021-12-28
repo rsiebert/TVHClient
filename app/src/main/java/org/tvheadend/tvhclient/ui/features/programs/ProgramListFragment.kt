@@ -41,7 +41,7 @@ class ProgramListFragment : BaseFragment(), RecyclerViewClickInterface, LastProg
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        programViewModel = ViewModelProvider(requireActivity()).get(ProgramViewModel::class.java)
+        programViewModel = ViewModelProvider(requireActivity())[ProgramViewModel::class.java]
 
         arguments?.let {
             programViewModel.channelId = it.getInt("channelId", 0)

@@ -30,7 +30,7 @@ class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceClic
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         PreferenceManager.setDefaultValues(activity, R.xml.preferences, false)
-        settingsViewModel = ViewModelProvider(activity as SettingsActivity).get(SettingsViewModel::class.java)
+        settingsViewModel = ViewModelProvider(activity as SettingsActivity)[SettingsViewModel::class.java]
 
         (activity as ToolbarInterface).let {
             it.setTitle(getString(R.string.settings))

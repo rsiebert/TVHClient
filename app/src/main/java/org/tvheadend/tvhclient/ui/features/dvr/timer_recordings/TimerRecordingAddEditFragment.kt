@@ -34,7 +34,7 @@ class TimerRecordingAddEditFragment : BaseFragment(), BackPressedInterface, Reco
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        timerRecordingViewModel = ViewModelProvider(requireActivity()).get(TimerRecordingViewModel::class.java)
+        timerRecordingViewModel = ViewModelProvider(requireActivity())[TimerRecordingViewModel::class.java]
 
         if (activity is LayoutControlInterface) {
            (activity as LayoutControlInterface).forceSingleScreenLayout()

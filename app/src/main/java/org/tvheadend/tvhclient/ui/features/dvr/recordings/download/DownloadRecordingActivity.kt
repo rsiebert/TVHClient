@@ -55,7 +55,7 @@ class DownloadRecordingActivity : BasePlaybackActivity() {
         val downloadDirectory: String = if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
             Timber.d("Android API version is ${Build.VERSION.SDK_INT}, loading download folder from preference")
             val path = PreferenceManager.getDefaultSharedPreferences(this).getString("download_directory", Environment.DIRECTORY_DOWNLOADS)
-                    ?: Environment.DIRECTORY_DOWNLOADS
+                ?: Environment.DIRECTORY_DOWNLOADS
             @Suppress("DEPRECATION")
             Environment.getExternalStorageDirectory().absolutePath + path
         } else {
@@ -80,10 +80,10 @@ class DownloadRecordingActivity : BasePlaybackActivity() {
 
         Timber.d("Download recording from serverUrl '$downloadUrl' to $downloadDirectory/$recordingTitle")
         val request = DownloadManager.Request(Uri.parse(downloadUrl))
-                .addRequestHeader("Authorization", credentials)
-                .setTitle(recording.title)
-                .setDescription(recording.description)
-                .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
+            .addRequestHeader("Authorization", credentials)
+            .setTitle(recording.title)
+            .setDescription(recording.description)
+            .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
 
         try {
             Timber.d("Adding download directory to the request")
@@ -154,10 +154,13 @@ class DownloadRecordingActivity : BasePlaybackActivity() {
         if (cursor != null && cursor.moveToFirst()) {
 
             if (cursor.columnCount > 0
-                    && cursor.getColumnIndex(DownloadManager.COLUMN_STATUS) != -1
-                    && cursor.getColumnIndex(DownloadManager.COLUMN_REASON) != -1) {
-                status = cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_STATUS))
-                reason = cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_REASON))
+                && cursor.getColumnIndex(DownloadManager.COLUMN_STATUS) != -1
+                && cursor.getColumnIndex(DownloadManager.COLUMN_REASON) != -1
+            ) {
+                val columnStatus = cursor.getColumnIndex(DownloadManager.COLUMN_STATUS)
+                val columnReason = cursor.getColumnIndex(DownloadManager.COLUMN_REASON)
+                status = cursor.getInt(columnStatus)
+                reason = cursor.getInt(columnReason)
             }
 
             when (status) {

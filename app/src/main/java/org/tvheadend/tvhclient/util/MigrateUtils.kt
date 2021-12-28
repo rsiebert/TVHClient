@@ -227,16 +227,27 @@ class MigrateUtils(val context: Context, val appRepository: AppRepository, val s
                     it.moveToFirst()
                     do {
                         val connection = Connection()
-                        connection.name = it.getString(it.getColumnIndex("name"))
-                        connection.hostname = it.getString(it.getColumnIndex("address"))
-                        connection.port = it.getInt(it.getColumnIndex("port"))
-                        connection.username = it.getString(it.getColumnIndex("username"))
-                        connection.password = it.getString(it.getColumnIndex("password"))
-                        connection.isActive = it.getInt(it.getColumnIndex("selected")) > 0
-                        connection.streamingPort = it.getInt(it.getColumnIndex("streaming_port"))
-                        connection.wolMacAddress = it.getString(it.getColumnIndex("wol_address"))
-                        connection.wolPort = it.getInt(it.getColumnIndex("wol_port"))
-                        connection.isWolUseBroadcast = it.getInt(it.getColumnIndex("wol_broadcast")) > 0
+                        val name = it.getColumnIndex("name")
+                        val address = it.getColumnIndex("address")
+                        val port = it.getColumnIndex("port")
+                        val username = it.getColumnIndex("username")
+                        val password = it.getColumnIndex("password")
+                        val selected = it.getColumnIndex("selected")
+                        val streamingPort = it.getColumnIndex("streaming_port")
+                        val wolAddress = it.getColumnIndex("wol_address")
+                        val wolPort = it.getColumnIndex("wol_port")
+                        val wolBroadcast = it.getColumnIndex("wol_broadcast")
+
+                        connection.name = it.getString(name)
+                        connection.hostname = it.getString(address)
+                        connection.port = it.getInt(port)
+                        connection.username = it.getString(username)
+                        connection.password = it.getString(password)
+                        connection.isActive = it.getInt(selected) > 0
+                        connection.streamingPort = it.getInt(streamingPort)
+                        connection.wolMacAddress = it.getString(wolAddress)
+                        connection.wolPort = it.getInt(wolPort)
+                        connection.isWolUseBroadcast = it.getInt(wolBroadcast) > 0
                         connection.isWolEnabled = !connection.wolMacAddress.isNullOrEmpty()
                         connection.lastUpdate = 0
                         connection.isSyncRequired = true

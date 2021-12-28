@@ -46,7 +46,7 @@ class SettingsAdvancedFragment : PreferenceFragmentCompat(), Preference.OnPrefer
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        settingsViewModel = ViewModelProvider(activity as SettingsActivity).get(SettingsViewModel::class.java)
+        settingsViewModel = ViewModelProvider(activity as SettingsActivity)[SettingsViewModel::class.java]
 
         (activity as ToolbarInterface).setTitle(getString(R.string.pref_advanced_settings))
 

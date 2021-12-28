@@ -63,7 +63,7 @@ class EpgViewPagerFragment : Fragment(), EpgScrollInterface {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         Timber.d("Initializing")
-        epgViewModel = ViewModelProvider(requireActivity()).get(EpgViewModel::class.java)
+        epgViewModel = ViewModelProvider(requireActivity())[EpgViewModel::class.java]
 
         // Required to show the vertical current time indication
         constraintSet = ConstraintSet()

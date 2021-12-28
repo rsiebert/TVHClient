@@ -27,7 +27,7 @@ class TimerRecordingDetailsFragment : BaseFragment(), RecordingRemovedInterface,
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        timerRecordingViewModel = ViewModelProvider(requireActivity()).get(TimerRecordingViewModel::class.java)
+        timerRecordingViewModel = ViewModelProvider(requireActivity())[TimerRecordingViewModel::class.java]
 
         if (!isDualPane) {
             toolbarInterface.setTitle(getString(R.string.details))

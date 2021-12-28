@@ -27,7 +27,7 @@ class SeriesRecordingDetailsFragment : BaseFragment(), RecordingRemovedInterface
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        seriesRecordingViewModel = ViewModelProvider(requireActivity()).get(SeriesRecordingViewModel::class.java)
+        seriesRecordingViewModel = ViewModelProvider(requireActivity())[SeriesRecordingViewModel::class.java]
 
         if (!isDualPane) {
             toolbarInterface.setTitle(getString(R.string.details))

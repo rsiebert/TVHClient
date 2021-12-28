@@ -105,9 +105,9 @@ class MainActivity : AppCompatActivity(), ToolbarInterface, LayoutControlInterfa
         setSupportActionBar(toolbar)
 
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
-        baseViewModel = ViewModelProvider(this).get(BaseViewModel::class.java)
-        navigationViewModel = ViewModelProvider(this).get(NavigationViewModel::class.java)
-        statusViewModel = ViewModelProvider(this).get(StatusViewModel::class.java)
+        baseViewModel = ViewModelProvider(this)[BaseViewModel::class.java]
+        navigationViewModel = ViewModelProvider(this)[NavigationViewModel::class.java]
+        statusViewModel = ViewModelProvider(this)[StatusViewModel::class.java]
 
         snackbarMessageReceiver = SnackbarMessageReceiver(baseViewModel)
         networkStatusReceiver = NetworkStatusReceiver(baseViewModel)
