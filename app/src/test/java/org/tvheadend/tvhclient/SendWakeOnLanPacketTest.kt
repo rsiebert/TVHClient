@@ -33,7 +33,7 @@ class SendWakeOnLanPacketTest {
     @Test
     fun sendingWolPacketSuccess() {
         connection.wolMacAddress = "10-62-E5-EC-A5-6A"
-        connection.serverUrl = "http://www.google.de"
+        connection.serverUrl = "https://www.google.de"
         connection.isWolUseBroadcast = false
 
         val status = sendWakeOnLanPacket.prepareAndSend()
@@ -43,7 +43,7 @@ class SendWakeOnLanPacketTest {
     @Test
     fun sendingWolPacketAsBroadcastSuccess() {
         connection.wolMacAddress = "10-62-E5-EC-A5-6A"
-        connection.serverUrl = "http://www.google.de"
+        connection.serverUrl = "https://www.google.de"
         connection.isWolUseBroadcast = true
 
         val status = sendWakeOnLanPacket.prepareAndSend()
