@@ -2,11 +2,17 @@
 
 buildscript {
     ext {
-        kotlin_version = '1.6.10'
+        kotlinVersion = '1.6.10'
         compileSdkVersion = 31
         minSdkVersion = 16
         targetSdkVersion = 30
         javaCompatibility = '11'
+
+        timberVersion = '5.0.1'
+        appCompatVersion = '1.4.0'
+        daggerVersion = '2.40.5'
+        coreKtxVersion = "1.7.0"
+        prefKtxVersion = "1.1.1"
     }
 
     repositories {
@@ -16,11 +22,11 @@ buildscript {
 
     dependencies {
         classpath 'com.android.tools.build:gradle:7.0.4'
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
         classpath 'com.google.gms:google-services:4.3.10'
         classpath 'com.google.firebase:firebase-crashlytics-gradle:2.8.1'
         classpath 'com.google.firebase:perf-plugin:1.4.0'
-        classpath 'com.novoda:bintray-release:0.9.1'
+        //classpath 'com.novoda:bintray-release:0.9.1'
 
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
@@ -36,7 +42,7 @@ allprojects {
     group = 'org.tvheadend.tvhclient'
 }
 
-apply from: 'javadoc_combined.gradle'
+//apply from: 'javadoc_combined.gradle'
 
 task clean(type: Delete) {
     delete rootProject.buildDir
