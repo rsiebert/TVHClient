@@ -48,6 +48,7 @@ open class WebViewFragment : Fragment(), FileContentsLoadedInterface {
         // Make the background transparent to remove flickering. This avoids seeing
         // the default theme background color before the stylesheets are loaded.
         webView?.setBackgroundColor(Color.argb(0, 0, 0, 0))
+        webView?.settings?.javaScriptEnabled = false
         webView?.gone()
 
         setHasOptionsMenu(true)
@@ -55,12 +56,17 @@ open class WebViewFragment : Fragment(), FileContentsLoadedInterface {
 
     override fun onResume() {
         super.onResume()
+        webView?.onResume()
+        webView?.resumeTimers()
+        webView?.loadUrl("about:blank")
         fileContentLoader.start(website)
     }
 
     override fun onPause() {
         super.onPause()
         fileContentLoader.stop()
+        webView?.onPause()
+        webView?.pauseTimers()
     }
 
     override fun onPrepareOptionsMenu(menu: Menu) {
