@@ -601,7 +601,7 @@ fun searchTitleOnImdbWebsite(context: Context, title: String?): Boolean {
         try {
             context.startActivity(intent)
         } catch  (ex: ActivityNotFoundException) {
-            intent.data = Uri.parse("http://www.imdb.com/find?s=tt&q=$url")
+            intent.data = Uri.parse("https://www.imdb.com/find?s=tt&q=$url")
             context.startActivity(intent)
         }
     } catch (e: UnsupportedEncodingException) {
