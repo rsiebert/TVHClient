@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.SharedPreferences
 import androidx.multidex.MultiDexApplication
 import com.android.billingclient.api.Purchase
-import com.facebook.stetho.Stetho
 import com.google.android.gms.cast.framework.CastOptions
 import com.google.android.gms.cast.framework.OptionsProvider
 import com.google.android.gms.cast.framework.SessionProvider
@@ -61,15 +60,6 @@ class MainApplication : MultiDexApplication(), OptionsProvider, BillingUpdatesLi
         component.inject(this)
 
         instance = this
-
-        // Enable the database debugging bridge in debug mode to access
-        // the database contents and other resources via the chrome browser
-        if (BuildConfig.DEBUG) {
-            Stetho.initialize(Stetho.newInitializerBuilder(this)
-                    .enableDumpapp(Stetho.defaultDumperPluginsProvider(this))
-                    .enableWebKitInspector(Stetho.defaultInspectorModulesProvider(this))
-                    .build())
-        }
 
         fireBaseAnalytics = FirebaseAnalytics.getInstance(this)
 
