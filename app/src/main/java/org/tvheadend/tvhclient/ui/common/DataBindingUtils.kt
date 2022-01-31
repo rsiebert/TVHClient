@@ -571,14 +571,16 @@ fun setLocalizedDate(view: TextView, date: Long) {
 
     var localizedDate = ""
 
-    if (DateUtils.isToday(date)) {
+    var dateDiff = date/ONE_DAY - System.currentTimeMillis()/ONE_DAY
+
+    if (dateDiff == 0) {
         // Show the string today
         localizedDate = view.context.getString(R.string.today)
 
-    } else if (date < System.currentTimeMillis() + ONE_DAY && date > System.currentTimeMillis()) {
+    } else if (dateDiff == 1) {
         localizedDate = view.context.getString(R.string.tomorrow)
 
-    } else if (date < System.currentTimeMillis() + SIX_DAYS && date > System.currentTimeMillis() - TWO_DAYS) {
+    } else if (dateDiff < 7 && dateDiff > 2) {
         val prefs = PreferenceManager.getDefaultSharedPreferences(view.context)
         localizedDate = if (prefs.getBoolean("localized_date_time_format_enabled", false)) {
             // Show the date as defined with the currently active locale.
@@ -586,6 +588,11 @@ fun setLocalizedDate(view: TextView, date: Long) {
             val df = java.text.DateFormat.getDateInstance(java.text.DateFormat.SHORT, getLocale(view.context))
             df.format(date)
         } else {
+            // Show the date using the default format like 31.07.2013
+            val sdf = SimpleDateFormat("dd.MM.yyyy", Locale.US)
+            sdf.format(date)
+        }
+    } else {
             // Show the date using the default format like 31.07.2013
             val sdf = SimpleDateFormat("dd.MM.yyyy", Locale.US)
             sdf.format(date)
