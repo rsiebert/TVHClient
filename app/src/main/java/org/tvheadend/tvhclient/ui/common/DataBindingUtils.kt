@@ -582,7 +582,7 @@ fun setLocalizedDate(view: TextView, date: Long) {
             val sdf = SimpleDateFormat("EEEE", getLocale(view.context))
             localizedDate = sdf.format(date)
         }
-        default -> {
+        else -> {
             val prefs = PreferenceManager.getDefaultSharedPreferences(view.context)
             localizedDate = if (prefs.getBoolean("localized_date_time_format_enabled", false)) {
                 // Show the date as defined with the currently active locale.
