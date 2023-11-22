@@ -573,7 +573,7 @@ fun setLocalizedDate(view: TextView, date: Long) {
 
     var dateDiff = date/ONE_DAY - System.currentTimeMillis()/ONE_DAY
 
-    when (dateDiff) {
+    when (dateDiff.toInt()) {
         0 -> localizedDate = view.context.getString(R.string.today)
         1 -> localizedDate = view.context.getString(R.string.tomorrow)
         -1 -> localizedDate = view.context.getString(R.string.yesterday)
