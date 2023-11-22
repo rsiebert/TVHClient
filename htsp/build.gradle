@@ -25,6 +25,7 @@ android {
         targetCompatibility = rootProject.ext.javaCompatibility
     }
     kotlinOptions.jvmTarget = rootProject.ext.javaCompatibility.toString()
+    namespace 'org.tvheadend.htsp'
 }
 
 dependencies {

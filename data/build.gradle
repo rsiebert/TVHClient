@@ -34,6 +34,7 @@ android {
         targetCompatibility = rootProject.ext.javaCompatibility
     }
     kotlinOptions.jvmTarget = rootProject.ext.javaCompatibility.toString()
+    namespace 'org.tvheadend.data'
 }
 
 dependencies {
@@ -44,7 +45,7 @@ dependencies {
     implementation "androidx.preference:preference-ktx:$prefKtxVersion"
 
     // Android Room
-    def roomVersion = '2.4.0'
+    def roomVersion = '2.6.0'
     implementation "androidx.room:room-runtime:$roomVersion"
     implementation "androidx.room:room-ktx:$roomVersion"
     kapt "androidx.room:room-compiler:$roomVersion"

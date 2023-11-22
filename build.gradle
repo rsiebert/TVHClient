@@ -2,15 +2,15 @@
 
 buildscript {
     ext {
-        kotlinVersion = '1.6.10'
-        compileSdkVersion = 31
-        minSdkVersion = 16
+        kotlinVersion = '1.8.22'
+        compileSdkVersion = 34
+        minSdkVersion = 19
         targetSdkVersion = 30
-        javaCompatibility = '11'
+        javaCompatibility = "17"
 
         timberVersion = '5.0.1'
         appCompatVersion = '1.4.0'
-        daggerVersion = '2.40.5'
+        daggerVersion = '2.48.1'
         coreKtxVersion = "1.7.0"
         prefKtxVersion = "1.1.1"
     }
@@ -21,11 +21,11 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:7.0.4'
+        classpath 'com.android.tools.build:gradle:8.1.4'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
-        classpath 'com.google.gms:google-services:4.3.10'
+        classpath 'com.google.gms:google-services:4.4.0'
         classpath 'com.google.firebase:firebase-crashlytics-gradle:2.8.1'
-        classpath 'com.google.firebase:perf-plugin:1.4.0'
+        classpath 'com.google.firebase:perf-plugin:1.4.1'
         //classpath 'com.novoda:bintray-release:0.9.1'
 
         // NOTE: Do not place your application dependencies here; they belong

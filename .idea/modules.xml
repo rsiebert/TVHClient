@@ -2,10 +2,19 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/TVHClient.iml" filepath="$PROJECT_DIR$/TVHClient.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/TVHClient.iml" filepath="$PROJECT_DIR$/.idea/modules/TVHClient.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/TVHClient.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/TVHClient.app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/TVHClient.app.androidTest.iml" filepath="$PROJECT_DIR$/.idea/modules/app/TVHClient.app.androidTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/TVHClient.app.main.iml" filepath="$PROJECT_DIR$/.idea/modules/app/TVHClient.app.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/TVHClient.app.unitTest.iml" filepath="$PROJECT_DIR$/.idea/modules/app/TVHClient.app.unitTest.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/data/TVHClient.data.iml" filepath="$PROJECT_DIR$/.idea/modules/data/TVHClient.data.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/data/TVHClient.data.androidTest.iml" filepath="$PROJECT_DIR$/.idea/modules/data/TVHClient.data.androidTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/data/TVHClient.data.main.iml" filepath="$PROJECT_DIR$/.idea/modules/data/TVHClient.data.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/data/TVHClient.data.unitTest.iml" filepath="$PROJECT_DIR$/.idea/modules/data/TVHClient.data.unitTest.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/htsp/TVHClient.htsp.iml" filepath="$PROJECT_DIR$/.idea/modules/htsp/TVHClient.htsp.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/htsp/TVHClient.htsp.androidTest.iml" filepath="$PROJECT_DIR$/.idea/modules/htsp/TVHClient.htsp.androidTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/htsp/TVHClient.htsp.main.iml" filepath="$PROJECT_DIR$/.idea/modules/htsp/TVHClient.htsp.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/htsp/TVHClient.htsp.unitTest.iml" filepath="$PROJECT_DIR$/.idea/modules/htsp/TVHClient.htsp.unitTest.iml" />
     </modules>
   </component>
 </project>
