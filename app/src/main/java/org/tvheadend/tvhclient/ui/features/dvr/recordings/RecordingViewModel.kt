@@ -7,7 +7,7 @@ import android.content.SharedPreferences
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Transformations.switchMap
+import androidx.lifecycle.switchMap
 import org.tvheadend.data.entity.Channel
 import org.tvheadend.data.entity.Recording
 import org.tvheadend.data.entity.ServerProfile
@@ -68,7 +68,7 @@ class RecordingViewModel(application: Application) : BaseViewModel(application),
             }
         }
 
-        scheduledRecordings = switchMap(ScheduledRecordingLiveData(hideDuplicateScheduledRecordings)) { value ->
+        scheduledRecordings = ScheduledRecordingLiveData(hideDuplicateScheduledRecordings).switchMap { value ->
             Timber.d("Loading scheduled recordings because the duplicate setting has changed")
             if (value == null) {
                 Timber.d("Skipping loading of scheduled recordings because the duplicate setting is not set")
@@ -76,7 +76,7 @@ class RecordingViewModel(application: Application) : BaseViewModel(application),
             }
             return@switchMap appRepository.recordingData.getScheduledRecordings(value)
         }
-        completedRecordings = switchMap(CompletedRecordingLiveData(completedRecordingSortOrder)) { value ->
+        completedRecordings = CompletedRecordingLiveData(completedRecordingSortOrder).switchMap { value ->
             if (value == null) {
                 Timber.d("Not loading of completed recordings because no recording sort order is set")
                 return@switchMap null

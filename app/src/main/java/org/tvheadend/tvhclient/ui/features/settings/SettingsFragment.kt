@@ -94,7 +94,7 @@ class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceClic
         }
     }
 
-    override fun onSharedPreferenceChanged(prefs: SharedPreferences, key: String) {
+    override fun onSharedPreferenceChanged(prefs: SharedPreferences?, key: String?) {
         Timber.d("Shared preference $key has changed")
         when (key) {
             "selected_theme" -> handlePreferenceThemeChanged()
@@ -157,7 +157,6 @@ class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceClic
         }
     }
 
-    @Suppress("DEPRECATION")
     private fun showFolderSelectionDialog(context: Context) {
         Timber.d("Showing folder selection dialog")
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {

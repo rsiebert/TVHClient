@@ -47,7 +47,7 @@ class LiveEvent<T> : MediatorLiveData<T>() {
 
         private var pending = false
 
-        override fun onChanged(t: T?) {
+        override fun onChanged(t: T) {
             if (pending) {
                 pending = false
                 observer.onChanged(t)

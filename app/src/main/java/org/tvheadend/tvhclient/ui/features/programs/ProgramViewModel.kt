@@ -5,7 +5,7 @@ import android.content.SharedPreferences
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Transformations
+import androidx.lifecycle.switchMap
 import org.tvheadend.data.entity.Program
 import org.tvheadend.data.entity.Recording
 import org.tvheadend.data.entity.ServerProfile
@@ -50,7 +50,7 @@ class ProgramViewModel(application: Application) : BaseViewModel(application), S
             }
         }
 
-        programs = Transformations.switchMap(ProgramLiveData(channelIdLiveData, selectedTimeLiveData)) { value ->
+        programs = ProgramLiveData(channelIdLiveData, selectedTimeLiveData).switchMap { value ->
             val channelId = value.first ?: 0
             val selectedTime = value.second ?: Date().time
 
@@ -61,7 +61,7 @@ class ProgramViewModel(application: Application) : BaseViewModel(application), S
             }
         }
 
-        recordings = Transformations.switchMap(RecordingLiveData(channelIdLiveData)) { value ->
+        recordings = RecordingLiveData(channelIdLiveData).switchMap { value ->
             val channelId = value ?: 0
             if (channelId == 0) {
                 return@switchMap appRepository.recordingData.getLiveDataItems()

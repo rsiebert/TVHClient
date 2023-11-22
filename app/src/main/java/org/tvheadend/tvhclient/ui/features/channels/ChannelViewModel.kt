@@ -5,7 +5,7 @@ import android.content.SharedPreferences
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Transformations
+import androidx.lifecycle.switchMap
 import org.tvheadend.data.entity.Channel
 import org.tvheadend.tvhclient.R
 import timber.log.Timber
@@ -33,7 +33,7 @@ class ChannelViewModel(application: Application) : BaseChannelViewModel(applicat
 
     init {
         val trigger = ChannelLiveData(selectedTime, channelSortOrder, selectedChannelTagIds)
-        channels = Transformations.switchMap(trigger) { value ->
+        channels = trigger.switchMap { value ->
             val time = value.first
             val sortOrder = value.second
             val tagIds = value.third

@@ -21,7 +21,7 @@ open class StartupViewModel : ViewModel() {
         connectionCount = appRepository.connectionData.getLiveDataItemCount()
         connectionLiveData = appRepository.connectionData.liveDataActiveItem
 
-        connectionStatus = Transformations.switchMap(ConnectionStatusLiveData(connectionCount, connectionLiveData)) { value ->
+        connectionStatus = ConnectionStatusLiveData(connectionCount, connectionLiveData).switchMap { value ->
             val count = value.first ?: 0
             val connection = value.second
             return@switchMap MutableLiveData(Pair(count, connection?.isActive ?: false))

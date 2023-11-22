@@ -12,7 +12,7 @@ import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Transformations
+import androidx.lifecycle.switchMap
 import org.tvheadend.data.entity.EpgChannel
 import org.tvheadend.data.entity.EpgProgram
 import org.tvheadend.tvhclient.R
@@ -100,7 +100,7 @@ class EpgViewModel(application: Application) : BaseChannelViewModel(application)
         daysOfEpgData.value = daysToShow
         hoursOfEpgDataPerScreen.value = hoursToShow
 
-        epgChannels = Transformations.switchMap(EpgChannelLiveData(channelSortOrder, selectedChannelTagIds)) { value ->
+        epgChannels = EpgChannelLiveData(channelSortOrder, selectedChannelTagIds).switchMap { value ->
             val sortOrder = value.first
             val tagIds = value.second
 

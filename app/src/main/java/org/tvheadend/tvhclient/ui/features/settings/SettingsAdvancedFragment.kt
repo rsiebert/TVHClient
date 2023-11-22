@@ -272,17 +272,21 @@ class SettingsAdvancedFragment : PreferenceFragmentCompat(), Preference.OnPrefer
         }
     }
 
-    override fun onSharedPreferenceChanged(prefs: SharedPreferences, key: String) {
+    override fun onSharedPreferenceChanged(prefs: SharedPreferences?, key: String?) {
         Timber.d("Preference $key has changed")
         when (key) {
             "notify_running_recording_count_enabled" -> {
-                if (!prefs.getBoolean(key, resources.getBoolean(R.bool.pref_default_notify_running_recording_count_enabled))) {
-                    (activity?.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager).cancel(1)
+                if (prefs != null) {
+                    if (!prefs.getBoolean(key, resources.getBoolean(R.bool.pref_default_notify_running_recording_count_enabled))) {
+                        (activity?.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager).cancel(1)
+                    }
                 }
             }
             "notify_low_storage_space_enabled" -> {
-                if (!prefs.getBoolean(key, resources.getBoolean(R.bool.pref_default_notify_low_storage_space_enabled))) {
-                    (activity?.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager).cancel(2)
+                if (prefs != null) {
+                    if (!prefs.getBoolean(key, resources.getBoolean(R.bool.pref_default_notify_low_storage_space_enabled))) {
+                        (activity?.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager).cancel(2)
+                    }
                 }
             }
         }
