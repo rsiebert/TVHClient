@@ -49,7 +49,7 @@ class StartupFragment : Fragment(), HideNavigationDrawerInterface {
         loadingDone = false
 
         Timber.d("Observing connection status")
-        startupViewModel.connectionStatus.observe(viewLifecycleOwner,  { status ->
+        startupViewModel.connectionStatus.observe(viewLifecycleOwner) { status ->
             Timber.d("Received connection status from view model")
 
             if (status != null) {
@@ -65,7 +65,7 @@ class StartupFragment : Fragment(), HideNavigationDrawerInterface {
                 binding.addConnectionButton.gone()
                 binding.listConnectionsButton.gone()
             }
-        })
+        }
     }
 
     private fun showStartupStatus() {

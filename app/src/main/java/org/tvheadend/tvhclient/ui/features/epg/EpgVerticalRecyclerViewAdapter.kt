@@ -84,11 +84,11 @@ internal class EpgVerticalRecyclerViewAdapter(private val activity: FragmentActi
                 binding.noPrograms.visible()
             }
 
-            epgViewModel.recordings.observe(activity, { recordings ->
+            epgViewModel.recordings.observe(activity) { recordings ->
                 if (recordings != null) {
                     recyclerViewAdapter.addRecordings(recordings)
                 }
-            })
+            }
         }
 
         internal class CustomHorizontalLayoutManager(context: Context) : LinearLayoutManager(context, HORIZONTAL, false) {

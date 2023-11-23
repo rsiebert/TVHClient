@@ -12,10 +12,10 @@ class ScheduledRecordingListFragment : RecordingListFragment() {
         super.onViewCreated(view, savedInstanceState)
 
         Timber.d("Observing recordings")
-        recordingViewModel.scheduledRecordings.observe(viewLifecycleOwner,  { recordings ->
+        recordingViewModel.scheduledRecordings.observe(viewLifecycleOwner) { recordings ->
             Timber.d("View model returned ${recordings.size} recordings")
             addRecordingsAndUpdateUI(recordings)
-        })
+        }
     }
 
     override fun onPrepareOptionsMenu(menu: Menu) {

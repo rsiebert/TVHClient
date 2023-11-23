@@ -1,5 +1,6 @@
 package org.tvheadend.tvhclient.ui.features.channels
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
 import android.os.Handler
@@ -69,23 +70,23 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickInterface, ChannelT
         binding.searchProgress.visibleOrGone(baseViewModel.isSearchActive)
 
         Timber.d("Observing selected time")
-        channelViewModel.selectedTime.observe(viewLifecycleOwner,  { time ->
+        channelViewModel.selectedTime.observe(viewLifecycleOwner) { time ->
             Timber.d("View model returned selected time $time")
             if (time != null) {
                 selectedTime = time
             }
-        })
+        }
 
         Timber.d("Observing channel tags")
-        channelViewModel.channelTags.observe(viewLifecycleOwner,  { tags ->
+        channelViewModel.channelTags.observe(viewLifecycleOwner) { tags ->
             if (tags != null) {
                 Timber.d("View model returned ${tags.size} channel tags")
                 channelTags = tags
             }
-        })
+        }
 
         Timber.d("Observing channels")
-        channelViewModel.channels.observe(viewLifecycleOwner,  { channels ->
+        channelViewModel.channels.observe(viewLifecycleOwner) { channels ->
             if (channels != null) {
                 Timber.d("View model returned ${channels.size} channels")
                 recyclerViewAdapter.addItems(channels.toMutableList())
@@ -100,11 +101,11 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickInterface, ChannelT
             if (isDualPane && recyclerViewAdapter.itemCount > 0) {
                 showProgramListOfSelectedChannelInDualPane(channelViewModel.selectedListPosition)
             }
-        })
+        }
 
-        channelViewModel.channelCount.observe(viewLifecycleOwner,  { count ->
+        channelViewModel.channelCount.observe(viewLifecycleOwner) { count ->
             channelCount = count
-        })
+        }
 
         // Initiate a timer that will update the view model data every minute
         // so that the progress bars will be displayed correctly
@@ -124,7 +125,7 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickInterface, ChannelT
         // so the recording status of the particular program can be updated. This is required
         // because the programs are not updated automatically when recordings change.
         Timber.d("Observing recordings")
-        channelViewModel.recordings.observe(viewLifecycleOwner,  { recordings ->
+        channelViewModel.recordings.observe(viewLifecycleOwner) { recordings ->
             if (recordings != null) {
                 Timber.d("View model returned ${recordings.size} recordings")
                 recyclerViewAdapter.addRecordings(recordings)
@@ -138,12 +139,12 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickInterface, ChannelT
                     }
                 }
             }
-        })
+        }
     }
 
     private fun observeSearchQuery() {
         Timber.d("Observing search query")
-        baseViewModel.searchQueryLiveData.observe(viewLifecycleOwner,  { query ->
+        baseViewModel.searchQueryLiveData.observe(viewLifecycleOwner) { query ->
             if (query.isNotEmpty()) {
                 Timber.d("View model returned search query '$query'")
                 onSearchRequested(query)
@@ -151,7 +152,7 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickInterface, ChannelT
                 Timber.d("View model returned empty search query")
                 onSearchResultsCleared()
             }
-        })
+        }
     }
 
     private fun showStatusInToolbar() {
@@ -232,6 +233,7 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickInterface, ChannelT
         }.also { dialogDismissHandler.postDelayed(it, 60000) }
     }
 
+    @SuppressLint("CheckResult")
     private fun showSearchForChannelsDialog(context: Context): Boolean {
         MaterialDialog(context).show {
             title(res = R.string.search_for_channels)

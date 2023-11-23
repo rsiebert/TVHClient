@@ -38,10 +38,10 @@ class TimerRecordingDetailsFragment : BaseFragment(), RecordingRemovedInterface,
             timerRecordingViewModel.currentIdLiveData.value = it.getString("id", "")
         }
 
-        timerRecordingViewModel.recordingLiveData.observe(viewLifecycleOwner,  {
+        timerRecordingViewModel.recordingLiveData.observe(viewLifecycleOwner) {
             recording = it
             showRecordingDetails()
-        })
+        }
     }
 
     private fun showRecordingDetails() {

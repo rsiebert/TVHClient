@@ -188,7 +188,7 @@ class PlaybackActivity : AppCompatActivity() {
         playerView.player = viewModel.player
 
         Timber.d("Observing authentication status")
-        viewModel.isConnected.observe(this, { isConnected ->
+        viewModel.isConnected.observe(this) { isConnected ->
             if (isConnected) {
                 if (!viewModel.isPlaybackProfileSelected(intent.extras)) {
                     Timber.d("No playback profile was selected")
@@ -202,28 +202,30 @@ class PlaybackActivity : AppCompatActivity() {
                 Timber.d("Not connected to server")
                 playerStatus.setText(R.string.connection_failed)
             }
-        })
+        }
 
         Timber.d("Observing video aspect ratio value")
-        viewModel.videoAspectRatio.observe(this, { ratio ->
+        viewModel.videoAspectRatio.observe(this) { ratio ->
             Timber.d("Received video aspect ratio value")
             selectedVideoAspectRatio = ratio
             updateVideoAspectRatio(ratio)
-        })
+        }
 
         Timber.d("Observing player playback state")
-        viewModel.playerState.observe(this, { state ->
+        viewModel.playerState.observe(this) { state ->
             Timber.d("Received player playback state $state")
             when (state) {
                 Player.STATE_IDLE -> {
                     playerStatus.visible()
                     exoPlayerSurfaceView.gone()
                 }
+
                 Player.STATE_BUFFERING -> {
                     playerStatus.visible()
                     exoPlayerSurfaceView.gone()
                     playerStatus.setText(R.string.player_is_loading_more_data)
                 }
+
                 Player.STATE_READY, Player.STATE_ENDED -> {
                     playerStatus.gone()
                     exoPlayerSurfaceView.visible()
@@ -234,66 +236,66 @@ class PlaybackActivity : AppCompatActivity() {
                     playerSettings.visible()
                 }
             }
-        })
+        }
 
         Timber.d("Observing player is playing state")
-        viewModel.playerIsPlaying.observe(this, { isPlaying ->
+        viewModel.playerIsPlaying.observe(this) { isPlaying ->
             Timber.d("Received player is playing $isPlaying")
             playerPlay.visibleOrInvisible(!isPlaying)
             playerPause.visibleOrInvisible(isPlaying)
             playerForward.visibleOrInvisible(isPlaying && timeshiftSupported)
             playerRewind.visibleOrInvisible(isPlaying && timeshiftSupported)
-        })
+        }
 
         Timber.d("Observing live TV playing")
-        viewModel.liveTvIsPlaying.observe(this, { isPlaying ->
+        viewModel.liveTvIsPlaying.observe(this) { isPlaying ->
             Timber.d("Received live TV is playing $isPlaying")
             playPreviousChannel.visibleOrGone(isPlaying)
             playNextChannel.visibleOrGone(isPlaying)
-        })
+        }
 
         Timber.d("Observing playback information")
-        viewModel.channelIcon.observe(this, { icon ->
+        viewModel.channelIcon.observe(this) { icon ->
             Timber.d("Received channel icon $icon")
             Picasso.get()
-                    .load(getIconUrl(this, icon))
-                    .into(channelIcon, object : Callback {
-                        override fun onSuccess() {
-                            channelName.gone()
-                            channelIcon.visible()
-                        }
+                .load(getIconUrl(this, icon))
+                .into(channelIcon, object : Callback {
+                    override fun onSuccess() {
+                        channelName.gone()
+                        channelIcon.visible()
+                    }
 
-                        override fun onError(e: Exception) {
-                            channelName.visible()
-                            channelIcon.gone()
-                        }
-                    })
-        })
+                    override fun onError(e: Exception) {
+                        channelName.visible()
+                        channelIcon.gone()
+                    }
+                })
+        }
 
-        viewModel.channelName.observe(this, { name ->
+        viewModel.channelName.observe(this) { name ->
             Timber.d("Received channel name $name")
             channelName.text = if (!name.isNullOrEmpty()) name else getString(R.string.all_channels)
-        })
-        viewModel.title.observe(this, { title ->
+        }
+        viewModel.title.observe(this) { title ->
             Timber.d("Received title $title")
             setOptionalDescriptionText(programTitle, title)
-        })
-        viewModel.subtitle.observe(this, { subtitle ->
+        }
+        viewModel.subtitle.observe(this) { subtitle ->
             Timber.d("Received subtitle $subtitle")
             setOptionalDescriptionText(programSubtitle, subtitle)
             programSubtitle.visibleOrGone(subtitle.isNotEmpty())
-        })
-        viewModel.nextTitle.observe(this, { nextTitle ->
+        }
+        viewModel.nextTitle.observe(this) { nextTitle ->
             Timber.d("Received next title $nextTitle")
             setOptionalDescriptionText(nextProgramTitle, nextTitle)
             nextProgramTitle.visibleOrGone(nextTitle.isNotEmpty())
-        })
-        viewModel.elapsedTime.observe(this, { time ->
+        }
+        viewModel.elapsedTime.observe(this) { time ->
             elapsedTime.text = time
-        })
-        viewModel.remainingTime.observe(this, { time ->
+        }
+        viewModel.remainingTime.observe(this) { time ->
             remainingTime.text = time
-        })
+        }
     }
 
     override fun attachBaseContext(context: Context) {

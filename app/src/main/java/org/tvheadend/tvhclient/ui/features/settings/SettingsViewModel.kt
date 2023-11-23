@@ -14,7 +14,6 @@ import org.tvheadend.data.entity.Connection
 import org.tvheadend.data.entity.ServerProfile
 import org.tvheadend.data.entity.ServerStatus
 import org.tvheadend.data.source.MiscDataSource
-import org.tvheadend.tvhclient.BuildConfig
 import org.tvheadend.tvhclient.MainApplication
 import org.tvheadend.tvhclient.MainRepository
 import org.tvheadend.tvhclient.R

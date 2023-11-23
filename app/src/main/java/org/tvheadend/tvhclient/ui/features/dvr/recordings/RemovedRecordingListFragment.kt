@@ -11,10 +11,10 @@ class RemovedRecordingListFragment : RecordingListFragment() {
         super.onViewCreated(view, savedInstanceState)
 
         Timber.d("Observing recordings")
-        recordingViewModel.removedRecordings.observe(viewLifecycleOwner,  { recordings ->
+        recordingViewModel.removedRecordings.observe(viewLifecycleOwner) { recordings ->
             Timber.d("View model returned ${recordings.size} recordings")
             addRecordingsAndUpdateUI(recordings)
-        })
+        }
     }
 
     override fun getQueryHint(): String {

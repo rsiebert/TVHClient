@@ -31,7 +31,7 @@ abstract class BasePlaybackActivity : AppCompatActivity() {
 
         viewModel = ViewModelProvider(this)[ExternalPlayerViewModel::class.java]
 
-        viewModel.isConnected.observe(this,  { isConnected ->
+        viewModel.isConnected.observe(this) { isConnected ->
             if (isConnected) {
                 Timber.d("Received live data, connected to server, requesting ticket")
                 binding.status.setText(R.string.requesting_playback_information)
@@ -41,16 +41,16 @@ abstract class BasePlaybackActivity : AppCompatActivity() {
                 binding.progressBar.gone()
                 binding.status.setText(R.string.connection_failed)
             }
-        })
+        }
 
-        viewModel.isTicketReceived.observe(this,  { isTicketReceived ->
+        viewModel.isTicketReceived.observe(this) { isTicketReceived ->
             Timber.d("Received ticket $isTicketReceived")
             if (isTicketReceived) {
                 binding.progressBar.gone()
                 binding.status.text = getString(R.string.connected_to_server)
                 onTicketReceived()
             }
-        })
+        }
     }
 
     override fun attachBaseContext(context: Context) {

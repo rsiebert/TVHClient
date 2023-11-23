@@ -20,11 +20,11 @@ class SettingsAddConnectionFragment : SettingsConnectionBaseFragment() {
             settingsViewModel.connectionToEdit = Connection()
         }
 
-        settingsViewModel.connectionCountLiveData.observe(viewLifecycleOwner,  { count ->
+        settingsViewModel.connectionCountLiveData.observe(viewLifecycleOwner) { count ->
             Timber.d("Received live data, connection count is $count, setting this one as the active")
             activeEnabledPreference.isChecked = (count == 0)
             settingsViewModel.connectionToEdit.isActive = (count == 0)
-        })
+        }
     }
 
     override fun save() {

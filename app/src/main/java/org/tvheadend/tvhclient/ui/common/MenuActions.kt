@@ -1,6 +1,7 @@
 package org.tvheadend.tvhclient.ui.common
 
 
+import android.annotation.SuppressLint
 import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
@@ -319,8 +320,8 @@ private fun removeSelectedSeriesRecording(context: Context, recording: SeriesRec
 
 fun showConfirmationToRemoveSelectedTimerRecording(context: Context, recording: TimerRecording, callback: RecordingRemovedInterface?): Boolean {
     val recordingName = recording.name ?: ""
-    val name = if (recordingName.isNotEmpty()) recordingName else ""
-    val displayTitle = if (name.isNotEmpty()) name else recording.title ?: ""
+    val name = recordingName.ifEmpty { "" }
+    val displayTitle = name.ifEmpty { recording.title ?: "" }
     Timber.d("Removing timer recording $displayTitle")
 
     MaterialDialog(context).show {
@@ -436,6 +437,7 @@ private fun removeAllTimerRecordings(context: Context, items: List<TimerRecordin
     }.start()
 }
 
+@SuppressLint("CheckResult")
 fun recordSelectedProgramWithCustomProfile(context: Context, eventId: Int, channelId: Int, serverProfileNames: Array<String>, serverProfile: ServerProfile?): Boolean {
     // Get the selected recording profile to highlight the
     // correct item in the list of the selection dialog

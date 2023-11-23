@@ -54,19 +54,34 @@ class NavigationDrawer(private val activity: AppCompatActivity,
         createHeader()
         createMenu()
 
-        navigationViewModel.isUnlockedLiveData.observe(activity,  { result.removeItem(MENU_UNLOCKER.toLong()) })
-        navigationViewModel.connectionLiveData.observe(activity,  {
+        navigationViewModel.isUnlockedLiveData.observe(activity) { result.removeItem(MENU_UNLOCKER.toLong()) }
+        navigationViewModel.connectionLiveData.observe(activity) {
             this.showConnectionsInDrawerHeader()
             headerResult.setActiveProfile(it.id.toLong())
-        })
+        }
 
-        statusViewModel.channelCount.observe(activity,  { count -> result.updateBadge(MENU_CHANNELS.toLong(), StringHolder(count.toString())) })
-        statusViewModel.seriesRecordingCount.observe(activity,  { count -> result.updateBadge(MENU_SERIES_RECORDINGS.toLong(), StringHolder(count.toString())) })
-        statusViewModel.timerRecordingCount.observe(activity,  { count -> result.updateBadge(MENU_TIMER_RECORDINGS.toLong(), StringHolder(count.toString())) })
-        statusViewModel.completedRecordingCount.observe(activity,  { count -> result.updateBadge(MENU_COMPLETED_RECORDINGS.toLong(), StringHolder(count.toString())) })
-        statusViewModel.scheduledRecordingCount.observe(activity,  { count -> result.updateBadge(MENU_SCHEDULED_RECORDINGS.toLong(), StringHolder(count.toString())) })
-        statusViewModel.failedRecordingCount.observe(activity,  { count -> result.updateBadge(MENU_FAILED_RECORDINGS.toLong(), StringHolder(count.toString())) })
-        statusViewModel.removedRecordingCount.observe(activity,  { count -> result.updateBadge(MENU_REMOVED_RECORDINGS.toLong(), StringHolder(count.toString())) })
+        statusViewModel.channelCount.observe(activity) { count -> result.updateBadge(MENU_CHANNELS.toLong(), StringHolder(count.toString())) }
+        statusViewModel.seriesRecordingCount.observe(activity) { count -> result.updateBadge(MENU_SERIES_RECORDINGS.toLong(), StringHolder(count.toString())) }
+        statusViewModel.timerRecordingCount.observe(activity) { count -> result.updateBadge(MENU_TIMER_RECORDINGS.toLong(), StringHolder(count.toString())) }
+        statusViewModel.completedRecordingCount.observe(activity) { count ->
+            result.updateBadge(
+                MENU_COMPLETED_RECORDINGS.toLong(),
+                StringHolder(count.toString())
+            )
+        }
+        statusViewModel.scheduledRecordingCount.observe(activity) { count ->
+            result.updateBadge(
+                MENU_SCHEDULED_RECORDINGS.toLong(),
+                StringHolder(count.toString())
+            )
+        }
+        statusViewModel.failedRecordingCount.observe(activity) { count -> result.updateBadge(MENU_FAILED_RECORDINGS.toLong(), StringHolder(count.toString())) }
+        statusViewModel.removedRecordingCount.observe(activity) { count ->
+            result.updateBadge(
+                MENU_REMOVED_RECORDINGS.toLong(),
+                StringHolder(count.toString())
+            )
+        }
     }
 
     private fun createHeader() {

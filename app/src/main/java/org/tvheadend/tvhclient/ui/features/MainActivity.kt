@@ -9,7 +9,11 @@ import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.database.Cursor
-import android.os.*
+import android.os.Build
+import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.os.StrictMode
 import android.provider.SearchRecentSuggestions
 import android.view.KeyEvent
 import android.view.Menu
@@ -26,21 +30,40 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.preference.PreferenceManager
-import com.google.android.gms.cast.framework.*
+import com.google.android.gms.cast.framework.CastButtonFactory
+import com.google.android.gms.cast.framework.CastContext
+import com.google.android.gms.cast.framework.CastSession
+import com.google.android.gms.cast.framework.CastState
+import com.google.android.gms.cast.framework.CastStateListener
+import com.google.android.gms.cast.framework.IntroductoryOverlay
+import com.google.android.gms.cast.framework.SessionManagerListener
 import org.tvheadend.api.AuthenticationFailureReason
 import org.tvheadend.api.AuthenticationStateResult
 import org.tvheadend.api.ConnectionFailureReason
 import org.tvheadend.api.ConnectionStateResult
 import org.tvheadend.tvhclient.BuildConfig
-import org.tvheadend.tvhclient.MainApplication
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.service.ConnectionService
 import org.tvheadend.tvhclient.service.SyncState
 import org.tvheadend.tvhclient.service.SyncStateReceiver
 import org.tvheadend.tvhclient.service.SyncStateResult
 import org.tvheadend.tvhclient.ui.base.BaseViewModel
-import org.tvheadend.tvhclient.ui.common.*
-import org.tvheadend.tvhclient.ui.common.interfaces.*
+import org.tvheadend.tvhclient.ui.common.NetworkStatus
+import org.tvheadend.tvhclient.ui.common.NetworkStatusReceiver
+import org.tvheadend.tvhclient.ui.common.SnackbarMessageReceiver
+import org.tvheadend.tvhclient.ui.common.SuggestionProvider
+import org.tvheadend.tvhclient.ui.common.WakeOnLanTask
+import org.tvheadend.tvhclient.ui.common.interfaces.BackPressedInterface
+import org.tvheadend.tvhclient.ui.common.interfaces.ClearSearchResultsOrPopBackStackInterface
+import org.tvheadend.tvhclient.ui.common.interfaces.HideNavigationDrawerInterface
+import org.tvheadend.tvhclient.ui.common.interfaces.LayoutControlInterface
+import org.tvheadend.tvhclient.ui.common.interfaces.SearchRequestInterface
+import org.tvheadend.tvhclient.ui.common.interfaces.ShowProgramListFragmentInterface
+import org.tvheadend.tvhclient.ui.common.interfaces.ToolbarInterface
+import org.tvheadend.tvhclient.ui.common.onAttach
+import org.tvheadend.tvhclient.ui.common.showConfirmationToReconnectToServer
+import org.tvheadend.tvhclient.ui.common.showOrCancelNotificationDiskSpaceIsLow
+import org.tvheadend.tvhclient.ui.common.showOrCancelNotificationProgramIsCurrentlyBeingRecorded
 import org.tvheadend.tvhclient.ui.features.dvr.recordings.download.DownloadPermissionGrantedInterface
 import org.tvheadend.tvhclient.ui.features.information.ChangeLogFragment
 import org.tvheadend.tvhclient.ui.features.information.PrivacyPolicyFragment
@@ -51,7 +74,13 @@ import org.tvheadend.tvhclient.ui.features.navigation.NavigationViewModel
 import org.tvheadend.tvhclient.ui.features.playback.external.CastSessionManagerListener
 import org.tvheadend.tvhclient.ui.features.programs.ProgramListFragment
 import org.tvheadend.tvhclient.ui.features.startup.StartupFragment
-import org.tvheadend.tvhclient.util.extensions.*
+import org.tvheadend.tvhclient.util.extensions.getCastContext
+import org.tvheadend.tvhclient.util.extensions.getCastSession
+import org.tvheadend.tvhclient.util.extensions.gone
+import org.tvheadend.tvhclient.util.extensions.sendSnackbarMessage
+import org.tvheadend.tvhclient.util.extensions.showSnackbarMessage
+import org.tvheadend.tvhclient.util.extensions.visible
+import org.tvheadend.tvhclient.util.extensions.visibleOrGone
 import org.tvheadend.tvhclient.util.getThemeId
 import timber.log.Timber
 
@@ -204,20 +233,18 @@ class MainActivity : AppCompatActivity(), ToolbarInterface, LayoutControlInterfa
             Timber.d("Delayed search timer elapsed, starting search")
         }
 
-        baseViewModel.isUnlockedLiveData.observe(this,  { isUnlocked ->
+        baseViewModel.isUnlockedLiveData.observe(this) { isUnlocked ->
             Timber.d("Received live data, isUnlocked value changed to $isUnlocked")
-            if (isUnlocked) {
-                baseViewModel.isUnlocked = isUnlocked || BuildConfig.OVERRIDE_UNLOCKED
-            }
-        })
+            baseViewModel.isUnlocked = isUnlocked || BuildConfig.OVERRIDE_UNLOCKED
+        }
 
-        baseViewModel.startupCompleteLiveData.observe(this,  { event ->
+        baseViewModel.startupCompleteLiveData.observe(this) { event ->
             val isComplete = event.getContentIfNotHandled() ?: false
             Timber.d("Received live data, startup complete value changed to $isComplete")
             if (isComplete) {
                 startupIsCompleteObserveMainLiveData()
             }
-        })
+        }
 
         // In case an orientation change occurred assume the startup is complete and start observing the
         // other required live data. Without that navigation and connectivity changes would not work anymore
@@ -230,45 +257,50 @@ class MainActivity : AppCompatActivity(), ToolbarInterface, LayoutControlInterfa
     private fun startupIsCompleteObserveMainLiveData() {
         Timber.d("Startup complete, observing other required live data")
 
-        baseViewModel.networkStatusLiveData.observe(this,  { event ->
+        baseViewModel.networkStatusLiveData.observe(this) { event ->
             event.getContentIfNotHandled()?.let {
                 Timber.d("Network status changed to $it")
                 connectToServer(it)
             }
-        })
+        }
 
-        baseViewModel.connectionToServerAvailableLiveData.observe(this,  { isAvailable ->
+        baseViewModel.connectionToServerAvailableLiveData.observe(this) { isAvailable ->
             Timber.d("Connection to server availability changed to $isAvailable")
             invalidateOptionsMenu()
             statusViewModel.stopDiskSpaceUpdateHandler()
             if (isAvailable) {
                 statusViewModel.startDiskSpaceUpdateHandler()
             }
-        })
+        }
 
-        navigationViewModel.getNavigationMenuId().observe(this,  { event ->
+        navigationViewModel.getNavigationMenuId().observe(this) { event ->
             event.getContentIfNotHandled()?.let {
                 Timber.d("Navigation menu id changed to $it")
                 baseViewModel.clearSearchQuery()
                 navigationDrawer.handleDrawerItemSelected(it)
             }
-        })
-        statusViewModel.showRunningRecordingCount.observe(this,  { show ->
+        }
+        statusViewModel.showRunningRecordingCount.observe(this) { show ->
             showOrCancelNotificationProgramIsCurrentlyBeingRecorded(this, statusViewModel.runningRecordingCount, show)
-        })
-        statusViewModel.showLowStorageSpace.observe(this,  { show ->
+        }
+        statusViewModel.showLowStorageSpace.observe(this) { show ->
             showOrCancelNotificationDiskSpaceIsLow(this, statusViewModel.availableStorageSpace, show)
-        })
-        baseViewModel.snackbarMessageLiveData.observe(this,  { event ->
+        }
+        baseViewModel.snackbarMessageLiveData.observe(this) { event ->
             event.getContentIfNotHandled()?.let {
                 this.showSnackbarMessage(it)
             }
-        })
-        baseViewModel.isUnlockedLiveData.observe(this,  { unlocked ->
+        }
+        baseViewModel.isUnlockedLiveData.observe(this) { unlocked ->
             Timber.d("Received live data, unlocked changed to $unlocked")
             invalidateOptionsMenu()
-            miniController.visibleOrGone(isUnlocked && sharedPreferences.getBoolean("casting_minicontroller_enabled", resources.getBoolean(R.bool.pref_default_casting_minicontroller_enabled)))
-        })
+            miniController.visibleOrGone(
+                isUnlocked && sharedPreferences.getBoolean(
+                    "casting_minicontroller_enabled",
+                    resources.getBoolean(R.bool.pref_default_casting_minicontroller_enabled)
+                )
+            )
+        }
 
         Timber.d("Done initializing")
     }

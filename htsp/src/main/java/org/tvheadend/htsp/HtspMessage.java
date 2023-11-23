@@ -340,34 +340,22 @@ public class HtspMessage extends HashMap<String, Object> {
             buf.get(bData);
 
             switch (type) {
-                case HtspMessage.HMF_STR: {
-                    obj = new String(bData);
-                    break;
-                }
-                case HMF_BIN: {
-                    obj = bData;
-                    break;
-                }
-                case HMF_S64: {
-                    obj = toBigInteger(bData);
-                    break;
-                }
-                case HMF_MAP: {
+                case HtspMessage.HMF_STR -> obj = new String(bData);
+                case HMF_BIN -> obj = bData;
+                case HMF_S64 -> obj = toBigInteger(bData);
+                case HMF_MAP -> {
                     ByteBuffer sub = ByteBuffer.allocateDirect((int) datalen);
                     sub.put(bData);
                     sub.flip();
                     obj = deserializeBinary(sub);
-                    break;
                 }
-                case HMF_LIST: {
+                case HMF_LIST -> {
                     ByteBuffer sub = ByteBuffer.allocateDirect((int) datalen);
                     sub.put(bData);
                     sub.flip();
                     obj = new ArrayList<>(deserializeBinary(sub).values());
-                    break;
                 }
-                default:
-                    throw new IOException("Unknown data type " + type);
+                default -> throw new IOException("Unknown data type " + type);
             }
             msg.put(name, obj);
         }

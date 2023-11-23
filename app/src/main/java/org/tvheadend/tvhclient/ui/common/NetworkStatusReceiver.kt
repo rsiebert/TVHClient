@@ -33,7 +33,7 @@ class NetworkStatusReceiver(private val viewModel: NetworkStatusInterface) : Bro
     }
 
     @Suppress("DEPRECATION")
-    fun isNetworkAvailable(context: Context): Boolean {
+    private fun isNetworkAvailable(context: Context): Boolean {
         val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         return if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
             val activeNetworkInfo = connectivityManager.activeNetworkInfo

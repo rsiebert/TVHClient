@@ -50,7 +50,7 @@ abstract class RecordingListFragment : BaseFragment(), RecyclerViewClickInterfac
 
     private fun observeSearchQuery() {
         Timber.d("Observing search query")
-        baseViewModel.searchQueryLiveData.observe(viewLifecycleOwner,  { query ->
+        baseViewModel.searchQueryLiveData.observe(viewLifecycleOwner) { query ->
             if (query.isNotEmpty()) {
                 Timber.d("View model returned search query '$query'")
                 onSearchRequested(query)
@@ -58,7 +58,7 @@ abstract class RecordingListFragment : BaseFragment(), RecyclerViewClickInterfac
                 Timber.d("View model returned empty search query")
                 onSearchResultsCleared()
             }
-        })
+        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

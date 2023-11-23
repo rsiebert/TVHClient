@@ -116,12 +116,12 @@ class EpgViewPagerFragment : Fragment(), EpgScrollInterface {
         // In case the channels and hours and days to show have changed invalidate
         // the adapter so that the UI can be updated with the new data
         Timber.d("Observing trigger to reload epg data")
-        epgViewModel.viewAndEpgDataIsInvalid.observe(viewLifecycleOwner, { reload ->
+        epgViewModel.viewAndEpgDataIsInvalid.observe(viewLifecycleOwner) { reload ->
             Timber.d("Trigger to reload epg data has changed to $reload")
             if (reload) {
                 recyclerViewAdapter.loadProgramData()
             }
-        })
+        }
 
         binding.currentTime.visibleOrGone(showTimeIndication)
 

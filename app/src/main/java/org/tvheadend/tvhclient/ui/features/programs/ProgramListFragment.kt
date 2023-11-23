@@ -60,7 +60,7 @@ class ProgramListFragment : BaseFragment(), RecyclerViewClickInterface, LastProg
         binding.searchProgress.visibleOrGone(baseViewModel.isSearchActive)
 
         Timber.d("Observing programs")
-        programViewModel.programs.observe(viewLifecycleOwner,  { progs ->
+        programViewModel.programs.observe(viewLifecycleOwner) { progs ->
             if (progs != null) {
                 Timber.d("View model returned ${progs.size} programs")
                 recyclerViewAdapter.addItems(progs.toMutableList())
@@ -71,30 +71,30 @@ class ProgramListFragment : BaseFragment(), RecyclerViewClickInterface, LastProg
             binding.recyclerView.visible()
             showStatusInToolbar()
             activity?.invalidateOptionsMenu()
-        })
+        }
 
         Timber.d("Observing channel id")
-        programViewModel.channelIdLiveData.observe(viewLifecycleOwner,  { id ->
+        programViewModel.channelIdLiveData.observe(viewLifecycleOwner) { id ->
             if (id != null) {
                 Timber.d("View model returned channel id $id")
                 channelId = id
             }
-        })
+        }
     }
 
     private fun observeRecordings() {
         Timber.d("Observing recordings")
-        programViewModel.recordings.observe(viewLifecycleOwner,  { recs ->
+        programViewModel.recordings.observe(viewLifecycleOwner) { recs ->
             if (recs != null) {
                 Timber.d("View model returned ${recs.size} recordings")
                 handleObservedRecordings(recs)
             }
-        })
+        }
     }
 
     private fun observeSearchQuery() {
         Timber.d("Observing search query")
-        baseViewModel.searchQueryLiveData.observe(viewLifecycleOwner,  { query ->
+        baseViewModel.searchQueryLiveData.observe(viewLifecycleOwner) { query ->
             loadingMoreProgramAllowed = if (query.isNotEmpty()) {
                 Timber.d("View model returned search query '$query'")
                 onSearchRequested(query)
@@ -105,7 +105,7 @@ class ProgramListFragment : BaseFragment(), RecyclerViewClickInterface, LastProg
                 onSearchResultsCleared()
                 true
             }
-        })
+        }
     }
 
     /**

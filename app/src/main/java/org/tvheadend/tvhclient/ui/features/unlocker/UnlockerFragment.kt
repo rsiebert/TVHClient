@@ -6,9 +6,7 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
-import androidx.lifecycle.asLiveData
 import com.afollestad.materialdialogs.MaterialDialog
-import org.tvheadend.tvhclient.BuildConfig
 import org.tvheadend.tvhclient.MainApplication
 import org.tvheadend.tvhclient.MainRepository.Companion.UNLOCKER
 import org.tvheadend.tvhclient.R

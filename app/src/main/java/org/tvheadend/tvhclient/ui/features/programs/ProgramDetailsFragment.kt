@@ -55,19 +55,19 @@ class ProgramDetailsFragment : BaseFragment(), ClearSearchResultsOrPopBackStackI
         }
 
         Timber.d("Observing program")
-        programViewModel.program.observe(viewLifecycleOwner, {
+        programViewModel.program.observe(viewLifecycleOwner) {
             Timber.d("View model returned a program")
             program = it
             showProgramDetails()
-        })
+        }
 
         Timber.d("Observing recordings")
-        programViewModel.recordings.observe(viewLifecycleOwner, { recordings ->
+        programViewModel.recordings.observe(viewLifecycleOwner) { recordings ->
             if (recordings != null) {
                 Timber.d("View model returned ${recordings.size} recordings")
                 showRecordingStatusOfProgram(recordings)
             }
-        })
+        }
     }
 
     private fun showProgramDetails() {

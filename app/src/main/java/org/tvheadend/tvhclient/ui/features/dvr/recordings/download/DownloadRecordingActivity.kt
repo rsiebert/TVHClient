@@ -56,7 +56,6 @@ class DownloadRecordingActivity : BasePlaybackActivity() {
             Timber.d("Android API version is ${Build.VERSION.SDK_INT}, loading download folder from preference")
             val path = PreferenceManager.getDefaultSharedPreferences(this).getString("download_directory", Environment.DIRECTORY_DOWNLOADS)
                 ?: Environment.DIRECTORY_DOWNLOADS
-            @Suppress("DEPRECATION")
             Environment.getExternalStorageDirectory().absolutePath + path
         } else {
             Timber.d("Android API version is ${Build.VERSION.SDK_INT}, using default folder")

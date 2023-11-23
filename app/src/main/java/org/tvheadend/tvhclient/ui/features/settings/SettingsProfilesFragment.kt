@@ -42,22 +42,22 @@ class SettingsProfilesFragment : PreferenceFragmentCompat() {
         addProfileValuesToListPreference(timerRecordingProfilesPreference, settingsViewModel.getRecordingProfiles(), settingsViewModel.currentServerStatus.timerRecordingServerProfileId)
         addProfileValuesToListPreference(castingProfilesPreference, settingsViewModel.getHttpProfiles(), settingsViewModel.currentServerStatus.castingServerProfileId)
 
-        settingsViewModel.activeConnectionLiveData.observe(viewLifecycleOwner,  { connection ->
+        settingsViewModel.activeConnectionLiveData.observe(viewLifecycleOwner) { connection ->
             toolbarInterface.setSubtitle(connection.name ?: "")
-        })
+        }
 
-        settingsViewModel.isUnlockedLiveData.observe(viewLifecycleOwner,  {
+        settingsViewModel.isUnlockedLiveData.observe(viewLifecycleOwner) {
             initProfileChangeListeners()
-        })
+        }
 
-        settingsViewModel.currentServerStatusLiveData.observe(viewLifecycleOwner,  {
+        settingsViewModel.currentServerStatusLiveData.observe(viewLifecycleOwner) {
             setHttpPlaybackPreferenceSummary()
             setHtspPlaybackPreferenceSummary()
             setRecordingPreferenceSummary()
             setSeriesRecordingPreferenceSummary()
             setTimerRecordingPreferenceSummary()
             setCastingPreferenceSummary()
-        })
+        }
     }
 
     private fun initProfileChangeListeners() {

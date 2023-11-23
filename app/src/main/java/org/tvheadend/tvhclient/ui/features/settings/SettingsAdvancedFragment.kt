@@ -66,9 +66,9 @@ class SettingsAdvancedFragment : PreferenceFragmentCompat(), Preference.OnPrefer
         connectionTimeoutPreference = findPreference("connection_timeout")
         connectionTimeoutPreference?.onPreferenceChangeListener = this
 
-        settingsViewModel.isUnlockedLiveData.observe(viewLifecycleOwner, {
+        settingsViewModel.isUnlockedLiveData.observe(viewLifecycleOwner) {
             initPreferenceChangeListeners()
-        })
+        }
     }
 
     private fun initPreferenceChangeListeners() {

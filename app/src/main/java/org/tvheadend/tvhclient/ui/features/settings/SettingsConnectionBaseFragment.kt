@@ -196,7 +196,7 @@ abstract class SettingsConnectionBaseFragment : PreferenceFragmentCompat(), Back
             is ValidationResult.Success -> {
                 settingsViewModel.connectionToEdit.name = value
                 namePreference.text = value
-                namePreference.summary = if (value.isEmpty()) getString(R.string.pref_name_sum) else value
+                namePreference.summary = value.ifEmpty { getString(R.string.pref_name_sum) }
             }
             is ValidationResult.Failed -> {
                 namePreference.text = settingsViewModel.connectionToEdit.name
@@ -210,7 +210,7 @@ abstract class SettingsConnectionBaseFragment : PreferenceFragmentCompat(), Back
             is ValidationResult.Success -> {
                 settingsViewModel.connectionToEdit.serverUrl = value
                 serverUrlPreference.text = value
-                serverUrlPreference.summary = if (value.isEmpty()) getString(R.string.pref_server_url_sum) else value
+                serverUrlPreference.summary = value.ifEmpty { getString(R.string.pref_server_url_sum) }
             }
             is ValidationResult.Failed -> {
                 serverUrlPreference.text = settingsViewModel.connectionToEdit.serverUrl
@@ -224,7 +224,7 @@ abstract class SettingsConnectionBaseFragment : PreferenceFragmentCompat(), Back
             is ValidationResult.Success -> {
                 settingsViewModel.connectionToEdit.streamingUrl = value
                 streamingUrlPreference.text = value
-                streamingUrlPreference.summary = if (value.isEmpty()) getString(R.string.pref_streaming_url_sum) else value
+                streamingUrlPreference.summary = value.ifEmpty { getString(R.string.pref_streaming_url_sum) }
             }
             is ValidationResult.Failed -> {
                 streamingUrlPreference.text = settingsViewModel.connectionToEdit.streamingUrl
@@ -236,7 +236,7 @@ abstract class SettingsConnectionBaseFragment : PreferenceFragmentCompat(), Back
     private fun preferenceUsernameChanged(value: String) {
         settingsViewModel.connectionToEdit.username = value
         usernamePreference.text = value
-        usernamePreference.summary = if (value.isEmpty()) getString(R.string.pref_user_sum) else value
+        usernamePreference.summary = value.ifEmpty { getString(R.string.pref_user_sum) }
     }
 
     private fun preferencePasswordChanged(value: String) {
@@ -265,7 +265,7 @@ abstract class SettingsConnectionBaseFragment : PreferenceFragmentCompat(), Back
             is ValidationResult.Success -> {
                 settingsViewModel.connectionToEdit.wolMacAddress = value
                 wolMacAddressPreference.text = value
-                wolMacAddressPreference.summary = if (value.isEmpty()) getString(R.string.pref_wol_address_sum) else value
+                wolMacAddressPreference.summary = value.ifEmpty { getString(R.string.pref_wol_address_sum) }
             }
             is ValidationResult.Failed -> {
                 wolMacAddressPreference.text = settingsViewModel.connectionToEdit.wolMacAddress

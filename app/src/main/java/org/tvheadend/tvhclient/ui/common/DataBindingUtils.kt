@@ -1,12 +1,12 @@
 package org.tvheadend.tvhclient.ui.common
 
+import android.annotation.SuppressLint
 import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.os.Build
 import android.text.SpannableString
 import android.text.SpannableStringBuilder
-import android.text.format.DateUtils
 import android.text.style.ForegroundColorSpan
 import android.util.SparseArray
 import android.view.View
@@ -571,7 +571,7 @@ fun setLocalizedDate(view: TextView, date: Long) {
 
     var localizedDate = ""
 
-    var dateDiff = date/ONE_DAY - System.currentTimeMillis()/ONE_DAY
+    val dateDiff = date/ONE_DAY - System.currentTimeMillis()/ONE_DAY
 
     when (dateDiff.toInt()) {
         0 -> localizedDate = view.context.getString(R.string.today)
@@ -608,6 +608,7 @@ fun setLocalizedDate(view: TextView, date: Long) {
  * @param showGenreColors True to show the color, false otherwise
  * @param offset          Positive offset from 0 to 100 to increase the transparency of the color
  */
+@SuppressLint("ResourceAsColor")
 @BindingAdapter("genreColor", "showGenreColor", "genreColorAlphaOffset", "genreColorItemName")
 fun setGenreColor(view: TextView, contentType: Int, showGenreColors: Boolean, offset: Int, itemName: String?) {
     val context = view.context

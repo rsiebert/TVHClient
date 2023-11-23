@@ -49,21 +49,24 @@ class SettingsListConnectionsFragment : Fragment(), BackPressedInterface, Action
         binding.recyclerView.layoutManager = LinearLayoutManager(activity)
         binding.recyclerView.adapter = recyclerViewAdapter
 
-        settingsViewModel.connectionListLiveData.observe(viewLifecycleOwner,  { connections ->
+        settingsViewModel.connectionListLiveData.observe(viewLifecycleOwner) { connections ->
             if (connections != null) {
                 recyclerViewAdapter.addItems(connections)
                 context?.let {
-                    toolbarInterface.setSubtitle(it.resources.getQuantityString(
+                    toolbarInterface.setSubtitle(
+                        it.resources.getQuantityString(
                             R.plurals.number_of_connections,
                             recyclerViewAdapter.itemCount,
-                            recyclerViewAdapter.itemCount))
+                            recyclerViewAdapter.itemCount
+                        )
+                    )
                 }
             }
-        })
-        settingsViewModel.activeConnectionLiveData.observe(viewLifecycleOwner,  { connection ->
+        }
+        settingsViewModel.activeConnectionLiveData.observe(viewLifecycleOwner) { connection ->
             connectionHasChanged = connection != null && connection.id != settingsViewModel.connectionToEdit.id
             activeConnectionId = connection?.id ?: -1
-        })
+        }
 
         setHasOptionsMenu(true)
     }

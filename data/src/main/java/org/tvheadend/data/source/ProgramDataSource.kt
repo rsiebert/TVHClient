@@ -29,7 +29,7 @@ class ProgramDataSource(private val db: AppRoomDatabase) : DataSourceInterface<P
     }
 
     fun addItems(items: List<Program>) {
-        if (!items.isNullOrEmpty()) {
+        if (items.isNotEmpty()) {
             ioScope.launch {
                 db.programDao.insert(ArrayList(items).mapNotNull { program -> program.let { item ->
                     ProgramEntity.from(item) }

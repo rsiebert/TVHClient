@@ -49,35 +49,33 @@ class SettingsActivity : AppCompatActivity(), RemoveFragmentFromBackstackInterfa
             settingsViewModel.setNavigationMenuId(id)
         }
 
-        settingsViewModel.getNavigationMenuId().observe(this,  { event ->
+        settingsViewModel.getNavigationMenuId().observe(this) { event ->
             event.getContentIfNotHandled()?.let {
                 Timber.d("New preference selected with id $it, replacing settings fragment")
                 supportFragmentManager.beginTransaction()
-                        .replace(R.id.main, getSettingsFragment(it))
-                        .addToBackStack(null)
-                        .commit()
+                    .replace(R.id.main, getSettingsFragment(it))
+                    .addToBackStack(null)
+                    .commit()
             }
-        })
+        }
 
-        settingsViewModel.currentServerStatusLiveData.observe(this,  { serverStatus ->
+        settingsViewModel.currentServerStatusLiveData.observe(this) { serverStatus ->
             Timber.d("Received live data, server status has changed and is ${if (serverStatus != null) "" else "not "}available")
             if (serverStatus != null) {
                 settingsViewModel.currentServerStatus = serverStatus
             }
-        })
+        }
 
-        settingsViewModel.snackbarMessageLiveData.observe(this,  { event ->
+        settingsViewModel.snackbarMessageLiveData.observe(this) { event ->
             event.getContentIfNotHandled()?.let {
                 this.showSnackbarMessage(it)
             }
-        })
+        }
 
-        settingsViewModel.isUnlockedLiveData.observe(this,  { isUnlocked ->
+        settingsViewModel.isUnlockedLiveData.observe(this) { isUnlocked ->
             Timber.d("Received live data, isUnlocked value changed to $isUnlocked")
-            if (isUnlocked) {
-                settingsViewModel.isUnlocked = isUnlocked || BuildConfig.OVERRIDE_UNLOCKED
-            }
-        })
+            settingsViewModel.isUnlocked = isUnlocked || BuildConfig.OVERRIDE_UNLOCKED
+        }
     }
 
     public override fun onStart() {
@@ -135,6 +133,7 @@ class SettingsActivity : AppCompatActivity(), RemoveFragmentFromBackstackInterfa
      * This is usually required when a confirmation dialog shall be shown before exiting the fragment.
      * Otherwise remove the last fragment from the back stack or close the activity in case only one fragment remains.
      */
+    @Deprecated("Deprecated in Java")
     override fun onBackPressed() {
         val fragment = supportFragmentManager.findFragmentById(R.id.main)
         if (fragment is BackPressedInterface && fragment.isVisible) {

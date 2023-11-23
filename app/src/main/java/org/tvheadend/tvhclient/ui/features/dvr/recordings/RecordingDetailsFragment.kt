@@ -42,11 +42,11 @@ class RecordingDetailsFragment : BaseFragment(), RecordingRemovedInterface, Down
         }
 
         Timber.d("Observing recording")
-        recordingViewModel.recordingLiveData.observe(viewLifecycleOwner,  {
+        recordingViewModel.recordingLiveData.observe(viewLifecycleOwner) {
             Timber.d("View model returned a recording")
             recording = it
             showRecordingDetails()
-        })
+        }
     }
 
     private fun showRecordingDetails() {

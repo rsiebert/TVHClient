@@ -38,10 +38,10 @@ class SeriesRecordingDetailsFragment : BaseFragment(), RecordingRemovedInterface
             seriesRecordingViewModel.currentIdLiveData.value = it.getString("id", "")
         }
 
-        seriesRecordingViewModel.recordingLiveData.observe(viewLifecycleOwner,  {
+        seriesRecordingViewModel.recordingLiveData.observe(viewLifecycleOwner) {
             recording = it
             showRecordingDetails()
-        })
+        }
     }
 
     private fun showRecordingDetails() {

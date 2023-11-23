@@ -47,7 +47,7 @@ class TimerRecordingListFragment : BaseFragment(), RecyclerViewClickInterface, S
         binding.recyclerView.gone()
         binding.searchProgress.visibleOrGone(baseViewModel.isSearchActive)
 
-        timerRecordingViewModel.recordings.observe(viewLifecycleOwner,  { recordings ->
+        timerRecordingViewModel.recordings.observe(viewLifecycleOwner) { recordings ->
             if (recordings != null) {
                 recyclerViewAdapter.addItems(recordings)
                 observeSearchQuery()
@@ -60,12 +60,12 @@ class TimerRecordingListFragment : BaseFragment(), RecyclerViewClickInterface, S
             if (isDualPane && recyclerViewAdapter.itemCount > 0) {
                 showRecordingDetails(timerRecordingViewModel.selectedListPosition)
             }
-        })
+        }
     }
 
     private fun observeSearchQuery() {
         Timber.d("Observing search query")
-        baseViewModel.searchQueryLiveData.observe(viewLifecycleOwner,  { query ->
+        baseViewModel.searchQueryLiveData.observe(viewLifecycleOwner) { query ->
             if (query.isNotEmpty()) {
                 Timber.d("View model returned search query '$query'")
                 onSearchRequested(query)
@@ -73,7 +73,7 @@ class TimerRecordingListFragment : BaseFragment(), RecyclerViewClickInterface, S
                 Timber.d("View model returned empty search query")
                 onSearchResultsCleared()
             }
-        })
+        }
     }
 
     private fun showStatusInToolbar() {
