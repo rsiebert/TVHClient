@@ -5,7 +5,7 @@ buildscript {
         kotlinVersion = '1.8.22'
         compileSdkVersion = 34
         minSdkVersion = 19
-        targetSdkVersion = 30
+        targetSdkVersion = 34
         javaCompatibility = "17"
 
         timberVersion = '5.0.1'
