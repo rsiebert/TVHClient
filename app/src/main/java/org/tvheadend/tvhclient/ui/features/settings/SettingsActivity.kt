@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import org.tvheadend.tvhclient.BuildConfig
 import org.tvheadend.tvhclient.MainApplication
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.ui.common.SnackbarMessageReceiver
@@ -68,6 +69,13 @@ class SettingsActivity : AppCompatActivity(), RemoveFragmentFromBackstackInterfa
         settingsViewModel.snackbarMessageLiveData.observe(this,  { event ->
             event.getContentIfNotHandled()?.let {
                 this.showSnackbarMessage(it)
+            }
+        })
+
+        settingsViewModel.isUnlockedLiveData.observe(this,  { isUnlocked ->
+            Timber.d("Received live data, isUnlocked value changed to $isUnlocked")
+            if (isUnlocked) {
+                settingsViewModel.isUnlocked = isUnlocked || BuildConfig.OVERRIDE_UNLOCKED
             }
         })
     }

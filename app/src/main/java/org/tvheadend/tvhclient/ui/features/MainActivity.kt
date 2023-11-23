@@ -32,6 +32,7 @@ import org.tvheadend.api.AuthenticationStateResult
 import org.tvheadend.api.ConnectionFailureReason
 import org.tvheadend.api.ConnectionStateResult
 import org.tvheadend.tvhclient.BuildConfig
+import org.tvheadend.tvhclient.MainApplication
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.service.ConnectionService
 import org.tvheadend.tvhclient.service.SyncState
@@ -53,6 +54,7 @@ import org.tvheadend.tvhclient.ui.features.startup.StartupFragment
 import org.tvheadend.tvhclient.util.extensions.*
 import org.tvheadend.tvhclient.util.getThemeId
 import timber.log.Timber
+
 
 class MainActivity : AppCompatActivity(), ToolbarInterface, LayoutControlInterface, SearchView.OnQueryTextListener, SearchView.OnSuggestionListener, SyncStateReceiver.Listener, View.OnFocusChangeListener {
 
@@ -108,6 +110,9 @@ class MainActivity : AppCompatActivity(), ToolbarInterface, LayoutControlInterfa
         baseViewModel = ViewModelProvider(this)[BaseViewModel::class.java]
         navigationViewModel = ViewModelProvider(this)[NavigationViewModel::class.java]
         statusViewModel = ViewModelProvider(this)[StatusViewModel::class.java]
+
+        // Allows billing to refresh purchases during onResume
+        lifecycle.addObserver(baseViewModel.billingLifecycleObserver)
 
         snackbarMessageReceiver = SnackbarMessageReceiver(baseViewModel)
         networkStatusReceiver = NetworkStatusReceiver(baseViewModel)
@@ -198,6 +203,13 @@ class MainActivity : AppCompatActivity(), ToolbarInterface, LayoutControlInterfa
         queryTextSubmitTask = Runnable {
             Timber.d("Delayed search timer elapsed, starting search")
         }
+
+        baseViewModel.isUnlockedLiveData.observe(this,  { isUnlocked ->
+            Timber.d("Received live data, isUnlocked value changed to $isUnlocked")
+            if (isUnlocked) {
+                baseViewModel.isUnlocked = isUnlocked || BuildConfig.OVERRIDE_UNLOCKED
+            }
+        })
 
         baseViewModel.startupCompleteLiveData.observe(this,  { event ->
             val isComplete = event.getContentIfNotHandled() ?: false

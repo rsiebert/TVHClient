@@ -6,6 +6,7 @@ import android.content.SharedPreferences
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.asLiveData
 import androidx.preference.PreferenceManager
 import org.tvheadend.data.AppRepository
 import org.tvheadend.data.entity.Channel
@@ -15,6 +16,7 @@ import org.tvheadend.data.entity.ServerStatus
 import org.tvheadend.data.source.MiscDataSource
 import org.tvheadend.tvhclient.BuildConfig
 import org.tvheadend.tvhclient.MainApplication
+import org.tvheadend.tvhclient.MainRepository
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.ui.common.interfaces.SnackbarMessageInterface
 import org.tvheadend.tvhclient.util.livedata.Event
@@ -26,6 +28,7 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
     @Inject
     lateinit var appRepository: AppRepository
 
+    private var mainRepository: MainRepository
     private var sharedPreferences: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(application.applicationContext)
     private val defaultChannelSortOrder = application.applicationContext.resources.getString(R.string.pref_default_channel_sort_order)
 
@@ -78,7 +81,6 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
      * Contains the information if the application is unlocked or not
      */
     var isUnlocked = false
-        private set
 
     /**
      * Contains a string with the name of the fragment that shall be shown
@@ -94,8 +96,11 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
 
     init {
         inject()
-        isUnlocked = appRepository.getIsUnlocked() || BuildConfig.OVERRIDE_UNLOCKED
-        isUnlockedLiveData = appRepository.getIsUnlockedLiveData()
+        mainRepository = (application as MainApplication).appContainer.mainRepository
+
+        Timber.d("Observing isUnlockedLiveData from main repository")
+        isUnlockedLiveData = mainRepository.isPurchased(MainRepository.UNLOCKER).asLiveData()
+
         connectionToEdit = appRepository.connectionData.activeItem
         activeConnectionLiveData = appRepository.connectionData.liveDataActiveItem
         connectionCountLiveData = appRepository.connectionData.getLiveDataItemCount()

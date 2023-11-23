@@ -27,12 +27,4 @@ constructor(
     init {
         isUnlockedLiveData.value = false
     }
-
-    fun getIsUnlockedLiveData(): LiveData<Boolean> = isUnlockedLiveData
-
-    fun getIsUnlocked(): Boolean = isUnlockedLiveData.value ?: false
-
-    fun setIsUnlocked(unlocked: Boolean) {
-        isUnlockedLiveData.value = unlocked
-    }
 }

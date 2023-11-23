@@ -12,7 +12,6 @@ import org.tvheadend.tvhclient.ui.base.BaseViewModel
 import org.tvheadend.tvhclient.ui.features.settings.SettingsActivity
 import org.tvheadend.tvhclient.ui.features.settings.SettingsViewModel
 import org.tvheadend.tvhclient.ui.features.startup.StartupViewModel
-import org.tvheadend.tvhclient.util.billing.BillingManager
 
 
 @Component(
@@ -29,5 +28,4 @@ interface MainComponent {
     fun inject(baseViewModel: BaseViewModel)
     fun inject(settingsViewModel: SettingsViewModel)
     fun inject(startupViewModel: StartupViewModel)
-    fun inject(billingManager: BillingManager)
 }
