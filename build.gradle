@@ -3,6 +3,7 @@
 buildscript {
     ext {
         kotlinVersion = '2.4.21'
+        kspVersion = '2.3.13'
         compileSdkVersion = 34
         minSdkVersion = 23
         targetSdkVersion = 34
@@ -23,6 +24,7 @@ buildscript {
     dependencies {
         classpath 'com.android.tools.build:gradle:8.13.2'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
+        classpath "com.google.devtools.ksp:com.google.devtools.ksp.gradle.plugin:$kspVersion"
         classpath 'com.google.gms:google-services:4.4.0'
         classpath 'com.google.firebase:firebase-crashlytics-gradle:2.8.1'
         classpath 'com.google.firebase:perf-plugin:1.4.1'

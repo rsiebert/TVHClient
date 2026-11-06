@@ -1,7 +1,11 @@
 plugins {
     id 'com.android.application'
     id 'kotlin-android'
+    // Data Binding's BR/binding classes are still produced by an annotation processor, and
+    // KSP support for Data Binding is not planned, so kapt has to stay in this module.
+    // Everything else (Dagger) runs through KSP below.
     id 'kotlin-kapt'
+    id 'com.google.devtools.ksp'
     id 'kotlin-parcelize'
     id 'com.google.gms.google-services'
     id 'com.google.firebase.firebase-perf'
@@ -108,7 +112,7 @@ dependencies {
     implementation 'androidx.work:work-runtime:2.7.1'
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycleVersion"
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycleVersion"
-    kapt "androidx.lifecycle:lifecycle-common-java8:$lifecycleVersion"
+    implementation "androidx.lifecycle:lifecycle-common-java8:$lifecycleVersion"
     implementation "androidx.fragment:fragment-ktx:$fragmentVersion"
     debugImplementation "androidx.fragment:fragment-testing:$fragmentVersion"
 
@@ -146,7 +150,7 @@ dependencies {
 
     // Dependency injection
     implementation "com.google.dagger:dagger:$daggerVersion"
-    kapt "com.google.dagger:dagger-compiler:$daggerVersion"
+    ksp "com.google.dagger:dagger-compiler:$daggerVersion"
 
 
     // ----------------------------------------------------------------------------

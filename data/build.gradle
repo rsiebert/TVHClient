@@ -1,7 +1,7 @@
 plugins {
     id 'com.android.library'
     id 'kotlin-android'
-    id 'kotlin-kapt'
+    id 'com.google.devtools.ksp'
 }
 
 android {
@@ -10,15 +10,6 @@ android {
     defaultConfig {
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-
-        javaCompileOptions {
-            annotationProcessorOptions {
-                arguments = [
-                        "room.schemaLocation": "$projectDir/schemas".toString(),
-                        "room.incremental"   : "true"
-                ]
-            }
-        }
     }
 
     buildTypes {
@@ -37,6 +28,13 @@ android {
     namespace 'org.tvheadend.data'
 }
 
+ksp {
+    // Room schema location and incremental processing, previously set through
+    // javaCompileOptions.annotationProcessorOptions (kapt).
+    arg('room.schemaLocation', "$projectDir/schemas")
+    arg('room.incremental', 'true')
+}
+
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
@@ -48,16 +46,12 @@ dependencies {
     def roomVersion = '2.8.5'
     implementation "androidx.room:room-runtime:$roomVersion"
     implementation "androidx.room:room-ktx:$roomVersion"
-    kapt "androidx.room:room-compiler:$roomVersion"
-    // Room 2.8.x ships kotlin-metadata-jvm 2.2.0, but Kotlin 2.4 emits 2.4.0 metadata.
-    // Pin the parser on the annotation-processor classpath. Step 2 (KSP) removes the
-    // need for this: KSP reads symbols instead of compiled metadata.
-    kapt "org.jetbrains.kotlin:kotlin-metadata-jvm:$kotlinVersion"
+    ksp "androidx.room:room-compiler:$roomVersion"
 
     // Logging library
     implementation "com.jakewharton.timber:timber:$timberVersion"
 
     // Dependency injection
     implementation "com.google.dagger:dagger:$daggerVersion"
-    kapt "com.google.dagger:dagger-compiler:$daggerVersion"
+    ksp "com.google.dagger:dagger-compiler:$daggerVersion"
 }
