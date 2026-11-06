@@ -8,7 +8,6 @@ import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.LifecycleOwner
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.android.extensions.LayoutContainer
 import org.tvheadend.data.entity.EpgChannel
 import org.tvheadend.data.entity.EpgProgram
 import org.tvheadend.tvhclient.R
@@ -50,13 +49,13 @@ internal class EpgVerticalRecyclerViewAdapter(private val activity: FragmentActi
         notifyDataSetChanged()
     }
 
-    class EpgViewPagerViewHolder(override val containerView: View,
+    class EpgViewPagerViewHolder(val containerView: View,
                                  val binding: EpgVerticalRecyclerviewAdapterBinding,
                                  private val activity: FragmentActivity,
                                  fragmentId: Int,
                                  viewPool: RecyclerView.RecycledViewPool,
                                  private val epgViewModel: EpgViewModel,
-                                 lifecycleOwner: LifecycleOwner) : RecyclerView.ViewHolder(binding.root), LayoutContainer {
+                                 lifecycleOwner: LifecycleOwner) : RecyclerView.ViewHolder(binding.root) {
 
         private val recyclerViewAdapter: EpgHorizontalChildRecyclerViewAdapter
 

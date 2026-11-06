@@ -24,7 +24,6 @@ android {
 
         // Define the apk naming convention
         applicationId "org.tvheadend.tvhclient"
-        setProperty("archivesBaseName", "${applicationId}-${versionName}-${versionCode}")
 
         // Set the default values for these build config fields
         buildConfigField "String", "DEVELOPER_EMAIL", "\"${appProperties['developerEmail']}\""
@@ -42,8 +41,6 @@ android {
         // Support vector drawable and animated vector drawable on devices
         // running platform versions lower than Android 5.0 (API level 21)
         vectorDrawables.useSupportLibrary = true
-
-        multiDexEnabled true
 
         lintOptions {
             // Do not check for lint errors to reduce the build time.
@@ -67,6 +64,11 @@ android {
     kotlinOptions.jvmTarget = rootProject.ext.javaCompatibility.toString()
     testOptions.unitTests.includeAndroidResources = true
     namespace 'org.tvheadend.tvhclient'
+    packaging {
+        jniLibs {
+            useLegacyPackaging false
+        }
+    }
 
     buildTypes {
         release {
@@ -78,6 +80,12 @@ android {
             initWith buildTypes.release
         }
     }
+}
+
+// Gradle 9 removed the 'archivesBaseName' convention property, so it can no longer be set
+// from defaultConfig via setProperty(...). Set the APK naming convention via the base extension.
+base {
+    archivesName = "${android.defaultConfig.applicationId}-${android.defaultConfig.versionName}-${android.defaultConfig.versionCode}"
 }
 
 dependencies {
@@ -115,7 +123,7 @@ dependencies {
 
     // Kotlin
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:${kotlinVersion}"
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.0-native-mt'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.11.0'
 
     // Material navigation drawer and dialogs
     implementation "com.afollestad.material-dialogs:core:$materialDialogsVersion"
@@ -124,7 +132,12 @@ dependencies {
     implementation "com.afollestad.material-dialogs:datetime:$materialDialogsVersion"
     implementation "com.afollestad.material-dialogs:lifecycle:${materialDialogsVersion}"
     //noinspection GradleDependency
-    implementation 'com.mikepenz:materialdrawer:7.0.0'
+    implementation('com.mikepenz:materialdrawer:7.0.0') {
+        // MaterialDrawer 7 requests kotlin-android-extensions-runtime 1.3.61, which bundles
+        // kotlinx.android.parcel.* - meanwhile provided by kotlin-parcelize-runtime, giving
+        // duplicate classes. The app no longer uses any kotlinx.android API.
+        exclude group: 'org.jetbrains.kotlin', module: 'kotlin-android-extensions-runtime'
+    }
 
     // Firebase Crash Reporting and Performance Monitoring
     implementation 'com.google.firebase:firebase-analytics-ktx:19.0.1'
@@ -135,8 +148,6 @@ dependencies {
     implementation "com.google.dagger:dagger:$daggerVersion"
     kapt "com.google.dagger:dagger-compiler:$daggerVersion"
 
-    // Use multidex because the method count is over 64k
-    implementation 'androidx.multidex:multidex:2.0.1'
 
     // ----------------------------------------------------------------------------
     // Required internal libraries for the application

@@ -45,10 +45,14 @@ dependencies {
     implementation "androidx.preference:preference-ktx:$prefKtxVersion"
 
     // Android Room
-    def roomVersion = '2.6.0'
+    def roomVersion = '2.8.5'
     implementation "androidx.room:room-runtime:$roomVersion"
     implementation "androidx.room:room-ktx:$roomVersion"
     kapt "androidx.room:room-compiler:$roomVersion"
+    // Room 2.8.x ships kotlin-metadata-jvm 2.2.0, but Kotlin 2.4 emits 2.4.0 metadata.
+    // Pin the parser on the annotation-processor classpath. Step 2 (KSP) removes the
+    // need for this: KSP reads symbols instead of compiled metadata.
+    kapt "org.jetbrains.kotlin:kotlin-metadata-jvm:$kotlinVersion"
 
     // Logging library
     implementation "com.jakewharton.timber:timber:$timberVersion"

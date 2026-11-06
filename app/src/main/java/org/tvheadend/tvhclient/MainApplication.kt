@@ -1,8 +1,8 @@
 package org.tvheadend.tvhclient
 
+import android.app.Application
 import android.content.Context
 import android.content.SharedPreferences
-import androidx.multidex.MultiDexApplication
 import com.google.android.gms.cast.framework.CastOptions
 import com.google.android.gms.cast.framework.OptionsProvider
 import com.google.android.gms.cast.framework.SessionProvider
@@ -30,7 +30,7 @@ import javax.inject.Inject
 // TODO when a notification is dismissed, it reappears when the recording gets updated,
 //  save the dismissed id in the viewmodel and don't add another notification if the id was already dismissed
 
-class MainApplication : MultiDexApplication(), OptionsProvider {
+class MainApplication : Application(), OptionsProvider {
 
     @Inject
     lateinit var appRepository: AppRepository

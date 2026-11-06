@@ -2,15 +2,15 @@
 
 buildscript {
     ext {
-        kotlinVersion = '1.9.24'
+        kotlinVersion = '2.4.21'
         compileSdkVersion = 34
-        minSdkVersion = 19
+        minSdkVersion = 23
         targetSdkVersion = 34
         javaCompatibility = "17"
 
         timberVersion = '5.0.1'
         appCompatVersion = '1.4.0'
-        daggerVersion = '2.48.1'
+        daggerVersion = '2.60.1'
         coreKtxVersion = "1.7.0"
         prefKtxVersion = "1.1.1"
     }
@@ -21,7 +21,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:8.13.0'
+        classpath 'com.android.tools.build:gradle:8.13.2'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
         classpath 'com.google.gms:google-services:4.4.0'
         classpath 'com.google.firebase:firebase-crashlytics-gradle:2.8.1'
@@ -40,20 +40,6 @@ allprojects {
         maven { url 'https://plugins.gradle.org/m2/'}
     }
     group = 'org.tvheadend.tvhclient'
-
-    // AGP 8.13 ships a 'databinding-ktx' helper that is compiled against Kotlin
-    // 2.2 metadata. The Kotlin compiler in this project is 1.9.24 (the newest
-    // that Room 2.6.0 / Dagger 2.48.1 can read), and it refuses to read 2.2
-    // metadata ("Module was compiled with an incompatible version of Kotlin").
-    // The artifact only provides optional KTX extensions for data binding and is
-    // not referenced by this app, so drop it and keep the Kotlin stdlib aligned
-    // with the compiler version.
-    configurations.all {
-        exclude group: 'androidx.databinding', module: 'databinding-ktx'
-        resolutionStrategy {
-            force "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
-        }
-    }
 }
 
 //apply from: 'javadoc_combined.gradle'
