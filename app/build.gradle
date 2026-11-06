@@ -16,11 +16,11 @@ def appProperties = new Properties()
 appProperties.load(new FileInputStream(rootProject.file("tvhclient.properties")))
 
 android {
-    compileSdk = rootProject.ext.compileSdkVersion
+    compileSdk = libs.versions.compileSdk.get().toInteger()
 
     defaultConfig {
-        minSdk = rootProject.ext.minSdkVersion
-        targetSdk = rootProject.ext.targetSdkVersion
+        minSdk = libs.versions.minSdk.get().toInteger()
+        targetSdk = libs.versions.targetSdk.get().toInteger()
         versionCode 241
         versionName "2.4.8"
 
@@ -44,7 +44,6 @@ android {
         // running platform versions lower than Android 5.0 (API level 21)
         vectorDrawables.useSupportLibrary = true
 
-
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -61,8 +60,8 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility = rootProject.ext.javaCompatibility
-        targetCompatibility = rootProject.ext.javaCompatibility
+        sourceCompatibility = libs.versions.javaVersion.get()
+        targetCompatibility = libs.versions.javaVersion.get()
     }
 
     // AGP 9's built-in Kotlin defaults jvmTarget to compileOptions.targetCompatibility.
@@ -97,48 +96,42 @@ base {
 dependencies {
     // Dependency on local binaries
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation 'com.android.billingclient:billing-ktx:6.1.0'
-
-    def fragmentVersion = '1.4.0'
-    def lifecycleVersion = '2.4.0'
-    def materialDialogsVersion = '3.3.0'
 
     // AndroidX libraries
-    implementation "androidx.core:core-ktx:$coreKtxVersion"
-    implementation "androidx.appcompat:appcompat:$appCompatVersion"
-    implementation 'androidx.recyclerview:recyclerview:1.2.1'
-    implementation 'androidx.annotation:annotation:1.3.0'
-    implementation "androidx.preference:preference-ktx:$prefKtxVersion"
-    implementation 'androidx.constraintlayout:constraintlayout:2.1.2'
-    implementation 'androidx.viewpager2:viewpager2:1.0.0'
-    implementation 'androidx.work:work-runtime:2.7.1'
-    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycleVersion"
-    implementation "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycleVersion"
-    implementation "androidx.lifecycle:lifecycle-common-java8:$lifecycleVersion"
-    implementation "androidx.fragment:fragment-ktx:$fragmentVersion"
-    debugImplementation "androidx.fragment:fragment-testing:$fragmentVersion"
+    implementation libs.androidx.core.ktx
+    implementation libs.androidx.appcompat
+    implementation libs.androidx.recyclerview
+    implementation libs.androidx.annotation
+    implementation libs.androidx.preference.ktx
+    implementation libs.androidx.constraintlayout
+    implementation libs.androidx.viewpager2
+    implementation libs.androidx.work.runtime
+    implementation libs.androidx.lifecycle.viewmodel.ktx
+    implementation libs.androidx.lifecycle.livedata.ktx
+    implementation libs.androidx.fragment.ktx
+    debugImplementation libs.androidx.fragment.testing
 
     // Misc stuff like logging, image loading, billing, casting
-    implementation 'com.google.android.material:material:1.4.0'
-    implementation "com.jakewharton.timber:timber:$timberVersion"
-    implementation 'com.squareup.picasso:picasso:2.71828'
-    implementation 'com.android.billingclient:billing:6.1.0'
-    implementation 'com.google.android.gms:play-services-cast-framework:21.0.0'
-    implementation 'com.google.android.datatransport:transport-backend-cct:3.1.1'
-    implementation 'androidx.mediarouter:mediarouter:1.2.5'
+    implementation libs.material.components
+    implementation libs.timber
+    implementation libs.picasso
+    implementation libs.billing.ktx
+    implementation libs.billing.client
+    implementation libs.play.services.cast.framework
+    implementation libs.transport.backend.cct
+    implementation libs.androidx.mediarouter
 
     // Kotlin
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:${kotlinVersion}"
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.11.0'
+    implementation libs.kotlinx.coroutines.android
 
     // Material navigation drawer and dialogs
-    implementation "com.afollestad.material-dialogs:core:$materialDialogsVersion"
-    implementation "com.afollestad.material-dialogs:input:$materialDialogsVersion"
-    implementation "com.afollestad.material-dialogs:files:$materialDialogsVersion"
-    implementation "com.afollestad.material-dialogs:datetime:$materialDialogsVersion"
-    implementation "com.afollestad.material-dialogs:lifecycle:${materialDialogsVersion}"
+    implementation libs.material.dialogs.core
+    implementation libs.material.dialogs.input
+    implementation libs.material.dialogs.files
+    implementation libs.material.dialogs.datetime
+    implementation libs.material.dialogs.lifecycle
     //noinspection GradleDependency
-    implementation('com.mikepenz:materialdrawer:7.0.0') {
+    implementation(libs.materialdrawer) {
         // MaterialDrawer 7 requests kotlin-android-extensions-runtime 1.3.61, which bundles
         // kotlinx.android.parcel.* - meanwhile provided by kotlin-parcelize-runtime, giving
         // duplicate classes. The app no longer uses any kotlinx.android API.
@@ -146,37 +139,27 @@ dependencies {
     }
 
     // Firebase Crash Reporting and Performance Monitoring
-    implementation 'com.google.firebase:firebase-analytics-ktx:19.0.1'
-    implementation 'com.google.firebase:firebase-crashlytics:18.2.1'
-    implementation 'com.google.firebase:firebase-perf:20.0.2'
+    implementation libs.firebase.analytics.ktx
+    implementation libs.firebase.crashlytics
+    implementation libs.firebase.perf
 
     // Dependency injection
-    implementation "com.google.dagger:dagger:$daggerVersion"
-    ksp "com.google.dagger:dagger-compiler:$daggerVersion"
-
+    implementation libs.dagger.runtime
+    ksp libs.dagger.compiler
 
     // ----------------------------------------------------------------------------
     // Required internal libraries for the application
-    def exoplayerVersion = '2.11.7'
 
-    implementation "org.tvheadend.tvhclient.exoplayer:exoplayer-ui:$exoplayerVersion"
-    implementation "org.tvheadend.tvhclient.exoplayer:exoplayer-core:$exoplayerVersion"
-    implementation "org.tvheadend.tvhclient.exoplayer:exoplayer-dash:$exoplayerVersion"
-    implementation "org.tvheadend.tvhclient.exoplayer:extension-ffmpeg:$exoplayerVersion"
+    implementation libs.exoplayer.ui
+    implementation libs.exoplayer.core
+    implementation libs.exoplayer.dash
+    implementation libs.exoplayer.extension.ffmpeg
 
-    //implementation "org.tvheadend.tvhclient.htsp:htsp:1.2.1"
-    //implementation "org.tvheadend.tvhclient.data:data:2.1.3"
     implementation project(':htsp')
     implementation project(':data')
 
     // ----------------------------------------------------------------------------
-    // Define versions for testing dependencies
-    def junit_version = '4.13.2'
-    def androidx_test_version = '1.4.0'
-
     // Required dependencies for unit testing
-    testImplementation "junit:junit:$junit_version"
-    testImplementation "androidx.test:core:$androidx_test_version"
+    testImplementation libs.junit
+    testImplementation libs.androidx.test.core
 }
-
-apply plugin: 'com.google.gms.google-services'

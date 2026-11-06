@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    compileSdk = rootProject.ext.compileSdkVersion
+    compileSdk = libs.versions.compileSdk.get().toInteger()
 
     defaultConfig {
-        minSdk = rootProject.ext.minSdkVersion
-        targetSdk = rootProject.ext.targetSdkVersion
+        minSdk = libs.versions.minSdk.get().toInteger()
+        targetSdk = libs.versions.targetSdk.get().toInteger()
     }
 
     buildTypes {
@@ -20,8 +20,8 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = rootProject.ext.javaCompatibility
-        targetCompatibility = rootProject.ext.javaCompatibility
+        sourceCompatibility = libs.versions.javaVersion.get()
+        targetCompatibility = libs.versions.javaVersion.get()
     }
     // AGP 9's built-in Kotlin defaults jvmTarget to compileOptions.targetCompatibility.
     namespace 'org.tvheadend.data'
@@ -42,19 +42,18 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
     // Support library basics
-    implementation "androidx.appcompat:appcompat:$appCompatVersion"
-    implementation "androidx.preference:preference-ktx:$prefKtxVersion"
+    implementation libs.androidx.appcompat
+    implementation libs.androidx.preference.ktx
 
     // Android Room
-    def roomVersion = '2.8.5'
-    implementation "androidx.room:room-runtime:$roomVersion"
-    implementation "androidx.room:room-ktx:$roomVersion"
-    ksp "androidx.room:room-compiler:$roomVersion"
+    implementation libs.androidx.room.runtime
+    implementation libs.androidx.room.ktx
+    ksp libs.androidx.room.compiler
 
     // Logging library
-    implementation "com.jakewharton.timber:timber:$timberVersion"
+    implementation libs.timber
 
     // Dependency injection
-    implementation "com.google.dagger:dagger:$daggerVersion"
-    ksp "com.google.dagger:dagger-compiler:$daggerVersion"
+    implementation libs.dagger.runtime
+    ksp libs.dagger.compiler
 }

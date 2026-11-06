@@ -1,0 +1,101 @@
+# Single source of truth for SDK levels and library versions.
+#
+# Plugin versions (AGP, Kotlin, KSP, Firebase) live in the root build.gradle buildscript
+# block, because a version catalog cannot be read from inside a `buildscript {}` block.
+
+[versions]
+compileSdk = "34"
+minSdk = "23"
+targetSdk = "34"
+javaVersion = "17"
+
+# AndroidX
+appcompat = "1.4.0"
+coreKtx = "1.7.0"
+preferenceKtx = "1.1.1"
+recyclerview = "1.2.1"
+annotation = "1.3.0"
+constraintlayout = "2.1.2"
+viewpager2 = "1.0.0"
+work = "2.7.1"
+mediarouter = "1.2.5"
+lifecycle = "2.4.0"
+fragment = "1.4.0"
+material = "1.4.0"
+room = "2.8.5"
+androidxTest = "1.4.0"
+
+# Tools and languages
+timber = "5.0.1"
+picasso = "2.71828"
+coroutines = "1.11.0"
+dagger = "2.60.1"
+
+# Google Play / Cast
+billing = "6.1.0"
+playServicesCast = "21.0.0"
+transportBackendCct = "3.1.1"
+
+# Firebase
+firebaseAnalytics = "19.0.1"
+firebaseCrashlytics = "18.2.1"
+firebasePerf = "20.0.2"
+
+# Unmaintained libraries scheduled for replacement
+materialDialogs = "3.3.0"
+materialDrawer = "7.0.0"
+
+# Built from the local fork; replaced by androidx.media3 in a later step
+exoplayer = "2.11.7"
+
+junit = "4.13.2"
+
+[libraries]
+androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "coreKtx" }
+androidx-appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompat" }
+androidx-recyclerview = { module = "androidx.recyclerview:recyclerview", version.ref = "recyclerview" }
+androidx-annotation = { module = "androidx.annotation:annotation", version.ref = "annotation" }
+androidx-preference-ktx = { module = "androidx.preference:preference-ktx", version.ref = "preferenceKtx" }
+androidx-constraintlayout = { module = "androidx.constraintlayout:constraintlayout", version.ref = "constraintlayout" }
+androidx-viewpager2 = { module = "androidx.viewpager2:viewpager2", version.ref = "viewpager2" }
+androidx-work-runtime = { module = "androidx.work:work-runtime", version.ref = "work" }
+androidx-mediarouter = { module = "androidx.mediarouter:mediarouter", version.ref = "mediarouter" }
+androidx-lifecycle-viewmodel-ktx = { module = "androidx.lifecycle:lifecycle-viewmodel-ktx", version.ref = "lifecycle" }
+androidx-lifecycle-livedata-ktx = { module = "androidx.lifecycle:lifecycle-livedata-ktx", version.ref = "lifecycle" }
+androidx-fragment-ktx = { module = "androidx.fragment:fragment-ktx", version.ref = "fragment" }
+androidx-fragment-testing = { module = "androidx.fragment:fragment-testing", version.ref = "fragment" }
+androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }
+androidx-room-ktx = { module = "androidx.room:room-ktx", version.ref = "room" }
+androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
+androidx-test-core = { module = "androidx.test:core", version.ref = "androidxTest" }
+
+timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
+picasso = { module = "com.squareup.picasso:picasso", version.ref = "picasso" }
+kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "coroutines" }
+dagger-runtime = { module = "com.google.dagger:dagger", version.ref = "dagger" }
+dagger-compiler = { module = "com.google.dagger:dagger-compiler", version.ref = "dagger" }
+
+material-components = { module = "com.google.android.material:material", version.ref = "material" }
+
+billing-client = { module = "com.android.billingclient:billing", version.ref = "billing" }
+billing-ktx = { module = "com.android.billingclient:billing-ktx", version.ref = "billing" }
+play-services-cast-framework = { module = "com.google.android.gms:play-services-cast-framework", version.ref = "playServicesCast" }
+transport-backend-cct = { module = "com.google.android.datatransport:transport-backend-cct", version.ref = "transportBackendCct" }
+
+firebase-analytics-ktx = { module = "com.google.firebase:firebase-analytics-ktx", version.ref = "firebaseAnalytics" }
+firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics", version.ref = "firebaseCrashlytics" }
+firebase-perf = { module = "com.google.firebase:firebase-perf", version.ref = "firebasePerf" }
+
+material-dialogs-core = { module = "com.afollestad.material-dialogs:core", version.ref = "materialDialogs" }
+material-dialogs-input = { module = "com.afollestad.material-dialogs:input", version.ref = "materialDialogs" }
+material-dialogs-files = { module = "com.afollestad.material-dialogs:files", version.ref = "materialDialogs" }
+material-dialogs-datetime = { module = "com.afollestad.material-dialogs:datetime", version.ref = "materialDialogs" }
+material-dialogs-lifecycle = { module = "com.afollestad.material-dialogs:lifecycle", version.ref = "materialDialogs" }
+materialdrawer = { module = "com.mikepenz:materialdrawer", version.ref = "materialDrawer" }
+
+exoplayer-core = { module = "org.tvheadend.tvhclient.exoplayer:exoplayer-core", version.ref = "exoplayer" }
+exoplayer-dash = { module = "org.tvheadend.tvhclient.exoplayer:exoplayer-dash", version.ref = "exoplayer" }
+exoplayer-ui = { module = "org.tvheadend.tvhclient.exoplayer:exoplayer-ui", version.ref = "exoplayer" }
+exoplayer-extension-ffmpeg = { module = "org.tvheadend.tvhclient.exoplayer:extension-ffmpeg", version.ref = "exoplayer" }
+
+junit = { module = "junit:junit", version.ref = "junit" }

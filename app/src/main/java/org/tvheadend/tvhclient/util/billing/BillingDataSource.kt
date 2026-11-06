@@ -5,9 +5,8 @@ import android.app.Application
 import android.os.Handler
 import android.os.Looper
 import android.os.SystemClock
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleObserver
-import androidx.lifecycle.OnLifecycleEvent
+import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.LifecycleOwner
 import com.android.billingclient.api.AcknowledgePurchaseParams
 import com.android.billingclient.api.BillingClient
 import com.android.billingclient.api.BillingClientStateListener
@@ -84,7 +83,7 @@ class BillingDataSource private constructor(
     knownSubscriptionSKUs: Array<String>?,
     autoConsumeSKUs: Array<String>?
 ) :
-    LifecycleObserver, PurchasesUpdatedListener, BillingClientStateListener {
+    DefaultLifecycleObserver, PurchasesUpdatedListener, BillingClientStateListener {
     // Billing client, connection, cached data
     private val billingClient: BillingClient
 
@@ -645,8 +644,7 @@ class BillingDataSource private constructor(
     /**
      * It's recommended to requery purchases during onResume.
      */
-    @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
-    fun resume() {
+    override fun onResume(owner: LifecycleOwner) {
         Timber.d("ON_RESUME")
         // this just avoids an extra purchase refresh after we finish a billing flow
         if (!billingFlowInProcess.value) {

@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    compileSdk = rootProject.ext.compileSdkVersion
+    compileSdk = libs.versions.compileSdk.get().toInteger()
 
     defaultConfig {
-        minSdk = rootProject.ext.minSdkVersion
-        targetSdk = rootProject.ext.targetSdkVersion
+        minSdk = libs.versions.minSdk.get().toInteger()
+        targetSdk = libs.versions.targetSdk.get().toInteger()
     }
 
     buildTypes {
@@ -20,8 +20,8 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = rootProject.ext.javaCompatibility
-        targetCompatibility = rootProject.ext.javaCompatibility
+        sourceCompatibility = libs.versions.javaVersion.get()
+        targetCompatibility = libs.versions.javaVersion.get()
     }
     // AGP 9's built-in Kotlin defaults jvmTarget to compileOptions.targetCompatibility.
     namespace 'org.tvheadend.htsp'
@@ -33,28 +33,7 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation "androidx.appcompat:appcompat:$appCompatVersion"
-    implementation "com.jakewharton.timber:timber:$timberVersion"
-    implementation "androidx.core:core-ktx:$coreKtxVersion"
-    //implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlinVersion"
-    //implementation "com.squareup.okhttp3:okhttp:3.11.0" // Higher versions don't support API 19 anymore
+    implementation libs.androidx.appcompat
+    implementation libs.timber
+    implementation libs.androidx.core.ktx
 }
-
-/*
-ext {
-    javadocTitle = 'Android HTSP Library used by TVHClient to communicate with TVHeadend'
-}
-apply from: '../javadoc_library.gradle'
-
-ext {
-    releaseVersion = '1.2.0'
-    releaseArtifact = 'htsp'
-    releaseGroupId = 'org.tvheadend.tvhclient.htsp'
-    releaseDescription = 'Android HTSP Library used by TVHClient to communicate with TVHeadend'
-}
-apply from: '../publish.gradle'
-
-repositories {
-    mavenCentral()
-}
-*/
