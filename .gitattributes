@@ -1,0 +1,27 @@
+# Keep line endings consistent so they never show up as spurious modifications.
+#
+# Text files are stored with LF inside the repository and checked out with LF,
+# no matter which platform the checkout happens on.
+* text=auto eol=lf
+
+# Windows scripts keep CRLF so they run correctly on Windows.
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+# Binary files must never be line-ending converted.
+*.png      binary
+*.jpg      binary
+*.jpeg     binary
+*.gif      binary
+*.webp     binary
+*.ico      binary
+*.ttf      binary
+*.otf      binary
+*.jar      binary
+*.zip      binary
+*.jks      binary
+*.keystore binary
+*.mp3      binary
+*.mp4      binary
+*.wav      binary
+*.so       binary
