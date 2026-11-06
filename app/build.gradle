@@ -1,10 +1,8 @@
 plugins {
     id 'com.android.application'
-    id 'kotlin-android'
-    // Data Binding's BR/binding classes are still produced by an annotation processor, and
-    // KSP support for Data Binding is not planned, so kapt has to stay in this module.
-    // Everything else (Dagger) runs through KSP below.
-    id 'kotlin-kapt'
+    // AGP 9 compiles Kotlin itself (built-in Kotlin) and no longer accepts kotlin-android.
+    // Data Binding still needs kapt, which AGP 9 only allows through this shim.
+    id 'com.android.legacy-kapt'
     id 'com.google.devtools.ksp'
     id 'kotlin-parcelize'
     id 'com.google.gms.google-services'
@@ -18,11 +16,11 @@ def appProperties = new Properties()
 appProperties.load(new FileInputStream(rootProject.file("tvhclient.properties")))
 
 android {
-    compileSdkVersion rootProject.ext.compileSdkVersion
+    compileSdk = rootProject.ext.compileSdkVersion
 
     defaultConfig {
-        minSdkVersion rootProject.ext.minSdkVersion
-        targetSdkVersion rootProject.ext.targetSdkVersion
+        minSdk = rootProject.ext.minSdkVersion
+        targetSdk = rootProject.ext.targetSdkVersion
         versionCode 241
         versionName "2.4.8"
 
@@ -46,11 +44,6 @@ android {
         // running platform versions lower than Android 5.0 (API level 21)
         vectorDrawables.useSupportLibrary = true
 
-        lintOptions {
-            // Do not check for lint errors to reduce the build time.
-            // Lint checks will be done manually before a release
-            checkReleaseBuilds false
-        }
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -58,6 +51,13 @@ android {
     buildFeatures {
         dataBinding = true
         viewBinding true
+        buildConfig = true
+    }
+
+    lint {
+        // Do not check for lint errors to reduce the build time.
+        // Lint checks will be done manually before a release
+        checkReleaseBuilds false
     }
 
     compileOptions {
@@ -65,7 +65,7 @@ android {
         targetCompatibility = rootProject.ext.javaCompatibility
     }
 
-    kotlinOptions.jvmTarget = rootProject.ext.javaCompatibility.toString()
+    // AGP 9's built-in Kotlin defaults jvmTarget to compileOptions.targetCompatibility.
     testOptions.unitTests.includeAndroidResources = true
     namespace 'org.tvheadend.tvhclient'
     packaging {
@@ -77,7 +77,9 @@ android {
     buildTypes {
         release {
             // Reduce the apk file size by enabling proguard
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            // AGP 9 removed 'proguard-android.txt' (it embedded -dontoptimize). Note this
+            // means release builds now run R8 optimisations.
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             buildConfigField "Boolean", "OVERRIDE_UNLOCKED", "false"
         }
         debug {
