@@ -55,6 +55,8 @@ class FakeHtspServer @JvmOverloads constructor(
     private val grantsAuthenticationRights: Boolean = true,
     private val serverVersion: String = "4.3-test",
     private val apiVersion: Int = 2,
+    /** The metadata that is served after a successful authentication. */
+    private val sampleData: HtspSampleData = HtspSampleData(),
 ) : AutoCloseable {
 
     private val running = AtomicBoolean(false)
@@ -70,6 +72,21 @@ class FakeHtspServer @JvmOverloads constructor(
 
     /** Number of `authenticate` messages received. */
     val authenticateCount = AtomicInteger()
+
+    /** Number of `enableAsyncMetadata` requests received. */
+    val enableAsyncMetadataCount = AtomicInteger()
+
+    /** Number of `tagAdd` messages pushed during the initial sync. */
+    val tagAddCount = AtomicInteger()
+
+    /** Number of `channelAdd` messages pushed during the initial sync. */
+    val channelAddCount = AtomicInteger()
+
+    /** Number of `eventAdd` messages pushed during the initial sync. */
+    val eventAddCount = AtomicInteger()
+
+    /** Number of `initialSyncCompleted` messages pushed during the initial sync. */
+    val initialSyncCompletedCount = AtomicInteger()
 
     /** The most recent `hello` message received from the client, or null before [start]. */
     @Volatile
@@ -191,7 +208,50 @@ class FakeHtspServer @JvmOverloads constructor(
                 }
                 send(channel, reply)
             }
-            else -> Unit // Ignore anything that is not part of the handshake.
+            "enableAsyncMetadata" -> {
+                enableAsyncMetadataCount.incrementAndGet()
+                // Acknowledge the request first (the client correlates it via seq), then push
+                // the initial metadata like a real server. The pushed messages carry no seq so
+                // the client hands them to its message listeners instead of a response handler.
+                send(channel, responseTo(message, "enableAsyncMetadata"))
+                for (tag in sampleData.tagAddMessages()) {
+                    tagAddCount.incrementAndGet()
+                    send(channel, tag)
+                }
+                for (channelMessage in sampleData.channelAddMessages()) {
+                    channelAddCount.incrementAndGet()
+                    send(channel, channelMessage)
+                }
+                for (event in sampleData.eventAddMessages()) {
+                    eventAddCount.incrementAndGet()
+                    send(channel, event)
+                }
+                initialSyncCompletedCount.incrementAndGet()
+                val syncCompleted = HtspMessage()
+                syncCompleted.setMethod("initialSyncCompleted")
+                send(channel, syncCompleted)
+            }
+            "getDiskSpace" -> send(channel, withSeq(sampleData.diskSpace(), message))
+            "getSysTime" -> send(channel, withSeq(sampleData.systemTime(), message))
+            "getProfiles" -> send(channel, withSeq(sampleData.profiles(), message))
+            "getDvrConfigs" -> send(channel, withSeq(sampleData.dvrConfigs(), message))
+            "getChannel" -> {
+                sampleData.channel(message.getInteger("channelId", 0))
+                    ?.let { send(channel, withSeq(it, message)) }
+            }
+            "getEvent" -> {
+                sampleData.event(message.getInteger("eventId", 0))
+                    ?.let { send(channel, withSeq(it, message)) }
+            }
+            "getEvents" -> send(channel, withSeq(sampleData.events(), message))
+            "api" -> {
+                if (message.getString("path", "") == "profile/list") {
+                    send(channel, withSeq(sampleData.httpProfiles(), message))
+                } else {
+                    send(channel, responseTo(message, "api"))
+                }
+            }
+            else -> Unit // Ignore anything that is not part of the handshake/metadata flow.
         }
     }
 
@@ -214,6 +274,23 @@ class FakeHtspServer @JvmOverloads constructor(
     /** Writes a message, reusing the production HTSP framing in [HtspMessage.transmit]. */
     private fun send(channel: SocketChannel, message: HtspMessage) {
         message.transmit(channel)
+    }
+
+    /**
+     * Adds the client's `seq` to [reply] so the client routes it to the response handler that
+     * was registered when the matching request was sent.
+     */
+    private fun withSeq(reply: HtspMessage, request: HtspMessage): HtspMessage {
+        reply.put("seq", request.getInteger("seq", 0))
+        return reply
+    }
+
+    /** Builds an empty acknowledgement that echoes the client's `seq` for [method]. */
+    private fun responseTo(request: HtspMessage, method: String): HtspMessage {
+        val reply = HtspMessage()
+        reply.setMethod(method)
+        reply.put("seq", request.getInteger("seq", 0))
+        return reply
     }
 
     override fun close() {
