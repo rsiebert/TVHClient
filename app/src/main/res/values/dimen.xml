@@ -2,5 +2,4 @@
 <resources>
     <dimen name="dp_80">80dp</dimen>
     <dimen name="dp_16">16dp</dimen>
-    <dimen name="md_corner_radius">4dp</dimen>
 </resources>

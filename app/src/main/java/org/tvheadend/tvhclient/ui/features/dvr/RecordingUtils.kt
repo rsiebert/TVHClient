@@ -4,10 +4,8 @@ import android.content.Context
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
-import com.afollestad.materialdialogs.MaterialDialog
-import com.afollestad.materialdialogs.list.customListAdapter
-import com.afollestad.materialdialogs.list.listItemsMultiChoice
-import com.afollestad.materialdialogs.list.listItemsSingleChoice
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import org.tvheadend.tvhclient.ui.common.buildRecyclerView
 import org.tvheadend.data.entity.Channel
 import org.tvheadend.data.entity.ServerProfile
 import org.tvheadend.tvhclient.R
@@ -59,17 +57,26 @@ fun handleDayOfWeekSelection(context: Context, daysOfWeek: Int, callback: Record
             list.add(i)
         }
     }
-    MaterialDialog(context).show {
-        title(R.string.days_of_week)
-        positiveButton(R.string.select)
-        listItemsMultiChoice(R.array.day_long_names, initialSelection = list.toMutableList().toIntArray()) { _, index, _ ->
-            var selectedDays = 0
-            for (i in index) {
-                selectedDays += 1 shl i
-            }
-            callback?.onDaysSelected(selectedDays)
+    val dayNames = context.resources.getStringArray(R.array.day_long_names)
+    val checked = BooleanArray(dayNames.size)
+    for (i in list) {
+        if (i in checked.indices) {
+            checked[i] = true
         }
     }
+    MaterialAlertDialogBuilder(context)
+            .setTitle(R.string.days_of_week)
+            .setMultiChoiceItems(dayNames, checked) { _, _, _ -> /* selection state is kept in checked */ }
+            .setPositiveButton(R.string.select) { _, _ ->
+                var selectedDays = 0
+                for (i in checked.indices) {
+                    if (checked[i]) {
+                        selectedDays += 1 shl i
+                    }
+                }
+                callback?.onDaysSelected(selectedDays)
+            }
+            .show()
 }
 
 fun handleChannelListSelection(context: Context, channelList: List<Channel>, showAllChannelsListEntry: Boolean, callback: RecordingConfigSelectedListener?) {
@@ -88,10 +95,10 @@ fun handleChannelListSelection(context: Context, channelList: List<Channel>, sho
     val channelListSelectionAdapter = ChannelListSelectionAdapter(context, channels)
     // Show the dialog that shows all available channel tags. When the
     // user has selected a tag, restart the loader to loadRecordingById the updated channel list
-    val dialog: MaterialDialog = MaterialDialog(context).show {
-        title(R.string.tags)
-        customListAdapter(channelListSelectionAdapter)
-    }
+    val dialog = MaterialAlertDialogBuilder(context)
+            .setTitle(R.string.tags)
+            .setView(buildRecyclerView(context, channelListSelectionAdapter))
+            .create()
 
     // Set the callback to handle clicks. This needs to be done after the
     // dialog creation so that the inner method has access to the dialog variable
@@ -101,26 +108,28 @@ fun handleChannelListSelection(context: Context, channelList: List<Channel>, sho
             dialog.dismiss()
         }
     })
+    dialog.show()
 }
 
 fun handlePrioritySelection(context: Context, selectedPriority: Int, callback: RecordingConfigSelectedListener?) {
     Timber.d("Selected priority is ${if (selectedPriority == 6) 5 else selectedPriority}")
-    MaterialDialog(context).show {
-        title(R.string.select_priority)
-        listItemsSingleChoice(R.array.dvr_priority_names, initialSelection = if (selectedPriority == 6) 5 else selectedPriority) { _, index, _ ->
-            Timber.d("New selected priority is ${if (index == 5) 6 else index}")
-            callback?.onPrioritySelected(if (index == 5) 6 else index)
-        }
-    }
+    val priorityNames = context.resources.getStringArray(R.array.dvr_priority_names)
+    MaterialAlertDialogBuilder(context)
+            .setTitle(R.string.select_priority)
+            .setSingleChoiceItems(priorityNames, if (selectedPriority == 6) 5 else selectedPriority) { _, index ->
+                Timber.d("New selected priority is ${if (index == 5) 6 else index}")
+                callback?.onPrioritySelected(if (index == 5) 6 else index)
+            }
+            .show()
 }
 
 fun handleRecordingProfileSelection(context: Context, recordingProfilesList: Array<String>, selectedProfile: Int, callback: RecordingConfigSelectedListener?) {
-    MaterialDialog(context).show {
-        title(R.string.select_dvr_config)
-        listItemsSingleChoice(items = recordingProfilesList.toList(), initialSelection = selectedProfile) { _, index, _ ->
-            callback?.onProfileSelected(index)
-        }
-    }
+    MaterialAlertDialogBuilder(context)
+            .setTitle(R.string.select_dvr_config)
+            .setSingleChoiceItems(recordingProfilesList, selectedProfile) { _, index ->
+                callback?.onProfileSelected(index)
+            }
+            .show()
 }
 
 fun getSelectedProfileId(profile: ServerProfile?, recordingProfilesList: Array<String>): Int {

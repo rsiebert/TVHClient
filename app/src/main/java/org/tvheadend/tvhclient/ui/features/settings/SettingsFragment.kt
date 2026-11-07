@@ -14,8 +14,8 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceManager
-import com.afollestad.materialdialogs.MaterialDialog
-import com.afollestad.materialdialogs.files.folderChooser
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import java.io.File
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.ui.common.interfaces.ToolbarInterface
 import org.tvheadend.tvhclient.ui.features.MainActivity
@@ -161,19 +161,52 @@ class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceClic
         Timber.d("Showing folder selection dialog")
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
             Timber.d("Android API version is ${Build.VERSION.SDK_INT}, showing folder selection dialog")
-            // Show the folder chooser dialog which defaults to the external storage dir
-            MaterialDialog(context).show {
-                folderChooser(context) { _, file ->
-                    Timber.d("Folder ${file.absolutePath}, ${file.name} was selected")
-                    val strippedPath = file.absolutePath.replace(Environment.getExternalStorageDirectory().absolutePath, "")
-                    sharedPreferences.edit().putString("download_directory", strippedPath).apply()
-                    updateDownloadDirSummary()
-                }
-            }
+            // Show a simple folder chooser dialog which defaults to the external storage dir
+            showFolderChooser(context, Environment.getExternalStorageDirectory())
         } else {
             Timber.d("Android API version is ${Build.VERSION.SDK_INT}, showing information about default folder")
             context.sendSnackbarMessage("On Android 10 and higher devices the download folder is always ${Environment.DIRECTORY_DOWNLOADS}")
         }
+    }
+
+    /**
+     * Simple folder picker. Lists the sub folders of [directory] and navigates into them on
+     * click. The positive button selects the current folder as the download directory.
+     */
+    private fun showFolderChooser(context: Context, directory: File) {
+        val rootPath = Environment.getExternalStorageDirectory().absolutePath
+        val subFolders = (directory.listFiles { file -> file.isDirectory } ?: emptyArray())
+                .sortedBy { it.name }
+
+        val displayItems = ArrayList<String>()
+        val targetFolders = ArrayList<File>()
+        // Allow navigating to the parent folder, but not above the external storage root
+        if (directory.absolutePath != rootPath) {
+            directory.parentFile?.let {
+                displayItems.add("..")
+                targetFolders.add(it)
+            }
+        }
+        for (folder in subFolders) {
+            displayItems.add(folder.name)
+            targetFolders.add(folder)
+        }
+
+        val builder = MaterialAlertDialogBuilder(context)
+                .setTitle(directory.name.ifEmpty { directory.absolutePath })
+                .setPositiveButton(R.string.select) { _, _ ->
+                    Timber.d("Folder ${directory.absolutePath} was selected")
+                    val strippedPath = directory.absolutePath.replace(Environment.getExternalStorageDirectory().absolutePath, "")
+                    sharedPreferences.edit().putString("download_directory", strippedPath).apply()
+                    updateDownloadDirSummary()
+                }
+                .setNegativeButton(R.string.cancel, null)
+        if (displayItems.isNotEmpty()) {
+            builder.setItems(displayItems.toTypedArray()) { _, which ->
+                showFolderChooser(context, targetFolders[which])
+            }
+        }
+        builder.show()
     }
 
     private fun isReadPermissionGranted(activity: FragmentActivity): Boolean {

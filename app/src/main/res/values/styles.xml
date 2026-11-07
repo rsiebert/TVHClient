@@ -147,13 +147,6 @@
         <item name="fast_scroll_thumb">@drawable/fast_scroll_thumb_dark</item>
         <!--</editor-fold>-->
 
-        <!--<editor-fold desc="Material dialog colors">-->
-        <item name="md_color_title">@color/title_text_dark</item>
-        <item name="md_color_content">@color/content_text_dark</item>
-        <item name="md_color_button_text">@color/title_text_dark</item>
-        <item name="md_corner_radius">@dimen/md_corner_radius</item>
-        <!--</editor-fold>-->
-
         <!--<editor-fold desc="Misc">-->
         <item name="divider_color">@color/divider_color_dark</item>
         <item name="rounded_corners">@drawable/rounded_corners_dark</item>
@@ -242,13 +235,6 @@
         <!--<editor-fold desc="Fast scrollbar styles">-->
         <item name="fast_scroll_track">@drawable/fast_scroll_track_light</item>
         <item name="fast_scroll_thumb">@drawable/fast_scroll_thumb_light</item>
-        <!--</editor-fold>-->
-
-        <!--<editor-fold desc="Material dialog colors">-->
-        <item name="md_color_title">@color/title_text_light</item>
-        <item name="md_color_content">@color/content_text_light</item>
-        <item name="md_color_button_text">@color/title_text_light</item>
-        <item name="md_corner_radius">@dimen/md_corner_radius</item>
         <!--</editor-fold>-->
 
         <!--<editor-fold desc="Misc">-->

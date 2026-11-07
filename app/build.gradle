@@ -131,13 +131,6 @@ dependencies {
     // Kotlin
     implementation libs.kotlinx.coroutines.android
 
-    // Material navigation drawer and dialogs
-    implementation libs.material.dialogs.core
-    implementation libs.material.dialogs.input
-    implementation libs.material.dialogs.files
-    implementation libs.material.dialogs.datetime
-    implementation libs.material.dialogs.lifecycle
-
     // Firebase Crash Reporting and Performance Monitoring
     implementation libs.firebase.analytics.ktx
     implementation libs.firebase.crashlytics

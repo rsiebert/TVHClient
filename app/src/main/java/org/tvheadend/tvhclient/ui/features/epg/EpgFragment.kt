@@ -14,7 +14,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.SCROLL_STATE_IDLE
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
-import com.afollestad.materialdialogs.MaterialDialog
+import androidx.appcompat.app.AlertDialog
 import org.tvheadend.data.entity.ChannelTag
 import org.tvheadend.data.entity.EpgProgram
 import org.tvheadend.tvhclient.R
@@ -211,7 +211,7 @@ class EpgFragment : BaseFragment(), EpgScrollInterface, RecyclerViewClickInterfa
         }
     }
 
-    private fun startDialogDismissTimer(dialog: MaterialDialog) {
+    private fun startDialogDismissTimer(dialog: AlertDialog) {
         dialogDismissRunnable = Runnable {
             if (dialog.isShowing) {
                 dialog.dismiss()

@@ -7,7 +7,7 @@ import android.net.Uri
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
-import com.afollestad.materialdialogs.MaterialDialog
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.databinding.PlayActivityBinding
 import org.tvheadend.tvhclient.ui.common.onAttach
@@ -73,23 +73,23 @@ abstract class BasePlaybackActivity : AppCompatActivity() {
                 binding.status.setText(R.string.no_media_player)
 
                 // Show a confirmation dialog before deleting the recording
-                MaterialDialog(this@BasePlaybackActivity).show {
-                    title(R.string.no_media_player)
-                    message(R.string.show_play_store)
-                    positiveButton(android.R.string.ok) {
-                        try {
-                            Timber.d("Opening play store to download external players")
-                            val installIntent = Intent(Intent.ACTION_VIEW)
-                            installIntent.data = Uri.parse("market://search?q=free%20video%20player&c=apps")
-                            startActivity(installIntent)
-                        } catch (t2: Throwable) {
-                            Timber.d("Could not startPlayback google play store")
-                        } finally {
-                            finish()
+                MaterialAlertDialogBuilder(this@BasePlaybackActivity)
+                        .setTitle(R.string.no_media_player)
+                        .setMessage(R.string.show_play_store)
+                        .setPositiveButton(android.R.string.ok) { _, _ ->
+                            try {
+                                Timber.d("Opening play store to download external players")
+                                val installIntent = Intent(Intent.ACTION_VIEW)
+                                installIntent.data = Uri.parse("market://search?q=free%20video%20player&c=apps")
+                                startActivity(installIntent)
+                            } catch (t2: Throwable) {
+                                Timber.d("Could not startPlayback google play store")
+                            } finally {
+                                finish()
+                            }
                         }
-                    }
-                    negativeButton(android.R.string.cancel) { finish() }
-                }
+                        .setNegativeButton(android.R.string.cancel) { _, _ -> finish() }
+                        .show()
             }
         }
     }

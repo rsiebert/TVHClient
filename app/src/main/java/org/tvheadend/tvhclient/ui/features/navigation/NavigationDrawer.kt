@@ -12,7 +12,7 @@ import androidx.appcompat.widget.Toolbar
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.preference.PreferenceManager
-import com.afollestad.materialdialogs.MaterialDialog
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.navigation.NavigationView
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.ui.features.channels.ChannelListFragment
@@ -137,22 +137,21 @@ class NavigationDrawer(private val activity: AppCompatActivity,
             return
         }
 
-        MaterialDialog(activity).show {
-            title(R.string.connect_to_new_server)
-            negativeButton(R.string.cancel) {
-                val activeIndex = connectionIds.indexOf(navigationViewModel.connection.id)
-                if (activeIndex >= 0) {
-                    connectionSpinner.setSelection(activeIndex, false)
+        MaterialAlertDialogBuilder(activity)
+                .setTitle(R.string.connect_to_new_server)
+                .setNegativeButton(R.string.cancel) { _, _ ->
+                    val activeIndex = connectionIds.indexOf(navigationViewModel.connection.id)
+                    if (activeIndex >= 0) {
+                        connectionSpinner.setSelection(activeIndex, false)
+                    }
                 }
-            }
-            positiveButton(R.string.connect) {
-                if (navigationViewModel.setSelectedConnectionAsActive(selectedId)) {
-                    navigationViewModel.updateConnectionAndRestartApplication(activity)
+                .setPositiveButton(R.string.connect) { _, _ ->
+                    if (navigationViewModel.setSelectedConnectionAsActive(selectedId)) {
+                        navigationViewModel.updateConnectionAndRestartApplication(activity)
+                    }
                 }
-            }
-            cancelable(false)
-            cancelOnTouchOutside(false)
-        }
+                .setCancelable(false)
+                .show()
     }
 
     fun getSelectedMenu(): Int =

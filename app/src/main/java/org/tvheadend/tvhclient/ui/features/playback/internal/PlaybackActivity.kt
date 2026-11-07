@@ -23,8 +23,7 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.preference.PreferenceManager
-import com.afollestad.materialdialogs.MaterialDialog
-import com.afollestad.materialdialogs.list.listItemsSingleChoice
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.ui.PlayerView
 import com.squareup.picasso.Callback
@@ -457,14 +456,14 @@ class PlaybackActivity : AppCompatActivity() {
             }
         }
 
-        MaterialDialog(this).show {
-            title(text = "Select the video aspect ratio")
-            listItemsSingleChoice(items = videoAspectRatioNameList.toList(), initialSelection = selectedVideoAspectIndex) { _, which, _ ->
-                Timber.d("Selected aspect ratio index is $which")
-                selectedVideoAspectIndex = which
-                viewModel.setVideoAspectRatio(videoAspectRatioList[which])
-            }
-        }
+        MaterialAlertDialogBuilder(this)
+                .setTitle("Select the video aspect ratio")
+                .setSingleChoiceItems(videoAspectRatioNameList.toTypedArray(), selectedVideoAspectIndex) { _, which ->
+                    Timber.d("Selected aspect ratio index is $which")
+                    selectedVideoAspectIndex = which
+                    viewModel.setVideoAspectRatio(videoAspectRatioList[which])
+                }
+                .show()
     }
 
     private fun onToggleFullscreenSelected() {

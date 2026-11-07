@@ -40,9 +40,6 @@ firebaseAnalytics = "19.0.1"
 firebaseCrashlytics = "18.2.1"
 firebasePerf = "20.0.2"
 
-# Unmaintained libraries scheduled for replacement
-materialDialogs = "3.3.0"
-
 # Built from the local fork; replaced by androidx.media3 in a later step
 exoplayer = "2.11.7"
 
@@ -92,12 +89,6 @@ transport-backend-cct = { module = "com.google.android.datatransport:transport-b
 firebase-analytics-ktx = { module = "com.google.firebase:firebase-analytics-ktx", version.ref = "firebaseAnalytics" }
 firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics", version.ref = "firebaseCrashlytics" }
 firebase-perf = { module = "com.google.firebase:firebase-perf", version.ref = "firebasePerf" }
-
-material-dialogs-core = { module = "com.afollestad.material-dialogs:core", version.ref = "materialDialogs" }
-material-dialogs-input = { module = "com.afollestad.material-dialogs:input", version.ref = "materialDialogs" }
-material-dialogs-files = { module = "com.afollestad.material-dialogs:files", version.ref = "materialDialogs" }
-material-dialogs-datetime = { module = "com.afollestad.material-dialogs:datetime", version.ref = "materialDialogs" }
-material-dialogs-lifecycle = { module = "com.afollestad.material-dialogs:lifecycle", version.ref = "materialDialogs" }
 
 exoplayer-core = { module = "org.tvheadend.tvhclient.exoplayer:exoplayer-core", version.ref = "exoplayer" }
 exoplayer-dash = { module = "org.tvheadend.tvhclient.exoplayer:exoplayer-dash", version.ref = "exoplayer" }

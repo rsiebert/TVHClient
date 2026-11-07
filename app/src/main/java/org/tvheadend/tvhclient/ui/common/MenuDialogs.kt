@@ -4,14 +4,14 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.FrameLayout
+import androidx.appcompat.app.AlertDialog
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import androidx.preference.PreferenceManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.afollestad.materialdialogs.MaterialDialog
-import com.afollestad.materialdialogs.callbacks.onDismiss
-import com.afollestad.materialdialogs.list.customListAdapter
-import com.afollestad.materialdialogs.list.listItemsSingleChoice
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import org.tvheadend.data.entity.ChannelTag
 import org.tvheadend.tvhclient.BR
 import org.tvheadend.tvhclient.R
@@ -22,6 +22,26 @@ import timber.log.Timber
 import java.text.SimpleDateFormat
 import java.util.*
 
+/**
+ * Creates a [RecyclerView] that hosts the given adapter so it can be used as the
+ * custom view of a [MaterialAlertDialogBuilder].
+ *
+ * [MaterialAlertDialogBuilder] has no direct RecyclerView adapter support (unlike the
+ * former material-dialogs library). The existing adapters are kept and simply wrapped in
+ * a RecyclerView that is passed via [MaterialAlertDialogBuilder.setView].
+ */
+fun buildRecyclerView(context: Context, adapter: RecyclerView.Adapter<*>): RecyclerView {
+    val recyclerView = RecyclerView(context)
+    recyclerView.layoutManager = LinearLayoutManager(context)
+    recyclerView.adapter = adapter
+    recyclerView.setHasFixedSize(true)
+    // Explicit layout params are required so the RecyclerView is shown when it is added to
+    // the alert dialog's custom panel (which is a FrameLayout inside a scroll view).
+    recyclerView.layoutParams = FrameLayout.LayoutParams(
+            FrameLayout.LayoutParams.MATCH_PARENT,
+            FrameLayout.LayoutParams.WRAP_CONTENT)
+    return recyclerView
+}
 
 fun showChannelTagSelectionDialog(context: Context, channelTags: MutableList<ChannelTag>, channelCount: Int, callback: ChannelTagIdsSelectedInterface): Boolean {
     val isMultipleChoice = PreferenceManager.getDefaultSharedPreferences(context).getBoolean("multiple_channel_tags_enabled",
@@ -48,15 +68,20 @@ fun showChannelTagSelectionDialog(context: Context, channelTags: MutableList<Cha
 
     // Show the dialog that shows all available channel tags. When the
     // user has selected a tag, restart the loader to loadRecordingById the updated channel list
-    val dialog: MaterialDialog = MaterialDialog(context)
-            .title(R.string.filter_channel_list)
-            .customListAdapter(adapter)
+    val builder = MaterialAlertDialogBuilder(context)
+            .setTitle(if (isMultipleChoice) R.string.select_multiple_channel_tags else R.string.filter_channel_list)
+            .setView(buildRecyclerView(context, adapter))
 
     if (isMultipleChoice) {
-        dialog.title(R.string.select_multiple_channel_tags)
-                .positiveButton(R.string.save) { callback.onChannelTagIdsSelected(adapter.selectedTagIds) }
-    } else {
-        dialog.onDismiss { callback.onChannelTagIdsSelected(adapter.selectedTagIds) }
+        // In multiple choice mode the selection is confirmed via the "save" button.
+        builder.setPositiveButton(R.string.save) { _, _ -> callback.onChannelTagIdsSelected(adapter.selectedTagIds) }
+    }
+
+    val dialog = builder.create()
+    if (!isMultipleChoice) {
+        // In single choice mode the adapter dismisses the dialog and the
+        // selection is reported when the dialog is dismissed.
+        dialog.setOnDismissListener { callback.onChannelTagIdsSelected(adapter.selectedTagIds) }
     }
 
     adapter.setCallback(dialog)
@@ -67,7 +92,7 @@ fun showChannelTagSelectionDialog(context: Context, channelTags: MutableList<Cha
 class ChannelTagSelectionAdapter(private val channelTagList: List<ChannelTag>, private val isMultiChoice: Boolean) : RecyclerView.Adapter<ChannelTagSelectionAdapter.ViewHolder>() {
 
     private val selectedChannelTagIds: MutableSet<Int>
-    private lateinit var dialog: MaterialDialog
+    private lateinit var dialog: AlertDialog
 
     internal val selectedTagIds: Set<Int>
         get() = selectedChannelTagIds
@@ -106,7 +131,7 @@ class ChannelTagSelectionAdapter(private val channelTagList: List<ChannelTag>, p
         return if (isMultiChoice) R.layout.channeltag_list_multiple_choice_adapter else R.layout.channeltag_list_single_choice_adapter
     }
 
-    fun setCallback(dialog: MaterialDialog) {
+    fun setCallback(dialog: AlertDialog) {
         this.dialog = dialog
     }
 
@@ -147,10 +172,10 @@ class ChannelTagSelectionAdapter(private val channelTagList: List<ChannelTag>, p
  */
 fun showGenreColorDialog(context: Context): Boolean {
     val adapter = GenreColorListAdapter(context.resources.getStringArray(R.array.pr_content_type0))
-    MaterialDialog(context).show {
-        title(R.string.genre_color_list)
-        customListAdapter(adapter)
-    }
+    MaterialAlertDialogBuilder(context)
+            .setTitle(R.string.genre_color_list)
+            .setView(buildRecyclerView(context, adapter))
+            .show()
     return true
 }
 
@@ -185,7 +210,7 @@ class GenreColorListAdapter internal constructor(private val contentInfo: Array<
     }
 }
 
-fun showProgramTimeframeSelectionDialog(context: Context, currentSelection: Int, intervalInHours: Int, maxIntervalsToShow: Int, callback: ChannelTimeSelectedInterface?): MaterialDialog {
+fun showProgramTimeframeSelectionDialog(context: Context, currentSelection: Int, intervalInHours: Int, maxIntervalsToShow: Int, callback: ChannelTimeSelectedInterface?): AlertDialog {
 
     val startDateFormat = SimpleDateFormat("dd.MM.yyyy - HH:00", Locale.US)
     val endDateFormat = SimpleDateFormat("HH:00", Locale.US)
@@ -206,42 +231,44 @@ fun showProgramTimeframeSelectionDialog(context: Context, currentSelection: Int,
         times.add("$startTime - $endTime")
     }
 
-    val dialog = MaterialDialog(context)
-    dialog.show {
-        title(R.string.select_time)
-        listItemsSingleChoice(items = times, initialSelection = currentSelection) { _, index, _ ->
-            callback?.onTimeSelected(index)
-        }
-    }
+    val dialog = MaterialAlertDialogBuilder(context)
+            .setTitle(R.string.select_time)
+            .setSingleChoiceItems(times.toTypedArray(), currentSelection) { _, index ->
+                callback?.onTimeSelected(index)
+            }
+            .create()
+    dialog.show()
     return dialog
 }
 
 fun showChannelSortOrderSelectionDialog(context: Context): Boolean {
 
     val channelSortOrder = Integer.valueOf(PreferenceManager.getDefaultSharedPreferences(context).getString("channel_sort_order", context.resources.getString(R.string.pref_default_channel_sort_order))!!)
-    MaterialDialog(context).show {
-        title(R.string.pref_sort_channels)
-        listItemsSingleChoice(R.array.pref_sort_channels_names, initialSelection = channelSortOrder) { _, index, _ ->
-            Timber.d("New selected channel sort order changed from $channelSortOrder to $index")
-            val editor = PreferenceManager.getDefaultSharedPreferences(context).edit()
-            editor.putString("channel_sort_order", index.toString())
-            editor.apply()
-        }
-    }
+    val sortOrderNames = context.resources.getStringArray(R.array.pref_sort_channels_names)
+    MaterialAlertDialogBuilder(context)
+            .setTitle(R.string.pref_sort_channels)
+            .setSingleChoiceItems(sortOrderNames, channelSortOrder) { _, index ->
+                Timber.d("New selected channel sort order changed from $channelSortOrder to $index")
+                val editor = PreferenceManager.getDefaultSharedPreferences(context).edit()
+                editor.putString("channel_sort_order", index.toString())
+                editor.apply()
+            }
+            .show()
     return false
 }
 
 fun showCompletedRecordingSortOrderSelectionDialog(context: Context): Boolean {
 
     val sortOrder = Integer.valueOf(PreferenceManager.getDefaultSharedPreferences(context).getString("completed_recording_sort_order", context.resources.getString(R.string.pref_default_completed_recording_sort_order))!!)
-    MaterialDialog(context).show {
-        title(R.string.pref_sort_completed_recordings)
-        listItemsSingleChoice(R.array.pref_sort_completed_recordings_names, initialSelection = sortOrder) { _, index, _ ->
-            Timber.d("New selected completed recording sort order changed from $sortOrder to $index")
-            val editor = PreferenceManager.getDefaultSharedPreferences(context).edit()
-            editor.putString("completed_recording_sort_order", index.toString())
-            editor.apply()
-        }
-    }
+    val sortOrderNames = context.resources.getStringArray(R.array.pref_sort_completed_recordings_names)
+    MaterialAlertDialogBuilder(context)
+            .setTitle(R.string.pref_sort_completed_recordings)
+            .setSingleChoiceItems(sortOrderNames, sortOrder) { _, index ->
+                Timber.d("New selected completed recording sort order changed from $sortOrder to $index")
+                val editor = PreferenceManager.getDefaultSharedPreferences(context).edit()
+                editor.putString("completed_recording_sort_order", index.toString())
+                editor.apply()
+            }
+            .show()
     return false
 }

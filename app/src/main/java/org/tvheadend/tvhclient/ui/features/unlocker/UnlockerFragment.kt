@@ -6,7 +6,7 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
-import com.afollestad.materialdialogs.MaterialDialog
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import org.tvheadend.tvhclient.MainApplication
 import org.tvheadend.tvhclient.MainRepository.Companion.UNLOCKER
 import org.tvheadend.tvhclient.R
@@ -54,26 +54,28 @@ class UnlockerFragment : WebViewFragment() {
     private fun showPurchaseNotSuccessfulDialog() {
         Timber.d("Unlocker purchase not successful")
         context?.let {
-            MaterialDialog(it).show {
-                title(R.string.purchase_not_successful)
-                message(R.string.contact_developer)
-                cancelOnTouchOutside(false)
-                positiveButton(android.R.string.ok) { dismiss() }
-            }
+            val dialog = MaterialAlertDialogBuilder(it)
+                    .setTitle(R.string.purchase_not_successful)
+                    .setMessage(R.string.contact_developer)
+                    .setPositiveButton(android.R.string.ok) { _, _ -> }
+                    .create()
+            dialog.setCanceledOnTouchOutside(false)
+            dialog.show()
         }
     }
 
     private fun showPurchaseSuccessfulDialog() {
         Timber.d("Unlocker purchase successful")
         context?.let {
-            MaterialDialog(it).show {
-                title(R.string.purchase_successful)
-                message(R.string.thank_you)
-                cancelOnTouchOutside(false)
-                positiveButton(R.string.restart) {
-                    restartApplication()
-                }
-            }
+            val dialog = MaterialAlertDialogBuilder(it)
+                    .setTitle(R.string.purchase_successful)
+                    .setMessage(R.string.thank_you)
+                    .setPositiveButton(R.string.restart) { _, _ ->
+                        restartApplication()
+                    }
+                    .create()
+            dialog.setCanceledOnTouchOutside(false)
+            dialog.show()
         }
     }
 
@@ -89,14 +91,13 @@ class UnlockerFragment : WebViewFragment() {
     private fun showPurchasedAlreadyMadeDialog() {
         Timber.d("Unlocker already purchased")
         context?.let {
-            MaterialDialog(it).show {
-                title(R.string.thank_you)
-                message(R.string.purchase_already_made)
-                cancelOnTouchOutside(false)
-                positiveButton(android.R.string.ok) {
-                    dismiss()
-                }
-            }
+            val dialog = MaterialAlertDialogBuilder(it)
+                    .setTitle(R.string.thank_you)
+                    .setMessage(R.string.purchase_already_made)
+                    .setPositiveButton(android.R.string.ok) { _, _ -> }
+                    .create()
+            dialog.setCanceledOnTouchOutside(false)
+            dialog.show()
         }
     }
 

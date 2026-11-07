@@ -7,14 +7,17 @@ import android.os.Handler
 import android.os.Looper
 import android.view.*
 import android.widget.Filter
+import android.widget.FrameLayout
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.view.children
 import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.afollestad.materialdialogs.MaterialDialog
-import com.afollestad.materialdialogs.input.input
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.textfield.TextInputEditText
+import com.google.android.material.textfield.TextInputLayout
 import org.tvheadend.data.entity.ChannelTag
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.databinding.RecyclerviewFragmentBinding
@@ -225,7 +228,7 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickInterface, ChannelT
         }
     }
 
-    private fun startDialogDismissTimer(dialog: MaterialDialog) {
+    private fun startDialogDismissTimer(dialog: AlertDialog) {
         dialogDismissRunnable = Runnable {
             if (dialog.isShowing) {
                 dialog.dismiss()
@@ -235,13 +238,22 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickInterface, ChannelT
 
     @SuppressLint("CheckResult")
     private fun showSearchForChannelsDialog(context: Context): Boolean {
-        MaterialDialog(context).show {
-            title(res = R.string.search_for_channels)
-            input(hintRes = R.string.enter_channel_name) { _, text ->
-                baseViewModel.startSearchQuery(text.toString())
-            }
-            positiveButton(R.string.search)
-        }
+        val padding = (16 * context.resources.displayMetrics.density).toInt()
+        val inputLayout = TextInputLayout(context)
+        inputLayout.hint = context.getString(R.string.enter_channel_name)
+        val editText = TextInputEditText(inputLayout.context)
+        inputLayout.addView(editText)
+        val container = FrameLayout(context)
+        container.setPadding(padding, padding / 2, padding, 0)
+        container.addView(inputLayout)
+
+        MaterialAlertDialogBuilder(context)
+                .setTitle(R.string.search_for_channels)
+                .setView(container)
+                .setPositiveButton(R.string.search) { _, _ ->
+                    baseViewModel.startSearchQuery(editText.text?.toString().orEmpty())
+                }
+                .show()
         return true
     }
 

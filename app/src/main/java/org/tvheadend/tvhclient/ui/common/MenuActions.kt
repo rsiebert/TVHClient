@@ -11,8 +11,7 @@ import androidx.core.view.children
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.preference.PreferenceManager
-import com.afollestad.materialdialogs.MaterialDialog
-import com.afollestad.materialdialogs.list.listItemsSingleChoice
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import org.tvheadend.data.entity.*
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.service.ConnectionService
@@ -135,14 +134,14 @@ fun preparePopupOrToolbarSearchMenu(menu: Menu, title: String?, isConnectionToSe
 }
 
 fun showConfirmationToReconnectToServer(context: Context, viewModel: BaseViewModel): Boolean {
-    MaterialDialog(context).show {
-        title(R.string.reconnect_to_server)
-        message(R.string.restart_and_sync)
-        negativeButton(R.string.cancel)
-        positiveButton(R.string.reconnect) {
-            viewModel.updateConnectionAndRestartApplication(context)
-        }
-    }
+    MaterialAlertDialogBuilder(context)
+            .setTitle(R.string.reconnect_to_server)
+            .setMessage(R.string.restart_and_sync)
+            .setNegativeButton(R.string.cancel, null)
+            .setPositiveButton(R.string.reconnect) { _, _ ->
+                viewModel.updateConnectionAndRestartApplication(context)
+            }
+            .show()
     return true
 }
 
@@ -174,14 +173,14 @@ fun recordSelectedProgramAsSeriesRecording(context: Context, title: String?, cha
 fun showConfirmationToStopSelectedRecording(context: Context, recording: Recording?, callback: RecordingRemovedInterface?): Boolean {
     recording ?: return false
     Timber.d("Stopping recording ${recording.title}")
-    MaterialDialog(context).show {
-        title(R.string.record_stop)
-        message(text = context.getString(R.string.stop_recording, recording.title))
-        negativeButton(R.string.cancel)
-        positiveButton(R.string.stop) {
-            stopSelectedRecording(context, recording, callback)
-        }
-    }
+    MaterialAlertDialogBuilder(context)
+            .setTitle(R.string.record_stop)
+            .setMessage(context.getString(R.string.stop_recording, recording.title))
+            .setNegativeButton(R.string.cancel, null)
+            .setPositiveButton(R.string.stop) { _, _ ->
+                stopSelectedRecording(context, recording, callback)
+            }
+            .show()
     return true
 }
 
@@ -196,14 +195,14 @@ private fun stopSelectedRecording(context: Context, recording: Recording, callba
 fun showConfirmationToRemoveSelectedRecording(context: Context, recording: Recording?, callback: RecordingRemovedInterface?): Boolean {
     recording ?: return false
     Timber.d("Removing recording ${recording.title}")
-    MaterialDialog(context).show {
-        title(R.string.record_remove)
-        message(text = context.getString(R.string.remove_recording, recording.title))
-        negativeButton(R.string.cancel)
-        positiveButton(R.string.remove) {
-            removeSelectedRecording(context, recording, callback)
-        }
-    }
+    MaterialAlertDialogBuilder(context)
+            .setTitle(R.string.record_remove)
+            .setMessage(context.getString(R.string.remove_recording, recording.title))
+            .setNegativeButton(R.string.cancel, null)
+            .setPositiveButton(R.string.remove) { _, _ ->
+                removeSelectedRecording(context, recording, callback)
+            }
+            .show()
     return true
 }
 
@@ -218,14 +217,14 @@ private fun removeSelectedRecording(context: Context, recording: Recording, call
 fun showConfirmationToCancelSelectedRecording(context: Context, recording: Recording?, callback: RecordingRemovedInterface?): Boolean {
     recording ?: return false
     Timber.d("Cancelling recording ${recording.title}")
-    MaterialDialog(context).show {
-        title(R.string.record_remove)
-        message(text = context.getString(R.string.cancel_recording, recording.title))
-        negativeButton(R.string.cancel)
-        positiveButton(R.string.remove) {
-            cancelSelectedRecording(context, recording, callback)
-        }
-    }
+    MaterialAlertDialogBuilder(context)
+            .setTitle(R.string.record_remove)
+            .setMessage(context.getString(R.string.cancel_recording, recording.title))
+            .setNegativeButton(R.string.cancel, null)
+            .setPositiveButton(R.string.remove) { _, _ ->
+                cancelSelectedRecording(context, recording, callback)
+            }
+            .show()
     return true
 }
 
@@ -299,14 +298,14 @@ fun addNewTimerRecording(activity: FragmentActivity): Boolean {
 
 fun showConfirmationToRemoveSelectedSeriesRecording(context: Context, recording: SeriesRecording, callback: RecordingRemovedInterface?): Boolean {
     Timber.d("Removing series recording ${recording.title}")
-    MaterialDialog(context).show {
-        title(R.string.record_remove)
-        message(text = context.getString(R.string.remove_series_recording, recording.title))
-        negativeButton(R.string.cancel)
-        positiveButton(R.string.remove) {
-            removeSelectedSeriesRecording(context, recording, callback)
-        }
-    }
+    MaterialAlertDialogBuilder(context)
+            .setTitle(R.string.record_remove)
+            .setMessage(context.getString(R.string.remove_series_recording, recording.title))
+            .setNegativeButton(R.string.cancel, null)
+            .setPositiveButton(R.string.remove) { _, _ ->
+                removeSelectedSeriesRecording(context, recording, callback)
+            }
+            .show()
     return true
 }
 
@@ -324,14 +323,14 @@ fun showConfirmationToRemoveSelectedTimerRecording(context: Context, recording: 
     val displayTitle = name.ifEmpty { recording.title ?: "" }
     Timber.d("Removing timer recording $displayTitle")
 
-    MaterialDialog(context).show {
-        title(R.string.record_remove)
-        message(text = context.getString(R.string.remove_timer_recording, displayTitle))
-        negativeButton(R.string.cancel)
-        positiveButton(R.string.remove) {
-            removeSelectedTimerRecording(context, recording, callback)
-        }
-    }
+    MaterialAlertDialogBuilder(context)
+            .setTitle(R.string.record_remove)
+            .setMessage(context.getString(R.string.remove_timer_recording, displayTitle))
+            .setNegativeButton(R.string.cancel, null)
+            .setPositiveButton(R.string.remove) { _, _ ->
+                removeSelectedTimerRecording(context, recording, callback)
+            }
+            .show()
     return true
 }
 
@@ -344,14 +343,14 @@ private fun removeSelectedTimerRecording(context: Context, recording: TimerRecor
 }
 
 fun showConfirmationToRemoveAllRecordings(context: Context, items: List<Recording>): Boolean {
-    MaterialDialog(context).show {
-        title(R.string.record_remove_all)
-        message(R.string.confirm_remove_all)
-        negativeButton(R.string.cancel)
-        positiveButton(R.string.remove) {
-            removeAllRecordings(context, items)
-        }
-    }
+    MaterialAlertDialogBuilder(context)
+            .setTitle(R.string.record_remove_all)
+            .setMessage(R.string.confirm_remove_all)
+            .setNegativeButton(R.string.cancel, null)
+            .setPositiveButton(R.string.remove) { _, _ ->
+                removeAllRecordings(context, items)
+            }
+            .show()
     return true
 }
 
@@ -378,14 +377,14 @@ private fun removeAllRecordings(context: Context, items: List<Recording>) {
 }
 
 fun showConfirmationToRemoveAllSeriesRecordings(context: Context, items: List<SeriesRecording>): Boolean {
-    MaterialDialog(context).show {
-        title(R.string.record_remove_all)
-        message(R.string.remove_all_recordings)
-        negativeButton(R.string.cancel)
-        positiveButton(R.string.remove) {
-            removeAllSeriesRecordings(context, items)
-        }
-    }
+    MaterialAlertDialogBuilder(context)
+            .setTitle(R.string.record_remove_all)
+            .setMessage(R.string.remove_all_recordings)
+            .setNegativeButton(R.string.cancel, null)
+            .setPositiveButton(R.string.remove) { _, _ ->
+                removeAllSeriesRecordings(context, items)
+            }
+            .show()
     return true
 }
 
@@ -408,14 +407,14 @@ private fun removeAllSeriesRecordings(context: Context, items: List<SeriesRecord
 }
 
 fun showConfirmationToRemoveAllTimerRecordings(context: Context, items: List<TimerRecording>): Boolean {
-    MaterialDialog(context).show {
-        title(R.string.record_remove_all)
-        message(R.string.remove_all_recordings)
-        negativeButton(R.string.cancel)
-        positiveButton(R.string.remove) {
-            removeAllTimerRecordings(context, items)
-        }
-    }
+    MaterialAlertDialogBuilder(context)
+            .setTitle(R.string.record_remove_all)
+            .setMessage(R.string.remove_all_recordings)
+            .setNegativeButton(R.string.cancel, null)
+            .setPositiveButton(R.string.remove) { _, _ ->
+                removeAllTimerRecordings(context, items)
+            }
+            .show()
     return true
 }
 
@@ -452,17 +451,17 @@ fun recordSelectedProgramWithCustomProfile(context: Context, eventId: Int, chann
         }
     }
     // Create the dialog to show the available profiles
-    MaterialDialog(context).show {
-        title(R.string.select_dvr_config)
-        listItemsSingleChoice(items = serverProfileNames.toList(), initialSelection = dvrConfigNameValue) { _, index, _ ->
-            val intent = Intent(context, ConnectionService::class.java)
-            intent.action = "addDvrEntry"
-            intent.putExtra("eventId", eventId)
-            intent.putExtra("channelId", channelId)
-            intent.putExtra("configName", serverProfileNames[index])
-            context.startService(intent)
-        }
-    }
+    MaterialAlertDialogBuilder(context)
+            .setTitle(R.string.select_dvr_config)
+            .setSingleChoiceItems(serverProfileNames, dvrConfigNameValue) { _, index ->
+                val intent = Intent(context, ConnectionService::class.java)
+                intent.action = "addDvrEntry"
+                intent.putExtra("eventId", eventId)
+                intent.putExtra("channelId", channelId)
+                intent.putExtra("configName", serverProfileNames[index])
+                context.startService(intent)
+            }
+            .show()
     return true
 }
 
