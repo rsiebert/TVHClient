@@ -9,7 +9,7 @@ sealed class AuthenticationStateResult : Parcelable {
     @Parcelize
     data class Authenticating(val message: String = "") : AuthenticationStateResult(), Parcelable
     @Parcelize
-    data class Authenticated(val message: String = "") : AuthenticationStateResult(), Parcelable
+    data class Authenticated(val message: String = "", val rights: AuthenticationRights = AuthenticationRights()) : AuthenticationStateResult(), Parcelable
     @Parcelize
     data class Failed(val reason: AuthenticationFailureReason) : AuthenticationStateResult(), Parcelable
 }

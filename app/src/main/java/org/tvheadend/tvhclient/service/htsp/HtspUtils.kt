@@ -211,14 +211,15 @@ fun convertMessageToRecordingModel(recording: Recording, msg: HtspMessage): Reco
             recording.image = msg.getString("image")
         }
     }
-    if (msg.containsKey("fanart_image")) {
-        if (!msg.getString("fanart_image").isNullOrEmpty()) {
-            recording.fanartImage = msg.getString("fanart_image")
+    // The server uses camel case for these two fields to be compatible with the other names
+    if (msg.containsKey("fanartImage")) {
+        if (!msg.getString("fanartImage").isNullOrEmpty()) {
+            recording.fanartImage = msg.getString("fanartImage")
         }
     }
-    if (msg.containsKey("copyright_year")) {
-        if (msg.getInteger("copyright_year") > 0) {
-            recording.copyrightYear = msg.getInteger("copyright_year")
+    if (msg.containsKey("copyrightYear")) {
+        if (msg.getInteger("copyrightYear") > 0) {
+            recording.copyrightYear = msg.getInteger("copyrightYear")
         }
     }
     if (msg.containsKey("removal")) {
@@ -376,9 +377,9 @@ fun convertMessageToProgramModel(program: Program, msg: HtspMessage): Program {
             program.episodeUri = msg.getString("episodeUri")
         }
     }
-    if (msg.containsKey("copyright_year")) {
-        if (msg.getInteger("copyright_year") > 0) {
-            program.copyrightYear = msg.getInteger("copyright_year")
+    if (msg.containsKey("copyrightYear")) {
+        if (msg.getInteger("copyrightYear") > 0) {
+            program.copyrightYear = msg.getInteger("copyrightYear")
         }
     }
     program.modifiedTime = System.currentTimeMillis()
@@ -571,6 +572,9 @@ fun convertMessageToServerStatusModel(serverStatus: ServerStatus, msg: HtspMessa
     if (msg.containsKey("htspversion")) {
         serverStatus.htspVersion = msg.getInteger("htspversion", 13)
     }
+    if (msg.containsKey("api_version")) {
+        serverStatus.apiVersion = msg.getInteger("api_version", 0)
+    }
     if (msg.containsKey("servername")) {
         serverStatus.serverName = msg.getString("servername")
     }
@@ -587,6 +591,29 @@ fun convertMessageToServerStatusModel(serverStatus: ServerStatus, msg: HtspMessa
         }
     }
     return serverStatus
+}
+
+/**
+ * Converts the reply of a getDvrCutpoints request into a list of cut points. A cut point
+ * describes a range of the recording that the server has marked, for example a commercial
+ * break or a range that shall only be muted.
+ */
+fun convertMessageToCutpointList(msg: HtspMessage): List<DvrCutpoint> {
+    val cutpoints = mutableListOf<DvrCutpoint>()
+    if (!msg.containsKey("cutpoints")) {
+        return cutpoints
+    }
+
+    for (obj in msg.getList("cutpoints")) {
+        val cutpoint = obj as HtspMessage
+        cutpoints.add(DvrCutpoint(
+                start = cutpoint.getLong("start", 0),
+                end = cutpoint.getLong("end", 0),
+                type = cutpoint.getInteger("type", DvrCutpoint.TYPE_UNKNOWN)))
+    }
+
+    Timber.d("Received ${cutpoints.size} cut points from the server")
+    return cutpoints
 }
 
 fun convertIntentToAutorecMessage(intent: Intent, htspVersion: Int): HtspMessage {

@@ -7,6 +7,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import org.tvheadend.api.AuthenticationFailureReason;
+import org.tvheadend.api.AuthenticationRights;
 import org.tvheadend.api.AuthenticationStateResult;
 import org.tvheadend.api.ConnectionFailureReason;
 import org.tvheadend.api.ConnectionStateResult;
@@ -226,7 +227,9 @@ public class HtspConnection extends Thread implements ServerConnectionInterface<
             if (!isAuthenticated) {
                 connectionListener.onAuthenticationStateChange(new AuthenticationStateResult.Failed(new AuthenticationFailureReason.BadCredentials()));
             } else {
-                connectionListener.onAuthenticationStateChange(new AuthenticationStateResult.Authenticated());
+                AuthenticationRights rights = parseAuthenticationRights(response);
+                Timber.d("Granted rights: admin %s, streaming %s, dvr %s", rights.isAdmin(), rights.isStreaming(), rights.isDvr());
+                connectionListener.onAuthenticationStateChange(new AuthenticationStateResult.Authenticated("", rights));
             }
             synchronized (authMessage) {
                 authMessage.notify();
@@ -437,6 +440,28 @@ public class HtspConnection extends Thread implements ServerConnectionInterface<
                 msg.transmit(sChannel);
             }
         }
+    }
+
+    /**
+     * Reads the rights of the authenticated account from the reply to the authenticate
+     * request. The server only sends them when the negotiated HTSP version is newer than 25,
+     * so older servers are treated as if everything was granted.
+     */
+    private static AuthenticationRights parseAuthenticationRights(HtspMessage response) {
+        if (!response.containsKey("streaming")) {
+            return new AuthenticationRights(false, true, true, false, false, 0, 0, 0, 0, "");
+        }
+        return new AuthenticationRights(
+                response.getInteger("admin", 0) == 1,
+                response.getInteger("streaming", 0) == 1,
+                response.getInteger("dvr", 0) == 1,
+                response.getInteger("faileddvr", 0) == 1,
+                response.getInteger("anonymous", 0) == 1,
+                response.getInteger("limitall", 0),
+                response.getInteger("limitdvr", 0),
+                response.getInteger("limitstreaming", 0),
+                response.getInteger("uilevel", 0),
+                response.getString("uilanguage", ""));
     }
 
     private void handleMessage(HtspMessage msg) {

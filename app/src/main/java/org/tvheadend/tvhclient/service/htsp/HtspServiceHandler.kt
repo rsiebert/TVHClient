@@ -77,6 +77,14 @@ class HtspServiceHandler(val context: Context, val appRepository: AppRepository,
         }
         Timber.d("Received command $action for service handler")
 
+        // The server reports with the reply to the authenticate request whether the account
+        // of the connection is allowed to record. Servers that do not report it allow it.
+        if (isDvrAction(action) && !appRepository.serverStatusData.activeItem.isDvr) {
+            Timber.d("Not executing $action, the account of the connection is not allowed to record")
+            context.sendSnackbarMessage(R.string.error_no_dvr_access)
+            return Service.START_NOT_STICKY
+        }
+
         when (action) {
             "connect" -> {
                 Timber.d("Connection to server requested")
@@ -190,8 +198,24 @@ class HtspServiceHandler(val context: Context, val appRepository: AppRepository,
     override fun onAuthenticationStateChange(result: AuthenticationStateResult) {
         context.sendSyncStateMessage(SyncStateResult.Authenticating(result))
         if (result is AuthenticationStateResult.Authenticated) {
+            updateAuthenticationRights(result.rights)
             startAsyncCommunicationWithServer()
         }
+    }
+
+    /**
+     * Stores the rights that the server granted to the account of the connection so that
+     * they survive a restart and the user interface can be adapted to them.
+     */
+    private fun updateAuthenticationRights(rights: AuthenticationRights) {
+        Timber.d("Server granted admin ${rights.isAdmin}, dvr ${rights.isDvr}, streaming ${rights.isStreaming}")
+        val serverStatus = appRepository.serverStatusData.activeItem
+        serverStatus.isAdmin = rights.isAdmin
+        serverStatus.isDvr = rights.isDvr
+        serverStatus.isStreaming = rights.isStreaming
+        serverStatus.uiLevel = rights.uiLevel
+        serverStatus.uiLanguage = rights.uiLanguage
+        appRepository.serverStatusData.updateItem(serverStatus)
     }
 
     override fun onConnectionStateChange(result: ConnectionStateResult) {
@@ -378,7 +402,7 @@ class HtspServiceHandler(val context: Context, val appRepository: AppRepository,
     }
 
     private fun getHttpProfiles() {
-        if (htspVersion >= 26) {
+        if (serverProvidesApi()) {
             val request = HtspMessage()
             request.method = "api"
             request["path"] = "profile/list"
@@ -393,7 +417,7 @@ class HtspServiceHandler(val context: Context, val appRepository: AppRepository,
     }
 
     private fun getSubscriptions() {
-        if (htspVersion >= 26) {
+        if (serverProvidesApi()) {
             val request = HtspMessage()
             request.method = "api"
             request["path"] = "status/subscriptions"
@@ -409,7 +433,7 @@ class HtspServiceHandler(val context: Context, val appRepository: AppRepository,
     }
 
     private fun getInputs() {
-        if (htspVersion >= 26) {
+        if (serverProvidesApi()) {
             val request = HtspMessage()
             request.method = "api"
             request["path"] = "status/inputs"
@@ -1528,5 +1552,31 @@ class HtspServiceHandler(val context: Context, val appRepository: AppRepository,
                 LocalBroadcastManager.getInstance(context.applicationContext).sendBroadcast(ticketIntent)
             }
         })
+    }
+
+    /**
+     * Whether the server provides the http api that is used to load additional data like the
+     * http playback profiles. Servers that announce an api version always provide it, the
+     * older ones are recognised by their HTSP version.
+     */
+    private fun serverProvidesApi(): Boolean {
+        return appRepository.serverStatusData.activeItem.apiVersion > 0 || htspVersion >= MIN_HTSP_VERSION_FOR_API
+    }
+
+    /**
+     * Whether the action changes a recording on the server, which requires the dvr right.
+     */
+    private fun isDvrAction(action: String): Boolean {
+        return action in DVR_ACTIONS
+    }
+
+    companion object {
+        // The http api was added to the protocol in this HTSP version
+        private const val MIN_HTSP_VERSION_FOR_API = 26
+
+        private val DVR_ACTIONS = arrayOf(
+                "addDvrEntry", "updateDvrEntry", "cancelDvrEntry", "deleteDvrEntry", "stopDvrEntry",
+                "addAutorecEntry", "updateAutorecEntry", "deleteAutorecEntry",
+                "addTimerecEntry", "updateTimerecEntry", "deleteTimerecEntry")
     }
 }

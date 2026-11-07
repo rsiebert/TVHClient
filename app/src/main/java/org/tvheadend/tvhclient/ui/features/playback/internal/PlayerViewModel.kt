@@ -22,10 +22,13 @@ import androidx.media3.exoplayer.upstream.DefaultAllocator
 import org.tvheadend.api.AuthenticationStateResult
 import org.tvheadend.api.ConnectionStateResult
 import org.tvheadend.api.ServerConnectionStateListener
+import org.tvheadend.api.ServerResponseListener
 import org.tvheadend.data.entity.Channel
+import org.tvheadend.data.entity.DvrCutpoint
 import org.tvheadend.htsp.*
 import org.tvheadend.tvhclient.BuildConfig
 import org.tvheadend.tvhclient.R
+import org.tvheadend.tvhclient.service.htsp.convertMessageToCutpointList
 import org.tvheadend.tvhclient.ui.base.BaseViewModel
 import org.tvheadend.tvhclient.ui.features.playback.internal.utils.CustomEventLogger
 import org.tvheadend.tvhclient.ui.features.playback.internal.utils.VideoAspect
@@ -69,6 +72,17 @@ class PlayerViewModel(application: Application) : BaseViewModel(application), Se
     var elapsedTime: MutableLiveData<String> = MutableLiveData()
     var remainingTime: MutableLiveData<String> = MutableLiveData()
 
+    // State of the current subscription as reported by the server. This is not the stream
+    // data itself but the signal quality, the descrambler information, the queue statistics
+    // and the error status of the subscription.
+    var subscriptionState: MutableLiveData<HtspSubscriptionState> = MutableLiveData()
+    var statusMessage: MutableLiveData<String> = MutableLiveData()
+
+    // Ranges of the current recording that the server has marked as a commercial break
+    // or as a cut. They are only loaded for recordings and only used when the user
+    // has enabled skipping them.
+    var cutpoints: MutableLiveData<List<DvrCutpoint>> = MutableLiveData()
+
     // Contains the information like icon, title, subtitle, start
     // and stop times either for a channel or a recording
     private lateinit var playbackInformation: PlaybackInformation
@@ -83,6 +97,7 @@ class PlayerViewModel(application: Application) : BaseViewModel(application), Se
     private val defaultChannelSortOrder = application.applicationContext.resources.getString(R.string.pref_default_channel_sort_order)
     private val defaultAudioTunnelingEnabled = application.applicationContext.resources.getBoolean(R.bool.pref_default_audio_tunneling_enabled)
     private val defaultConnectionTimeout = application.resources.getString(R.string.pref_default_connection_timeout)
+    private val defaultAutoSkipCutpoints = application.applicationContext.resources.getBoolean(R.bool.pref_default_auto_skip_cutpoints_enabled)
 
     init {
         Timber.d("Initializing view model")
@@ -147,6 +162,7 @@ class PlayerViewModel(application: Application) : BaseViewModel(application), Se
             Timber.d("Updating elapsed and remaining times")
             remainingTime.postValue(playbackInformation.remainingTime)
             elapsedTime.postValue(playbackInformation.elapsedTime)
+            skipCutpointsIfRequested()
             timeUpdateHandler.postDelayed(timeUpdateRunnable, 1000)
         }
     }
@@ -173,6 +189,12 @@ class PlayerViewModel(application: Application) : BaseViewModel(application), Se
         val dvrId = bundle?.getInt("dvrId", 0) ?: 0
         val localUri = bundle?.getString("uri", "") ?: ""
 
+        // The new media source does not have any status information yet, so forget about
+        // the one of the previous source and allow the same message to be shown again.
+        lastStatusMessage = null
+        subscriptionState.postValue(HtspSubscriptionState())
+        cutpoints.postValue(emptyList())
+
         when {
             channelId > 0 -> loadMediaSourceForChannel(context, channelId)
             dvrId > 0 -> loadMediaSourceForRecording(dvrId)
@@ -193,6 +215,7 @@ class PlayerViewModel(application: Application) : BaseViewModel(application), Se
         val serverStatus = appRepository.serverStatusData.activeItem
         val serverProfile = appRepository.serverProfileData.getItemById(serverStatus.htspPlaybackServerProfileId)
         val dataSourceFactory = HtspSubscriptionDataSource.Factory(context, htspConnection, serverProfile?.name)
+        dataSourceFactory.setStateListener(subscriptionStateListener)
         htspSubscriptionDataSourceFactory = dataSourceFactory
         dataSource = dataSourceFactory.currentDataSource
 
@@ -219,6 +242,8 @@ class PlayerViewModel(application: Application) : BaseViewModel(application), Se
                 TvheadendExtractorsFactory())
                 .createMediaSource(MediaItem.fromUri(Uri.parse("htsp://dvrfile/$recordingId"))))
 
+        requestCutpoints(recordingId)
+
         liveTvIsPlaying.value = false
         player.playWhenReady = true
     }
@@ -239,8 +264,101 @@ class PlayerViewModel(application: Application) : BaseViewModel(application), Se
         Timber.d("Releasing previous media source")
         player.stop()
         trackSelector.buildUponParameters().clearSelectionOverrides()
+        htspSubscriptionDataSourceFactory?.setStateListener(null)
         htspSubscriptionDataSourceFactory?.releaseCurrentDataSource()
         htspFileInputStreamDataSourceFactory?.releaseCurrentDataSource()
+    }
+
+    /**
+     * Receives the subscription state messages that the server sends while a channel is
+     * streamed. These are the signal and descrambler information, the queue statistics and
+     * the messages that report why a subscription could not be started or was stopped.
+     */
+    private val subscriptionStateListener = object : HtspSubscriptionStateListener {
+        override fun onSubscriptionStateChanged(state: HtspSubscriptionState) {
+            subscriptionState.postValue(state)
+
+            val message = buildStatusMessage(state) ?: return
+            if (message != lastStatusMessage) {
+                lastStatusMessage = message
+                Timber.d("Updating the playback status message to '$message'")
+                statusMessage.postValue(message)
+            }
+        }
+    }
+
+    private var lastStatusMessage: String? = null
+
+    /**
+     * Converts the status of the subscription into a message for the user. Returns null when
+     * the state does not contain anything the user needs to know about.
+     */
+    private fun buildStatusMessage(state: HtspSubscriptionState): String? {
+        val graceTimeout = state.graceTimeout
+        if (graceTimeout != null) {
+            return getApplication<Application>().getString(R.string.htsp_status_grace_period, graceTimeout)
+        }
+
+        val status = state.status ?: return null
+        val statusResId = htspStatusToStringRes(status)
+        return if (statusResId != null) {
+            getApplication<Application>().getString(statusResId)
+        } else {
+            // The server can send plain text instead of a code, for example "Input/output error".
+            getApplication<Application>().getString(R.string.playback_status_error, status)
+        }
+    }
+
+    /**
+     * Requests the ranges that the server has marked in the given recording, for example
+     * commercial breaks. Servers that do not support this feature simply do not reply,
+     * which leaves the list of cut points empty.
+     */
+    private fun requestCutpoints(recordingId: Int) {
+        val htspVersion = appRepository.serverStatusData.activeItem.htspVersion
+        if (htspVersion < MIN_HTSP_VERSION_FOR_CUTPOINTS) {
+            Timber.d("Not requesting cut points, the server only supports HTSP version $htspVersion")
+            return
+        }
+
+        Timber.d("Requesting the cut points of the recording $recordingId")
+        val request = HtspMessage()
+        request["method"] = "getDvrCutpoints"
+        request["id"] = recordingId
+
+        htspConnection.sendMessage(request, object : ServerResponseListener<HtspMessage> {
+            override fun handleResponse(response: HtspMessage) {
+                if (response.containsKey("error")) {
+                    Timber.d("Error requesting the cut points: %s", response.getString("error"))
+                    return
+                }
+                val receivedCutpoints = convertMessageToCutpointList(response)
+                Timber.d("Received ${receivedCutpoints.size} cut points for the recording $recordingId")
+                cutpoints.postValue(receivedCutpoints)
+            }
+        })
+    }
+
+    /**
+     * Continues the playback behind the range that the current position falls into, but only
+     * if the server marked it as a range that shall be skipped and the user has enabled this.
+     */
+    private fun skipCutpointsIfRequested() {
+        if (!isAutoSkipCutpointsEnabled()) {
+            return
+        }
+
+        val position = player.currentPosition
+        val cutpoint = cutpoints.value?.firstOrNull {
+            it.isSkippedDuringPlayback && position >= it.start && position < it.end
+        } ?: return
+
+        Timber.d("Skipping the range from ${cutpoint.start} to ${cutpoint.end} at position $position")
+        player.seekTo(cutpoint.end)
+    }
+
+    private fun isAutoSkipCutpointsEnabled(): Boolean {
+        return sharedPreferences.getBoolean("auto_skip_cutpoints_enabled", defaultAutoSkipCutpoints)
     }
 
     fun setVideoAspectRatio(rational: VideoAspect) {
@@ -438,5 +556,10 @@ class PlayerViewModel(application: Application) : BaseViewModel(application), Se
 
     override fun onPlayerError(error: PlaybackException) {
         Timber.d("Player error occurred with code ${error.errorCode}: ${error.message}")
+    }
+
+    companion object {
+        // getDvrCutpoints was added to the protocol in this version
+        private const val MIN_HTSP_VERSION_FOR_CUTPOINTS = 12
     }
 }

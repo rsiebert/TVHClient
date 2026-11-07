@@ -159,8 +159,29 @@ class HtspFileInputStreamDataSource private constructor(val connection: HtspConn
             }
         }
 
-        Timber.d("Opened file $fileName, id $fileId with size $fileSize")
-        return fileSize
+        // The server provides the size of the recording in the reply to the open request.
+        // If it did not, ask for it, otherwise the number of remaining bytes stays unknown.
+        if (fileId >= 0 && fileSize < 0) {
+            Timber.d("Size of the file is not known, requesting it from the server")
+            updateFileSizeFromServer()
+        }
+
+        // The server opens the file at the beginning. When playback shall continue at a later
+        // position, for example after the player has seeked, the file position is moved to it.
+        val startPosition = if (spec.position > 0) spec.position else 0
+        if (fileId >= 0 && startPosition > 0) {
+            Timber.d("File shall be opened at position $startPosition")
+            if (seekTo(startPosition)) {
+                // The data of the first read request was read from the beginning of the file
+                // and is therefore not the data that was asked for. It can be discarded.
+                Timber.d("Discarding the data that was read from the beginning of the file")
+                byteBuffer = ByteBuffer.allocate(0)
+            }
+        }
+
+        Timber.d("Opened file $fileName, id $fileId with size $fileSize at position $filePosition")
+        // The player can only read the data that is left after the requested position
+        return if (fileSize != -1L) fileSize - filePosition else fileSize
     }
 
     override fun read(bytes: ByteArray, offset: Int, readLength: Int): Int {
@@ -185,11 +206,9 @@ class HtspFileInputStreamDataSource private constructor(val connection: HtspConn
             return RESULT_END_OF_INPUT
         }
 
-        Timber.d("Getting bytes %s from offset %s, read length: %s, buffer elements remaining: %s", bytes.size, offset, readLength, byteBuffer.remaining())
-        byteBuffer[bytes, offset, min(readLength, byteBuffer.remaining())]
-        val bytesRead = byteBuffer.position() - offset
-        Timber.d("Read %s bytes", bytesRead)
-        return bytesRead
+        val length = copyBufferedBytes(byteBuffer, bytes, offset, readLength)
+        Timber.d("Read %s bytes into the buffer at offset %s", length, offset)
+        return length
     }
 
     override fun getUri(): Uri? {
@@ -213,11 +232,107 @@ class HtspFileInputStreamDataSource private constructor(val connection: HtspConn
     // HtspDataSource Methods
     private fun release() {
         Timber.d("Releasing file input data source $dataSourceNumber)")
+
         val request = HtspMessage()
         request["method"] = "fileClose"
         request["id"] = fileId
+
+        // Tell the server where the playback stopped so that it can store the position and
+        // any other client can continue the playback at it. The value is expected in seconds.
+        val playPosition = getPlayPositionSeconds()
+        if (fileId >= 0 && playPosition > 0) {
+            Timber.d("Reporting a playback position of $playPosition seconds to the server")
+            request["playposition"] = playPosition
+        }
+
         htspConnection.sendMessage(request, null)
         htspConnection.removeMessageListener(this)
+    }
+
+    /**
+     * Returns the position in the file that the player has actually consumed, in seconds.
+     * The data that was fetched from the server but not yet read by the player is subtracted.
+     */
+    private fun getPlayPositionSeconds(): Long {
+        if (filePosition <= 0) {
+            return 0
+        }
+        val buffered = if (this::byteBuffer.isInitialized) byteBuffer.remaining().toLong() else 0
+        return ((filePosition - buffered).coerceAtLeast(0)) / 1000
+    }
+
+    /**
+     * Moves the file position of the file handle that the server keeps for this data source.
+     * Returns whether the server accepted the new position.
+     */
+    private fun seekTo(position: Long): Boolean {
+        Timber.d("Seeking file $fileId to position $position")
+
+        val request = HtspMessage()
+        request["method"] = "fileSeek"
+        request["id"] = fileId
+        request["offset"] = position
+        request["whence"] = "SEEK_SET"
+
+        val response = sendFileRequest(request) ?: return false
+        if (response.containsKey("error")) {
+            Timber.d("Error seeking in the file: %s", response.getString("error"))
+            return false
+        }
+
+        filePosition = response.getLong("offset", position)
+        Timber.d("File position is now $filePosition")
+        return true
+    }
+
+    /**
+     * Asks the server for the size of the file. This is used when the reply to the open
+     * request did not contain the size of the file.
+     */
+    private fun updateFileSizeFromServer() {
+        val request = HtspMessage()
+        request["method"] = "fileStat"
+        request["id"] = fileId
+
+        val response = sendFileRequest(request) ?: return
+        if (response.containsKey("error")) {
+            Timber.d("Error requesting the size of the file: %s", response.getString("error"))
+            return
+        }
+
+        if (response.containsKey("size")) {
+            fileSize = response.getLong("size")
+            Timber.d("Size of the file is $fileSize")
+        }
+    }
+
+    /**
+     * Sends the given file request and waits until the server has replied. Returns null when
+     * the server did not reply in time. This method must not be called from a message handler,
+     * because those are invoked on the connection thread that also delivers the reply.
+     */
+    private fun sendFileRequest(request: HtspMessage, timeoutMs: Long = 5_000): HtspMessage? {
+        val lock = ReentrantLock()
+        val condition = lock.newCondition()
+        var reply: HtspMessage? = null
+
+        htspConnection.sendMessage(request, object : ServerResponseListener<HtspMessage> {
+            override fun handleResponse(response: HtspMessage) {
+                reply = response
+                lock.withLock {
+                    condition.signal()
+                }
+            }
+        })
+
+        lock.withLock {
+            try {
+                condition.await(timeoutMs, TimeUnit.MILLISECONDS)
+            } catch (e: InterruptedException) {
+                Timber.d(e, "Waiting for a reply from the server was interrupted")
+            }
+        }
+        return reply
     }
 
     private fun sendFileRead(offset: Long) {
@@ -272,4 +387,18 @@ class HtspFileInputStreamDataSource private constructor(val connection: HtspConn
             }
         }
     }
+}
+
+/**
+ * Copies up to [readLength] bytes from [buffer] into [bytes], starting at [offset], and returns
+ * the number of bytes that were copied. The buffer is drained by exactly that number of bytes,
+ * which is what the caller has to report to the player.
+ */
+internal fun copyBufferedBytes(buffer: ByteBuffer, bytes: ByteArray, offset: Int, readLength: Int): Int {
+    if (readLength <= 0 || !buffer.hasRemaining()) {
+        return 0
+    }
+    val length = min(readLength, buffer.remaining())
+    buffer[bytes, offset, length]
+    return length
 }

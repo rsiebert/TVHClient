@@ -27,7 +27,17 @@ data class ServerStatus(
         var timerRecordingServerProfileId: Int = 0,
         var castingServerProfileId: Int = 0,
         var playbackTranscodingProfileId: Int = 0,
-        var recordingTranscodingProfileId: Int = 0
+        var recordingTranscodingProfileId: Int = 0,
+
+        // Version of the http api of the server (Added in HTSP version 26)
+        var apiVersion: Int = 0,
+
+        // Rights that the server has granted to the account of the connection
+        var isAdmin: Boolean = false,
+        var isStreaming: Boolean = true,
+        var isDvr: Boolean = true,
+        var uiLevel: Int = 0,
+        var uiLanguage: String? = null
 )
 
 @Entity(tableName = "server_status", indices = [Index(value = ["id", "connection_id"], unique = true)])
@@ -71,7 +81,19 @@ internal data class ServerStatusEntity(
         @ColumnInfo(name = "playback_transcoding_profile_id")
         var playbackTranscodingProfileId: Int = 0,
         @ColumnInfo(name = "recording_transcoding_profile_id")
-        var recordingTranscodingProfileId: Int = 0
+        var recordingTranscodingProfileId: Int = 0,
+        @ColumnInfo(name = "api_version")
+        var apiVersion: Int = 0,
+        @ColumnInfo(name = "is_admin")
+        var isAdmin: Boolean = false,
+        @ColumnInfo(name = "is_streaming")
+        var isStreaming: Boolean = true,
+        @ColumnInfo(name = "is_dvr")
+        var isDvr: Boolean = true,
+        @ColumnInfo(name = "ui_level")
+        var uiLevel: Int = 0,
+        @ColumnInfo(name = "ui_language")
+        var uiLanguage: String? = null
 ) {
     companion object {
         fun from(serverStatus: ServerStatus): ServerStatusEntity {
@@ -96,11 +118,17 @@ internal data class ServerStatusEntity(
                     serverStatus.timerRecordingServerProfileId,
                     serverStatus.castingServerProfileId,
                     serverStatus.playbackTranscodingProfileId,
-                    serverStatus.recordingTranscodingProfileId)
+                    serverStatus.recordingTranscodingProfileId,
+                    serverStatus.apiVersion,
+                    serverStatus.isAdmin,
+                    serverStatus.isStreaming,
+                    serverStatus.isDvr,
+                    serverStatus.uiLevel,
+                    serverStatus.uiLanguage)
         }
     }
 
     fun toServerStatus(): ServerStatus {
-        return ServerStatus(id, connectionId, connectionName, serverName, serverVersion, webroot, time, timezone, gmtoffset, htspVersion, freeDiskSpace, totalDiskSpace, channelTagId, htspPlaybackServerProfileId, httpPlaybackServerProfileId, recordingServerProfileId, seriesRecordingServerProfileId, timerRecordingServerProfileId, castingServerProfileId, playbackTranscodingProfileId, recordingTranscodingProfileId)
+        return ServerStatus(id, connectionId, connectionName, serverName, serverVersion, webroot, time, timezone, gmtoffset, htspVersion, freeDiskSpace, totalDiskSpace, channelTagId, htspPlaybackServerProfileId, httpPlaybackServerProfileId, recordingServerProfileId, seriesRecordingServerProfileId, timerRecordingServerProfileId, castingServerProfileId, playbackTranscodingProfileId, recordingTranscodingProfileId, apiVersion, isAdmin, isStreaming, isDvr, uiLevel, uiLanguage)
     }
 }

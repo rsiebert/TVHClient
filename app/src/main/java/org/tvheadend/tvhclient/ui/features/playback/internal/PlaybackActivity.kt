@@ -295,6 +295,15 @@ class PlaybackActivity : AppCompatActivity() {
         viewModel.remainingTime.observe(this) { time ->
             remainingTime.text = time
         }
+
+        Timber.d("Observing the playback status messages")
+        viewModel.statusMessage.observe(this) { message ->
+            Timber.d("Received the playback status message '$message'")
+            // Show the message of the server in the overlay, for example when the channel
+            // is scrambled or when no free adapter is available for the subscription.
+            playerStatus.text = message
+            playerStatus.visible()
+        }
     }
 
     override fun attachBaseContext(context: Context) {
@@ -435,8 +444,38 @@ class PlaybackActivity : AppCompatActivity() {
 
     private fun onInformationButtonSelected() {
         Timber.d("Information button selected")
+        val subscriptionState = viewModel.subscriptionState.value
+        if (subscriptionState == null || !hasSubscriptionInformation(subscriptionState)) {
+            showTrackInformationDialog()
+            return
+        }
+
+        Timber.d("The server provides additional information about the subscription")
+        MaterialAlertDialogBuilder(this)
+                .setTitle(R.string.playback_status_choose)
+                .setItems(arrayOf(getString(R.string.playback_status_info), getString(R.string.playback_status))) { _, which ->
+                    if (which == 0) {
+                        showTrackInformationDialog()
+                    } else {
+                        PlaybackStatusDialog.create(subscriptionState).show(supportFragmentManager, null)
+                    }
+                }
+                .show()
+    }
+
+    private fun showTrackInformationDialog() {
         val trackInformationDialog = TrackInformationDialog.createForTrackSelector(viewModel.player)
         trackInformationDialog.show(supportFragmentManager, null)
+    }
+
+    /**
+     * Returns whether the server has sent any information about the subscription that is
+     * worth showing to the user, like the signal quality or the descrambler information.
+     */
+    private fun hasSubscriptionInformation(state: HtspSubscriptionState): Boolean {
+        return state.signalStatus != null ||
+                state.descrambleInfo != null ||
+                state.queueStatus != null
     }
 
     private fun onChangeAspectRatioSelected() {

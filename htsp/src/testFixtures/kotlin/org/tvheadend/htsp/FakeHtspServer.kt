@@ -48,6 +48,13 @@ class FakeHtspServer @JvmOverloads constructor(
     private val username: String = "*",
     private val password: String = "test",
     private val challenge: ByteArray = ByteArray(16) { (it + 1).toByte() },
+    /**
+     * Whether the reply to `authenticate` shall contain the rights of the account. Real
+     * servers only send them when the negotiated HTSP version is 26 or newer.
+     */
+    private val grantsAuthenticationRights: Boolean = true,
+    private val serverVersion: String = "4.3-test",
+    private val apiVersion: Int = 2,
 ) : AutoCloseable {
 
     private val running = AtomicBoolean(false)
@@ -63,6 +70,11 @@ class FakeHtspServer @JvmOverloads constructor(
 
     /** Number of `authenticate` messages received. */
     val authenticateCount = AtomicInteger()
+
+    /** The most recent `hello` message received from the client, or null before [start]. */
+    @Volatile
+    var lastHelloMessage: HtspMessage? = null
+        private set
 
     /** The (ephemeral) port the server is listening on, or -1 before [start]. */
     @Volatile
@@ -143,6 +155,7 @@ class FakeHtspServer @JvmOverloads constructor(
         when (message.getMethod()) {
             "hello" -> {
                 helloCount.incrementAndGet()
+                lastHelloMessage = message
                 // Handshake step 3: answer with the challenge. The client reads it via
                 // getByteArray("challenge") and mixes it into the SHA1 digest.
                 val reply = HtspMessage()
@@ -150,7 +163,10 @@ class FakeHtspServer @JvmOverloads constructor(
                 reply.put("seq", message.getInteger("seq", 0))
                 reply.put("challenge", challenge)
                 reply.put("servername", "FakeTVHeadend")
+                reply.put("serverversion", serverVersion)
                 reply.put("htspversion", HtspMessage.HTSP_VERSION)
+                reply.put("api_version", apiVersion)
+                reply.put("servercapability", arrayListOf("timeshift", "tvh-http-api"))
                 send(channel, reply)
             }
             "authenticate" -> {
@@ -161,6 +177,18 @@ class FakeHtspServer @JvmOverloads constructor(
                 reply.setMethod("authenticate")
                 reply.put("seq", message.getInteger("seq", 0))
                 reply.put("noaccess", if (authorized) 0 else 1)
+                if (authorized && grantsAuthenticationRights) {
+                    reply.put("admin", 1)
+                    reply.put("streaming", 1)
+                    reply.put("dvr", 1)
+                    reply.put("faileddvr", 0)
+                    reply.put("anonymous", 1)
+                    reply.put("limitall", 4)
+                    reply.put("limitdvr", 2)
+                    reply.put("limitstreaming", 1)
+                    reply.put("uilevel", 3)
+                    reply.put("uilanguage", "de")
+                }
                 send(channel, reply)
             }
             else -> Unit // Ignore anything that is not part of the handshake.

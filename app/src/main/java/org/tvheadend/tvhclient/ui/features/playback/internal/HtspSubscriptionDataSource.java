@@ -70,12 +70,15 @@ public class HtspSubscriptionDataSource implements DataSource, Closeable, Server
     private final ReentrantLock lock = new ReentrantLock();
     private boolean subscriptionStarted = false;
     private boolean isSubscribed = false;
+    private HtspSubscriptionState subscriptionState = new HtspSubscriptionState();
+    private HtspSubscriptionStateListener stateListener;
 
     public static class Factory implements DataSource.Factory {
 
         private final Context context;
         private final HtspConnection htspConnection;
         private final String streamProfile;
+        private HtspSubscriptionStateListener stateListener;
         private HtspSubscriptionDataSource dataSource;
 
         Factory(Context context, HtspConnection htspConnection, String streamProfile) {
@@ -85,10 +88,23 @@ public class HtspSubscriptionDataSource implements DataSource, Closeable, Server
             this.streamProfile = streamProfile;
         }
 
+        /**
+         * Registers the listener that receives the subscription state messages (signal status,
+         * descrambler information, ...) of the data source that this factory creates. The
+         * listener is set before the data source exists, so it is kept here until then.
+         */
+        void setStateListener(HtspSubscriptionStateListener listener) {
+            Timber.d("Setting subscription state listener");
+            this.stateListener = listener;
+            if (dataSource != null) {
+                dataSource.setStateListener(listener);
+            }
+        }
+
         @Override
         public DataSource createDataSource() {
             Timber.d("Created new data source from factory");
-            dataSource = new HtspSubscriptionDataSource(context, htspConnection, streamProfile);
+            dataSource = new HtspSubscriptionDataSource(context, htspConnection, streamProfile, stateListener);
             return dataSource;
         }
 
@@ -105,12 +121,13 @@ public class HtspSubscriptionDataSource implements DataSource, Closeable, Server
         }
     }
 
-    private HtspSubscriptionDataSource(Context context, HtspConnection htspConnection, String streamProfile) {
+    private HtspSubscriptionDataSource(Context context, HtspConnection htspConnection, String streamProfile, HtspSubscriptionStateListener stateListener) {
         Timber.d("Initializing subscription data source");
         this.context = context;
         this.htspConnection = htspConnection;
         this.htspConnection.addMessageListener(this);
         this.streamProfile = streamProfile;
+        this.stateListener = stateListener;
 
         SharedPreferences mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         boolean timeshiftEnabled = mSharedPreferences.getBoolean("timeshift_enabled", context.getResources().getBoolean(R.bool.pref_default_timeshift_enabled));
@@ -180,6 +197,8 @@ public class HtspSubscriptionDataSource implements DataSource, Closeable, Server
                     int availableTimeshiftPeriod = response.getInteger("timeshiftPeriod", 0);
                     Timber.d("Available timeshift period in seconds: %s", availableTimeshiftPeriod);
                 });
+                // A new subscription starts without any status information from the server.
+                subscriptionState = new HtspSubscriptionState();
                 isSubscribed = true;
             }
         }
@@ -277,16 +296,50 @@ public class HtspSubscriptionDataSource implements DataSource, Closeable, Server
 
             case "subscriptionStop":
                 subscriptionStarted = false;
+                updateSubscriptionState(message, method);
                 break;
 
             case "subscriptionStatus":
             case "subscriptionSkip":
             case "subscriptionSpeed":
+            case "subscriptionGrace":
             case "queueStatus":
             case "signalStatus":
+            case "descrambleInfo":
             case "timeshiftStatus":
+                updateSubscriptionState(message, method);
                 break;
         }
+    }
+
+    /**
+     * Updates the subscription state with the data of the given server message and informs
+     * the registered listener about the change. Status messages are also received while the
+     * initial sync is running, so the listener is optional and is only notified when set.
+     */
+    private void updateSubscriptionState(@NonNull HtspMessage message, @NonNull String method) {
+        subscriptionState = HtspSubscriptionStateReader.read(subscriptionState, message, method);
+
+        HtspSubscriptionStateListener listener = stateListener;
+        if (listener != null) {
+            listener.onSubscriptionStateChanged(subscriptionState);
+        }
+    }
+
+    /**
+     * Returns the most recent state as reported by the server. This is not the stream data
+     * itself, but the signal quality, the descrambler information and the queue statistics.
+     */
+    public HtspSubscriptionState getSubscriptionState() {
+        return subscriptionState;
+    }
+
+    /**
+     * Registers the listener that is informed whenever the server sends new state
+     * information for this subscription.
+     */
+    public void setStateListener(HtspSubscriptionStateListener listener) {
+        this.stateListener = listener;
     }
 
     private void release() {
@@ -297,6 +350,7 @@ public class HtspSubscriptionDataSource implements DataSource, Closeable, Server
         request.put("subscriptionId", subscriptionId);
         htspConnection.sendMessage(request, null);
         htspConnection.removeMessageListener(this);
+        stateListener = null;
     }
 
     public void pause() {

@@ -21,7 +21,7 @@ import org.tvheadend.data.entity.*
             ServerProfileEntity::class,
             ServerStatusEntity::class],
         exportSchema = false,
-        version = 14)
+        version = 15)
 abstract class AppRoomDatabase : RoomDatabase() {
 
     internal abstract val timerRecordingDao: TimerRecordingDao
@@ -65,6 +65,7 @@ abstract class AppRoomDatabase : RoomDatabase() {
                             .addMigrations(MIGRATION_11_12)
                             .addMigrations(MIGRATION_12_13)
                             .addMigrations(MIGRATION_13_14)
+                            .addMigrations(MIGRATION_14_15)
                             .build()
                 }
             }
@@ -164,6 +165,21 @@ abstract class AppRoomDatabase : RoomDatabase() {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("ALTER TABLE server_status ADD COLUMN series_recording_server_profile_id INTEGER NOT NULL DEFAULT 0;")
                 database.execSQL("ALTER TABLE server_status ADD COLUMN timer_recording_server_profile_id INTEGER NOT NULL DEFAULT 0;")
+            }
+        }
+
+        /**
+         * Adds the version of the http api of the server and the rights that the server has
+         * granted to the account of the connection to the server status.
+         */
+        private val MIGRATION_14_15 = object : Migration(14, 15) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("ALTER TABLE server_status ADD COLUMN api_version INTEGER NOT NULL DEFAULT 0;")
+                database.execSQL("ALTER TABLE server_status ADD COLUMN is_admin INTEGER NOT NULL DEFAULT 0;")
+                database.execSQL("ALTER TABLE server_status ADD COLUMN is_streaming INTEGER NOT NULL DEFAULT 1;")
+                database.execSQL("ALTER TABLE server_status ADD COLUMN is_dvr INTEGER NOT NULL DEFAULT 1;")
+                database.execSQL("ALTER TABLE server_status ADD COLUMN ui_level INTEGER NOT NULL DEFAULT 0;")
+                database.execSQL("ALTER TABLE server_status ADD COLUMN ui_language TEXT;")
             }
         }
     }
