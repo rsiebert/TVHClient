@@ -22,11 +22,9 @@ import org.tvheadend.tvhclient.ui.common.interfaces.SnackbarMessageInterface
 import org.tvheadend.tvhclient.ui.features.MainActivity
 import org.tvheadend.tvhclient.util.livedata.Event
 import timber.log.Timber
-import javax.inject.Inject
 
 open class BaseViewModel(application: Application) : AndroidViewModel(application), SnackbarMessageInterface, NetworkStatusInterface {
 
-    @Inject
     lateinit var appRepository: AppRepository
 
     private var mainRepository: MainRepository
@@ -82,7 +80,7 @@ open class BaseViewModel(application: Application) : AndroidViewModel(applicatio
         get() = mainRepository.billingLifecycleObserver
 
     init {
-        inject()
+        appRepository = (application as MainApplication).appRepository
         startupCompleteLiveData.value = Event(false)
 
         mainRepository = (application as MainApplication).appContainer.mainRepository
@@ -96,10 +94,6 @@ open class BaseViewModel(application: Application) : AndroidViewModel(applicatio
         connectionToServerAvailableLiveData.value = false
 
         networkStatusLiveData.value = Event(NetworkStatus.NETWORK_UNKNOWN)
-    }
-
-    private fun inject() {
-        MainApplication.component.inject(this)
     }
 
     fun updateConnectionAndRestartApplication(context: Context?, isSyncRequired: Boolean = true) {

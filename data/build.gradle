@@ -52,8 +52,4 @@ dependencies {
 
     // Logging library
     implementation libs.timber
-
-    // Dependency injection
-    implementation libs.dagger.runtime
-    ksp libs.dagger.compiler
 }

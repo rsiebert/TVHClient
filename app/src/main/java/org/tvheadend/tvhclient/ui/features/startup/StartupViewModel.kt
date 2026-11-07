@@ -5,11 +5,9 @@ import androidx.lifecycle.*
 import org.tvheadend.data.AppRepository
 import org.tvheadend.data.entity.Connection
 import org.tvheadend.tvhclient.MainApplication
-import javax.inject.Inject
 
 open class StartupViewModel : ViewModel() {
 
-    @Inject
     lateinit var appRepository: AppRepository
 
     private var connectionCount: LiveData<Int>
@@ -17,7 +15,7 @@ open class StartupViewModel : ViewModel() {
     var connectionStatus: LiveData<Pair<Int, Boolean>>
 
     init {
-        inject()
+        appRepository = MainApplication.instance.appRepository
         connectionCount = appRepository.connectionData.getLiveDataItemCount()
         connectionLiveData = appRepository.connectionData.liveDataActiveItem
 
@@ -40,7 +38,4 @@ open class StartupViewModel : ViewModel() {
         }
     }
 
-    private fun inject() {
-        MainApplication.component.inject(this)
-    }
 }

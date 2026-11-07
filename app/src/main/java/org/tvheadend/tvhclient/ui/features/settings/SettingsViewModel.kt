@@ -20,11 +20,9 @@ import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.ui.common.interfaces.SnackbarMessageInterface
 import org.tvheadend.tvhclient.util.livedata.Event
 import timber.log.Timber
-import javax.inject.Inject
 
 class SettingsViewModel(application: Application) : AndroidViewModel(application), SnackbarMessageInterface {
 
-    @Inject
     lateinit var appRepository: AppRepository
 
     private var mainRepository: MainRepository
@@ -94,7 +92,7 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
         private set
 
     init {
-        inject()
+        appRepository = (application as MainApplication).appRepository
         mainRepository = (application as MainApplication).appContainer.mainRepository
 
         Timber.d("Observing isUnlockedLiveData from main repository")
@@ -106,10 +104,6 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
         connectionListLiveData = appRepository.connectionData.getLiveDataItems()
         currentServerStatus = appRepository.serverStatusData.activeItem
         currentServerStatusLiveData = appRepository.serverStatusData.liveDataActiveItem
-    }
-
-    private fun inject() {
-        MainApplication.component.inject(this)
     }
 
     fun getNavigationMenuId(): LiveData<Event<String>> = navigationMenuIdLiveData

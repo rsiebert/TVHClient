@@ -15,11 +15,9 @@ import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.ui.common.interfaces.LayoutControlInterface
 import org.tvheadend.tvhclient.ui.common.interfaces.ToolbarInterface
 import timber.log.Timber
-import javax.inject.Inject
 
 abstract class BaseFragment : Fragment() {
 
-    @Inject
     lateinit var appRepository: AppRepository
 
     protected lateinit var sharedPreferences: SharedPreferences
@@ -33,7 +31,7 @@ abstract class BaseFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        MainApplication.component.inject(this)
+        appRepository = (requireActivity().application as MainApplication).appRepository
 
         if (activity is ToolbarInterface) {
             toolbarInterface = activity as ToolbarInterface

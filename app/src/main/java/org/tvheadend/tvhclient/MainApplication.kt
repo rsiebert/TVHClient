@@ -3,6 +3,7 @@ package org.tvheadend.tvhclient
 import android.app.Application
 import android.content.Context
 import android.content.SharedPreferences
+import androidx.preference.PreferenceManager
 import com.google.android.gms.cast.framework.CastOptions
 import com.google.android.gms.cast.framework.OptionsProvider
 import com.google.android.gms.cast.framework.SessionProvider
@@ -11,12 +12,7 @@ import com.google.android.gms.cast.framework.media.NotificationOptions
 import com.google.firebase.analytics.FirebaseAnalytics
 import kotlinx.coroutines.GlobalScope
 import org.tvheadend.data.AppRepository
-import org.tvheadend.data.di.DaggerRepositoryComponent
-import org.tvheadend.data.di.RepositoryModule
-import org.tvheadend.tvhclient.di.component.DaggerMainComponent
-import org.tvheadend.tvhclient.di.component.MainComponent
-import org.tvheadend.tvhclient.di.module.ContextModule
-import org.tvheadend.tvhclient.di.module.SharedPreferencesModule
+import org.tvheadend.data.di.DataContainer
 import org.tvheadend.tvhclient.ui.common.onAttach
 import org.tvheadend.tvhclient.ui.features.playback.external.ExpandedControlsActivity
 import org.tvheadend.tvhclient.util.MigrateUtils
@@ -24,7 +20,6 @@ import org.tvheadend.tvhclient.util.billing.BillingDataSource
 import org.tvheadend.tvhclient.util.logging.DebugTree
 import org.tvheadend.tvhclient.util.logging.FileLoggingTree
 import timber.log.Timber
-import javax.inject.Inject
 
 // TODO snackbar locale changes
 // TODO when a notification is dismissed, it reappears when the recording gets updated,
@@ -32,13 +27,17 @@ import javax.inject.Inject
 
 class MainApplication : Application(), OptionsProvider {
 
-    @Inject
-    lateinit var appRepository: AppRepository
-    @Inject
-    lateinit var sharedPreferences: SharedPreferences
-
     private lateinit var fireBaseAnalytics: FirebaseAnalytics
     lateinit var appContainer: AppContainer
+
+    /** Root of the hand rolled dependency graph, replacing the former Dagger components. */
+    val dataContainer: DataContainer by lazy { DataContainer(this) }
+
+    val appRepository: AppRepository
+        get() = dataContainer.appRepository
+
+    val appSharedPreferences: SharedPreferences
+        get() = PreferenceManager.getDefaultSharedPreferences(this)
 
     inner class AppContainer {
         private val applicationScope = GlobalScope
@@ -58,21 +57,6 @@ class MainApplication : Application(), OptionsProvider {
     override fun onCreate() {
         super.onCreate()
 
-        // Create the repository component which is then be used for the dependency injection.
-        val repositoryComponent = DaggerRepositoryComponent
-                .builder()
-                .repositoryModule(RepositoryModule(applicationContext))
-                .build()
-
-        // Setup the required modules and components for dependency injection
-        component = DaggerMainComponent
-                .builder()
-                .contextModule(ContextModule(applicationContext))
-                .sharedPreferencesModule(SharedPreferencesModule())
-                .repositoryComponent(repositoryComponent)
-                .build()
-        component.inject(this)
-
         instance = this
 
         fireBaseAnalytics = FirebaseAnalytics.getInstance(this)
@@ -81,7 +65,7 @@ class MainApplication : Application(), OptionsProvider {
         Timber.plant(DebugTree())
 
         // Log to a file when in release mode and the user has activated the setting
-        if (!BuildConfig.DEBUG && sharedPreferences.getBoolean("debug_mode_enabled", resources.getBoolean(R.bool.pref_default_debug_mode_enabled))) {
+        if (!BuildConfig.DEBUG && appSharedPreferences.getBoolean("debug_mode_enabled", resources.getBoolean(R.bool.pref_default_debug_mode_enabled))) {
             Timber.plant(FileLoggingTree(applicationContext))
         }
 
@@ -91,7 +75,7 @@ class MainApplication : Application(), OptionsProvider {
         // Execute some additional tasks before starting the application.
         // These tasks are for example migrating connections, updating or
         // removing preferences, removing old information from the database and others
-        MigrateUtils(applicationContext, appRepository, sharedPreferences).doMigrate()
+        MigrateUtils(applicationContext, appRepository, appSharedPreferences).doMigrate()
     }
 
     override fun attachBaseContext(context: Context) {
@@ -132,6 +116,5 @@ class MainApplication : Application(), OptionsProvider {
     companion object {
 
         lateinit var instance: MainApplication
-        lateinit var component: MainComponent
     }
 }

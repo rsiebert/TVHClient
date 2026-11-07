@@ -9,27 +9,25 @@ import org.tvheadend.data.entity.Connection
 import org.tvheadend.tvhclient.MainApplication
 import org.tvheadend.tvhclient.service.htsp.HtspIntentServiceHandler
 import timber.log.Timber
-import javax.inject.Inject
 
 class ConnectionIntentService : JobIntentService() {
 
-    @Inject
-    lateinit var context: Context
+    private lateinit var appRepository: AppRepository
 
-    @Inject
-    lateinit var appRepository: AppRepository
+    private lateinit var sharedPreferences: SharedPreferences
 
-    @Inject
-    lateinit var sharedPreferences: SharedPreferences
+    private lateinit var connection: Connection
+    private lateinit var serviceHandler: ServiceInterface
 
-    private var connection: Connection
-    private var serviceHandler: ServiceInterface
-
-    init {
+    override fun onCreate() {
+        super.onCreate()
         Timber.d("Starting intent service")
-        MainApplication.component.inject(this)
+        val application = application as MainApplication
+        appRepository = application.appRepository
+        sharedPreferences = application.appSharedPreferences
+
         connection = appRepository.connectionData.activeItem
-        serviceHandler = HtspIntentServiceHandler(context, appRepository, connection)
+        serviceHandler = HtspIntentServiceHandler(this, appRepository, connection)
     }
 
     override fun onHandleWork(intent: Intent) {

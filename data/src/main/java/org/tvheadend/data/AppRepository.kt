@@ -14,10 +14,8 @@ import org.tvheadend.data.source.ServerStatusDataSource
 import org.tvheadend.data.source.SubscriptionDataSource
 import org.tvheadend.data.source.TagAndChannelDataSource
 import org.tvheadend.data.source.TimerRecordingDataSource
-import javax.inject.Inject
 
-class AppRepository @Inject
-constructor(
+class AppRepository(
         override val channelData: ChannelDataSource,
         override val programData: ProgramDataSource,
         override val recordingData: RecordingDataSource,
