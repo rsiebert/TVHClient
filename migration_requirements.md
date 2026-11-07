@@ -154,7 +154,7 @@ graph LR
 | ExoPlayer fork | **Migrate to `androidx.media3` 1.11.1** — the fork holds no library-code changes |
 | Unmaintained libraries | **Replace** material-dialogs (18 files) and materialdrawer (1 file) — *both done* |
 | Annotation processing | **KSP** — not `com.android.legacy-kapt` |
-| Cast | Keep `play-services-cast-framework`, bump to **23.0.0**. Cast is a live feature (9 files); `media3-cast` is an optional later step |
+| Cast | Keep `play-services-cast-framework` at **21.0.0** for now; the 23.0.0 bump is **deferred to Step 6** (it forces compileSdk 37 + minSdk 24 + a beta `mediarouter`). Cast is a live feature (9 files); `media3-cast` is an optional later step |
 
 ### Evidence: the fork carries no patches
 
@@ -284,7 +284,7 @@ Retires in one go:
 | ~~material-dialogs → Material Components~~ | ~~18 files~~ | **Done** (`ec3bcfd20`). `MaterialAlertDialogBuilder`; custom RecyclerView adapters wrapped via `setView`; folder chooser reimplemented with `java.io.File`. |
 | ~~materialdrawer → `DrawerLayout` + `NavigationView`~~ | ~~1 file~~ | **Done** (`eb0ab74a2`). Connection switcher moved to a header `Spinner`; count badges shown in item titles (drawer `NavigationView` has no badge API). |
 | Library version bumps | 1 file | 24 stale versions flagged in `libs.versions.toml` — e.g. appcompat 1.4.0 → 1.8.0, core-ktx 1.7.0 → 1.19.1, billing 6.1.0 → 9.1.0 |
-| Cast 21.0.0 → 23.0.0, then drop `enableJetifier` | 9 files (compile) | Must land together — jetifier is what currently rewrites Cast 21's support-library references |
+| Cast 21.0.0 → 23.0.0, then drop `enableJetifier` | 9 files (compile) | **Deferred to Step 6** — 23.0.0 forces compileSdk 37 + minSdk 24 + a beta `mediarouter`. Must land with the jetifier drop |
 | `android.nonTransitiveRClass=true` | build files | Faster builds; may need explicit `R` imports |
 
 ### Step 6 — targetSdk 37
