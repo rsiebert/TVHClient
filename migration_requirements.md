@@ -1,3 +1,4 @@
+
 # TVHClient — Requirements to move to the latest toolchain
 
 > [!IMPORTANT]
@@ -14,7 +15,7 @@ graph LR
   G -->|"removes Configuration.fileCollection(Spec)"| K["Kotlin 2.x required<br/>(KGP 1.9.x caps at Gradle 8.1.1)"]
   A -->|"new DSL only"| BK["Built-in Kotlin<br/>kotlin-android removed"]
   BK -->|"kotlin-kapt incompatible"| KSP["KSP or com.android.legacy-kapt"]
-  K -->|"Kotlin 2.x metadata"| RD["Room 2.8 + Dagger 2.60<br/>(2.6.0 / 2.48.1 can't read it)"]
+  K -->|"Kotlin 2.x metadata"| RD["Room 2.8<br/>(2.6.0 can't read it)"]
   RD -->|"Room 2.8 floor"| MS["minSdk 19 → 23"]
 ```
 
@@ -62,7 +63,7 @@ graph LR
 ### 3.4 Annotation processing (the riskiest part)
 
 - **Room** ([data/build.gradle](file:///home/rsiebert/projects/TVHClient/data/build.gradle#L38)) — `kapt "androidx.room:room-compiler"` → KSP.
-- **Dagger** (app + data `kapt "com.google.dagger:dagger-compiler"`) → KSP (supported since 2.48).
+- **Dagger** — *removed entirely* (see §9). The tiny DI graph was replaced by a hand-rolled `DataContainer`; no annotation processor needed.
 - With `kapt` + Kotlin ≥ 2.3, Room 2.8 hits a metadata ceiling
   (`kotlin-metadata-jvm:2.2.0`, "maximum supported version is 2.2.0"). **KSP avoids this entirely.**
 
@@ -83,7 +84,7 @@ graph LR
 | Library | Current | Latest |
 | --- | --- | --- |
 | Room | 2.6.0 | **2.8.5** |
-| Dagger | 2.48.1 | **2.60.1** |
+| Dagger | 2.48.1 | **removed** (replaced by `DataContainer`) |
 | kotlinx-coroutines-android | `1.6.0-native-mt` | **1.11.0** |
 | material | 1.4.0 | 1.14.0 |
 | appcompat | 1.4.0 | 1.8.0 |
@@ -112,9 +113,9 @@ graph LR
 
 - **`kotlinx-coroutines-android:1.6.0-native-mt`** — the `-native-mt` artifact was discontinued after 1.6.0.
   Switch to plain `kotlinx-coroutines-android:1.11.0`.
-- **`com.afollestad.material-dialogs:3.3.0`** — unmaintained (stuck on 3.3.0); replace with Material Components
-  dialogs or another maintained library. Used across the UI.
-- **`com.mikepenz:materialdrawer:7.0.0`** — no newer stable found (only `10.0.0-b01` preview).
+- ~~**`com.afollestad.material-dialogs:3.3.0`**~~ — **done**: replaced with Material Components
+  (`MaterialAlertDialogBuilder`) across 18 files (see §9).
+- ~~**`com.mikepenz:materialdrawer:7.0.0`**~~ — **done**: replaced with `DrawerLayout` + `NavigationView` (see §9).
 - **`play-services-cast-framework:21.0.0`** — still references the old support library (Jetifier rewrites it).
   Bump to 23.0.0 so Jetifier can be dropped.
 - **ExoPlayer 2.11.7 fork** — a 2019 snapshot of a library that is now **`androidx.media3` 1.11.1**. Keeping
@@ -151,7 +152,7 @@ graph LR
 | targetSdk | **37** — required |
 | minSdk | **19 → 23** |
 | ExoPlayer fork | **Migrate to `androidx.media3` 1.11.1** — the fork holds no library-code changes |
-| Unmaintained libraries | **Replace** material-dialogs (18 files) and materialdrawer (1 file) |
+| Unmaintained libraries | **Replace** material-dialogs (18 files) and materialdrawer (1 file) — *both done* |
 | Annotation processing | **KSP** — not `com.android.legacy-kapt` |
 | Cast | Keep `play-services-cast-framework`, bump to **23.0.0**. Cast is a live feature (9 files); `media3-cast` is an optional later step |
 
@@ -187,6 +188,11 @@ the stub pipeline and the metadata ceiling.
 5. **Dialog/drawer replacement** + remaining library bumps.
 6. **targetSdk 37** behaviour work.
 
+> [!NOTE]
+> Steps 1–2 above were executed as written (Dagger bumped to 2.60.1, then moved to KSP), but Dagger was
+> **subsequently removed entirely** (`06a570026`) — the graph was too small to justify it. Step 5's drawer
+> replacement is also **done** (`eb0ab74a2`), as is the material-dialogs replacement (`ec3bcfd20`); only the library bumps remain.
+
 ### Traps to expect
 
 > [!WARNING]
@@ -205,8 +211,13 @@ the stub pipeline and the metadata ceiling.
 - [x] **Step 2 — kapt → KSP** — `5a0724caf`.
 - [x] **Step 3 — Gradle 9.8.2 + AGP 9.5.1** — `506611170` (fork: `d952d9e8e`).
 - [x] **Build-config simplification** — `6feff603e`.
+- [x] **Dagger removal** — `06a570026` (hand-rolled `DataContainer`).
+- [x] **MaterialDrawer → `NavigationView`** — `eb0ab74a2`.
+- [x] **Build deps + test infra** — `c8318bf8a`, `28e1e9a51`.
+- [x] **Docs + `.gitignore`** — `6370072df`, `9a71fac31`.
+- [x] **material-dialogs → Material Components** — `ec3bcfd20`.
 - [ ] Step 4 — Media3 migration.
-- [ ] Step 5 — dialog/drawer replacement + library bumps.
+- [ ] Step 5 — library bumps (dialogs + drawer done).
 - [ ] Step 6 — targetSdk 37 behaviour.
 
 `./gradlew :app:assembleDebug` is green on the committed state (Gradle 9.8.2, AGP 9.5.1, Kotlin 2.4.21).
@@ -234,7 +245,7 @@ library bumps are now a single-file edit.
 | --- | --- | --- | --- |
 | 1 | `OutOfMemoryError: Metaspace` in D8 / Kotlin compile | Kotlin 2.x + AGP need far more than the 512 MB metaspace | `org.gradle.jvmargs` / `kotlin.daemon.jvmargs` → 1 GB metaspace |
 | 2 | `Using multiple versions of AGP (8.13.0, 8.13.2) is not allowed` | A composite build requires an identical AGP in both builds | Bumped the fork to match |
-| 3 | `Duplicate class kotlinx.android.parcel.*` | MaterialDrawer 7 pulls `kotlin-android-extensions-runtime` 1.3.61 | Removed the app's last `kotlinx.android.extensions.LayoutContainer` use, then excluded the legacy runtime |
+| 3 | `Duplicate class kotlinx.android.parcel.*` | MaterialDrawer 7 pulls `kotlin-android-extensions-runtime` 1.3.61 | Removed the app's last `kotlinx.android.extensions.LayoutContainer` use, then excluded the legacy runtime. *(Exclude now gone — MaterialDrawer removed in `eb0ab74a2`.)* |
 | 4 | `Unresolved reference 'BR'` | Data Binding's `BR`/binding classes come from an annotation processor — **KSP support is not planned** | kapt kept in `app`; under AGP 9 via `com.android.legacy-kapt` |
 | 5 | `Could not create plugin of type 'FirebasePerfPlugin'` | Old Firebase/Google Gradle plugins can't be instantiated under AGP 9 | google-services → 4.5.0, crashlytics-gradle → 3.0.8, perf-plugin → 2.0.2 |
 | 6 | `getDefaultProguardFile('proguard-android.txt') is no longer supported` | Removed in AGP 9 (it embedded `-dontoptimize`) | Switched to `proguard-android-optimize.txt` — **release builds now run R8 optimisations** |
@@ -270,8 +281,8 @@ Retires in one go:
 
 | Item | Scope | Note |
 | --- | --- | --- |
-| material-dialogs → Material Components | 18 files | `MaterialAlertDialogBuilder`, `MaterialDatePicker`, `MaterialTimePicker` |
-| materialdrawer → `DrawerLayout` + `NavigationView` | 1 file | `NavigationDrawer.kt`; the account header / profile UI is MaterialDrawer-specific and would need reimplementing |
+| ~~material-dialogs → Material Components~~ | ~~18 files~~ | **Done** (`ec3bcfd20`). `MaterialAlertDialogBuilder`; custom RecyclerView adapters wrapped via `setView`; folder chooser reimplemented with `java.io.File`. |
+| ~~materialdrawer → `DrawerLayout` + `NavigationView`~~ | ~~1 file~~ | **Done** (`eb0ab74a2`). Connection switcher moved to a header `Spinner`; count badges shown in item titles (drawer `NavigationView` has no badge API). |
 | Library version bumps | 1 file | 24 stale versions flagged in `libs.versions.toml` — e.g. appcompat 1.4.0 → 1.8.0, core-ktx 1.7.0 → 1.19.1, billing 6.1.0 → 9.1.0 |
 | Cast 21.0.0 → 23.0.0, then drop `enableJetifier` | 9 files (compile) | Must land together — jetifier is what currently rewrites Cast 21's support-library references |
 | `android.nonTransitiveRClass=true` | build files | Faster builds; may need explicit `R` imports |
@@ -287,9 +298,8 @@ single jump**: edge-to-edge enforcement, predictive back, foreground-service typ
 These landed **compile-verified only**, and the first three sit on runtime paths.
 
 > [!WARNING]
-> 1. **MaterialDrawer's excluded runtime** — `kotlin-android-extensions-runtime` was excluded from
->    MaterialDrawer 7. If MaterialDrawer used Kotlin synthetics internally, the **drawer crashes at runtime**
->    with `NoClassDefFoundError`. **Highest-risk item — test the drawer first.**
+> 1. ~~**MaterialDrawer's excluded runtime**~~ — **resolved**: MaterialDrawer is gone, so the excluded
+>    `kotlin-android-extensions-runtime` and its runtime risk are gone too.
 > 2. **`BillingDataSource.onResume`** — the `@OnLifecycleEvent` → `DefaultLifecycleObserver` migration
 >    changes the purchase-refresh-on-resume path.
 > 3. **EPG screen** — `LayoutContainer` was removed from `EpgVerticalRecyclerViewAdapter`.
@@ -301,11 +311,10 @@ These landed **compile-verified only**, and the first three sit on runtime paths
 - **View Binding instead of Data Binding** — the only route to a kapt-free `app` (drops `legacy-kapt`). Costs
   the 258-expression refactor across at least 12 layouts plus their `@BindingAdapter`s.
 - **Plugin versions into the catalog** — needs the root `plugins { alias(...) apply false }` migration.
-- **Consolidate the two DI systems** — Dagger plus the hand-rolled `AppContainer` in
-  [MainApplication.kt](file:///home/rsiebert/projects/TVHClient/app/src/main/java/org/tvheadend/tvhclient/MainApplication.kt),
-  which also holds a `GlobalScope`.
+- ~~**Consolidate the two DI systems**~~ — **done**: Dagger removed (`06a570026`); only the hand-rolled
+  `AppContainer` remains (still holds a `GlobalScope` worth revisiting).
 
 ### Housekeeping
 
 - **Nothing has been pushed** to either remote.
-- Uncommitted: `.idea/misc.xml` and `implementation_plan.md` (line-ending delta only).
+- Uncommitted: only `.idea/misc.xml` and `.idea/deploymentTargetSelector.xml` (tracked IDE files).
