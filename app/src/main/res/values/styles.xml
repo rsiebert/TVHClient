@@ -138,14 +138,8 @@
         <item name="colorSecondary">@color/secondaryColor</item>
         <!--</editor-fold>-->
 
-        <!--<editor-fold desc="Material drawer colors">-->
-        <item name="material_drawer_badge">@color/material_drawer_badge_dark</item>
-        <item name="material_drawer_background">@color/material_drawer_background_dark</item>
-        <item name="material_drawer_primary_text">@color/material_drawer_dark_primary_text</item>
-        <item name="material_drawer_primary_icon">@color/material_drawer_dark_primary_icon</item>
-        <item name="material_drawer_header_selection_text">@color/material_drawer_dark_primary_text</item>
-        <item name="material_drawer_header_selection_subtext">@color/material_drawer_dark_secondary_text</item>
-        <item name="material_drawer_selected">@color/material_drawer_selected_dark</item>
+        <!--<editor-fold desc="Navigation drawer colors">-->
+        <item name="colorDrawerSelected">@color/drawer_selected_dark</item>
         <!--</editor-fold>-->
 
         <!--<editor-fold desc="Fast scrollbar styles">-->
@@ -241,12 +235,8 @@
         <item name="colorSecondary">@color/secondaryColor</item>
         <!--</editor-fold>-->
 
-        <!--<editor-fold desc="Material drawer colors">-->
-        <item name="material_drawer_badge">@color/material_drawer_badge_light</item>
-        <item name="material_drawer_background">@color/material_drawer_background_light</item>
-        <item name="material_drawer_header_selection_text">@color/material_drawer_dark_primary_text</item>
-        <item name="material_drawer_header_selection_subtext">@color/material_drawer_dark_secondary_text</item>
-        <item name="material_drawer_selected">@color/material_drawer_selected_light</item>
+        <!--<editor-fold desc="Navigation drawer colors">-->
+        <item name="colorDrawerSelected">@color/drawer_selected_light</item>
         <!--</editor-fold>-->
 
         <!--<editor-fold desc="Fast scrollbar styles">-->

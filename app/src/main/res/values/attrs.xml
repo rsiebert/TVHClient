@@ -53,7 +53,7 @@
     <attr name="fast_scroll_track" format="reference" />
     <attr name="fast_scroll_thumb" format="reference" />
 
-    <attr name="material_drawer_badge" format="reference" />
+    <attr name="colorDrawerSelected" format="reference" />
     <attr name="divider_color" format="reference" />
 
     <attr name="toolbarColorPrimary" format="reference" />

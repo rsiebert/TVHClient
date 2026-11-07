@@ -21,13 +21,9 @@
     <color name="surfaceDarkColor">#202020</color>
     <!--</editor-fold>-->
 
-    <!--<editor-fold desc="Material drawer colors">-->
-    <color name="material_drawer_background_dark">#303030</color>
-    <color name="material_drawer_background_light">#F9F9F9</color>
-    <color name="material_drawer_badge_dark">#1FAAAAAA</color>
-    <color name="material_drawer_badge_light">#0F000000</color>
-    <color name="material_drawer_selected_dark">#202020</color>
-    <color name="material_drawer_selected_light">#E8E8E8</color>
+    <!--<editor-fold desc="Navigation drawer colors">-->
+    <color name="drawer_selected_dark">#202020</color>
+    <color name="drawer_selected_light">#E8E8E8</color>
     <!--</editor-fold>-->
 
     <!--<editor-fold desc="Colors for the rounded edges of buttons in the startup screen">-->

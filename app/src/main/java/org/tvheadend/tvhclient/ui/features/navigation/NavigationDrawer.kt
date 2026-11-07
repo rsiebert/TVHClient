@@ -2,25 +2,18 @@ package org.tvheadend.tvhclient.ui.features.navigation
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.TypedValue
 import android.view.View
-import androidx.annotation.AttrRes
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
+import android.widget.Spinner
+import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.preference.PreferenceManager
 import com.afollestad.materialdialogs.MaterialDialog
-import com.mikepenz.materialdrawer.AccountHeader
-import com.mikepenz.materialdrawer.AccountHeaderBuilder
-import com.mikepenz.materialdrawer.Drawer
-import com.mikepenz.materialdrawer.DrawerBuilder
-import com.mikepenz.materialdrawer.holder.BadgeStyle
-import com.mikepenz.materialdrawer.holder.StringHolder
-import com.mikepenz.materialdrawer.model.DividerDrawerItem
-import com.mikepenz.materialdrawer.model.PrimaryDrawerItem
-import com.mikepenz.materialdrawer.model.ProfileDrawerItem
-import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem
-import com.mikepenz.materialdrawer.model.interfaces.IProfile
+import com.google.android.material.navigation.NavigationView
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.ui.features.channels.ChannelListFragment
 import org.tvheadend.tvhclient.ui.features.dvr.recordings.CompletedRecordingListFragment
@@ -38,238 +31,158 @@ import org.tvheadend.tvhclient.ui.features.settings.SettingsActivity
 import org.tvheadend.tvhclient.ui.features.unlocker.UnlockerFragment
 import org.tvheadend.tvhclient.util.getThemeId
 import timber.log.Timber
-import java.util.*
 
+/**
+ * Wraps the [NavigationView] based navigation drawer. Replaces the former MaterialDrawer
+ * implementation with the framework/Material Components drawer.
+ */
 class NavigationDrawer(private val activity: AppCompatActivity,
-                       private val savedInstanceState: Bundle?,
-                       private val toolbar: Toolbar,
+                       toolbar: Toolbar,
+                       private val drawerLayout: DrawerLayout,
+                       private val navigationView: NavigationView,
                        private val navigationViewModel: NavigationViewModel,
                        statusViewModel: StatusViewModel,
-                       private val isDualPane: Boolean) : AccountHeader.OnAccountHeaderListener, Drawer.OnDrawerItemClickListener {
+                       private val isDualPane: Boolean) {
 
-    private lateinit var headerResult: AccountHeader
-    private lateinit var result: Drawer
+    private val toggle: ActionBarDrawerToggle =
+            ActionBarDrawerToggle(activity, drawerLayout, toolbar, R.string.app_name, R.string.app_name)
+
+    private val connectionSpinner: Spinner =
+            navigationView.getHeaderView(0).findViewById(R.id.navigation_header_connection_spinner)
+
+    private var connectionIds: List<Int> = emptyList()
+
+    private val countItemIds = intArrayOf(
+            R.id.nav_channels,
+            R.id.nav_series_recordings,
+            R.id.nav_timer_recordings,
+            R.id.nav_completed_recordings,
+            R.id.nav_scheduled_recordings,
+            R.id.nav_failed_recordings,
+            R.id.nav_removed_recordings)
+
+    private val baseTitles = mutableMapOf<Int, CharSequence>()
 
     init {
-        createHeader()
-        createMenu()
+        toggle.syncState()
+        toggle.setToolbarNavigationClickListener { activity.onBackPressed() }
 
-        navigationViewModel.isUnlockedLiveData.observe(activity) { result.removeItem(MENU_UNLOCKER.toLong()) }
+        countItemIds.forEach { id ->
+            navigationView.menu.findItem(id)?.title?.let { baseTitles[id] = it }
+        }
+
+        navigationView.getHeaderView(0).setBackgroundResource(
+                if (getThemeId(activity) == R.style.CustomTheme_Light) R.drawable.header_light else R.drawable.header_dark)
+
+        navigationView.setNavigationItemSelectedListener { item ->
+            drawerLayout.closeDrawer(navigationView)
+            navigationViewModel.setNavigationMenuId(menuIdForItem(item.itemId))
+            true
+        }
+
+        navigationViewModel.isUnlockedLiveData.observe(activity) { unlocked ->
+            navigationView.menu.findItem(R.id.nav_extras)?.isVisible = !unlocked
+        }
         navigationViewModel.connectionLiveData.observe(activity) {
-            this.showConnectionsInDrawerHeader()
-            headerResult.setActiveProfile(it.id.toLong())
+            updateConnectionSpinner()
         }
 
-        statusViewModel.channelCount.observe(activity) { count -> result.updateBadge(MENU_CHANNELS.toLong(), StringHolder(count.toString())) }
-        statusViewModel.seriesRecordingCount.observe(activity) { count -> result.updateBadge(MENU_SERIES_RECORDINGS.toLong(), StringHolder(count.toString())) }
-        statusViewModel.timerRecordingCount.observe(activity) { count -> result.updateBadge(MENU_TIMER_RECORDINGS.toLong(), StringHolder(count.toString())) }
-        statusViewModel.completedRecordingCount.observe(activity) { count ->
-            result.updateBadge(
-                MENU_COMPLETED_RECORDINGS.toLong(),
-                StringHolder(count.toString())
-            )
-        }
-        statusViewModel.scheduledRecordingCount.observe(activity) { count ->
-            result.updateBadge(
-                MENU_SCHEDULED_RECORDINGS.toLong(),
-                StringHolder(count.toString())
-            )
-        }
-        statusViewModel.failedRecordingCount.observe(activity) { count -> result.updateBadge(MENU_FAILED_RECORDINGS.toLong(), StringHolder(count.toString())) }
-        statusViewModel.removedRecordingCount.observe(activity) { count ->
-            result.updateBadge(
-                MENU_REMOVED_RECORDINGS.toLong(),
-                StringHolder(count.toString())
-            )
-        }
-    }
-
-    private fun createHeader() {
-        headerResult = AccountHeaderBuilder()
-                .withActivity(activity)
-                .withCompactStyle(true)
-                .withSelectionListEnabledForSingleProfile(false)
-                .withProfileImagesVisible(false)
-                .withHeaderBackground(if (getThemeId(activity) == R.style.CustomTheme_Light) R.drawable.header_light else R.drawable.header_dark)
-                .withOnAccountHeaderListener(this)
-                .withSavedInstance(savedInstanceState)
-                .build()
-    }
-
-    private fun createMenu() {
-        val badgeStyle = BadgeStyle()
-                .withColorRes(getResourceIdFromAttr(R.attr.material_drawer_badge))
-
-        val channelItem = PrimaryDrawerItem()
-                .withIdentifier(MENU_CHANNELS.toLong()).withName(R.string.channels)
-                .withIcon(getResourceIdFromAttr(R.attr.ic_menu_channels))
-                .withBadgeStyle(badgeStyle)
-        val programGuideItem = PrimaryDrawerItem()
-                .withIdentifier(MENU_PROGRAM_GUIDE.toLong()).withName(R.string.pref_program_guide)
-                .withIcon(getResourceIdFromAttr(R.attr.ic_menu_program_guide))
-        val completedRecordingsItem = PrimaryDrawerItem()
-                .withIdentifier(MENU_COMPLETED_RECORDINGS.toLong()).withName(R.string.completed_recordings)
-                .withIcon(getResourceIdFromAttr(R.attr.ic_menu_completed_recordings))
-                .withBadgeStyle(badgeStyle)
-        val scheduledRecordingsItem = PrimaryDrawerItem()
-                .withIdentifier(MENU_SCHEDULED_RECORDINGS.toLong()).withName(R.string.scheduled_recordings)
-                .withIcon(getResourceIdFromAttr(R.attr.ic_menu_scheduled_recordings))
-                .withBadgeStyle(badgeStyle)
-        val seriesRecordingsItem = PrimaryDrawerItem()
-                .withIdentifier(MENU_SERIES_RECORDINGS.toLong()).withName(R.string.series_recordings)
-                .withIcon(getResourceIdFromAttr(R.attr.ic_menu_scheduled_recordings))
-                .withBadgeStyle(badgeStyle)
-        val timerRecordingsItem = PrimaryDrawerItem()
-                .withIdentifier(MENU_TIMER_RECORDINGS.toLong()).withName(R.string.timer_recordings)
-                .withIcon(getResourceIdFromAttr(R.attr.ic_menu_scheduled_recordings))
-                .withBadgeStyle(badgeStyle)
-        val failedRecordingsItem = PrimaryDrawerItem()
-                .withIdentifier(MENU_FAILED_RECORDINGS.toLong()).withName(R.string.failed_recordings)
-                .withIcon(getResourceIdFromAttr(R.attr.ic_menu_failed_recordings))
-                .withBadgeStyle(badgeStyle)
-        val removedRecordingsItem = PrimaryDrawerItem()
-                .withIdentifier(MENU_REMOVED_RECORDINGS.toLong()).withName(R.string.removed_recordings)
-                .withIcon(getResourceIdFromAttr(R.attr.ic_menu_removed_recordings))
-                .withBadgeStyle(badgeStyle)
-        val statusItem = PrimaryDrawerItem()
-                .withIdentifier(MENU_STATUS.toLong()).withName(R.string.status)
-                .withIcon(getResourceIdFromAttr(R.attr.ic_menu_status))
-        val settingsItem = PrimaryDrawerItem()
-                .withIdentifier(MENU_SETTINGS.toLong()).withName(R.string.settings)
-                .withIcon(getResourceIdFromAttr(R.attr.ic_menu_settings))
-                .withSelectable(false)
-        val extrasItem = PrimaryDrawerItem()
-                .withIdentifier(MENU_UNLOCKER.toLong()).withName(R.string.pref_unlocker)
-                .withIcon(getResourceIdFromAttr(R.attr.ic_menu_extras))
-        val helpItem = PrimaryDrawerItem()
-                .withIdentifier(MENU_HELP.toLong()).withName(R.string.help_and_support)
-                .withIcon(getResourceIdFromAttr(R.attr.ic_menu_help))
-
-        val drawerBuilder = DrawerBuilder()
-        drawerBuilder.withActivity(activity)
-                .withAccountHeader(headerResult)
-                .withToolbar(toolbar)
-                .withOnDrawerItemClickListener(this)
-                .withSavedInstance(savedInstanceState)
-
-        drawerBuilder.addDrawerItems(
-                channelItem,
-                programGuideItem,
-                DividerDrawerItem(),
-                completedRecordingsItem,
-                scheduledRecordingsItem,
-                seriesRecordingsItem,
-                timerRecordingsItem,
-                failedRecordingsItem,
-                removedRecordingsItem,
-                DividerDrawerItem(),
-                extrasItem,
-                settingsItem,
-                helpItem,
-                statusItem)
-
-        drawerBuilder.withOnDrawerNavigationListener(object : Drawer.OnDrawerNavigationListener {
-            override fun onNavigationClickListener(clickedView: View): Boolean {
-                // this method is only called if the Arrow icon is shown.
-                // The hamburger is automatically managed by the MaterialDrawer
-                activity.onBackPressed()
-                // return true if we have consumed the event
-                return true
+        connectionSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                onConnectionSelected(position)
             }
-        })
 
-        result = drawerBuilder.build()
+            override fun onNothingSelected(parent: AdapterView<*>?) {}
+        }
+
+        statusViewModel.channelCount.observe(activity) { setBadge(R.id.nav_channels, it) }
+        statusViewModel.seriesRecordingCount.observe(activity) { setBadge(R.id.nav_series_recordings, it) }
+        statusViewModel.timerRecordingCount.observe(activity) { setBadge(R.id.nav_timer_recordings, it) }
+        statusViewModel.completedRecordingCount.observe(activity) { setBadge(R.id.nav_completed_recordings, it) }
+        statusViewModel.scheduledRecordingCount.observe(activity) { setBadge(R.id.nav_scheduled_recordings, it) }
+        statusViewModel.failedRecordingCount.observe(activity) { setBadge(R.id.nav_failed_recordings, it) }
+        statusViewModel.removedRecordingCount.observe(activity) { setBadge(R.id.nav_removed_recordings, it) }
+
+        updateConnectionSpinner()
     }
 
-    private fun getResourceIdFromAttr(@AttrRes attr: Int): Int {
-        val typedValue = TypedValue()
-        activity.theme.resolveAttribute(attr, typedValue, true)
-        return typedValue.resourceId
+    private fun setBadge(itemId: Int, count: Int) {
+        val item = navigationView.menu.findItem(itemId) ?: return
+        val baseTitle = baseTitles[itemId] ?: item.title
+        item.title = if (count > 0) "$baseTitle ($count)" else baseTitle
     }
 
-    private fun showConnectionsInDrawerHeader() {
-        // Remove old profiles from the header
-        val profileIdList = ArrayList<Long>()
-        headerResult.profiles?.forEach {
-            profileIdList.add(it.identifier)
-        }
-        for (id in profileIdList) {
-            headerResult.removeProfileByIdentifier(id)
-        }
-        // Add the existing connections as new profiles
-        if (navigationViewModel.connections.isNotEmpty()) {
-            navigationViewModel.connections.forEach {
-                headerResult.addProfiles(
-                        ProfileDrawerItem()
-                                .withIdentifier(it.id.toLong())
-                                .withName(it.name)
-                                .withEmail(it.serverUrl))
-            }
+    private fun updateConnectionSpinner() {
+        val connections = navigationViewModel.connections
+        connectionIds = connections.map { it.id }
+        val names = if (connections.isEmpty()) {
+            listOf(activity.getString(R.string.no_connection_available))
         } else {
-            headerResult.addProfiles(ProfileDrawerItem().withName(R.string.no_connection_available))
+            connections.map { it.name ?: "" }
+        }
+        val adapter = ArrayAdapter(activity, R.layout.navigation_header_connection_item, names)
+        connectionSpinner.adapter = adapter
+
+        val activeIndex = connections.indexOfFirst { it.id == navigationViewModel.connection.id }
+        if (activeIndex >= 0) {
+            connectionSpinner.setSelection(activeIndex, false)
         }
     }
 
-    override fun onProfileChanged(view: View?, profile: IProfile<*>, current: Boolean): Boolean {
-        result.closeDrawer()
-
-        // Do nothing if the same profile has been selected
-        if (current) {
-            return true
+    private fun onConnectionSelected(position: Int) {
+        val selectedId = connectionIds.getOrNull(position) ?: return
+        // Ignore the callback that fires when the spinner is programmatically set to the
+        // currently active connection.
+        if (selectedId == navigationViewModel.connection.id) {
+            return
         }
 
         MaterialDialog(activity).show {
             title(R.string.connect_to_new_server)
             negativeButton(R.string.cancel) {
-                headerResult.setActiveProfile(navigationViewModel.connection.id.toLong())
+                val activeIndex = connectionIds.indexOf(navigationViewModel.connection.id)
+                if (activeIndex >= 0) {
+                    connectionSpinner.setSelection(activeIndex, false)
+                }
             }
             positiveButton(R.string.connect) {
-                headerResult.setActiveProfile(profile.identifier)
-                if (navigationViewModel.setSelectedConnectionAsActive(profile.identifier.toInt())) {
+                if (navigationViewModel.setSelectedConnectionAsActive(selectedId)) {
                     navigationViewModel.updateConnectionAndRestartApplication(activity)
                 }
             }
             cancelable(false)
             cancelOnTouchOutside(false)
         }
-        return false
     }
 
-    override fun onItemClick(view: View?, position: Int, drawerItem: IDrawerItem<*>): Boolean {
-        result.closeDrawer()
-        navigationViewModel.setNavigationMenuId(drawerItem.identifier.toInt())
-        return true
-    }
-
-    fun getSelectedMenu(): Int {
-        return result.currentSelection.toInt()
-    }
+    fun getSelectedMenu(): Int =
+            navigationView.checkedItem?.let { menuIdForItem(it.itemId) } ?: MENU_CHANNELS
 
     fun saveInstanceState(outState: Bundle): Bundle {
-        var out = outState
-        out = result.saveInstanceState(out)
-        out = headerResult.saveInstanceState(out)
-        return out
+        // The DrawerLayout and NavigationView persist their own state through their view ids.
+        return outState
     }
 
     fun enableDrawerIndicator(isEnabled: Boolean) {
-        result.actionBarDrawerToggle?.isDrawerIndicatorEnabled = isEnabled
+        toggle.isDrawerIndicatorEnabled = isEnabled
     }
 
     fun setSelectedNavigationDrawerMenuFromFragmentType(fragment: Fragment?) {
-        when (fragment) {
-            is ChannelListFragment -> result.setSelection(MENU_CHANNELS.toLong(), false)
-            is EpgFragment -> result.setSelection(MENU_PROGRAM_GUIDE.toLong(), false)
-            is CompletedRecordingListFragment -> result.setSelection(MENU_COMPLETED_RECORDINGS.toLong(), false)
-            is ScheduledRecordingListFragment -> result.setSelection(MENU_SCHEDULED_RECORDINGS.toLong(), false)
-            is SeriesRecordingListFragment -> result.setSelection(MENU_SERIES_RECORDINGS.toLong(), false)
-            is TimerRecordingListFragment -> result.setSelection(MENU_TIMER_RECORDINGS.toLong(), false)
-            is FailedRecordingListFragment -> result.setSelection(MENU_FAILED_RECORDINGS.toLong(), false)
-            is RemovedRecordingListFragment -> result.setSelection(MENU_REMOVED_RECORDINGS.toLong(), false)
-            is StatusFragment -> result.setSelection(MENU_STATUS.toLong(), false)
-            is UnlockerFragment -> result.setSelection(MENU_UNLOCKER.toLong(), false)
-            is WebViewFragment -> result.setSelection(MENU_HELP.toLong(), false)
+        val menuId = when (fragment) {
+            is ChannelListFragment -> MENU_CHANNELS
+            is EpgFragment -> MENU_PROGRAM_GUIDE
+            is CompletedRecordingListFragment -> MENU_COMPLETED_RECORDINGS
+            is ScheduledRecordingListFragment -> MENU_SCHEDULED_RECORDINGS
+            is SeriesRecordingListFragment -> MENU_SERIES_RECORDINGS
+            is TimerRecordingListFragment -> MENU_TIMER_RECORDINGS
+            is FailedRecordingListFragment -> MENU_FAILED_RECORDINGS
+            is RemovedRecordingListFragment -> MENU_REMOVED_RECORDINGS
+            is StatusFragment -> MENU_STATUS
+            is UnlockerFragment -> MENU_UNLOCKER
+            is WebViewFragment -> MENU_HELP
+            else -> return
         }
+        navigationView.setCheckedItem(itemIdForMenu(menuId))
     }
 
     /**
@@ -328,6 +241,38 @@ class NavigationDrawer(private val activity: AppCompatActivity,
                 it.commit()
             }
         }
+    }
+
+    private fun menuIdForItem(itemId: Int): Int = when (itemId) {
+        R.id.nav_channels -> MENU_CHANNELS
+        R.id.nav_program_guide -> MENU_PROGRAM_GUIDE
+        R.id.nav_completed_recordings -> MENU_COMPLETED_RECORDINGS
+        R.id.nav_scheduled_recordings -> MENU_SCHEDULED_RECORDINGS
+        R.id.nav_series_recordings -> MENU_SERIES_RECORDINGS
+        R.id.nav_timer_recordings -> MENU_TIMER_RECORDINGS
+        R.id.nav_failed_recordings -> MENU_FAILED_RECORDINGS
+        R.id.nav_removed_recordings -> MENU_REMOVED_RECORDINGS
+        R.id.nav_status -> MENU_STATUS
+        R.id.nav_settings -> MENU_SETTINGS
+        R.id.nav_extras -> MENU_UNLOCKER
+        R.id.nav_help -> MENU_HELP
+        else -> MENU_CHANNELS
+    }
+
+    private fun itemIdForMenu(menuId: Int): Int = when (menuId) {
+        MENU_CHANNELS -> R.id.nav_channels
+        MENU_PROGRAM_GUIDE -> R.id.nav_program_guide
+        MENU_COMPLETED_RECORDINGS -> R.id.nav_completed_recordings
+        MENU_SCHEDULED_RECORDINGS -> R.id.nav_scheduled_recordings
+        MENU_SERIES_RECORDINGS -> R.id.nav_series_recordings
+        MENU_TIMER_RECORDINGS -> R.id.nav_timer_recordings
+        MENU_FAILED_RECORDINGS -> R.id.nav_failed_recordings
+        MENU_REMOVED_RECORDINGS -> R.id.nav_removed_recordings
+        MENU_STATUS -> R.id.nav_status
+        MENU_SETTINGS -> R.id.nav_settings
+        MENU_UNLOCKER -> R.id.nav_extras
+        MENU_HELP -> R.id.nav_help
+        else -> R.id.nav_channels
     }
 
     companion object {

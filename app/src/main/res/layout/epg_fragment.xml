@@ -21,7 +21,7 @@
         android:id="@+id/channel_list_header"
         android:layout_width="90dp"
         android:layout_height="36dp"
-        android:background="?attr/material_drawer_selected"
+        android:background="?attr/colorDrawerSelected"
         android:text="@null"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
