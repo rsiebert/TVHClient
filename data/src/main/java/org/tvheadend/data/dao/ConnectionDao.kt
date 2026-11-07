@@ -16,8 +16,12 @@ internal interface ConnectionDao {
     @Query("SELECT * FROM connections")
     fun loadAllConnectionsSync(): List<ConnectionEntity>
 
+    // Nullable: the query matches no row when nothing is active, and the caller relies on that
+    // (ConnectionDataSource.liveDataActiveItem maps it to a default Connection). Declaring it
+    // non-null made the caller's `?:` fallback dead code and turned "no active connection" -
+    // i.e. a fresh install - into a NullPointerException inside the LiveData transform.
     @Query("SELECT * FROM connections WHERE active = 1")
-    fun loadActiveConnection(): LiveData<ConnectionEntity>
+    fun loadActiveConnection(): LiveData<ConnectionEntity?>
 
     @Query("SELECT * FROM connections WHERE active = 1")
     fun loadActiveConnectionSync(): ConnectionEntity?

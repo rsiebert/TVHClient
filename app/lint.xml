@@ -14,4 +14,16 @@
     <issue id="UnsafeOptInUsageError">
         <option name="opt-in" value="androidx.media3.common.util.UnstableApi" />
     </issue>
+
+    <!--
+      Surface incomplete or leftover translations instead of silently falling back to English.
+
+      Both checks are FATAL by default (they can even fail `assembleRelease`), but the app still
+      carries a backlog of untranslated, newly added keys, so they are pinned to `warning` here:
+      the backlog stays visible in the IDE and in `./gradlew lint` reports without breaking the
+      build. See translation_coverage.artifact.md for the current backlog; raise these to `error`
+      once it is cleared.
+    -->
+    <issue id="MissingTranslation" severity="warning" />
+    <issue id="ExtraTranslation" severity="warning" />
 </lint>

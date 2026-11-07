@@ -11,9 +11,10 @@ import org.tvheadend.data.entity.ServerProfile
 import org.tvheadend.data.entity.ServerProfileEntity
 import java.util.*
 
-class ServerProfileDataSource(private val db: AppRoomDatabase) : DataSourceInterface<ServerProfile> {
-
-    private val ioScope = CoroutineScope(Dispatchers.IO)
+class ServerProfileDataSource(
+        private val db: AppRoomDatabase,
+        private val ioScope: CoroutineScope = CoroutineScope(Dispatchers.IO)
+) : DataSourceInterface<ServerProfile> {
 
     val recordingProfileNames: Array<String>
         get() = getProfileNames(recordingProfiles)

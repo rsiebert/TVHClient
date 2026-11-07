@@ -55,6 +55,13 @@ espresso = "3.6.1"
 # framework classes (Uri, SparseArray, Log) that the htsp module depends on
 robolectric = "4.17"
 
+# Additional JVM unit-testing libraries (coroutines, LiveData, mocking, assertions)
+coroutinesTest = "1.11.0"
+archCoreTesting = "2.2.0"
+mockk = "1.14.11"
+truth = "1.4.5"
+turbine = "1.2.1"
+
 [libraries]
 androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "coreKtx" }
 androidx-appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompat" }
@@ -103,3 +110,9 @@ espresso-core = { module = "androidx.test.espresso:espresso-core", version.ref =
 
 junit = { module = "junit:junit", version.ref = "junit" }
 robolectric = { module = "org.robolectric:robolectric", version.ref = "robolectric" }
+androidx-arch-core-testing = { module = "androidx.arch.core:core-testing", version.ref = "archCoreTesting" }
+kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutinesTest" }
+androidx-room-testing = { module = "androidx.room:room-testing", version.ref = "room" }
+mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
+truth = { module = "com.google.truth:truth", version.ref = "truth" }
+turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }

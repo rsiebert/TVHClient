@@ -14,7 +14,7 @@ import org.tvheadend.data.entity.Connection
 import org.tvheadend.data.entity.ServerProfile
 import org.tvheadend.data.entity.ServerStatus
 import org.tvheadend.data.source.MiscDataSource
-import org.tvheadend.tvhclient.MainApplication
+import org.tvheadend.tvhclient.AppGraphProvider
 import org.tvheadend.tvhclient.MainRepository
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.ui.common.interfaces.SnackbarMessageInterface
@@ -92,8 +92,9 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
         private set
 
     init {
-        appRepository = (application as MainApplication).appRepository
-        mainRepository = (application as MainApplication).appContainer.mainRepository
+        val graph = AppGraphProvider.require()
+        appRepository = graph.appRepository
+        mainRepository = graph.mainRepository
 
         Timber.d("Observing isUnlockedLiveData from main repository")
         isUnlockedLiveData = mainRepository.isPurchased(MainRepository.UNLOCKER).asLiveData()

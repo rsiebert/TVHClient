@@ -11,9 +11,10 @@ import org.tvheadend.data.entity.EpgProgram
 import org.tvheadend.data.entity.Program
 import org.tvheadend.data.entity.ProgramEntity
 
-class ProgramDataSource(private val db: AppRoomDatabase) : DataSourceInterface<Program> {
-
-    private val ioScope = CoroutineScope(Dispatchers.IO)
+class ProgramDataSource(
+        private val db: AppRoomDatabase,
+        private val ioScope: CoroutineScope = CoroutineScope(Dispatchers.IO)
+) : DataSourceInterface<Program> {
 
     val itemCount: Int
         get() {

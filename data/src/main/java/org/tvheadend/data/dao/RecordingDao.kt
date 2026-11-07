@@ -69,9 +69,9 @@ internal interface RecordingDao {
     @Transaction
     @Query(RECORDING_BASE_QUERY +
             " WHERE $CONNECTION_IS_ACTIVE" +
-            " AND (rec.error IS NOT NULL AND (rec.state='missed'  OR rec.state='invalid')) " +
+            " AND ((rec.error IS NOT NULL AND (rec.state='missed'  OR rec.state='invalid')) " +
             " OR (rec.error IS NULL  AND rec.state='missed') " +
-            " OR (rec.error='Aborted by user' AND rec.state='completed')" +
+            " OR (rec.error='Aborted by user' AND rec.state='completed'))" +
             " ORDER BY rec.start DESC")
     fun loadFailedRecordings(): LiveData<List<RecordingEntity>>
 
@@ -132,9 +132,13 @@ internal interface RecordingDao {
     fun deleteAll()
 
     companion object {
-        const val RECORDING_BASE_QUERY = "SELECT DISTINCT rec.*, " +
+        // The aliased join columns are listed before `rec.*` on purpose: `recordings` has its own
+        // channel_name / channel_icon columns, and Cursor.getColumnIndex(name) returns the first
+        // match, so with `rec.*` first the stored columns would shadow the joined channel values.
+        const val RECORDING_BASE_QUERY = "SELECT DISTINCT " +
                 "c.name AS channel_name, " +
-                "c.icon AS channel_icon " +
+                "c.icon AS channel_icon, " +
+                "rec.* " +
                 "FROM recordings AS rec " +
                 "LEFT JOIN channels AS c ON c.id = rec.channel_id "
 

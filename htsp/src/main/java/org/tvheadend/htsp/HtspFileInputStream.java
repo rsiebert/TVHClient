@@ -11,6 +11,14 @@ import java.io.InputStream;
 import timber.log.Timber;
 
 public class HtspFileInputStream extends InputStream {
+    private static final long RESPONSE_TIMEOUT_MS = 10_000;
+
+    /**
+     * How long a request waits for its response before giving up. Package-private and mutable so
+     * that tests can lower it; production code always uses {@link #RESPONSE_TIMEOUT_MS}.
+     */
+    static volatile long responseTimeoutMs = RESPONSE_TIMEOUT_MS;
+
     private final HtspConnection connection;
     private final String path;
 
@@ -50,30 +58,36 @@ public class HtspFileInputStream extends InputStream {
         int id;
         long size;
         long time;
+        boolean responded;
 
         @Override
         public void handleResponse(@NotNull HtspMessage response) {
             id = response.getInteger("id", 0);
             size = response.getLong("size", 0);
             time = response.getLong("mtime", 0);
+            responded = true;
             notifyAll();
         }
     }
 
     static class FileReadResponse implements ServerResponseListener<HtspMessage> {
         byte[] data;
+        boolean responded;
 
         @Override
         public void handleResponse(@NotNull HtspMessage response) {
             data = response.getByteArray("data");
+            responded = true;
             notifyAll();
         }
     }
 
     static class FileCloseResponse implements ServerResponseListener<HtspMessage> {
+        boolean responded;
 
         @Override
         public void handleResponse(@NotNull HtspMessage response) {
+            responded = true;
             notifyAll();
         }
     }
@@ -88,12 +102,18 @@ public class HtspFileInputStream extends InputStream {
         synchronized (response) {
             try {
                 connection.sendMessage(request, response);
-                response.wait();
+                response.wait(responseTimeoutMs);
                 fileId = response.id;
                 fileSize = response.size;
             } catch (Throwable e) {
                 Timber.e(e, "Timeout waiting for fileOpen");
             }
+        }
+
+        // A reply that never arrived must surface as an error instead of being mistaken for a
+        // missing file: after a timeout fileId is still at its default of 0, not below it.
+        if (!response.responded) {
+            throw new IOException("Timeout waiting for the fileOpen response");
         }
 
         if (fileId < 0) {
@@ -113,16 +133,21 @@ public class HtspFileInputStream extends InputStream {
         synchronized (response) {
             try {
                 connection.sendMessage(request, response);
-                response.wait();
+                response.wait(responseTimeoutMs);
                 fileId = -1;
                 fileSize = -1;
             } catch (Throwable e) {
                 Timber.e(e, "Timeout waiting for fileClose");
             }
         }
+
+        // close() must never throw, so a server that never answers is only logged.
+        if (!response.responded) {
+            Timber.e("Timeout waiting for the fileClose response");
+        }
     }
 
-    public int read(@NonNull byte[] outBuf, int outOffset, int outLength) {
+    public int read(@NonNull byte[] outBuf, int outOffset, int outLength) throws IOException {
         fillBuffer();
 
         int ret = Math.min(buf.length - bufPos, outLength - outOffset);
@@ -136,7 +161,7 @@ public class HtspFileInputStream extends InputStream {
     }
 
     @Override
-    public int read() {
+    public int read() throws IOException {
         fillBuffer();
 
         if (bufPos < buf.length) {
@@ -146,7 +171,7 @@ public class HtspFileInputStream extends InputStream {
         return -1;
     }
 
-    private void fillBuffer() {
+    private void fillBuffer() throws IOException {
         if (bufPos < buf.length) {
             return;
         }
@@ -162,14 +187,24 @@ public class HtspFileInputStream extends InputStream {
         synchronized (response) {
             try {
                 connection.sendMessage(request, response);
-                response.wait();
+                response.wait(responseTimeoutMs);
 
-                offset += buf.length;
-                buf = response.data;
-                bufPos = 0;
+                if (response.responded) {
+                    // Advance past the chunk just received. This previously added the *previous*
+                    // buf.length before reassigning buf, so on the first call offset stayed 0 (buf was
+                    // still the empty array from reset()) and the first chunk was fetched twice.
+                    buf = response.data;
+                    offset += buf.length;
+                    bufPos = 0;
+                }
             } catch (Throwable e) {
                 Timber.e(e, "Timeout waiting for fileRead");
             }
+        }
+
+        // A stalled server must not look like the end of the stream, so surface the timeout.
+        if (!response.responded) {
+            throw new IOException("Timeout waiting for the fileRead response");
         }
     }
 }

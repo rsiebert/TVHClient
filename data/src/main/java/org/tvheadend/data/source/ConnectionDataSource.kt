@@ -14,9 +14,10 @@ import org.tvheadend.data.entity.ServerStatusEntity
 import timber.log.Timber
 import java.util.*
 
-class ConnectionDataSource(private val db: AppRoomDatabase) : DataSourceInterface<Connection> {
-
-    private val ioScope = CoroutineScope(Dispatchers.IO)
+class ConnectionDataSource(
+        private val db: AppRoomDatabase,
+        private val ioScope: CoroutineScope = CoroutineScope(Dispatchers.IO)
+) : DataSourceInterface<Connection> {
 
     val liveDataActiveItem: LiveData<Connection>
         get() = db.connectionDao.loadActiveConnection().map { entity ->

@@ -217,8 +217,18 @@ class MigrateUtils(val context: Context, val appRepository: AppRepository, val s
      */
     private fun copyConnectionsFromOldToNewDatabase() {
         Timber.d("Migrating existing connections to the new room database")
-        val db = DatabaseHelperForMigration.getInstance(context)?.readableDatabase ?: return
         val connectionList = ArrayList<Connection>()
+        // Opening the legacy database can throw. DatabaseHelperForMigration declares version 9 but
+        // shares the "tvhclient" file name with AppRoomDatabase (version 15), so when the file is
+        // already at 15 SQLite rejects the open with "Can't downgrade database from version 15 to 9".
+        // That must never escape Application.onCreate. Bailing out here also skips the
+        // deleteDatabase() further down, which would otherwise wipe a current install's database.
+        val db = try {
+            DatabaseHelperForMigration.getInstance(context)?.readableDatabase
+        } catch (e: SQLiteException) {
+            Timber.e(e, "Could not open the legacy database; skipping the connection migration")
+            null
+        } ?: return
         try {
             Timber.d("Database is readable ${db.isOpen}")
             val cursor = db.rawQuery("SELECT * FROM connections", null)

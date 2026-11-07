@@ -12,7 +12,7 @@ import androidx.lifecycle.asLiveData
 import androidx.preference.PreferenceManager
 import org.tvheadend.data.AppRepository
 import org.tvheadend.data.entity.Connection
-import org.tvheadend.tvhclient.MainApplication
+import org.tvheadend.tvhclient.AppGraphProvider
 import org.tvheadend.tvhclient.MainRepository
 import org.tvheadend.tvhclient.MainRepository.Companion.UNLOCKER
 import org.tvheadend.tvhclient.service.ConnectionService
@@ -80,10 +80,11 @@ open class BaseViewModel(application: Application) : AndroidViewModel(applicatio
         get() = mainRepository.billingLifecycleObserver
 
     init {
-        appRepository = (application as MainApplication).appRepository
+        val graph = AppGraphProvider.require()
+        appRepository = graph.appRepository
         startupCompleteLiveData.value = Event(false)
 
-        mainRepository = (application as MainApplication).appContainer.mainRepository
+        mainRepository = graph.mainRepository
 
         Timber.d("Observing isUnlockedLiveData from main repository")
         isUnlockedLiveData = mainRepository.isPurchased(UNLOCKER).asLiveData()

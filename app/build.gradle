@@ -155,6 +155,19 @@ dependencies {
     // Required dependencies for unit testing
     testImplementation libs.junit
     testImplementation libs.androidx.test.core
+    testImplementation libs.androidx.test.ext.junit
+    testImplementation libs.robolectric
+    testImplementation libs.androidx.arch.core.testing
+    testImplementation libs.kotlinx.coroutines.test
+    testImplementation libs.mockk
+    testImplementation libs.truth
+    testImplementation libs.turbine
+    // The ViewModel tests build a real AppRepository over an in-memory AppRoomDatabase.
+    // :data declares room-runtime as `implementation`, so it is not on :app's classpath.
+    testImplementation libs.androidx.room.runtime
+    // Reuse the htsp test fixtures (FakeHtspServer, HtspSampleData) in JVM tests,
+    // not only in the androidTest source set.
+    testImplementation testFixtures(project(':htsp'))
 
     // ----------------------------------------------------------------------------
     // Required dependencies for instrumented (androidTest) testing

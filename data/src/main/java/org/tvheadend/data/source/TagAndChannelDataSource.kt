@@ -10,9 +10,10 @@ import org.tvheadend.data.entity.TagAndChannel
 import org.tvheadend.data.entity.TagAndChannelEntity
 import java.util.*
 
-class TagAndChannelDataSource(private val db: AppRoomDatabase) : DataSourceInterface<TagAndChannel> {
-
-    private val ioScope = CoroutineScope(Dispatchers.IO)
+class TagAndChannelDataSource(
+        private val db: AppRoomDatabase,
+        private val ioScope: CoroutineScope = CoroutineScope(Dispatchers.IO)
+) : DataSourceInterface<TagAndChannel> {
 
     override fun addItem(item: TagAndChannel) {
         ioScope.launch { db.tagAndChannelDao.insert(TagAndChannelEntity.from(item)) }

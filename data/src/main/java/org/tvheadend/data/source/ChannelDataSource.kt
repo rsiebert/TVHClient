@@ -14,9 +14,10 @@ import org.tvheadend.data.entity.EpgChannel
 import timber.log.Timber
 import java.util.*
 
-class ChannelDataSource(private val db: AppRoomDatabase) : DataSourceInterface<Channel> {
-
-    private val ioScope = CoroutineScope(Dispatchers.IO)
+class ChannelDataSource(
+        private val db: AppRoomDatabase,
+        private val ioScope: CoroutineScope = CoroutineScope(Dispatchers.IO)
+) : DataSourceInterface<Channel> {
 
     override fun addItem(item: Channel) {
         ioScope.launch { db.channelDao.insert(ChannelEntity.from(item)) }

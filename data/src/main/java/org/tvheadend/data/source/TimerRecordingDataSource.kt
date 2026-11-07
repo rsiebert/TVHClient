@@ -11,9 +11,10 @@ import org.tvheadend.data.entity.TimerRecording
 import org.tvheadend.data.entity.TimerRecordingEntity
 import java.util.*
 
-class TimerRecordingDataSource(private val db: AppRoomDatabase) : DataSourceInterface<TimerRecording> {
-
-    private val ioScope = CoroutineScope(Dispatchers.IO)
+class TimerRecordingDataSource(
+        private val db: AppRoomDatabase,
+        private val ioScope: CoroutineScope = CoroutineScope(Dispatchers.IO)
+) : DataSourceInterface<TimerRecording> {
 
     override fun addItem(item: TimerRecording) {
         ioScope.launch { db.timerRecordingDao.insert(TimerRecordingEntity.from(item)) }

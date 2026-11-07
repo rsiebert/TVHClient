@@ -4,7 +4,7 @@ import androidx.core.util.Pair
 import androidx.lifecycle.*
 import org.tvheadend.data.AppRepository
 import org.tvheadend.data.entity.Connection
-import org.tvheadend.tvhclient.MainApplication
+import org.tvheadend.tvhclient.AppGraphProvider
 
 open class StartupViewModel : ViewModel() {
 
@@ -15,7 +15,7 @@ open class StartupViewModel : ViewModel() {
     var connectionStatus: LiveData<Pair<Int, Boolean>>
 
     init {
-        appRepository = MainApplication.instance.appRepository
+        appRepository = AppGraphProvider.require().appRepository
         connectionCount = appRepository.connectionData.getLiveDataItemCount()
         connectionLiveData = appRepository.connectionData.liveDataActiveItem
 

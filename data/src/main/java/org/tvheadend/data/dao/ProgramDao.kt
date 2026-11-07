@@ -141,9 +141,13 @@ internal interface ProgramDao {
 
     companion object {
 
-        const val PROGRAM_BASE_QUERY = "SELECT p.*," +
+        // The aliased join columns are listed before `p.*` on purpose: `programs` has its own
+        // channel_name / channel_icon columns, and Cursor.getColumnIndex(name) returns the first
+        // match, so with `p.*` first the stored columns would shadow the joined channel values.
+        const val PROGRAM_BASE_QUERY = "SELECT " +
                 "c.name AS channel_name, " +
-                "c.icon AS channel_icon " +
+                "c.icon AS channel_icon, " +
+                "p.* " +
                 "FROM programs AS p " +
                 "LEFT JOIN channels AS c ON c.id = p.channel_id "
 

@@ -11,9 +11,10 @@ import org.tvheadend.data.entity.SeriesRecording
 import org.tvheadend.data.entity.SeriesRecordingEntity
 import java.util.*
 
-class SeriesRecordingDataSource(private val db: AppRoomDatabase) : DataSourceInterface<SeriesRecording> {
-
-    private val ioScope = CoroutineScope(Dispatchers.IO)
+class SeriesRecordingDataSource(
+        private val db: AppRoomDatabase,
+        private val ioScope: CoroutineScope = CoroutineScope(Dispatchers.IO)
+) : DataSourceInterface<SeriesRecording> {
 
     override fun addItem(item: SeriesRecording) {
         ioScope.launch { db.seriesRecordingDao.insert(SeriesRecordingEntity.from(item)) }

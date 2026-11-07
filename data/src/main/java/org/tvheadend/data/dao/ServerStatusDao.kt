@@ -17,8 +17,10 @@ internal interface ServerStatusDao {
     @Query("$SERVER_STATUS_BASE_QUERY WHERE $CONNECTION_IS_ACTIVE")
     fun loadActiveServerStatusSync(): ServerStatusEntity?
 
+    // Nullable for the same reason as ConnectionDao.loadActiveConnection: no active connection
+    // means no row, and the caller maps the null to a default ServerStatus.
     @Query("$SERVER_STATUS_BASE_QUERY WHERE $CONNECTION_IS_ACTIVE")
-    fun loadActiveServerStatus(): LiveData<ServerStatusEntity>
+    fun loadActiveServerStatus(): LiveData<ServerStatusEntity?>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(serverStatus: ServerStatusEntity)

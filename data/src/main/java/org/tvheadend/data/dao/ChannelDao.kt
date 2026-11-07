@@ -89,7 +89,12 @@ internal interface ChannelDao {
 
     companion object {
 
-        const val CHANNEL_BASE_QUERY = "SELECT DISTINCT c.*, " +
+        // The aliased join columns are listed before `c.*` on purpose. `channels` has its own
+        // program_* / next_program_* columns that share these alias names, and
+        // Cursor.getColumnIndex(name) returns the first match. With `c.*` first the channel's
+        // stored columns would shadow the joined ones, so the program playing at the requested
+        // time would never reach the entity.
+        const val CHANNEL_BASE_QUERY = "SELECT DISTINCT " +
                 "program.id AS program_id, " +
                 "program.title AS program_title, " +
                 "program.subtitle AS program_subtitle, " +
@@ -97,7 +102,8 @@ internal interface ChannelDao {
                 "program.stop AS program_stop, " +
                 "program.content_type AS program_content_type, " +
                 "next_program.id AS next_program_id, " +
-                "next_program.title AS next_program_title " +
+                "next_program.title AS next_program_title, " +
+                "c.* " +
                 "FROM channels AS c "
 
         const val EPG_CHANNEL_BASE_QUERY = "SELECT c.id, " +

@@ -10,9 +10,10 @@ import org.tvheadend.data.entity.ServerStatusEntity
 import timber.log.Timber
 import java.lang.ref.WeakReference
 
-class MiscDataSource(private val db: AppRoomDatabase) {
-
-    private val ioScope = CoroutineScope(Dispatchers.IO)
+class MiscDataSource(
+        private val db: AppRoomDatabase,
+        private val ioScope: CoroutineScope = CoroutineScope(Dispatchers.IO)
+) {
 
     fun clearDatabase(callback: DatabaseClearedCallback) {
         MiscDataSource.callback = WeakReference(callback)

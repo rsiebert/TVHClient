@@ -13,6 +13,7 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import kotlinx.coroutines.GlobalScope
 import org.tvheadend.data.AppRepository
 import org.tvheadend.data.di.DataContainer
+import org.tvheadend.tvhclient.debug.FakeServerBootstrap
 import org.tvheadend.tvhclient.ui.common.onAttach
 import org.tvheadend.tvhclient.ui.features.playback.external.ExpandedControlsActivity
 import org.tvheadend.tvhclient.util.MigrateUtils
@@ -25,7 +26,7 @@ import timber.log.Timber
 // TODO when a notification is dismissed, it reappears when the recording gets updated,
 //  save the dismissed id in the viewmodel and don't add another notification if the id was already dismissed
 
-class MainApplication : Application(), OptionsProvider {
+class MainApplication : Application(), OptionsProvider, AppGraph {
 
     private lateinit var fireBaseAnalytics: FirebaseAnalytics
     lateinit var appContainer: AppContainer
@@ -33,8 +34,11 @@ class MainApplication : Application(), OptionsProvider {
     /** Root of the hand rolled dependency graph, replacing the former Dagger components. */
     val dataContainer: DataContainer by lazy { DataContainer(this) }
 
-    val appRepository: AppRepository
+    override val appRepository: AppRepository
         get() = dataContainer.appRepository
+
+    override val mainRepository: MainRepository
+        get() = appContainer.mainRepository
 
     val appSharedPreferences: SharedPreferences
         get() = PreferenceManager.getDefaultSharedPreferences(this)
@@ -70,12 +74,19 @@ class MainApplication : Application(), OptionsProvider {
         }
 
         appContainer = AppContainer()
+        // Publish the graph so ViewModels can resolve it without casting the Application.
+        AppGraphProvider.graph = this
         Timber.d("Application build time is ${BuildConfig.BUILD_TIME}, git commit hash is ${BuildConfig.GIT_SHA}")
 
         // Execute some additional tasks before starting the application.
         // These tasks are for example migrating connections, updating or
         // removing preferences, removing old information from the database and others
         MigrateUtils(applicationContext, appRepository, appSharedPreferences).doMigrate()
+
+        // Debug builds only (no-op in release). Starts an in-process fake TVHeadend server and,
+        // if the app has no connections yet, adds a demo connection so a fresh debug install
+        // shows channels, EPG data and recordings without a real server.
+        FakeServerBootstrap.start(this)
     }
 
     override fun attachBaseContext(context: Context) {

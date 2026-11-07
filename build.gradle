@@ -7,6 +7,7 @@ buildscript {
         agpVersion = '9.5.1'
         kotlinVersion = '2.4.21'
         kspVersion = '2.3.13'
+        koverVersion = '0.9.11'
     }
 
     repositories {
@@ -25,6 +26,8 @@ buildscript {
         classpath 'com.google.gms:google-services:4.5.0'
         classpath 'com.google.firebase:firebase-crashlytics-gradle:3.0.8'
         classpath 'com.google.firebase:perf-plugin:2.0.2'
+        // Coverage instrumentation, report-only for now (thresholds land in Phase 6).
+        classpath "org.jetbrains.kotlinx:kover-gradle-plugin:$koverVersion"
 
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
@@ -38,6 +41,68 @@ allprojects {
         maven { url 'https://plugins.gradle.org/m2/'}
     }
     group = 'org.tvheadend.tvhclient'
+}
+
+// Coverage reporting for every module. Applied from the buildscript classpath above,
+// matching how the other plugin versions are managed in this project.
+subprojects {
+    apply plugin: 'org.jetbrains.kotlinx.kover'
+
+    // Generated and non-behavioural code is not worth measuring: Room/KSP emits
+    // AppRoomDatabase_Impl and the DAO *_Impl classes (huge), DataBinding emits the binding
+    // classes, and BuildConfig/R are compiler output. Without this the numbers are
+    // dominated by generated code and say nothing.
+    def excludedClassPatterns = [
+            '*.BuildConfig',
+            '*.R',
+            '*.R$*',
+            '*_Impl',
+            '*_Impl$*',
+            '*_Factory*',
+            '*DataBinding*',
+            '*_ViewBinding',
+            '*_ViewBinding$*',
+            '*_ViewBindingImpl',
+            '*BR']
+
+    // Enforce a minimum only where the suite is mature. `:app` stays report-only: it is
+    // ~14.7k lines at ~1.8% and needs the ViewModel seams from the deferred Phase 5, so a
+    // bound there would say nothing.
+    //
+    // Measured on the debug variant (see below). :htsp is at ~86% including the debug-only
+    // src/debug/.../FakeTvheadendServer.kt, so it is gated at 70 like :data.
+    def minimumLineCoverage = [':data': 60, ':htsp': 70][project.path]
+
+    kover {
+        reports {
+            filters {
+                excludes { classes(*excludedClassPatterns) }
+            }
+            // Bound the *debug* report variant, because testDebugUnitTest is the only test
+            // task that runs. The variant-less 'total' report is not an equivalent proxy:
+            // it aggregates debug and release and drops the debug-only source set, which
+            // overstates :htsp by ~22 points (81.7% vs the real 60.0%).
+            if (minimumLineCoverage != null) {
+                variant('debug') {
+                    filters {
+                        excludes { classes(*excludedClassPatterns) }
+                    }
+                    verify {
+                        rule { minBound(minimumLineCoverage) }
+                    }
+                }
+            }
+        }
+    }
+
+    if (minimumLineCoverage != null) {
+        // The variant-specific verify task is not wired into 'check' by the plugin.
+        afterEvaluate {
+            tasks.matching { it.name == 'check' }.configureEach {
+                dependsOn 'koverVerifyDebug'
+            }
+        }
+    }
 }
 
 task clean(type: Delete) {

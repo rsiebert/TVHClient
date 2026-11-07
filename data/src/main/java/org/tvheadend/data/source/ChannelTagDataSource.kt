@@ -12,9 +12,10 @@ import org.tvheadend.data.entity.ChannelTag
 import org.tvheadend.data.entity.ChannelTagEntity
 import java.util.*
 
-class ChannelTagDataSource(private val db: AppRoomDatabase) : DataSourceInterface<ChannelTag> {
-
-    private val ioScope = CoroutineScope(Dispatchers.IO)
+class ChannelTagDataSource(
+        private val db: AppRoomDatabase,
+        private val ioScope: CoroutineScope = CoroutineScope(Dispatchers.IO)
+) : DataSourceInterface<ChannelTag> {
 
     val liveDataSelectedItemIds: LiveData<List<Int>?>
         get() = db.channelTagDao.loadAllSelectedItemIds()
