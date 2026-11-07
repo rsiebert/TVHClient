@@ -150,11 +150,11 @@ graph LR
 | Question | Decision |
 | --- | --- |
 | targetSdk | **37** — required |
-| minSdk | **19 → 23** |
+| minSdk | **19 → 24** (raised for firebase-perf 23 in Step 5) |
 | ExoPlayer fork | **Migrate to `androidx.media3` 1.11.1** — the fork holds no library-code changes |
 | Unmaintained libraries | **Replace** material-dialogs (18 files) and materialdrawer (1 file) — *both done* |
 | Annotation processing | **KSP** — not `com.android.legacy-kapt` |
-| Cast | Keep `play-services-cast-framework` at **21.0.0** for now; the 23.0.0 bump is **deferred to Step 6** (it forces compileSdk 37 + minSdk 24 + a beta `mediarouter`). Cast is a live feature (9 files); `media3-cast` is an optional later step |
+| Cast | Keep `play-services-cast-framework` at **21.0.0** for now; the 23.0.0 bump is **deferred to Step 6** — compileSdk 37 + minSdk 24 are now in place (Step 5), so only the beta `mediarouter` remains. Cast is a live feature (9 files); `media3-cast` is an optional later step |
 
 ### Evidence: the fork carries no patches
 
@@ -191,7 +191,7 @@ the stub pipeline and the metadata ceiling.
 > [!NOTE]
 > Steps 1–2 above were executed as written (Dagger bumped to 2.60.1, then moved to KSP), but Dagger was
 > **subsequently removed entirely** (`06a570026`) — the graph was too small to justify it. Step 5's drawer
-> replacement is also **done** (`eb0ab74a2`), as is the material-dialogs replacement (`ec3bcfd20`) and the Media3 migration (`8ba77e9a4`); only the library bumps and targetSdk 37 work remain.
+> replacement is also **done** (`eb0ab74a2`), as is the material-dialogs replacement (`ec3bcfd20`), the Media3 migration (`8ba77e9a4`) and the Step 5 library bumps (`d64151f4b`); only the targetSdk 37 work remains.
 
 ### Traps to expect
 
@@ -217,7 +217,7 @@ the stub pipeline and the metadata ceiling.
 - [x] **Docs + `.gitignore`** — `6370072df`, `9a71fac31`.
 - [x] **material-dialogs → Material Components** — `ec3bcfd20`.
 - [x] **Step 4 — Media3 migration** — `8ba77e9a4` (ExoPlayer fork retired; compileSdk 34 → 36).
-- [ ] Step 5 — library bumps (dialogs + drawer done).
+- [x] **Step 5 — library bumps** — `d64151f4b` (all libs to latest stable; compileSdk 36 → 37, minSdk 23 → 24).
 - [ ] Step 6 — targetSdk 37 behaviour.
 
 `./gradlew :app:assembleDebug` is green on the committed state (Gradle 9.8.2, AGP 9.5.1, Kotlin 2.4.21).
@@ -276,16 +276,16 @@ AAR metadata (`targetSdk` stays 34). Runtime playback is unverified (see Verific
 | --- | --- | --- |
 | ~~material-dialogs → Material Components~~ | ~~18 files~~ | **Done** (`ec3bcfd20`). `MaterialAlertDialogBuilder`; custom RecyclerView adapters wrapped via `setView`; folder chooser reimplemented with `java.io.File`. |
 | ~~materialdrawer → `DrawerLayout` + `NavigationView`~~ | ~~1 file~~ | **Done** (`eb0ab74a2`). Connection switcher moved to a header `Spinner`; count badges shown in item titles (drawer `NavigationView` has no badge API). |
-| Library version bumps | 1 file | 24 stale versions flagged in `libs.versions.toml` — e.g. appcompat 1.4.0 → 1.8.0, core-ktx 1.7.0 → 1.19.1, billing 6.1.0 → 9.1.0 |
-| Cast 21.0.0 → 23.0.0, then drop `enableJetifier` | 9 files (compile) | **Deferred to Step 6** — 23.0.0 forces compileSdk 37 + minSdk 24 + a beta `mediarouter`. Must land with the jetifier drop |
+| ~~Library version bumps~~ | ~~1 file~~ | **Done** (`d64151f4b`). appcompat 1.4→1.8, core-ktx 1.7→1.19.1, lifecycle 2.4→2.11, material 1.4→1.14, billing 6→9, firebase 19/18/20→22/21/23, etc. Forced compileSdk 36→37 and minSdk 23→24. |
+| Cast 21.0.0 → 23.0.0, then drop `enableJetifier` | 9 files (compile) | **Deferred to Step 6** — compileSdk 37 + minSdk 24 are now in place (Step 5); only the beta `mediarouter` remains. Must land with the jetifier drop |
 | `android.nonTransitiveRClass=true` | build files | Faster builds; may need explicit `R` imports |
 
 ### Step 6 — targetSdk 37
 
-`compileSdk` is already **36** (media3 forced it in Step 4); bump to **37** (AGP 9.5.1 supports API 37), then
-clear the behaviour changes for **35, 36 and 37 in a single jump**: edge-to-edge enforcement, predictive back,
-foreground-service types — plus the `nonFinalResIds` deprecation ahead of Gradle 10. The deferred cast 23.0.0
-bump also lands here.
+`compileSdk` is already **37** (media3 forced 36 in Step 4; the Step 5 bumps took it to 37). Remaining work is
+`targetSdk` 34 → 37 and clearing the behaviour changes for **35, 36 and 37 in a single jump**: edge-to-edge
+enforcement, predictive back, foreground-service types — plus the `nonFinalResIds` deprecation ahead of Gradle
+10. The deferred cast 23.0.0 bump also lands here.
 
 ### Verification debt
 
