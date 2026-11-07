@@ -23,13 +23,12 @@ lifecycle = "2.4.0"
 fragment = "1.4.0"
 material = "1.4.0"
 room = "2.8.5"
-androidxTest = "1.4.0"
+androidxTest = "1.6.1"
 
 # Tools and languages
 timber = "5.0.1"
 picasso = "2.71828"
 coroutines = "1.11.0"
-dagger = "2.60.1"
 
 # Google Play / Cast
 billing = "6.1.0"
@@ -43,12 +42,22 @@ firebasePerf = "20.0.2"
 
 # Unmaintained libraries scheduled for replacement
 materialDialogs = "3.3.0"
-materialDrawer = "7.0.0"
 
 # Built from the local fork; replaced by androidx.media3 in a later step
 exoplayer = "2.11.7"
 
 junit = "4.13.2"
+
+# Instrumented (androidTest) testing - versions compatible with compileSdk 34
+androidxTestExtJunit = "1.2.1"
+androidxTestRunner = "1.6.1"
+androidxTestRules = "1.6.1"
+androidxTestMonitor = "1.6.1"
+espresso = "3.6.1"
+
+# JVM unit testing - Robolectric supplies real implementations of the Android
+# framework classes (Uri, SparseArray, Log) that the htsp module depends on
+robolectric = "4.17"
 
 [libraries]
 androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "coreKtx" }
@@ -72,8 +81,6 @@ androidx-test-core = { module = "androidx.test:core", version.ref = "androidxTes
 timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
 picasso = { module = "com.squareup.picasso:picasso", version.ref = "picasso" }
 kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "coroutines" }
-dagger-runtime = { module = "com.google.dagger:dagger", version.ref = "dagger" }
-dagger-compiler = { module = "com.google.dagger:dagger-compiler", version.ref = "dagger" }
 
 material-components = { module = "com.google.android.material:material", version.ref = "material" }
 
@@ -91,11 +98,17 @@ material-dialogs-input = { module = "com.afollestad.material-dialogs:input", ver
 material-dialogs-files = { module = "com.afollestad.material-dialogs:files", version.ref = "materialDialogs" }
 material-dialogs-datetime = { module = "com.afollestad.material-dialogs:datetime", version.ref = "materialDialogs" }
 material-dialogs-lifecycle = { module = "com.afollestad.material-dialogs:lifecycle", version.ref = "materialDialogs" }
-materialdrawer = { module = "com.mikepenz:materialdrawer", version.ref = "materialDrawer" }
 
 exoplayer-core = { module = "org.tvheadend.tvhclient.exoplayer:exoplayer-core", version.ref = "exoplayer" }
 exoplayer-dash = { module = "org.tvheadend.tvhclient.exoplayer:exoplayer-dash", version.ref = "exoplayer" }
 exoplayer-ui = { module = "org.tvheadend.tvhclient.exoplayer:exoplayer-ui", version.ref = "exoplayer" }
 exoplayer-extension-ffmpeg = { module = "org.tvheadend.tvhclient.exoplayer:extension-ffmpeg", version.ref = "exoplayer" }
 
+androidx-test-ext-junit = { module = "androidx.test.ext:junit", version.ref = "androidxTestExtJunit" }
+androidx-test-monitor = { module = "androidx.test:monitor", version.ref = "androidxTestMonitor" }
+androidx-test-runner = { module = "androidx.test:runner", version.ref = "androidxTestRunner" }
+androidx-test-rules = { module = "androidx.test:rules", version.ref = "androidxTestRules" }
+espresso-core = { module = "androidx.test.espresso:espresso-core", version.ref = "espresso" }
+
 junit = { module = "junit:junit", version.ref = "junit" }
+robolectric = { module = "org.robolectric:robolectric", version.ref = "robolectric" }

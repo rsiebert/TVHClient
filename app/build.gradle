@@ -110,6 +110,13 @@ dependencies {
     implementation libs.androidx.lifecycle.livedata.ktx
     implementation libs.androidx.fragment.ktx
     debugImplementation libs.androidx.fragment.testing
+    // androidx.fragment:fragment-testing requests an old androidx.test stack that ends up in
+    // the debug APK and shadows the one used by the Espresso runner (missing
+    // androidx.test.platform.io.FileTestStorage and the API-34 registerReceiver flags).
+    // Keep the debug variant aligned with the versions used by the androidTest APK.
+    debugImplementation libs.androidx.test.core
+    debugImplementation libs.androidx.test.monitor
+    debugImplementation libs.androidx.test.rules
 
     // Misc stuff like logging, image loading, billing, casting
     implementation libs.material.components
@@ -130,22 +137,11 @@ dependencies {
     implementation libs.material.dialogs.files
     implementation libs.material.dialogs.datetime
     implementation libs.material.dialogs.lifecycle
-    //noinspection GradleDependency
-    implementation(libs.materialdrawer) {
-        // MaterialDrawer 7 requests kotlin-android-extensions-runtime 1.3.61, which bundles
-        // kotlinx.android.parcel.* - meanwhile provided by kotlin-parcelize-runtime, giving
-        // duplicate classes. The app no longer uses any kotlinx.android API.
-        exclude group: 'org.jetbrains.kotlin', module: 'kotlin-android-extensions-runtime'
-    }
 
     // Firebase Crash Reporting and Performance Monitoring
     implementation libs.firebase.analytics.ktx
     implementation libs.firebase.crashlytics
     implementation libs.firebase.perf
-
-    // Dependency injection
-    implementation libs.dagger.runtime
-    ksp libs.dagger.compiler
 
     // ----------------------------------------------------------------------------
     // Required internal libraries for the application
@@ -162,4 +158,19 @@ dependencies {
     // Required dependencies for unit testing
     testImplementation libs.junit
     testImplementation libs.androidx.test.core
+
+    // ----------------------------------------------------------------------------
+    // Required dependencies for instrumented (androidTest) testing
+    androidTestImplementation libs.junit
+    androidTestImplementation libs.androidx.test.runner
+    androidTestImplementation libs.androidx.test.rules
+    androidTestImplementation libs.androidx.test.monitor
+    androidTestImplementation libs.androidx.test.ext.junit
+    androidTestImplementation libs.espresso.core
+
+    // The reusable FakeHtspServer lives in the htsp module's test fixtures so the
+    // Espresso test can run it in-process. Expose the htsp test fixtures and the
+    // htsp main classes (HtspMessage, HtspConnection) to the androidTest source set.
+    androidTestImplementation testFixtures(project(':htsp'))
+    androidTestImplementation project(':htsp')
 }

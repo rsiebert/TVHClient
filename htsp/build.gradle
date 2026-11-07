@@ -29,6 +29,15 @@ android {
     buildFeatures {
         buildConfig = true
     }
+
+    // Enable test fixtures so the reusable FakeHtspServer can be shared between
+    // this module's JVM tests and the app module's instrumented (androidTest) tests.
+    testFixtures {
+        enable = true
+    }
+
+    // Robolectric needs the merged Android resources/manifest of this module.
+    testOptions.unitTests.includeAndroidResources = true
 }
 
 dependencies {
@@ -36,4 +45,11 @@ dependencies {
     implementation libs.androidx.appcompat
     implementation libs.timber
     implementation libs.androidx.core.ktx
+
+    // HtspConnection is a plain thread/selector implementation, but it relies on
+    // android.net.Uri and android.util.SparseArray. Robolectric provides real
+    // implementations of those framework classes so the connection can be
+    // exercised on the JVM against the fake server.
+    testImplementation libs.junit
+    testImplementation libs.robolectric
 }
