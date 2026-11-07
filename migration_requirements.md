@@ -191,7 +191,7 @@ the stub pipeline and the metadata ceiling.
 > [!NOTE]
 > Steps 1–2 above were executed as written (Dagger bumped to 2.60.1, then moved to KSP), but Dagger was
 > **subsequently removed entirely** (`06a570026`) — the graph was too small to justify it. Step 5's drawer
-> replacement is also **done** (`eb0ab74a2`), as is the material-dialogs replacement (`ec3bcfd20`); only the library bumps remain.
+> replacement is also **done** (`eb0ab74a2`), as is the material-dialogs replacement (`ec3bcfd20`) and the Media3 migration (`8ba77e9a4`); only the library bumps and targetSdk 37 work remain.
 
 ### Traps to expect
 
@@ -216,7 +216,7 @@ the stub pipeline and the metadata ceiling.
 - [x] **Build deps + test infra** — `c8318bf8a`, `28e1e9a51`.
 - [x] **Docs + `.gitignore`** — `6370072df`, `9a71fac31`.
 - [x] **material-dialogs → Material Components** — `ec3bcfd20`.
-- [ ] Step 4 — Media3 migration.
+- [x] **Step 4 — Media3 migration** — `8ba77e9a4` (ExoPlayer fork retired; compileSdk 34 → 36).
 - [ ] Step 5 — library bumps (dialogs + drawer done).
 - [ ] Step 6 — targetSdk 37 behaviour.
 
@@ -258,24 +258,17 @@ library bumps are now a single-file edit.
 > - **Release builds now run R8 optimisations** (fix #6). The release build has not been exercised — keep
 >   rules may need attention.
 > - `android.enableJetifier` is deprecated but still accepted under AGP 9, so the `play-services-cast-framework`
->   21.0.0 → 23.0.0 bump stays in step 5.
+>   21.0.0 → 23.0.0 bump stays in step 6.
 > - `android.nonFinalResIds=false` is also deprecated; it will need attention before Gradle 10.
 
 ## 10. Remaining work
 
-### Step 4 — Media3 migration (largest)
+### Step 4 — Media3 migration — DONE (`8ba77e9a4`)
 
-Replace ExoPlayer 2.11.7 with `androidx.media3` **1.11.1** — ~24 Kotlin files plus 3 layout XMLs.
-
-Retires in one go:
-
-- the ExoPlayer **fork repository**
-- `includeBuild('../ExoPlayer')` and the 4 `substitute` rules in
-  [settings.gradle](file:///home/rsiebert/projects/TVHClient/settings.gradle)
-- the fork's machine-specific `local.properties`
-- the **AGP-version lockstep** constraint between the two builds (already broke the build twice)
-- Phase 2 (native FFmpeg) — *unless* FFmpeg audio is wanted, since Media3's FFmpeg extension is
-  build-it-yourself
+Replaced ExoPlayer 2.11.7 with `androidx.media3` **1.11.1** (24 Kotlin + 2 Java files + 3 layouts). Retired
+the fork repository, `includeBuild('../ExoPlayer')` + the 4 `substitute` rules, the fork's `local.properties`,
+the AGP-lockstep constraint, and Phase 2 (native FFmpeg). **compileSdk 34 → 36** was forced by media3 1.11.1's
+AAR metadata (`targetSdk` stays 34). Runtime playback is unverified (see Verification debt).
 
 ### Step 5 — unmaintained libraries + remaining bumps
 
@@ -289,9 +282,10 @@ Retires in one go:
 
 ### Step 6 — targetSdk 37
 
-`compileSdk` 34 → 37 (AGP 9.5.1 supports API 37), then clear the behaviour changes for **35, 36 and 37 in a
-single jump**: edge-to-edge enforcement, predictive back, foreground-service types — plus the
-`nonFinalResIds` deprecation ahead of Gradle 10.
+`compileSdk` is already **36** (media3 forced it in Step 4); bump to **37** (AGP 9.5.1 supports API 37), then
+clear the behaviour changes for **35, 36 and 37 in a single jump**: edge-to-edge enforcement, predictive back,
+foreground-service types — plus the `nonFinalResIds` deprecation ahead of Gradle 10. The deferred cast 23.0.0
+bump also lands here.
 
 ### Verification debt
 
@@ -305,6 +299,8 @@ These landed **compile-verified only**, and the first three sit on runtime paths
 > 3. **EPG screen** — `LayoutContainer` was removed from `EpgVerticalRecyclerViewAdapter`.
 > 4. **Release build** — AGP 9 forced `proguard-android-optimize.txt`, so release builds now run R8
 >    optimisations for the first time, against keep rules that have never been exercised.
+> 5. **Media3 playback** — the ExoPlayer→Media3 migration (`8ba77e9a4`) is build-verified only. Live TV,
+>    recordings, timeshift seek, and the track-selection dialog need manual testing against a real server.
 
 ### Optional / structural
 
