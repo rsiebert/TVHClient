@@ -75,7 +75,7 @@ class TrackSelectionDialog : DialogFragment() {
         // We need to own the view to let tab layout work correctly on all API levels. We can't use
         // AlertDialog because it owns the view itself, so we use AppCompatDialog instead, themed using
         // the AlertDialog theme overlay with force-enabled title.
-        val dialog = AppCompatDialog(activity, R.style.TrackSelectionDialogThemeOverlay)
+        val dialog = AppCompatDialog(requireContext(), R.style.TrackSelectionDialogThemeOverlay)
         dialog.setTitle(titleId)
         return dialog
     }

@@ -38,7 +38,7 @@ class TrackInformationDialog : DialogFragment() {
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val dialog = AppCompatDialog(activity, R.style.ThemeOverlay_MaterialComponents_Dialog_Alert)
+        val dialog = AppCompatDialog(requireContext(), R.style.ThemeOverlay_MaterialComponents_Dialog_Alert)
         dialog.setTitle(titleId)
         return dialog
     }

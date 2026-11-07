@@ -123,7 +123,7 @@ class ChangeLogFragment : Fragment(), BackPressedInterface, HideNavigationDrawer
 
     override fun onBackPressed() {
         // Save the information that the changelog was shown
-        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
+        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(requireContext())
         val editor = sharedPreferences.edit()
         editor.putString("versionNameForChangelog", BuildConfig.VERSION_NAME)
         editor.apply()

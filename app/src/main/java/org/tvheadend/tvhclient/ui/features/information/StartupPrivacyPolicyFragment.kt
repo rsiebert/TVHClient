@@ -62,7 +62,7 @@ class StartupPrivacyPolicyFragment : WebViewFragment(), BackPressedInterface, Hi
     private fun acceptPrivacyPolicy() {
         Timber.d("Privacy policy was accepted")
 
-        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
+        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(requireContext())
         val editor = sharedPreferences.edit()
         editor.putBoolean("showPrivacyPolicy", false)
         editor.apply()

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  TVHClient is an application (not a published library), so it has no consumers that
+  depend on Media3's binary-compatibility guarantees. The playback layer deliberately
+  implements Media3's extension points (custom Extractors, DataSource, TrackSelector,
+  AnalyticsListener), all of which live on the @UnstableApi surface, so opting the whole
+  module in keeps the build free of ~20 identical, unsuppressable-otherwise warnings.
+
+  @UnstableApi implies nothing about quality or performance - only that the API is not
+  "API-frozen". See:
+  https://developer.android.com/media/media3/exoplayer/troubleshooting#unstable-api-lint-errors
+-->
+<lint>
+    <issue id="UnsafeOptInUsageError">
+        <option name="opt-in" value="androidx.media3.common.util.UnstableApi" />
+    </issue>
+</lint>

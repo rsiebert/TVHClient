@@ -2,7 +2,7 @@ package org.tvheadend.data.source
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Transformations
+import androidx.lifecycle.map
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -63,7 +63,7 @@ class ChannelTagDataSource(private val db: AppRoomDatabase) : DataSourceInterfac
     }
 
     override fun getLiveDataItems(): LiveData<List<ChannelTag>> {
-        return Transformations.map(db.channelTagDao.loadAllChannelTags()) { entities ->
+        return db.channelTagDao.loadAllChannelTags().map { entities ->
             entities.map { it.toChannelTag() }
         }
     }

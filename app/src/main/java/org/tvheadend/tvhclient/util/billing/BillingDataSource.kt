@@ -13,14 +13,16 @@ import com.android.billingclient.api.BillingClientStateListener
 import com.android.billingclient.api.BillingFlowParams
 import com.android.billingclient.api.BillingResult
 import com.android.billingclient.api.ConsumeParams
+import com.android.billingclient.api.PendingPurchasesParams
+import com.android.billingclient.api.ProductDetails
 import com.android.billingclient.api.Purchase
 import com.android.billingclient.api.PurchasesUpdatedListener
-import com.android.billingclient.api.SkuDetails
-import com.android.billingclient.api.SkuDetailsParams
+import com.android.billingclient.api.QueryProductDetailsParams
+import com.android.billingclient.api.QueryPurchasesParams
 import com.android.billingclient.api.acknowledgePurchase
 import com.android.billingclient.api.consumePurchase
+import com.android.billingclient.api.queryProductDetails
 import com.android.billingclient.api.queryPurchasesAsync
-import com.android.billingclient.api.querySkuDetails
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -107,7 +109,7 @@ class BillingDataSource private constructor(
     // Flows that are mostly maintained so they can be transformed into observables.
     private val skuStateMap: MutableMap<String, MutableStateFlow<SkuState>> = HashMap()
     @Suppress("DEPRECATION")
-    private val skuDetailsMap: MutableMap<String, MutableStateFlow<SkuDetails?>> = HashMap()
+    private val skuDetailsMap: MutableMap<String, MutableStateFlow<ProductDetails?>> = HashMap()
 
     // Observables that are used to communicate state.
     private val purchaseConsumptionInProcess: MutableSet<Purchase> = HashSet()
@@ -166,7 +168,7 @@ class BillingDataSource private constructor(
     private fun addSkuFlows(skuList: List<String>?) {
         for (sku in skuList!!) {
             val skuState = MutableStateFlow(SkuState.SKU_STATE_UNPURCHASED)
-            val details = MutableStateFlow<SkuDetails?>(null)
+            val details = MutableStateFlow<ProductDetails?>(null)
             details.subscriptionCount.map { count -> count > 0 } // map count into active/inactive flag
                 .distinctUntilChanged() // only react to true<->false changes
                 .onEach { isActive -> // configure an action
@@ -235,19 +237,19 @@ class BillingDataSource private constructor(
      * parts of the app to use the [SkuDetails] to show SKU information and make purchases.
      */
     @Suppress("DEPRECATION")
-    private fun onSkuDetailsResponse(billingResult: BillingResult, skuDetailsList: List<SkuDetails>?) {
+    private fun onSkuDetailsResponse(billingResult: BillingResult, productDetailsList: List<ProductDetails>?) {
         val responseCode = billingResult.responseCode
         val debugMessage = billingResult.debugMessage
         Timber.i("onSkuDetailsResponse: $responseCode $debugMessage")
         when (responseCode) {
             BillingClient.BillingResponseCode.OK -> {
-                if (skuDetailsList.isNullOrEmpty()) {
+                if (productDetailsList.isNullOrEmpty()) {
                     Timber.e("onSkuDetailsResponse: " + "Found null or empty SkuDetails. " + "Check to see if the SKUs you requested are correctly published " + "in the Google Play Console.")
                 } else {
-                    for (skuDetails in skuDetailsList) {
-                        val sku = skuDetails.sku
+                    for (productDetails in productDetailsList) {
+                        val sku = productDetails.productId
                         val detailsMutableFlow = skuDetailsMap[sku]
-                        detailsMutableFlow?.tryEmit(skuDetails)
+                        detailsMutableFlow?.tryEmit(productDetails)
                             ?: Timber.e("Unknown sku: $sku")
                     }
                 }
@@ -286,22 +288,30 @@ class BillingDataSource private constructor(
     @Suppress("DEPRECATION")
     private suspend fun querySkuDetailsAsync() {
         if (!knownInappSKUs.isNullOrEmpty()) {
-            val skuDetailsResult = billingClient.querySkuDetails(
-                SkuDetailsParams.newBuilder()
-                    .setType(BillingClient.SkuType.INAPP)
-                    .setSkusList(knownInappSKUs)
+            val productDetailsResult = billingClient.queryProductDetails(
+                QueryProductDetailsParams.newBuilder()
+                    .setProductList(knownInappSKUs.map { sku ->
+                        QueryProductDetailsParams.Product.newBuilder()
+                            .setProductId(sku)
+                            .setProductType(BillingClient.ProductType.INAPP)
+                            .build()
+                    })
                     .build()
             )
-            onSkuDetailsResponse(skuDetailsResult.billingResult, skuDetailsResult.skuDetailsList)
+            onSkuDetailsResponse(productDetailsResult.billingResult, productDetailsResult.productDetailsList)
         }
         if (!knownSubscriptionSKUs.isNullOrEmpty()) {
-            val skuDetailsResult = billingClient.querySkuDetails(
-                SkuDetailsParams.newBuilder()
-                    .setType(BillingClient.SkuType.SUBS)
-                    .setSkusList(knownSubscriptionSKUs)
+            val productDetailsResult = billingClient.queryProductDetails(
+                QueryProductDetailsParams.newBuilder()
+                    .setProductList(knownSubscriptionSKUs.map { sku ->
+                        QueryProductDetailsParams.Product.newBuilder()
+                            .setProductId(sku)
+                            .setProductType(BillingClient.ProductType.SUBS)
+                            .build()
+                    })
                     .build()
             )
-            onSkuDetailsResponse(skuDetailsResult.billingResult, skuDetailsResult.skuDetailsList)
+            onSkuDetailsResponse(productDetailsResult.billingResult, productDetailsResult.productDetailsList)
         }
     }
 
@@ -312,14 +322,18 @@ class BillingDataSource private constructor(
     @Suppress("DEPRECATION")
     suspend fun refreshPurchases() {
         Timber.d("Refreshing purchases.")
-        var purchasesResult = billingClient.queryPurchasesAsync(BillingClient.SkuType.INAPP)
+        var purchasesResult = billingClient.queryPurchasesAsync(
+            QueryPurchasesParams.newBuilder().setProductType(BillingClient.ProductType.INAPP).build()
+        )
         var billingResult = purchasesResult.billingResult
         if (billingResult.responseCode != BillingClient.BillingResponseCode.OK) {
             Timber.e("Problem getting purchases: " + billingResult.debugMessage)
         } else {
             processPurchaseList(purchasesResult.purchasesList, knownInappSKUs)
         }
-        purchasesResult = billingClient.queryPurchasesAsync(BillingClient.SkuType.SUBS)
+        purchasesResult = billingClient.queryPurchasesAsync(
+            QueryPurchasesParams.newBuilder().setProductType(BillingClient.ProductType.SUBS).build()
+        )
         billingResult = purchasesResult.billingResult
         if (billingResult.responseCode != BillingClient.BillingResponseCode.OK) {
             Timber.e("Problem getting subscriptions: " + billingResult.debugMessage)
@@ -340,7 +354,9 @@ class BillingDataSource private constructor(
      */
     @Suppress("DEPRECATION")
     private suspend fun getPurchases(skus: Array<String>, skuType: String): List<Purchase> {
-        val purchasesResult = billingClient.queryPurchasesAsync(skuType)
+        val purchasesResult = billingClient.queryPurchasesAsync(
+            QueryPurchasesParams.newBuilder().setProductType(skuType).build()
+        )
         val br = purchasesResult.billingResult
         val returnPurchasesList: MutableList<Purchase> = LinkedList()
         if (br.responseCode != BillingClient.BillingResponseCode.OK) {
@@ -367,7 +383,9 @@ class BillingDataSource private constructor(
      */
     @Suppress("DEPRECATION")
     suspend fun consumeInappPurchase(sku: String) {
-        val pr = billingClient.queryPurchasesAsync(BillingClient.SkuType.INAPP)
+        val pr = billingClient.queryPurchasesAsync(
+            QueryPurchasesParams.newBuilder().setProductType(BillingClient.ProductType.INAPP).build()
+        )
         val br = pr.billingResult
         val purchasesList = pr.purchasesList
         if (br.responseCode != BillingClient.BillingResponseCode.OK) {
@@ -574,16 +592,22 @@ class BillingDataSource private constructor(
         val skuDetails = skuDetailsMap[sku]?.value
         if (null != skuDetails) {
             val billingFlowParamsBuilder = BillingFlowParams.newBuilder()
-            billingFlowParamsBuilder.setSkuDetails(skuDetails)
+            billingFlowParamsBuilder.setProductDetailsParamsList(
+                listOf(
+                    BillingFlowParams.ProductDetailsParams.newBuilder()
+                        .setProductDetails(skuDetails)
+                        .build()
+                )
+            )
             val upgradeSkus = arrayOf(*upgradeSkusVarargs)
             defaultScope.launch {
-                val heldSubscriptions = getPurchases(upgradeSkus, BillingClient.SkuType.SUBS)
+                val heldSubscriptions = getPurchases(upgradeSkus, BillingClient.ProductType.SUBS)
                 when (heldSubscriptions.size) {
                     1 -> {
                         val purchase = heldSubscriptions[0]
                         billingFlowParamsBuilder.setSubscriptionUpdateParams(
                             BillingFlowParams.SubscriptionUpdateParams.newBuilder()
-                                .setOldSkuPurchaseToken(purchase.purchaseToken)
+                                .setOldPurchaseToken(purchase.purchaseToken)
                                 .build()
                         )
                     }
@@ -703,7 +727,11 @@ class BillingDataSource private constructor(
         initializeFlows()
         billingClient = BillingClient.newBuilder(application)
             .setListener(this)
-            .enablePendingPurchases()
+            .enablePendingPurchases(
+                PendingPurchasesParams.newBuilder()
+                    .enableOneTimeProducts()
+                    .build()
+            )
             .build()
         billingClient.startConnection(this)
     }

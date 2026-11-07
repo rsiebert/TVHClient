@@ -2,7 +2,7 @@ package org.tvheadend.data.source
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Transformations
+import androidx.lifecycle.map
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -81,11 +81,11 @@ class ChannelDataSource(private val db: AppRoomDatabase) : DataSourceInterface<C
     fun getAllEpgChannels(channelSortOrder: Int, tagIds: List<Int>): LiveData<List<EpgChannel>> {
         Timber.d("Loading epg channels with sort order $channelSortOrder and ${tagIds.size} tags")
         return if (tagIds.isEmpty()) {
-            Transformations.map(db.channelDao.loadAllEpgChannels(channelSortOrder)) { entities ->
+            db.channelDao.loadAllEpgChannels(channelSortOrder).map { entities ->
                 entities.map { it.toEpgChannel() }
             }
         } else {
-            Transformations.map(db.channelDao.loadAllEpgChannelsByTag(channelSortOrder, tagIds)) { entities ->
+            db.channelDao.loadAllEpgChannelsByTag(channelSortOrder, tagIds).map { entities ->
                 entities.map { it.toEpgChannel() }
             }
         }
@@ -94,11 +94,11 @@ class ChannelDataSource(private val db: AppRoomDatabase) : DataSourceInterface<C
     fun getAllChannelsByTime(selectedTime: Long, channelSortOrder: Int, tagIds: List<Int>): LiveData<List<Channel>> {
         Timber.d("Loading channels from time $selectedTime with sort order $channelSortOrder and ${tagIds.size} tags")
         return if (tagIds.isEmpty()) {
-            Transformations.map(db.channelDao.loadAllChannelsByTime(selectedTime, channelSortOrder)) { entities ->
+            db.channelDao.loadAllChannelsByTime(selectedTime, channelSortOrder).map { entities ->
                 entities.map { it.toChannel() }
             }
         } else {
-            Transformations.map(db.channelDao.loadAllChannelsByTimeAndTag(selectedTime, channelSortOrder, tagIds)) { entities ->
+            db.channelDao.loadAllChannelsByTimeAndTag(selectedTime, channelSortOrder, tagIds).map { entities ->
                 entities.map { it.toChannel() }
             }
         }

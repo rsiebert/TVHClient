@@ -81,9 +81,7 @@ class SettingsUserInterfaceFragment : PreferenceFragmentCompat(), Preference.OnP
         }
     }
 
-    override fun onPreferenceChange(preference: Preference?, newValue: Any?): Boolean {
-        if (preference == null) return false
-
+    override fun onPreferenceChange(preference: Preference, newValue: Any): Boolean {
         Timber.d("Preference ${preference.key} changed, checking if it is valid")
         when (preference.key) {
             "hours_of_epg_data_per_screen" ->

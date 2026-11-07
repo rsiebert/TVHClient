@@ -1,7 +1,7 @@
 package org.tvheadend.data.source
 
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.Transformations
+import androidx.lifecycle.map
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -59,13 +59,13 @@ class ProgramDataSource(private val db: AppRoomDatabase) : DataSourceInterface<P
     }
 
     override fun getLiveDataItems(): LiveData<List<Program>> {
-        return Transformations.map(db.programDao.loadPrograms()) { entities ->
+        return db.programDao.loadPrograms().map { entities ->
             entities.map { it.toProgram() }
         }
     }
 
     override fun getLiveDataItemById(id: Any): LiveData<Program> {
-        return Transformations.map(db.programDao.loadProgramById(id as Int)) { entity ->
+        return db.programDao.loadProgramById(id as Int).map { entity ->
             entity.toProgram()
         }
     }
@@ -87,13 +87,13 @@ class ProgramDataSource(private val db: AppRoomDatabase) : DataSourceInterface<P
     }
 
     fun getLiveDataItemsFromTime(time: Long): LiveData<List<Program>> {
-        return Transformations.map(db.programDao.loadProgramsFromTime(time)) { entities ->
+        return db.programDao.loadProgramsFromTime(time).map { entities ->
             entities.map { it.toProgram() }
         }
     }
 
     fun getLiveDataItemByChannelIdAndTime(channelId: Int, time: Long): LiveData<List<Program>> {
-        return Transformations.map(db.programDao.loadProgramsFromChannelFromTime(channelId, time)) { entities ->
+        return db.programDao.loadProgramsFromChannelFromTime(channelId, time).map { entities ->
             entities.map { it.toProgram() }
         }
     }

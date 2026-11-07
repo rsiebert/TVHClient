@@ -29,7 +29,7 @@ class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceClic
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        PreferenceManager.setDefaultValues(activity, R.xml.preferences, false)
+        PreferenceManager.setDefaultValues(requireContext(), R.xml.preferences, false)
         settingsViewModel = ViewModelProvider(activity as SettingsActivity)[SettingsViewModel::class.java]
 
         (activity as ToolbarInterface).let {
@@ -37,7 +37,7 @@ class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceClic
             it.setSubtitle("")
         }
 
-        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(activity)
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(requireContext())
 
         findPreference<Preference>("list_connections")?.onPreferenceClickListener = this
         findPreference<Preference>("user_interface")?.onPreferenceClickListener = this

@@ -11,6 +11,7 @@ import androidx.test.espresso.action.ViewActions.swipeUp
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.isRoot
+import androidx.test.espresso.matcher.ViewMatchers.withContentDescription
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.ext.junit.rules.ActivityScenarioRule
@@ -71,7 +72,9 @@ class SettingsAddConnectionEspressoTest {
         onView(withText(R.string.pref_connections)).check(matches(isDisplayed()))
 
         // 2. Open the add-connection screen via the toolbar "Add" action.
-        onView(withText(R.string.add)).perform(click())
+        //    Toolbar/menu actions are rendered as ActionMenuItemView, which expose their
+        //    label through contentDescription (their text is empty), so withText() never matches.
+        onView(withContentDescription(R.string.add)).perform(click())
         onView(withText(R.string.add_connection)).check(matches(isDisplayed()))
 
         // 3. Fill in the connection details. The urls point at the fake HTSP server that runs
@@ -83,7 +86,9 @@ class SettingsAddConnectionEspressoTest {
         setPreference(R.string.pref_pass, PASSWORD)
 
         // 4. Save. This validates + persists the connection and pops the add screen.
-        onView(withText(R.string.save)).perform(click())
+        //    Like "Add", "Save" is a toolbar menu action (ActionMenuItemView), so it must be
+        //    matched by contentDescription rather than text.
+        onView(withContentDescription(R.string.save)).perform(click())
 
         // 5. The app has navigated back to the connection list screen.
         activityRule.scenario.onActivity { activity ->

@@ -44,6 +44,7 @@ dependencies {
     // Support library basics
     implementation libs.androidx.appcompat
     implementation libs.androidx.preference.ktx
+    implementation libs.androidx.lifecycle.livedata.ktx
 
     // Android Room
     implementation libs.androidx.room.runtime

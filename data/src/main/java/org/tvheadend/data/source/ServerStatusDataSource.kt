@@ -1,7 +1,7 @@
 package org.tvheadend.data.source
 
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.Transformations
+import androidx.lifecycle.map
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -17,7 +17,7 @@ class ServerStatusDataSource(private val db: AppRoomDatabase) : DataSourceInterf
     private val ioScope = CoroutineScope(Dispatchers.IO)
 
     val liveDataActiveItem: LiveData<ServerStatus>
-        get() = Transformations.map(db.serverStatusDao.loadActiveServerStatus()) { entity ->
+        get() = db.serverStatusDao.loadActiveServerStatus().map { entity ->
             Timber.d("Loading active server status as live data is null ${entity == null}")
             entity?.toServerStatus() ?: activeItem
         }
@@ -63,13 +63,13 @@ class ServerStatusDataSource(private val db: AppRoomDatabase) : DataSourceInterf
     }
 
     override fun getLiveDataItems(): LiveData<List<ServerStatus>> {
-        return Transformations.map(db.serverStatusDao.loadAllServerStatus()) { entities ->
+        return db.serverStatusDao.loadAllServerStatus().map { entities ->
             entities.map { it.toServerStatus() }
         }
     }
 
     override fun getLiveDataItemById(id: Any): LiveData<ServerStatus> {
-        return Transformations.map(db.serverStatusDao.loadServerStatusById(id as Int)) { entity ->
+        return db.serverStatusDao.loadServerStatusById(id as Int).map { entity ->
             entity.toServerStatus()
         }
     }
