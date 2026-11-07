@@ -1,3 +1,12 @@
+$ 3.0.0
+  % VERSION 3.0.0
+  _ 07.11.2026
+    * Updated to the latest Android toolchain (Gradle 9, AGP 9, Kotlin 2.4)
+    * Replaced the navigation drawer with a standard Material navigation view
+    * Replaced the deprecated dialog library with Material Components
+    * Removed the Dagger dependency injection framework
+    * Added automated tests for the HTSP connection and connection setup
+    * Internal improvements and dependency cleanups
 $ 2.4.8
   % VERSION 2.4.8
   _ 23.11.2023

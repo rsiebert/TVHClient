@@ -21,8 +21,8 @@ android {
     defaultConfig {
         minSdk = libs.versions.minSdk.get().toInteger()
         targetSdk = libs.versions.targetSdk.get().toInteger()
-        versionCode 241
-        versionName "2.4.8"
+        versionCode 242
+        versionName "3.0.0"
 
         // Define the apk naming convention
         applicationId "org.tvheadend.tvhclient"
