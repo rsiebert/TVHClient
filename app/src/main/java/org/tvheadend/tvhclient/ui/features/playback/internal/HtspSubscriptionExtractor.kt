@@ -17,9 +17,9 @@
 package org.tvheadend.tvhclient.ui.features.playback.internal
 
 import android.util.SparseArray
-import com.google.android.exoplayer2.C
-import com.google.android.exoplayer2.extractor.*
-import com.google.android.exoplayer2.util.ParsableByteArray
+import androidx.media3.common.C
+import androidx.media3.common.util.ParsableByteArray
+import androidx.media3.extractor.*
 import org.tvheadend.htsp.HtspMessage
 import org.tvheadend.tvhclient.ui.features.playback.internal.reader.StreamReader
 import org.tvheadend.tvhclient.ui.features.playback.internal.reader.StreamReadersFactory
@@ -44,8 +44,8 @@ internal class HtspSubscriptionExtractor : Extractor {
             return C.TIME_UNSET
         }
 
-        override fun getSeekPoints(timeUs: Long): SeekMap.SeekPoints? {
-            return null
+        override fun getSeekPoints(timeUs: Long): SeekMap.SeekPoints {
+            return SeekMap.SeekPoints(SeekPoint(0, timeUs))
         }
     }
 

@@ -16,12 +16,12 @@
 
 package org.tvheadend.tvhclient.ui.features.playback.internal.reader
 
-import com.google.android.exoplayer2.C
-import com.google.android.exoplayer2.Format
-import com.google.android.exoplayer2.ParserException
-import com.google.android.exoplayer2.util.MimeTypes
-import com.google.android.exoplayer2.util.ParsableByteArray
-import com.google.android.exoplayer2.video.AvcConfig
+import androidx.media3.common.C
+import androidx.media3.common.Format
+import androidx.media3.common.MimeTypes
+import androidx.media3.common.ParserException
+import androidx.media3.common.util.ParsableByteArray
+import androidx.media3.extractor.AvcConfig
 
 import org.tvheadend.htsp.HtspMessage
 
@@ -41,15 +41,16 @@ internal class H264StreamReader : PlainStreamReader(C.TRACK_TYPE_VIDEO) {
             }
         }
 
-        return Format.createVideoSampleFormat(
-                streamIndex.toString(),
-                MimeTypes.VIDEO_H264, null,
-                Format.NO_VALUE,
-                Format.NO_VALUE,
-                stream.getInteger("width"),
-                stream.getInteger("height"),
-                StreamReaderUtils.frameDurationToFrameRate(stream.getInteger("duration", Format.NO_VALUE)),
-                initializationData, null)
+        return Format.Builder()
+                .setId(streamIndex.toString())
+                .setSampleMimeType(MimeTypes.VIDEO_H264)
+                .setAverageBitrate(Format.NO_VALUE)
+                .setMaxInputSize(Format.NO_VALUE)
+                .setWidth(stream.getInteger("width"))
+                .setHeight(stream.getInteger("height"))
+                .setFrameRate(StreamReaderUtils.frameDurationToFrameRate(stream.getInteger("duration", Format.NO_VALUE)))
+                .setInitializationData(initializationData)
+                .build()
     }
 
     override val trackType: Int

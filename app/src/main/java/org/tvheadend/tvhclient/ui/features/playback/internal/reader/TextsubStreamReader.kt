@@ -17,13 +17,13 @@
 
 package org.tvheadend.tvhclient.ui.features.playback.internal.reader
 
-import com.google.android.exoplayer2.C
-import com.google.android.exoplayer2.Format
-import com.google.android.exoplayer2.extractor.ExtractorOutput
-import com.google.android.exoplayer2.extractor.TrackOutput
-import com.google.android.exoplayer2.util.MimeTypes
-import com.google.android.exoplayer2.util.ParsableByteArray
-import com.google.android.exoplayer2.util.Util
+import androidx.media3.common.C
+import androidx.media3.common.Format
+import androidx.media3.common.MimeTypes
+import androidx.media3.common.util.ParsableByteArray
+import androidx.media3.common.util.Util
+import androidx.media3.extractor.ExtractorOutput
+import androidx.media3.extractor.TrackOutput
 import org.tvheadend.htsp.HtspMessage
 import java.nio.charset.Charset
 import java.util.*
@@ -58,12 +58,12 @@ internal class TextsubStreamReader : StreamReader {
     }
 
     private fun buildFormat(streamIndex: Int, stream: HtspMessage): Format {
-        return Format.createTextSampleFormat(
-                streamIndex.toString(),
-                MimeTypes.APPLICATION_SUBRIP,
-                C.SELECTION_FLAG_AUTOSELECT,
-                stream.getString("language", "und"), null
-        )
+        return Format.Builder()
+                .setId(streamIndex.toString())
+                .setSampleMimeType(MimeTypes.APPLICATION_SUBRIP)
+                .setSelectionFlags(C.SELECTION_FLAG_AUTOSELECT)
+                .setLanguage(stream.getString("language", "und"))
+                .build()
     }
 
     companion object {

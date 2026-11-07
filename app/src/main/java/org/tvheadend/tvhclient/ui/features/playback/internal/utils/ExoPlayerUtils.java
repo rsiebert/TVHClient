@@ -2,8 +2,8 @@ package org.tvheadend.tvhclient.ui.features.playback.internal.utils;
 
 import android.text.TextUtils;
 
-import com.google.android.exoplayer2.Format;
-import com.google.android.exoplayer2.util.MimeTypes;
+import androidx.media3.common.Format;
+import androidx.media3.common.MimeTypes;
 
 import java.util.Locale;
 

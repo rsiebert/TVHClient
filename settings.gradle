@@ -2,15 +2,3 @@ plugins {
     id 'org.gradle.toolchains.foojay-resolver-convention' version '0.10.0'
 }
 include ':app', ':data', ':htsp'
-
-// The ExoPlayer fork (org.tvheadend.tvhclient.exoplayer:*) is no longer published
-// anywhere, so substitute the published coordinates with the local source clone,
-// which lives next to this project.
-includeBuild('../ExoPlayer') {
-    dependencySubstitution {
-        substitute module('org.tvheadend.tvhclient.exoplayer:exoplayer-core')   using project(':library-core')
-        substitute module('org.tvheadend.tvhclient.exoplayer:exoplayer-dash')   using project(':library-dash')
-        substitute module('org.tvheadend.tvhclient.exoplayer:exoplayer-ui')     using project(':library-ui')
-        substitute module('org.tvheadend.tvhclient.exoplayer:extension-ffmpeg') using project(':extension-ffmpeg')
-    }
-}

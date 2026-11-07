@@ -16,7 +16,7 @@
 
 package org.tvheadend.tvhclient.ui.features.playback.internal.reader
 
-import com.google.android.exoplayer2.Format
+import androidx.media3.common.Format
 
 internal class StreamReaderUtils private constructor() {
     init {

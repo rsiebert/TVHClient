@@ -207,7 +207,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/progress" />
 
-    <com.google.android.exoplayer2.ui.DefaultTimeBar
+    <androidx.media3.ui.DefaultTimeBar
         android:id="@+id/progress"
         android:layout_width="0dp"
         android:layout_height="26dp"

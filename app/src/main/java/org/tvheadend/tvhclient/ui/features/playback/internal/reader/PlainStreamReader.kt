@@ -16,11 +16,11 @@
 
 package org.tvheadend.tvhclient.ui.features.playback.internal.reader
 
-import com.google.android.exoplayer2.C
-import com.google.android.exoplayer2.Format
-import com.google.android.exoplayer2.extractor.ExtractorOutput
-import com.google.android.exoplayer2.extractor.TrackOutput
-import com.google.android.exoplayer2.util.ParsableByteArray
+import androidx.media3.common.C
+import androidx.media3.common.Format
+import androidx.media3.common.util.ParsableByteArray
+import androidx.media3.extractor.ExtractorOutput
+import androidx.media3.extractor.TrackOutput
 import org.tvheadend.htsp.HtspMessage
 
 /**

@@ -1,10 +1,10 @@
 package org.tvheadend.tvhclient.ui.features.playback.internal
 
 import android.net.Uri
-import com.google.android.exoplayer2.C.RESULT_END_OF_INPUT
-import com.google.android.exoplayer2.upstream.DataSource
-import com.google.android.exoplayer2.upstream.DataSpec
-import com.google.android.exoplayer2.upstream.TransferListener
+import androidx.media3.common.C.RESULT_END_OF_INPUT
+import androidx.media3.datasource.DataSource
+import androidx.media3.datasource.DataSpec
+import androidx.media3.datasource.TransferListener
 import org.tvheadend.htsp.HtspConnection
 import org.tvheadend.htsp.HtspMessage
 import org.tvheadend.api.ServerMessageListener
@@ -39,10 +39,11 @@ class HtspFileInputStreamDataSource private constructor(val connection: HtspConn
         private val htspConnection: HtspConnection
         private var dataSource: HtspFileInputStreamDataSource? = null
 
-        override fun createDataSource(): DataSource? {
+        override fun createDataSource(): DataSource {
             Timber.d("Created new data source from factory")
-            dataSource = HtspFileInputStreamDataSource(htspConnection)
-            return dataSource
+            val newDataSource = HtspFileInputStreamDataSource(htspConnection)
+            dataSource = newDataSource
+            return newDataSource
         }
 
         val currentDataSource: HtspFileInputStreamDataSource?
@@ -89,7 +90,7 @@ class HtspFileInputStreamDataSource private constructor(val connection: HtspConn
         // No action needed
     }
 
-    override fun addTransferListener(transferListener: TransferListener?) {
+    override fun addTransferListener(transferListener: TransferListener) {
         // NOP
     }
 

@@ -15,11 +15,13 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
 import androidx.viewpager.widget.ViewPager
-import com.google.android.exoplayer2.C
-import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
-import com.google.android.exoplayer2.trackselection.DefaultTrackSelector.SelectionOverride
-import com.google.android.exoplayer2.trackselection.MappingTrackSelector.MappedTrackInfo
-import com.google.android.exoplayer2.util.Assertions
+import androidx.media3.common.C
+import androidx.media3.common.TrackGroup
+import androidx.media3.common.TrackSelectionOverride
+import androidx.media3.common.util.Assertions
+import androidx.media3.exoplayer.trackselection.DefaultTrackSelector
+import androidx.media3.exoplayer.trackselection.DefaultTrackSelector.SelectionOverride
+import androidx.media3.exoplayer.trackselection.MappingTrackSelector.MappedTrackInfo
 import com.google.android.material.tabs.TabLayout
 import org.tvheadend.tvhclient.R
 import java.util.*
@@ -64,9 +66,9 @@ class TrackSelectionDialog : DialogFragment() {
      * @param rendererIndex Renderer index.
      * @return The list of track selection overrides for this renderer.
      */
-    private fun getOverrides(rendererIndex: Int): List<SelectionOverride> {
+    private fun getOverrides(rendererIndex: Int): Map<TrackGroup, TrackSelectionOverride> {
         val rendererView = tabFragments[rendererIndex]
-        return rendererView?.overrides ?: emptyList()
+        return rendererView?.overrides ?: emptyMap()
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
@@ -149,9 +151,15 @@ class TrackSelectionDialog : DialogFragment() {
                 val builder = parameters.buildUpon()
                 for (i in 0 until mappedTrackInfo.rendererCount) {
                     builder.clearSelectionOverrides(i).setRendererDisabled(i, trackSelectionDialog.getIsDisabled(i))
+                    val trackGroupArray = mappedTrackInfo.getTrackGroups(i)
                     val overrides = trackSelectionDialog.getOverrides(i)
                     if (overrides.isNotEmpty()) {
-                        builder.setSelectionOverride(i, mappedTrackInfo.getTrackGroups(i), overrides[0])
+                        val override = overrides.values.first()
+                        val groupIndex = trackGroupArray.indexOf(override.mediaTrackGroup)
+                        if (groupIndex != C.INDEX_UNSET) {
+                            builder.setSelectionOverride(i, trackGroupArray,
+                                    SelectionOverride(groupIndex, *override.trackIndices.toIntArray()))
+                        }
                     }
                 }
                 trackSelector.setParameters(builder)

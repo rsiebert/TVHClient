@@ -24,8 +24,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.preference.PreferenceManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.google.android.exoplayer2.Player
-import com.google.android.exoplayer2.ui.PlayerView
+import androidx.media3.common.Player
+import androidx.media3.ui.PlayerView
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
 import org.tvheadend.tvhclient.R
