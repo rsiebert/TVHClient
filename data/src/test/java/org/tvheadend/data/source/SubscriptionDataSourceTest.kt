@@ -54,13 +54,14 @@ class SubscriptionDataSourceTest {
     }
 
     @Test
-    fun updateItemAppendsRatherThanReplacing() {
+    fun updateItemReplacesTheExistingEntry() {
         dataSource.addItem(subscription(1))
 
-        // The implementation simply adds, so updating an existing entry appends a second one.
+        // Replaces the entry with the same id. This used to append unconditionally, leaving the
+        // stale entry behind.
         dataSource.updateItem(subscription(1))
 
-        assertThat(dataSource.getItems()).hasSize(2)
+        assertThat(dataSource.getItems()).hasSize(1)
     }
 
     @Test

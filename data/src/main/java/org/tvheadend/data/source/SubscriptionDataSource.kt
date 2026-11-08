@@ -40,7 +40,14 @@ class SubscriptionDataSource(@Suppress("unused") private val db: AppRoomDatabase
     }
 
     override fun updateItem(item: Subscription) {
-        subscriptions.add(item)
+        // Replace in place. This used to append, so every update left the old entry behind and
+        // added a second one.
+        val index = subscriptions.indexOfFirst { it.id == item.id }
+        if (index >= 0) {
+            subscriptions[index] = item
+        } else {
+            subscriptions.add(item)
+        }
     }
 
     override fun removeItem(item: Subscription) {

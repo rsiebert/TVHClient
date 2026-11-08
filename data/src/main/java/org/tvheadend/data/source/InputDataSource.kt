@@ -40,7 +40,19 @@ class InputDataSource(@Suppress("unused") private val db: AppRoomDatabase) : Dat
     }
 
     override fun updateItem(item: Input) {
-        inputs.add(item)
+        // Replace in place. This used to append unconditionally, so updating an entry left the old
+        // one behind and added a second copy.
+        //
+        // Input has no identity field - no id, and uuid is not guaranteed to be populated - and
+        // this class has always treated the list position as the key. Equality is therefore the
+        // only safe match: replacing on a field would overwrite an unrelated entry whenever that
+        // field happens to be blank.
+        val index = inputs.indexOf(item)
+        if (index >= 0) {
+            inputs[index] = item
+        } else {
+            inputs.add(item)
+        }
     }
 
     override fun removeItem(item: Input) {

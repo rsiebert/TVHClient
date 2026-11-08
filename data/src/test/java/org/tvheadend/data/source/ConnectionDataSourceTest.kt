@@ -166,20 +166,23 @@ class ConnectionDataSourceTest {
      * hands a `null` entity to the data source. `ConnectionDao.loadActiveConnection` used to be
      * declared non-null, which made the `?:` fallback dead code and turned this case - a fresh
      * install without any active connection - into a `NullPointerException` when the LiveData was
-     * observed. Observing must instead yield the default `Connection()`, the same default the
-     * synchronous [ConnectionDataSource.activeItem] produces when nothing is active.
+     * observed. Observing must instead yield the same "no active connection" sentinel that the
+     * synchronous [ConnectionDataSource.activeItem] produces, i.e. a Connection with id = -1.
      */
     @Test
-    fun liveDataActiveItemReturnsADefaultWhenNoConnectionIsActive() {
+    fun liveDataActiveItemReturnsTheSameSentinelAsTheSynchronousActiveItem() {
         // Nothing is active: only an inactive connection exists.
         dataSource.addItem(connection(id = 1, name = "Inactive", isActive = false))
 
         val activeItem = dataSource.liveDataActiveItem.observedValue()
 
         assertThat(activeItem).isNotNull()
-        assertThat(activeItem!!.id).isEqualTo(Connection().id)
+        // Both accessors must agree on what "nothing is active" looks like. This used to hand back
+        // a plain Connection() here, i.e. id 0, which callers testing `id >= 0` - such as
+        // setSyncRequiredForActiveConnection - misread as a real connection.
+        assertThat(activeItem!!.id).isEqualTo(-1)
+        assertThat(activeItem).isEqualTo(dataSource.activeItem)
         assertThat(activeItem.isActive).isFalse()
-        assertThat(activeItem).isEqualTo(Connection())
     }
 
     @Test

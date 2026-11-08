@@ -54,13 +54,14 @@ class InputDataSourceTest {
     }
 
     @Test
-    fun updateItemAppendsRatherThanReplacing() {
+    fun updateItemReplacesTheExistingEntry() {
         dataSource.addItem(input("a"))
 
-        // The implementation simply adds, so updating an existing entry appends a second one.
+        // Input has no identity field, so this matches on equality and replaces in place. It used
+        // to append unconditionally, leaving the stale entry behind.
         dataSource.updateItem(input("a"))
 
-        assertThat(dataSource.getItems()).hasSize(2)
+        assertThat(dataSource.getItems()).hasSize(1)
     }
 
     @Test

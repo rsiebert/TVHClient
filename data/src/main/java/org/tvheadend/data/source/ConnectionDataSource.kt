@@ -22,7 +22,11 @@ class ConnectionDataSource(
     val liveDataActiveItem: LiveData<Connection>
         get() = db.connectionDao.loadActiveConnection().map { entity ->
             Timber.d("Active live data item for connection is null ${entity == null}")
-            entity?.toConnection() ?: Connection()
+            // Fall back to the same "no active connection" sentinel as the synchronous
+            // activeItem (id = -1). A plain Connection() has id 0, which callers that test
+            // `id >= 0` - setSyncRequiredForActiveConnection, for one - misread as a real
+            // connection.
+            entity?.toConnection() ?: Connection().also { it.id = -1 }
         }
 
     val activeItem: Connection

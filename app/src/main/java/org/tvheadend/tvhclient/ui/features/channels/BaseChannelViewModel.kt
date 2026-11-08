@@ -46,8 +46,12 @@ open class BaseChannelViewModel(application: Application) : BaseViewModel(applic
     }
 
     fun setSelectedChannelTagIds(ids: Set<Int>) {
-        val tagValues = channelTags.value ?: HashSet<Int>()
-        if (!tagValues.toTypedArray().contentEquals(ids.toTypedArray())) {
+        // Compare the incoming ids against the tag ids that are actually selected. The previous
+        // guard compared the ChannelTag objects in channelTags.value with the incoming Int ids,
+        // which can never be equal, so the guard was dead and the database was written on every
+        // call.
+        val currentIds = selectedChannelTagIds.value?.toSet() ?: emptySet()
+        if (currentIds != ids) {
             Timber.d("Updating database with newly selected channel tag ids")
             appRepository.channelTagData.updateSelectedChannelTags(ids)
         }

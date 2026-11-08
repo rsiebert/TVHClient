@@ -31,7 +31,9 @@ class AppRepository(
         override val inputData: InputDataSource
 ) : RepositoryInterface {
 
-    private var isUnlockedLiveData = MutableLiveData<Boolean>()
+    // Exposed so callers do not have to reach it reflectively. Nothing in the app reads it yet, so
+    // if it stays unused it is a candidate for deletion.
+    val isUnlockedLiveData = MutableLiveData<Boolean>()
 
     init {
         isUnlockedLiveData.value = false
