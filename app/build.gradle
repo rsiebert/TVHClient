@@ -60,6 +60,9 @@ android {
         // Opt in to Media3's @UnstableApi surface (custom Extractors, DataSource,
         // TrackSelector, AnalyticsListener) so a manual lint run is warning-free.
         lintConfig = file("lint.xml")
+        // Record the pre-existing findings so `check` can be used as the gate runner. Anything new
+        // is still reported and fails the build.
+        baseline = file("lint-baseline.xml")
     }
 
     compileOptions {
