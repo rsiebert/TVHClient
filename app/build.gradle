@@ -63,6 +63,12 @@ android {
         // Record the pre-existing findings so `check` can be used as the gate runner. Anything new
         // is still reported and fails the build.
         baseline = file("lint-baseline.xml")
+        // AGP's unit-test lint analysis reads the Data Binding output that kapt generates for the
+        // *release* variant without depending on the task that writes it, so on a cold build lint
+        // dies with FileNotFoundException on DataBinderMapperImpl.java and `check` fails. Skipping
+        // test sources makes `check` deterministic; `checkReleaseBuilds false` already gives up the
+        // release half.
+        checkTestSources = false
     }
 
     compileOptions {
