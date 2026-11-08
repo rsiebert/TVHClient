@@ -20,7 +20,8 @@ import org.tvheadend.data.entity.*
             ConnectionEntity::class,
             ServerProfileEntity::class,
             ServerStatusEntity::class],
-        exportSchema = false,
+        // Export the schema so migrations can be tested against a real base from v15 onwards.
+        exportSchema = true,
         version = 15)
 abstract class AppRoomDatabase : RoomDatabase() {
 
