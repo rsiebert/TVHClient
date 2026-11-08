@@ -41,7 +41,9 @@ public class HtspFileInputStream extends InputStream {
     }
 
     public int available() {
-        return this.buf.length;
+        // Only the bytes that have not been handed out yet are available. Returning the whole
+        // fetched chunk over-reports as soon as the caller has consumed part of it.
+        return this.buf.length - this.bufPos;
     }
 
     public boolean markSupported() {
@@ -150,7 +152,10 @@ public class HtspFileInputStream extends InputStream {
     public int read(@NonNull byte[] outBuf, int outOffset, int outLength) throws IOException {
         fillBuffer();
 
-        int ret = Math.min(buf.length - bufPos, outLength - outOffset);
+        // outOffset is where to start writing into outBuf, not a limit on how much to read: the
+        // InputStream contract is to read at most outLength bytes. Using outLength - outOffset made
+        // every caller that passed an off > 0 receive fewer bytes than it asked for.
+        int ret = Math.min(buf.length - bufPos, outLength);
         if (ret > 0) {
             System.arraycopy(buf, bufPos, outBuf, outOffset, ret);
             bufPos += ret;

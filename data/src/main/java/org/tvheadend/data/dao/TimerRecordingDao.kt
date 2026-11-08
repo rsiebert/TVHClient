@@ -52,9 +52,13 @@ internal interface TimerRecordingDao {
 
     companion object {
 
-        const val RECORDING_BASE_QUERY = "SELECT DISTINCT rec.*, " +
+        // The aliased columns must come before rec.*: Cursor.getColumnIndex returns the first
+        // match, and timer_recordings has its own channel_name/channel_icon columns, so projecting
+        // rec.* first meant those won and the JOIN was dead.
+        const val RECORDING_BASE_QUERY = "SELECT DISTINCT " +
                 "c.name AS channel_name, " +
-                "c.icon AS channel_icon " +
+                "c.icon AS channel_icon, " +
+                "rec.* " +
                 "FROM timer_recordings AS rec " +
                 "LEFT JOIN channels AS c ON  c.id = rec.channel_id "
 

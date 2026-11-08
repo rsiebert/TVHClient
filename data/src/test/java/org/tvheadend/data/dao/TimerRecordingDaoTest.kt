@@ -71,6 +71,20 @@ class TimerRecordingDaoTest {
     }
 
     @Test
+    fun loadAllRecordingsResolvesTheChannelNameFromTheJoinedChannel() {
+        insertActiveAndInactiveConnections()
+        db.channelDao.insert(TestDatabase.channel(id = 5, connectionId = 1, name = "Live Channel"))
+        db.timerRecordingDao.insert(TestDatabase.timerRecording(id = "a", connectionId = 1, channelId = 5))
+
+        val loaded = db.timerRecordingDao.loadAllRecordings().observedValue()!!.single()
+
+        // timer_recordings has its own channel_name column (null here). The query projected
+        // rec.* before the join aliases, so getColumnIndex picked the table's column and the JOIN
+        // was dead; the live name from `channels` has to win.
+        assertThat(loaded.channelName).isEqualTo("Live Channel")
+    }
+
+    @Test
     fun loadRecordingByIdOnlyReturnsRecordingsOfTheActiveConnection() {
         insertActiveAndInactiveConnections()
         db.timerRecordingDao.insert(TestDatabase.timerRecording(id = "same", connectionId = 1, title = "Active"))

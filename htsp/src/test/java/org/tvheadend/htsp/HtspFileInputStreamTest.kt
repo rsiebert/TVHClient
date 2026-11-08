@@ -138,7 +138,7 @@ class HtspFileInputStreamTest {
     }
 
     @Test
-    fun availableStartsAtZeroAndReflectsTheFetchedChunk() {
+    fun availableCountsOnlyTheBytesNotYetConsumed() {
         val stream = openStream()
         try {
             assertEquals("Nothing is buffered before the first read", 0, stream.available())
@@ -146,9 +146,9 @@ class HtspFileInputStreamTest {
             val buffer = ByteArray(1)
             assertEquals(1, stream.read(buffer, 0, 1))
 
-            // available() returns the size of the whole fetched chunk and does not subtract the
-            // bytes that have already been consumed from it.
-            assertEquals(5, stream.available())
+            // A five byte chunk was fetched and one byte of it has been handed out, so four
+            // remain. This used to report the whole chunk size, ignoring the read position.
+            assertEquals(4, stream.available())
         } finally {
             stream.close()
         }
@@ -193,20 +193,20 @@ class HtspFileInputStreamTest {
     }
 
     @Test
-    fun readWithAnArrayOffsetOnlyCopiesLengthMinusOffsetBytes() {
-        // NOTE: this pins a second contract violation of HtspFileInputStream.read(byte[], int, int),
-        // which computes the number of bytes with `outLength - outOffset` instead of `outLength`.
-        // A caller that follows the InputStream.read(b, off, len) contract (len = number of bytes
-        // to read) therefore gets fewer bytes than it asked for whenever off > 0. Documented here,
-        // not fixed.
+    fun readWithAnArrayOffsetReadsUpToLengthBytes() {
         val stream = openStream()
         try {
             val destination = ByteArray(10)
             val copied = stream.read(destination, 4, 6)
 
-            assertEquals(2, copied)
-            assertEquals(content[0], destination[4])
-            assertEquals(content[1], destination[5])
+            // Six bytes were requested and five are buffered, so five arrive. This used to copy
+            // `outLength - outOffset` = 2, because the offset into the destination array was
+            // mistaken for a cap on how much to read.
+            assertEquals(5, copied)
+            assertThat(destination.copyOfRange(4, 9)).isEqualTo(content.copyOfRange(0, 5))
+            // Everything outside [offset, offset + copied) is left untouched.
+            assertEquals(0, destination[3].toInt())
+            assertEquals(0, destination[9].toInt())
         } finally {
             stream.close()
         }
