@@ -7,6 +7,11 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.verify
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.advanceUntilIdle
+import kotlinx.coroutines.test.runTest
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
@@ -41,6 +46,7 @@ import java.nio.channels.SocketChannel
 @RunWith(RobolectricTestRunner::class)
 // Use a plain Application instead of MainApplication: the latter does database work in onCreate.
 @Config(sdk = [34], application = Application::class)
+@OptIn(ExperimentalCoroutinesApi::class)
 class FakeServerBootstrapTest {
 
     private lateinit var context: Context
@@ -55,6 +61,9 @@ class FakeServerBootstrapTest {
     fun setUp() {
         Timber.plant(NOOP_TREE)
         resetBootstrapState()
+        // Production seeds on a background dispatcher so that MainApplication.onCreate is never
+        // blocked. Unconfined runs the seeding inline, which keeps the assertions below synchronous.
+        FakeServerBootstrap.seedScope = CoroutineScope(Dispatchers.Unconfined)
 
         context = mockk()
         app = mockk(relaxed = true)
@@ -142,17 +151,21 @@ class FakeServerBootstrapTest {
     }
 
     @Test
-    fun waitsUntilTheInsertedRowBecomesVisible() {
-        // addItem() inserts asynchronously in production, so the bootstrap polls until the row is
-        // visible. Make it appear only on the third read: the first read is the "is there already
-        // a connection?" check, the second is the first poll.
+    fun waitsUntilTheInsertedRowBecomesVisible() = runTest {
+        // addItem() inserts asynchronously in production, so the bootstrap polls - with a delay -
+        // until the row is visible. Make it appear only on the third read: the first read is the
+        // "is there already a connection?" check, the second is the first poll.
         var reads = 0
         every { connectionData.getItems() } answers {
             reads++
             if (reads <= 2) emptyList() else storedConnections.toList()
         }
+        // Run the seeding on the test scheduler so the poll's delay is virtual time rather than a
+        // real 25 ms wait, and the assertions can stay synchronous.
+        FakeServerBootstrap.seedScope = this
 
         FakeServerBootstrap.start(context)
+        advanceUntilIdle()
 
         assertThat(storedConnections).hasSize(1)
         assertThat(reads).isAtLeast(3)

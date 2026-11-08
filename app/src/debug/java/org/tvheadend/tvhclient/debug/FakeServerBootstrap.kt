@@ -1,6 +1,10 @@
 package org.tvheadend.tvhclient.debug
 
 import android.content.Context
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.tvheadend.data.entity.Connection
 import org.tvheadend.htsp.FakeTvheadendServer
 import org.tvheadend.tvhclient.MainApplication
@@ -20,6 +24,12 @@ object FakeServerBootstrap {
     @Volatile
     private var server: FakeTvheadendServer? = null
 
+    /**
+     * Runs the seeding. Injectable so tests can use [Dispatchers.Unconfined] and assert inline
+     * instead of racing a background thread.
+     */
+    var seedScope: CoroutineScope = CoroutineScope(Dispatchers.IO)
+
     fun start(context: Context) {
         if (server != null) {
             return
@@ -34,10 +44,14 @@ object FakeServerBootstrap {
         }
         server = fakeServer
 
-        seedDemoConnectionIfNone(app, fakeServer)
+        // start() is called from MainApplication.onCreate, and both the existence check and the wait
+        // for the inserted row are database work. None of it may run on the main thread.
+        seedScope.launch {
+            seedDemoConnectionIfNone(app, fakeServer)
+        }
     }
 
-    private fun seedDemoConnectionIfNone(app: MainApplication, fakeServer: FakeTvheadendServer) {
+    private suspend fun seedDemoConnectionIfNone(app: MainApplication, fakeServer: FakeTvheadendServer) {
         try {
             val repository = app.appRepository
             if (repository.connectionData.getItems().isNotEmpty()) {
@@ -62,13 +76,14 @@ object FakeServerBootstrap {
 
             // addItem inserts on a background dispatcher. Wait (briefly) until the row exists so
             // that ConnectionService.onCreate() picks it up as the active connection when the
-            // app's normal start-up connect kicks in.
+            // app's normal start-up connect kicks in. delay(), not Thread.sleep(): we are already on
+            // a background dispatcher here, and blocking the thread would only tie one up.
             val deadline = System.currentTimeMillis() + 2_000
             while (System.currentTimeMillis() < deadline) {
                 if (repository.connectionData.getItems().isNotEmpty()) {
                     break
                 }
-                Thread.sleep(25)
+                delay(25)
             }
             Timber.i("Added demo connection to the fake TVHeadend server at ${fakeServer.url}")
         } catch (e: Exception) {
