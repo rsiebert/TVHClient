@@ -213,6 +213,19 @@ class HtspFileInputStreamTest {
     }
 
     @Test
+    fun readWithAZeroLengthRequestReturnsZeroInsteadOfEndOfStream() {
+        val stream = openStream()
+        try {
+            // InputStream.read(b, off, 0) reports 0 bytes read, not EOF. This used to fall through
+            // to the end-of-stream return and hand back -1.
+            assertEquals(0, stream.read(ByteArray(4), 0, 0))
+            assertEquals(0, stream.read(ByteArray(4), 2, 0))
+        } finally {
+            stream.close()
+        }
+    }
+
+    @Test
     fun openingAMissingFileFails() {
         server.close()
         server = FakeFileServer(content, chunkSize, fileId = 0).start()

@@ -152,6 +152,12 @@ public class HtspFileInputStream extends InputStream {
     public int read(@NonNull byte[] outBuf, int outOffset, int outLength) throws IOException {
         fillBuffer();
 
+        // InputStream.read(b, off, 0) must report 0 bytes read, not end of stream. Without this the
+        // fall-through below returned -1 for a zero-length request.
+        if (outLength == 0) {
+            return 0;
+        }
+
         // outOffset is where to start writing into outBuf, not a limit on how much to read: the
         // InputStream contract is to read at most outLength bytes. Using outLength - outOffset made
         // every caller that passed an off > 0 receive fewer bytes than it asked for.
