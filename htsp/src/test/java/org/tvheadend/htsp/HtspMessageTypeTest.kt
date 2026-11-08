@@ -93,12 +93,12 @@ class HtspMessageTypeTest {
     }
 
     @Test
-    fun getStringWithFallbackStillReturnsNullForAPresentNullValue() {
-        // containsKey() is true for a present null value, so the fallback is bypassed. This is
-        // the documented behaviour: the fallback guards a missing key, not a null value.
+    fun getStringWithFallbackUsesTheFallbackForAPresentNullValue() {
+        // A key that is present but holds null is now treated the same as an absent one. It used to
+        // bypass the fallback and hand back null to a caller that had asked for a default.
         val message = HtspMessage()
         message.put("key", null)
-        assertNull(message.getString("key", "fallback"))
+        assertEquals("fallback", message.getString("key", "fallback"))
     }
 
     @Test
@@ -138,11 +138,12 @@ class HtspMessageTypeTest {
     }
 
     @Test
-    fun getIntegerRejectsALong() {
-        // (int) obj compiles to a checkcast to Integer, so a boxed Long cannot be coerced.
+    fun getIntegerNarrowsALong() {
+        // Integers from the wire are BigInteger, but a value put in locally is a boxed Integer or
+        // Long. Only BigInteger used to be recognised, so a Long threw ClassCastException.
         val message = HtspMessage()
         message.put("key", 7L)
-        assertThrows(ClassCastException::class.java) { message.getInteger("key") }
+        assertEquals(7, message.getInteger("key"))
     }
 
     @Test
@@ -174,11 +175,10 @@ class HtspMessageTypeTest {
     }
 
     @Test
-    fun getLongRejectsAnInteger() {
-        // (long) obj compiles to a checkcast to Long, so a boxed Integer cannot be coerced.
+    fun getLongWidensAnInteger() {
         val message = HtspMessage()
         message.put("key", 7)
-        assertThrows(ClassCastException::class.java) { message.getLong("key") }
+        assertEquals(7L, message.getLong("key"))
     }
 
     @Test
@@ -268,12 +268,12 @@ class HtspMessageTypeTest {
     }
 
     @Test
-    fun getIntegerListSkipsValuesThatAreNotBigIntegers() {
-        // Only BigInteger entries are copied. Plain Integers (which never come off the wire)
-        // are silently dropped, so a hand-built list of Integers yields an empty result.
+    fun getIntegerListAcceptsAnyNumber() {
+        // Entries that come off the wire are BigInteger, but a hand-built list holds Integers.
+        // Those used to be silently dropped, so this returned an empty list.
         val message = HtspMessage()
         message.put("key", arrayListOf(1, 2, 3))
-        assertTrue(message.getIntegerList("key").isEmpty())
+        assertEquals(listOf(1, 2, 3), message.getIntegerList("key"))
     }
 
     // ---- getByteArray ---------------------------------------------------------------

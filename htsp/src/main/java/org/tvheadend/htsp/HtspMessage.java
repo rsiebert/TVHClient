@@ -33,11 +33,11 @@ public class HtspMessage extends HashMap<String, Object> {
     }
 
     public String getString(String key, String fallback) {
-        if (!containsKey(key)) {
-            return fallback;
-        }
-
-        return getString(key);
+        // A key that is present but holds null is treated the same as an absent one. Previously
+        // only an absent key returned the fallback, so a present-but-null value handed a null to
+        // callers that had explicitly asked for a default.
+        String value = getString(key);
+        return value != null ? value : fallback;
     }
 
     public String getString(String key) {
@@ -61,11 +61,7 @@ public class HtspMessage extends HashMap<String, Object> {
         if (obj == null) {
             throw new RuntimeException("Attempted to getInteger(" + key + ") on non-existent key");
         }
-        if (obj instanceof BigInteger) {
-            return ((BigInteger) obj).intValue();
-        }
-
-        return (int) obj;
+        return toNumber(key, obj).intValue();
     }
 
     public long getLong(String key, long fallback) {
@@ -81,12 +77,24 @@ public class HtspMessage extends HashMap<String, Object> {
         if (obj == null) {
             throw new RuntimeException("Attempted to getLong(" + key + ") on non-existent key");
         }
+        return toNumber(key, obj).longValue();
+    }
 
-        if (obj instanceof BigInteger) {
-            return ((BigInteger) obj).longValue();
+    /**
+     * The numeric value of a decoded field. Integers arriving from the server are BigInteger, while
+     * values put in locally are boxed Integer or Long - BigInteger, Integer and Long are all Number,
+     * so everything is narrowed through it. Previously only BigInteger was recognised and anything
+     * else was cast directly, so asking for a long that had been stored as an Integer - or an int
+     * stored as a Long - threw ClassCastException.
+     */
+    private static Number toNumber(String key, Object value) {
+        if (value instanceof Number) {
+            return (Number) value;
         }
-
-        return (long) obj;
+        // ClassCastException rather than a plainer exception: that is what this used to throw for a
+        // non-numeric value, and it is what callers catch today.
+        throw new ClassCastException("Attempted to read " + key + " as a number but it is a "
+                + value.getClass().getSimpleName());
     }
 
     public boolean getBoolean(String key, boolean fallback) {
@@ -111,8 +119,10 @@ public class HtspMessage extends HashMap<String, Object> {
             return list;
         }
         for (Object obj : getList(name)) {
-            if (obj instanceof BigInteger) {
-                list.add(((BigInteger) obj).intValue());
+            // Accept any Number, not just BigInteger, so a list put in locally as Integer or Long is
+            // not silently dropped.
+            if (obj instanceof Number) {
+                list.add(((Number) obj).intValue());
             }
         }
         return list;
