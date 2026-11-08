@@ -74,10 +74,6 @@ class ServerProfileDataSource(
         return MutableLiveData()
     }
 
-    override fun getLiveDataItemById(id: Any): LiveData<ServerProfile> {
-        return MutableLiveData()
-    }
-
     override fun getItemById(id: Any): ServerProfile? {
         var serverProfile: ServerProfile? = null
         runBlocking(Dispatchers.IO) {

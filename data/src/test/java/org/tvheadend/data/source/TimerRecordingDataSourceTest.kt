@@ -93,13 +93,6 @@ class TimerRecordingDataSourceTest {
     }
 
     @Test
-    fun getLiveDataItemByIdReturnsTheRecording() {
-        dataSource.addItem(timerRecording("a", title = "One"))
-
-        assertThat(dataSource.getLiveDataItemById("a").observedValue()!!.title).isEqualTo("One")
-    }
-
-    @Test
     fun getItemByIdReturnsTheRecordingOnlyForNonEmptyIds() {
         dataSource.addItem(timerRecording("a", title = "One"))
 

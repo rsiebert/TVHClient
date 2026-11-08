@@ -47,10 +47,6 @@ class ChannelDataSource(
         return MutableLiveData()
     }
 
-    override fun getLiveDataItemById(id: Any): LiveData<Channel> {
-        return MutableLiveData()
-    }
-
     override fun getItemById(id: Any): Channel? {
         var channel: Channel?
         runBlocking(Dispatchers.IO) {

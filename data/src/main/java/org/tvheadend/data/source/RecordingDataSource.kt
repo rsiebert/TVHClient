@@ -43,12 +43,6 @@ class RecordingDataSource(
         }
     }
 
-    override fun getLiveDataItemById(id: Any): LiveData<Recording> {
-        return db.recordingDao.loadRecordingById(id as Int).map { entity ->
-            entity.toRecording()
-        }
-    }
-
     fun getLiveDataItemsByChannelId(channelId: Int): LiveData<List<Recording>> {
         return db.recordingDao.loadRecordingsByChannelId(channelId).map { entities ->
             entities.map { it.toRecording() }

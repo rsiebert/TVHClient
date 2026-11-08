@@ -21,12 +21,6 @@ class InputDataSource(@Suppress("unused") private val db: AppRoomDatabase) : Dat
         return inputLiveData
     }
 
-    override fun getLiveDataItemById(id: Any): LiveData<Input> {
-        val inputLiveData = MutableLiveData<Input>()
-        inputLiveData.value = getItemById(id)
-        return inputLiveData
-    }
-
     override fun getItems(): List<Input> {
         return inputs
     }

@@ -116,13 +116,6 @@ class ConnectionDataSourceTest {
     }
 
     @Test
-    fun getLiveDataItemByIdReturnsTheConnection() {
-        dataSource.addItem(connection(id = 1, name = "One"))
-
-        assertThat(dataSource.getLiveDataItemById(1).observedValue()!!.name).isEqualTo("One")
-    }
-
-    @Test
     fun getItemByIdReturnsTheConnectionOrNull() {
         dataSource.addItem(connection(id = 1, name = "One"))
 

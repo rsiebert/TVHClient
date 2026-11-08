@@ -142,6 +142,5 @@ class ChannelTagDataSourceTest {
         dataSource.addItem(channelTag(tagId = 1))
 
         assertThat(dataSource.getLiveDataItemCount().observedValue()).isNull()
-        assertThat(dataSource.getLiveDataItemById(1).observedValue()).isNull()
     }
 }

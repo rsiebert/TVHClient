@@ -65,12 +65,6 @@ class ProgramDataSource(
         }
     }
 
-    override fun getLiveDataItemById(id: Any): LiveData<Program> {
-        return db.programDao.loadProgramById(id as Int).map { entity ->
-            entity.toProgram()
-        }
-    }
-
     override fun getItemById(id: Any): Program? {
         var program: Program?
         runBlocking(Dispatchers.IO) {

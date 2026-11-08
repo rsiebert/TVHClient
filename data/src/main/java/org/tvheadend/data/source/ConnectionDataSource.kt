@@ -83,12 +83,6 @@ class ConnectionDataSource(
         }
     }
 
-    override fun getLiveDataItemById(id: Any): LiveData<Connection> {
-        return db.connectionDao.loadConnectionById(id as Int).map { entity ->
-            entity.toConnection()
-        }
-    }
-
     override fun getItemById(id: Any): Connection? {
         var connection: Connection?
         runBlocking(Dispatchers.IO) {

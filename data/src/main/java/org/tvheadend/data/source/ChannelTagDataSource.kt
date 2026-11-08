@@ -69,10 +69,6 @@ class ChannelTagDataSource(
         }
     }
 
-    override fun getLiveDataItemById(id: Any): LiveData<ChannelTag> {
-        return MutableLiveData()
-    }
-
     override fun getItemById(id: Any): ChannelTag? {
         var channelTag: ChannelTag?
         runBlocking(Dispatchers.IO) {

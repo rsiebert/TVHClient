@@ -116,13 +116,6 @@ class RecordingDataSourceTest {
     }
 
     @Test
-    fun getLiveDataItemByIdReturnsTheRecording() {
-        dataSource.addItem(recording(id = 1, title = "One"))
-
-        assertThat(dataSource.getLiveDataItemById(1).observedValue()!!.title).isEqualTo("One")
-    }
-
-    @Test
     fun getLiveDataItemsByChannelIdFiltersByChannel() {
         dataSource.addItem(recording(id = 1, channelId = 100))
         dataSource.addItem(recording(id = 2, channelId = 200))

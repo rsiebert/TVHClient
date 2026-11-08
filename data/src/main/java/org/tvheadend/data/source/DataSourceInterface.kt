@@ -8,8 +8,6 @@ interface DataSourceInterface<T> {
 
     fun getLiveDataItems(): LiveData<List<T>>
 
-    fun getLiveDataItemById(id: Any): LiveData<T>
-
     fun getItems(): List<T>
 
     fun getItemById(id: Any): T?

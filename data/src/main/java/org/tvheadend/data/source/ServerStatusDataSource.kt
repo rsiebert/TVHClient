@@ -69,12 +69,6 @@ class ServerStatusDataSource(
         }
     }
 
-    override fun getLiveDataItemById(id: Any): LiveData<ServerStatus> {
-        return db.serverStatusDao.loadServerStatusById(id as Int).map { entity ->
-            entity.toServerStatus()
-        }
-    }
-
     override fun getItemById(id: Any): ServerStatus? {
         var serverStatus: ServerStatus?
         runBlocking(Dispatchers.IO) {

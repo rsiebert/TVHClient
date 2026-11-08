@@ -113,14 +113,6 @@ class ServerStatusDataSourceTest {
     }
 
     @Test
-    fun getLiveDataItemByIdReturnsTheServerStatus() {
-        db.connectionDao.insert(TestDatabase.activeConnection(id = 1))
-        db.serverStatusDao.insert(TestDatabase.serverStatus(connectionId = 1, id = 1, serverName = "Active"))
-
-        assertThat(dataSource.getLiveDataItemById(1).observedValue()!!.serverName).isEqualTo("Active")
-    }
-
-    @Test
     fun getItemByIdReturnsTheServerStatusOrNull() {
         db.connectionDao.insert(TestDatabase.activeConnection(id = 1))
         db.serverStatusDao.insert(TestDatabase.serverStatus(connectionId = 1, id = 1, serverName = "Active"))

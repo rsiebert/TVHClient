@@ -107,11 +107,4 @@ class SubscriptionDataSourceTest {
 
         assertThat(dataSource.getLiveDataItems().observedValue()!!.map { it.id }).containsExactly(1)
     }
-
-    @Test
-    fun getLiveDataItemByIdReturnsTheEntry() {
-        dataSource.addItem(subscription(1))
-
-        assertThat(dataSource.getLiveDataItemById(0).observedValue()!!.id).isEqualTo(1)
-    }
 }

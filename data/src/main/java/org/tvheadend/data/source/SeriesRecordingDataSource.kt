@@ -38,12 +38,6 @@ class SeriesRecordingDataSource(
         }
     }
 
-    override fun getLiveDataItemById(id: Any): LiveData<SeriesRecording> {
-        return db.seriesRecordingDao.loadRecordingById(id as String).map { entity ->
-            entity.toRecording()
-        }
-    }
-
     override fun getItemById(id: Any): SeriesRecording? {
         var seriesRecording: SeriesRecording? = null
         if ((id as String).isNotEmpty()) {

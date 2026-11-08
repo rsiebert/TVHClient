@@ -107,11 +107,4 @@ class InputDataSourceTest {
 
         assertThat(dataSource.getLiveDataItems().observedValue()!!.map { it.uuid }).containsExactly("a")
     }
-
-    @Test
-    fun getLiveDataItemByIdReturnsTheEntry() {
-        dataSource.addItem(input("a"))
-
-        assertThat(dataSource.getLiveDataItemById(0).observedValue()!!.uuid).isEqualTo("a")
-    }
 }

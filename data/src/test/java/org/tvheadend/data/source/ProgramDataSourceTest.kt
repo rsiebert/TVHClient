@@ -146,13 +146,6 @@ class ProgramDataSourceTest {
     }
 
     @Test
-    fun getLiveDataItemByIdReturnsTheProgram() {
-        dataSource.addItem(program(eventId = 1, title = "One"))
-
-        assertThat(dataSource.getLiveDataItemById(1).observedValue()!!.title).isEqualTo("One")
-    }
-
-    @Test
     fun getItemByIdReturnsTheProgramOrNull() {
         dataSource.addItem(program(eventId = 1, title = "One"))
 

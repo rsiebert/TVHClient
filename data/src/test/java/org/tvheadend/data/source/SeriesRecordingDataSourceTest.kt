@@ -93,13 +93,6 @@ class SeriesRecordingDataSourceTest {
     }
 
     @Test
-    fun getLiveDataItemByIdReturnsTheRecording() {
-        dataSource.addItem(seriesRecording("a", title = "One"))
-
-        assertThat(dataSource.getLiveDataItemById("a").observedValue()!!.title).isEqualTo("One")
-    }
-
-    @Test
     fun getItemByIdReturnsTheRecordingOnlyForNonEmptyIds() {
         dataSource.addItem(seriesRecording("a", title = "One"))
 

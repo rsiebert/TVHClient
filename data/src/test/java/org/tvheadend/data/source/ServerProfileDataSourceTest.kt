@@ -111,7 +111,6 @@ class ServerProfileDataSourceTest {
 
         assertThat(dataSource.getLiveDataItemCount().observedValue()).isNull()
         assertThat(dataSource.getLiveDataItems().observedValue()).isNull()
-        assertThat(dataSource.getLiveDataItemById(1).observedValue()).isNull()
         assertThat(dataSource.getItems()).isEmpty()
     }
 }

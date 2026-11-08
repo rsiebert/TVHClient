@@ -38,12 +38,6 @@ class TimerRecordingDataSource(
         }
     }
 
-    override fun getLiveDataItemById(id: Any): LiveData<TimerRecording> {
-        return db.timerRecordingDao.loadRecordingById(id as String).map { entity ->
-            entity.toRecording()
-        }
-    }
-
     override fun getItemById(id: Any): TimerRecording? {
         var timerRecording: TimerRecording? = null
         if ((id as String).isNotEmpty()) {

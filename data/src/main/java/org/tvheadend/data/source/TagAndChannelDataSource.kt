@@ -43,10 +43,6 @@ class TagAndChannelDataSource(
         return MutableLiveData()
     }
 
-    override fun getLiveDataItemById(id: Any): LiveData<TagAndChannel> {
-        return MutableLiveData()
-    }
-
     override fun getItemById(id: Any): TagAndChannel? {
         return null
     }
