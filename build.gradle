@@ -71,7 +71,7 @@ subprojects {
     //
     // Measured on the debug variant (see below). :htsp is at ~86% including the debug-only
     // src/debug/.../FakeTvheadendServer.kt, so it is gated at 70 like :data.
-    def minimumLineCoverage = [':data': 60, ':htsp': 70][project.path]
+    def minimumLineCoverage = [':data': 60, ':htsp': 70, ':app': 5][project.path]
 
     kover {
         reports {
