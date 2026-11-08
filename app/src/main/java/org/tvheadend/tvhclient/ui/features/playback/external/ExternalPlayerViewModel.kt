@@ -19,6 +19,7 @@ import org.tvheadend.htsp.*
 import org.tvheadend.tvhclient.BuildConfig
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.ui.base.BaseViewModel
+import org.tvheadend.tvhclient.ui.features.playback.PlaybackLogic
 import timber.log.Timber
 import java.net.InetAddress
 import java.net.UnknownHostException
@@ -180,7 +181,11 @@ class ExternalPlayerViewModel(application: Application) : BaseViewModel(applicat
 
         // Get the playback profile for the given id. In case no profile is returned, use the default name
         val serverProfile = appRepository.serverProfileData.getItemById(profileId)
-        return "${getServerUrl(convertHostname)}$path?ticket=$ticket&profile=${serverProfile?.name
-                ?: defaultProfileName}"
+        return PlaybackLogic.playbackUrl(
+            baseUrl = getServerUrl(convertHostname),
+            path = path,
+            ticket = ticket,
+            profileName = serverProfile?.name ?: defaultProfileName
+        )
     }
 }

@@ -30,14 +30,13 @@ import org.tvheadend.tvhclient.BuildConfig
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.service.htsp.convertMessageToCutpointList
 import org.tvheadend.tvhclient.ui.base.BaseViewModel
+import org.tvheadend.tvhclient.ui.features.playback.PlaybackLogic
 import org.tvheadend.tvhclient.ui.features.playback.internal.utils.CustomEventLogger
 import org.tvheadend.tvhclient.ui.features.playback.internal.utils.VideoAspect
 import timber.log.Timber
-import java.text.DecimalFormat
 import java.util.*
 import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledExecutorService
-import kotlin.math.max
 
 
 class PlayerViewModel(application: Application) : BaseViewModel(application), ServerConnectionStateListener, Player.Listener {
@@ -418,19 +417,13 @@ class PlayerViewModel(application: Application) : BaseViewModel(application), Se
         val height = videoSize.height
         val pixelWidthHeightRatio = videoSize.pixelWidthHeightRatio
         Timber.d("Video size changed to width $width, height $height, pixel aspect ratio $pixelWidthHeightRatio")
-        var newPixelWidthHeightRatio = pixelWidthHeightRatio
-
         val forceAspectRatio = sharedPreferences.getBoolean("force_aspect_ratio_for_sd_content_enabled", defaultForceAspectRatio)
         if (forceAspectRatio) {
             Timber.d("Video aspect shall be forced, checking original video aspect ratio")
-
-            val aspectRatio = DecimalFormat("#.##").format(width.toFloat() / height.toFloat())
-            if (aspectRatio == "1,25") {
-                newPixelWidthHeightRatio = ((16f / 9f) * height.toFloat()) / width.toFloat()
-                Timber.d("Video aspect ratio is 5:4, updating pixel aspect ratio to $newPixelWidthHeightRatio")
-            }
         }
-        videoAspectRatio.postValue(VideoAspect((width * newPixelWidthHeightRatio).toInt(), height))
+        videoAspectRatio.postValue(
+            PlaybackLogic.videoAspect(width, height, pixelWidthHeightRatio, forceAspectRatio)
+        )
     }
 
     override fun onRenderedFirstFrame() {
@@ -505,21 +498,16 @@ class PlayerViewModel(application: Application) : BaseViewModel(application), Se
     }
 
     private fun getSeekPosition(offset: Int): Long {
-        val timeshiftStartTime = dataSource?.timeshiftStartTime ?: 0
-        val timeshiftStartPts = dataSource?.timeshiftStartPts ?: 0
-        val timeshiftOffsetPts = dataSource?.timeshiftOffsetPts ?: 0
-
-        val startTime = if (timeshiftStartTime != Long.MIN_VALUE)
-            (timeshiftStartTime / 1000) else 0
-        Timber.d("Timeshift start time is $startTime")
-
-        val currentTime = if (timeshiftOffsetPts != Long.MIN_VALUE)
-            System.currentTimeMillis() + timeshiftOffsetPts / 1000 else player.currentPosition
-        Timber.d("Timeshift current time is $currentTime")
-
-        val time = max(currentTime + offset, startTime)
-        val seekPts = time * 1000 - timeshiftStartTime
-        return max(seekPts, timeshiftStartPts) / 1000
+        val position = PlaybackLogic.seekPosition(
+            timeshiftStartTime = dataSource?.timeshiftStartTime ?: 0,
+            timeshiftStartPts = dataSource?.timeshiftStartPts ?: 0,
+            timeshiftOffsetPts = dataSource?.timeshiftOffsetPts ?: 0,
+            currentPosition = player.currentPosition,
+            now = System.currentTimeMillis(),
+            offsetSeconds = offset
+        )
+        Timber.d("Seek position for offset $offset is $position")
+        return position
     }
 
     fun playNextChannel(context: Context) {
