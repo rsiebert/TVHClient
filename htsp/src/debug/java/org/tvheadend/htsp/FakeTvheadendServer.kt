@@ -3,6 +3,7 @@ package org.tvheadend.htsp
 import java.io.IOException
 import java.net.InetSocketAddress
 import java.nio.ByteBuffer
+import java.nio.ByteOrder
 import java.nio.channels.ServerSocketChannel
 import java.nio.channels.SocketChannel
 import java.util.concurrent.ConcurrentHashMap
@@ -208,9 +209,12 @@ class FakeTvheadendServer(
                 }
             }
             "fileOpen" -> {
-                // Channel icons are fetched over the HTSP file API: a non-http url is read through
-                // HtspFileInputStream while the negotiated htspversion is above 9.
-                val data = iconBytes(message.getString("file", ""))
+                // Channel icons and recordings are fetched over the HTSP file API: a non-http url is
+                // read through HtspFileInputStream while the negotiated htspversion is above 9.
+                // A demo recording ("dvrfile/<id>") yields a real, decodable WAV so the internal
+                // player can reach a ready state; everything else is an icon.
+                val path = message.getString("file", "")
+                val data = if (path.startsWith("dvrfile")) recordingBytes() else iconBytes(path)
                 val fileId = nextFileId.getAndIncrement()
                 openFiles[fileId] = data
                 send(channel, withSeq(message, HtspMessage().apply {
@@ -365,6 +369,31 @@ class FakeTvheadendServer(
         DemoChannelIconFactory.badge(DEMO_CHANNEL_ICON_COLORS[index % DEMO_CHANNEL_ICON_COLORS.size])
     }
 
+    /**
+     * A minimal, valid mono 8 kHz 8-bit PCM WAV of silence, returned as the content of every demo
+     * recording. Media3's WavExtractor parses it, which lets the internal player reach a ready
+     * state on the emulator without shipping any real media.
+     */
+    private fun recordingBytes(): ByteArray {
+        val sampleCount = SAMPLE_RATE
+        val buffer = ByteBuffer.allocate(WAV_HEADER_SIZE + sampleCount).order(ByteOrder.LITTLE_ENDIAN)
+        buffer.put("RIFF".toByteArray(Charsets.US_ASCII))
+        buffer.putInt(WAV_HEADER_SIZE - 8 + sampleCount)
+        buffer.put("WAVE".toByteArray(Charsets.US_ASCII))
+        buffer.put("fmt ".toByteArray(Charsets.US_ASCII))
+        buffer.putInt(16)              // fmt chunk size
+        buffer.putShort(1.toShort())   // PCM
+        buffer.putShort(1.toShort())   // mono
+        buffer.putInt(SAMPLE_RATE)
+        buffer.putInt(SAMPLE_RATE)     // byte rate of 8-bit mono audio
+        buffer.putShort(1.toShort())   // block align
+        buffer.putShort(8.toShort())   // bits per sample
+        buffer.put("data".toByteArray(Charsets.US_ASCII))
+        buffer.putInt(sampleCount)
+        repeat(sampleCount) { buffer.put(SILENCE_SAMPLE) }
+        return buffer.array()
+    }
+
     /** A bounded slice of a file opened through the HTSP file API, or an empty array if unknown. */
     private fun slice(data: ByteArray?, offset: Long, size: Int): ByteArray {
         if (data == null || size <= 0 || offset < 0 || offset >= data.size) {
@@ -413,6 +442,15 @@ class FakeTvheadendServer(
     companion object {
         const val DEFAULT_HOST = "127.0.0.1"
         const val DEFAULT_PORT = 19982
+
+        /** Sample rate of the generated demo recording audio. */
+        private const val SAMPLE_RATE = 8000
+
+        /** Size of a canonical WAV header (RIFF + fmt + data chunks). */
+        private const val WAV_HEADER_SIZE = 44
+
+        /** 8-bit PCM silence sits at the midpoint of the unsigned range. */
+        private const val SILENCE_SAMPLE: Byte = -128
 
         private val CHALLENGE = ByteArray(16) { (it + 1).toByte() }
         private val DEMO_CHANNEL_NAMES = listOf(
