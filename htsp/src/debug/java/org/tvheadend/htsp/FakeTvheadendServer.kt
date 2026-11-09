@@ -5,8 +5,10 @@ import java.net.InetSocketAddress
 import java.nio.ByteBuffer
 import java.nio.channels.ServerSocketChannel
 import java.nio.channels.SocketChannel
+import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.CopyOnWriteArrayList
 import java.util.concurrent.atomic.AtomicBoolean
+import java.util.concurrent.atomic.AtomicInteger
 import timber.log.Timber
 
 /**
@@ -16,7 +18,8 @@ import timber.log.Timber
  * always answers with the same demo data (generated relative to "now" so it shows up in the
  * EPG and recordings screens):
  *
- *  - 3 channels in a single "Demo" tag
+ *  - 6 channels in a single "Demo" tag, each with a generated channel icon served over the
+ *    HTSP file API (`fileOpen` / `fileRead` / `fileClose`)
  *  - a full day of 1-hour EPG events per channel, starting at the top of the current hour
  *  - 3 recordings (one `scheduled`, one `recording`, one `completed`)
  *
@@ -33,6 +36,15 @@ class FakeTvheadendServer(
     private val clients = CopyOnWriteArrayList<SocketChannel>()
     private var serverChannel: ServerSocketChannel? = null
     private var acceptThread: Thread? = null
+
+    /** Files opened through the HTSP file API, keyed by the id handed out to the client. */
+    private val openFiles = ConcurrentHashMap<Int, ByteArray>()
+
+    /** Source of the ids used to track files opened through the HTSP file API. */
+    private val nextFileId = AtomicInteger(1)
+
+    /** Generated channel icons, cached per requested path so repeated downloads are cheap. */
+    private val iconCache = ConcurrentHashMap<String, ByteArray>()
 
     /** The port the server is actually listening on, or -1 before [start]. */
     @Volatile
@@ -193,6 +205,27 @@ class FakeTvheadendServer(
                     send(channel, ack(message, "api"))
                 }
             }
+            "fileOpen" -> {
+                // Channel icons are fetched over the HTSP file API: a non-http url is read through
+                // HtspFileInputStream while the negotiated htspversion is above 9.
+                val data = iconBytes(message.getString("file", ""))
+                val fileId = nextFileId.getAndIncrement()
+                openFiles[fileId] = data
+                send(channel, withSeq(message, HtspMessage().apply {
+                    setMethod("fileOpen")
+                    put("id", fileId)
+                    put("size", data.size.toLong())
+                    put("mtime", now)
+                }))
+            }
+            "fileRead" -> send(channel, withSeq(message, HtspMessage().apply {
+                setMethod("fileRead")
+                put("data", slice(openFiles[message.getInteger("id", 0)], message.getLong("offset", 0), message.getInteger("size", 0)))
+            }))
+            "fileClose" -> {
+                openFiles.remove(message.getInteger("id", 0))
+                send(channel, withSeq(message, HtspMessage().apply { setMethod("fileClose") }))
+            }
             else -> Unit // Ignore everything else (playback, status, ...).
         }
     }
@@ -205,7 +238,7 @@ class FakeTvheadendServer(
             put("tagId", 1)
             put("tagName", "Demo")
             put("tagIndex", 1)
-            put("members", arrayListOf(1, 2, 3))
+            put("members", arrayListOf(1, 2, 3, 4, 5, 6))
         },
     )
 
@@ -217,6 +250,7 @@ class FakeTvheadendServer(
             put("channelNumber", channelId)
             put("channelNumberMinor", 0)
             put("channelName", name)
+            put("channelIcon", DEMO_CHANNEL_ICON_PATHS[index])
             put("eventId", channelId * 1000)
             put("nextEventId", channelId * 1000 + 1)
             put("tags", arrayListOf(1))
@@ -280,6 +314,24 @@ class FakeTvheadendServer(
         put("comment", "")
     }
 
+    /**
+     * Returns the PNG bytes for the given icon [path], generating and caching them on demand.
+     * Unknown paths still yield an empty image so the client never hangs on a missing file.
+     */
+    private fun iconBytes(path: String): ByteArray = iconCache.getOrPut(path) {
+        val index = DEMO_CHANNEL_ICON_PATHS.indexOf(path).takeIf { it >= 0 } ?: (path.hashCode() and Int.MAX_VALUE)
+        DemoChannelIconFactory.badge(DEMO_CHANNEL_ICON_COLORS[index % DEMO_CHANNEL_ICON_COLORS.size])
+    }
+
+    /** A bounded slice of a file opened through the HTSP file API, or an empty array if unknown. */
+    private fun slice(data: ByteArray?, offset: Long, size: Int): ByteArray {
+        if (data == null || size <= 0 || offset < 0 || offset >= data.size) {
+            return ByteArray(0)
+        }
+        val start = offset.toInt()
+        return data.copyOfRange(start, minOf(start + size, data.size))
+    }
+
     // ---- Helpers ----------------------------------------------------------------------
 
     private fun send(channel: SocketChannel, message: HtspMessage) {
@@ -321,6 +373,22 @@ class FakeTvheadendServer(
         const val DEFAULT_PORT = 19982
 
         private val CHALLENGE = ByteArray(16) { (it + 1).toByte() }
-        private val DEMO_CHANNEL_NAMES = listOf("Demo One HD", "Demo Two HD", "Demo Three HD")
+        private val DEMO_CHANNEL_NAMES = listOf(
+            "Demo One HD", "Demo Two HD", "Demo Three HD",
+            "Demo Four HD", "Demo Five HD", "Demo Six HD",
+        )
+
+        /** HTSP paths the app is told to load each channel's icon from. */
+        private val DEMO_CHANNEL_ICON_PATHS = DEMO_CHANNEL_NAMES.indices.map { "imagecache/demo${it + 1}.png" }
+
+        /** One distinct badge colour per demo channel. */
+        private val DEMO_CHANNEL_ICON_COLORS = listOf(
+            0xFF1E88E5.toInt(),
+            0xFFE53935.toInt(),
+            0xFF43A047.toInt(),
+            0xFFFB8C00.toInt(),
+            0xFF8E24AA.toInt(),
+            0xFF00ACC1.toInt(),
+        )
     }
 }

@@ -151,8 +151,8 @@ class FakeTvheadendServerTest {
         assertTrue("Expected the initial sync to complete", syncCompleted.await(10, TimeUnit.SECONDS))
 
         assertThat(methods("tagAdd")).hasSize(1)
-        assertThat(methods("channelAdd")).hasSize(3)
-        assertThat(methods("eventAdd")).hasSize(6) // 3 channels * 2 hours
+        assertThat(methods("channelAdd")).hasSize(6)
+        assertThat(methods("eventAdd")).hasSize(12) // 6 channels * 2 hours
         assertThat(methods("dvrEntryAdd")).hasSize(3)
         assertThat(methods("initialSyncCompleted")).hasSize(1)
 
@@ -160,12 +160,13 @@ class FakeTvheadendServerTest {
         assertThat(tag.getInteger("tagId")).isEqualTo(1)
         assertThat(tag.getString("tagName")).isEqualTo("Demo")
         assertThat(tag.getInteger("tagIndex")).isEqualTo(1)
-        assertThat(tag.getIntegerList("members")).containsExactly(1, 2, 3)
+        assertThat(tag.getIntegerList("members")).containsExactly(1, 2, 3, 4, 5, 6)
 
         val channel = methods("channelAdd").first { it.getInteger("channelId") == 1 }
         assertThat(channel.getInteger("channelNumber")).isEqualTo(1)
         assertThat(channel.getInteger("channelNumberMinor")).isEqualTo(0)
         assertThat(channel.getString("channelName")).isEqualTo("Demo One HD")
+        assertThat(channel.getString("channelIcon")).isEqualTo("imagecache/demo1.png")
         assertThat(channel.getInteger("eventId")).isEqualTo(1000)
         assertThat(channel.getInteger("nextEventId")).isEqualTo(1001)
         assertThat(channel.getIntegerList("tags")).containsExactly(1)
@@ -220,7 +221,7 @@ class FakeTvheadendServerTest {
 
         val events = request("getEvents")
         assertThat(events).isNotNull()
-        assertThat(events!!.getList("events")).hasSize(6)
+        assertThat(events!!.getList("events")).hasSize(12)
 
         val channel = request("getChannel") { it.put("channelId", 1) }
         assertThat(channel).isNotNull()
@@ -254,6 +255,34 @@ class FakeTvheadendServerTest {
         assertThat(response).isNotNull()
         assertThat(response!!.getMethod()).isEqualTo("api")
         assertThat(response.containsKey("response")).isFalse()
+    }
+
+    @Test
+    fun servesChannelIconsThroughTheHtspFileApi() {
+        server = FakeTvheadendServer(port = 0).start()
+        connectAndAuthenticate()
+
+        val open = request("fileOpen") { it.put("file", "imagecache/demo1.png") }
+        assertThat(open).isNotNull()
+        val fileId = open!!.getInteger("id")
+        val size = open.getLong("size")
+        assertThat(fileId).isGreaterThan(0)
+        assertThat(size).isGreaterThan(0L)
+
+        val read = request("fileRead") {
+            it.put("id", fileId)
+            it.put("offset", 0L)
+            it.put("size", size)
+        }
+        assertThat(read).isNotNull()
+        val data = read!!.getByteArray("data")
+        assertThat(data).hasLength(size.toInt())
+        // A valid PNG starts with the 8-byte signature 89 50 4E 47 0D 0A 1A 0A.
+        assertThat(data.take(8).joinToString("") { "%02X".format(it) }).isEqualTo("89504E470D0A1A0A")
+
+        val close = request("fileClose") { it.put("id", fileId) }
+        assertThat(close).isNotNull()
+        assertThat(close!!.getMethod()).isEqualTo("fileClose")
     }
 
     // ---- edge cases ------------------------------------------------------------------

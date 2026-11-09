@@ -133,8 +133,12 @@ class HtspServiceHandler(val context: Context, val appRepository: AppRepository,
                             // Internal calls that are called from the intent service
                             "getMoreEvents" -> getMoreEvents(intent)
                             "loadChannelIcons" -> {
-                                loadAllChannelIcons()
-                                loadAllChannelTagIcons()
+                                // The download blocks until the icons are cached, so keep it off the
+                                // main thread this command is handled on.
+                                execService.execute {
+                                    loadAllChannelIcons()
+                                    loadAllChannelTagIcons()
+                                }
                             }
                         }
                     } else {
@@ -277,11 +281,23 @@ class HtspServiceHandler(val context: Context, val appRepository: AppRepository,
         // Save the channels and tags only during a forced sync.
         // This avoids the channel list being updated by the recyclerview
         if (syncRequired) {
-            Timber.d("Sync of initial data is required, saving received channels, tags and downloading icons")
-            saveAllReceivedChannels()
-            saveAllReceivedChannelTags()
-            loadAllChannelIcons(pendingChannelOps)
-            loadAllChannelTagIcons(pendingChannelTagOps)
+            Timber.d("Sync of initial data is required, downloading icons and saving received channels and tags")
+            // The channel list loads each icon from a file in the cache directory and only binds a
+            // row once the channel is stored. Storing the channels before the icons are downloaded
+            // made the list bind against an empty cache, and since the channel data does not change
+            // afterwards DiffUtil never rebinds the rows, so the icons stayed missing until the
+            // next start. Download the icons first and store the channels afterwards.
+            //
+            // The downloads wait for responses that are delivered by the connection reader thread,
+            // which is the thread that called this method, so this has to run on the executor.
+            val channels = ArrayList(pendingChannelOps)
+            val channelTags = ArrayList(pendingChannelTagOps)
+            execService.execute {
+                loadAllChannelIcons(channels)
+                loadAllChannelTagIcons(channelTags)
+                saveAllReceivedChannels()
+                saveAllReceivedChannelTags()
+            }
         } else {
             Timber.d("Sync of initial data is not required")
         }
@@ -784,13 +800,12 @@ class HtspServiceHandler(val context: Context, val appRepository: AppRepository,
      * @param msg The message with the new epg event data
      */
     private fun onEventAdd(msg: HtspMessage) {
+        // The channels are deliberately not saved here. The channel list renders the icons from
+        // files in the cache directory, so the channels are only stored together with their icons
+        // once the sync completes (see onInitialSyncCompleted). Saving them on the first event
+        // populated the list before the icons existed and it was never rebound afterwards.
         if (!firstEventReceived && syncRequired) {
-            Timber.d("Sync is required and received first event, saving ${pendingChannelOps.size} channels")
-            appRepository.channelData.addItems(pendingChannelOps)
-
-            Timber.d("Updating connection status with full sync completed")
-            connection.isSyncRequired = false
-            appRepository.connectionData.updateItem(connection)
+            Timber.d("Received first event, the ${pendingChannelOps.size} channels are saved once their icons are downloaded")
         }
 
         firstEventReceived = true
@@ -1134,32 +1149,36 @@ class HtspServiceHandler(val context: Context, val appRepository: AppRepository,
         }
     }
 
+    /**
+     * Downloads and caches the icons of the given [channels].
+     *
+     * This blocks until every icon has been handled, so it must not be called on the main thread
+     * nor on the connection reader thread (that thread delivers the responses the downloads wait
+     * for). Callers run it on [execService] instead.
+     */
     private fun loadAllChannelIcons(channels: List<Channel> = appRepository.channelData.getItems()) {
         Timber.d("Downloading and saving all channel icons...")
 
         for (channel in channels) {
-            execService.execute {
-                try {
-                    Timber.d("Downloading channel icon ${channel.icon} for channel ${channel.name}")
-                    downloadIconFromFileUrl(channel.icon)
-                } catch (e: Exception) {
-                    Timber.d(e, "Could not load channel icon for channel '${channel.icon}'")
-                }
+            try {
+                Timber.d("Downloading channel icon ${channel.icon} for channel ${channel.name}")
+                downloadIconFromFileUrl(channel.icon)
+            } catch (e: Exception) {
+                Timber.d(e, "Could not load channel icon for channel '${channel.name}'")
             }
         }
     }
 
+    /** Downloads and caches the icons of the given [tags]. Blocks, see [loadAllChannelIcons]. */
     private fun loadAllChannelTagIcons(tags: List<ChannelTag> = appRepository.channelTagData.getItems()) {
         Timber.d("Downloading and saving all channel tag icons...")
 
         for (tag in tags) {
-            execService.execute {
-                try {
-                    Timber.d("Downloading channel tag icon ${tag.tagIcon} for channel tag ${tag.tagName}")
-                    downloadIconFromFileUrl(tag.tagIcon)
-                } catch (e: Exception) {
-                    Timber.d(e, "Could not load channel tag icon '${tag.tagIcon}'")
-                }
+            try {
+                Timber.d("Downloading channel tag icon ${tag.tagIcon} for channel tag ${tag.tagName}")
+                downloadIconFromFileUrl(tag.tagIcon)
+            } catch (e: Exception) {
+                Timber.d(e, "Could not load channel tag icon '${tag.tagIcon}'")
             }
         }
     }
