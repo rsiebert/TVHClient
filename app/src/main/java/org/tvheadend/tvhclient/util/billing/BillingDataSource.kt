@@ -24,6 +24,7 @@ import com.android.billingclient.api.consumePurchase
 import com.android.billingclient.api.queryProductDetails
 import com.android.billingclient.api.queryPurchasesAsync
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -35,6 +36,7 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import timber.log.Timber
 import java.util.LinkedList
 import kotlin.math.min
@@ -599,6 +601,10 @@ class BillingDataSource private constructor(
                         .build()
                 )
             )
+            val purchaseActivity = activity ?: run {
+                Timber.e("No activity available to launch the billing flow for: $sku")
+                return
+            }
             val upgradeSkus = arrayOf(*upgradeSkusVarargs)
             defaultScope.launch {
                 val heldSubscriptions = getPurchases(upgradeSkus, BillingClient.ProductType.SUBS)
@@ -617,10 +623,16 @@ class BillingDataSource private constructor(
 
                     else -> Timber.e(heldSubscriptions.size.toString() + " subscriptions subscribed to. Upgrade not possible.")
                 }
-                val br = billingClient.launchBillingFlow(
-                    activity!!,
-                    billingFlowParamsBuilder.build()
-                )
+                // launchBillingFlow is a @UiThread API: it starts the Play purchase Activity, so it
+                // has to be invoked on the main thread even though the purchase lookup above does
+                // not. Calling it from the application scope's background dispatcher is undefined
+                // behaviour and can leave the user without a purchase sheet.
+                val br = withContext(Dispatchers.Main) {
+                    billingClient.launchBillingFlow(
+                        purchaseActivity,
+                        billingFlowParamsBuilder.build()
+                    )
+                }
                 if (br.responseCode == BillingClient.BillingResponseCode.OK) {
                     billingFlowInProcess.emit(true)
                 } else {
