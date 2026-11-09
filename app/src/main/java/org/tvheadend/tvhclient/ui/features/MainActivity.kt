@@ -23,6 +23,7 @@ import android.view.View
 import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.ProgressBar
+import androidx.activity.addCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
@@ -142,6 +143,8 @@ class MainActivity : AppCompatActivity(), ToolbarInterface, LayoutControlInterfa
 
         findViewById<View>(R.id.app_bar).applySystemBarInsets(top = true)
         findViewById<View>(R.id.content_container).applySystemBarInsets(bottom = true, horizontal = true)
+
+        onBackPressedDispatcher.addCallback(this) { handleBackPressed() }
 
         toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
@@ -473,7 +476,7 @@ class MainActivity : AppCompatActivity(), ToolbarInterface, LayoutControlInterfa
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             android.R.id.home -> {
-                onBackPressed()
+                onBackPressedDispatcher.onBackPressed()
                 true
             }
             R.id.menu_privacy_policy -> {
@@ -649,7 +652,14 @@ class MainActivity : AppCompatActivity(), ToolbarInterface, LayoutControlInterfa
         }
     }
 
-    override fun onBackPressed() {
+    /**
+     * Handles a back press.
+     *
+     * Registered as an OnBackPressedCallback in onCreate so the press is intercepted through the
+     * supported dispatcher API instead of the deprecated onBackPressed override, which is no
+     * longer called from Android 16 (API 36) onwards.
+     */
+    private fun handleBackPressed() {
 
         val fragment = supportFragmentManager.findFragmentById(R.id.main)
         if (fragment is BackPressedInterface) {
@@ -690,13 +700,24 @@ class MainActivity : AppCompatActivity(), ToolbarInterface, LayoutControlInterfa
             if (baseViewModel.removeFragmentWhenSearchIsDone) {
                 Timber.d("Removing current fragment because flag was set")
                 baseViewModel.removeFragmentWhenSearchIsDone = false
-                super.onBackPressed()
+                popBackStackOrFinish()
                 navigationViewModel.setSelectedMenuItemId(navigationDrawer.getSelectedMenu())
             }
         } else {
             Timber.d("Removing current fragment")
-            super.onBackPressed()
+            popBackStackOrFinish()
             navigationViewModel.setSelectedMenuItemId(navigationDrawer.getSelectedMenu())
+        }
+    }
+
+    /**
+     * Pops the current fragment off the back stack, or finishes the activity when there is nothing
+     * left to pop. Replaces the former `super.onBackPressed()` call, which no longer works because
+     * the deprecated onBackPressed override is not invoked from Android 16 (API 36) onwards.
+     */
+    private fun popBackStackOrFinish() {
+        if (!supportFragmentManager.popBackStackImmediate()) {
+            finish()
         }
     }
 

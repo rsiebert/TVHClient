@@ -65,7 +65,7 @@ class NavigationDrawer(private val activity: AppCompatActivity,
 
     init {
         toggle.syncState()
-        toggle.setToolbarNavigationClickListener { activity.onBackPressed() }
+        toggle.setToolbarNavigationClickListener { activity.onBackPressedDispatcher.onBackPressed() }
 
         countItemIds.forEach { id ->
             navigationView.menu.findItem(id)?.title?.let { baseTitles[id] = it }

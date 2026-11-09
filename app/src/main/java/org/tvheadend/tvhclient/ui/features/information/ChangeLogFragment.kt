@@ -110,7 +110,7 @@ class ChangeLogFragment : Fragment(), BackPressedInterface, HideNavigationDrawer
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             android.R.id.home -> {
-                onBackPressed()
+                requireActivity().onBackPressedDispatcher.onBackPressed()
                 return true
             }
             R.id.menu_show_full_changelog -> {

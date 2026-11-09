@@ -94,7 +94,7 @@ class TimerRecordingDetailsFragment : BaseFragment(), RecordingRemovedInterface,
 
     override fun onRecordingRemoved() {
         if (!isDualPane) {
-            activity?.onBackPressed()
+            activity?.onBackPressedDispatcher?.onBackPressed()
         } else {
             val detailsFragment = activity?.supportFragmentManager?.findFragmentById(R.id.details)
             if (detailsFragment != null) {

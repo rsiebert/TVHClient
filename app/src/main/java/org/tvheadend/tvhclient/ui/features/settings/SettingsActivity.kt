@@ -6,6 +6,7 @@ import android.content.IntentFilter
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
+import androidx.activity.addCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -42,6 +43,8 @@ class SettingsActivity : AppCompatActivity(), RemoveFragmentFromBackstackInterfa
 
         setSupportActionBar(findViewById(R.id.toolbar))
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
+        onBackPressedDispatcher.addCallback(this) { handleBackPressed() }
 
         settingsViewModel = ViewModelProvider(this)[SettingsViewModel::class.java]
         snackbarMessageReceiver = SnackbarMessageReceiver(settingsViewModel)
@@ -107,7 +110,7 @@ class SettingsActivity : AppCompatActivity(), RemoveFragmentFromBackstackInterfa
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             android.R.id.home -> {
-                onBackPressed()
+                onBackPressedDispatcher.onBackPressed()
                 true
             }
             else -> super.onOptionsItemSelected(item)
@@ -136,9 +139,11 @@ class SettingsActivity : AppCompatActivity(), RemoveFragmentFromBackstackInterfa
      * Forwards the back press command to the fragment that implements the to handle the back press.
      * This is usually required when a confirmation dialog shall be shown before exiting the fragment.
      * Otherwise remove the last fragment from the back stack or close the activity in case only one fragment remains.
+     *
+     * Registered as an OnBackPressedCallback in onCreate; replaces the deprecated onBackPressed
+     * override, which is no longer called from Android 16 (API 36) onwards.
      */
-    @Deprecated("Deprecated in Java")
-    override fun onBackPressed() {
+    private fun handleBackPressed() {
         val fragment = supportFragmentManager.findFragmentById(R.id.main)
         if (fragment is BackPressedInterface && fragment.isVisible) {
             Timber.d("Calling back press in the fragment")
@@ -154,7 +159,7 @@ class SettingsActivity : AppCompatActivity(), RemoveFragmentFromBackstackInterfa
         if (supportFragmentManager.backStackEntryCount <= 1) {
             finish()
         } else {
-            super.onBackPressed()
+            supportFragmentManager.popBackStack()
         }
     }
 }

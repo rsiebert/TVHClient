@@ -104,7 +104,7 @@ class RecordingDetailsFragment : BaseFragment(), RecordingRemovedInterface, Down
 
     override fun onRecordingRemoved() {
         if (!isDualPane) {
-            activity?.onBackPressed()
+            activity?.onBackPressedDispatcher?.onBackPressed()
         } else {
             val detailsFragment = activity?.supportFragmentManager?.findFragmentById(R.id.details)
             if (detailsFragment != null) {
