@@ -127,7 +127,7 @@ class SettingsActivity : AppCompatActivity(), RemoveFragmentFromBackstackInterfa
             "profiles" -> SettingsProfilesFragment()
             "playback" -> SettingsPlaybackFragment()
             "advanced" -> SettingsAdvancedFragment()
-            "unlocker" -> UnlockerFragment.newInstance(settingsViewModel.isUnlocked)
+            "unlocker" -> UnlockerFragment()
             "information" -> InformationFragment()
             "privacy_policy" -> PrivacyPolicyFragment()
             "changelog" -> ChangeLogFragment.newInstance(showFullChangelog = true)

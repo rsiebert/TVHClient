@@ -6,8 +6,8 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
+import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import org.tvheadend.tvhclient.MainApplication
 import org.tvheadend.tvhclient.MainRepository.Companion.UNLOCKER
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.service.ConnectionService
@@ -18,6 +18,7 @@ import timber.log.Timber
 
 class UnlockerFragment : WebViewFragment() {
 
+    private lateinit var unlockerViewModel: UnlockerViewModel
     private var isUnlocked: Boolean = false
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -26,8 +27,18 @@ class UnlockerFragment : WebViewFragment() {
         toolbarInterface.setTitle(getString(R.string.pref_unlocker))
         toolbarInterface.setSubtitle("")
 
-        isUnlocked = arguments?.getBoolean("isUnlocked") ?: false
         website = "features"
+
+        unlockerViewModel = ViewModelProvider(this)[UnlockerViewModel::class.java]
+
+        // Observe the purchase state instead of reading it from the arguments: the drawer opens
+        // this screen without any arguments, and the state also changes while the screen is
+        // visible when a purchase completes.
+        unlockerViewModel.isUnlockedLiveData.observe(viewLifecycleOwner) { unlocked ->
+            Timber.d("Received live data, unlocked changed to $unlocked")
+            isUnlocked = unlocked
+            activity?.invalidateOptionsMenu()
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -35,15 +46,21 @@ class UnlockerFragment : WebViewFragment() {
         inflater.inflate(R.menu.unlocker_options_menu, menu)
     }
 
+    override fun onPrepareOptionsMenu(menu: Menu) {
+        super.onPrepareOptionsMenu(menu)
+        // There is nothing left to buy once the unlocker is owned.
+        menu.findItem(R.id.menu_purchase)?.isVisible = !isUnlocked
+    }
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.menu_purchase -> {
-                if (!isUnlocked) {
-                    Timber.d("Unlocker not purchased")
-                    (activity!!.application as MainApplication).appContainer.mainRepository.buySku(activity!!, UNLOCKER)
-                } else {
+                if (isUnlocked) {
                     Timber.d("Unlocker already purchased")
                     showPurchasedAlreadyMadeDialog()
+                } else {
+                    Timber.d("Unlocker not purchased")
+                    unlockerViewModel.buySku(requireActivity(), UNLOCKER)
                 }
                 true
             }
@@ -98,17 +115,6 @@ class UnlockerFragment : WebViewFragment() {
                     .create()
             dialog.setCanceledOnTouchOutside(false)
             dialog.show()
-        }
-    }
-
-    companion object {
-
-        fun newInstance(isUnlocked: Boolean): UnlockerFragment {
-            val f = UnlockerFragment()
-            val args = Bundle()
-            args.putBoolean("isUnlocked", isUnlocked)
-            f.arguments = args
-            return f
         }
     }
 }
