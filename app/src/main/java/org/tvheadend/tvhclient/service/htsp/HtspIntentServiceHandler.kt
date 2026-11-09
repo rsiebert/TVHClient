@@ -57,6 +57,14 @@ class HtspIntentServiceHandler(val context: Context, val appRepository: AppRepos
     private val authenticationLock = Object()
     private val responseLock = Object()
 
+    /**
+     * Set while the handler is being torn down. A failure that surfaces then was caused by closing
+     * our own socket while the handshake was still in flight, not by the server, so it must not be
+     * reported to the user as a failed authentication.
+     */
+    @Volatile
+    private var isDestroying = false
+
     init {
         htspVersion = serverStatus.htspVersion
 
@@ -110,6 +118,7 @@ class HtspIntentServiceHandler(val context: Context, val appRepository: AppRepos
 
     override fun onDestroy() {
         Timber.d("Stopping service handler")
+        isDestroying = true
         execService.shutdown()
         htspConnection.closeConnection()
     }
@@ -117,6 +126,12 @@ class HtspIntentServiceHandler(val context: Context, val appRepository: AppRepos
     override fun onAuthenticationStateChange(result: AuthenticationStateResult) {
         synchronized(authenticationLock) {
             authenticationLock.notify()
+        }
+        // Closing the socket while the handshake is still running makes the connection report a
+        // failure. That is not a server error, so it is not forwarded to the user interface.
+        if (isDestroying && result is AuthenticationStateResult.Failed) {
+            Timber.d("Not reporting the authentication failure caused by tearing down the handler")
+            return
         }
         context.sendSyncStateMessage(SyncStateResult.Authenticating(result))
     }

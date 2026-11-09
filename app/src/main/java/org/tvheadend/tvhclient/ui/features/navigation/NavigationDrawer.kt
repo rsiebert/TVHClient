@@ -138,9 +138,20 @@ class NavigationDrawer(private val activity: AppCompatActivity,
 
     private fun onConnectionSelected(position: Int) {
         val selectedId = connectionIds.getOrNull(position) ?: return
+        val activeId = activeConnectionId()
+
+        // The spinner is repopulated whenever the connection list or the active connection changes.
+        // While switching servers the active connection is briefly unknown (the old row is
+        // deactivated before the new one is activated), and the callback fired while the adapter is
+        // being set would otherwise be taken for the user picking a different server. Until the
+        // active connection is known again there is no real selection to act on.
+        if (selectedId < 0 || activeId < 0) {
+            return
+        }
+
         // Ignore the callback that fires when the spinner is programmatically set to the
         // currently active connection.
-        if (selectedId == activeConnectionId()) {
+        if (selectedId == activeId) {
             return
         }
 

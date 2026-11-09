@@ -62,6 +62,18 @@ public class HtspConnection extends Thread implements ServerConnectionInterface<
     private final LinkedList<HtspMessage> messageQueue;
     private boolean isConnecting = false;
     private boolean isAuthenticated = false;
+    /**
+     * Set when the connection is closed on purpose. A close during the handshake must not be
+     * reported as a failed authentication, otherwise the user sees a misleading "Authentication
+     * failed" message while switching servers.
+     */
+    private volatile boolean isClosing = false;
+    /**
+     * Monitor on which {@link #authenticate()} waits for the response. It is a field so that
+     * {@link #closeConnection()} can release a waiting authenticator instead of leaving it to run
+     * into the connection timeout.
+     */
+    private final Object authMonitor = new Object();
     private Selector selector;
 
     @Override
@@ -106,6 +118,7 @@ public class HtspConnection extends Thread implements ServerConnectionInterface<
 
         Timber.d("Connection to server is starting");
         isConnecting = true;
+        isClosing = false;
 
         final Object signal = new Object();
 
@@ -231,8 +244,8 @@ public class HtspConnection extends Thread implements ServerConnectionInterface<
                 Timber.d("Granted rights: admin %s, streaming %s, dvr %s", rights.isAdmin(), rights.isStreaming(), rights.isDvr());
                 connectionListener.onAuthenticationStateChange(new AuthenticationStateResult.Authenticated("", rights));
             }
-            synchronized (authMessage) {
-                authMessage.notify();
+            synchronized (authMonitor) {
+                authMonitor.notify();
             }
             Timber.d("Connection to server is complete");
             isConnecting = false;
@@ -267,10 +280,13 @@ public class HtspConnection extends Thread implements ServerConnectionInterface<
             }
         });
 
-        synchronized (authMessage) {
+        synchronized (authMonitor) {
             try {
-                authMessage.wait(htspConnectionData.getConnectionTimeout());
-                if (!isAuthenticated) {
+                authMonitor.wait(htspConnectionData.getConnectionTimeout());
+                // A close that was requested on purpose is not a failed authentication: the socket
+                // was closed by the application, so the caller must not be told the handshake timed
+                // out. Without this check a rebind or a service teardown reports a bogus failure.
+                if (!isAuthenticated && !isClosing) {
                     Timber.d("Timeout while waiting for authentication response");
                     connectionListener.onAuthenticationStateChange(new AuthenticationStateResult.Failed(new AuthenticationFailureReason.Other()));
                 }
@@ -318,6 +334,7 @@ public class HtspConnection extends Thread implements ServerConnectionInterface<
     @Override
     public void closeConnection() {
         Timber.d("Closing HTSP connection");
+        isClosing = true;
         lock.lock();
         try {
             responseHandlers.clear();
@@ -339,6 +356,12 @@ public class HtspConnection extends Thread implements ServerConnectionInterface<
             Timber.d(e, "Failed to close socket channel");
         } finally {
             lock.unlock();
+        }
+        // Release a thread that is waiting for the authenticate response. Without this the waiter
+        // would block until the connection timeout and then report a failed authentication even
+        // though the connection was closed on purpose.
+        synchronized (authMonitor) {
+            authMonitor.notify();
         }
         Timber.d("HTSP connection closed");
     }
