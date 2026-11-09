@@ -111,10 +111,11 @@ class MainApplication : Application(), OptionsProvider, AppGraph {
         migrationJob = applicationScope.launch {
             MigrateUtils(applicationContext, repository, appSharedPreferences).doMigrate()
 
-            // Debug builds only (no-op in release). Starts an in-process fake TVHeadend server and,
-            // if the app has no connections yet, adds a demo connection so a fresh debug install
-            // shows channels, EPG data and recordings without a real server. It runs after the
-            // migration because it depends on the migrated connection data.
+            // Debug builds only (no-op in release). Starts an in-process fake TVHeadend server and
+            // adds the demo connections pointing at it (adding any that are missing) so a fresh
+            // debug install shows channels, EPG data and recordings without a real server, and so
+            // the multi-connection flows can be exercised. It runs after the migration because it
+            // depends on the migrated connection data.
             FakeServerBootstrap.start(this@MainApplication)
         }
     }

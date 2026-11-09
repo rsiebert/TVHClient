@@ -26,15 +26,15 @@ import java.nio.channels.SocketChannel
 
 /**
  * Tests for [FakeServerBootstrap], the debug-only helper that starts the in-process
- * [FakeTvheadendServer] and, when the app has no connections yet, adds a demo connection pointing
- * at it.
+ * [FakeTvheadendServer] and adds the demo connections pointing at it (adding each one that is
+ * missing).
  *
  * The bootstrap is only reachable through a real [MainApplication] (`context.applicationContext as?
  * MainApplication`), but `MainApplication.onCreate` builds the Room database and runs the legacy
  * SQLite migration, which cannot be set up in a unit test. A `mockk` [MainApplication] is therefore
  * substituted (this is exactly why every other `:app` Robolectric test uses a plain [Application]).
  * The repository/connection data source are `mockk`s over a small in-memory list, so the tests can
- * assert precisely which connection row the bootstrap writes.
+ * assert precisely which connection rows the bootstrap writes.
  *
  * `start` is suspending (it runs inside `MainApplication`'s migration coroutine so it never blocks
  * the main thread), so the tests drive it from [runTest]. The bootstrap keeps the started server in
@@ -80,30 +80,41 @@ class FakeServerBootstrapTest {
     }
 
     @Test
-    fun startsTheFakeServerAndSeedsADemoConnection() = runTest {
+    fun startsTheFakeServerAndSeedsBothDemoConnections() = runTest {
         FakeServerBootstrap.start(context)
 
-        assertThat(storedConnections).hasSize(1)
-        val connection = storedConnections.single()
-        assertThat(connection.name).isEqualTo("Demo (fake server)")
-        assertThat(connection.hostname).isEqualTo(FakeTvheadendServer.DEFAULT_HOST)
-        assertThat(connection.username).isEqualTo("demo")
-        assertThat(connection.password).isEqualTo("demo")
-        assertThat(connection.isActive).isTrue()
-        assertThat(connection.isSyncRequired).isTrue()
-        assertThat(connection.lastUpdate).isEqualTo(0L)
-        assertThat(connection.port).isEqualTo(connection.streamingPort)
-        assertThat(connection.port).isGreaterThan(0)
-        assertThat(connection.serverUrl)
-            .isEqualTo("http://${FakeTvheadendServer.DEFAULT_HOST}:${connection.port}")
-        assertThat(connection.streamingUrl).isEqualTo(connection.serverUrl)
+        assertThat(storedConnections.map { it.name })
+            .containsExactly("Demo (fake server)", "Demo 2 (fake server)")
+
+        val active = storedConnections.single { it.name == "Demo (fake server)" }
+        assertThat(active.isActive).isTrue()
+        assertThat(active.hostname).isEqualTo(FakeTvheadendServer.DEFAULT_HOST)
+        assertThat(active.username).isEqualTo("demo")
+        assertThat(active.password).isEqualTo("demo")
+        assertThat(active.isSyncRequired).isTrue()
+        assertThat(active.lastUpdate).isEqualTo(0L)
+        assertThat(active.port).isEqualTo(active.streamingPort)
+        assertThat(active.port).isGreaterThan(0)
+        assertThat(active.serverUrl)
+            .isEqualTo("http://${FakeTvheadendServer.DEFAULT_HOST}:${active.port}")
+        assertThat(active.streamingUrl).isEqualTo(active.serverUrl)
+
+        // The second connection points at the very same fake server but is left inactive.
+        val second = storedConnections.single { it.name == "Demo 2 (fake server)" }
+        assertThat(second.isActive).isFalse()
+        assertThat(second.hostname).isEqualTo(FakeTvheadendServer.DEFAULT_HOST)
+        assertThat(second.port).isEqualTo(active.port)
+        assertThat(second.streamingPort).isEqualTo(active.port)
+        assertThat(second.serverUrl).isEqualTo(active.serverUrl)
+        assertThat(second.streamingUrl).isEqualTo(active.streamingUrl)
+        assertThat(second.isSyncRequired).isTrue()
     }
 
     @Test
     fun startsAServerThatActuallyAcceptsConnections() = runTest {
         FakeServerBootstrap.start(context)
 
-        val port = storedConnections.single().port
+        val port = storedConnections.first().port
         val socket = SocketChannel.open()
         try {
             socket.connect(InetSocketAddress(FakeTvheadendServer.DEFAULT_HOST, port))
@@ -114,13 +125,42 @@ class FakeServerBootstrapTest {
     }
 
     @Test
-    fun doesNotSeedADemoConnectionWhenOneAlreadyExists() = runTest {
-        storedConnections.add(Connection(name = "Existing server", isActive = true))
+    fun onlyAddsTheDemoConnectionThatIsMissing() = runTest {
+        // An existing install already has the first demo connection (e.g. from a previous run).
+        val existing = Connection(name = "Demo (fake server)", isActive = true)
+        storedConnections.add(existing)
 
         FakeServerBootstrap.start(context)
 
-        assertThat(storedConnections).hasSize(1)
-        assertThat(storedConnections.single().name).isEqualTo("Existing server")
+        // The pre-existing row is untouched and only the missing second one is added.
+        assertThat(storedConnections).hasSize(2)
+        assertThat(storedConnections).contains(existing)
+        assertThat(storedConnections.map { it.name })
+            .containsExactly("Demo (fake server)", "Demo 2 (fake server)")
+    }
+
+    @Test
+    fun addsTheDemoConnectionsEvenWhenAnUnrelatedConnectionExists() = runTest {
+        // A user-added (real) connection must not stop the demo connections being seeded.
+        val realServer = Connection(name = "My real server", isActive = true)
+        storedConnections.add(realServer)
+
+        FakeServerBootstrap.start(context)
+
+        assertThat(storedConnections.map { it.name })
+            .containsExactly("My real server", "Demo (fake server)", "Demo 2 (fake server)")
+        assertThat(storedConnections).contains(realServer)
+    }
+
+    @Test
+    fun doesNothingWhenAllDemoConnectionsAlreadyExist() = runTest {
+        storedConnections.add(Connection(name = "Demo (fake server)", isActive = true))
+        storedConnections.add(Connection(name = "Demo 2 (fake server)", isActive = false))
+
+        FakeServerBootstrap.start(context)
+
+        assertThat(storedConnections).hasSize(2)
+        verify(exactly = 0) { connectionData.addItem(any()) }
     }
 
     @Test
@@ -134,21 +174,21 @@ class FakeServerBootstrapTest {
     }
 
     @Test
-    fun startingTwiceOnlyStartsOneServerAndSeedsOneConnection() = runTest {
+    fun startingTwiceOnlyStartsOneServerAndSeedsTheDemoConnectionsOnce() = runTest {
         FakeServerBootstrap.start(context)
-        val firstConnection = storedConnections.single()
+        val afterFirstStart = storedConnections.toList()
 
         FakeServerBootstrap.start(context)
 
-        assertThat(storedConnections).hasSize(1)
-        assertThat(storedConnections.single()).isSameInstanceAs(firstConnection)
+        assertThat(storedConnections).hasSize(2)
+        assertThat(storedConnections).containsExactlyElementsIn(afterFirstStart)
     }
 
     @Test
-    fun waitsUntilTheInsertedRowBecomesVisible() = runTest {
+    fun waitsUntilTheInsertedRowsBecomeVisible() = runTest {
         // addItem() inserts asynchronously in production, so the bootstrap polls - with a delay -
-        // until the row is visible. Make it appear only on the third read: the first read is the
-        // "is there already a connection?" check, the second is the first poll.
+        // until the rows are visible. Make them appear only on the third read: the first read is
+        // the "which demo connections already exist?" check, the second is the first poll.
         var reads = 0
         coEvery { connectionData.getItems() } answers {
             reads++
@@ -157,7 +197,7 @@ class FakeServerBootstrapTest {
 
         FakeServerBootstrap.start(context)
 
-        assertThat(storedConnections).hasSize(1)
+        assertThat(storedConnections).hasSize(2)
         assertThat(reads).isAtLeast(3)
     }
 
