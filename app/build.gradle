@@ -12,8 +12,19 @@ plugins {
 
 apply from: '../signing.gradle'
 
+// Read through `providers` rather than a raw stream: the file is then a tracked input to the
+// configuration phase instead of an undeclared read, and no file handle is leaked.
 def appProperties = new Properties()
-appProperties.load(new FileInputStream(rootProject.file("tvhclient.properties")))
+appProperties.load(new StringReader(
+        providers.fileContents(rootProject.layout.projectDirectory.file("tvhclient.properties")).asText.get()))
+
+// `providers.exec` is tracked by Gradle, unlike Groovy's `String.execute()`, which spawns a
+// process outside Gradle's instrumentation and cannot be modelled by the configuration cache.
+def gitSha = providers.exec {
+    commandLine 'git', 'rev-parse', '--short', 'HEAD'
+    workingDir rootDir
+    ignoreExitValue true
+}.standardOutput.asText.get().trim()
 
 android {
     compileSdk = libs.versions.compileSdk.get().toInteger()
@@ -31,18 +42,14 @@ android {
         buildConfigField "String", "DEVELOPER_EMAIL", "\"${appProperties['developerEmail']}\""
         buildConfigField "Integer", "BUILD_VERSION", "$versionCode"
 
-        // Include the build time and git commit hash in the crash reports
-        def gitSha = 'git rev-parse --short HEAD'.execute([], project.rootDir).text.trim()
-        def buildTime = new GregorianCalendar().format("yyyy.MM.dd HH:mm:ss")
-        buildConfigField "String", "BUILD_TIME", "\"${buildTime}\""
+        // Include the git commit hash in the crash reports. Only the hash belongs here: it is
+        // stable between builds. The wall clock time is declared per build type instead (see
+        // below), because a value that changes on every configuration makes
+        // generate*BuildConfig permanently out of date and recompiles :app on every build.
         buildConfigField "String", "GIT_SHA", "\"${gitSha}\""
 
         // The cast ID that the app shall use
         buildConfigField "String", "CAST_ID", "\"${appProperties['castId']}\""
-
-        // Support vector drawable and animated vector drawable on devices
-        // running platform versions lower than Android 5.0 (API level 21)
-        vectorDrawables.useSupportLibrary = true
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -78,11 +85,12 @@ android {
     // AGP 9's built-in Kotlin defaults jvmTarget to compileOptions.targetCompatibility.
     testOptions.unitTests.includeAndroidResources = true
     namespace 'org.tvheadend.tvhclient'
-    packaging {
-        jniLibs {
-            useLegacyPackaging false
-        }
-    }
+
+    // Wall-clock build time, for the release crash reports. Evaluation here is cheap; what
+    // matters is that it is not in defaultConfig, where it would be an input to *every*
+    // variant's BuildConfig task. Note this value is frozen for the lifetime of a configuration
+    // cache entry, so it needs revisiting before the configuration cache is enabled.
+    def releaseBuildTime = new GregorianCalendar().format("yyyy.MM.dd HH:mm:ss")
 
     buildTypes {
         release {
@@ -96,14 +104,21 @@ android {
             }
             proguardFiles 'proguard-rules.pro'
             buildConfigField "Boolean", "OVERRIDE_UNLOCKED", "false"
+            buildConfigField "String", "BUILD_TIME", "\"${releaseBuildTime}\""
         }
         debug {
-            // Inherit the release settings, but stay unminified: initWith would otherwise
-            // pull in the release optimization block and minify debug (and androidTest) too.
-            initWith buildTypes.release
+            // Deliberately no initWith here. initWith copies the whole release build type, and
+            // that silently drags in debuggable = false - which left the debug variant
+            // undebuggable (no debugger attach, BuildConfig.DEBUG == false) - as well as the
+            // release BUILD_TIME. Everything that genuinely needs to differ is set explicitly
+            // below, so the debug build type keeps AGP's defaults (debuggable = true).
             optimization {
                 enable = false
             }
+            // A stable literal rather than a timestamp. A value that changes on every
+            // configuration would make generateDebugBuildConfig permanently out of date, which
+            // in turn recompiles :app and stops the build cache from ever hitting.
+            buildConfigField "String", "BUILD_TIME", "\"dev\""
             // Debug builds are unlocked so the paid-only features (the internal player, the
             // recording profiles) can be exercised without a Play purchase.
             buildConfigField "Boolean", "OVERRIDE_UNLOCKED", "true"
@@ -118,9 +133,6 @@ base {
 }
 
 dependencies {
-    // Dependency on local binaries
-    implementation fileTree(include: ['*.jar'], dir: 'libs')
-
     // AndroidX libraries
     implementation libs.androidx.core.ktx
     implementation libs.androidx.appcompat

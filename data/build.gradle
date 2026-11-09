@@ -15,9 +15,6 @@ android {
         release {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
-        debug {
-            initWith buildTypes.release
-        }
     }
     compileOptions {
         sourceCompatibility = libs.versions.javaVersion.get()
@@ -43,8 +40,6 @@ ksp {
 }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
-
     // Support library basics
     implementation libs.androidx.appcompat
     implementation libs.androidx.preference.ktx

@@ -1,5 +1,8 @@
+// Read through `providers` so the file is a tracked input to the configuration phase rather
+// than an undeclared stream read, and so no file handle is left open.
 def keystoreProperties = new Properties()
-keystoreProperties.load(new FileInputStream(rootProject.file("keystore.properties")))
+keystoreProperties.load(new StringReader(
+        providers.fileContents(rootProject.layout.projectDirectory.file("keystore.properties")).asText.get()))
 
 android {
     signingConfigs {
