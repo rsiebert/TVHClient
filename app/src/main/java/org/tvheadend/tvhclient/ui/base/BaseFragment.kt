@@ -10,6 +10,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.preference.PreferenceManager
 import org.tvheadend.data.AppRepository
 import org.tvheadend.data.entity.Connection
+import org.tvheadend.tvhclient.BuildConfig
 import org.tvheadend.tvhclient.MainApplication
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.ui.common.interfaces.LayoutControlInterface
@@ -46,7 +47,9 @@ abstract class BaseFragment : Fragment() {
 
         baseViewModel.isUnlockedLiveData.observe(viewLifecycleOwner) { unlocked ->
             Timber.d("Received live data, unlocked changed to $unlocked")
-            isUnlocked = unlocked
+            // Honour the debug override the same way BaseViewModel does, so fragments route the
+            // playback actions to the internal player in an unlocked debug build.
+            isUnlocked = unlocked || BuildConfig.OVERRIDE_UNLOCKED
         }
 
         // The connection and the htsp version are loaded off the main thread. Seed from the

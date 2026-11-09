@@ -105,6 +105,9 @@ android {
             optimization {
                 enable = false
             }
+            // Debug builds are unlocked so the paid-only features (the internal player, the
+            // recording profiles) can be exercised without a Play purchase.
+            buildConfigField "Boolean", "OVERRIDE_UNLOCKED", "true"
         }
     }
 }

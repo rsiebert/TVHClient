@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--
+      Debug override: enable the internal player by default so it can be exercised without changing
+      the playback preferences by hand. Release builds keep the shipped default (false).
+    -->
+    <bool name="pref_default_internal_player_enabled">true</bool>
+</resources>
