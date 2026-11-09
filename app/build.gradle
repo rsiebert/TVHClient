@@ -99,7 +99,12 @@ android {
             buildConfigField "Boolean", "OVERRIDE_UNLOCKED", "false"
         }
         debug {
+            // Inherit the release settings, but stay unminified: initWith would otherwise
+            // pull in the release optimization block and minify debug (and androidTest) too.
             initWith buildTypes.release
+            optimization {
+                enable = false
+            }
         }
     }
 }
