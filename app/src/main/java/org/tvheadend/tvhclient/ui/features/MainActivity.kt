@@ -29,6 +29,7 @@ import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
@@ -283,6 +284,7 @@ class MainActivity : AppCompatActivity(), ToolbarInterface, LayoutControlInterfa
             event.getContentIfNotHandled()?.let {
                 Timber.d("Navigation menu id changed to $it")
                 baseViewModel.clearSearchQuery()
+                removeOnboardingFromBackStack()
                 navigationDrawer.handleDrawerItemSelected(it)
             }
         }
@@ -657,13 +659,28 @@ class MainActivity : AppCompatActivity(), ToolbarInterface, LayoutControlInterfa
                 else -> finish()
             }
         } else {
-            // Only finish the activity when the status fragment and
-            // another fragment are the last two fragments on the back stack.
-            if (supportFragmentManager.backStackEntryCount <= 2) {
+            // With navigation history enabled, finish only at the root destination (a single back
+            // stack entry once the onboarding screens have been removed); otherwise pop one entry.
+            if (supportFragmentManager.backStackEntryCount <= 1) {
                 finish()
             } else {
                 clearSearchResultsOrPopBackStack()
             }
+        }
+    }
+
+    /**
+     * Removes the onboarding screens (startup, privacy policy, changelog) from the back stack once
+     * the first real destination is shown. They are kept on the back stack only so that
+     * [StartupFragment] can be restored to finish its work; afterwards Back must not return to them.
+     */
+    private fun removeOnboardingFromBackStack() {
+        val current = supportFragmentManager.findFragmentById(R.id.main)
+        if (current is StartupFragment
+                || current is StartupPrivacyPolicyFragment
+                || current is ChangeLogFragment) {
+            Timber.d("Removing onboarding fragment from the back stack")
+            supportFragmentManager.popBackStackImmediate(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
         }
     }
 
