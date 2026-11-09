@@ -22,7 +22,5 @@
 -dontwarn com.google.android.material.**
 
 # preserve the information Crashlytics requires for producing readable crash reports
--keepattributes SourceFile,LineNumberTable        # Keep file names and line numbers.
-
-# ensure that retracing stack traces is unambiguous
--keepattributes LineNumberTable,SourceFile
+# and keep retracing stack traces unambiguous (file names + line numbers)
+-keepattributes SourceFile,LineNumberTable
