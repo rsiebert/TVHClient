@@ -79,6 +79,8 @@ import kotlin.math.min
 private const val RECONNECT_TIMER_START_MILLISECONDS = 1L * 1000L
 private const val RECONNECT_TIMER_MAX_TIME_MILLISECONDS = 1000L * 60L * 15L // 15 minutes
 private const val SKU_DETAILS_REQUERY_TIME = 1000L * 60L * 60L * 4L // 4 hours
+private const val ACK_RETRY_TIMER_START_MILLISECONDS = 10L * 1000L
+private const val ACK_RETRY_TIMER_MAX_TIME_MILLISECONDS = 1000L * 60L * 15L // 15 minutes
 
 class BillingDataSource private constructor(
     application: Application,
@@ -100,6 +102,9 @@ class BillingDataSource private constructor(
 
     // how long before the data source tries to reconnect to Google play
     private var reconnectMilliseconds = RECONNECT_TIMER_START_MILLISECONDS
+
+    // how long before a failed acknowledgement is attempted again
+    private var acknowledgeRetryMilliseconds = ACK_RETRY_TIMER_START_MILLISECONDS
 
     // when was the last successful SkuDetailsResponse?
     private var skuDetailsResponseTime = -SKU_DETAILS_REQUERY_TIME
@@ -163,6 +168,24 @@ class BillingDataSource private constructor(
     }
 
     /**
+     * A purchase that could not be acknowledged stays refundable for three days. Granting the
+     * entitlement does not depend on the acknowledgement, so instead of leaving the retry to the
+     * next onResume, re-read the purchases after a backoff; the refresh acknowledges every
+     * purchase that is still unacknowledged.
+     */
+    private fun scheduleAcknowledgeRetry() {
+        Timber.d("Retrying acknowledgement in $acknowledgeRetryMilliseconds ms")
+        handler.postDelayed(
+            { defaultScope.launch { refreshPurchases() } },
+            acknowledgeRetryMilliseconds
+        )
+        acknowledgeRetryMilliseconds = min(
+            acknowledgeRetryMilliseconds * 2,
+            ACK_RETRY_TIMER_MAX_TIME_MILLISECONDS
+        )
+    }
+
+    /**
      * Called by initializeFlows to create the various Flow objects we're planning to emit.
      * @param skuList a List<String> of SKUs representing purchases and subscriptions.
     </String> */
@@ -205,15 +228,19 @@ class BillingDataSource private constructor(
     fun getConsumedPurchases() = purchaseConsumedFlow.asSharedFlow()
 
     /**
-     * Returns whether or not the user has purchased a SKU. It does this by returning
-     * a Flow that returns true if the SKU is in the PURCHASED state and
-     * the Purchase has been acknowledged.
+     * Returns whether or not the user has purchased a SKU. A purchase counts as owned as soon as
+     * Google Play reports it as PURCHASED; the acknowledgement is a separate bookkeeping step that
+     * the app owes Google Play, and a failure to send it must not lock a paying user out. Pending
+     * purchases are deliberately not owned yet.
      * @return a Flow that observes the SKUs purchase state
      */
     fun isPurchased(sku: String): Flow<Boolean> {
         Timber.d("Checking if $sku is purchased")
-        val skuStateFLow = skuStateMap[sku]!!
-        return skuStateFLow.map { skuState -> skuState == SkuState.SKU_STATE_PURCHASED_AND_ACKNOWLEDGED }
+        val skuStateFlow = skuStateMap[sku]!!
+        return skuStateFlow.map { skuState ->
+            skuState == SkuState.SKU_STATE_PURCHASED ||
+                skuState == SkuState.SKU_STATE_PURCHASED_AND_ACKNOWLEDGED
+        }
     }
 
     /**
@@ -517,8 +544,10 @@ class BillingDataSource private constructor(
                             )
                             if (billingResult.responseCode != BillingClient.BillingResponseCode.OK) {
                                 Timber.e("Error acknowledging purchase: " + purchase.skus.toString())
+                                scheduleAcknowledgeRetry()
                             } else {
                                 // purchase acknowledged
+                                acknowledgeRetryMilliseconds = ACK_RETRY_TIMER_START_MILLISECONDS
                                 for (sku in purchase.skus) {
                                     setSkuState(sku, SkuState.SKU_STATE_PURCHASED_AND_ACKNOWLEDGED)
                                 }
