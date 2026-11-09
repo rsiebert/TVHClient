@@ -21,7 +21,9 @@ import timber.log.Timber
  *
  *  - 6 channels in a single "Demo" tag, each with a generated channel icon served over the
  *    HTSP file API (`fileOpen` / `fileRead` / `fileClose`)
- *  - a full day of 1-hour EPG events per channel, starting at the top of the current hour
+ *  - a week of EPG events per channel, starting at the top of the current hour and tiling the
+ *    timeline with programs of differing lengths (15 minutes to 2 hours) so the guide looks
+ *    realistic instead of a uniform row of one-hour blocks
  *  - 5 recordings (one `scheduled`, one `recording`, one `completed`, two failed)
  *  - 1 series recording (an enabled `autorecEntryAdd`)
  *
@@ -31,7 +33,7 @@ import timber.log.Timber
 class FakeTvheadendServer(
     private val host: String = DEFAULT_HOST,
     private val port: Int = DEFAULT_PORT,
-    private val hoursOfEpg: Int = 12,
+    private val hoursOfEpg: Int = 168,
 ) : AutoCloseable {
 
     private val running = AtomicBoolean(false)
@@ -263,24 +265,51 @@ class FakeTvheadendServer(
         }
     }
 
-    /** Event payloads without a method so they can be pushed as `eventAdd` or listed in `getEvents`. */
+    /**
+     * Event payloads without a method so they can be pushed as `eventAdd` or listed in `getEvents`.
+     *
+     * The programs of a channel start at the top of the current hour and tile the timeline without
+     * gaps until they cover [hoursOfEpg] hours. The first program always lasts one hour, so it is
+     * the program that is currently airing and the channel's `eventId`/`nextEventId` point at the
+     * right entries. Every following program takes its length from
+     * [DEMO_PROGRAM_DURATIONS_MINUTES], so the guide shows a realistic mix of short and long
+     * programs instead of a uniform row of one-hour blocks.
+     */
     private fun buildEventPayloads(now: Long): List<HtspMessage> {
         val base = now - (now % 3600) // top of the current hour
-        val events = ArrayList<HtspMessage>(DEMO_CHANNEL_NAMES.size * hoursOfEpg)
+        val timelineEnd = base + hoursOfEpg * 3600L
+        val events = ArrayList<HtspMessage>()
         for (channelId in 1..DEMO_CHANNEL_NAMES.size) {
-            for (hour in 0 until hoursOfEpg) {
-                val start = base + hour * 3600L
+            val channelName = DEMO_CHANNEL_NAMES[channelId - 1]
+            var start = base
+            var index = 0
+            while (start < timelineEnd) {
+                // The first program covers "now" and is always a whole hour; the rest vary.
+                val duration = if (index == 0) {
+                    3600L
+                } else {
+                    DEMO_PROGRAM_DURATIONS_MINUTES[(channelId + index) % DEMO_PROGRAM_DURATIONS_MINUTES.size] * 60L
+                }
+                val stop = start + duration
                 events.add(HtspMessage().apply {
-                    put("eventId", channelId * 1000 + hour)
+                    put("eventId", channelId * 1000 + index)
                     put("channelId", channelId)
                     put("start", start)
-                    put("stop", start + 3600L)
-                    put("title", "${DEMO_CHANNEL_NAMES[channelId - 1]}: Show ${hour + 1}")
-                    put("subtitle", if (hour == 0) "Now" else "Upcoming")
-                    put("summary", "Demo EPG event ${hour + 1} on ${DEMO_CHANNEL_NAMES[channelId - 1]}")
+                    put("stop", stop)
+                    put("title", "$channelName: Show ${index + 1}")
+                    put("subtitle", when {
+                        now < start -> "Upcoming"
+                        now < stop -> "Now"
+                        else -> "Past"
+                    })
+                    put("summary", "Demo EPG event ${index + 1} on $channelName, " +
+                            "${(stop - start) / 60} minutes long")
                     put("description", "Auto-generated demo EPG data.")
-                    put("contentType", 16)
+                    put("contentType", DEMO_CONTENT_TYPES[index % DEMO_CONTENT_TYPES.size])
+                    put("ageRating", DEMO_AGE_RATINGS[index % DEMO_AGE_RATINGS.size])
                 })
+                start = stop
+                index++
             }
         }
         return events
@@ -460,6 +489,22 @@ class FakeTvheadendServer(
 
         /** HTSP paths the app is told to load each channel's icon from. */
         private val DEMO_CHANNEL_ICON_PATHS = DEMO_CHANNEL_NAMES.indices.map { "imagecache/demo${it + 1}.png" }
+
+        /**
+         * Lengths, in minutes, used for the demo programs after the first one. The values are
+         * rotated per channel so neighbouring programs rarely share a length and each channel's
+         * guide looks different. The first program of every channel stays a whole hour so it always
+         * covers the current time.
+         */
+        private val DEMO_PROGRAM_DURATIONS_MINUTES = listOf(
+            30, 45, 90, 120, 25, 75, 50, 15, 100, 40, 60, 80, 35, 110, 55, 20, 70, 95, 65, 85,
+        )
+
+        /** DVB content codes used to vary the genre (and therefore the genre colour) per program. */
+        private val DEMO_CONTENT_TYPES = listOf(0x10, 0x20, 0x30, 0x40, 0x50, 0x60, 0x70, 0x80)
+
+        /** Minimum age ratings cycled through the demo programs. */
+        private val DEMO_AGE_RATINGS = listOf(0, 6, 12, 16, 18)
 
         /** One distinct badge colour per demo channel. */
         private val DEMO_CHANNEL_ICON_COLORS = listOf(

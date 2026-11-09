@@ -152,7 +152,7 @@ class FakeTvheadendServerTest {
 
         assertThat(methods("tagAdd")).hasSize(1)
         assertThat(methods("channelAdd")).hasSize(6)
-        assertThat(methods("eventAdd")).hasSize(12) // 6 channels * 2 hours
+        assertThat(methods("eventAdd")).isNotEmpty()
         assertThat(methods("dvrEntryAdd")).hasSize(5)
         assertThat(methods("autorecEntryAdd")).hasSize(1)
         assertThat(methods("initialSyncCompleted")).hasSize(1)
@@ -177,10 +177,30 @@ class FakeTvheadendServerTest {
         assertThat(firstEvent.getInteger("channelId")).isEqualTo(1)
         assertThat(firstEvent.getString("title")).isEqualTo("Demo One HD: Show 1")
         assertThat(firstEvent.getString("subtitle")).isEqualTo("Now")
-        // Events are aligned to the top of the hour and last one hour.
+        // The first program starts at the top of the current hour and covers "now" for a full hour.
         assertThat(firstEvent.getLong("start") % 3600).isEqualTo(0L)
         assertThat(firstEvent.getLong("stop") - firstEvent.getLong("start")).isEqualTo(3600L)
         assertThat(events.first { it.getInteger("eventId") == 1001 }.getString("subtitle")).isEqualTo("Upcoming")
+
+        // Each channel's programs tile the timeline without gaps, cover the requested two hours and
+        // use a mix of durations, so the guide no longer shows a uniform row of one-hour blocks.
+        val programsByChannel = events.groupBy { it.getInteger("channelId") }
+        assertThat(programsByChannel.keys).containsExactly(1, 2, 3, 4, 5, 6)
+        for ((channelId, programs) in programsByChannel) {
+            val ordered = programs.sortedBy { it.getLong("start") }
+            assertThat(ordered.first().getInteger("eventId")).isEqualTo(channelId * 1000)
+            assertThat(ordered.first().getLong("start")).isEqualTo(firstEvent.getLong("start"))
+            // The durations are not all the same: the first is a whole hour, the rest vary.
+            assertThat(ordered.map { it.getLong("stop") - it.getLong("start") }.distinct().size)
+                .isGreaterThan(1)
+            for (i in 1 until ordered.size) {
+                // No gap and no overlap: each program starts where the previous one stopped.
+                assertThat(ordered[i].getLong("start")).isEqualTo(ordered[i - 1].getLong("stop"))
+            }
+            // The last program reaches the end of the requested window.
+            assertThat(ordered.last().getLong("stop"))
+                .isAtLeast(firstEvent.getLong("start") + (2 * 3600L))
+        }
 
         val recordings = methods("dvrEntryAdd").associateBy { it.getInteger("id") }
         assertThat(recordings.keys).containsExactly(1, 2, 3, 4, 5)
@@ -235,7 +255,19 @@ class FakeTvheadendServerTest {
 
         val events = request("getEvents")
         assertThat(events).isNotNull()
-        assertThat(events!!.getList("events")).hasSize(12)
+        // One reply carries every channel's programs, tiled into varied-length blocks like the
+        // events pushed during the initial sync.
+        val eventList = events!!.getList("events").map { it as HtspMessage }
+        val programsByChannel = eventList.groupBy { it.getInteger("channelId") }
+        assertThat(programsByChannel.keys).containsExactly(1, 2, 3, 4, 5, 6)
+        for (programs in programsByChannel.values) {
+            val ordered = programs.sortedBy { it.getLong("start") }
+            for (i in 1 until ordered.size) {
+                assertThat(ordered[i].getLong("start")).isEqualTo(ordered[i - 1].getLong("stop"))
+            }
+            assertThat(ordered.map { it.getLong("stop") - it.getLong("start") }.distinct().size)
+                .isGreaterThan(1)
+        }
 
         val channel = request("getChannel") { it.put("channelId", 1) }
         assertThat(channel).isNotNull()
