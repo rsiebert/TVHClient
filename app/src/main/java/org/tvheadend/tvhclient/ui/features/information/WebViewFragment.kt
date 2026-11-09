@@ -8,6 +8,7 @@ import android.webkit.WebView
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.ui.common.interfaces.FileContentsLoadedInterface
 import org.tvheadend.tvhclient.ui.common.interfaces.LayoutControlInterface
@@ -59,7 +60,7 @@ open class WebViewFragment : Fragment(), FileContentsLoadedInterface {
         webView?.onResume()
         webView?.resumeTimers()
         webView?.loadUrl("about:blank")
-        fileContentLoader.start(website)
+        fileContentLoader.start(website, viewLifecycleOwner.lifecycleScope)
     }
 
     override fun onPause() {

@@ -121,12 +121,22 @@ class StatusViewModel(application: Application) : BaseViewModel(application), Sh
         return appRepository.channelData.getItemById(id)
     }
 
+    private var diskSpaceUpdateRunning = false
+
     fun startDiskSpaceUpdateHandler() {
+        // The task re-posts itself every 60s, so a second start would create a second,
+        // independent polling loop. Only one may be running at a time.
+        if (diskSpaceUpdateRunning) {
+            Timber.d("Disk space update handler is already running")
+            return
+        }
+        diskSpaceUpdateRunning = true
         Timber.d("Starting disk space update handler")
         diskSpaceUpdateHandler.post(discSpaceUpdateTask)
     }
 
     fun stopDiskSpaceUpdateHandler() {
+        diskSpaceUpdateRunning = false
         Timber.d("Stopping disk space update handler")
         diskSpaceUpdateHandler.removeCallbacks(discSpaceUpdateTask)
     }

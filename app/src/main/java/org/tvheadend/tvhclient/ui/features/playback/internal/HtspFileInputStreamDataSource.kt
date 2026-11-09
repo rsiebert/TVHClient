@@ -377,7 +377,7 @@ class HtspFileInputStreamDataSource private constructor(val connection: HtspConn
                     filePosition += data.size.toLong()
                     byteBuffer = ByteBuffer.wrap(data)
                 }
-                synchronized(request) {
+                lock.withLock {
                     condition.signal()
                 }
             }

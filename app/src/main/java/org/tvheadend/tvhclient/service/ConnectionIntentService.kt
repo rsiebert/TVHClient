@@ -2,7 +2,6 @@ package org.tvheadend.tvhclient.service
 
 import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
 import androidx.core.app.JobIntentService
 import kotlinx.coroutines.runBlocking
 import org.tvheadend.data.AppRepository
@@ -16,36 +15,40 @@ class ConnectionIntentService : JobIntentService() {
 
     private lateinit var appRepository: AppRepository
 
-    private lateinit var sharedPreferences: SharedPreferences
-
     private lateinit var execService: ScheduledExecutorService
 
-    private lateinit var connection: Connection
-    private lateinit var serviceHandler: ServiceInterface
+    /**
+     * Created lazily on the [onHandleWork] background thread so the (blocking) read of the active
+     * connection never runs on the main thread. Written on the work thread and read on the main
+     * thread in [onDestroy], hence [Volatile].
+     */
+    @Volatile
+    private var serviceHandler: ServiceInterface? = null
 
     override fun onCreate() {
         super.onCreate()
         Timber.d("Starting intent service")
         val application = application as MainApplication
         appRepository = application.appRepository
-        sharedPreferences = application.appSharedPreferences
         execService = application.htspExecutor
-
-        // onHandleWork() needs the handler (and thus the connection) to be ready right after
-        // onCreate(), so this one read is bridged back to blocking. It is the documented boundary
-        // for runBlocking outside the htsp handlers; the database read itself still happens off the
-        // main thread via the data source's withContext(Dispatchers.IO).
-        connection = runBlocking { appRepository.connectionData.getActiveItem() }
-        serviceHandler = HtspIntentServiceHandler(this, appRepository, connection, execService)
     }
 
     override fun onHandleWork(intent: Intent) {
-        serviceHandler.onHandleWork(intent)
+        // onHandleWork() runs on a background thread, so the handler (and the connection it needs)
+        // is created here rather than in onCreate().
+        val handler = serviceHandler ?: createServiceHandler()
+        handler.onHandleWork(intent)
+    }
+
+    private fun createServiceHandler(): ServiceInterface {
+        val connection: Connection = runBlocking { appRepository.connectionData.getActiveItem() }
+        return HtspIntentServiceHandler(this, appRepository, connection, execService)
+                .also { serviceHandler = it }
     }
 
     override fun onDestroy() {
         Timber.d("Stopping service")
-        serviceHandler.onDestroy()
+        serviceHandler?.onDestroy()
     }
 
     companion object {

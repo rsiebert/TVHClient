@@ -1,6 +1,9 @@
 package org.tvheadend.data.di
 
 import android.content.Context
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import org.tvheadend.data.AppRepository
 import org.tvheadend.data.db.AppRoomDatabase
 import org.tvheadend.data.source.ChannelDataSource
@@ -28,21 +31,27 @@ class DataContainer(context: Context) {
 
     private val appContext = context.applicationContext
 
+    /**
+     * The single IO scope shared by every data source, instead of one scope per source. Backed by
+     * a [SupervisorJob] so a failed write in one source cannot cancel the others.
+     */
+    private val ioScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+
     val appDatabase: AppRoomDatabase by lazy { AppRoomDatabase.getInstance(appContext)!! }
 
     val appRepository: AppRepository by lazy {
         AppRepository(
-                ChannelDataSource(appDatabase),
-                ProgramDataSource(appDatabase),
-                RecordingDataSource(appDatabase),
-                SeriesRecordingDataSource(appDatabase),
-                TimerRecordingDataSource(appDatabase),
-                ConnectionDataSource(appDatabase),
-                ChannelTagDataSource(appDatabase),
-                ServerStatusDataSource(appDatabase),
-                ServerProfileDataSource(appDatabase),
-                TagAndChannelDataSource(appDatabase),
-                MiscDataSource(appDatabase),
+                ChannelDataSource(appDatabase, ioScope),
+                ProgramDataSource(appDatabase, ioScope),
+                RecordingDataSource(appDatabase, ioScope),
+                SeriesRecordingDataSource(appDatabase, ioScope),
+                TimerRecordingDataSource(appDatabase, ioScope),
+                ConnectionDataSource(appDatabase, ioScope),
+                ChannelTagDataSource(appDatabase, ioScope),
+                ServerStatusDataSource(appDatabase, ioScope),
+                ServerProfileDataSource(appDatabase, ioScope),
+                TagAndChannelDataSource(appDatabase, ioScope),
+                MiscDataSource(appDatabase, ioScope),
                 SubscriptionDataSource(appDatabase),
                 InputDataSource(appDatabase))
     }

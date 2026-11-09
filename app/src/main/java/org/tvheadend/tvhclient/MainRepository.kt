@@ -3,8 +3,8 @@ package org.tvheadend.tvhclient
 import android.app.Activity
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.asLiveData
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
@@ -42,8 +42,11 @@ class MainRepository(
                         }
                     }
                 }
-            } catch (e: Throwable) {
-                Timber.d("Collection complete")
+            } catch (e: CancellationException) {
+                // Never swallow cancellation: it must propagate to cancel the collection.
+                throw e
+            } catch (e: Exception) {
+                Timber.d(e, "Collection complete")
             }
             Timber.d("Collection Coroutine Scope Exited")
         }
@@ -111,7 +114,7 @@ class MainRepository(
         get() = billingDataSource.getBillingFlowResults()
 
     fun debugConsumePremium() {
-        CoroutineScope(Dispatchers.Main).launch {
+        defaultScope.launch {
             billingDataSource.consumeInappPurchase(UNLOCKER)
         }
     }

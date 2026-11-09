@@ -37,6 +37,7 @@ import java.net.HttpURLConnection
 import java.net.URL
 import java.text.SimpleDateFormat
 import java.util.*
+import java.util.concurrent.CopyOnWriteArrayList
 import java.util.concurrent.ScheduledExecutorService
 import java.util.concurrent.TimeUnit
 import kotlin.math.floor
@@ -71,10 +72,12 @@ class HtspServiceHandler(val context: Context,
     private var htspVersion: Int = 13
     private var htspConnection: HtspConnection? = null
 
-    private val pendingEventOps = ArrayList<Program>()
-    private val pendingChannelOps = ArrayList<Channel>()
-    private val pendingChannelTagOps = ArrayList<ChannelTag>()
-    private val pendingRecordingOps = ArrayList<Recording>()
+    // Written from the HTSP connection reader thread (message callbacks) and read from the
+    // executor thread that saves the synced data, so these must be safe to iterate concurrently.
+    private val pendingEventOps = CopyOnWriteArrayList<Program>()
+    private val pendingChannelOps = CopyOnWriteArrayList<Channel>()
+    private val pendingChannelTagOps = CopyOnWriteArrayList<ChannelTag>()
+    private val pendingRecordingOps = CopyOnWriteArrayList<Recording>()
 
     private var pendingHtspProfiles: MutableList<ServerProfile> = blocking { appRepository.serverProfileData.getHtspPlaybackProfiles() }.toMutableList()
     private var pendingHttpProfiles: MutableList<ServerProfile> = blocking { appRepository.serverProfileData.getHttpPlaybackProfiles() }.toMutableList()
@@ -1154,7 +1157,7 @@ class HtspServiceHandler(val context: Context,
      */
     private fun saveAllReceivedRecordings() {
         Timber.d("Removing previously existing recordings and saving ${pendingRecordingOps.size} new recordings")
-        appRepository.recordingData.removeAndAddItems(pendingRecordingOps)
+        appRepository.recordingData.removeAndAddItems(ArrayList(pendingRecordingOps))
     }
 
     private fun saveAllReceivedEvents() {

@@ -2,7 +2,11 @@ package org.tvheadend.tvhclient.ui.features.information
 
 import android.content.Context
 import androidx.preference.PreferenceManager
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.tvheadend.tvhclient.BuildConfig
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.ui.common.getLocale
@@ -14,24 +18,29 @@ import java.util.regex.Pattern
 
 class FileContentLoader(val context: Context, private val defaultLocale: String, val callback: FileContentsLoadedInterface) {
 
-    private val job = Job()
-    private val scope = CoroutineScope(Dispatchers.IO + job)
+    // Cancelled and replaced on every start(), so a previous load can never deliver a stale result
+    // after a newer one was requested. The scope is supplied by the caller (a lifecycle scope)
+    // rather than created here, so the work is bound to the caller's lifecycle.
+    private var job: Job? = null
     private var contents = ""
 
-    fun start(filename: String) {
+    fun start(filename: String, scope: CoroutineScope) {
         Timber.d("Starting to load contents for $filename")
-        scope.launch {
+        job?.cancel()
+        job = scope.launch {
             loadFileContents(filename)
         }
     }
 
     fun stop() {
-        job.cancel()
+        job?.cancel()
     }
 
     private suspend fun loadFileContents(filename: String) {
 
-        val deferredLoader = scope.async {
+        // The asset read and the text processing run off the main thread; only the callback runs
+        // on it.
+        withContext(Dispatchers.IO) {
             val languageCode = PreferenceManager.getDefaultSharedPreferences(context).getString("language", getLocale(context).language)!!.substring(0, 2)
             val htmlFile = "html/" + filename + "_" + languageCode.substring(0, 2) + ".html"
             val defaultHtmlFile = "html/" + filename + "_" + defaultLocale + ".html"
@@ -43,12 +52,10 @@ class FileContentLoader(val context: Context, private val defaultLocale: String,
 
             replaceCorrectStyleSheet()
             replaceApplicationVersion()
-
-            return@async
         }
+
         // Switch the context to the main thread to call the following method
         withContext(Dispatchers.Main) {
-            deferredLoader.await()
             callback.onFileContentsLoaded(contents)
         }
     }
@@ -81,4 +88,3 @@ class FileContentLoader(val context: Context, private val defaultLocale: String,
         }
     }
 }
-

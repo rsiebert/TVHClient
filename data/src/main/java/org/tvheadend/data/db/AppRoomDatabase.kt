@@ -47,6 +47,8 @@ abstract class AppRoomDatabase : RoomDatabase() {
 
     companion object {
 
+        // Volatile: written under the class lock in getInstance() and read without it.
+        @Volatile
         private var instance: AppRoomDatabase? = null
 
         fun getInstance(context: Context): AppRoomDatabase? {

@@ -4,6 +4,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import timber.log.Timber
 
 fun <R> CoroutineScope.executeAsyncTask(
         onPreExecute: () -> Unit,
@@ -11,8 +12,11 @@ fun <R> CoroutineScope.executeAsyncTask(
         onPostExecute: (R) -> Unit
 ) = launch {
     onPreExecute() // runs in Main Thread
+    // runCatching keeps a failure in doInBackground from crashing the caller's scope (for example
+    // a lifecycleScope) and simply skips onPostExecute in that case.
     val result = withContext(Dispatchers.IO) {
-        doInBackground() // runs in background thread without blocking the Main Thread
+        runCatching { doInBackground() } // runs in background thread without blocking the Main Thread
     }
-    onPostExecute(result) // runs in Main Thread
+    result.onSuccess(onPostExecute) // runs in Main Thread
+            .onFailure { Timber.e(it, "Background task failed") }
 }

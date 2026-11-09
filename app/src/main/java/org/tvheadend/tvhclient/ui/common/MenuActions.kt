@@ -13,7 +13,10 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.preference.PreferenceManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.tvheadend.data.entity.*
+import org.tvheadend.tvhclient.MainApplication
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.service.ConnectionService
 import org.tvheadend.tvhclient.ui.base.BaseViewModel
@@ -376,25 +379,19 @@ fun showConfirmationToRemoveAllRecordings(context: Context, items: List<Recordin
 }
 
 private fun removeAllRecordings(context: Context, items: List<Recording>) {
-    object : Thread() {
-        override fun run() {
-            for (item in items) {
-                val intent = Intent(context, ConnectionService::class.java)
-                intent.putExtra("id", item.id)
-                if (item.isRecording || item.isScheduled) {
-                    intent.action = "cancelDvrEntry"
-                } else {
-                    intent.action = "deleteDvrEntry"
-                }
-                context.startService(intent)
-                try {
-                    sleep(500)
-                } catch (e: InterruptedException) {
-                    // NOP
-                }
+    MainApplication.instance.applicationScope.launch {
+        for (item in items) {
+            val intent = Intent(context, ConnectionService::class.java)
+            intent.putExtra("id", item.id)
+            if (item.isRecording || item.isScheduled) {
+                intent.action = "cancelDvrEntry"
+            } else {
+                intent.action = "deleteDvrEntry"
             }
+            context.startService(intent)
+            delay(500)
         }
-    }.start()
+    }
 }
 
 fun showConfirmationToRemoveAllSeriesRecordings(context: Context, items: List<SeriesRecording>): Boolean {
@@ -410,21 +407,15 @@ fun showConfirmationToRemoveAllSeriesRecordings(context: Context, items: List<Se
 }
 
 private fun removeAllSeriesRecordings(context: Context, items: List<SeriesRecording>) {
-    object : Thread() {
-        override fun run() {
-            for ((id) in items) {
-                val intent = Intent(context, ConnectionService::class.java)
-                intent.action = "deleteAutorecEntry"
-                intent.putExtra("id", id)
-                context.startService(intent)
-                try {
-                    sleep(500)
-                } catch (e: InterruptedException) {
-                    // NOP
-                }
-            }
+    MainApplication.instance.applicationScope.launch {
+        for ((id) in items) {
+            val intent = Intent(context, ConnectionService::class.java)
+            intent.action = "deleteAutorecEntry"
+            intent.putExtra("id", id)
+            context.startService(intent)
+            delay(500)
         }
-    }.start()
+    }
 }
 
 fun showConfirmationToRemoveAllTimerRecordings(context: Context, items: List<TimerRecording>): Boolean {
@@ -440,21 +431,15 @@ fun showConfirmationToRemoveAllTimerRecordings(context: Context, items: List<Tim
 }
 
 private fun removeAllTimerRecordings(context: Context, items: List<TimerRecording>) {
-    object : Thread() {
-        override fun run() {
-            for ((id) in items) {
-                val intent = Intent(context, ConnectionService::class.java)
-                intent.action = "deleteTimerecEntry"
-                intent.putExtra("id", id)
-                context.startService(intent)
-                try {
-                    sleep(500)
-                } catch (e: InterruptedException) {
-                    // NOP
-                }
-            }
+    MainApplication.instance.applicationScope.launch {
+        for ((id) in items) {
+            val intent = Intent(context, ConnectionService::class.java)
+            intent.action = "deleteTimerecEntry"
+            intent.putExtra("id", id)
+            context.startService(intent)
+            delay(500)
         }
-    }.start()
+    }
 }
 
 @SuppressLint("CheckResult")

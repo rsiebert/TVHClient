@@ -12,12 +12,10 @@ import android.widget.TextView
 import androidx.core.content.edit
 import androidx.core.view.forEach
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import org.tvheadend.tvhclient.BuildConfig
 import org.tvheadend.tvhclient.R
@@ -37,9 +35,6 @@ import timber.log.Timber
  * by hand and rendered that in a `WebView`.
  */
 class ChangeLogFragment : Fragment(), BackPressedInterface, HideNavigationDrawerInterface {
-
-    private val job = Job()
-    private val scope = CoroutineScope(Dispatchers.Main + job)
 
     private val adapter = ChangeLogRecyclerViewAdapter()
     private var showFullChangeLog = false
@@ -83,11 +78,6 @@ class ChangeLogFragment : Fragment(), BackPressedInterface, HideNavigationDrawer
         loadChangeLog()
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        job.cancel()
-    }
-
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putBoolean("showFullChangelog", showFullChangeLog)
@@ -96,7 +86,9 @@ class ChangeLogFragment : Fragment(), BackPressedInterface, HideNavigationDrawer
 
     private fun loadChangeLog() {
         val loader = ChangeLogLoader(requireContext())
-        scope.launch {
+        // Tied to the view lifecycle, so the load is cancelled automatically when the view is
+        // destroyed instead of relying on a manually cancelled scope.
+        viewLifecycleOwner.lifecycleScope.launch {
             val loaded = loader.load()
             if (!isAdded) {
                 return@launch

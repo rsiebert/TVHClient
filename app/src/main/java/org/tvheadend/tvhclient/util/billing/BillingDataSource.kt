@@ -39,6 +39,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 import java.util.LinkedList
+import java.util.concurrent.ConcurrentHashMap
 import kotlin.math.min
 
 /**
@@ -133,12 +134,12 @@ class BillingDataSource private constructor(
     }
 
     // Flows that are mostly maintained so they can be transformed into observables.
-    private val skuStateMap: MutableMap<String, MutableStateFlow<SkuState>> = HashMap()
+    private val skuStateMap: MutableMap<String, MutableStateFlow<SkuState>> = ConcurrentHashMap()
     @Suppress("DEPRECATION")
-    private val skuDetailsMap: MutableMap<String, MutableStateFlow<ProductDetails?>> = HashMap()
+    private val skuDetailsMap: MutableMap<String, MutableStateFlow<ProductDetails?>> = ConcurrentHashMap()
 
     // Observables that are used to communicate state.
-    private val purchaseConsumptionInProcess: MutableSet<Purchase> = HashSet()
+    private val purchaseConsumptionInProcess: MutableSet<Purchase> = ConcurrentHashMap.newKeySet()
     private val newPurchaseFlow = MutableSharedFlow<List<String>>(extraBufferCapacity = 1)
     private val purchaseConsumedFlow = MutableSharedFlow<List<String>>()
     private val billingFlowInProcess = MutableStateFlow(false)

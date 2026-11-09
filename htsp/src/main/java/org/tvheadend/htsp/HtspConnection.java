@@ -37,7 +37,7 @@ import java.nio.channels.UnresolvedAddressException;
 import java.nio.channels.UnsupportedAddressTypeException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.HashSet;
+import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Set;
@@ -57,11 +57,11 @@ public class HtspConnection extends Thread implements ServerConnectionInterface<
     private int seq;
 
     private final ServerConnectionStateListener connectionListener;
-    private final Set<ServerMessageListener<HtspMessage>> messageListeners = new HashSet<>();
+    private final Set<ServerMessageListener<HtspMessage>> messageListeners = new CopyOnWriteArraySet<>();
     private final SparseArray<ServerResponseListener<HtspMessage>> responseHandlers;
     private final LinkedList<HtspMessage> messageQueue;
-    private boolean isConnecting = false;
-    private boolean isAuthenticated = false;
+    private volatile boolean isConnecting = false;
+    private volatile boolean isAuthenticated = false;
     /**
      * Set when the connection is closed on purpose. A close during the handshake must not be
      * reported as a failed authentication, otherwise the user sees a misleading "Authentication

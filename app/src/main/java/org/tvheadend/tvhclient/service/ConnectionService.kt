@@ -2,7 +2,6 @@ package org.tvheadend.tvhclient.service
 
 import android.app.Service
 import android.content.Intent
-import android.content.SharedPreferences
 import android.os.IBinder
 import kotlinx.coroutines.runBlocking
 import org.tvheadend.data.AppRepository
@@ -10,6 +9,7 @@ import org.tvheadend.data.entity.Connection
 import org.tvheadend.tvhclient.MainApplication
 import org.tvheadend.tvhclient.service.htsp.HtspServiceHandler
 import timber.log.Timber
+import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledExecutorService
 
 class ConnectionService : Service() {
@@ -27,33 +27,48 @@ class ConnectionService : Service() {
     }
 
     private lateinit var appRepository: AppRepository
-    private lateinit var sharedPreferences: SharedPreferences
     private lateinit var execService: ScheduledExecutorService
 
-    private lateinit var connection: Connection
-    private lateinit var serviceHandler: ServiceInterface
+    /**
+     * Serializes command handling on a single background thread. A single thread (rather than the
+     * shared, multi-threaded HTSP pool) keeps the commands in the order they arrive, which the
+     * handler relies on, while also keeping the active-connection database read out of
+     * [onCreate]/[onStartCommand] so the main thread is never blocked on it.
+     */
+    private val commandExecutor = Executors.newSingleThreadExecutor { runnable ->
+        Thread(runnable, "htsp-service-command").apply { isDaemon = true }
+    }
+
+    /** Only ever touched on [commandExecutor]. */
+    private var serviceHandler: ServiceInterface? = null
 
     override fun onCreate() {
         Timber.d("Starting service")
         val application = application as MainApplication
         appRepository = application.appRepository
-        sharedPreferences = application.appSharedPreferences
         execService = application.htspExecutor
-
-        // onStartCommand() needs the handler (and thus the connection) to be ready right after
-        // onCreate(), so this one read is bridged back to blocking. It is the documented boundary
-        // for runBlocking outside the htsp handlers; the database read itself still happens off the
-        // main thread via the data source's withContext(Dispatchers.IO).
-        connection = runBlocking { appRepository.connectionData.getActiveItem() }
-        serviceHandler = HtspServiceHandler(this, appRepository, connection, execService)
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        commandExecutor.execute { handleCommand(intent) }
+        return START_NOT_STICKY
+    }
+
+    private fun handleCommand(intent: Intent?) {
         if (intent?.action == ACTION_REBIND) {
             rebindServiceHandler()
-            return serviceHandler.onStartCommand(Intent(ACTION_CONNECT))
+            serviceHandler?.onStartCommand(Intent(ACTION_CONNECT))
+            return
         }
-        return serviceHandler.onStartCommand(intent)
+        (serviceHandler ?: createServiceHandler()).onStartCommand(intent)
+    }
+
+    private fun createServiceHandler(): ServiceInterface {
+        // Runs on commandExecutor, so the (blocking) read of the active connection never blocks
+        // the main thread.
+        val connection: Connection = runBlocking { appRepository.connectionData.getActiveItem() }
+        return HtspServiceHandler(this, appRepository, connection, execService)
+                .also { serviceHandler = it }
     }
 
     /**
@@ -63,13 +78,16 @@ class ConnectionService : Service() {
      */
     private fun rebindServiceHandler() {
         Timber.d("Rebinding the service handler to the active connection")
-        serviceHandler.onDestroy()
-        connection = runBlocking { appRepository.connectionData.getActiveItem() }
-        serviceHandler = HtspServiceHandler(this, appRepository, connection, execService)
+        serviceHandler?.onDestroy()
+        serviceHandler = null
+        createServiceHandler()
     }
 
     override fun onDestroy() {
-        serviceHandler.onDestroy()
+        // Let any in-flight command finish, then tear the handler down on the same thread so its
+        // state is not touched concurrently.
+        commandExecutor.execute { serviceHandler?.onDestroy() }
+        commandExecutor.shutdown()
     }
 
     override fun onBind(intent: Intent): IBinder? {

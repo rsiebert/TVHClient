@@ -15,8 +15,10 @@ class MiscDataSource(
         private val ioScope: CoroutineScope = CoroutineScope(Dispatchers.IO)
 ) {
 
+    private var callback: WeakReference<DatabaseClearedCallback>? = null
+
     fun clearDatabase(callback: DatabaseClearedCallback) {
-        MiscDataSource.callback = WeakReference(callback)
+        this.callback = WeakReference(callback)
         ioScope.launch {
             clearDatabase()
         }
@@ -72,10 +74,6 @@ class MiscDataSource(
                 "${db.serverProfileDao.itemCountSync} server profiles")
 
         callback?.get()?.onDatabaseCleared()
-    }
-
-    companion object {
-        private var callback: WeakReference<DatabaseClearedCallback>? = null
     }
 
     interface DatabaseClearedCallback {
