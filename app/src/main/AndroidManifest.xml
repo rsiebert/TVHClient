@@ -63,13 +63,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
 
+            <!-- Searchable activity; the unused tvhclient:// deep link was removed. -->
             <intent-filter>
-                <data android:scheme="tvhclient" />
-
-                <action android:name="android.intent.action.VIEW" />
                 <action android:name="android.intent.action.SEARCH" />
 
-                <category android:name="android.intent.category.BROWSABLE" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
 
