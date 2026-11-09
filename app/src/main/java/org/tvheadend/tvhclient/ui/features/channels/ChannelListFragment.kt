@@ -196,20 +196,16 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickInterface, ChannelT
         val showChannelTagMenu = sharedPreferences.getBoolean("channel_tag_menu_enabled", resources.getBoolean(R.bool.pref_default_channel_tag_menu_enabled))
 
         if (!baseViewModel.isSearchActive) {
-            menu.findItem(R.id.menu_genre_color_information)?.isVisible = showGenreColors
-            menu.findItem(R.id.menu_program_timeframe)?.isVisible = isUnlocked
+            prepareChannelListMenu(menu, isUnlocked, showGenreColors, showChannelTagMenu, recyclerViewAdapter.itemCount > 0)
             menu.findItem(R.id.menu_search)?.isVisible = recyclerViewAdapter.itemCount > 0
-            menu.findItem(R.id.menu_search_channels)?.isVisible = recyclerViewAdapter.itemCount > 0
-
-            // Prevent the channel tag menu item from going into the overlay menu
-            if (showChannelTagMenu) {
-                menu.findItem(R.id.menu_channel_tags)?.setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS)
-            }
         } else {
-            menu.findItem(R.id.menu_genre_color_information)?.isVisible = false
-            menu.findItem(R.id.menu_program_timeframe)?.isVisible = false
+            prepareChannelListMenu(
+                    menu = menu,
+                    isUnlocked = false,
+                    showGenreColors = false,
+                    showChannelTagMenu = false,
+                    showSearchChannels = false)
             menu.findItem(R.id.menu_search)?.isVisible = false
-            menu.findItem(R.id.menu_search_channels)?.isVisible = false
             menu.findItem(R.id.menu_channel_tags)?.isVisible = false
         }
     }

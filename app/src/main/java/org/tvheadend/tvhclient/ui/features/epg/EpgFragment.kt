@@ -189,13 +189,7 @@ class EpgFragment : BaseFragment(), EpgScrollInterface, RecyclerViewClickInterfa
         val showGenreColors = sharedPreferences.getBoolean("genre_colors_for_channels_enabled", resources.getBoolean(R.bool.pref_default_genre_colors_for_channels_enabled))
         val showChannelTagMenu = sharedPreferences.getBoolean("channel_tag_menu_enabled", resources.getBoolean(R.bool.pref_default_channel_tag_menu_enabled))
 
-        menu.findItem(R.id.menu_genre_color_information)?.isVisible = showGenreColors
-        menu.findItem(R.id.menu_search_channels)?.isVisible = false
-
-        // Prevent the channel tag menu item from going into the overlay menu
-        if (showChannelTagMenu) {
-            menu.findItem(R.id.menu_channel_tags)?.setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS)
-        }
+        prepareChannelListMenu(menu, isUnlocked, showGenreColors, showChannelTagMenu, false)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

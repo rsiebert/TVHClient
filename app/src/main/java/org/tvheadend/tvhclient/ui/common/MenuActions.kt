@@ -7,6 +7,7 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.view.Menu
+import android.view.MenuItem
 import androidx.core.view.children
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
@@ -51,7 +52,7 @@ fun preparePopupOrToolbarRecordingMenu(context: Context,
             menu.findItem(R.id.menu_record_program)?.isVisible = true
             menu.findItem(R.id.menu_record_program_and_edit)?.isVisible = isUnlocked
             menu.findItem(R.id.menu_record_program_with_custom_profile)?.isVisible = isUnlocked
-            menu.findItem(R.id.menu_record_program_as_series_recording)?.isVisible = htspVersion >= 13
+            menu.findItem(R.id.menu_record_program_as_series_recording)?.isVisible = htspVersion >= 13 && isUnlocked
 
         } else if (recording.isCompleted) {
             Timber.d("Recording is completed ")
@@ -120,6 +121,26 @@ fun preparePopupOrToolbarMiscMenu(context: Context,
             startTime = program.start
         }
         menu.findItem(R.id.menu_add_notification)?.isVisible = startTime > currentTime
+    }
+}
+
+/**
+ * Applies the paid/free visibility rules for the channel list options menu
+ * ([R.menu.channel_list_options_menu]). That menu is inflated by both the channel list and the
+ * program guide, so keeping the rules in one place stops the two screens from drifting apart.
+ */
+fun prepareChannelListMenu(menu: Menu,
+                           isUnlocked: Boolean,
+                           showGenreColors: Boolean,
+                           showChannelTagMenu: Boolean,
+                           showSearchChannels: Boolean) {
+    menu.findItem(R.id.menu_genre_color_information)?.isVisible = showGenreColors
+    menu.findItem(R.id.menu_program_timeframe)?.isVisible = isUnlocked
+    menu.findItem(R.id.menu_search_channels)?.isVisible = showSearchChannels
+
+    // Prevent the channel tag menu item from going into the overlay menu
+    if (showChannelTagMenu) {
+        menu.findItem(R.id.menu_channel_tags)?.setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS)
     }
 }
 
