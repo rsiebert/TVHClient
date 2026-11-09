@@ -1,6 +1,5 @@
 package org.tvheadend.tvhclient.ui.features.unlocker
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuInflater
@@ -10,9 +9,8 @@ import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import org.tvheadend.tvhclient.MainRepository.Companion.UNLOCKER
 import org.tvheadend.tvhclient.R
-import org.tvheadend.tvhclient.service.ConnectionService
-import org.tvheadend.tvhclient.ui.features.MainActivity
 import org.tvheadend.tvhclient.ui.features.information.WebViewFragment
+import org.tvheadend.tvhclient.util.billing.BillingFlowResult
 import timber.log.Timber
 
 
@@ -38,6 +36,22 @@ class UnlockerFragment : WebViewFragment() {
             Timber.d("Received live data, unlocked changed to $unlocked")
             isUnlocked = unlocked
             activity?.invalidateOptionsMenu()
+        }
+
+        // Purchase updates do not run through the receiver that feeds the snackbar, so the outcome
+        // has to be reported here. Google Play is the only source of failures, which is why the
+        // user is told about them rather than having a sheet close for an unknown reason.
+        unlockerViewModel.purchaseResults.observe(viewLifecycleOwner) { result ->
+            Timber.d("Received purchase result $result")
+            when (result) {
+                is BillingFlowResult.Purchased -> showPurchaseSuccessfulDialog()
+                is BillingFlowResult.AlreadyOwned -> showPurchasedAlreadyMadeDialog()
+                is BillingFlowResult.Canceled -> Timber.i("Unlocker purchase canceled by the user")
+                is BillingFlowResult.Failed -> {
+                    Timber.e("Unlocker purchase failed: ${result.message}")
+                    showPurchaseNotSuccessfulDialog()
+                }
+            }
         }
     }
 
@@ -83,25 +97,16 @@ class UnlockerFragment : WebViewFragment() {
 
     private fun showPurchaseSuccessfulDialog() {
         Timber.d("Unlocker purchase successful")
+        // No restart is needed any more: the unlock is observed live, so the features are enabled
+        // as soon as the purchase is granted.
         context?.let {
             val dialog = MaterialAlertDialogBuilder(it)
                     .setTitle(R.string.purchase_successful)
                     .setMessage(R.string.thank_you)
-                    .setPositiveButton(R.string.restart) { _, _ ->
-                        restartApplication()
-                    }
+                    .setPositiveButton(android.R.string.ok) { _, _ -> }
                     .create()
             dialog.setCanceledOnTouchOutside(false)
             dialog.show()
-        }
-    }
-
-    private fun restartApplication() {
-        context?.let {
-            it.stopService(Intent(it, ConnectionService::class.java))
-            val intent = Intent(it, MainActivity::class.java)
-            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-            it.startActivity(intent)
         }
     }
 
