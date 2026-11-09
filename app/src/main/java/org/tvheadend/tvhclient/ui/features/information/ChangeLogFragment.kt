@@ -1,48 +1,59 @@
 package org.tvheadend.tvhclient.ui.features.information
 
-import android.content.Context
-import android.graphics.Color
-import android.os.Build
 import android.os.Bundle
-import android.view.*
-import android.webkit.WebView
+import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup
 import android.widget.ProgressBar
+import android.widget.TextView
+import androidx.core.content.edit
 import androidx.core.view.forEach
 import androidx.fragment.app.Fragment
 import androidx.preference.PreferenceManager
-import kotlinx.coroutines.*
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import org.tvheadend.tvhclient.BuildConfig
 import org.tvheadend.tvhclient.R
-import org.tvheadend.tvhclient.ui.common.interfaces.HideNavigationDrawerInterface
 import org.tvheadend.tvhclient.ui.common.interfaces.BackPressedInterface
+import org.tvheadend.tvhclient.ui.common.interfaces.HideNavigationDrawerInterface
 import org.tvheadend.tvhclient.ui.common.interfaces.LayoutControlInterface
 import org.tvheadend.tvhclient.ui.common.interfaces.ToolbarInterface
 import org.tvheadend.tvhclient.util.extensions.gone
-import org.tvheadend.tvhclient.util.extensions.visible
-import org.tvheadend.tvhclient.util.getThemeId
+import org.tvheadend.tvhclient.util.extensions.visibleOrGone
 import timber.log.Timber
-import java.io.BufferedReader
-import java.io.InputStream
-import java.io.InputStreamReader
 
+/**
+ * Shows the changelog as a list of version headings and change items.
+ *
+ * The entries are read from the `assets/changelog.json` asset by [ChangeLogLoader] and rendered by
+ * a [RecyclerView]. The former implementation parsed a marker based text file into an HTML string
+ * by hand and rendered that in a `WebView`.
+ */
 class ChangeLogFragment : Fragment(), BackPressedInterface, HideNavigationDrawerInterface {
 
     private val job = Job()
-    private val scope = CoroutineScope(Dispatchers.IO + job)
+    private val scope = CoroutineScope(Dispatchers.Main + job)
+
+    private val adapter = ChangeLogRecyclerViewAdapter()
     private var showFullChangeLog = false
     private var versionName: String = ""
 
-    private var webView: WebView? = null
+    private var recyclerView: RecyclerView? = null
     private var loadingView: ProgressBar? = null
+    private var errorView: TextView? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val view = if (Build.VERSION.SDK_INT in 21..25) {
-            inflater.inflate(R.layout.webview_fragment_for_lollipop, container, false)
-        } else {
-            inflater.inflate(R.layout.webview_fragment, container, false)
-        }
-        webView = view.findViewById(R.id.webview)
+        val view = inflater.inflate(R.layout.changelog_fragment, container, false)
+        recyclerView = view.findViewById(R.id.changelog_list)
         loadingView = view.findViewById(R.id.loading_view)
+        errorView = view.findViewById(R.id.errorTextView)
         return view
     }
 
@@ -57,18 +68,19 @@ class ChangeLogFragment : Fragment(), BackPressedInterface, HideNavigationDrawer
             (activity as LayoutControlInterface).forceSingleScreenLayout()
         }
 
-        showFullChangeLog = arguments?.getBoolean("showFullChangelog", true) ?: true
-        versionName = arguments?.getString("versionNameForChangelog", BuildConfig.VERSION_NAME) ?: BuildConfig.VERSION_NAME
+        showFullChangeLog = savedInstanceState?.getBoolean("showFullChangelog")
+                ?: arguments?.getBoolean("showFullChangelog", true)
+                ?: true
+        versionName = savedInstanceState?.getString("versionNameForChangelog")
+                ?: arguments?.getString("versionNameForChangelog", BuildConfig.VERSION_NAME)
+                ?: BuildConfig.VERSION_NAME
         setHasOptionsMenu(true)
 
-        // Make the background transparent to remove flickering. This avoids
-        // seeing the default theme background color before the stylesheets are loaded.
-        webView?.setBackgroundColor(Color.argb(0, 0, 0, 0))
+        recyclerView?.layoutManager = LinearLayoutManager(requireContext())
+        recyclerView?.adapter = adapter
 
         Timber.d("Showing changelog, show full changelog: $showFullChangeLog")
-        activity?.let {
-            scope.launch { loadChangeLogContents(it, versionName, showFullChangeLog) }
-        }
+        loadChangeLog()
     }
 
     override fun onDestroy() {
@@ -82,18 +94,36 @@ class ChangeLogFragment : Fragment(), BackPressedInterface, HideNavigationDrawer
         outState.putString("versionNameForChangelog", versionName)
     }
 
-    private suspend fun loadChangeLogContents(context: Context, versionName: String, showFullChangeLog: Boolean) {
-        Timber.d("Loading data in background via suspend function")
-        val deferredLoader = scope.async {
-            Timber.d("Invoking ChangeLogLoader")
-            return@async ChangeLogLoader(context, versionName).getChangeLogFromFile(showFullChangeLog)
+    private fun loadChangeLog() {
+        val loader = ChangeLogLoader(requireContext())
+        scope.launch {
+            val loaded = loader.load()
+            if (!isAdded) {
+                return@launch
+            }
+            showEntries(selectEntries(loaded, versionName, showFullChangeLog))
+
+            // Record that the changelog has been shown so it is not shown again on the next start.
+            // This used to happen in onBackPressed(), which misses every other way of leaving the
+            // screen and therefore showed the changelog again after e.g. using the navigation menu.
+            if (loaded.isNotEmpty()) {
+                PreferenceManager.getDefaultSharedPreferences(requireContext())
+                        .edit { putString("versionNameForChangelog", BuildConfig.VERSION_NAME) }
+            }
         }
-        // Switch the context to the main thread to call the following method
-        withContext(Dispatchers.Main) {
-            Timber.d("Waiting until contents have been loaded")
-            val contents = deferredLoader.await()
-            Timber.d("Contents have been loaded")
-            onFileContentsLoaded(contents)
+    }
+
+    private fun showEntries(entries: List<ChangeLogEntry>) {
+        loadingView?.gone()
+
+        val hasEntries = entries.isNotEmpty()
+        recyclerView?.visibleOrGone(hasEntries)
+        errorView?.visibleOrGone(!hasEntries)
+
+        if (hasEntries) {
+            adapter.submitRows(toRows(entries))
+        } else {
+            Timber.d("No changelog entries to show for version $versionName")
         }
     }
 
@@ -114,7 +144,9 @@ class ChangeLogFragment : Fragment(), BackPressedInterface, HideNavigationDrawer
                 return true
             }
             R.id.menu_show_full_changelog -> {
-                scope.launch { loadChangeLogContents(requireContext(), versionName, true) }
+                showFullChangeLog = true
+                activity?.invalidateOptionsMenu()
+                loadChangeLog()
                 return true
             }
         }
@@ -122,153 +154,7 @@ class ChangeLogFragment : Fragment(), BackPressedInterface, HideNavigationDrawer
     }
 
     override fun onBackPressed() {
-        // Save the information that the changelog was shown
-        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(requireContext())
-        val editor = sharedPreferences.edit()
-        editor.putString("versionNameForChangelog", BuildConfig.VERSION_NAME)
-        editor.apply()
-
         activity?.supportFragmentManager?.popBackStack()
-    }
-
-    private fun onFileContentsLoaded(fileContent: String) {
-        Timber.d("Changelog data was loaded, file contents is not empty ${fileContent.isNotEmpty()}, fragment is added $isAdded and is visible $isVisible")
-        if (fileContent.isNotEmpty() && isAdded) {
-            Timber.d("Changelog data is available, showing contents in webview")
-            webView?.loadDataWithBaseURL("file:///android_asset/", fileContent, "text/html", "utf-8", null)
-            webView?.visible()
-            loadingView?.gone()
-        }
-    }
-
-    internal class ChangeLogLoader(context: Context, private val lastAppVersion: String) {
-
-        private var inputStream: InputStream
-        private var isLightTheme: Boolean = false
-        private var listMode = ListMode.NONE
-        private var stringBuffer = StringBuffer()
-
-        // modes for HTML-Lists (bullet, numbered)
-        private enum class ListMode {
-            NONE, ORDERED, UNORDERED
-        }
-
-        init {
-            Timber.d("Creating input stream from changelog file")
-            inputStream = context.resources.openRawResource(R.raw.changelog)
-            isLightTheme = getThemeId(context) == R.style.CustomTheme_Light
-        }
-
-        fun getChangeLogFromFile(loadFullChangelog: Boolean): String {
-            Timber.d("Loading full changelog $loadFullChangelog")
-
-            // Add the style sheet depending on the used theme
-            stringBuffer = StringBuffer()
-            stringBuffer.append("<html><head>")
-            if (isLightTheme) {
-                stringBuffer.append("<link href=\"html/styles_light.css\" type=\"text/css\" rel=\"stylesheet\"/>")
-            } else {
-                stringBuffer.append("<link href=\"html/styles_dark.css\" type=\"text/css\" rel=\"stylesheet\"/>")
-            }
-            stringBuffer.append("</head><body>")
-
-            val bufferedReader = BufferedReader(InputStreamReader(inputStream))
-            // ignore further version sections if set to true
-            var advanceToEOVS = false
-
-            // Loop through the contents for the file line by line
-            while (true) {
-                var line = bufferedReader.readLine() ?: break
-                // Remove any spaces before or after the line
-                line = line.trim()
-                // Get the first character which indicates the type of content on each line
-                val marker: Char = if (line.isNotEmpty()) line[0] else '0'
-                if (marker == '$') {
-                    // begin of a version section
-                    closeList()
-                    val version = line.substring(1).trim()
-                    // stop output?
-                    if (!loadFullChangelog) {
-                        if (lastAppVersion == version) {
-                            advanceToEOVS = true
-                        } else if (version == "END_OF_CHANGE_LOG") {
-                            advanceToEOVS = false
-                        }
-                    }
-                } else if (!advanceToEOVS) {
-                    when (marker) {
-                        '%' -> {
-                            // line contains version title
-                            closeList()
-                            stringBuffer.append("<div class=\"title\">")
-                            stringBuffer.append(line.substring(1))
-                            stringBuffer.append("</div>\n")
-                        }
-                        '_' -> {
-                            // line contains version title
-                            closeList()
-                            stringBuffer.append("<div class=\"subtitle\">")
-                            stringBuffer.append(line.substring(1))
-                            stringBuffer.append("</div>\n")
-                        }
-                        '!' -> {
-                            // line contains free text
-                            closeList()
-                            stringBuffer.append("<div class=\"content\">")
-                            stringBuffer.append(line.substring(1))
-                            stringBuffer.append("</div>\n")
-                        }
-                        '#' -> {
-                            // line contains numbered list item
-                            openList(ListMode.ORDERED)
-                            stringBuffer.append("<li class=\"list_content\">")
-                            stringBuffer.append(line.substring(1))
-                            stringBuffer.append("</li>\n")
-                        }
-                        '*' -> {
-                            // line contains bullet list item
-                            openList(ListMode.UNORDERED)
-                            stringBuffer.append("<li class=\"list_content\">")
-                            stringBuffer.append(line.substring(1))
-                            stringBuffer.append("</li>\n")
-                        }
-                        else -> {
-                            // no special character: just use line as is
-                            closeList()
-                            stringBuffer.append(line)
-                            stringBuffer.append("\n")
-                        }
-                    }
-                }
-            }
-            closeList()
-            bufferedReader.close()
-
-            stringBuffer.append("</body></html>")
-            Timber.d("Done reading changelog file")
-            return stringBuffer.toString()
-        }
-
-        private fun openList(listMode: ListMode) {
-            if (this.listMode != listMode) {
-                closeList()
-                if (listMode == ListMode.ORDERED) {
-                    stringBuffer.append("<ol>\n")
-                } else if (listMode == ListMode.UNORDERED) {
-                    stringBuffer.append("<ul>\n")
-                }
-                this.listMode = listMode
-            }
-        }
-
-        private fun closeList() {
-            if (listMode == ListMode.ORDERED) {
-                stringBuffer.append("</ol>\n")
-            } else if (listMode == ListMode.UNORDERED) {
-                stringBuffer.append("</ul>\n")
-            }
-            listMode = ListMode.NONE
-        }
     }
 
     companion object {

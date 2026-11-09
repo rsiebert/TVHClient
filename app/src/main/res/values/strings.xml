@@ -23,6 +23,7 @@
     <string name="cancel_recording">Do you really want to remove the scheduled recording \'%s\'?</string>
     <string name="cast">Cast</string>
     <string name="cast_error_no_media_client_available">Could not get the remote media client from the cast session.</string>
+    <string name="changelog_bullet" translatable="false">•</string>
     <string name="channel">Channel</string>
     <string name="channels">Channels</string>
     <string name="clear">Clear</string>
