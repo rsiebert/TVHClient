@@ -23,6 +23,7 @@ import org.tvheadend.tvhclient.BuildConfig
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.service.ConnectionIntentService
 import org.tvheadend.tvhclient.service.ServerTicketReceiver
+import org.tvheadend.tvhclient.util.HtspExecutor
 import org.tvheadend.tvhclient.service.SyncStateResult
 import org.tvheadend.tvhclient.util.convertUrlToHashString
 import org.tvheadend.tvhclient.util.extensions.sendSyncStateMessage
@@ -31,7 +32,6 @@ import timber.log.Timber
 import java.io.*
 import java.net.URL
 import java.util.*
-import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledExecutorService
 import kotlin.math.floor
 import kotlin.math.max
@@ -48,7 +48,7 @@ class HtspIntentServiceHandler(val context: Context, val appRepository: AppRepos
     private fun <T> blocking(block: suspend () -> T): T = runBlocking { block() }
 
     private val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
-    private val execService: ScheduledExecutorService = Executors.newScheduledThreadPool(10)
+    private val execService: ScheduledExecutorService = HtspExecutor.service
     private val htspConnection: HtspConnection
     private val serverStatus: ServerStatus = blocking { appRepository.serverStatusData.getActiveItem() }
     private var htspVersion: Int = 13
@@ -158,7 +158,7 @@ class HtspIntentServiceHandler(val context: Context, val appRepository: AppRepos
     override fun onDestroy() {
         Timber.d("Stopping service handler")
         isDestroying = true
-        execService.shutdown()
+        // The executor is shared and application scoped, so it is not shut down here.
         htspConnection.closeConnection()
     }
 

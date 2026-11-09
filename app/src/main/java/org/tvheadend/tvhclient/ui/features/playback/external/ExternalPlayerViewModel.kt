@@ -20,16 +20,16 @@ import org.tvheadend.tvhclient.BuildConfig
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.ui.base.BaseViewModel
 import org.tvheadend.tvhclient.ui.features.playback.PlaybackLogic
+import org.tvheadend.tvhclient.util.HtspExecutor
 import timber.log.Timber
 import java.net.InetAddress
 import java.net.UnknownHostException
-import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledExecutorService
 
 class ExternalPlayerViewModel(application: Application) : BaseViewModel(application), ServerConnectionStateListener {
 
     // Connection related
-    private val execService: ScheduledExecutorService = Executors.newScheduledThreadPool(10)
+    private val execService: ScheduledExecutorService = HtspExecutor.service
     private val htspConnection: HtspConnection
 
     var channel: Channel? = null
@@ -92,7 +92,7 @@ class ExternalPlayerViewModel(application: Application) : BaseViewModel(applicat
     override fun onCleared() {
         super.onCleared()
         Timber.d("Clearing view model")
-        execService.shutdown()
+        // The executor is shared and application scoped, so it is not shut down here.
         htspConnection.closeConnection()
     }
 

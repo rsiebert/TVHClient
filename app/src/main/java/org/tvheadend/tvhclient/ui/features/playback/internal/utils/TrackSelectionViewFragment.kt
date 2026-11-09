@@ -13,7 +13,6 @@ import androidx.media3.exoplayer.trackselection.DefaultTrackSelector.SelectionOv
 import androidx.media3.exoplayer.trackselection.MappingTrackSelector.MappedTrackInfo
 import androidx.media3.ui.TrackSelectionView
 import androidx.media3.ui.TrackSelectionView.TrackSelectionListener
-import org.tvheadend.tvhclient.R
 
 class TrackSelectionViewFragment : Fragment(), TrackSelectionListener {
 
@@ -63,8 +62,11 @@ class TrackSelectionViewFragment : Fragment(), TrackSelectionListener {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val rootView = inflater.inflate(R.layout.exo_track_selection_dialog, container, false)
-        val trackSelectionView: TrackSelectionView = rootView.findViewById(R.id.exo_track_selection_view)
+        // These two belong to the media3-ui library, not to the app, so they are referenced
+        // through its R class.
+        val rootView = inflater.inflate(androidx.media3.ui.R.layout.exo_track_selection_dialog, container, false)
+        val trackSelectionView: TrackSelectionView =
+                rootView.findViewById(androidx.media3.ui.R.id.exo_track_selection_view)
 
         trackSelectionView.setShowDisableOption(true)
         trackSelectionView.setAllowMultipleOverrides(allowMultipleOverrides)

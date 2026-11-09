@@ -448,6 +448,8 @@
     <string name="pref_load_more_epg_data">Load more epg data</string>
     <string name="error_loading_information">Error loading required information</string>
     <string name="exo_track_selection_title_video">Video</string>
+    <!-- Deliberately localised here: media3-ui keeps this one private. -->
+    <string name="exo_track_selection_title_audio" tools:override="true">Audio</string>
     <string name="exo_track_selection_title_text">Text</string>
     <string name="aspect_ratio_select_title">Select the video aspect ratio</string>
 </resources>

@@ -23,6 +23,7 @@ import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.service.*
 import org.tvheadend.tvhclient.ui.common.addNotificationScheduledRecordingStarts
 import org.tvheadend.tvhclient.ui.common.removeNotificationById
+import org.tvheadend.tvhclient.util.HtspExecutor
 import org.tvheadend.tvhclient.util.convertUrlToHashString
 import org.tvheadend.tvhclient.util.extensions.isEqualTo
 import org.tvheadend.tvhclient.util.extensions.sendSnackbarMessage
@@ -33,14 +34,17 @@ import org.tvheadend.tvhclient.util.worker.EpgDataUpdateWorker
 import kotlinx.coroutines.runBlocking
 import timber.log.Timber
 import java.io.*
+import java.net.HttpURLConnection
 import java.net.URL
 import java.text.SimpleDateFormat
 import java.util.*
-import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledExecutorService
 import java.util.concurrent.TimeUnit
 import kotlin.math.floor
 import kotlin.math.max
+
+/** How long to wait for a channel icon that is read over http. */
+private const val ICON_READ_TIMEOUT_MS = 10_000
 
 class HtspServiceHandler(val context: Context, val appRepository: AppRepository, val connection: Connection) : ConnectionService.ServiceInterface, ServerConnectionStateListener, ServerMessageListener<HtspMessage> {
 
@@ -64,7 +68,7 @@ class HtspServiceHandler(val context: Context, val appRepository: AppRepository,
     )
     private var htspVersion: Int = 13
     private var htspConnection: HtspConnection? = null
-    private val execService: ScheduledExecutorService = Executors.newScheduledThreadPool(10)
+    private val execService: ScheduledExecutorService = HtspExecutor.service
 
     private val pendingEventOps = ArrayList<Program>()
     private val pendingChannelOps = ArrayList<Channel>()
@@ -162,7 +166,7 @@ class HtspServiceHandler(val context: Context, val appRepository: AppRepository,
 
     override fun onDestroy() {
         Timber.d("Stopping service handler")
-        execService.shutdown()
+        // The executor is shared and application scoped, so it is not shut down here.
         htspConnection?.closeConnection()
     }
 
@@ -1215,26 +1219,14 @@ class HtspServiceHandler(val context: Context, val appRepository: AppRepository,
             return
         }
 
-        var inputStream: InputStream
-        inputStream = when {
-            url.startsWith("http") -> BufferedInputStream(URL(url).openStream())
-            htspVersion > 9 -> HtspFileInputStream(htspConnection, url)
-            else -> return
-        }
+        // Read the image once. The previous version opened the url twice, so every icon was
+        // downloaded a second time just to decode it after measuring its bounds.
+        val data = readIconBytes(url) ?: return
 
-        val os = FileOutputStream(file)
-
-        // Set the options for a bitmap and decode an input stream into a bitmap
+        // Set the options for a bitmap and decode the bytes to measure the bounds
         var o = BitmapFactory.Options()
         o.inJustDecodeBounds = true
-        BitmapFactory.decodeStream(inputStream, null, o)
-        inputStream.close()
-
-        if (url.startsWith("http")) {
-            inputStream = BufferedInputStream(URL(url).openStream())
-        } else if (htspVersion > 9) {
-            inputStream = HtspFileInputStream(htspConnection, url)
-        }
+        BitmapFactory.decodeByteArray(data, 0, data.size, o)
 
         val scale = context.resources.displayMetrics.density
         val width = (64 * scale).toInt()
@@ -1244,17 +1236,42 @@ class HtspServiceHandler(val context: Context, val appRepository: AppRepository,
         // either dimension that correspond to a single pixel in the decoded
         // bitmap. For example, inSampleSize == 4 returns an image that is 1/4
         // the width/height of the original, and 1/16 the number of pixels.
-        val ratio = max(o.outWidth / width, o.outHeight / height)
-        val sampleSize = Integer.highestOneBit(floor(ratio.toDouble()).toInt())
+        val ratio = if (o.outWidth > 0 && o.outHeight > 0) max(o.outWidth / width, o.outHeight / height) else 1
+        val sampleSize = Integer.highestOneBit(floor(ratio.toDouble()).toInt()).coerceAtLeast(1)
         o = BitmapFactory.Options()
         o.inSampleSize = sampleSize
 
-        // Now decode an input stream into a bitmap and compress it.
-        val bitmap = BitmapFactory.decodeStream(inputStream, null, o)
-        bitmap?.compress(Bitmap.CompressFormat.PNG, 100, os)
+        // Now decode the bytes into a bitmap and compress it.
+        val bitmap = BitmapFactory.decodeByteArray(data, 0, data.size, o)
+        FileOutputStream(file).use { os ->
+            bitmap?.compress(Bitmap.CompressFormat.PNG, 100, os)
+        }
+    }
 
-        os.close()
-        inputStream.close()
+    /**
+     * Reads the bytes of the icon at [url]. An http url is read with explicit timeouts, so a server
+     * that accepts the connection but never answers cannot block the download forever.
+     */
+    private fun readIconBytes(url: String): ByteArray? {
+        return try {
+            when {
+                url.startsWith("http") -> {
+                    val connection = URL(url).openConnection() as HttpURLConnection
+                    connection.connectTimeout = ICON_READ_TIMEOUT_MS
+                    connection.readTimeout = ICON_READ_TIMEOUT_MS
+                    try {
+                        connection.inputStream.use { it.readBytes() }
+                    } finally {
+                        connection.disconnect()
+                    }
+                }
+                htspVersion > 9 -> HtspFileInputStream(htspConnection, url).use { it.readBytes() }
+                else -> null
+            }
+        } catch (e: IOException) {
+            Timber.d(e, "Could not read the icon from '$url'")
+            null
+        }
     }
 
     /**
