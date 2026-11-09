@@ -12,6 +12,11 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 class FileLoggingTree(context: Context) : BaseDebugTree() {
+
+    private companion object {
+        const val LOG_TAG = "FileLoggingTree"
+    }
+
     private var logPath: File? = null
     private var file: File? = null
 
@@ -68,6 +73,7 @@ class FileLoggingTree(context: Context) : BaseDebugTree() {
 
     }
 
+    @Suppress("LogNotTimber")
     override fun log(priority: Int, tag: String?, message: String, t: Throwable?) {
         if (priority == Log.VERBOSE || priority == Log.INFO) {
             return
@@ -76,10 +82,14 @@ class FileLoggingTree(context: Context) : BaseDebugTree() {
             val stream = FileOutputStream(file, true)
             stream.write(tag?.toByteArray())
             stream.write(" ".toByteArray())
-            stream.write((message + "\n").toByteArray())
+            // The log file is written for support and can leave the device, so the server address
+            // and playback tickets are stripped before anything is stored.
+            stream.write((LogRedaction.apply(message) + "\n").toByteArray())
             stream.close()
         } catch (e: IOException) {
-            Timber.e(e, "Could not open logfile ${file?.name} for writing")
+            // Log directly instead of through Timber: this tree is the one writing to the file, so
+            // falling back to Timber here would re-enter this method and recurse.
+            Log.e(LOG_TAG, "Could not open logfile ${file?.name} for writing", e)
         }
     }
 }

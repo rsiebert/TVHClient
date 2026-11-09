@@ -44,15 +44,13 @@
             android:value="false" />
 
         <activity android:name=".ui.features.settings.SettingsActivity" />
+        <!-- Started explicitly by the Cast framework as the expanded controller activity, so it
+             needs no intent filter of its own. -->
         <activity
             android:name=".ui.features.playback.external.ExpandedControlsActivity"
             android:exported="false"
             android:label="@string/app_name"
-            android:launchMode="singleTask">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-            </intent-filter>
-        </activity>
+            android:launchMode="singleTask" />
         <activity
             android:name=".ui.features.MainActivity"
             android:exported="true"
