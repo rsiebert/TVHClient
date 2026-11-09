@@ -21,6 +21,9 @@ import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.preference.PreferenceManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -76,6 +79,7 @@ class PlaybackActivity : AppCompatActivity() {
     private var sensorManager: SensorManager? = null
     private var orientation: Sensor? = null
     private var forceOrientation = false
+    private var isFullscreen = false
     private var value0 = -10000f
     private var value1 = -10000f
 
@@ -507,6 +511,22 @@ class PlaybackActivity : AppCompatActivity() {
     }
 
     private fun onToggleFullscreenSelected() {
+        if (isLargeScreen()) {
+            // From Android 16 (API 36) an activity's requested orientation is no longer honoured on
+            // displays with a smallest width of 600dp or more, so rotating to landscape is not
+            // possible there. Toggle an immersive full screen instead, which lets the video use the
+            // whole window without relying on a forced rotation.
+            isFullscreen = !isFullscreen
+            val controller = WindowCompat.getInsetsController(window, window.decorView)
+            if (isFullscreen) {
+                controller.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+                controller.hide(WindowInsetsCompat.Type.systemBars())
+            } else {
+                controller.show(WindowInsetsCompat.Type.systemBars())
+            }
+            return
+        }
+
         @Suppress("DEPRECATION")
         when (resources.configuration.orientation) {
             Configuration.ORIENTATION_PORTRAIT -> {
@@ -525,6 +545,13 @@ class PlaybackActivity : AppCompatActivity() {
             }
         }
     }
+
+    /**
+     * Returns whether the app is running on a display that the platform treats as large. On such
+     * displays orientation, resizability and aspect ratio restrictions are ignored from Android 16
+     * (API 36) onwards.
+     */
+    private fun isLargeScreen(): Boolean = resources.configuration.screenWidthDp >= 600
 
     private fun onRewindButtonSelected() {
         Timber.d("Rewind button selected")
