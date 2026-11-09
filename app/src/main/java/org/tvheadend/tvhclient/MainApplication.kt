@@ -98,13 +98,18 @@ class MainApplication : Application(), OptionsProvider, AppGraph {
         AppGraphProvider.graph = this
         Timber.d("Application build time is ${BuildConfig.BUILD_TIME}, git commit hash is ${BuildConfig.GIT_SHA}")
 
+        // Build the data graph eagerly on the main thread. AppRepository writes to a LiveData in its
+        // constructor, and LiveData may only be written from the main thread, so it must not be
+        // created for the first time from the migration coroutine below.
+        val repository = appRepository
+
         // Execute some additional tasks before starting the application.
         // These tasks are for example migrating connections, updating or
         // removing preferences, removing old information from the database and others.
         // They run off the main thread; the startup flow waits for [migrationJob] so that the
         // database is never read before the migration that rewrites it has finished.
         migrationJob = applicationScope.launch {
-            MigrateUtils(applicationContext, appRepository, appSharedPreferences).doMigrate()
+            MigrateUtils(applicationContext, repository, appSharedPreferences).doMigrate()
 
             // Debug builds only (no-op in release). Starts an in-process fake TVHeadend server and,
             // if the app has no connections yet, adds a demo connection so a fresh debug install
