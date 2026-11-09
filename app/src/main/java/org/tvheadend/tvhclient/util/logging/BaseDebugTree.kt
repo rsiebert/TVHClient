@@ -10,4 +10,10 @@ abstract class BaseDebugTree : Timber.DebugTree() {
                 element.methodName,
                 element.lineNumber)
     }
+
+    override fun log(priority: Int, tag: String?, message: String, t: Throwable?) {
+        // Logcat is readable by anything attached to the device and gets pasted into bug reports,
+        // so the same values that are redacted for the log file are redacted here too.
+        super.log(priority, tag, LogRedaction.apply(message), t)
+    }
 }

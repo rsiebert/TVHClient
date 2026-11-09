@@ -162,23 +162,23 @@ public class HtspConnection extends Thread implements ServerConnectionInterface<
             start();
 
         } catch (UnknownHostException e) {
-            Timber.d(e, "Unknown host exception while opening HTSP connection");
+            Timber.w(e, "Could not open the HTSP connection, the host is unknown");
             connectionListener.onConnectionStateChange(new ConnectionStateResult.Failed(new ConnectionFailureReason.UnresolvedAddress()));
 
         } catch (ClosedByInterruptException e) {
-            Timber.d(e, "Failed to open HTSP connection, interrupted");
+            Timber.w(e, "Could not open the HTSP connection, the call was interrupted");
             connectionListener.onConnectionStateChange(new ConnectionStateResult.Failed(new ConnectionFailureReason.Interrupted()));
 
         } catch (UnresolvedAddressException e) {
-            Timber.d(e, "Failed to resolve HTSP server address");
+            Timber.w(e, "Could not resolve the address of the HTSP server");
             connectionListener.onConnectionStateChange(new ConnectionStateResult.Failed(new ConnectionFailureReason.UnresolvedAddress()));
 
         } catch (UnsupportedAddressTypeException e) {
-            Timber.d(e, "Type of HTSP server address is not supported");
+            Timber.w(e, "The address type of the HTSP server is not supported");
             connectionListener.onConnectionStateChange(new ConnectionStateResult.Failed(new ConnectionFailureReason.UnresolvedAddress()));
 
         } catch (IOException e) {
-            Timber.d(e, "Caught IOException while opening SocketChannel");
+            Timber.w(e, "Could not open the socket channel to the HTSP server");
             connectionListener.onConnectionStateChange(new ConnectionStateResult.Failed(new ConnectionFailureReason.SocketException()));
 
         } finally {
@@ -197,12 +197,13 @@ public class HtspConnection extends Thread implements ServerConnectionInterface<
                     try {
                         signal.wait(htspConnectionData.getConnectionTimeout());
                         if (socketChannel.isConnectionPending()) {
-                            Timber.d("Timeout while waiting to connect to server");
+                            Timber.w("Timed out while waiting for the connection to the server");
                             connectionListener.onConnectionStateChange(new ConnectionStateResult.Failed(new ConnectionFailureReason.Other()));
                             closeConnection();
                         }
                     } catch (InterruptedException e) {
-                        Timber.d(e, "Waiting for pending connection was interrupted.");
+                        Thread.currentThread().interrupt();
+                        Timber.w(e, "Waiting for the pending connection was interrupted");
                     }
                 }
             }
@@ -284,7 +285,7 @@ public class HtspConnection extends Thread implements ServerConnectionInterface<
                 authMessage.put("digest", md.digest());
                 sendMessage(authMessage, authHandler);
             } catch (NoSuchAlgorithmException e) {
-                Timber.d(e, "Could not sent authentication message.");
+                Timber.e(e, "Could not send the authentication message, no SHA1 algorithm available");
             }
         });
 
@@ -295,11 +296,12 @@ public class HtspConnection extends Thread implements ServerConnectionInterface<
                 // was closed by the application, so the caller must not be told the handshake timed
                 // out. Without this check a rebind or a service teardown reports a bogus failure.
                 if (!isAuthenticated && !isClosing) {
-                    Timber.d("Timeout while waiting for authentication response");
+                    Timber.w("Timed out while waiting for the authentication response");
                     connectionListener.onAuthenticationStateChange(new AuthenticationStateResult.Failed(new AuthenticationFailureReason.Other()));
                 }
             } catch (InterruptedException e) {
-                Timber.d(e, "Waiting for authentication message was interrupted.");
+                Thread.currentThread().interrupt();
+                Timber.w(e, "Waiting for the authentication response was interrupted");
             }
         }
     }
@@ -312,7 +314,7 @@ public class HtspConnection extends Thread implements ServerConnectionInterface<
     @Override
     public void sendMessage(@NonNull HtspMessage message, @Nullable ServerResponseListener<HtspMessage> listener) {
         if (isNotConnected()) {
-            Timber.d("Not sending message, not connected to server");
+            Timber.w("Not sending the message %s, not connected to the server", message.getMethod());
 
             HtspMessage msg = new HtspMessage();
             msg.put("success", 0);
@@ -333,7 +335,7 @@ public class HtspConnection extends Thread implements ServerConnectionInterface<
             selector.wakeup();
 
         } catch (Exception e) {
-            Timber.d(e, "Could not send message.");
+            Timber.w(e, "Could not send the message %s", message.getMethod());
         } finally {
             lock.unlock();
         }
@@ -353,15 +355,15 @@ public class HtspConnection extends Thread implements ServerConnectionInterface<
             socketChannel.close();
 
         } catch (ClosedChannelException e) {
-            Timber.d(e, "Failed to register selector with socket channel, closed channel exception");
+            Timber.w(e, "Could not close the HTSP connection, the channel is already closed");
         } catch (NullPointerException e) {
-            Timber.d(e, "Failed to register selector with socket channel or closing socket channel, socket channel is null");
+            Timber.w(e, "Could not close the HTSP connection, the socket channel is null");
         } catch (IllegalSelectorException e) {
-            Timber.d(e, "Failed to register selector with socket channel, illegal selector");
+            Timber.w(e, "Could not close the HTSP connection, the selector is illegal");
         } catch (CancelledKeyException e) {
-            Timber.d(e, "Failed to register selector with socket channel, cancelled key");
+            Timber.w(e, "Could not close the HTSP connection, the selection key was cancelled");
         } catch (IOException e) {
-            Timber.d(e, "Failed to close socket channel");
+            Timber.w(e, "Could not close the socket channel of the HTSP connection");
         } finally {
             lock.unlock();
         }
@@ -383,11 +385,11 @@ public class HtspConnection extends Thread implements ServerConnectionInterface<
             try {
                 selector.select(5000);
             } catch (IOException e) {
-                Timber.d(e, "Failed to select from socket channel, I/O error occurred");
+                Timber.w(e, "Could not select from the socket channel, an I/O error occurred");
                 connectionListener.onConnectionStateChange(new ConnectionStateResult.Failed(new ConnectionFailureReason.Other()));
                 isRunning = false;
             } catch (ClosedSelectorException e) {
-                Timber.d(e, "Failed to select from socket channel, selector is already closed");
+                Timber.w(e, "Could not select from the socket channel, the selector is already closed");
                 connectionListener.onConnectionStateChange(new ConnectionStateResult.Failed(new ConnectionFailureReason.Other()));
                 isRunning = false;
             }
@@ -409,25 +411,25 @@ public class HtspConnection extends Thread implements ServerConnectionInterface<
                 }
 
             } catch (NullPointerException e) {
-                Timber.d(e, "Failed to register selector with socket channel, socket channel is null");
+                Timber.w(e, "Could not register the selector, the socket channel is null");
                 isRunning = false;
             } catch (IllegalSelectorException e) {
-                Timber.d(e, "Failed to register selector with socket channel, illegal selector");
+                Timber.w(e, "Could not register the selector, the selector is illegal");
                 isRunning = false;
             } catch (ClosedChannelException e) {
-                Timber.d(e, "Failed to register selector with socket channel, channel is already closed");
+                Timber.w(e, "Could not register the selector, the channel is already closed");
                 isRunning = false;
             } catch (ClosedSelectorException e) {
-                Timber.d(e, "Failed to register selector with socket channel, selector is already closed");
+                Timber.w(e, "Could not register the selector, the selector is already closed");
                 isRunning = false;
             } catch (CancelledKeyException e) {
-                Timber.d(e, "Invalid selection key was used while processing tcp selection key");
+                Timber.w(e, "Could not register the selector, the selection key was cancelled");
                 isRunning = false;
             } catch (NotYetConnectedException e) {
-                Timber.d(e, "Not yet connected while while processing tcp selection key");
+                Timber.w(e, "Could not register the selector, the channel is not connected yet");
                 isRunning = false;
             } catch (IOException e) {
-                Timber.d(e, "Exception while processing tcp selection key");
+                Timber.w(e, "Could not process the tcp selection key");
                 isRunning = false;
             } finally {
                 lock.unlock();
@@ -455,7 +457,7 @@ public class HtspConnection extends Thread implements ServerConnectionInterface<
             int len = sChannel.read(inputByteBuffer);
             if (len < 0) {
                 connectionListener.onConnectionStateChange(new ConnectionStateResult.Failed(new ConnectionFailureReason.Other()));
-                Timber.d("Could not read data from server");
+                Timber.w("Could not read data from the server, the server closed the connection");
                 throw new IOException();
             }
 

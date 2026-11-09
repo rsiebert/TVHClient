@@ -51,14 +51,14 @@ fun preparePopupOrToolbarRecordingMenu(context: Context,
                         && !recording.isFileMissing
                         && !recording.isMissed
                         && !recording.isAborted)) {
-            Timber.d("Recording is not recording or scheduled")
+            Timber.v("Recording is not recording or scheduled")
             menu.findItem(R.id.menu_record_program)?.isVisible = true
             menu.findItem(R.id.menu_record_program_and_edit)?.isVisible = isUnlocked
             menu.findItem(R.id.menu_record_program_with_custom_profile)?.isVisible = isUnlocked
             menu.findItem(R.id.menu_record_program_as_series_recording)?.isVisible = htspVersion >= 13 && isUnlocked
 
         } else if (recording.isCompleted) {
-            Timber.d("Recording is completed ")
+            Timber.v("Recording is completed")
             menu.findItem(R.id.menu_play)?.isVisible = true
             menu.findItem(R.id.menu_cast)?.isVisible = context.getCastSession() != null
             menu.findItem(R.id.menu_remove_recording)?.isVisible = true
@@ -66,14 +66,14 @@ fun preparePopupOrToolbarRecordingMenu(context: Context,
             menu.findItem(R.id.menu_share_recording)?.isVisible = isUnlocked
 
         } else if (recording.isScheduled && !recording.isRecording) {
-            Timber.d("Recording is scheduled")
+            Timber.v("Recording is scheduled")
             menu.findItem(R.id.menu_cancel_recording)?.isVisible = true
             menu.findItem(R.id.menu_edit_recording)?.isVisible = isUnlocked
             menu.findItem(R.id.menu_disable_recording)?.isVisible = htspVersion >= 23 && isUnlocked && recording.isEnabled
             menu.findItem(R.id.menu_enable_recording)?.isVisible = htspVersion >= 23 && isUnlocked && !recording.isEnabled
 
         } else if (recording.isRecording) {
-            Timber.d("Recording is being recorded")
+            Timber.v("Recording is being recorded")
             menu.findItem(R.id.menu_play)?.isVisible = true
             menu.findItem(R.id.menu_cast)?.isVisible = context.getCastSession() != null
             menu.findItem(R.id.menu_stop_recording)?.isVisible = true
@@ -81,7 +81,7 @@ fun preparePopupOrToolbarRecordingMenu(context: Context,
             menu.findItem(R.id.menu_share_recording)?.isVisible = isUnlocked
 
         } else if (recording.isFailed || recording.isFileMissing || recording.isMissed || recording.isAborted) {
-            Timber.d("Recording is failed, file is missing, has been missed or was aborted")
+            Timber.v("Recording is failed, file is missing, has been missed or was aborted")
             menu.findItem(R.id.menu_remove_recording)?.isVisible = true
             // Allow playing a failed recording which size is not zero
             if (recording.dataSize > 0) {

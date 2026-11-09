@@ -2,7 +2,6 @@ package org.tvheadend.tvhclient
 
 import android.app.Activity
 import androidx.lifecycle.LifecycleObserver
-import androidx.lifecycle.asLiveData
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
@@ -46,9 +45,9 @@ class MainRepository(
                 // Never swallow cancellation: it must propagate to cancel the collection.
                 throw e
             } catch (e: Exception) {
-                Timber.d(e, "Collection complete")
+                Timber.w(e, "Collecting the purchases reported by the billing client failed")
             }
-            Timber.d("Collection Coroutine Scope Exited")
+            Timber.d("Stopped collecting purchases reported by the billing client")
         }
     }
 
@@ -68,10 +67,8 @@ class MainRepository(
      * @return Flow that returns true if the sku is purchased.
      */
     fun isPurchased(sku: String): Flow<Boolean> {
-        Timber.d("Calling isPurchased($sku)")
-        val skuPurchased = billingDataSource.isPurchased(sku)
-        Timber.d("Calling isPurchased($sku) status is ${skuPurchased.asLiveData().value}")
-        return skuPurchased
+        Timber.d("Returning the purchase flow for $sku")
+        return billingDataSource.isPurchased(sku)
     }
 
     /**

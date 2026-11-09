@@ -82,7 +82,7 @@ fun addNotificationScheduledRecordingStarts(context: Context, recording: Recordi
             && recording.start > System.currentTimeMillis()
             && !recording.title.isNullOrEmpty()) {
 
-        Timber.d("Adding of notification for recording ${recording.title}, it starts at ${recording.start}")
+        Timber.d("Adding a notification for recording ${recording.title}, it starts at ${recording.start}")
 
         val data = Data.Builder()
                 .putString("dvrTitle", recording.title)

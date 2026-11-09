@@ -89,8 +89,11 @@ class MainApplication : Application(), OptionsProvider, AppGraph {
 
         fireBaseAnalytics = FirebaseAnalytics.getInstance(this)
 
-        // Initialize the logging. Log to the console only when in debug mode.
-        Timber.plant(DebugTree())
+        // Log to the console only in debug builds. Planting the debug tree unconditionally keeps
+        // every Timber call site (and the string it builds) alive and printing in release builds.
+        if (BuildConfig.DEBUG) {
+            Timber.plant(DebugTree())
+        }
 
         // Log to a file when in release mode and the user has activated the setting
         if (!BuildConfig.DEBUG && appSharedPreferences.getBoolean("debug_mode_enabled", resources.getBoolean(R.bool.pref_default_debug_mode_enabled))) {

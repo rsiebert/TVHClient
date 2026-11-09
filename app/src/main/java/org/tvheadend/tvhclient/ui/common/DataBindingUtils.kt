@@ -378,9 +378,9 @@ fun setProgramImage(view: ImageView, url: String?, viewWidth: Int = 0, visible: 
 
         val transformation = object : Transformation {
             override fun transform(source: Bitmap): Bitmap {
-                Timber.d("Transforming source image with dimensions w:${source.width}, h:${source.height} to fit the view width $viewWidth")
+                Timber.v("Transforming source image with dimensions w:${source.width}, h:${source.height} to fit the view width $viewWidth")
                 if (viewWidth == 0 || source.height == 0 || source.width == 0) {
-                    Timber.d("Returning source image with dimensions w:${source.width}, h:${source.height}, target width is $viewWidth")
+                    Timber.v("Returning source image with dimensions w:${source.width}, h:${source.height}, target width is $viewWidth")
                     return source
                 }
                 val aspectRatio = source.height.toDouble() / source.width.toDouble()
@@ -390,7 +390,7 @@ fun setProgramImage(view: ImageView, url: String?, viewWidth: Int = 0, visible: 
                     // Same bitmap is returned if sizes are the same
                     source.recycle()
                 }
-                Timber.d("Returning transformed image with new dimensions w:${source.width}, h:${source.height}")
+                Timber.v("Returning transformed image with new dimensions w:${source.width}, h:${source.height}")
                 return result
             }
 
@@ -408,7 +408,9 @@ fun setProgramImage(view: ImageView, url: String?, viewWidth: Int = 0, visible: 
                     }
 
                     override fun onError(e: Exception) {
-                        Timber.d("Could not load image $url")
+                        // A missing image is cosmetic and this callback runs for every row of a
+                        // list, so it is only logged in verbose builds.
+                        Timber.v(e, "Could not load image $url")
                         view.gone()
                     }
                 })
@@ -424,23 +426,20 @@ fun setProgramImage(view: ImageView, url: String?, viewWidth: Int = 0, visible: 
 @BindingAdapter("iconUrl")
 fun setChannelIcon(view: ImageView, iconUrl: String?) {
     if (iconUrl.isNullOrEmpty()) {
-        //Timber.d("Channel icon '$iconUrl' is empty or null, hiding icon")
         view.gone()
     } else {
         val url = getIconUrl(view.context, iconUrl)
-        //Timber.d("Channel icon '$iconUrl' is not empty, loading icon from url '$url'")
 
         Picasso.get().cancelRequest(view)
         Picasso.get()
                 .load(url)
                 .into(view, object : Callback {
                     override fun onSuccess() {
-                        //Timber.d("Successfully loaded channel icon from url '$url'")
                         view.visible()
                     }
 
                     override fun onError(e: Exception) {
-                        //Timber.d("Error loading channel icon from url '$url'")
+                        Timber.v(e, "Could not load channel icon $url")
                         view.gone()
                     }
                 })
@@ -622,7 +621,7 @@ fun setGenreColor(view: TextView, contentType: Int, showGenreColors: Boolean, of
             var type = contentType / 16 - 1
             type = if (type < 0) 0 else type
 
-            Timber.d("Received content type $contentType ${if (itemName != null) " for $itemName" else ""}, final color id is ${contentType / 16}")
+            Timber.v("Received content type $contentType ${if (itemName != null) " for $itemName" else ""}, final color id is ${contentType / 16}")
             when (type) {
                 0 -> color = ContextCompat.getColor(view.context, R.color.EPG_MOVIES)
                 1 -> color = ContextCompat.getColor(view.context, R.color.EPG_NEWS)

@@ -222,7 +222,7 @@ class EpgViewModel(application: Application) : BaseChannelViewModel(application)
     }
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
-        Timber.d("Shared preference $key has changed")
+        Timber.v("Shared preference $key has changed")
         if (sharedPreferences == null) return
         when (key) {
             "channel_sort_order" -> channelSortOrder.value = Integer.valueOf(sharedPreferences.getString("channel_sort_order", defaultChannelSortOrder)

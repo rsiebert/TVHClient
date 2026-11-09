@@ -91,11 +91,11 @@ class DownloadRecordingActivity : BasePlaybackActivity() {
             lastDownloadId = downloadManager.enqueue(request)
             Timber.d("Started download with id $lastDownloadId")
         } catch (e: SecurityException) {
-            Timber.d(e, "Could not start download, security exception")
+            Timber.w(e, "Could not start the download, the storage permission is missing")
         } catch (e: IllegalArgumentException) {
-            Timber.d(e, "Could not start download, download uri is not valid")
+            Timber.w(e, "Could not start the download, the download uri is not valid")
         } catch (e: IllegalStateException) {
-            Timber.d(e, "Could not set the destination directory %s", downloadDirectory)
+            Timber.w(e, "Could not set the destination directory to %s", downloadDirectory)
         }
 
         // Check after a certain delay the status of the download and that for

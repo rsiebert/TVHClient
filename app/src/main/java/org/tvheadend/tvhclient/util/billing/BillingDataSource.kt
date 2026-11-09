@@ -296,7 +296,7 @@ class BillingDataSource private constructor(
         when (responseCode) {
             BillingClient.BillingResponseCode.OK -> {
                 if (productDetailsList.isNullOrEmpty()) {
-                    Timber.e("onSkuDetailsResponse: " + "Found null or empty SkuDetails. " + "Check to see if the SKUs you requested are correctly published " + "in the Google Play Console.")
+                    Timber.e("onSkuDetailsResponse: found null or empty SkuDetails. Check that the requested SKUs are published in the Google Play Console")
                 } else {
                     for (productDetails in productDetailsList) {
                         val sku = productDetails.productId
@@ -674,7 +674,7 @@ class BillingDataSource private constructor(
                     0 -> {
                     }
 
-                    else -> Timber.e(heldSubscriptions.size.toString() + " subscriptions subscribed to. Upgrade not possible.")
+                    else -> Timber.w("${heldSubscriptions.size} subscriptions subscribed to, an upgrade is not possible")
                 }
                 // launchBillingFlow is a @UiThread API: it starts the Play purchase Activity, so it
                 // has to be invoked on the main thread even though the purchase lookup above does

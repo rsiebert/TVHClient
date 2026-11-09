@@ -67,7 +67,7 @@ internal class HtspSubscriptionExtractor : Extractor {
     @Throws(IOException::class, InterruptedException::class)
     override fun read(input: ExtractorInput, seekPosition: PositionHolder): Int {
         val bytesRead = input.read(mRawBytes, 0, mRawBytes.size)
-        Timber.d("Read $bytesRead bytes")
+        Timber.v("Read $bytesRead bytes")
 
         var objectInput: ObjectInputStream? = null
         try {
@@ -79,17 +79,17 @@ internal class HtspSubscriptionExtractor : Extractor {
             }
         } catch (e: IOException) {
             // TODO: This is a problem, and returning RESULT_CONTINUE is a hack... I think?
-            Timber.w("Caught IOException, returning RESULT_CONTINUE")
+            Timber.w(e, "Could not read the subscription data, returning RESULT_CONTINUE")
             return Extractor.RESULT_CONTINUE
         } catch (e: ClassNotFoundException) {
-            Timber.w("Class Not Found")
+            Timber.w(e, "Could not deserialize the message received from the server")
         } finally {
             try {
                 if (objectInput != null) {
                     objectInput!!.close()
                 }
             } catch (ex: IOException) {
-                // Ignore
+                Timber.v(ex, "Could not close the object input stream")
             }
 
         }// N.B. Don't add the objectInput to this bit, it breaks stuff

@@ -4,7 +4,6 @@ import android.content.Context
 import android.os.Build
 import android.util.Log
 import org.tvheadend.tvhclient.BuildConfig
-import timber.log.Timber
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
@@ -26,41 +25,37 @@ class FileLoggingTree(context: Context) : BaseDebugTree() {
     }
 
     private fun removeLogFiles() {
+        val logPath = logPath ?: return
         val currentTime = System.currentTimeMillis()
         val sevenDays = (7 * 24 * 3600 * 1000).toLong()
 
-        if (logPath!!.exists()) {
-            val files = logPath!!.listFiles()
-            if (files != null) {
-                for (file in files) {
-                    val diff = currentTime - file.lastModified()
-                    if (diff > sevenDays) {
-                        if (!file.delete()) {
-                            Timber.d("Could not remove logfile ${file.name}")
-                        }
-                    }
-                }
+        for (logfile in logPath.listFiles().orEmpty()) {
+            val diff = currentTime - logfile.lastModified()
+            if (diff > sevenDays && !logfile.delete()) {
+                // Log directly: this tree is the one writing to the file, so going through Timber
+                // would re-enter this class.
+                logToLogcat(Log.WARN, "Could not remove old logfile ${logfile.name}")
             }
         }
     }
 
     private fun createNewLogFile(context: Context) {
-        logPath = File(context.cacheDir, "logs")
-        if (!logPath!!.exists()) {
-            if (!logPath!!.mkdirs()) {
-                return
-            }
+        val logPath = File(context.cacheDir, "logs")
+        this.logPath = logPath
+        if (!logPath.exists() && !logPath.mkdirs()) {
+            return
         }
         // Open the log file with the current date. This ensures that the log files are rotated daily
         val simpleDateFormat = SimpleDateFormat("dd.MM.yyyy", Locale.getDefault())
-        file = File(logPath, "tvhclient_" +
+        val logfile = File(logPath, "tvhclient_" +
                 BuildConfig.VERSION_NAME + "_" +
                 BuildConfig.BUILD_VERSION + "_" +
                 simpleDateFormat.format(System.currentTimeMillis()) + ".log")
+        file = logfile
 
         try {
-            if (file!!.createNewFile() || file!!.exists()) {
-                val stream = FileOutputStream(file, true)
+            if (logfile.createNewFile() || logfile.exists()) {
+                val stream = FileOutputStream(logfile, true)
                 stream.write("Logging started\n".toByteArray())
                 stream.write(("Application version: " + BuildConfig.VERSION_NAME + "(" + BuildConfig.BUILD_VERSION + ")\n").toByteArray())
                 stream.write(("Application build time is " + BuildConfig.BUILD_TIME + ", git commit hash is " + BuildConfig.GIT_SHA + ")\n").toByteArray())
@@ -68,18 +63,19 @@ class FileLoggingTree(context: Context) : BaseDebugTree() {
                 stream.close()
             }
         } catch (e: IOException) {
-            Timber.e(e, "Could not open logfile ${file?.name} for writing")
+            logToLogcat(Log.ERROR, "Could not open logfile ${logfile.name} for writing", e)
         }
-
     }
 
-    @Suppress("LogNotTimber")
     override fun log(priority: Int, tag: String?, message: String, t: Throwable?) {
         if (priority == Log.VERBOSE || priority == Log.INFO) {
             return
         }
+        // The log file could not be created (e.g. the cache directory is not writable), so there
+        // is nowhere to write to. Returning here keeps the tree from failing on every message.
+        val logfile = file ?: return
         try {
-            val stream = FileOutputStream(file, true)
+            val stream = FileOutputStream(logfile, true)
             stream.write(tag?.toByteArray())
             stream.write(" ".toByteArray())
             // The log file is written for support and can leave the device, so the server address
@@ -87,9 +83,20 @@ class FileLoggingTree(context: Context) : BaseDebugTree() {
             stream.write((LogRedaction.apply(message) + "\n").toByteArray())
             stream.close()
         } catch (e: IOException) {
-            // Log directly instead of through Timber: this tree is the one writing to the file, so
-            // falling back to Timber here would re-enter this method and recurse.
-            Log.e(LOG_TAG, "Could not open logfile ${file?.name} for writing", e)
+            logToLogcat(Log.ERROR, "Could not write to logfile ${logfile.name}", e)
+        }
+    }
+
+    /**
+     * Writes directly to logcat. Used because this tree is the one writing to the file, so falling
+     * back to Timber here would re-enter [log] and recurse.
+     */
+    @Suppress("LogNotTimber")
+    private fun logToLogcat(priority: Int, message: String, throwable: Throwable? = null) {
+        when {
+            throwable == null -> Log.println(priority, LOG_TAG, message)
+            priority >= Log.ERROR -> Log.e(LOG_TAG, message, throwable)
+            else -> Log.w(LOG_TAG, message, throwable)
         }
     }
 }

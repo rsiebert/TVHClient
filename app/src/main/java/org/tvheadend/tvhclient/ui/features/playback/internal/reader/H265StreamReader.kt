@@ -38,7 +38,8 @@ internal class H265StreamReader : PlainStreamReader(C.TRACK_TYPE_VIDEO) {
                 val hevcConfig = HevcConfig.parse(ParsableByteArray(stream.getByteArray("meta")))
                 initializationData = hevcConfig.initializationData
             } catch (e: ParserException) {
-                Timber.e("Failed to parse H265 meta, discarding")
+                // The track is skipped and playback continues, so this is not an error.
+                Timber.w(e, "Could not parse the H265 meta data of stream $streamIndex, discarding the stream")
             }
 
         }

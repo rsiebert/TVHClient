@@ -95,7 +95,7 @@ class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceClic
     }
 
     override fun onSharedPreferenceChanged(prefs: SharedPreferences?, key: String?) {
-        Timber.d("Shared preference $key has changed")
+        Timber.v("Shared preference $key has changed")
         when (key) {
             "selected_theme" -> handlePreferenceThemeChanged()
             "language" -> {

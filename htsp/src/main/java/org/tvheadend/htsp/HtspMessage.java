@@ -343,8 +343,8 @@ public class HtspMessage extends HashMap<String, Object> {
                 throw new IOException("Would get precision losses, datalen " + datalen + ", max int " + Integer.MAX_VALUE);
             }
             if (buf.limit() < namelen + datalen) {
-                //throw new IOException("Buffer limit exceeded, limit " + buf.limit() + ", namelen " + namelen + ", datalen " + datalen);
-                Timber.d("Buffer limit exceeded, limit " + buf.limit() + ", namelen " + namelen + ", datalen " + datalen);
+                // The message is incomplete: more data has to be read from the server first.
+                Timber.v("Buffer limit exceeded, limit %d, namelen %d, datalen %d", buf.limit(), namelen, datalen);
                 return null;
             }
 
@@ -357,8 +357,8 @@ public class HtspMessage extends HashMap<String, Object> {
                 buf.get(bName);
                 name = new String(bName);
             } else {
-                //throw new IOException("Buffer position is negative, namelen " + namelen);
-                Timber.d("Buffer position is negative, namelen %s", namelen);
+                // Only a corrupt message can get here, the name length is unsigned on the wire.
+                Timber.w("Received a corrupt message, the name length is negative: %d", namelen);
                 return null;
             }
 

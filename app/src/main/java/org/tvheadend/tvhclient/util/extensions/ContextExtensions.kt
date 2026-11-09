@@ -31,7 +31,8 @@ fun Context.getCastSession(): CastSession? {
         try {
             return castContext.sessionManager.currentCastSession
         } catch (e: IllegalStateException) {
-            Timber.e("Could not get current cast session")
+            // Expected whenever no cast session is active.
+            Timber.w(e, "Could not get the current cast session")
         }
     }
     return null

@@ -322,10 +322,10 @@ class HtspServiceHandler(val context: Context,
 
         // Only save any received events when they shall be loaded
         if (syncEventsRequired) {
-            Timber.d("Sync of all evens is required, saving events")
+            Timber.d("Sync of all events is required, saving events")
             saveAllReceivedEvents()
         } else {
-            Timber.d("Sync of all evens is not required")
+            Timber.d("Sync of all events is not required")
         }
 
         // Recordings are always saved to keep up to
@@ -478,7 +478,7 @@ class HtspServiceHandler(val context: Context,
                 }
             })
         } else {
-            Timber.d("Not requesting subscription status because the API version is too low")
+            Timber.d("Not requesting input status because the API version is too low")
         }
     }
 
@@ -838,7 +838,8 @@ class HtspServiceHandler(val context: Context,
                 context.sendSyncStateMessage(SyncStateResult.Syncing(SyncState.InProgress("Received ${pendingEventOps.size} program guide events")))
             }
         } else {
-            Timber.d("Adding event ${program.title}")
+            // Called for every event the server pushes, which can be thousands per hour.
+            Timber.v("Adding event ${program.title}")
             appRepository.programData.addItem(program)
         }
     }
@@ -852,7 +853,7 @@ class HtspServiceHandler(val context: Context,
     private fun onEventUpdate(msg: HtspMessage) {
         val program = blocking { appRepository.programData.getItemById(msg.getInteger("eventId")) } ?: return
         val updatedProgram = convertMessageToProgramModel(program, msg)
-        Timber.d("Updating event ${updatedProgram.title}")
+        Timber.v("Updating event ${updatedProgram.title}")
         appRepository.programData.updateItem(updatedProgram)
     }
 
@@ -932,7 +933,7 @@ class HtspServiceHandler(val context: Context,
                     }
                 }
             } catch (e: JSONException) {
-                Timber.e(e, "Error parsing JSON data")
+                Timber.e(e, "Could not parse the http playback profiles received from the server")
             }
         } else {
             Timber.d("No http playback profile data available")
@@ -962,7 +963,7 @@ class HtspServiceHandler(val context: Context,
                         var i = 0
                         val totalObject = entries.length()
                         while (i < totalObject) {
-                            Timber.d("Reading subscription $i of $totalObject")
+                            Timber.v("Reading subscription $i of $totalObject")
                             val entry = entries.getJSONObject(i)
                             if (entry.has("id")) {
                                 // Taken from https://github.com/tvheadend/tvheadend/blob/master/src/webui/static/app/status.js
@@ -990,7 +991,7 @@ class HtspServiceHandler(val context: Context,
                     }
                 }
             } catch (e: JSONException) {
-                Timber.e(e, "Error parsing JSON data")
+                Timber.e(e, "Could not parse the subscription status received from the server")
             }
         } else {
             Timber.d("No subscription status data available")
@@ -1013,7 +1014,7 @@ class HtspServiceHandler(val context: Context,
                         var i = 0
                         val totalObject = entries.length()
                         while (i < totalObject) {
-                            Timber.d("Reading input $i of $totalObject")
+                            Timber.v("Reading input $i of $totalObject")
                             val entry = entries.getJSONObject(i)
                             if (entry.has("uuid")) {
                                 // Taken from https://github.com/tvheadend/tvheadend/blob/master/src/webui/static/app/status.js
@@ -1041,7 +1042,7 @@ class HtspServiceHandler(val context: Context,
                     }
                 }
             } catch (e: JSONException) {
-                Timber.e(e, "Error parsing JSON data")
+                Timber.e(e, "Could not parse the input status received from the server")
             }
         } else {
             Timber.d("No input status data available")
@@ -1180,10 +1181,10 @@ class HtspServiceHandler(val context: Context,
 
         for (channel in channelList) {
             try {
-                Timber.d("Downloading channel icon ${channel.icon} for channel ${channel.name}")
+                Timber.v("Downloading channel icon ${channel.icon} for channel ${channel.name}")
                 downloadIconFromFileUrl(channel.icon)
             } catch (e: Exception) {
-                Timber.d(e, "Could not load channel icon for channel '${channel.name}'")
+                Timber.w(e, "Could not load channel icon for channel '${channel.name}'")
             }
         }
     }
@@ -1195,10 +1196,10 @@ class HtspServiceHandler(val context: Context,
 
         for (tag in tagList) {
             try {
-                Timber.d("Downloading channel tag icon ${tag.tagIcon} for channel tag ${tag.tagName}")
+                Timber.v("Downloading channel tag icon ${tag.tagIcon} for channel tag ${tag.tagName}")
                 downloadIconFromFileUrl(tag.tagIcon)
             } catch (e: Exception) {
-                Timber.d(e, "Could not load channel tag icon '${tag.tagIcon}'")
+                Timber.w(e, "Could not load channel tag icon '${tag.tagIcon}'")
             }
         }
     }
@@ -1273,7 +1274,7 @@ class HtspServiceHandler(val context: Context,
                 else -> null
             }
         } catch (e: IOException) {
-            Timber.d(e, "Could not read the icon from '$url'")
+            Timber.w(e, "Could not read the icon from '$url'")
             null
         }
     }
@@ -1290,7 +1291,7 @@ class HtspServiceHandler(val context: Context,
         val url = getIconUrl(context, iconUrl)
         val file = File(url)
         if (!file.exists() || !file.delete()) {
-            Timber.d("Could not delete icon ${file.name}")
+            Timber.w("Could not delete the cached icon ${file.name}")
         }
     }
 
@@ -1307,7 +1308,7 @@ class HtspServiceHandler(val context: Context,
                     try {
                         downloadIconFromFileUrl(icon)
                     } catch (e: Exception) {
-                        Timber.d(e, "Could not load icon '$icon'")
+                        Timber.w(e, "Could not load icon '$icon'")
                     }
                 }
             }
@@ -1413,7 +1414,7 @@ class HtspServiceHandler(val context: Context,
                         try {
                             eventIdList.add(str.toInt())
                         } catch (e: NumberFormatException) {
-                            Timber.d("Error converting eventId $str to Int")
+                            Timber.w(e, "Could not parse the event id '$str' received from the server")
                         }
                     }
                 }
@@ -1462,7 +1463,6 @@ class HtspServiceHandler(val context: Context,
 
         htspConnection?.sendMessage(request, object : ServerResponseListener<HtspMessage> {
             override fun handleResponse(response: HtspMessage) {
-                Timber.d("Response is not null")
                 if (response.getInteger("success", 0) == 1) {
                     context.applicationContext?.sendSnackbarMessage(context.getString(R.string.success_removing_recording))
                 } else {
@@ -1597,7 +1597,8 @@ class HtspServiceHandler(val context: Context,
 
         htspConnection?.sendMessage(request, object : ServerResponseListener<HtspMessage> {
             override fun handleResponse(response: HtspMessage) {
-                Timber.d("Response is not null")
+                // The ticket is a credential valid until it expires, so its value is never logged.
+                Timber.d("Received a playback ticket from the server")
                 val ticketIntent = Intent(ServerTicketReceiver.ACTION)
                 ticketIntent.putExtra(ServerTicketReceiver.PATH, response.getString("path"))
                 ticketIntent.putExtra(ServerTicketReceiver.TICKET, response.getString("ticket"))

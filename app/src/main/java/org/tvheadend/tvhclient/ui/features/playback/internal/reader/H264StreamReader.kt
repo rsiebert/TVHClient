@@ -37,7 +37,8 @@ internal class H264StreamReader : PlainStreamReader(C.TRACK_TYPE_VIDEO) {
                 val avcConfig = AvcConfig.parse(ParsableByteArray(stream.getByteArray("meta")))
                 initializationData = avcConfig.initializationData
             } catch (e: ParserException) {
-                Timber.e("Failed to parse H264 meta, discarding")
+                // The track is skipped and playback continues, so this is not an error.
+                Timber.w(e, "Could not parse the H264 meta data of stream $streamIndex, discarding the stream")
             }
         }
 

@@ -20,14 +20,12 @@ class WakeOnLanTask(lifecycleScope: LifecycleCoroutineScope, context: Context, p
     init {
         lifecycleScope.executeAsyncTask(onPreExecute = {
             // ... runs in Main Thread
-            Timber.d("onPreExecute")
+            Timber.d("Sending a wake on lan packet to ${connection.wolMacAddress}")
         }, doInBackground = {
-            Timber.d("doInBackground")
             val status: Int = sendWakeOnLanPacket.prepareAndSend()
             status // send data to "onPostExecute"
         }, onPostExecute = {
             // runs in Main Thread
-            Timber.d("onPostExecute")
             // ... here "it" is the data returned from "doInBackground"
             val message: String
             when (it) {
@@ -40,11 +38,11 @@ class WakeOnLanTask(lifecycleScope: LifecycleCoroutineScope, context: Context, p
                     message = context.getString(R.string.wol_send_broadcast, connection.wolMacAddress)
                 }
                 WOL_INVALID_MAC -> {
-                    Timber.d("Can't send WOL packet, the MAC-address is not valid")
+                    Timber.w("Could not send the WOL packet, the MAC address ${connection.wolMacAddress} is not valid")
                     message = context.getString(R.string.wol_address_invalid)
                 }
                 else -> {
-                    Timber.d("Error sending WOL packet to ${connection.wolMacAddress}:${connection.port}")
+                    Timber.w(sendWakeOnLanPacket.exception, "Could not send the WOL packet to ${connection.wolMacAddress}:${connection.port}")
                     message = context.getString(R.string.wol_error, "${connection.wolMacAddress}:${connection.port}", sendWakeOnLanPacket.exception?.localizedMessage)
                 }
             }

@@ -36,7 +36,8 @@ internal class VorbisStreamReader : PlainStreamReader(C.TRACK_TYPE_AUDIO) {
             try {
                 initializationData = parseVorbisCodecPrivate(stream.getByteArray("meta"))
             } catch (e: ParserException) {
-                Timber.e("Failed to parse Vorbis meta, discarding")
+                // The track is skipped and playback continues, so this is not an error.
+                Timber.w(e, "Could not parse the Vorbis meta data of stream $streamIndex, discarding the stream")
             }
 
         }

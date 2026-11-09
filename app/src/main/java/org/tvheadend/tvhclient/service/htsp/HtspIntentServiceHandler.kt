@@ -142,7 +142,7 @@ class HtspIntentServiceHandler(val context: Context,
             while (authenticationResult == null) {
                 val remaining = deadline - System.currentTimeMillis()
                 if (remaining <= 0) {
-                    Timber.d("Timed out while waiting for the connection to authenticate")
+                    Timber.w("Timed out while waiting for the connection to authenticate")
                     return
                 }
                 try {
@@ -256,7 +256,7 @@ class HtspIntentServiceHandler(val context: Context,
             val isLastIconUrl = ++iconUrlCount == iconUrls.size
             execService.execute {
                 try {
-                    Timber.d("Downloading icon url $it")
+                    Timber.v("Downloading icon url $it")
                     downloadIconFromFileUrl(it)
                     // Release the lock so that all data can be saved
                     if (isLastIconUrl) {
@@ -266,7 +266,7 @@ class HtspIntentServiceHandler(val context: Context,
                         }
                     }
                 } catch (e: Exception) {
-                    Timber.d(e, "Could not load icon $it")
+                    Timber.w(e, "Could not load icon $it")
                 }
             }
 

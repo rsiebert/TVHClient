@@ -48,7 +48,7 @@ class UnlockerFragment : WebViewFragment() {
                 is BillingFlowResult.AlreadyOwned -> showPurchasedAlreadyMadeDialog()
                 is BillingFlowResult.Canceled -> Timber.i("Unlocker purchase canceled by the user")
                 is BillingFlowResult.Failed -> {
-                    Timber.e("Unlocker purchase failed: ${result.message}")
+                    Timber.w("Unlocker purchase failed: ${result.message}")
                     showPurchaseNotSuccessfulDialog()
                 }
             }

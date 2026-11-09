@@ -38,7 +38,7 @@ internal class EpgVerticalRecyclerViewAdapter(private val activity: FragmentActi
             if (holder.bindingAdapterPosition != position) {
                 return@launch
             }
-            Timber.d("Binding ${programs.size} programs for channel ${epgChannel.name} in viewpager fragment $fragmentId")
+            // Bound for every visible row, i.e. on every scroll frame, so nothing is logged here.
             holder.bindData(programs)
         }
     }

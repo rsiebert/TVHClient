@@ -40,7 +40,7 @@ class HtspFileInputStreamDataSource private constructor(val connection: HtspConn
         private var dataSource: HtspFileInputStreamDataSource? = null
 
         override fun createDataSource(): DataSource {
-            Timber.d("Created new data source from factory")
+            Timber.v("Created new data source from factory")
             val newDataSource = HtspFileInputStreamDataSource(htspConnection)
             dataSource = newDataSource
             return newDataSource
@@ -48,12 +48,12 @@ class HtspFileInputStreamDataSource private constructor(val connection: HtspConn
 
         val currentDataSource: HtspFileInputStreamDataSource?
             get() {
-                Timber.d("Returning data source")
+                Timber.v("Returning data source")
                 return if (dataSource != null) dataSource else null
             }
 
         fun releaseCurrentDataSource() {
-            Timber.d("Releasing data source")
+            Timber.v("Releasing data source")
             dataSource?.release()
         }
 
@@ -95,7 +95,7 @@ class HtspFileInputStreamDataSource private constructor(val connection: HtspConn
     }
 
     override fun open(spec: DataSpec): Long {
-        Timber.d("Opening file input data source $dataSourceNumber)")
+        Timber.d("Opening file input data source $dataSourceNumber")
         dataSpec = spec
 
         fileName = "dvrfile" + dataSpec.uri.path
@@ -111,15 +111,14 @@ class HtspFileInputStreamDataSource private constructor(val connection: HtspConn
             override fun handleResponse(response: HtspMessage) {
                 if (response.containsKey("error")) {
                     val error = response.getString("error")
-                    Timber.d("Error reading file at offset 0: %s", error)
+                    Timber.w("Could not read the file at offset 0: %s", error)
                 } else {
                     val data = response.getByteArray("data")
-                    Timber.d("Fetched %s bytes of file at filePosition %s", data.size, filePosition)
+                    Timber.v("Fetched %s bytes of file at filePosition %s", data.size, filePosition)
                     filePosition += data.size.toLong()
                     byteBuffer = ByteBuffer.wrap(data)
                 }
                 lock.withLock {
-                    Timber.d("Notifying fileReadRequest")
                     condition.signal()
                 }
             }
@@ -133,7 +132,7 @@ class HtspFileInputStreamDataSource private constructor(val connection: HtspConn
             override fun handleResponse(response: HtspMessage) {
                 if (response.containsKey("error")) {
                     val error = response.getString("error")
-                    Timber.d("Error opening file: %s", error)
+                    Timber.w("Could not open file %s: %s", fileName, error)
                 } else {
                     Timber.d("Opening file: %s", fileName)
                     fileId = response.getInteger("id")
@@ -143,7 +142,7 @@ class HtspFileInputStreamDataSource private constructor(val connection: HtspConn
                     } else {
                         Timber.v("Opened file $fileName successfully")
                     }
-                    Timber.d("Sending file read request for file id %s", fileId)
+                    Timber.v("Sending file read request for file id %s", fileId)
                     fileReadRequest["id"] = fileId
                     htspConnection.sendMessage(fileReadRequest, fileReadHandler)
                 }
@@ -155,7 +154,8 @@ class HtspFileInputStreamDataSource private constructor(val connection: HtspConn
             try {
                 condition.await(5, TimeUnit.SECONDS)
             } catch (e: InterruptedException) {
-                Timber.d(e, "Waiting for fileReadRequest message was interrupted")
+                Thread.currentThread().interrupt()
+                Timber.w(e, "Waiting for fileReadRequest message was interrupted")
             }
         }
 
@@ -188,45 +188,46 @@ class HtspFileInputStreamDataSource private constructor(val connection: HtspConn
         return if (fileSize != -1L) fileSize - startPosition else fileSize
     }
 
+    // The player calls read() and getUri() hundreds of times per second, so everything on this
+    // path logs at verbose level only.
     override fun read(bytes: ByteArray, offset: Int, readLength: Int): Int {
-        Timber.d("Read %s at offset %s with length %s", bytes.size, offset, readLength)
-        // If we've reached the end of the file, we're done :)
+        Timber.v("Read %s at offset %s with length %s", bytes.size, offset, readLength)
         // If we've reached the end of the file, we're done :)
         if (fileSize == filePosition && !byteBuffer.hasRemaining()) {
-            Timber.d("File has been read, returning -1")
+            Timber.v("File has been read, returning -1")
             return RESULT_END_OF_INPUT
         }
 
         sendFileRead(filePosition)
 
         if (!byteBuffer.hasRemaining() && fileSize == -1L) {
-            Timber.d("No data and no known size, returning -1")
+            Timber.v("No data and no known size, returning -1")
             // If we still don't have any data, and we
             // don't have a known size, then we're done.
             return RESULT_END_OF_INPUT
         } else if (!byteBuffer.hasRemaining()) {
             // If we don't have data here, something went wrong
-            Timber.d("Failed to read data for %s, returning -1", fileName)
+            Timber.w("Failed to read data for %s, returning -1", fileName)
             return RESULT_END_OF_INPUT
         }
 
         val length = copyBufferedBytes(byteBuffer, bytes, offset, readLength)
-        Timber.d("Read %s bytes into the buffer at offset %s", length, offset)
+        Timber.v("Read %s bytes into the buffer at offset %s", length, offset)
         return length
     }
 
     override fun getUri(): Uri? {
-        Timber.d("Returning data spec uri of %s", dataSpec.uri)
+        Timber.v("Returning data spec uri of %s", dataSpec.uri)
         return dataSpec.uri
     }
 
     override fun getResponseHeaders(): Map<String, List<String>> {
-        Timber.d("Returning response headers")
+        Timber.v("Returning response headers")
         return emptyMap()
     }
 
     override fun close() {
-        Timber.d("Closing file input data source $dataSourceNumber)")
+        Timber.d("Closing file input data source $dataSourceNumber")
     }
 
     override fun onMessage(response: HtspMessage, method: String) {
@@ -235,7 +236,7 @@ class HtspFileInputStreamDataSource private constructor(val connection: HtspConn
 
     // HtspDataSource Methods
     private fun release() {
-        Timber.d("Releasing file input data source $dataSourceNumber)")
+        Timber.d("Releasing file input data source $dataSourceNumber")
 
         val request = HtspMessage()
         request["method"] = "fileClose"
@@ -280,12 +281,12 @@ class HtspFileInputStreamDataSource private constructor(val connection: HtspConn
 
         val response = sendFileRequest(request) ?: return false
         if (response.containsKey("error")) {
-            Timber.d("Error seeking in the file: %s", response.getString("error"))
+            Timber.w("Could not seek to position $position in file $fileId: %s", response.getString("error"))
             return false
         }
 
         filePosition = response.getLong("offset", position)
-        Timber.d("File position is now $filePosition")
+        Timber.v("File position is now $filePosition")
         return true
     }
 
@@ -300,7 +301,7 @@ class HtspFileInputStreamDataSource private constructor(val connection: HtspConn
 
         val response = sendFileRequest(request) ?: return
         if (response.containsKey("error")) {
-            Timber.d("Error requesting the size of the file: %s", response.getString("error"))
+            Timber.w("Could not request the size of file $fileId: %s", response.getString("error"))
             return
         }
 
@@ -333,22 +334,22 @@ class HtspFileInputStreamDataSource private constructor(val connection: HtspConn
             try {
                 condition.await(timeoutMs, TimeUnit.MILLISECONDS)
             } catch (e: InterruptedException) {
-                Timber.d(e, "Waiting for a reply from the server was interrupted")
+                Thread.currentThread().interrupt()
+                Timber.w(e, "Waiting for a reply from the server was interrupted")
             }
         }
         return reply
     }
 
     private fun sendFileRead(offset: Long) {
-        Timber.d("Sending message to read file from offset %s", offset)
+        Timber.v("Sending message to read file from offset %s", offset)
 
         if (byteBuffer.hasRemaining()) {
-            Timber.d("Buffer has elements remaining, returning")
+            Timber.v("Buffer has elements remaining, returning")
             return
         }
 
         var size: Long = 1024000
-        Timber.d("File size is %s", fileSize)
         if (fileSize != -1L) {
             // Make sure we don't overrun the file
             if (offset + size > fileSize) {
@@ -361,7 +362,7 @@ class HtspFileInputStreamDataSource private constructor(val connection: HtspConn
         request["id"] = fileId
         request["size"] = size
         request["offset"] = offset
-        Timber.d("Fetching $size bytes of file at offset $offset")
+        Timber.v("Fetching $size bytes of file at offset $offset")
 
         val lock = ReentrantLock()
         val condition = lock.newCondition()
@@ -370,10 +371,10 @@ class HtspFileInputStreamDataSource private constructor(val connection: HtspConn
             override fun handleResponse(response: HtspMessage) {
                 if (response.containsKey("error")) {
                     val error = response.getString("error")
-                    Timber.d("Error reading file at $offset: $error")
+                    Timber.w("Could not read the file at offset $offset: $error")
                 } else {
                     val data = response.getByteArray("data")
-                    Timber.d("Fetched %s bytes of file at offset %s", data.size, offset)
+                    Timber.v("Fetched %s bytes of file at offset %s", data.size, offset)
                     filePosition += data.size.toLong()
                     byteBuffer = ByteBuffer.wrap(data)
                 }
@@ -382,12 +383,12 @@ class HtspFileInputStreamDataSource private constructor(val connection: HtspConn
                 }
             }
         })
-        Timber.d("Waiting for file read request")
         lock.withLock {
             try {
                 condition.await(5, TimeUnit.SECONDS)
             } catch (e: InterruptedException) {
-                Timber.d(e, "Waiting for fileReadRequest message was interrupted.")
+                Thread.currentThread().interrupt()
+                Timber.w(e, "Waiting for the file read response was interrupted")
             }
         }
     }

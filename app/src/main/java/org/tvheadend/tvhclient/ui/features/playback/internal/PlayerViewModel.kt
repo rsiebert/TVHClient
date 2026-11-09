@@ -138,8 +138,8 @@ class PlayerViewModel(application: Application) : BaseViewModel(application), Se
         player.addListener(this)
         player.addAnalyticsListener(CustomEventLogger(trackSelector))
 
+        // Runs once per second, so it must not log anything.
         timeUpdateRunnable = Runnable {
-            Timber.d("Updating elapsed and remaining times")
             remainingTime.postValue(playbackInformation.remainingTime)
             elapsedTime.postValue(playbackInformation.elapsedTime)
             skipCutpointsIfRequested()
@@ -335,7 +335,7 @@ class PlayerViewModel(application: Application) : BaseViewModel(application), Se
         htspConnection.sendMessage(request, object : ServerResponseListener<HtspMessage> {
             override fun handleResponse(response: HtspMessage) {
                 if (response.containsKey("error")) {
-                    Timber.d("Error requesting the cut points: %s", response.getString("error"))
+                    Timber.w("Could not request the cut points of recording $recordingId: %s", response.getString("error"))
                     return
                 }
                 val receivedCutpoints = convertMessageToCutpointList(response)
@@ -385,7 +385,7 @@ class PlayerViewModel(application: Application) : BaseViewModel(application), Se
                 isConnected.postValue(true)
             }
             is AuthenticationStateResult.Failed -> {
-                Timber.d("Authorization failed")
+                Timber.w("Authorization with the server failed")
                 isConnected.postValue(false)
             }
         }
@@ -394,7 +394,7 @@ class PlayerViewModel(application: Application) : BaseViewModel(application), Se
     override fun onConnectionStateChange(result: ConnectionStateResult) {
         when (result) {
             is ConnectionStateResult.Failed -> {
-                Timber.d("Connection failed")
+                Timber.w("Connection to the server failed")
                 isConnected.postValue(false)
             }
             else -> {
@@ -554,7 +554,7 @@ class PlayerViewModel(application: Application) : BaseViewModel(application), Se
     }
 
     override fun onPlayerError(error: PlaybackException) {
-        Timber.d("Player error occurred with code ${error.errorCode}: ${error.message}")
+        Timber.w(error, "Playback failed with error code ${error.errorCode}: ${error.message}")
     }
 
     companion object {

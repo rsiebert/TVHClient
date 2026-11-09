@@ -89,14 +89,14 @@ class MigrateUtils(val context: Context, val appRepository: AppRepository, val s
     }
 
     private fun convertInvalidLowSpaceThresholdPreference() {
-        var hours = 0
+        var threshold = 0
         try {
-            hours = Integer.parseInt(sharedPreferences.getString("low_storage_space_threshold", context.resources.getString(R.string.pref_default_low_storage_space_threshold))!!)
+            threshold = Integer.parseInt(sharedPreferences.getString("low_storage_space_threshold", context.resources.getString(R.string.pref_default_low_storage_space_threshold))!!)
         } catch (e: NumberFormatException) {
-            Timber.d("Low space threshold contains an invalid number, setting default of 1")
+            Timber.w(e, "The low space threshold contains an invalid number, setting the default of 1")
         }
-        Timber.d("ow space threshold is $hours")
-        if (hours == 0) {
+        Timber.d("Low space threshold is $threshold")
+        if (threshold == 0) {
             val editor = sharedPreferences.edit()
             editor.putString("low_storage_space_threshold", "1")
             editor.apply()

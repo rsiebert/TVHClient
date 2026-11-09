@@ -128,11 +128,14 @@ class MainActivity : AppCompatActivity(), ToolbarInterface, LayoutControlInterfa
         setTheme(getThemeId(this))
 
         if (BuildConfig.DEBUG) {
+            // penaltyLog only, deliberately. These detectors report from a GC callback rather
+            // than at the offending call site, so a death penalty would kill the process at an
+            // arbitrary moment that is hard to attribute to the leak. The logged report still
+            // carries the allocation stack trace that points at the culprit.
             StrictMode.setVmPolicy(StrictMode.VmPolicy.Builder()
                     .detectLeakedSqlLiteObjects()
                     .detectLeakedClosableObjects()
                     .penaltyLog()
-                    .penaltyDeath()
                     .build())
         }
         super.onCreate(savedInstanceState)
@@ -237,7 +240,7 @@ class MainActivity : AppCompatActivity(), ToolbarInterface, LayoutControlInterfa
                 }
             }
         } else {
-            Timber.d("Casting is not available, casting will no be enabled")
+            Timber.d("Casting is not available, casting will not be enabled")
         }
 
         baseViewModel.isUnlockedLiveData.observe(this) { isUnlocked ->

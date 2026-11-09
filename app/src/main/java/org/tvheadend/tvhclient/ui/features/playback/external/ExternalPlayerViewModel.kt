@@ -71,7 +71,7 @@ class ExternalPlayerViewModel(application: Application) : BaseViewModel(applicat
                 isConnected.postValue(true)
             }
             is AuthenticationStateResult.Failed -> {
-                Timber.d("Authorization failed")
+                Timber.w("Authorization with the server failed")
                 isConnected.postValue(false)
             }
         }
@@ -80,7 +80,7 @@ class ExternalPlayerViewModel(application: Application) : BaseViewModel(applicat
     override fun onConnectionStateChange(result: ConnectionStateResult) {
         when (result) {
             is ConnectionStateResult.Failed -> {
-                Timber.d("Connection failed")
+                Timber.w("Connection to the server failed")
                 isConnected.postValue(false)
             }
             else -> {
@@ -116,7 +116,8 @@ class ExternalPlayerViewModel(application: Application) : BaseViewModel(applicat
             override fun handleResponse(response: HtspMessage) {
                 path = response.getString("path", "")
                 ticket = response.getString("ticket", "")
-                Timber.d("Received response for ticket request, path is $path, ticket is $ticket")
+                // The ticket is a credential valid until it expires, so its value is never logged.
+                Timber.d("Received response for ticket request, path is $path, ticket received ${ticket.isNotEmpty()}")
                 isTicketReceived.postValue(true)
             }
         })
@@ -133,11 +134,11 @@ class ExternalPlayerViewModel(application: Application) : BaseViewModel(applicat
             withContext(Dispatchers.IO) {
                 try {
                     if (!hostname.isNullOrEmpty()) {
-                        Timber.d("Tying to convert hostname to address")
+                        Timber.d("Trying to convert hostname $hostname to an address")
                         hostname = InetAddress.getByName(hostname).hostAddress
                     }
                 } catch (e: UnknownHostException) {
-                    Timber.d(e, "Could not get ip address from $hostname, using hostname as fallback")
+                    Timber.w(e, "Could not resolve hostname $hostname, using the hostname as fallback")
                 }
             }
         } else {
@@ -153,6 +154,7 @@ class ExternalPlayerViewModel(application: Application) : BaseViewModel(applicat
         }
 
         Timber.d("Original url was ${connection.streamingUrl}, converted url is $baseUrl")
+
         return baseUrl
     }
 

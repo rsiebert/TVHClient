@@ -101,7 +101,7 @@ class RecordingViewModel(application: Application) : BaseViewModel(application),
     }
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
-        Timber.d("Shared preference $key has changed")
+        Timber.v("Shared preference $key has changed")
         if (sharedPreferences == null) return
         when (key) {
             "genre_colors_for_recordings_enabled" -> showGenreColor.value = sharedPreferences.getBoolean(key,defaultShowGenreColor)

@@ -7,7 +7,8 @@ package org.tvheadend.tvhclient.util.logging
  * setting, but it can still leave the device. The server address reveals the host and port of a
  * private server, and a playback ticket grants access to a stream until it expires.
  *
- * The console tree of a debug build is left untouched so the values stay useful during development.
+ * The console tree is redacted as well: logcat is readable by anything attached to the device and
+ * is routinely pasted into public bug reports.
  */
 object LogRedaction {
 

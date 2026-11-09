@@ -85,7 +85,7 @@ class ProgramViewModel(application: Application) : BaseViewModel(application), S
     }
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
-        Timber.d("Shared preference $key has changed")
+        Timber.v("Shared preference $key has changed")
         if (sharedPreferences == null) return
         when (key) {
             "genre_colors_for_programs_enabled" -> showGenreColor.value = sharedPreferences.getBoolean(key, defaultShowGenreColor)

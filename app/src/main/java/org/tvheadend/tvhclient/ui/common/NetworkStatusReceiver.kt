@@ -58,11 +58,11 @@ class NetworkStatusReceiver(private val viewModel: NetworkStatusInterface) : Bro
                 try {
                     return method.invoke(wifiManager) as Boolean
                 } catch (e: IllegalArgumentException) {
-                    Timber.d(e, "Illegal argument error while invoking method 'isWifiApEnabled'")
+                    Timber.w(e, "Could not invoke the hidden method 'isWifiApEnabled', illegal argument")
                 } catch (e: IllegalAccessException) {
-                    Timber.d(e, "Illegal access error while invoking method 'isWifiApEnabled'")
+                    Timber.w(e, "Could not invoke the hidden method 'isWifiApEnabled', illegal access")
                 } catch (e: InvocationTargetException) {
-                    Timber.d(e, "Invocation error while invoking method 'isWifiApEnabled'")
+                    Timber.w(e, "Could not invoke the hidden method 'isWifiApEnabled', the invocation failed")
                 }
             }
         }
@@ -70,7 +70,7 @@ class NetworkStatusReceiver(private val viewModel: NetworkStatusInterface) : Bro
     }
 
     private fun getNetworkStatus(previousStatus: NetworkStatus?, isAvailable: Boolean): NetworkStatus {
-        Timber.d("Previous network status is $previousStatus")
+        Timber.v("Previous network status is $previousStatus")
         val status = when (previousStatus) {
             NetworkStatus.NETWORK_IS_DOWN -> {
                 if (isAvailable) NetworkStatus.NETWORK_IS_UP else NetworkStatus.NETWORK_IS_STILL_DOWN

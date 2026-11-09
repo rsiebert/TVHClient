@@ -108,7 +108,7 @@ public class HtspFileInputStream extends InputStream {
                 fileId = response.id;
                 fileSize = response.size;
             } catch (Throwable e) {
-                Timber.e(e, "Timeout waiting for fileOpen");
+                Timber.w(e, "Could not wait for the fileOpen response from the server");
             }
         }
 
@@ -139,13 +139,13 @@ public class HtspFileInputStream extends InputStream {
                 fileId = -1;
                 fileSize = -1;
             } catch (Throwable e) {
-                Timber.e(e, "Timeout waiting for fileClose");
+                Timber.w(e, "Could not wait for the fileClose response from the server");
             }
         }
 
         // close() must never throw, so a server that never answers is only logged.
         if (!response.responded) {
-            Timber.e("Timeout waiting for the fileClose response");
+            Timber.w("Timed out waiting for the fileClose response of file %d", fileId);
         }
     }
 
@@ -209,7 +209,7 @@ public class HtspFileInputStream extends InputStream {
                     bufPos = 0;
                 }
             } catch (Throwable e) {
-                Timber.e(e, "Timeout waiting for fileRead");
+                Timber.w(e, "Could not wait for the fileRead response from the server");
             }
         }
 
