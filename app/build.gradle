@@ -54,9 +54,9 @@ android {
     }
 
     lint {
-        // Do not check for lint errors to reduce the build time.
-        // Lint checks will be done manually before a release
-        checkReleaseBuilds false
+        // Lint runs on release builds too, so a regression cannot slip into a release unnoticed.
+        // The pre-existing findings are recorded in the baseline, so only new ones fail the build.
+        checkReleaseBuilds true
         // Opt in to Media3's @UnstableApi surface (custom Extractors, DataSource,
         // TrackSelector, AnalyticsListener) so a manual lint run is warning-free.
         lintConfig = file("lint.xml")
@@ -65,9 +65,8 @@ android {
         baseline = file("lint-baseline.xml")
         // AGP's unit-test lint analysis reads the Data Binding output that kapt generates for the
         // *release* variant without depending on the task that writes it, so on a cold build lint
-        // dies with FileNotFoundException on DataBinderMapperImpl.java and `check` fails. Skipping
-        // test sources makes `check` deterministic; `checkReleaseBuilds false` already gives up the
-        // release half.
+        // dies with FileNotFoundException on DataBinderMapperImpl.java and fails. Skipping test
+        // sources keeps the analysis deterministic.
         checkTestSources = false
     }
 
