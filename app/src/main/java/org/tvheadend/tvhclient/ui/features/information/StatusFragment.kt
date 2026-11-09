@@ -10,11 +10,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import org.tvheadend.data.entity.ServerStatus
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.databinding.StatusFragmentBinding
 import org.tvheadend.tvhclient.service.ConnectionService
 import org.tvheadend.tvhclient.ui.base.BaseFragment
+import kotlinx.coroutines.launch
 import org.tvheadend.tvhclient.ui.common.interfaces.LayoutControlInterface
 import org.tvheadend.tvhclient.ui.features.dvr.recordings.RecordingViewModel
 import timber.log.Timber
@@ -136,6 +138,7 @@ class StatusFragment : BaseFragment() {
         // Get the programs that are currently being recorded
         val recordingViewModel = ViewModelProvider(this)[RecordingViewModel::class.java]
         recordingViewModel.scheduledRecordings.observe(viewLifecycleOwner) { recordings ->
+            viewLifecycleOwner.lifecycleScope.launch {
             if (recordings != null) {
                 val currentRecText = StringBuilder()
                 for (rec in recordings) {
@@ -149,6 +152,7 @@ class StatusFragment : BaseFragment() {
                 }
                 // Show which programs are being recorded
                 binding.currentlyRecordingView.text = if (currentRecText.isNotEmpty()) currentRecText.toString() else getString(R.string.nothing)
+            }
             }
         }
     }

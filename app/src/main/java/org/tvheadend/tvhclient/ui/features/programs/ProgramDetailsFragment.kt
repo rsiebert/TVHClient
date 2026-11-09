@@ -3,11 +3,13 @@ package org.tvheadend.tvhclient.ui.features.programs
 import android.os.Bundle
 import android.view.*
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import org.tvheadend.data.entity.Program
 import org.tvheadend.data.entity.Recording
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.databinding.ProgramDetailsFragmentBinding
 import org.tvheadend.tvhclient.ui.base.BaseFragment
+import kotlinx.coroutines.launch
 import org.tvheadend.tvhclient.ui.common.*
 import org.tvheadend.tvhclient.ui.common.interfaces.ClearSearchResultsOrPopBackStackInterface
 import org.tvheadend.tvhclient.ui.common.interfaces.LayoutControlInterface
@@ -145,13 +147,23 @@ class ProgramDetailsFragment : BaseFragment(), ClearSearchResultsOrPopBackStackI
             R.id.menu_stop_recording -> return showConfirmationToStopSelectedRecording(ctx, recording, null)
             R.id.menu_cancel_recording -> return showConfirmationToCancelSelectedRecording(ctx, recording, null)
             R.id.menu_remove_recording -> return showConfirmationToRemoveSelectedRecording(ctx, recording, null)
-            R.id.menu_record_program -> return recordSelectedProgram(ctx, program.eventId, programViewModel.getRecordingProfile(), htspVersion)
+            R.id.menu_record_program -> {
+                viewLifecycleOwner.lifecycleScope.launch { recordSelectedProgram(ctx, program.eventId, programViewModel.getRecordingProfile(), htspVersion) }
+                return true
+            }
             R.id.menu_record_program_and_edit -> {
                 programIdToBeEditedWhenBeingRecorded = program.eventId
-                return recordSelectedProgram(ctx, program.eventId, programViewModel.getRecordingProfile(), htspVersion)
+                viewLifecycleOwner.lifecycleScope.launch { recordSelectedProgram(ctx, program.eventId, programViewModel.getRecordingProfile(), htspVersion) }
+                return true
             }
-            R.id.menu_record_program_with_custom_profile -> return recordSelectedProgramWithCustomProfile(ctx, program.eventId, program.channelId, programViewModel.getRecordingProfileNames(), programViewModel.getRecordingProfile())
-            R.id.menu_record_program_as_series_recording -> return recordSelectedProgramAsSeriesRecording(ctx, program.title, program.channelId, programViewModel.getRecordingProfile(), htspVersion)
+            R.id.menu_record_program_with_custom_profile -> {
+                viewLifecycleOwner.lifecycleScope.launch { recordSelectedProgramWithCustomProfile(ctx, program.eventId, program.channelId, programViewModel.getRecordingProfileNames(), programViewModel.getRecordingProfile()) }
+                return true
+            }
+            R.id.menu_record_program_as_series_recording -> {
+                viewLifecycleOwner.lifecycleScope.launch { recordSelectedProgramAsSeriesRecording(ctx, program.title, program.channelId, programViewModel.getRecordingProfile(), htspVersion) }
+                return true
+            }
             R.id.menu_play -> return playSelectedChannel(ctx, program.channelId, isUnlocked)
             R.id.menu_cast -> return castSelectedChannel(ctx, program.channelId)
 
@@ -161,7 +173,10 @@ class ProgramDetailsFragment : BaseFragment(), ClearSearchResultsOrPopBackStackI
             R.id.menu_search_google -> return searchTitleOnGoogle(ctx, program.title)
             R.id.menu_search_epg -> return searchTitleInTheLocalDatabase(requireActivity(), baseViewModel, program.title, program.channelId)
 
-            R.id.menu_add_notification -> return addNotificationProgramIsAboutToStart(ctx, program, programViewModel.getRecordingProfile())
+            R.id.menu_add_notification -> {
+                viewLifecycleOwner.lifecycleScope.launch { addNotificationProgramIsAboutToStart(ctx, program, programViewModel.getRecordingProfile()) }
+                return true
+            }
             else -> return false
         }
     }

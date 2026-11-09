@@ -14,7 +14,7 @@ import timber.log.Timber
 
 class CastRecordingActivity : BasePlaybackActivity() {
 
-    override fun onTicketReceived() {
+    override suspend fun onTicketReceived() {
 
         val castSession = this.getCastSession()
         if (castSession == null) {

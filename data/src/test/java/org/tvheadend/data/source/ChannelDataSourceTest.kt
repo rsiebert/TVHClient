@@ -4,6 +4,7 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
@@ -94,7 +95,7 @@ class ChannelDataSourceTest {
     }
 
     @Test
-    fun getItemByIdReturnsTheStoredChannel() {
+    fun getItemByIdReturnsTheStoredChannel() : Unit = runBlocking {
         dataSource.addItem(Channel(id = 1, connectionId = 1, name = "One"))
 
         val loaded = dataSource.getItemById(1)
@@ -105,7 +106,7 @@ class ChannelDataSourceTest {
     }
 
     @Test
-    fun getChannelsAppliesTheSortOrder() {
+    fun getChannelsAppliesTheSortOrder() : Unit = runBlocking {
         dataSource.addItem(Channel(id = 1, connectionId = 1, name = "One", serverOrder = 2))
         dataSource.addItem(Channel(id = 2, connectionId = 1, name = "Two", serverOrder = 1))
 
@@ -114,7 +115,7 @@ class ChannelDataSourceTest {
     }
 
     @Test
-    fun getItemsReturnsAllChannelsOfTheActiveConnection() {
+    fun getItemsReturnsAllChannelsOfTheActiveConnection() : Unit = runBlocking {
         dataSource.addItem(Channel(id = 1, connectionId = 1, name = "One"))
         dataSource.addItem(Channel(id = 2, connectionId = 1, name = "Two"))
 
@@ -122,7 +123,7 @@ class ChannelDataSourceTest {
     }
 
     @Test
-    fun getItemByIdWithProgramsReturnsTheChannelWithItsProgramColumns() {
+    fun getItemByIdWithProgramsReturnsTheChannelWithItsProgramColumns() : Unit = runBlocking {
         // The `channels` table has its own program_* columns that share the names of the aliases
         // in the query's join. Because those aliased join columns are now projected before `c.*`,
         // the joined program wins and the channel's stored (stale) columns are shadowed instead.

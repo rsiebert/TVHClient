@@ -2,10 +2,12 @@ package org.tvheadend.data.source
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.map
+import kotlin.coroutines.ContinuationInterceptor
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 import org.tvheadend.data.db.AppRoomDatabase
 import org.tvheadend.data.entity.Connection
 import org.tvheadend.data.entity.ConnectionEntity
@@ -19,6 +21,11 @@ class ConnectionDataSource(
         private val ioScope: CoroutineScope = CoroutineScope(Dispatchers.IO)
 ) : DataSourceInterface<Connection> {
 
+    // See ChannelDataSource: reads follow the injected scope's dispatcher (Dispatchers.IO in
+    // production, Unconfined in the unit tests).
+    private val ioDispatcher: CoroutineDispatcher =
+            ioScope.coroutineContext[ContinuationInterceptor] as? CoroutineDispatcher ?: Dispatchers.IO
+
     val liveDataActiveItem: LiveData<Connection>
         get() = db.connectionDao.loadActiveConnection().map { entity ->
             Timber.d("Active live data item for connection is null ${entity == null}")
@@ -29,19 +36,18 @@ class ConnectionDataSource(
             entity?.toConnection() ?: Connection().also { it.id = -1 }
         }
 
-    val activeItem: Connection
-        get() {
-            var connection = Connection().also { it.id = -1 }
-            runBlocking(Dispatchers.IO) {
-                val c = db.connectionDao.loadActiveConnectionSync()
-                if (c != null) {
-                    Timber.d("Loaded active connection ${c.name} with id ${c.id}")
-                    connection = c.toConnection()
-                }
+    suspend fun getActiveItem(): Connection {
+        var connection = Connection().also { it.id = -1 }
+        withContext(ioDispatcher) {
+            val c = db.connectionDao.loadActiveConnectionSync()
+            if (c != null) {
+                Timber.d("Loaded active connection ${c.name} with id ${c.id}")
+                connection = c.toConnection()
             }
-            Timber.d("Returning active connection ${connection.name} with id ${connection.id}")
-            return connection
         }
+        Timber.d("Returning active connection ${connection.name} with id ${connection.id}")
+        return connection
+    }
 
     override fun addItem(item: Connection) {
         ioScope.launch {
@@ -83,24 +89,24 @@ class ConnectionDataSource(
         }
     }
 
-    override fun getItemById(id: Any): Connection? {
+    override suspend fun getItemById(id: Any): Connection? {
         var connection: Connection?
-        runBlocking(Dispatchers.IO) {
+        withContext(ioDispatcher) {
             connection = db.connectionDao.loadConnectionByIdSync(id as Int)?.toConnection()
         }
         return connection
     }
 
-    override fun getItems(): List<Connection> {
+    override suspend fun getItems(): List<Connection> {
         val connections = ArrayList<Connection>()
-        runBlocking(Dispatchers.IO) {
+        withContext(ioDispatcher) {
             connections.addAll(db.connectionDao.loadAllConnectionsSync().map { it.toConnection() })
         }
         return connections
     }
 
-    fun setSyncRequiredForActiveConnection() {
-        val connection = activeItem
+    suspend fun setSyncRequiredForActiveConnection() {
+        val connection = getActiveItem()
         if (connection.id >= 0) {
             connection.isSyncRequired = true
             connection.lastUpdate = 0
@@ -108,9 +114,9 @@ class ConnectionDataSource(
         }
     }
 
-    fun switchActiveConnection(oldId: Int, newId: Int) {
+    suspend fun switchActiveConnection(oldId: Int, newId: Int) {
         Timber.d("Switching active connection from id $oldId to $newId")
-        runBlocking(Dispatchers.IO) {
+        withContext(ioDispatcher) {
             db.connectionDao.loadConnectionByIdSync(oldId)?.also {
                 Timber.d("Currently active connection is ${it.name} with id ${it.id}")
                 it.isActive = false

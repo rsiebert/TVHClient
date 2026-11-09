@@ -4,6 +4,7 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
@@ -48,10 +49,10 @@ class ServerStatusDataSourceTest {
     }
 
     @Test
-    fun activeItemInsertsADefaultWhenNoneExists() {
+    fun activeItemInsertsADefaultWhenNoneExists() : Unit = runBlocking {
         db.connectionDao.insert(TestDatabase.activeConnection(id = 1))
 
-        val status = dataSource.activeItem
+        val status = dataSource.getActiveItem()
 
         assertThat(status.serverName).isEqualTo("Unknown")
         assertThat(status.serverVersion).isEqualTo("Unknown")
@@ -61,19 +62,19 @@ class ServerStatusDataSourceTest {
     }
 
     @Test
-    fun activeItemReturnsTheStoredStatus() {
+    fun activeItemReturnsTheStoredStatus() : Unit = runBlocking {
         db.connectionDao.insert(TestDatabase.activeConnection(id = 1))
         db.serverStatusDao.insert(TestDatabase.serverStatus(connectionId = 1, id = 1, serverName = "Tvheadend", serverVersion = "4.3"))
 
-        val status = dataSource.activeItem
+        val status = dataSource.getActiveItem()
 
         assertThat(status.serverName).isEqualTo("Tvheadend")
         assertThat(status.serverVersion).isEqualTo("4.3")
     }
 
     @Test
-    fun activeItemWithNoActiveConnectionReturnsUnknownsWithoutInserting() {
-        val status = dataSource.activeItem
+    fun activeItemWithNoActiveConnectionReturnsUnknownsWithoutInserting() : Unit = runBlocking {
+        val status = dataSource.getActiveItem()
 
         assertThat(status.serverName).isEqualTo("Unknown")
         assertThat(status.connectionId).isEqualTo(0)
@@ -113,7 +114,7 @@ class ServerStatusDataSourceTest {
     }
 
     @Test
-    fun getItemByIdReturnsTheServerStatusOrNull() {
+    fun getItemByIdReturnsTheServerStatusOrNull() : Unit = runBlocking {
         db.connectionDao.insert(TestDatabase.activeConnection(id = 1))
         db.serverStatusDao.insert(TestDatabase.serverStatus(connectionId = 1, id = 1, serverName = "Active"))
 
@@ -122,7 +123,7 @@ class ServerStatusDataSourceTest {
     }
 
     @Test
-    fun getItemsReturnsAnEmptyList() {
+    fun getItemsReturnsAnEmptyList() : Unit = runBlocking {
         db.connectionDao.insert(TestDatabase.activeConnection(id = 1))
         dataSource.addItem(serverStatus(connectionId = 1, id = 1))
 

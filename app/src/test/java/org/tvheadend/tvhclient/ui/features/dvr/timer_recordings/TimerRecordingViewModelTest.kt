@@ -5,6 +5,7 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.preference.PreferenceManager
 import androidx.test.core.app.ApplicationProvider
 import com.google.common.truth.Truth.assertThat
+import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
@@ -55,9 +56,9 @@ class TimerRecordingViewModelTest {
 
     private fun prefs() = PreferenceManager.getDefaultSharedPreferences(context)
 
-    private fun seedActiveConnection(): Int {
+    private fun seedActiveConnection(): Int = runBlocking {
         graph.appRepository.connectionData.addItem(Connection(name = "Active", isActive = true))
-        return graph.appRepository.connectionData.activeItem.id
+        graph.appRepository.connectionData.getActiveItem().id
     }
 
     // ---- recordings -----------------------------------------------------------------
@@ -87,7 +88,7 @@ class TimerRecordingViewModelTest {
     }
 
     @Test
-    fun loadRecordingByIdSyncLoadsTheRecordingAndEnablesTime() {
+    fun loadRecordingByIdSyncLoadsTheRecordingAndEnablesTime(): Unit = runBlocking {
         val connectionId = seedActiveConnection()
         graph.appRepository.timerRecordingData.addItem(
             TimerRecording(id = "t1", connectionId = connectionId, title = "Daily", start = 600, stop = 900))
@@ -100,7 +101,7 @@ class TimerRecordingViewModelTest {
     }
 
     @Test
-    fun loadRecordingByIdSyncWithAnUnknownIdResetsToAnEmptyRecording() {
+    fun loadRecordingByIdSyncWithAnUnknownIdResetsToAnEmptyRecording(): Unit = runBlocking {
         seedActiveConnection()
         val vm = TimerRecordingViewModel(context)
 
@@ -180,7 +181,7 @@ class TimerRecordingViewModelTest {
     // ---- channels and profiles ------------------------------------------------------
 
     @Test
-    fun getChannelListFollowsTheSortOrderPreference() {
+    fun getChannelListFollowsTheSortOrderPreference(): Unit = runBlocking {
         val connectionId = seedActiveConnection()
         graph.appRepository.channelData.addItem(Channel(id = 1, connectionId = connectionId, serverOrder = 2))
         graph.appRepository.channelData.addItem(Channel(id = 2, connectionId = connectionId, serverOrder = 1))
@@ -191,11 +192,11 @@ class TimerRecordingViewModelTest {
     }
 
     @Test
-    fun getRecordingProfileResolvesTheTimerRecordingProfile() {
+    fun getRecordingProfileResolvesTheTimerRecordingProfile(): Unit = runBlocking {
         val connectionId = seedActiveConnection()
         graph.appRepository.serverProfileData.addItem(
             ServerProfile(id = 6, connectionId = connectionId, name = "Rec", type = ServerProfile.RECORDING_PROFILE))
-        val status = graph.appRepository.serverStatusData.activeItem
+        val status = graph.appRepository.serverStatusData.getActiveItem()
         status.timerRecordingServerProfileId = 6
         graph.appRepository.serverStatusData.updateItem(status)
         val vm = TimerRecordingViewModel(context)

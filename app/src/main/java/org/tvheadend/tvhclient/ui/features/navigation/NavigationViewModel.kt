@@ -3,15 +3,20 @@ package org.tvheadend.tvhclient.ui.features.navigation
 import android.app.Application
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
+import org.tvheadend.data.entity.Connection
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.ui.base.BaseViewModel
 import org.tvheadend.tvhclient.ui.features.navigation.NavigationDrawer.Companion.MENU_SETTINGS
 import org.tvheadend.tvhclient.util.livedata.Event
+import kotlinx.coroutines.launch
 import timber.log.Timber
 
 class NavigationViewModel(application: Application) : BaseViewModel(application) {
 
-    val connections = appRepository.connectionData.getItems()
+    // The list of connections is loaded off the main thread and published as LiveData; readers
+    // observe it instead of reading a blocking snapshot.
+    val connections = MutableLiveData<List<Connection>>()
     val connectionLiveData = appRepository.connectionData.liveDataActiveItem
     private val navigationMenuId = MutableLiveData<Event<Int>>()
     var currentNavigationMenuId: Int
@@ -21,6 +26,9 @@ class NavigationViewModel(application: Application) : BaseViewModel(application)
         Timber.d("Initializing")
         currentNavigationMenuId = Integer.parseInt(sharedPreferences.getString("start_screen", defaultStartScreen)!!)
         navigationMenuId.value = Event(currentNavigationMenuId)
+        viewModelScope.launch {
+            connections.value = appRepository.connectionData.getItems()
+        }
     }
 
     fun getNavigationMenuId(): LiveData<Event<Int>> = navigationMenuId
@@ -34,15 +42,15 @@ class NavigationViewModel(application: Application) : BaseViewModel(application)
         }
     }
 
-    fun setSelectedConnectionAsActive(id: Int): Boolean {
-        val currentlyActiveConnection = appRepository.connectionData.activeItem
+    suspend fun setSelectedConnectionAsActive(id: Int): Boolean {
+        val currentlyActiveConnection = appRepository.connectionData.getActiveItem()
         val newActiveConnection = appRepository.connectionData.getItemById(id)
 
         Timber.d("Switching connection from ${currentlyActiveConnection.name} with id ${currentlyActiveConnection.id} to ${newActiveConnection?.name} with id ${newActiveConnection?.id}")
 
         if (newActiveConnection != null && newActiveConnection.id != currentlyActiveConnection.id) {
             appRepository.connectionData.switchActiveConnection(currentlyActiveConnection.id, newActiveConnection.id)
-            Timber.d("Switched active connection from ${currentlyActiveConnection.name} to ${newActiveConnection.name} (db version is ${appRepository.connectionData.activeItem.name})")
+            Timber.d("Switched active connection from ${currentlyActiveConnection.name} to ${newActiveConnection.name} (db version is ${appRepository.connectionData.getActiveItem().name})")
             return true
         }
         return false

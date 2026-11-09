@@ -4,6 +4,7 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
@@ -49,20 +50,20 @@ class ChannelTagDataSourceTest {
     }
 
     @Test
-    fun itemCountAndAddItem() {
-        assertThat(dataSource.itemCount).isEqualTo(0)
+    fun itemCountAndAddItem() : Unit = runBlocking {
+        assertThat(dataSource.getItemCount()).isEqualTo(0)
 
         dataSource.addItem(channelTag(tagId = 1))
 
-        assertThat(dataSource.itemCount).isEqualTo(1)
+        assertThat(dataSource.getItemCount()).isEqualTo(1)
         assertThat(db.channelTagDao.loadChannelTagByIdSync(1)!!.tagName).isEqualTo("Tag 1")
     }
 
     @Test
-    fun addItemsStoresAllTags() {
+    fun addItemsStoresAllTags() : Unit = runBlocking {
         dataSource.addItems(listOf(channelTag(tagId = 1), channelTag(tagId = 2)))
 
-        assertThat(dataSource.itemCount).isEqualTo(2)
+        assertThat(dataSource.getItemCount()).isEqualTo(2)
     }
 
     @Test
@@ -75,12 +76,12 @@ class ChannelTagDataSourceTest {
     }
 
     @Test
-    fun removeItemDeletesTheTag() {
+    fun removeItemDeletesTheTag() : Unit = runBlocking {
         dataSource.addItem(channelTag(tagId = 1))
 
         dataSource.removeItem(channelTag(tagId = 1))
 
-        assertThat(dataSource.itemCount).isEqualTo(0)
+        assertThat(dataSource.getItemCount()).isEqualTo(0)
     }
 
     @Test
@@ -105,7 +106,7 @@ class ChannelTagDataSourceTest {
     }
 
     @Test
-    fun getItemByIdReturnsTheTagOrNull() {
+    fun getItemByIdReturnsTheTagOrNull() : Unit = runBlocking {
         dataSource.addItem(channelTag(tagId = 1, name = "One"))
 
         assertThat(dataSource.getItemById(1)!!.tagName).isEqualTo("One")
@@ -113,7 +114,7 @@ class ChannelTagDataSourceTest {
     }
 
     @Test
-    fun getItemsReturnsAllTags() {
+    fun getItemsReturnsAllTags() : Unit = runBlocking {
         dataSource.addItem(channelTag(tagId = 1))
         dataSource.addItem(channelTag(tagId = 2))
 
@@ -121,7 +122,7 @@ class ChannelTagDataSourceTest {
     }
 
     @Test
-    fun getNonEmptyItemsFiltersByChannelCountWhenLoadAllIsFalse() {
+    fun getNonEmptyItemsFiltersByChannelCountWhenLoadAllIsFalse() : Unit = runBlocking {
         dataSource.addItem(channelTag(tagId = 1, name = "Empty", channelCount = 0))
         dataSource.addItem(channelTag(tagId = 2, name = "Full", channelCount = 3))
 

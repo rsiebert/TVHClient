@@ -7,6 +7,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.asLiveData
+import androidx.lifecycle.viewModelScope
 import androidx.preference.PreferenceManager
 import org.tvheadend.data.AppRepository
 import org.tvheadend.data.entity.Channel
@@ -19,6 +20,7 @@ import org.tvheadend.tvhclient.MainRepository
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.ui.common.interfaces.SnackbarMessageInterface
 import org.tvheadend.tvhclient.util.livedata.Event
+import kotlinx.coroutines.launch
 import timber.log.Timber
 
 class SettingsViewModel(application: Application) : AndroidViewModel(application), SnackbarMessageInterface {
@@ -99,12 +101,18 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
         Timber.d("Observing isUnlockedLiveData from main repository")
         isUnlockedLiveData = mainRepository.isPurchased(MainRepository.UNLOCKER).asLiveData()
 
-        connectionToEdit = appRepository.connectionData.activeItem
+        // Seed with defaults; the database reads happen off the main thread below.
+        connectionToEdit = Connection()
+        currentServerStatus = ServerStatus()
         activeConnectionLiveData = appRepository.connectionData.liveDataActiveItem
         connectionCountLiveData = appRepository.connectionData.getLiveDataItemCount()
         connectionListLiveData = appRepository.connectionData.getLiveDataItems()
-        currentServerStatus = appRepository.serverStatusData.activeItem
         currentServerStatusLiveData = appRepository.serverStatusData.liveDataActiveItem
+
+        viewModelScope.launch {
+            connectionToEdit = appRepository.connectionData.getActiveItem()
+            currentServerStatus = appRepository.serverStatusData.getActiveItem()
+        }
     }
 
     fun getNavigationMenuId(): LiveData<Event<String>> = navigationMenuIdLiveData
@@ -114,7 +122,7 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
         navigationMenuIdLiveData.value = Event(id)
     }
 
-    fun getChannelList(): List<Channel> {
+    suspend fun getChannelList(): List<Channel> {
         val channelSortOrder = Integer.valueOf(sharedPreferences.getString("channel_sort_order", defaultChannelSortOrder)
                 ?: defaultChannelSortOrder)
         return appRepository.channelData.getChannels(channelSortOrder)
@@ -123,7 +131,7 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
     /**
      * Updates the connection with the information that a new sync is required.
      */
-    fun setSyncRequiredForActiveConnection() {
+    suspend fun setSyncRequiredForActiveConnection() {
         Timber.d("Updating active connection to request a full sync")
         appRepository.connectionData.setSyncRequiredForActiveConnection()
     }
@@ -140,45 +148,45 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
         appRepository.serverStatusData.updateItem(serverStatus)
     }
 
-    fun getHtspProfile(): ServerProfile? {
+    suspend fun getHtspProfile(): ServerProfile? {
         return appRepository.serverProfileData.getItemById(currentServerStatus.htspPlaybackServerProfileId)
     }
 
-    fun getHtspProfiles(): List<ServerProfile> {
-        val profiles = appRepository.serverProfileData.htspPlaybackProfiles
+    suspend fun getHtspProfiles(): List<ServerProfile> {
+        val profiles = appRepository.serverProfileData.getHtspPlaybackProfiles()
         Timber.d("Loaded ${profiles.size} Htsp profiles")
         return profiles
     }
 
-    fun getHttpProfile(): ServerProfile? {
+    suspend fun getHttpProfile(): ServerProfile? {
         return appRepository.serverProfileData.getItemById(currentServerStatus.httpPlaybackServerProfileId)
     }
 
-    fun getHttpProfiles(): List<ServerProfile> {
-        val profiles = appRepository.serverProfileData.httpPlaybackProfiles
+    suspend fun getHttpProfiles(): List<ServerProfile> {
+        val profiles = appRepository.serverProfileData.getHttpPlaybackProfiles()
         Timber.d("Loaded ${profiles.size} Http profiles")
         return profiles
     }
 
-    fun getRecordingProfile(): ServerProfile? {
+    suspend fun getRecordingProfile(): ServerProfile? {
         return appRepository.serverProfileData.getItemById(currentServerStatus.recordingServerProfileId)
     }
 
-    fun getSeriesRecordingProfile(): ServerProfile? {
+    suspend fun getSeriesRecordingProfile(): ServerProfile? {
         return appRepository.serverProfileData.getItemById(currentServerStatus.seriesRecordingServerProfileId)
     }
 
-    fun getTimerRecordingProfile(): ServerProfile? {
+    suspend fun getTimerRecordingProfile(): ServerProfile? {
         return appRepository.serverProfileData.getItemById(currentServerStatus.timerRecordingServerProfileId)
     }
 
-    fun getRecordingProfiles(): List<ServerProfile> {
-        val profiles = appRepository.serverProfileData.recordingProfiles
+    suspend fun getRecordingProfiles(): List<ServerProfile> {
+        val profiles = appRepository.serverProfileData.getRecordingProfiles()
         Timber.d("Loaded ${profiles.size} recording profiles")
         return profiles
     }
 
-    fun getCastingProfile(): ServerProfile? {
+    suspend fun getCastingProfile(): ServerProfile? {
         return appRepository.serverProfileData.getItemById(currentServerStatus.castingServerProfileId)
     }
 
@@ -186,7 +194,7 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
         appRepository.connectionData.addItem(connectionToEdit)
     }
 
-    fun loadConnectionById(id: Int) {
+    suspend fun loadConnectionById(id: Int) {
         connectionToEdit = appRepository.connectionData.getItemById(id) ?: Connection()
     }
 

@@ -10,6 +10,7 @@ import android.provider.SearchRecentSuggestions
 import android.view.View
 import androidx.core.content.FileProvider
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.preference.*
 import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequest
@@ -28,6 +29,7 @@ import org.tvheadend.tvhclient.util.extensions.sendSnackbarMessage
 import org.tvheadend.tvhclient.util.getIconUrl
 import org.tvheadend.tvhclient.util.logging.FileLoggingTree
 import org.tvheadend.tvhclient.util.worker.LoadChannelIconWorker
+import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.io.File
 import java.text.SimpleDateFormat
@@ -290,13 +292,15 @@ class SettingsAdvancedFragment : PreferenceFragmentCompat(), Preference.OnPrefer
 
     override fun onDatabaseCleared() {
         Timber.d("Database has been cleared, stopping service and restarting application")
-        context?.let {
-            it.stopService(Intent(it, ConnectionService::class.java))
-            settingsViewModel.setSyncRequiredForActiveConnection()
+        context?.let { ctx ->
+            viewLifecycleOwner.lifecycleScope.launch {
+                ctx.stopService(Intent(ctx, ConnectionService::class.java))
+                settingsViewModel.setSyncRequiredForActiveConnection()
 
-            val intent = Intent(it, MainActivity::class.java)
-            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-            it.startActivity(intent)
+                val intent = Intent(ctx, MainActivity::class.java)
+                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                ctx.startActivity(intent)
+            }
         }
     }
 
@@ -321,12 +325,14 @@ class SettingsAdvancedFragment : PreferenceFragmentCompat(), Preference.OnPrefer
                     .setTitle(R.string.clear_icon_cache)
                     .setMessage(R.string.clear_icon_cache_sum)
                     .setPositiveButton(R.string.delete) { _, _ ->
-                        Timber.d("Deleting channel icons, invalidating cache and reloading icons via a background worker")
-                        clearIconsFromCache(it)
-                        it.sendSnackbarMessage(R.string.clear_icon_cache_done)
+                        viewLifecycleOwner.lifecycleScope.launch {
+                            Timber.d("Deleting channel icons, invalidating cache and reloading icons via a background worker")
+                            clearIconsFromCache(it)
+                            it.sendSnackbarMessage(R.string.clear_icon_cache_done)
 
-                        val loadChannelIcons = OneTimeWorkRequest.Builder(LoadChannelIconWorker::class.java).build()
-                        WorkManager.getInstance(it.applicationContext).enqueueUniqueWork(LoadChannelIconWorker.WORK_NAME, ExistingWorkPolicy.APPEND, loadChannelIcons)
+                            val loadChannelIcons = OneTimeWorkRequest.Builder(LoadChannelIconWorker::class.java).build()
+                            WorkManager.getInstance(it.applicationContext).enqueueUniqueWork(LoadChannelIconWorker.WORK_NAME, ExistingWorkPolicy.APPEND, loadChannelIcons)
+                        }
                     }
                     .setNegativeButton(R.string.cancel, null)
                     .show()
@@ -337,7 +343,7 @@ class SettingsAdvancedFragment : PreferenceFragmentCompat(), Preference.OnPrefer
      * Clear the cached channel icons by checking all cached files if their name
      * matches with the url from a channel icon. If this is the case remove the file
      */
-    private fun clearIconsFromCache(context: Context) {
+    private suspend fun clearIconsFromCache(context: Context) {
         val channels = settingsViewModel.getChannelList()
         if (context.cacheDir.exists()) {
             val fileNames = context.cacheDir.list()

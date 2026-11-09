@@ -8,12 +8,14 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.switchMap
+import androidx.lifecycle.viewModelScope
 import org.tvheadend.data.entity.Channel
 import org.tvheadend.data.entity.Recording
 import org.tvheadend.data.entity.ServerProfile
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.service.ConnectionService
 import org.tvheadend.tvhclient.ui.base.BaseViewModel
+import kotlinx.coroutines.launch
 import timber.log.Timber
 
 class RecordingViewModel(application: Application) : BaseViewModel(application), SharedPreferences.OnSharedPreferenceChangeListener {
@@ -64,7 +66,9 @@ class RecordingViewModel(application: Application) : BaseViewModel(application),
 
         recordingLiveData.addSource(currentIdLiveData) { value ->
             if (value > 0) {
-                recordingLiveData.value = appRepository.recordingData.getItemById(value)
+                viewModelScope.launch {
+                    recordingLiveData.value = appRepository.recordingData.getItemById(value)
+                }
             }
         }
 
@@ -106,22 +110,22 @@ class RecordingViewModel(application: Application) : BaseViewModel(application),
         }
     }
 
-    fun loadRecordingByIdSync(id: Int) {
+    suspend fun loadRecordingByIdSync(id: Int) {
         recording = appRepository.recordingData.getItemById(id) ?: Recording()
     }
 
-    fun getChannelList(): List<Channel> {
+    suspend fun getChannelList(): List<Channel> {
         val channelSortOrder = Integer.valueOf(sharedPreferences.getString("channel_sort_order", defaultChannelSortOrder)
                 ?: defaultChannelSortOrder)
         return appRepository.channelData.getChannels(channelSortOrder)
     }
 
-    fun getRecordingProfileNames(): Array<String> {
-        return appRepository.serverProfileData.recordingProfileNames
+    suspend fun getRecordingProfileNames(): Array<String> {
+        return appRepository.serverProfileData.getRecordingProfileNames()
     }
 
-    fun getRecordingProfile(): ServerProfile? {
-        return appRepository.serverProfileData.getItemById(appRepository.serverStatusData.activeItem.recordingServerProfileId)
+    suspend fun getRecordingProfile(): ServerProfile? {
+        return appRepository.serverProfileData.getItemById(appRepository.serverStatusData.getActiveItem().recordingServerProfileId)
     }
 
     internal class ScheduledRecordingLiveData(hideDuplicates: LiveData<Boolean>) : MediatorLiveData<Boolean>() {

@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.*
 import androidx.core.view.forEach
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import org.tvheadend.data.entity.Channel
 import org.tvheadend.data.entity.ServerProfile
@@ -17,6 +18,7 @@ import org.tvheadend.tvhclient.ui.features.dvr.*
 import org.tvheadend.tvhclient.util.extensions.afterTextChanged
 import org.tvheadend.tvhclient.util.extensions.sendSnackbarMessage
 import org.tvheadend.tvhclient.util.extensions.visibleOrGone
+import kotlinx.coroutines.launch
 import timber.log.Timber
 
 class SeriesRecordingAddEditFragment : BaseFragment(), BackPressedInterface, RecordingConfigSelectedListener, DatePickerFragment.Listener, TimePickerFragment.Listener, HideNavigationDrawerInterface {
@@ -39,21 +41,23 @@ class SeriesRecordingAddEditFragment : BaseFragment(), BackPressedInterface, Rec
             (activity as LayoutControlInterface).forceSingleScreenLayout()
         }
 
-        recordingProfilesList = seriesRecordingViewModel.getRecordingProfileNames()
-        profile = seriesRecordingViewModel.getRecordingProfile()
-        seriesRecordingViewModel.recordingProfileNameId = getSelectedProfileId(profile, recordingProfilesList)
+        viewLifecycleOwner.lifecycleScope.launch {
+            recordingProfilesList = seriesRecordingViewModel.getRecordingProfileNames()
+            profile = seriesRecordingViewModel.getRecordingProfile()
+            seriesRecordingViewModel.recordingProfileNameId = getSelectedProfileId(profile, recordingProfilesList)
 
-        if (savedInstanceState == null) {
-            seriesRecordingViewModel.loadRecordingByIdSync(arguments?.getString("id", "") ?: "")
+            if (savedInstanceState == null) {
+                seriesRecordingViewModel.loadRecordingByIdSync(arguments?.getString("id", "") ?: "")
+            }
+
+            updateUI()
+
+            toolbarInterface.setSubtitle("")
+            toolbarInterface.setTitle(if (seriesRecordingViewModel.recording.id.isNotEmpty())
+                getString(R.string.edit_recording)
+            else
+                getString(R.string.add_recording))
         }
-
-        updateUI()
-
-        toolbarInterface.setSubtitle("")
-        toolbarInterface.setTitle(if (seriesRecordingViewModel.recording.id.isNotEmpty())
-            getString(R.string.edit_recording)
-        else
-            getString(R.string.add_recording))
     }
 
     private fun updateUI() {
@@ -72,9 +76,11 @@ class SeriesRecordingAddEditFragment : BaseFragment(), BackPressedInterface, Rec
         binding.channelName.text = seriesRecordingViewModel.recording.channelName
                 ?: getString(R.string.all_channels)
         binding.channelName.setOnClickListener {
-            // Determine if the server supports recording on all channels
-            val allowRecordingOnAllChannels = htspVersion >= 21
-            handleChannelListSelection(ctx, seriesRecordingViewModel.getChannelList(), allowRecordingOnAllChannels, this@SeriesRecordingAddEditFragment)
+            viewLifecycleOwner.lifecycleScope.launch {
+                // Determine if the server supports recording on all channels
+                val allowRecordingOnAllChannels = htspVersion >= 21
+                handleChannelListSelection(ctx, seriesRecordingViewModel.getChannelList(), allowRecordingOnAllChannels, this@SeriesRecordingAddEditFragment)
+            }
         }
 
         binding.priority.text = getPriorityName(ctx, seriesRecordingViewModel.recording.priority)

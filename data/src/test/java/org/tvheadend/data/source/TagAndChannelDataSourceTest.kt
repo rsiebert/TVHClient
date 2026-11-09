@@ -4,6 +4,7 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
@@ -104,7 +105,7 @@ class TagAndChannelDataSourceTest {
     }
 
     @Test
-    fun notImplementedGettersReturnEmpty() {
+    fun notImplementedGettersReturnEmpty() : Unit = runBlocking {
         dataSource.addItem(tagAndChannel(tagId = 1, channelId = 10))
 
         assertThat(dataSource.getLiveDataItemCount().observedValue()).isNull()

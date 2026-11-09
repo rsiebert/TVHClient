@@ -49,8 +49,16 @@ abstract class BaseFragment : Fragment() {
             isUnlocked = unlocked
         }
 
+        // The connection and the htsp version are loaded off the main thread. Seed from the
+        // current values and keep them up to date through the LiveData.
         connection = baseViewModel.connection
         htspVersion = baseViewModel.htspVersion
+        baseViewModel.activeConnectionLiveData.observe(viewLifecycleOwner) { loadedConnection ->
+            connection = loadedConnection
+        }
+        baseViewModel.htspVersionLiveData.observe(viewLifecycleOwner) { loadedHtspVersion ->
+            htspVersion = loadedHtspVersion
+        }
 
         // Check if we have a frame in which to embed the details fragment.
         // Make the frame layout visible and set the weights again in case

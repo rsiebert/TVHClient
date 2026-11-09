@@ -8,9 +8,9 @@ interface DataSourceInterface<T> {
 
     fun getLiveDataItems(): LiveData<List<T>>
 
-    fun getItems(): List<T>
+    suspend fun getItems(): List<T>
 
-    fun getItemById(id: Any): T?
+    suspend fun getItemById(id: Any): T?
 
     fun addItem(item: T)
 

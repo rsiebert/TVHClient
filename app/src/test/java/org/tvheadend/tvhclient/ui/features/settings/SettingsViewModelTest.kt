@@ -6,6 +6,7 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.preference.PreferenceManager
 import androidx.test.core.app.ApplicationProvider
 import com.google.common.truth.Truth.assertThat
+import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
@@ -57,9 +58,9 @@ class SettingsViewModelTest {
 
     private fun prefs() = PreferenceManager.getDefaultSharedPreferences(context)
 
-    private fun seedActiveConnection(): Int {
+    private fun seedActiveConnection(): Int = runBlocking {
         graph.appRepository.connectionData.addItem(Connection(name = "Active", isActive = true))
-        return graph.appRepository.connectionData.activeItem.id
+        graph.appRepository.connectionData.getActiveItem().id
     }
 
     // ---- navigation -----------------------------------------------------------------
@@ -92,7 +93,7 @@ class SettingsViewModelTest {
     }
 
     @Test
-    fun loadConnectionByIdSelectsTheConnectionToEdit() {
+    fun loadConnectionByIdSelectsTheConnectionToEdit(): Unit = runBlocking {
         seedActiveConnection()
         graph.appRepository.connectionData.addItem(Connection(name = "Other"))
         val otherId = graph.appRepository.connectionData.getItems().first { it.name == "Other" }.id
@@ -104,7 +105,7 @@ class SettingsViewModelTest {
     }
 
     @Test
-    fun loadConnectionByIdWithAnUnknownIdFallsBackToAnEmptyConnection() {
+    fun loadConnectionByIdWithAnUnknownIdFallsBackToAnEmptyConnection(): Unit = runBlocking {
         seedActiveConnection()
         val vm = SettingsViewModel(context)
 
@@ -114,7 +115,7 @@ class SettingsViewModelTest {
     }
 
     @Test
-    fun addConnectionStoresTheConnectionToEditAsANewRow() {
+    fun addConnectionStoresTheConnectionToEditAsANewRow(): Unit = runBlocking {
         seedActiveConnection()
         val vm = SettingsViewModel(context)
         vm.loadConnectionById(9999)
@@ -126,7 +127,7 @@ class SettingsViewModelTest {
     }
 
     @Test
-    fun updateConnectionPersistsTheChange() {
+    fun updateConnectionPersistsTheChange(): Unit = runBlocking {
         seedActiveConnection()
         val vm = SettingsViewModel(context)
         val connection = vm.connectionToEdit
@@ -134,11 +135,11 @@ class SettingsViewModelTest {
 
         vm.updateConnection(connection)
 
-        assertThat(graph.appRepository.connectionData.activeItem.name).isEqualTo("Renamed")
+        assertThat(graph.appRepository.connectionData.getActiveItem().name).isEqualTo("Renamed")
     }
 
     @Test
-    fun removeConnectionDeletesTheRow() {
+    fun removeConnectionDeletesTheRow(): Unit = runBlocking {
         seedActiveConnection()
         graph.appRepository.connectionData.addItem(Connection(name = "Other"))
         val vm = SettingsViewModel(context)
@@ -150,22 +151,22 @@ class SettingsViewModelTest {
     }
 
     @Test
-    fun setSyncRequiredForActiveConnectionMarksTheActiveConnection() {
+    fun setSyncRequiredForActiveConnectionMarksTheActiveConnection(): Unit = runBlocking {
         seedActiveConnection()
-        val active = graph.appRepository.connectionData.activeItem
+        val active = graph.appRepository.connectionData.getActiveItem()
         active.isSyncRequired = false
         graph.appRepository.connectionData.updateItem(active)
         val vm = SettingsViewModel(context)
 
         vm.setSyncRequiredForActiveConnection()
 
-        assertThat(graph.appRepository.connectionData.activeItem.isSyncRequired).isTrue()
+        assertThat(graph.appRepository.connectionData.getActiveItem().isSyncRequired).isTrue()
     }
 
     // ---- channels -------------------------------------------------------------------
 
     @Test
-    fun getChannelListFollowsTheSortOrderPreference() {
+    fun getChannelListFollowsTheSortOrderPreference(): Unit = runBlocking {
         val connectionId = seedActiveConnection()
         graph.appRepository.channelData.addItem(Channel(id = 1, connectionId = connectionId, serverOrder = 2))
         graph.appRepository.channelData.addItem(Channel(id = 2, connectionId = connectionId, serverOrder = 1))
@@ -178,13 +179,13 @@ class SettingsViewModelTest {
     // ---- server profiles ------------------------------------------------------------
 
     @Test
-    fun exposesTheServerProfilesResolvedFromTheServerStatus() {
+    fun exposesTheServerProfilesResolvedFromTheServerStatus(): Unit = runBlocking {
         val connectionId = seedActiveConnection()
         graph.appRepository.serverProfileData.addItem(
             ServerProfile(id = 5, connectionId = connectionId, name = "HTSP", type = ServerProfile.HTSP_PROFILE))
         graph.appRepository.serverProfileData.addItem(
             ServerProfile(id = 6, connectionId = connectionId, name = "Rec", type = ServerProfile.RECORDING_PROFILE))
-        val status = graph.appRepository.serverStatusData.activeItem
+        val status = graph.appRepository.serverStatusData.getActiveItem()
         status.htspPlaybackServerProfileId = 5
         status.recordingServerProfileId = 6
         graph.appRepository.serverStatusData.updateItem(status)
@@ -198,21 +199,21 @@ class SettingsViewModelTest {
     }
 
     @Test
-    fun updateServerStatusPersistsTheChange() {
+    fun updateServerStatusPersistsTheChange(): Unit = runBlocking {
         seedActiveConnection()
         val vm = SettingsViewModel(context)
-        val status = graph.appRepository.serverStatusData.activeItem
+        val status = graph.appRepository.serverStatusData.getActiveItem()
         status.serverName = "MyServer"
 
         vm.updateServerStatus(status)
 
-        assertThat(graph.appRepository.serverStatusData.activeItem.serverName).isEqualTo("MyServer")
+        assertThat(graph.appRepository.serverStatusData.getActiveItem().serverName).isEqualTo("MyServer")
     }
 
     // ---- misc -----------------------------------------------------------------------
 
     @Test
-    fun clearDatabaseClearsTheRowsAndInvokesTheCallback() {
+    fun clearDatabaseClearsTheRowsAndInvokesTheCallback(): Unit = runBlocking {
         val connectionId = seedActiveConnection()
         graph.appRepository.channelData.addItem(Channel(id = 1, connectionId = connectionId))
         val vm = SettingsViewModel(context)

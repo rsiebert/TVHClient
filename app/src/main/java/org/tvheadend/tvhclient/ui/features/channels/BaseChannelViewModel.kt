@@ -5,12 +5,14 @@ import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
 import org.tvheadend.data.entity.ChannelTag
 import org.tvheadend.data.entity.Program
 import org.tvheadend.data.entity.Recording
 import org.tvheadend.data.entity.ServerProfile
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.ui.base.BaseViewModel
+import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.util.*
 
@@ -30,12 +32,16 @@ open class BaseChannelViewModel(application: Application) : BaseViewModel(applic
         showAllChannelTags.value = sharedPreferences.getBoolean("empty_channel_tags_enabled", defaultShowEmptyChannelTags)
         // Reload the channel tag list depending on the preference
         channelTags.addSource(showAllChannelTags) { allTags ->
-            channelTags.value = appRepository.channelTagData.getNonEmptyItems(allTags)
+            viewModelScope.launch {
+                channelTags.value = appRepository.channelTagData.getNonEmptyItems(allTags)
+            }
         }
         // Reload the channel tag list when the tags have changed to
         // get the updated selection status which is saved for each tag
         channelTags.addSource(appRepository.channelTagData.getLiveDataItems()) {
-            channelTags.value = appRepository.channelTagData.getNonEmptyItems(showAllChannelTags.value!!)
+            viewModelScope.launch {
+                channelTags.value = appRepository.channelTagData.getNonEmptyItems(showAllChannelTags.value!!)
+            }
         }
     }
 
@@ -79,19 +85,19 @@ open class BaseChannelViewModel(application: Application) : BaseViewModel(applic
         }
     }
 
-    fun getRecordingById(id: Int): Recording? {
+    suspend fun getRecordingById(id: Int): Recording? {
         return appRepository.recordingData.getItemByEventId(id)
     }
 
-    fun getRecordingProfile(): ServerProfile? {
-        return appRepository.serverProfileData.getItemById(appRepository.serverStatusData.activeItem.recordingServerProfileId)
+    suspend fun getRecordingProfile(): ServerProfile? {
+        return appRepository.serverProfileData.getItemById(appRepository.serverStatusData.getActiveItem().recordingServerProfileId)
     }
 
-    fun getRecordingProfileNames(): Array<String> {
-        return appRepository.serverProfileData.recordingProfileNames
+    suspend fun getRecordingProfileNames(): Array<String> {
+        return appRepository.serverProfileData.getRecordingProfileNames()
     }
 
-    fun getProgramById(id: Int): Program? {
+    suspend fun getProgramById(id: Int): Program? {
         return appRepository.programData.getItemById(id)
     }
 }

@@ -30,7 +30,7 @@ class DownloadRecordingActivity : BasePlaybackActivity() {
     private lateinit var downloadManager: DownloadManager
     private var lastDownloadId: Long = 0
 
-    override fun onTicketReceived() {
+    override suspend fun onTicketReceived() {
         viewModel.recording?.let {
             if (getIsStoragePermissionGranted(this)) {
                 Timber.d("Initializing download manager")

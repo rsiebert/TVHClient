@@ -3,10 +3,12 @@ package org.tvheadend.data.source
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.map
+import kotlin.coroutines.ContinuationInterceptor
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 import org.tvheadend.data.db.AppRoomDatabase
 import org.tvheadend.data.entity.Recording
 import org.tvheadend.data.entity.RecordingEntity
@@ -16,6 +18,11 @@ class RecordingDataSource(
         private val db: AppRoomDatabase,
         private val scope: CoroutineScope = CoroutineScope(Dispatchers.IO)
 ) : DataSourceInterface<Recording> {
+
+    // See ChannelDataSource: reads follow the injected scope's dispatcher (Dispatchers.IO in
+    // production, Unconfined in the unit tests).
+    private val ioDispatcher: CoroutineDispatcher =
+            scope.coroutineContext[ContinuationInterceptor] as? CoroutineDispatcher ?: Dispatchers.IO
 
     override fun addItem(item: Recording) {
         scope.launch { db.recordingDao.insert(RecordingEntity.from(item)) }
@@ -90,24 +97,24 @@ class RecordingDataSource(
         }
     }
 
-    override fun getItemById(id: Any): Recording? {
+    override suspend fun getItemById(id: Any): Recording? {
         var recording: Recording? = null
         if ((id as Int) > 0) {
-            runBlocking(Dispatchers.IO) {
+            withContext(ioDispatcher) {
                 recording = db.recordingDao.loadRecordingByIdSync(id)?.toRecording()
             }
         }
         return recording
     }
 
-    override fun getItems(): List<Recording> {
+    override suspend fun getItems(): List<Recording> {
         return ArrayList()
     }
 
-    fun getItemByEventId(id: Int): Recording? {
+    suspend fun getItemByEventId(id: Int): Recording? {
         var recording: Recording? = null
         if (id > 0) {
-            runBlocking(Dispatchers.IO) {
+            withContext(ioDispatcher) {
                 recording = db.recordingDao.loadRecordingByEventIdSync(id)?.toRecording()
             }
         }

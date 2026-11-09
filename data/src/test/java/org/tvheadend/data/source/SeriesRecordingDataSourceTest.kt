@@ -4,6 +4,7 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
@@ -93,7 +94,7 @@ class SeriesRecordingDataSourceTest {
     }
 
     @Test
-    fun getItemByIdReturnsTheRecordingOnlyForNonEmptyIds() {
+    fun getItemByIdReturnsTheRecordingOnlyForNonEmptyIds() : Unit = runBlocking {
         dataSource.addItem(seriesRecording("a", title = "One"))
 
         assertThat(dataSource.getItemById("a")!!.title).isEqualTo("One")
@@ -102,7 +103,7 @@ class SeriesRecordingDataSourceTest {
     }
 
     @Test
-    fun getItemsReturnsAnEmptyList() {
+    fun getItemsReturnsAnEmptyList() : Unit = runBlocking {
         dataSource.addItem(seriesRecording("a"))
 
         assertThat(dataSource.getItems()).isEmpty()

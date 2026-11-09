@@ -2,6 +2,7 @@ package org.tvheadend.data.source
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.google.common.truth.Truth.assertThat
+import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
@@ -47,14 +48,14 @@ class InputDataSourceTest {
     }
 
     @Test
-    fun addItemAppendsToTheList() {
+    fun addItemAppendsToTheList() : Unit = runBlocking {
         dataSource.addItem(input("a"))
 
         assertThat(dataSource.getItems().map { it.uuid }).containsExactly("a")
     }
 
     @Test
-    fun updateItemReplacesTheExistingEntry() {
+    fun updateItemReplacesTheExistingEntry() : Unit = runBlocking {
         dataSource.addItem(input("a"))
 
         // Input has no identity field, so this matches on equality and replaces in place. It used
@@ -65,7 +66,7 @@ class InputDataSourceTest {
     }
 
     @Test
-    fun removeItemRemovesTheEntry() {
+    fun removeItemRemovesTheEntry() : Unit = runBlocking {
         val item = input("a")
         dataSource.addItem(item)
 
@@ -75,7 +76,7 @@ class InputDataSourceTest {
     }
 
     @Test
-    fun removeItemsClearsTheList() {
+    fun removeItemsClearsTheList() : Unit = runBlocking {
         dataSource.addItem(input("a"))
         dataSource.addItem(input("b"))
 
@@ -85,7 +86,7 @@ class InputDataSourceTest {
     }
 
     @Test
-    fun getItemByIdReturnsTheEntryAtThatIndex() {
+    fun getItemByIdReturnsTheEntryAtThatIndex() : Unit = runBlocking {
         dataSource.addItem(input("a"))
         dataSource.addItem(input("b"))
 

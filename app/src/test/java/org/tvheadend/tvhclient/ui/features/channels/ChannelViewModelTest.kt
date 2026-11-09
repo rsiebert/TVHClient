@@ -5,6 +5,7 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.preference.PreferenceManager
 import androidx.test.core.app.ApplicationProvider
 import com.google.common.truth.Truth.assertThat
+import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
@@ -57,9 +58,9 @@ class ChannelViewModelTest {
     private fun prefs() = PreferenceManager.getDefaultSharedPreferences(context)
 
     /** Adds an active connection and returns its id (the id the channel/tag rows must reference). */
-    private fun seedActiveConnection(): Int {
+    private fun seedActiveConnection(): Int = runBlocking {
         graph.appRepository.connectionData.addItem(Connection(name = "Active", isActive = true))
-        return graph.appRepository.connectionData.activeItem.id
+        graph.appRepository.connectionData.getActiveItem().id
     }
 
     // ---- channelCount ---------------------------------------------------------------
@@ -143,7 +144,7 @@ class ChannelViewModelTest {
     // ---- setSelectedChannelTagIds ---------------------------------------------------
 
     @Test
-    fun setSelectedChannelTagIdsPersistsTheSelection() {
+    fun setSelectedChannelTagIdsPersistsTheSelection(): Unit = runBlocking {
         val connectionId = seedActiveConnection()
         graph.appRepository.channelTagData.addItem(
             ChannelTag(tagId = 5, tagName = "Movies", channelCount = 1, connectionId = connectionId))

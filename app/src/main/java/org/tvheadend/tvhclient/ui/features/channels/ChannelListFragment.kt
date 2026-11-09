@@ -14,6 +14,7 @@ import androidx.core.view.children
 import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.textfield.TextInputEditText
@@ -29,6 +30,7 @@ import org.tvheadend.tvhclient.ui.features.programs.ProgramViewModel
 import org.tvheadend.tvhclient.util.extensions.gone
 import org.tvheadend.tvhclient.util.extensions.visible
 import org.tvheadend.tvhclient.util.extensions.visibleOrGone
+import kotlinx.coroutines.launch
 import timber.log.Timber
 
 class ChannelListFragment : BaseFragment(), RecyclerViewClickInterface, ChannelTimeSelectedInterface, ChannelTagIdsSelectedInterface, SearchRequestInterface, Filter.FilterListener, ShowProgramListFragmentInterface {
@@ -335,12 +337,14 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickInterface, ChannelT
         }
     }
 
-    private fun showPopupMenu(view: View, position: Int) {
+    private suspend fun showPopupMenu(view: View, position: Int) {
         val channel = recyclerViewAdapter.getItem(position) ?: return
         val ctx = context ?: return
 
         val program = channelViewModel.getProgramById(channel.programId)
         val recording = channelViewModel.getRecordingById(channel.programId)
+        val selectedRecordingProfile = channelViewModel.getRecordingProfile()
+        val selectedRecordingProfileNames = channelViewModel.getRecordingProfileNames()
 
         val popupMenu = PopupMenu(ctx, view)
         popupMenu.menuInflater.inflate(R.menu.program_popup_and_toolbar_menu, popupMenu.menu)
@@ -362,13 +366,13 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickInterface, ChannelT
                 R.id.menu_stop_recording -> return@setOnMenuItemClickListener showConfirmationToStopSelectedRecording(ctx, recording, null)
                 R.id.menu_cancel_recording -> return@setOnMenuItemClickListener showConfirmationToCancelSelectedRecording(ctx, recording, null)
                 R.id.menu_remove_recording -> return@setOnMenuItemClickListener showConfirmationToRemoveSelectedRecording(ctx, recording, null)
-                R.id.menu_record_program -> return@setOnMenuItemClickListener recordSelectedProgram(ctx, channel.programId, channelViewModel.getRecordingProfile(), htspVersion)
+                R.id.menu_record_program -> return@setOnMenuItemClickListener recordSelectedProgram(ctx, channel.programId, selectedRecordingProfile, htspVersion)
                 R.id.menu_record_program_and_edit -> {
                     programIdToBeEditedWhenBeingRecorded = channel.programId
-                    return@setOnMenuItemClickListener recordSelectedProgram(ctx, channel.programId, channelViewModel.getRecordingProfile(), htspVersion)
+                    return@setOnMenuItemClickListener recordSelectedProgram(ctx, channel.programId, selectedRecordingProfile, htspVersion)
                 }
-                R.id.menu_record_program_with_custom_profile -> return@setOnMenuItemClickListener recordSelectedProgramWithCustomProfile(ctx, channel.programId, channel.id, channelViewModel.getRecordingProfileNames(), channelViewModel.getRecordingProfile())
-                R.id.menu_record_program_as_series_recording -> return@setOnMenuItemClickListener recordSelectedProgramAsSeriesRecording(ctx, channel.programTitle, channel.id, channelViewModel.getRecordingProfile(), htspVersion)
+                R.id.menu_record_program_with_custom_profile -> return@setOnMenuItemClickListener recordSelectedProgramWithCustomProfile(ctx, channel.programId, channel.id, selectedRecordingProfileNames, selectedRecordingProfile)
+                R.id.menu_record_program_as_series_recording -> return@setOnMenuItemClickListener recordSelectedProgramAsSeriesRecording(ctx, channel.programTitle, channel.id, selectedRecordingProfile, htspVersion)
                 R.id.menu_play -> return@setOnMenuItemClickListener playSelectedChannel(ctx, channel.id, isUnlocked)
                 R.id.menu_cast -> return@setOnMenuItemClickListener castSelectedChannel(ctx, channel.id)
 
@@ -378,7 +382,7 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickInterface, ChannelT
                 R.id.menu_search_google -> return@setOnMenuItemClickListener searchTitleOnGoogle(ctx, channel.programTitle)
                 R.id.menu_search_epg -> return@setOnMenuItemClickListener searchTitleInTheLocalDatabase(requireActivity(), baseViewModel, channel.programTitle, channel.id)
 
-                R.id.menu_add_notification -> return@setOnMenuItemClickListener addNotificationProgramIsAboutToStart(ctx, program, channelViewModel.getRecordingProfile())
+                R.id.menu_add_notification -> return@setOnMenuItemClickListener addNotificationProgramIsAboutToStart(ctx, program, selectedRecordingProfile)
                 else -> return@setOnMenuItemClickListener false
             }
         }
@@ -410,7 +414,9 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickInterface, ChannelT
     }
 
     override fun onLongClick(view: View, position: Int): Boolean {
-        showPopupMenu(view, position)
+        viewLifecycleOwner.lifecycleScope.launch {
+            showPopupMenu(view, position)
+        }
         return true
     }
 

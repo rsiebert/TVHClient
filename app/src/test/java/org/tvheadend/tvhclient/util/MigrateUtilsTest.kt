@@ -5,8 +5,9 @@ import android.content.Context
 import android.content.SharedPreferences
 import androidx.test.core.app.ApplicationProvider
 import com.google.common.truth.Truth.assertThat
-import io.mockk.every
+import io.mockk.coEvery
 import io.mockk.mockk
+import kotlinx.coroutines.runBlocking
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -56,11 +57,11 @@ class MigrateUtilsTest {
     /** A `mockk` stub of the repository with no connections, which every DB step tolerates. */
     private fun repository(): AppRepository {
         val repository = mockk<AppRepository>(relaxed = true)
-        every { repository.connectionData.getItems() } returns emptyList()
+        coEvery { repository.connectionData.getItems() } returns emptyList()
         return repository
     }
 
-    private fun migrateFrom(version: Int) {
+    private fun migrateFrom(version: Int) = runBlocking {
         prefs.edit().putInt("build_version_for_migration", version).apply()
         MigrateUtils(context, repository(), prefs).doMigrate()
     }
@@ -68,7 +69,7 @@ class MigrateUtilsTest {
     // ---- version handling -----------------------------------------------------------
 
     @Test
-    fun doesNotRunAnyStepWhenTheStoredVersionMatches() {
+    fun doesNotRunAnyStepWhenTheStoredVersionMatches(): Unit = runBlocking {
         prefs.edit()
             .putInt("build_version_for_migration", BuildConfig.BUILD_VERSION)
             .putString("hours_of_epg_data_per_screen", "0")

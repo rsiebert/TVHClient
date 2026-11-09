@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import org.tvheadend.data.entity.EpgChannel
@@ -15,6 +16,7 @@ import org.tvheadend.tvhclient.databinding.EpgVerticalRecyclerviewAdapterBinding
 import org.tvheadend.tvhclient.util.extensions.gone
 import org.tvheadend.tvhclient.util.extensions.invisible
 import org.tvheadend.tvhclient.util.extensions.visible
+import kotlinx.coroutines.launch
 import timber.log.Timber
 
 internal class EpgVerticalRecyclerViewAdapter(private val activity: FragmentActivity, private val epgViewModel: EpgViewModel, private val fragmentId: Int, private val lifecycleOwner: LifecycleOwner) : RecyclerView.Adapter<EpgVerticalRecyclerViewAdapter.EpgViewPagerViewHolder>() {
@@ -29,9 +31,16 @@ internal class EpgVerticalRecyclerViewAdapter(private val activity: FragmentActi
 
     override fun onBindViewHolder(holder: EpgViewPagerViewHolder, position: Int) {
         val epgChannel = channelList[position]
-        val programs = epgViewModel.getProgramsByChannelAndBetweenTimeSync(epgChannel.id, fragmentId)
-        Timber.d("Binding ${programs.size} programs for channel ${epgChannel.name} in viewpager fragment $fragmentId")
-        holder.bindData(programs)
+        // The programs are a database read, so load them off the main thread and only bind once
+        // they arrive, provided the holder still shows the same position.
+        lifecycleOwner.lifecycleScope.launch {
+            val programs = epgViewModel.getProgramsByChannelAndBetweenTimeSync(epgChannel.id, fragmentId)
+            if (holder.bindingAdapterPosition != position) {
+                return@launch
+            }
+            Timber.d("Binding ${programs.size} programs for channel ${epgChannel.name} in viewpager fragment $fragmentId")
+            holder.bindData(programs)
+        }
     }
 
     override fun getItemCount(): Int {

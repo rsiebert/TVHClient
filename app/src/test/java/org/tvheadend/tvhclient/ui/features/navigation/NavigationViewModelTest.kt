@@ -5,6 +5,7 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.preference.PreferenceManager
 import androidx.test.core.app.ApplicationProvider
 import com.google.common.truth.Truth.assertThat
+import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
@@ -18,6 +19,7 @@ import org.tvheadend.tvhclient.AppGraphProvider
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.testutil.TestAppGraph
 import org.tvheadend.tvhclient.testutil.TestAppGraphFactory
+import org.tvheadend.tvhclient.testutil.observedValue
 
 /**
  * Tests for [NavigationViewModel].
@@ -125,23 +127,23 @@ class NavigationViewModelTest {
     // ---- setSelectedConnectionAsActive ----------------------------------------------
 
     @Test
-    fun setSelectedConnectionAsActiveSwitchesToTheOtherConnection() {
+    fun setSelectedConnectionAsActiveSwitchesToTheOtherConnection(): Unit = runBlocking {
         graph.appRepository.connectionData.addItem(Connection(name = "A", isActive = true))
         graph.appRepository.connectionData.addItem(Connection(name = "B"))
-        val activeId = graph.appRepository.connectionData.activeItem.id
+        val activeId = graph.appRepository.connectionData.getActiveItem().id
         val otherId = graph.appRepository.connectionData.getItems().first { it.id != activeId }.id
         val vm = NavigationViewModel(context)
 
         val switched = vm.setSelectedConnectionAsActive(otherId)
 
         assertThat(switched).isTrue()
-        assertThat(graph.appRepository.connectionData.activeItem.id).isEqualTo(otherId)
+        assertThat(graph.appRepository.connectionData.getActiveItem().id).isEqualTo(otherId)
     }
 
     @Test
-    fun setSelectedConnectionAsActiveDoesNothingForTheAlreadyActiveConnection() {
+    fun setSelectedConnectionAsActiveDoesNothingForTheAlreadyActiveConnection(): Unit = runBlocking {
         graph.appRepository.connectionData.addItem(Connection(name = "A", isActive = true))
-        val activeId = graph.appRepository.connectionData.activeItem.id
+        val activeId = graph.appRepository.connectionData.getActiveItem().id
         val vm = NavigationViewModel(context)
 
         val switched = vm.setSelectedConnectionAsActive(activeId)
@@ -150,7 +152,7 @@ class NavigationViewModelTest {
     }
 
     @Test
-    fun setSelectedConnectionAsActiveDoesNothingForAnUnknownConnection() {
+    fun setSelectedConnectionAsActiveDoesNothingForAnUnknownConnection(): Unit = runBlocking {
         graph.appRepository.connectionData.addItem(Connection(name = "A", isActive = true))
         val vm = NavigationViewModel(context)
 
@@ -168,6 +170,6 @@ class NavigationViewModelTest {
 
         val vm = NavigationViewModel(context)
 
-        assertThat(vm.connections.map { it.name }).containsExactly("A", "B")
+        assertThat(vm.connections.observedValue()!!.map { it.name }).containsExactly("A", "B")
     }
 }

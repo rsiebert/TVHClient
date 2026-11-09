@@ -7,6 +7,7 @@ import android.net.Uri
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.databinding.PlayActivityBinding
@@ -14,6 +15,7 @@ import org.tvheadend.tvhclient.ui.common.onAttach
 import org.tvheadend.tvhclient.util.extensions.gone
 import org.tvheadend.tvhclient.util.extensions.setUpEdgeToEdge
 import org.tvheadend.tvhclient.util.getThemeId
+import kotlinx.coroutines.launch
 import timber.log.Timber
 
 abstract class BasePlaybackActivity : AppCompatActivity() {
@@ -37,7 +39,9 @@ abstract class BasePlaybackActivity : AppCompatActivity() {
             if (isConnected) {
                 Timber.d("Received live data, connected to server, requesting ticket")
                 binding.status.setText(R.string.requesting_playback_information)
-                viewModel.requestTicketFromServer(intent.extras)
+                lifecycleScope.launch {
+                    viewModel.requestTicketFromServer(intent.extras)
+                }
             } else {
                 Timber.d("Received live data, not connected to server")
                 binding.progressBar.gone()
@@ -50,7 +54,9 @@ abstract class BasePlaybackActivity : AppCompatActivity() {
             if (isTicketReceived) {
                 binding.progressBar.gone()
                 binding.status.text = getString(R.string.connected_to_server)
-                onTicketReceived()
+                lifecycleScope.launch {
+                    onTicketReceived()
+                }
             }
         }
     }
@@ -59,7 +65,7 @@ abstract class BasePlaybackActivity : AppCompatActivity() {
         super.attachBaseContext(onAttach(context))
     }
 
-    protected abstract fun onTicketReceived()
+    protected abstract suspend fun onTicketReceived()
 
     internal fun startExternalPlayer(intent: Intent) {
         Timber.d("Starting external player for given intent")

@@ -2,6 +2,7 @@ package org.tvheadend.data.source
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.google.common.truth.Truth.assertThat
+import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
@@ -47,14 +48,14 @@ class SubscriptionDataSourceTest {
     }
 
     @Test
-    fun addItemAppendsToTheList() {
+    fun addItemAppendsToTheList() : Unit = runBlocking {
         dataSource.addItem(subscription(1))
 
         assertThat(dataSource.getItems().map { it.id }).containsExactly(1)
     }
 
     @Test
-    fun updateItemReplacesTheExistingEntry() {
+    fun updateItemReplacesTheExistingEntry() : Unit = runBlocking {
         dataSource.addItem(subscription(1))
 
         // Replaces the entry with the same id. This used to append unconditionally, leaving the
@@ -65,7 +66,7 @@ class SubscriptionDataSourceTest {
     }
 
     @Test
-    fun removeItemRemovesTheEntry() {
+    fun removeItemRemovesTheEntry() : Unit = runBlocking {
         val item = subscription(1)
         dataSource.addItem(item)
 
@@ -75,7 +76,7 @@ class SubscriptionDataSourceTest {
     }
 
     @Test
-    fun removeItemsClearsTheList() {
+    fun removeItemsClearsTheList() : Unit = runBlocking {
         dataSource.addItem(subscription(1))
         dataSource.addItem(subscription(2))
 
@@ -85,7 +86,7 @@ class SubscriptionDataSourceTest {
     }
 
     @Test
-    fun getItemByIdReturnsTheEntryAtThatIndex() {
+    fun getItemByIdReturnsTheEntryAtThatIndex() : Unit = runBlocking {
         dataSource.addItem(subscription(1))
         dataSource.addItem(subscription(2))
 

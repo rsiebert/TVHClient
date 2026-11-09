@@ -6,7 +6,7 @@ import timber.log.Timber
 
 class PlayChannelActivity : BasePlaybackActivity() {
 
-    override fun onTicketReceived() {
+    override suspend fun onTicketReceived() {
         val url = viewModel.getPlaybackUrl()
         val intent = Intent(Intent.ACTION_VIEW)
         intent.setDataAndType(Uri.parse(url), "video/mp4")

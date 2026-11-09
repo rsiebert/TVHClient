@@ -4,6 +4,7 @@ import android.app.Service
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.IBinder
+import kotlinx.coroutines.runBlocking
 import org.tvheadend.data.AppRepository
 import org.tvheadend.data.entity.Connection
 import org.tvheadend.tvhclient.MainApplication
@@ -24,7 +25,11 @@ class ConnectionService : Service() {
         appRepository = application.appRepository
         sharedPreferences = application.appSharedPreferences
 
-        connection = appRepository.connectionData.activeItem
+        // onStartCommand() needs the handler (and thus the connection) to be ready right after
+        // onCreate(), so this one read is bridged back to blocking. It is the documented boundary
+        // for runBlocking outside the htsp handlers; the database read itself still happens off the
+        // main thread via the data source's withContext(Dispatchers.IO).
+        connection = runBlocking { appRepository.connectionData.getActiveItem() }
         serviceHandler = HtspServiceHandler(this, appRepository, connection)
     }
 

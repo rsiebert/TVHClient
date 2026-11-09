@@ -6,11 +6,13 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.switchMap
+import androidx.lifecycle.viewModelScope
 import org.tvheadend.data.entity.Program
 import org.tvheadend.data.entity.Recording
 import org.tvheadend.data.entity.ServerProfile
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.ui.base.BaseViewModel
+import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.util.*
 
@@ -46,7 +48,9 @@ class ProgramViewModel(application: Application) : BaseViewModel(application), S
 
         program.addSource(eventIdLiveData) { value ->
             if (value > 0) {
-                program.value = appRepository.programData.getItemById(value)
+                viewModelScope.launch {
+                    program.value = appRepository.programData.getItemById(value)
+                }
             }
         }
 
@@ -90,12 +94,12 @@ class ProgramViewModel(application: Application) : BaseViewModel(application), S
         }
     }
 
-    fun getRecordingProfile(): ServerProfile? {
-        return appRepository.serverProfileData.getItemById(appRepository.serverStatusData.activeItem.recordingServerProfileId)
+    suspend fun getRecordingProfile(): ServerProfile? {
+        return appRepository.serverProfileData.getItemById(appRepository.serverStatusData.getActiveItem().recordingServerProfileId)
     }
 
-    fun getRecordingProfileNames(): Array<String> {
-        return appRepository.serverProfileData.recordingProfileNames
+    suspend fun getRecordingProfileNames(): Array<String> {
+        return appRepository.serverProfileData.getRecordingProfileNames()
     }
 
     internal class ProgramLiveData(channelId: LiveData<Int>,

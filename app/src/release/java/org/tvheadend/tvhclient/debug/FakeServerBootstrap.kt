@@ -9,7 +9,7 @@ import android.content.Context
  */
 object FakeServerBootstrap {
 
-    fun start(context: Context) {
+    suspend fun start(context: Context) {
         // No-op in release builds.
     }
 }

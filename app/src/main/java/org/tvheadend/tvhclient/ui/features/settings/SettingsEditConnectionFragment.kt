@@ -2,8 +2,10 @@ package org.tvheadend.tvhclient.ui.features.settings
 
 import android.os.Bundle
 import android.view.View
+import androidx.lifecycle.lifecycleScope
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.util.extensions.sendSnackbarMessage
+import kotlinx.coroutines.launch
 
 class SettingsEditConnectionFragment : SettingsConnectionBaseFragment() {
 
@@ -12,8 +14,10 @@ class SettingsEditConnectionFragment : SettingsConnectionBaseFragment() {
         toolbarInterface.setTitle(getString(R.string.edit_connection))
 
         if (savedInstanceState == null) {
-            settingsViewModel.loadConnectionById(settingsViewModel.connectionIdToBeEdited)
-            toolbarInterface.setSubtitle(settingsViewModel.connectionToEdit.name ?: "")
+            viewLifecycleOwner.lifecycleScope.launch {
+                settingsViewModel.loadConnectionById(settingsViewModel.connectionIdToBeEdited)
+                toolbarInterface.setSubtitle(settingsViewModel.connectionToEdit.name ?: "")
+            }
         }
     }
 

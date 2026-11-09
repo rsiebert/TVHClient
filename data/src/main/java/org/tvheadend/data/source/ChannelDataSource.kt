@@ -3,10 +3,12 @@ package org.tvheadend.data.source
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.map
+import kotlin.coroutines.ContinuationInterceptor
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 import org.tvheadend.data.db.AppRoomDatabase
 import org.tvheadend.data.entity.Channel
 import org.tvheadend.data.entity.ChannelEntity
@@ -18,6 +20,12 @@ class ChannelDataSource(
         private val db: AppRoomDatabase,
         private val ioScope: CoroutineScope = CoroutineScope(Dispatchers.IO)
 ) : DataSourceInterface<Channel> {
+
+    // The reads run on the same dispatcher the writes use. In production that is
+    // [Dispatchers.IO]; a test that injects an Unconfined scope therefore keeps the reads
+    // (and the ViewModel coroutines that await them) synchronous and deterministic.
+    private val ioDispatcher: CoroutineDispatcher =
+            ioScope.coroutineContext[ContinuationInterceptor] as? CoroutineDispatcher ?: Dispatchers.IO
 
     override fun addItem(item: Channel) {
         ioScope.launch { db.channelDao.insert(ChannelEntity.from(item)) }
@@ -47,29 +55,29 @@ class ChannelDataSource(
         return MutableLiveData()
     }
 
-    override fun getItemById(id: Any): Channel? {
+    override suspend fun getItemById(id: Any): Channel? {
         var channel: Channel?
-        runBlocking(Dispatchers.IO) {
+        withContext(ioDispatcher) {
             channel = db.channelDao.loadChannelByIdSync(id as Int)?.toChannel()
         }
         return channel
     }
 
-    fun getChannels(sortOrder: Int = 0): List<Channel> {
+    suspend fun getChannels(sortOrder: Int = 0): List<Channel> {
         val channels = ArrayList<Channel>()
-        runBlocking(Dispatchers.IO) {
+        withContext(ioDispatcher) {
             channels.addAll(db.channelDao.loadAllChannelsSync(sortOrder).map { it.toChannel() })
         }
         return channels
     }
 
-    override fun getItems(): List<Channel> {
+    override suspend fun getItems(): List<Channel> {
         return getChannels()
     }
 
-    fun getItemByIdWithPrograms(id: Int, selectedTime: Long): Channel? {
+    suspend fun getItemByIdWithPrograms(id: Int, selectedTime: Long): Channel? {
         var channel: Channel?
-        runBlocking(Dispatchers.IO) {
+        withContext(ioDispatcher) {
             channel = db.channelDao.loadChannelByIdWithProgramsSync(id, selectedTime)?.toChannel()
         }
         return channel

@@ -26,6 +26,7 @@ import org.tvheadend.tvhclient.service.ServerTicketReceiver
 import org.tvheadend.tvhclient.service.SyncStateResult
 import org.tvheadend.tvhclient.util.convertUrlToHashString
 import org.tvheadend.tvhclient.util.extensions.sendSyncStateMessage
+import kotlinx.coroutines.runBlocking
 import timber.log.Timber
 import java.io.*
 import java.net.URL
@@ -37,10 +38,19 @@ import kotlin.math.max
 
 class HtspIntentServiceHandler(val context: Context, val appRepository: AppRepository, val connection: Connection) : ConnectionIntentService.ServiceInterface, ServerConnectionStateListener {
 
+    /**
+     * Bridges the now-suspending data-source reads back into this handler's blocking code.
+     *
+     * HtspIntentServiceHandler runs on a [androidx.core.app.JobIntentService] worker thread, never
+     * on the main thread, so blocking here is acceptable. This is the documented runBlocking
+     * boundary.
+     */
+    private fun <T> blocking(block: suspend () -> T): T = runBlocking { block() }
+
     private val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
     private val execService: ScheduledExecutorService = Executors.newScheduledThreadPool(10)
     private val htspConnection: HtspConnection
-    private val serverStatus: ServerStatus = appRepository.serverStatusData.activeItem
+    private val serverStatus: ServerStatus = blocking { appRepository.serverStatusData.getActiveItem() }
     private var htspVersion: Int = 13
 
     private val pendingEventOps = ArrayList<Program>()
@@ -168,14 +178,14 @@ class HtspIntentServiceHandler(val context: Context, val appRepository: AppRepos
         Timber.d("Downloading and saving all channel and channel tag icons...")
 
         val iconUrls = ArrayList<String>()
-        appRepository.channelData.getItems().forEach {
+        blocking { appRepository.channelData.getItems() }.forEach {
             val icon = it.icon
             if (!icon.isNullOrEmpty()) {
                 iconUrls.add(icon)
             }
         }
 
-        appRepository.channelTagData.getItems().forEach {
+        blocking { appRepository.channelTagData.getItems() }.forEach {
             val icon = it.tagIcon
             if (!icon.isNullOrEmpty()) {
                 iconUrls.add(icon)
@@ -227,9 +237,9 @@ class HtspIntentServiceHandler(val context: Context, val appRepository: AppRepos
     private fun removeDuplicateProgramsFromDatabase() {
         Timber.d("Removing duplicate programs from the database")
         val duplicatePrograms = Vector<Int>()
-        val channels = appRepository.channelData.getItems()
+        val channels = blocking { appRepository.channelData.getItems() }
         channels.forEach { channel ->
-            val programs = appRepository.programData.getDuplicatePrograms(channel.id)
+            val programs = blocking { appRepository.programData.getDuplicatePrograms(channel.id) }
             Timber.d("Loaded ${programs.size} duplicate programs for channel ${channel.name}")
 
             var lastProgram = EpgProgram()
@@ -333,9 +343,9 @@ class HtspIntentServiceHandler(val context: Context, val appRepository: AppRepos
     private fun getMoreEvents(intent: Intent) {
 
         val numberOfProgramsToLoad = intent.getIntExtra("numFollowing", 0)
-        val channelList = appRepository.channelData.getItems()
+        val channelList = blocking { appRepository.channelData.getItems() }
 
-        Timber.d("Database currently contains ${appRepository.programData.itemCount} events.")
+        Timber.d("Database currently contains ${blocking { appRepository.programData.getItemCount() }} events.")
         Timber.d("Loading $numberOfProgramsToLoad events for each of the ${channelList.size} channels")
 
         var channelCount = 0
@@ -350,7 +360,7 @@ class HtspIntentServiceHandler(val context: Context, val appRepository: AppRepos
             msgIntent.putExtra("channelId", it.id)
             msgIntent.putExtra("channelName", it.name)
 
-            val lastProgram = appRepository.programData.getLastItemByChannelId(it.id)
+            val lastProgram = blocking { appRepository.programData.getLastItemByChannelId(it.id) }
             when {
                 lastProgram != null -> {
                     Timber.d("Loading more programs for channel ${it.name} from last program id ${lastProgram.eventId}")
@@ -395,7 +405,7 @@ class HtspIntentServiceHandler(val context: Context, val appRepository: AppRepos
 
         Timber.d("Done loading more events")
         appRepository.programData.addItems(pendingEventOps)
-        Timber.d("Saved ${pendingEventOps.size} events for all channels. Database contains ${appRepository.programData.itemCount} events")
+        Timber.d("Saved ${pendingEventOps.size} events for all channels. Database contains ${blocking { appRepository.programData.getItemCount() }} events")
         pendingEventOps.clear()
     }
 }

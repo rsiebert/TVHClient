@@ -5,6 +5,7 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.preference.PreferenceManager
 import androidx.test.core.app.ApplicationProvider
 import com.google.common.truth.Truth.assertThat
+import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
@@ -54,9 +55,9 @@ class RecordingViewModelTest {
 
     private fun prefs() = PreferenceManager.getDefaultSharedPreferences(context)
 
-    private fun seedActiveConnection(): Int {
+    private fun seedActiveConnection(): Int = runBlocking {
         graph.appRepository.connectionData.addItem(Connection(name = "Active", isActive = true))
-        return graph.appRepository.connectionData.activeItem.id
+        graph.appRepository.connectionData.getActiveItem().id
     }
 
     // ---- lists ----------------------------------------------------------------------
@@ -90,7 +91,7 @@ class RecordingViewModelTest {
     }
 
     @Test
-    fun loadRecordingByIdSyncLoadsTheRecording() {
+    fun loadRecordingByIdSyncLoadsTheRecording(): Unit = runBlocking {
         val connectionId = seedActiveConnection()
         graph.appRepository.recordingData.addItem(Recording(id = 7, connectionId = connectionId, title = "Seven"))
         val vm = RecordingViewModel(context)

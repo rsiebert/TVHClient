@@ -3,12 +3,14 @@ package org.tvheadend.tvhclient.ui.features.settings
 import android.os.Bundle
 import android.view.View
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.preference.ListPreference
 import androidx.preference.PreferenceFragmentCompat
 import org.tvheadend.data.entity.ServerProfile
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.ui.common.interfaces.ToolbarInterface
 import org.tvheadend.tvhclient.util.extensions.sendSnackbarMessage
+import kotlinx.coroutines.launch
 import timber.log.Timber
 
 class SettingsProfilesFragment : PreferenceFragmentCompat() {
@@ -35,12 +37,14 @@ class SettingsProfilesFragment : PreferenceFragmentCompat() {
         timerRecordingProfilesPreference = findPreference("timer_recording_profiles")!!
         castingProfilesPreference = findPreference("casting_profiles")!!
 
-        addProfileValuesToListPreference(htspPlaybackProfilesPreference, settingsViewModel.getHtspProfiles(), settingsViewModel.currentServerStatus.htspPlaybackServerProfileId)
-        addProfileValuesToListPreference(httpPlaybackProfilesPreference, settingsViewModel.getHttpProfiles(), settingsViewModel.currentServerStatus.httpPlaybackServerProfileId)
-        addProfileValuesToListPreference(recordingProfilesPreference, settingsViewModel.getRecordingProfiles(), settingsViewModel.currentServerStatus.recordingServerProfileId)
-        addProfileValuesToListPreference(seriesRecordingProfilesPreference, settingsViewModel.getRecordingProfiles(), settingsViewModel.currentServerStatus.seriesRecordingServerProfileId)
-        addProfileValuesToListPreference(timerRecordingProfilesPreference, settingsViewModel.getRecordingProfiles(), settingsViewModel.currentServerStatus.timerRecordingServerProfileId)
-        addProfileValuesToListPreference(castingProfilesPreference, settingsViewModel.getHttpProfiles(), settingsViewModel.currentServerStatus.castingServerProfileId)
+        viewLifecycleOwner.lifecycleScope.launch {
+            addProfileValuesToListPreference(htspPlaybackProfilesPreference, settingsViewModel.getHtspProfiles(), settingsViewModel.currentServerStatus.htspPlaybackServerProfileId)
+            addProfileValuesToListPreference(httpPlaybackProfilesPreference, settingsViewModel.getHttpProfiles(), settingsViewModel.currentServerStatus.httpPlaybackServerProfileId)
+            addProfileValuesToListPreference(recordingProfilesPreference, settingsViewModel.getRecordingProfiles(), settingsViewModel.currentServerStatus.recordingServerProfileId)
+            addProfileValuesToListPreference(seriesRecordingProfilesPreference, settingsViewModel.getRecordingProfiles(), settingsViewModel.currentServerStatus.seriesRecordingServerProfileId)
+            addProfileValuesToListPreference(timerRecordingProfilesPreference, settingsViewModel.getRecordingProfiles(), settingsViewModel.currentServerStatus.timerRecordingServerProfileId)
+            addProfileValuesToListPreference(castingProfilesPreference, settingsViewModel.getHttpProfiles(), settingsViewModel.currentServerStatus.castingServerProfileId)
+        }
 
         settingsViewModel.activeConnectionLiveData.observe(viewLifecycleOwner) { connection ->
             toolbarInterface.setSubtitle(connection.name ?: "")
@@ -51,12 +55,14 @@ class SettingsProfilesFragment : PreferenceFragmentCompat() {
         }
 
         settingsViewModel.currentServerStatusLiveData.observe(viewLifecycleOwner) {
-            setHttpPlaybackPreferenceSummary()
-            setHtspPlaybackPreferenceSummary()
-            setRecordingPreferenceSummary()
-            setSeriesRecordingPreferenceSummary()
-            setTimerRecordingPreferenceSummary()
-            setCastingPreferenceSummary()
+            viewLifecycleOwner.lifecycleScope.launch {
+                setHttpPlaybackPreferenceSummary()
+                setHtspPlaybackPreferenceSummary()
+                setRecordingPreferenceSummary()
+                setSeriesRecordingPreferenceSummary()
+                setTimerRecordingPreferenceSummary()
+                setCastingPreferenceSummary()
+            }
         }
     }
 
@@ -101,8 +107,10 @@ class SettingsProfilesFragment : PreferenceFragmentCompat() {
             castingProfilesPreference.setOnPreferenceChangeListener { _, o ->
                 settingsViewModel.currentServerStatus.let {
                     it.castingServerProfileId = Integer.valueOf(o as String)
-                    setCastingPreferenceSummary()
                     settingsViewModel.updateServerStatus(it)
+                    viewLifecycleOwner.lifecycleScope.launch {
+                        setCastingPreferenceSummary()
+                    }
                 }
                 true
             }
@@ -119,7 +127,7 @@ class SettingsProfilesFragment : PreferenceFragmentCompat() {
         setPreferencesFromResource(R.xml.preferences_profiles, rootKey)
     }
 
-    private fun setHtspPlaybackPreferenceSummary() {
+    private suspend fun setHtspPlaybackPreferenceSummary() {
         Timber.d("Htsp playback profile id is ${settingsViewModel.currentServerStatus.htspPlaybackServerProfileId}")
         if (settingsViewModel.currentServerStatus.htspPlaybackServerProfileId == 0) {
             htspPlaybackProfilesPreference.summary = "None"
@@ -128,7 +136,7 @@ class SettingsProfilesFragment : PreferenceFragmentCompat() {
         }
     }
 
-    private fun setHttpPlaybackPreferenceSummary() {
+    private suspend fun setHttpPlaybackPreferenceSummary() {
         Timber.d("Http playback profile id is ${settingsViewModel.currentServerStatus.httpPlaybackServerProfileId}")
         if (settingsViewModel.currentServerStatus.httpPlaybackServerProfileId == 0) {
             httpPlaybackProfilesPreference.summary = "None"
@@ -137,7 +145,7 @@ class SettingsProfilesFragment : PreferenceFragmentCompat() {
         }
     }
 
-    private fun setRecordingPreferenceSummary() {
+    private suspend fun setRecordingPreferenceSummary() {
         Timber.d("Recording profile id is ${settingsViewModel.currentServerStatus.recordingServerProfileId}")
         if (settingsViewModel.currentServerStatus.recordingServerProfileId == 0) {
             recordingProfilesPreference.summary = "None"
@@ -146,7 +154,7 @@ class SettingsProfilesFragment : PreferenceFragmentCompat() {
         }
     }
 
-    private fun setSeriesRecordingPreferenceSummary() {
+    private suspend fun setSeriesRecordingPreferenceSummary() {
         Timber.d("Series recording profile id is ${settingsViewModel.currentServerStatus.seriesRecordingServerProfileId}")
         if (settingsViewModel.currentServerStatus.seriesRecordingServerProfileId == 0) {
             seriesRecordingProfilesPreference.summary = "None"
@@ -155,7 +163,7 @@ class SettingsProfilesFragment : PreferenceFragmentCompat() {
         }
     }
 
-    private fun setTimerRecordingPreferenceSummary() {
+    private suspend fun setTimerRecordingPreferenceSummary() {
         Timber.d("Timer recording profile id is ${settingsViewModel.currentServerStatus.timerRecordingServerProfileId}")
         if (settingsViewModel.currentServerStatus.timerRecordingServerProfileId == 0) {
             timerRecordingProfilesPreference.summary = "None"
@@ -164,7 +172,7 @@ class SettingsProfilesFragment : PreferenceFragmentCompat() {
         }
     }
 
-    private fun setCastingPreferenceSummary() {
+    private suspend fun setCastingPreferenceSummary() {
         Timber.d("Casting profile id is ${settingsViewModel.currentServerStatus.recordingServerProfileId}")
         if (settingsViewModel.currentServerStatus.castingServerProfileId == 0) {
             castingProfilesPreference.summary = "None"

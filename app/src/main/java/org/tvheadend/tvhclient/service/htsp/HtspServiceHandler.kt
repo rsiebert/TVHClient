@@ -30,6 +30,7 @@ import org.tvheadend.tvhclient.util.extensions.sendSyncStateMessage
 import org.tvheadend.tvhclient.util.getIconUrl
 import org.tvheadend.tvhclient.util.worker.DatabaseCleanupWorker
 import org.tvheadend.tvhclient.util.worker.EpgDataUpdateWorker
+import kotlinx.coroutines.runBlocking
 import timber.log.Timber
 import java.io.*
 import java.net.URL
@@ -42,6 +43,15 @@ import kotlin.math.floor
 import kotlin.math.max
 
 class HtspServiceHandler(val context: Context, val appRepository: AppRepository, val connection: Connection) : ConnectionService.ServiceInterface, ServerConnectionStateListener, ServerMessageListener<HtspMessage> {
+
+    /**
+     * Bridges the now-suspending data-source reads back into this handler's blocking code.
+     *
+     * HtspServiceHandler always runs on a background thread (the connection reader thread or
+     * [execService]), never on the main thread, so blocking here is acceptable and keeps the
+     * existing synchronous protocol flow intact. This is the documented boundary for runBlocking.
+     */
+    private fun <T> blocking(block: suspend () -> T): T = runBlocking { block() }
 
     private val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
     private var htspConnectionData: HtspConnectionData = HtspConnectionData(
@@ -61,9 +71,9 @@ class HtspServiceHandler(val context: Context, val appRepository: AppRepository,
     private val pendingChannelTagOps = ArrayList<ChannelTag>()
     private val pendingRecordingOps = ArrayList<Recording>()
 
-    private var pendingHtspProfiles: MutableList<ServerProfile> = appRepository.serverProfileData.htspPlaybackProfiles.toMutableList()
-    private var pendingHttpProfiles: MutableList<ServerProfile> = appRepository.serverProfileData.httpPlaybackProfiles.toMutableList()
-    private var pendingRecordingProfiles: MutableList<ServerProfile> = appRepository.serverProfileData.recordingProfiles.toMutableList()
+    private var pendingHtspProfiles: MutableList<ServerProfile> = blocking { appRepository.serverProfileData.getHtspPlaybackProfiles() }.toMutableList()
+    private var pendingHttpProfiles: MutableList<ServerProfile> = blocking { appRepository.serverProfileData.getHttpPlaybackProfiles() }.toMutableList()
+    private var pendingRecordingProfiles: MutableList<ServerProfile> = blocking { appRepository.serverProfileData.getRecordingProfiles() }.toMutableList()
 
     private var initialSyncWithServerRunning: Boolean = false
     private var syncEventsRequired: Boolean = false
@@ -79,7 +89,7 @@ class HtspServiceHandler(val context: Context, val appRepository: AppRepository,
 
         // The server reports with the reply to the authenticate request whether the account
         // of the connection is allowed to record. Servers that do not report it allow it.
-        if (isDvrAction(action) && !appRepository.serverStatusData.activeItem.isDvr) {
+        if (isDvrAction(action) && !blocking { appRepository.serverStatusData.getActiveItem() }.isDvr) {
             Timber.d("Not executing $action, the account of the connection is not allowed to record")
             context.sendSnackbarMessage(R.string.error_no_dvr_access)
             return Service.START_NOT_STICKY
@@ -213,7 +223,7 @@ class HtspServiceHandler(val context: Context, val appRepository: AppRepository,
      */
     private fun updateAuthenticationRights(rights: AuthenticationRights) {
         Timber.d("Server granted admin ${rights.isAdmin}, dvr ${rights.isDvr}, streaming ${rights.isStreaming}")
-        val serverStatus = appRepository.serverStatusData.activeItem
+        val serverStatus = blocking { appRepository.serverStatusData.getActiveItem() }
         serverStatus.isAdmin = rights.isAdmin
         serverStatus.isDvr = rights.isDvr
         serverStatus.isStreaming = rights.isStreaming
@@ -490,7 +500,7 @@ class HtspServiceHandler(val context: Context, val appRepository: AppRepository,
 
     private fun setDefaultProfileSelection() {
         Timber.d("Setting default profiles in case none are selected yet")
-        val serverStatus = appRepository.serverStatusData.activeItem
+        val serverStatus = blocking { appRepository.serverStatusData.getActiveItem() }
         serverStatus.let {
             if (it.htspPlaybackServerProfileId == 0) {
                 for (profile in pendingHtspProfiles) {
@@ -555,7 +565,7 @@ class HtspServiceHandler(val context: Context, val appRepository: AppRepository,
             return
         }
 
-        var channelTag = appRepository.channelTagData.getItemById(msg.getInteger("tagId"))
+        var channelTag = blocking { appRepository.channelTagData.getItemById(msg.getInteger("tagId")) }
         if (channelTag == null) {
             Timber.d("Could not find a channel tag with id ${msg.getInteger("tagId")} in the database")
             channelTag = ChannelTag()
@@ -583,7 +593,7 @@ class HtspServiceHandler(val context: Context, val appRepository: AppRepository,
      */
     private fun onTagDelete(msg: HtspMessage) {
         if (msg.containsKey("tagId")) {
-            val tag = appRepository.channelTagData.getItemById(msg.getInteger("tagId"))
+            val tag = blocking { appRepository.channelTagData.getItemById(msg.getInteger("tagId")) }
             if (tag != null) {
                 deleteIconFileFromCache(tag.tagIcon)
                 appRepository.channelTagData.removeItem(tag)
@@ -627,7 +637,7 @@ class HtspServiceHandler(val context: Context, val appRepository: AppRepository,
             return
         }
 
-        val channel = appRepository.channelData.getItemById(msg.getInteger("channelId")) ?: return
+        val channel = blocking { appRepository.channelData.getItemById(msg.getInteger("channelId")) } ?: return
         val updatedChannel = convertMessageToChannelModel(channel, msg)
         appRepository.channelData.updateItem(updatedChannel)
     }
@@ -642,7 +652,7 @@ class HtspServiceHandler(val context: Context, val appRepository: AppRepository,
         if (msg.containsKey("channelId")) {
             val channelId = msg.getInteger("channelId")
 
-            val channel = appRepository.channelData.getItemById(channelId)
+            val channel = blocking { appRepository.channelData.getItemById(channelId) }
             if (channel != null) {
                 deleteIconFileFromCache(channel.icon)
                 appRepository.channelData.removeItemById(channel.id)
@@ -681,7 +691,7 @@ class HtspServiceHandler(val context: Context, val appRepository: AppRepository,
      * @param msg The message with the updated recording data
      */
     private fun onDvrEntryUpdate(msg: HtspMessage) {
-        val recording = appRepository.recordingData.getItemById(msg.getInteger("id")) ?: return
+        val recording = blocking { appRepository.recordingData.getItemById(msg.getInteger("id")) } ?: return
         val updatedRecording = convertMessageToRecordingModel(recording, msg)
         appRepository.recordingData.updateItem(updatedRecording)
 
@@ -702,7 +712,7 @@ class HtspServiceHandler(val context: Context, val appRepository: AppRepository,
      */
     private fun onDvrEntryDelete(msg: HtspMessage) {
         if (msg.containsKey("id")) {
-            val recording = appRepository.recordingData.getItemById(msg.getInteger("id")) ?: return
+            val recording = blocking { appRepository.recordingData.getItemById(msg.getInteger("id")) } ?: return
             appRepository.recordingData.removeItem(recording)
         }
     }
@@ -731,7 +741,7 @@ class HtspServiceHandler(val context: Context, val appRepository: AppRepository,
             Timber.d("Could not find a series recording with id $id in the database")
             return
         }
-        val recording = appRepository.seriesRecordingData.getItemById(msg.getString("id")) ?: return
+        val recording = blocking { appRepository.seriesRecordingData.getItemById(msg.getString("id")) } ?: return
         val updatedRecording = convertMessageToSeriesRecordingModel(recording, msg)
         appRepository.seriesRecordingData.updateItem(updatedRecording)
     }
@@ -745,7 +755,7 @@ class HtspServiceHandler(val context: Context, val appRepository: AppRepository,
     private fun onAutorecEntryDelete(msg: HtspMessage) {
         val id = msg.getString("id", "")
         if (id.isNotEmpty()) {
-            val seriesRecording = appRepository.seriesRecordingData.getItemById(msg.getString("id")) ?: return
+            val seriesRecording = blocking { appRepository.seriesRecordingData.getItemById(msg.getString("id")) } ?: return
             appRepository.seriesRecordingData.removeItem(seriesRecording)
         }
     }
@@ -774,7 +784,7 @@ class HtspServiceHandler(val context: Context, val appRepository: AppRepository,
             Timber.d("Could not find a timer recording with id $id in the database")
             return
         }
-        val recording = appRepository.timerRecordingData.getItemById(id) ?: return
+        val recording = blocking { appRepository.timerRecordingData.getItemById(id) } ?: return
         val updatedRecording = convertMessageToTimerRecordingModel(recording, msg)
         appRepository.timerRecordingData.updateItem(updatedRecording)
     }
@@ -788,7 +798,7 @@ class HtspServiceHandler(val context: Context, val appRepository: AppRepository,
     private fun onTimerRecEntryDelete(msg: HtspMessage) {
         val id = msg.getString("id", "")
         if (id.isNotEmpty()) {
-            val timerRecording = appRepository.timerRecordingData.getItemById(id) ?: return
+            val timerRecording = blocking { appRepository.timerRecordingData.getItemById(id) } ?: return
             appRepository.timerRecordingData.removeItem(timerRecording)
         }
     }
@@ -832,7 +842,7 @@ class HtspServiceHandler(val context: Context, val appRepository: AppRepository,
      * @param msg The message with the updated epg event data
      */
     private fun onEventUpdate(msg: HtspMessage) {
-        val program = appRepository.programData.getItemById(msg.getInteger("eventId")) ?: return
+        val program = blocking { appRepository.programData.getItemById(msg.getInteger("eventId")) } ?: return
         val updatedProgram = convertMessageToProgramModel(program, msg)
         Timber.d("Updating event ${updatedProgram.title}")
         appRepository.programData.updateItem(updatedProgram)
@@ -1044,7 +1054,7 @@ class HtspServiceHandler(val context: Context, val appRepository: AppRepository,
     }
 
     private fun onServerStatus(message: HtspMessage) {
-        val serverStatus = appRepository.serverStatusData.activeItem
+        val serverStatus = blocking { appRepository.serverStatusData.getActiveItem() }
         serverStatus.let {
             val updatedServerStatus = convertMessageToServerStatusModel(it, message)
             updatedServerStatus.connectionId = connection.id
@@ -1058,7 +1068,7 @@ class HtspServiceHandler(val context: Context, val appRepository: AppRepository,
     }
 
     private fun onSystemTime(message: HtspMessage) {
-        val serverStatus = appRepository.serverStatusData.activeItem
+        val serverStatus = blocking { appRepository.serverStatusData.getActiveItem() }
         serverStatus.let {
             val gmtOffsetFromServer = message.getInteger("gmtoffset", 0) * 60 * 1000
             val gmtOffset = gmtOffsetFromServer - daylightSavingOffset
@@ -1073,7 +1083,7 @@ class HtspServiceHandler(val context: Context, val appRepository: AppRepository,
     }
 
     private fun onDiskSpace(message: HtspMessage) {
-        val serverStatus = appRepository.serverStatusData.activeItem
+        val serverStatus = blocking { appRepository.serverStatusData.getActiveItem() }
         serverStatus.let {
             it.freeDiskSpace = message.getLong("freediskspace", 0)
             it.totalDiskSpace = message.getLong("totaldiskspace", 0)
@@ -1108,7 +1118,7 @@ class HtspServiceHandler(val context: Context, val appRepository: AppRepository,
             appRepository.channelTagData.addItems(pendingChannelTagOps)
             for (tag in pendingChannelTagOps) {
 
-                val tac = appRepository.tagAndChannelData.getItemById(tag.tagId)
+                val tac = blocking { appRepository.tagAndChannelData.getItemById(tag.tagId) }
                 if (tac != null) {
                     pendingRemovedTagAndChannelOps.add(tac)
                 }
@@ -1156,10 +1166,11 @@ class HtspServiceHandler(val context: Context, val appRepository: AppRepository,
      * nor on the connection reader thread (that thread delivers the responses the downloads wait
      * for). Callers run it on [execService] instead.
      */
-    private fun loadAllChannelIcons(channels: List<Channel> = appRepository.channelData.getItems()) {
+    private fun loadAllChannelIcons(channels: List<Channel>? = null) {
+        val channelList = channels ?: blocking { appRepository.channelData.getItems() }
         Timber.d("Downloading and saving all channel icons...")
 
-        for (channel in channels) {
+        for (channel in channelList) {
             try {
                 Timber.d("Downloading channel icon ${channel.icon} for channel ${channel.name}")
                 downloadIconFromFileUrl(channel.icon)
@@ -1170,10 +1181,11 @@ class HtspServiceHandler(val context: Context, val appRepository: AppRepository,
     }
 
     /** Downloads and caches the icons of the given [tags]. Blocks, see [loadAllChannelIcons]. */
-    private fun loadAllChannelTagIcons(tags: List<ChannelTag> = appRepository.channelTagData.getItems()) {
+    private fun loadAllChannelTagIcons(tags: List<ChannelTag>? = null) {
+        val tagList = tags ?: blocking { appRepository.channelTagData.getItems() }
         Timber.d("Downloading and saving all channel tag icons...")
 
-        for (tag in tags) {
+        for (tag in tagList) {
             try {
                 Timber.d("Downloading channel tag icon ${tag.tagIcon} for channel tag ${tag.tagName}")
                 downloadIconFromFileUrl(tag.tagIcon)
@@ -1325,13 +1337,13 @@ class HtspServiceHandler(val context: Context, val appRepository: AppRepository,
     private fun getMoreEvents(intent: Intent) {
 
         val numberOfProgramsToLoad = intent.getIntExtra("numFollowing", 0)
-        val channelList = appRepository.channelData.getItems()
+        val channelList = blocking { appRepository.channelData.getItems() }
 
-        Timber.d("Database currently contains ${appRepository.programData.itemCount} events. ")
+        Timber.d("Database currently contains ${blocking { appRepository.programData.getItemCount() }} events. ")
         Timber.d("Loading $numberOfProgramsToLoad events for each of the ${channelList.size} channels")
 
         for (channel in channelList) {
-            val lastProgram = appRepository.programData.getLastItemByChannelId(channel.id)
+            val lastProgram = blocking { appRepository.programData.getLastItemByChannelId(channel.id) }
 
             val msgIntent = Intent()
             msgIntent.putExtra("numFollowing", numberOfProgramsToLoad)
@@ -1357,7 +1369,7 @@ class HtspServiceHandler(val context: Context, val appRepository: AppRepository,
         }
 
         appRepository.programData.addItems(pendingEventOps)
-        Timber.d("Saved ${pendingEventOps.size} events for all channels. Database contains ${appRepository.programData.itemCount} events")
+        Timber.d("Saved ${pendingEventOps.size} events for all channels. Database contains ${blocking { appRepository.programData.getItemCount() }} events")
         pendingEventOps.clear()
     }
 
@@ -1579,7 +1591,7 @@ class HtspServiceHandler(val context: Context, val appRepository: AppRepository,
      * older ones are recognised by their HTSP version.
      */
     private fun serverProvidesApi(): Boolean {
-        return appRepository.serverStatusData.activeItem.apiVersion > 0 || htspVersion >= MIN_HTSP_VERSION_FOR_API
+        return blocking { appRepository.serverStatusData.getActiveItem() }.apiVersion > 0 || htspVersion >= MIN_HTSP_VERSION_FOR_API
     }
 
     /**

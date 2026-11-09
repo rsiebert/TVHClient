@@ -9,7 +9,7 @@ import java.io.File
 
 class PlayRecordingActivity : BasePlaybackActivity() {
 
-    override fun onTicketReceived() {
+    override suspend fun onTicketReceived() {
         val url = viewModel.getPlaybackUrl()
         val intent = Intent(Intent.ACTION_VIEW)
         val title = viewModel.recording?.title ?: ""

@@ -2,10 +2,12 @@ package org.tvheadend.data.source
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.map
+import kotlin.coroutines.ContinuationInterceptor
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 import org.tvheadend.data.db.AppRoomDatabase
 import org.tvheadend.data.entity.SeriesRecording
 import org.tvheadend.data.entity.SeriesRecordingEntity
@@ -15,6 +17,11 @@ class SeriesRecordingDataSource(
         private val db: AppRoomDatabase,
         private val ioScope: CoroutineScope = CoroutineScope(Dispatchers.IO)
 ) : DataSourceInterface<SeriesRecording> {
+
+    // See ChannelDataSource: reads follow the injected scope's dispatcher (Dispatchers.IO in
+    // production, Unconfined in the unit tests).
+    private val ioDispatcher: CoroutineDispatcher =
+            ioScope.coroutineContext[ContinuationInterceptor] as? CoroutineDispatcher ?: Dispatchers.IO
 
     override fun addItem(item: SeriesRecording) {
         ioScope.launch { db.seriesRecordingDao.insert(SeriesRecordingEntity.from(item)) }
@@ -38,17 +45,17 @@ class SeriesRecordingDataSource(
         }
     }
 
-    override fun getItemById(id: Any): SeriesRecording? {
+    override suspend fun getItemById(id: Any): SeriesRecording? {
         var seriesRecording: SeriesRecording? = null
         if ((id as String).isNotEmpty()) {
-            runBlocking(Dispatchers.IO) {
+            withContext(ioDispatcher) {
                 seriesRecording = db.seriesRecordingDao.loadRecordingByIdSync(id)?.toRecording()
             }
         }
         return seriesRecording
     }
 
-    override fun getItems(): List<SeriesRecording> {
+    override suspend fun getItems(): List<SeriesRecording> {
         return ArrayList()
     }
 }

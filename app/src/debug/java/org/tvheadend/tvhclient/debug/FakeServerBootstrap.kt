@@ -1,10 +1,7 @@
 package org.tvheadend.tvhclient.debug
 
 import android.content.Context
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import org.tvheadend.data.entity.Connection
 import org.tvheadend.htsp.FakeTvheadendServer
 import org.tvheadend.tvhclient.MainApplication
@@ -25,12 +22,11 @@ object FakeServerBootstrap {
     private var server: FakeTvheadendServer? = null
 
     /**
-     * Runs the seeding. Injectable so tests can use [Dispatchers.Unconfined] and assert inline
-     * instead of racing a background thread.
+     * Suspending so it can run inside [MainApplication]'s migration coroutine and never blocks the
+     * main thread. It must run after the migration, because it depends on the migrated connection
+     * data. Tests drive it from their own coroutine so it runs inline.
      */
-    var seedScope: CoroutineScope = CoroutineScope(Dispatchers.IO)
-
-    fun start(context: Context) {
+    suspend fun start(context: Context) {
         if (server != null) {
             return
         }
@@ -44,11 +40,7 @@ object FakeServerBootstrap {
         }
         server = fakeServer
 
-        // start() is called from MainApplication.onCreate, and both the existence check and the wait
-        // for the inserted row are database work. None of it may run on the main thread.
-        seedScope.launch {
-            seedDemoConnectionIfNone(app, fakeServer)
-        }
+        seedDemoConnectionIfNone(app, fakeServer)
     }
 
     private suspend fun seedDemoConnectionIfNone(app: MainApplication, fakeServer: FakeTvheadendServer) {

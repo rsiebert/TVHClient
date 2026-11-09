@@ -43,11 +43,11 @@ class TagAndChannelDataSource(
         return MutableLiveData()
     }
 
-    override fun getItemById(id: Any): TagAndChannel? {
+    override suspend fun getItemById(id: Any): TagAndChannel? {
         return null
     }
 
-    override fun getItems(): List<TagAndChannel> {
+    override suspend fun getItems(): List<TagAndChannel> {
         return ArrayList()
     }
 

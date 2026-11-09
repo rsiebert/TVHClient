@@ -58,6 +58,9 @@ dependencies {
     // Logging library
     implementation libs.timber
 
+    // Coroutines: the data sources read the database on Dispatchers.IO via withContext.
+    implementation libs.kotlinx.coroutines.android
+
     // ----------------------------------------------------------------------------
     // Unit (JVM) testing. Robolectric supplies real implementations of the Android
     // framework classes so the Room in-memory tests can run on the JVM.

@@ -3,10 +3,12 @@ package org.tvheadend.data.source
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.map
+import kotlin.coroutines.ContinuationInterceptor
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 import org.tvheadend.data.db.AppRoomDatabase
 import org.tvheadend.data.entity.ChannelTag
 import org.tvheadend.data.entity.ChannelTagEntity
@@ -17,17 +19,21 @@ class ChannelTagDataSource(
         private val ioScope: CoroutineScope = CoroutineScope(Dispatchers.IO)
 ) : DataSourceInterface<ChannelTag> {
 
+    // See ChannelDataSource: reads follow the injected scope's dispatcher (Dispatchers.IO in
+    // production, Unconfined in the unit tests).
+    private val ioDispatcher: CoroutineDispatcher =
+            ioScope.coroutineContext[ContinuationInterceptor] as? CoroutineDispatcher ?: Dispatchers.IO
+
     val liveDataSelectedItemIds: LiveData<List<Int>?>
         get() = db.channelTagDao.loadAllSelectedItemIds()
 
-    val itemCount: Int
-        get() {
-            var count: Int
-            runBlocking(Dispatchers.IO) {
-                count = db.channelTagDao.itemCountSync
-            }
-            return count
+    suspend fun getItemCount(): Int {
+        var count: Int
+        withContext(ioDispatcher) {
+            count = db.channelTagDao.itemCountSync
         }
+        return count
+    }
 
     override fun addItem(item: ChannelTag) {
         ioScope.launch { db.channelTagDao.insert(ChannelTagEntity.from(item)) }
@@ -69,25 +75,25 @@ class ChannelTagDataSource(
         }
     }
 
-    override fun getItemById(id: Any): ChannelTag? {
+    override suspend fun getItemById(id: Any): ChannelTag? {
         var channelTag: ChannelTag?
-        runBlocking(Dispatchers.IO) {
+        withContext(ioDispatcher) {
             channelTag = db.channelTagDao.loadChannelTagByIdSync(id as Int)?.toChannelTag()
         }
         return channelTag
     }
 
-    override fun getItems(): List<ChannelTag> {
+    override suspend fun getItems(): List<ChannelTag> {
         var channelTags: List<ChannelTag> = ArrayList()
-        runBlocking(Dispatchers.IO) {
+        withContext(ioDispatcher) {
             channelTags = db.channelTagDao.loadAllChannelTagsSync().map { it.toChannelTag() }
         }
         return channelTags
     }
 
-    fun getNonEmptyItems(loadAll: Boolean = true): List<ChannelTag> {
+    suspend fun getNonEmptyItems(loadAll: Boolean = true): List<ChannelTag> {
         var channelTags: List<ChannelTag> = ArrayList()
-        runBlocking(Dispatchers.IO) {
+        withContext(ioDispatcher) {
             channelTags = if (loadAll) {
                 db.channelTagDao.loadAllChannelTagsSync().map { it.toChannelTag() }
             } else {

@@ -12,7 +12,9 @@ import com.google.android.gms.cast.framework.media.NotificationOptions
 import com.google.firebase.analytics.FirebaseAnalytics
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
 import org.tvheadend.data.AppRepository
 import org.tvheadend.data.di.DataContainer
 import org.tvheadend.tvhclient.debug.FakeServerBootstrap
@@ -52,7 +54,15 @@ class MainApplication : Application(), OptionsProvider, AppGraph {
      * [Dispatchers.Default] so launches start off the main thread. Replaces the previous
      * `GlobalScope`, which was unstructured and could never be cancelled.
      */
-    private val applicationScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
+    internal val applicationScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
+
+    /**
+     * The job that runs the one-off database migration (and the debug bootstrap) off the main
+     * thread. The startup flow waits for it before it lets the UI query the database, so nothing
+     * observes pre-migration data.
+     */
+    lateinit var migrationJob: Job
+        private set
 
     inner class AppContainer {
         private val billingDataSource = BillingDataSource.getInstance(
@@ -90,13 +100,18 @@ class MainApplication : Application(), OptionsProvider, AppGraph {
 
         // Execute some additional tasks before starting the application.
         // These tasks are for example migrating connections, updating or
-        // removing preferences, removing old information from the database and others
-        MigrateUtils(applicationContext, appRepository, appSharedPreferences).doMigrate()
+        // removing preferences, removing old information from the database and others.
+        // They run off the main thread; the startup flow waits for [migrationJob] so that the
+        // database is never read before the migration that rewrites it has finished.
+        migrationJob = applicationScope.launch {
+            MigrateUtils(applicationContext, appRepository, appSharedPreferences).doMigrate()
 
-        // Debug builds only (no-op in release). Starts an in-process fake TVHeadend server and,
-        // if the app has no connections yet, adds a demo connection so a fresh debug install
-        // shows channels, EPG data and recordings without a real server.
-        FakeServerBootstrap.start(this)
+            // Debug builds only (no-op in release). Starts an in-process fake TVHeadend server and,
+            // if the app has no connections yet, adds a demo connection so a fresh debug install
+            // shows channels, EPG data and recordings without a real server. It runs after the
+            // migration because it depends on the migrated connection data.
+            FakeServerBootstrap.start(this@MainApplication)
+        }
     }
 
     override fun attachBaseContext(context: Context) {

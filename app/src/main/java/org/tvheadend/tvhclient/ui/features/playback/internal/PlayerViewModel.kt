@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
 import androidx.media3.common.C
 import androidx.media3.common.MediaItem
 import androidx.media3.common.PlaybackException
@@ -33,6 +34,7 @@ import org.tvheadend.tvhclient.ui.base.BaseViewModel
 import org.tvheadend.tvhclient.ui.features.playback.PlaybackLogic
 import org.tvheadend.tvhclient.ui.features.playback.internal.utils.CustomEventLogger
 import org.tvheadend.tvhclient.ui.features.playback.internal.utils.VideoAspect
+import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.util.*
 import java.util.concurrent.Executors
@@ -42,11 +44,12 @@ import java.util.concurrent.ScheduledExecutorService
 class PlayerViewModel(application: Application) : BaseViewModel(application), ServerConnectionStateListener, Player.Listener {
 
     private var channelId: Int = 0
-    private val channelList: List<Channel>
+    // Loaded off the main thread by the coroutine in [init].
+    private lateinit var channelList: List<Channel>
 
     // Connection related
     private val execService: ScheduledExecutorService = Executors.newScheduledThreadPool(10)
-    private val htspConnection: HtspConnection
+    private lateinit var htspConnection: HtspConnection
     private var htspSubscriptionDataSourceFactory: HtspSubscriptionDataSource.Factory? = null
     private var htspFileInputStreamDataSourceFactory: HtspFileInputStreamDataSource.Factory? = null
     private var dataSource: HtspDataSourceInterface? = null
@@ -105,28 +108,6 @@ class PlayerViewModel(application: Application) : BaseViewModel(application), Se
         playerIsPlaying.postValue(false)
         playerState.postValue(Player.STATE_IDLE)
 
-        val channelSortOrder = Integer.valueOf(sharedPreferences.getString("channel_sort_order", defaultChannelSortOrder) ?: defaultChannelSortOrder)
-        channelList = appRepository.channelData.getChannels(channelSortOrder)
-
-        Timber.d("Starting connection")
-        val connection = appRepository.connectionData.activeItem
-        val connectionTimeout = Integer.valueOf(sharedPreferences.getString("connection_timeout", defaultConnectionTimeout)!!) * 1000
-
-        val htspConnectionData = HtspConnectionData(
-                connection.username,
-                connection.password,
-                connection.serverUrl,
-                BuildConfig.VERSION_NAME,
-                BuildConfig.VERSION_CODE,
-                connectionTimeout
-        )
-        htspConnection = HtspConnection(htspConnectionData, this, null)
-
-        execService.execute {
-            htspConnection.openConnection()
-            htspConnection.authenticate()
-        }
-
         trackSelector = DefaultTrackSelector(application.applicationContext)
         trackSelector.buildUponParameters().setRendererDisabled(C.TRACK_TYPE_TEXT, true)
         if (sharedPreferences.getBoolean("audio_tunneling_enabled", defaultAudioTunnelingEnabled)) {
@@ -164,13 +145,39 @@ class PlayerViewModel(application: Application) : BaseViewModel(application), Se
             skipCutpointsIfRequested()
             timeUpdateHandler.postDelayed(timeUpdateRunnable, 1000)
         }
+
+        // The channel list and the connection are database reads, so they must not run on the
+        // main thread during construction.
+        viewModelScope.launch {
+            val channelSortOrder = Integer.valueOf(sharedPreferences.getString("channel_sort_order", defaultChannelSortOrder) ?: defaultChannelSortOrder)
+            channelList = appRepository.channelData.getChannels(channelSortOrder)
+
+            Timber.d("Starting connection")
+            val connection = appRepository.connectionData.getActiveItem()
+            val connectionTimeout = Integer.valueOf(sharedPreferences.getString("connection_timeout", defaultConnectionTimeout)!!) * 1000
+
+            val htspConnectionData = HtspConnectionData(
+                    connection.username,
+                    connection.password,
+                    connection.serverUrl,
+                    BuildConfig.VERSION_NAME,
+                    BuildConfig.VERSION_CODE,
+                    connectionTimeout
+            )
+            htspConnection = HtspConnection(htspConnectionData, this@PlayerViewModel, null)
+
+            execService.execute {
+                htspConnection.openConnection()
+                htspConnection.authenticate()
+            }
+        }
     }
 
 
-    fun isPlaybackProfileSelected(bundle: Bundle?): Boolean {
+    suspend fun isPlaybackProfileSelected(bundle: Bundle?): Boolean {
         val channelId = bundle?.getInt("channelId", 0) ?: 0
         if (channelId > 0) {
-            val serverStatus = appRepository.serverStatusData.activeItem
+            val serverStatus = appRepository.serverStatusData.getActiveItem()
             val serverProfile = appRepository.serverProfileData.getItemById(serverStatus.htspPlaybackServerProfileId)
             if (serverProfile != null && !serverProfile.name.isNullOrEmpty() && serverProfile.name != "None") {
                 return true
@@ -179,7 +186,7 @@ class PlayerViewModel(application: Application) : BaseViewModel(application), Se
         return false
     }
 
-    fun loadMediaSource(context: Context, bundle: Bundle?) {
+    suspend fun loadMediaSource(context: Context, bundle: Bundle?) {
         Timber.d("Loading new media source")
 
         releaseMediaSource()
@@ -208,10 +215,10 @@ class PlayerViewModel(application: Application) : BaseViewModel(application), Se
         nextTitle.postValue(playbackInformation.nextTitle)
     }
 
-    private fun loadMediaSourceForChannel(context: Context, channelId: Int) {
+    private suspend fun loadMediaSourceForChannel(context: Context, channelId: Int) {
         Timber.d("Loading media source for channel id $channelId")
         playbackInformation = PlaybackInformation(appRepository.channelData.getItemByIdWithPrograms(channelId, Date().time))
-        val serverStatus = appRepository.serverStatusData.activeItem
+        val serverStatus = appRepository.serverStatusData.getActiveItem()
         val serverProfile = appRepository.serverProfileData.getItemById(serverStatus.htspPlaybackServerProfileId)
         val dataSourceFactory = HtspSubscriptionDataSource.Factory(context, htspConnection, serverProfile?.name)
         dataSourceFactory.setStateListener(subscriptionStateListener)
@@ -228,7 +235,7 @@ class PlayerViewModel(application: Application) : BaseViewModel(application), Se
         player.playWhenReady = true
     }
 
-    private fun loadMediaSourceForRecording(recordingId: Int) {
+    private suspend fun loadMediaSourceForRecording(recordingId: Int) {
         Timber.d("Loading media source for recording id $recordingId")
         playbackInformation = PlaybackInformation(appRepository.recordingData.getItemById(recordingId))
         val dataSourceFactory = HtspFileInputStreamDataSource.Factory(htspConnection)
@@ -313,8 +320,8 @@ class PlayerViewModel(application: Application) : BaseViewModel(application), Se
      * commercial breaks. Servers that do not support this feature simply do not reply,
      * which leaves the list of cut points empty.
      */
-    private fun requestCutpoints(recordingId: Int) {
-        val htspVersion = appRepository.serverStatusData.activeItem.htspVersion
+    private suspend fun requestCutpoints(recordingId: Int) {
+        val htspVersion = appRepository.serverStatusData.getActiveItem().htspVersion
         if (htspVersion < MIN_HTSP_VERSION_FOR_CUTPOINTS) {
             Timber.d("Not requesting cut points, the server only supports HTSP version $htspVersion")
             return
@@ -409,7 +416,11 @@ class PlayerViewModel(application: Application) : BaseViewModel(application), Se
 
         Timber.d("Closing connection")
         execService.shutdown()
-        htspConnection.closeConnection()
+        // The connection is created by the init coroutine, so it may not exist yet if the
+        // activity is finished immediately.
+        if (::htspConnection.isInitialized) {
+            htspConnection.closeConnection()
+        }
     }
 
     override fun onVideoSizeChanged(videoSize: VideoSize) {
@@ -510,7 +521,7 @@ class PlayerViewModel(application: Application) : BaseViewModel(application), Se
         return position
     }
 
-    fun playNextChannel(context: Context) {
+    suspend fun playNextChannel(context: Context) {
         var newChannelId = channelId
         channelList.forEachIndexed { index, channel ->
             if (channel.id == channelId) {
@@ -526,7 +537,7 @@ class PlayerViewModel(application: Application) : BaseViewModel(application), Se
         loadMediaSource(context, bundle)
     }
 
-    fun playPreviousChannel(context: Context) {
+    suspend fun playPreviousChannel(context: Context) {
         var newChannelId = channelId
         channelList.forEachIndexed { index, channel ->
             if (channel.id == channelId) {

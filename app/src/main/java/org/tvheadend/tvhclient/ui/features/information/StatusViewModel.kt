@@ -117,7 +117,7 @@ class StatusViewModel(application: Application) : BaseViewModel(application), Sh
         }
     }
 
-    fun getChannelById(id: Int): Channel? {
+    suspend fun getChannelById(id: Int): Channel? {
         return appRepository.channelData.getItemById(id)
     }
 

@@ -9,6 +9,7 @@ import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.asLiveData
+import androidx.lifecycle.viewModelScope
 import androidx.preference.PreferenceManager
 import org.tvheadend.data.AppRepository
 import org.tvheadend.data.entity.Connection
@@ -21,6 +22,7 @@ import org.tvheadend.tvhclient.ui.common.interfaces.NetworkStatusInterface
 import org.tvheadend.tvhclient.ui.common.interfaces.SnackbarMessageInterface
 import org.tvheadend.tvhclient.ui.features.MainActivity
 import org.tvheadend.tvhclient.util.livedata.Event
+import kotlinx.coroutines.launch
 import timber.log.Timber
 
 open class BaseViewModel(application: Application) : AndroidViewModel(application), SnackbarMessageInterface, NetworkStatusInterface {
@@ -52,6 +54,19 @@ open class BaseViewModel(application: Application) : AndroidViewModel(applicatio
         private set
 
     var connection: Connection
+
+    /**
+     * The active connection once it has been loaded from the database. The [connection] field is
+     * seeded with a default and updated when this LiveData emits, so the blocking read no longer
+     * has to run on the main thread during [init].
+     */
+    val activeConnectionLiveData = MutableLiveData<Connection>()
+
+    /**
+     * The htsp version of the active server status once it has been loaded from the database.
+     * Mirrors [htspVersion], which is seeded with a default until this emits.
+     */
+    val htspVersionLiveData = MutableLiveData<Int>()
 
     /**
      * Contains the live data information that the application is unlocked or not
@@ -89,23 +104,37 @@ open class BaseViewModel(application: Application) : AndroidViewModel(applicatio
         Timber.d("Observing isUnlockedLiveData from main repository")
         isUnlockedLiveData = mainRepository.isPurchased(UNLOCKER).asLiveData()
 
-        connection = appRepository.connectionData.activeItem
-        htspVersion = appRepository.serverStatusData.activeItem.htspVersion
+        // Seed with defaults; the database reads happen off the main thread below and publish
+        // their results through the LiveData, which consumers observe.
+        connection = Connection().also { it.id = -1 }
+        htspVersion = 13
 
         connectionToServerAvailableLiveData.value = false
 
         networkStatusLiveData.value = Event(NetworkStatus.NETWORK_UNKNOWN)
+
+        viewModelScope.launch {
+            val loadedConnection = appRepository.connectionData.getActiveItem()
+            connection = loadedConnection
+            activeConnectionLiveData.value = loadedConnection
+
+            val loadedHtspVersion = appRepository.serverStatusData.getActiveItem().htspVersion
+            htspVersion = loadedHtspVersion
+            htspVersionLiveData.value = loadedHtspVersion
+        }
     }
 
     fun updateConnectionAndRestartApplication(context: Context?, isSyncRequired: Boolean = true) {
-        context?.let {
-            if (isSyncRequired) {
-                appRepository.connectionData.setSyncRequiredForActiveConnection()
+        context?.let { ctx ->
+            viewModelScope.launch {
+                if (isSyncRequired) {
+                    appRepository.connectionData.setSyncRequiredForActiveConnection()
+                }
+                ctx.stopService(Intent(ctx, ConnectionService::class.java))
+                val intent = Intent(ctx, MainActivity::class.java)
+                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                ctx.startActivity(intent)
             }
-            context.stopService(Intent(context, ConnectionService::class.java))
-            val intent = Intent(context, MainActivity::class.java)
-            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-            context.startActivity(intent)
         }
     }
 

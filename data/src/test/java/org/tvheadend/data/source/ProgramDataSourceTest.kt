@@ -4,6 +4,7 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
@@ -65,46 +66,46 @@ class ProgramDataSourceTest {
     }
 
     @Test
-    fun addAndCountPrograms() {
-        assertThat(dataSource.itemCount).isEqualTo(0)
+    fun addAndCountPrograms() : Unit = runBlocking {
+        assertThat(dataSource.getItemCount()).isEqualTo(0)
 
         dataSource.addItem(program(eventId = 1))
 
-        assertThat(dataSource.itemCount).isEqualTo(1)
+        assertThat(dataSource.getItemCount()).isEqualTo(1)
         assertThat(db.programDao.loadProgramByIdSync(1)!!.title).isEqualTo("Program 1")
     }
 
     @Test
-    fun addItemsStoresAllPrograms() {
+    fun addItemsStoresAllPrograms() : Unit = runBlocking {
         dataSource.addItems(listOf(program(eventId = 1), program(eventId = 2)))
 
-        assertThat(dataSource.itemCount).isEqualTo(2)
+        assertThat(dataSource.getItemCount()).isEqualTo(2)
     }
 
     @Test
-    fun addItemsWithAnEmptyListStoresNothing() {
+    fun addItemsWithAnEmptyListStoresNothing() : Unit = runBlocking {
         dataSource.addItems(emptyList())
 
-        assertThat(dataSource.itemCount).isEqualTo(0)
+        assertThat(dataSource.getItemCount()).isEqualTo(0)
     }
 
     @Test
-    fun updateItemReplacesTheStoredProgram() {
+    fun updateItemReplacesTheStoredProgram() : Unit = runBlocking {
         dataSource.addItem(program(eventId = 1, title = "Before"))
 
         dataSource.updateItem(program(eventId = 1, title = "After"))
 
-        assertThat(dataSource.itemCount).isEqualTo(1)
+        assertThat(dataSource.getItemCount()).isEqualTo(1)
         assertThat(db.programDao.loadProgramByIdSync(1)!!.title).isEqualTo("After")
     }
 
     @Test
-    fun removeItemDeletesTheProgram() {
+    fun removeItemDeletesTheProgram() : Unit = runBlocking {
         dataSource.addItem(program(eventId = 1))
 
         dataSource.removeItem(program(eventId = 1))
 
-        assertThat(dataSource.itemCount).isEqualTo(0)
+        assertThat(dataSource.getItemCount()).isEqualTo(0)
     }
 
     @Test
@@ -119,12 +120,12 @@ class ProgramDataSourceTest {
     }
 
     @Test
-    fun removeItemByIdDeletesTheProgram() {
+    fun removeItemByIdDeletesTheProgram() : Unit = runBlocking {
         dataSource.addItem(program(eventId = 1))
 
         dataSource.removeItemById(1)
 
-        assertThat(dataSource.itemCount).isEqualTo(0)
+        assertThat(dataSource.getItemCount()).isEqualTo(0)
     }
 
     @Test
@@ -146,7 +147,7 @@ class ProgramDataSourceTest {
     }
 
     @Test
-    fun getItemByIdReturnsTheProgramOrNull() {
+    fun getItemByIdReturnsTheProgramOrNull() : Unit = runBlocking {
         dataSource.addItem(program(eventId = 1, title = "One"))
 
         assertThat(dataSource.getItemById(1)!!.title).isEqualTo("One")
@@ -154,7 +155,7 @@ class ProgramDataSourceTest {
     }
 
     @Test
-    fun getItemsReturnsEveryStoredProgram() {
+    fun getItemsReturnsEveryStoredProgram() : Unit = runBlocking {
         dataSource.addItem(program(eventId = 1))
         dataSource.addItem(program(eventId = 2))
 
@@ -182,7 +183,7 @@ class ProgramDataSourceTest {
     }
 
     @Test
-    fun getItemByChannelIdAndBetweenTimeReturnsOverlappingPrograms() {
+    fun getItemByChannelIdAndBetweenTimeReturnsOverlappingPrograms() : Unit = runBlocking {
         dataSource.addItem(program(eventId = 1, channelId = 100, start = 2_500L, stop = 3_500L))
         dataSource.addItem(program(eventId = 2, channelId = 100, start = 100L, stop = 500L))
 
@@ -192,7 +193,7 @@ class ProgramDataSourceTest {
     }
 
     @Test
-    fun getLastItemByChannelIdReturnsTheLatestProgram() {
+    fun getLastItemByChannelIdReturnsTheLatestProgram() : Unit = runBlocking {
         dataSource.addItem(program(eventId = 1, channelId = 100, start = 100L))
         dataSource.addItem(program(eventId = 2, channelId = 100, start = 300L))
 
@@ -201,7 +202,7 @@ class ProgramDataSourceTest {
     }
 
     @Test
-    fun getItemsByChannelIdReturnsProgramsFromNowUntilTheLastProgram() {
+    fun getItemsByChannelIdReturnsProgramsFromNowUntilTheLastProgram() : Unit = runBlocking {
         val now = System.currentTimeMillis()
         dataSource.addItem(program(eventId = 1, channelId = 100, start = now + 100_000L, stop = now + 200_000L))
 
@@ -211,7 +212,7 @@ class ProgramDataSourceTest {
     }
 
     @Test
-    fun getDuplicateProgramsGroupsByTitleAndSubtitle() {
+    fun getDuplicateProgramsGroupsByTitleAndSubtitle() : Unit = runBlocking {
         dataSource.addItem(program(eventId = 1, channelId = 100, title = "Show", subtitle = "S1"))
         dataSource.addItem(program(eventId = 2, channelId = 100, title = "Show", subtitle = "S1"))
         dataSource.addItem(program(eventId = 3, channelId = 100, title = "Show", subtitle = "S2"))

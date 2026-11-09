@@ -3,14 +3,11 @@ package org.tvheadend.tvhclient.debug
 import android.app.Application
 import android.content.Context
 import com.google.common.truth.Truth.assertThat
+import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.verify
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.junit.After
 import org.junit.Before
@@ -39,14 +36,14 @@ import java.nio.channels.SocketChannel
  * The repository/connection data source are `mockk`s over a small in-memory list, so the tests can
  * assert precisely which connection row the bootstrap writes.
  *
- * The bootstrap keeps the started server in a private field of its (singleton) object, which
- * Robolectric does not reset between test methods. It is therefore closed and cleared before and
- * after every test via reflection.
+ * `start` is suspending (it runs inside `MainApplication`'s migration coroutine so it never blocks
+ * the main thread), so the tests drive it from [runTest]. The bootstrap keeps the started server in
+ * a private field of its (singleton) object, which Robolectric does not reset between test methods.
+ * It is therefore closed and cleared before and after every test via reflection.
  */
 @RunWith(RobolectricTestRunner::class)
 // Use a plain Application instead of MainApplication: the latter does database work in onCreate.
 @Config(sdk = [34], application = Application::class)
-@OptIn(ExperimentalCoroutinesApi::class)
 class FakeServerBootstrapTest {
 
     private lateinit var context: Context
@@ -61,9 +58,6 @@ class FakeServerBootstrapTest {
     fun setUp() {
         Timber.plant(NOOP_TREE)
         resetBootstrapState()
-        // Production seeds on a background dispatcher so that MainApplication.onCreate is never
-        // blocked. Unconfined runs the seeding inline, which keeps the assertions below synchronous.
-        FakeServerBootstrap.seedScope = CoroutineScope(Dispatchers.Unconfined)
 
         context = mockk()
         app = mockk(relaxed = true)
@@ -74,7 +68,7 @@ class FakeServerBootstrapTest {
         every { context.applicationContext } returns app
         every { app.appRepository } returns repository
         every { repository.connectionData } returns connectionData
-        every { connectionData.getItems() } answers { storedConnections.toList() }
+        coEvery { connectionData.getItems() } answers { storedConnections.toList() }
         every { connectionData.addItem(capture(addedConnection)) } answers {
             storedConnections.add(addedConnection.captured)
         }
@@ -86,7 +80,7 @@ class FakeServerBootstrapTest {
     }
 
     @Test
-    fun startsTheFakeServerAndSeedsADemoConnection() {
+    fun startsTheFakeServerAndSeedsADemoConnection() = runTest {
         FakeServerBootstrap.start(context)
 
         assertThat(storedConnections).hasSize(1)
@@ -106,7 +100,7 @@ class FakeServerBootstrapTest {
     }
 
     @Test
-    fun startsAServerThatActuallyAcceptsConnections() {
+    fun startsAServerThatActuallyAcceptsConnections() = runTest {
         FakeServerBootstrap.start(context)
 
         val port = storedConnections.single().port
@@ -120,7 +114,7 @@ class FakeServerBootstrapTest {
     }
 
     @Test
-    fun doesNotSeedADemoConnectionWhenOneAlreadyExists() {
+    fun doesNotSeedADemoConnectionWhenOneAlreadyExists() = runTest {
         storedConnections.add(Connection(name = "Existing server", isActive = true))
 
         FakeServerBootstrap.start(context)
@@ -130,7 +124,7 @@ class FakeServerBootstrapTest {
     }
 
     @Test
-    fun doesNothingForANonMainApplicationContext() {
+    fun doesNothingForANonMainApplicationContext() = runTest {
         every { context.applicationContext } returns mockk<Application>()
 
         FakeServerBootstrap.start(context)
@@ -140,7 +134,7 @@ class FakeServerBootstrapTest {
     }
 
     @Test
-    fun startingTwiceOnlyStartsOneServerAndSeedsOneConnection() {
+    fun startingTwiceOnlyStartsOneServerAndSeedsOneConnection() = runTest {
         FakeServerBootstrap.start(context)
         val firstConnection = storedConnections.single()
 
@@ -156,25 +150,21 @@ class FakeServerBootstrapTest {
         // until the row is visible. Make it appear only on the third read: the first read is the
         // "is there already a connection?" check, the second is the first poll.
         var reads = 0
-        every { connectionData.getItems() } answers {
+        coEvery { connectionData.getItems() } answers {
             reads++
             if (reads <= 2) emptyList() else storedConnections.toList()
         }
-        // Run the seeding on the test scheduler so the poll's delay is virtual time rather than a
-        // real 25 ms wait, and the assertions can stay synchronous.
-        FakeServerBootstrap.seedScope = this
 
         FakeServerBootstrap.start(context)
-        advanceUntilIdle()
 
         assertThat(storedConnections).hasSize(1)
         assertThat(reads).isAtLeast(3)
     }
 
     @Test
-    fun startsTheServerButSkipsSeedingWhenTheRepositoryFails() {
+    fun startsTheServerButSkipsSeedingWhenTheRepositoryFails() = runTest {
         // The seeding is wrapped in its own try/catch; a repository failure must not propagate.
-        every { connectionData.getItems() } throws IllegalStateException("database is broken")
+        coEvery { connectionData.getItems() } throws IllegalStateException("database is broken")
 
         FakeServerBootstrap.start(context)
 

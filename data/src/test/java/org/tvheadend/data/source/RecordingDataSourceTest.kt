@@ -4,6 +4,7 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
@@ -184,7 +185,7 @@ class RecordingDataSourceTest {
     }
 
     @Test
-    fun getItemByIdReturnsTheRecordingOnlyForPositiveIds() {
+    fun getItemByIdReturnsTheRecordingOnlyForPositiveIds() : Unit = runBlocking {
         dataSource.addItem(recording(id = 1, title = "One"))
 
         assertThat(dataSource.getItemById(1)!!.title).isEqualTo("One")
@@ -193,7 +194,7 @@ class RecordingDataSourceTest {
     }
 
     @Test
-    fun getItemByEventIdReturnsTheRecordingOnlyForPositiveIds() {
+    fun getItemByEventIdReturnsTheRecordingOnlyForPositiveIds() : Unit = runBlocking {
         dataSource.addItem(recording(id = 1, eventId = 55))
 
         assertThat(dataSource.getItemByEventId(55)!!.id).isEqualTo(1)
@@ -201,7 +202,7 @@ class RecordingDataSourceTest {
     }
 
     @Test
-    fun getItemsReturnsAnEmptyList() {
+    fun getItemsReturnsAnEmptyList() : Unit = runBlocking {
         dataSource.addItem(recording(id = 1))
 
         // The list variant is intentionally not implemented and always returns an empty list.

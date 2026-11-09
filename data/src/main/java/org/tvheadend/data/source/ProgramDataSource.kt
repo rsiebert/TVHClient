@@ -2,10 +2,12 @@ package org.tvheadend.data.source
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.map
+import kotlin.coroutines.ContinuationInterceptor
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 import org.tvheadend.data.db.AppRoomDatabase
 import org.tvheadend.data.entity.EpgProgram
 import org.tvheadend.data.entity.Program
@@ -16,14 +18,18 @@ class ProgramDataSource(
         private val ioScope: CoroutineScope = CoroutineScope(Dispatchers.IO)
 ) : DataSourceInterface<Program> {
 
-    val itemCount: Int
-        get() {
-            var count: Int
-            runBlocking(Dispatchers.IO) {
-                count = db.programDao.itemCountSync
-            }
-            return count
+    // See ChannelDataSource: reads follow the injected scope's dispatcher (Dispatchers.IO in
+    // production, Unconfined in the unit tests).
+    private val ioDispatcher: CoroutineDispatcher =
+            ioScope.coroutineContext[ContinuationInterceptor] as? CoroutineDispatcher ?: Dispatchers.IO
+
+    suspend fun getItemCount(): Int {
+        var count: Int
+        withContext(ioDispatcher) {
+            count = db.programDao.itemCountSync
         }
+        return count
+    }
 
     override fun addItem(item: Program) {
         ioScope.launch { db.programDao.insert(ProgramEntity.from(item)) }
@@ -65,17 +71,17 @@ class ProgramDataSource(
         }
     }
 
-    override fun getItemById(id: Any): Program? {
+    override suspend fun getItemById(id: Any): Program? {
         var program: Program?
-        runBlocking(Dispatchers.IO) {
+        withContext(ioDispatcher) {
             program = db.programDao.loadProgramByIdSync(id as Int)?.toProgram()
         }
         return program
     }
 
-    override fun getItems(): List<Program> {
+    override suspend fun getItems(): List<Program> {
         val programs = ArrayList<Program>()
-        runBlocking(Dispatchers.IO) {
+        withContext(ioDispatcher) {
             programs.addAll(db.programDao.loadProgramsSync().map { it.toProgram() })
         }
         return programs
@@ -93,25 +99,25 @@ class ProgramDataSource(
         }
     }
 
-    fun getItemByChannelIdAndBetweenTime(channelId: Int, startTime: Long, endTime: Long): List<EpgProgram> {
+    suspend fun getItemByChannelIdAndBetweenTime(channelId: Int, startTime: Long, endTime: Long): List<EpgProgram> {
         val programs = ArrayList<EpgProgram>()
-        runBlocking(Dispatchers.IO) {
+        withContext(ioDispatcher) {
             programs.addAll(db.programDao.loadEpgProgramsFromChannelBetweenTimeSync(channelId, startTime, endTime).map { it.toEpgProgram() })
         }
         return programs
     }
 
-    fun getLastItemByChannelId(channelId: Int): Program? {
+    suspend fun getLastItemByChannelId(channelId: Int): Program? {
         var program: Program?
-        runBlocking(Dispatchers.IO) {
+        withContext(ioDispatcher) {
             program = db.programDao.loadLastProgramFromChannelSync(channelId)?.toProgram()
         }
         return program
     }
 
-    fun getItemsByChannelId(channelId: Int): List<Program> {
+    suspend fun getItemsByChannelId(channelId: Int): List<Program> {
         val programs = ArrayList<Program>()
-        runBlocking(Dispatchers.IO) {
+        withContext(ioDispatcher) {
 
             val timeStep = 1000L * 3600 * 24 * 2
             val lastProgram = db.programDao.loadLastProgramFromChannelSync(channelId)?.toProgram()
@@ -126,9 +132,9 @@ class ProgramDataSource(
         return programs
     }
 
-    fun getDuplicatePrograms(channelId: Int): List<EpgProgram> {
+    suspend fun getDuplicatePrograms(channelId: Int): List<EpgProgram> {
         val programs = ArrayList<EpgProgram>()
-        runBlocking(Dispatchers.IO) {
+        withContext(ioDispatcher) {
             programs.addAll(db.programDao.loadDuplicateProgramsSync(channelId).map { it.toEpgProgram() })
         }
         return programs

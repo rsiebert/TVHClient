@@ -4,6 +4,7 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
@@ -116,7 +117,7 @@ class ConnectionDataSourceTest {
     }
 
     @Test
-    fun getItemByIdReturnsTheConnectionOrNull() {
+    fun getItemByIdReturnsTheConnectionOrNull() : Unit = runBlocking {
         dataSource.addItem(connection(id = 1, name = "One"))
 
         assertThat(dataSource.getItemById(1)!!.name).isEqualTo("One")
@@ -124,7 +125,7 @@ class ConnectionDataSourceTest {
     }
 
     @Test
-    fun getItemsReturnsEveryConnection() {
+    fun getItemsReturnsEveryConnection() : Unit = runBlocking {
         dataSource.addItem(connection(id = 1, name = "One"))
         dataSource.addItem(connection(id = 2, name = "Two"))
 
@@ -132,19 +133,19 @@ class ConnectionDataSourceTest {
     }
 
     @Test
-    fun activeItemReturnsTheActiveConnection() {
+    fun activeItemReturnsTheActiveConnection() : Unit = runBlocking {
         dataSource.addItem(connection(id = 1, name = "Active", isActive = true))
         dataSource.addItem(connection(id = 2, name = "Inactive", isActive = false))
 
-        assertThat(dataSource.activeItem.id).isEqualTo(1)
-        assertThat(dataSource.activeItem.name).isEqualTo("Active")
+        assertThat(dataSource.getActiveItem().id).isEqualTo(1)
+        assertThat(dataSource.getActiveItem().name).isEqualTo("Active")
     }
 
     @Test
-    fun activeItemReturnsADefaultWithMinusOneWhenNoneIsActive() {
+    fun activeItemReturnsADefaultWithMinusOneWhenNoneIsActive() : Unit = runBlocking {
         dataSource.addItem(connection(id = 1, name = "Inactive", isActive = false))
 
-        assertThat(dataSource.activeItem.id).isEqualTo(-1)
+        assertThat(dataSource.getActiveItem().id).isEqualTo(-1)
     }
 
     @Test
@@ -163,7 +164,7 @@ class ConnectionDataSourceTest {
      * synchronous [ConnectionDataSource.activeItem] produces, i.e. a Connection with id = -1.
      */
     @Test
-    fun liveDataActiveItemReturnsTheSameSentinelAsTheSynchronousActiveItem() {
+    fun liveDataActiveItemReturnsTheSameSentinelAsTheSynchronousActiveItem() : Unit = runBlocking {
         // Nothing is active: only an inactive connection exists.
         dataSource.addItem(connection(id = 1, name = "Inactive", isActive = false))
 
@@ -174,12 +175,12 @@ class ConnectionDataSourceTest {
         // a plain Connection() here, i.e. id 0, which callers testing `id >= 0` - such as
         // setSyncRequiredForActiveConnection - misread as a real connection.
         assertThat(activeItem!!.id).isEqualTo(-1)
-        assertThat(activeItem).isEqualTo(dataSource.activeItem)
+        assertThat(activeItem).isEqualTo(dataSource.getActiveItem())
         assertThat(activeItem.isActive).isFalse()
     }
 
     @Test
-    fun setSyncRequiredForActiveConnectionResetsTheSyncFlags() {
+    fun setSyncRequiredForActiveConnectionResetsTheSyncFlags() : Unit = runBlocking {
         dataSource.addItem(connection(id = 1, name = "Home", isActive = true))
         db.connectionDao.update(db.connectionDao.loadConnectionByIdSync(1)!!.copy(isSyncRequired = false, lastUpdate = 500L))
 
@@ -191,7 +192,7 @@ class ConnectionDataSourceTest {
     }
 
     @Test
-    fun switchActiveConnectionMovesTheActiveFlag() {
+    fun switchActiveConnectionMovesTheActiveFlag() : Unit = runBlocking {
         dataSource.addItem(connection(id = 1, name = "Old", isActive = true))
         dataSource.addItem(connection(id = 2, name = "New", isActive = false))
 

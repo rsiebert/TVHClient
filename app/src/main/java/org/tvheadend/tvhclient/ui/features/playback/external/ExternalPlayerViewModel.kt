@@ -6,7 +6,7 @@ import android.os.Bundle
 import androidx.lifecycle.MutableLiveData
 import androidx.preference.PreferenceManager
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 import org.tvheadend.api.AuthenticationStateResult
 import org.tvheadend.api.ConnectionStateResult
 import org.tvheadend.api.ServerConnectionStateListener
@@ -23,7 +23,6 @@ import org.tvheadend.tvhclient.ui.features.playback.PlaybackLogic
 import timber.log.Timber
 import java.net.InetAddress
 import java.net.UnknownHostException
-import java.util.concurrent.ExecutionException
 import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledExecutorService
 
@@ -97,7 +96,7 @@ class ExternalPlayerViewModel(application: Application) : BaseViewModel(applicat
         htspConnection.closeConnection()
     }
 
-    fun requestTicketFromServer(bundle: Bundle?) {
+    suspend fun requestTicketFromServer(bundle: Bundle?) {
         val channelId = bundle?.getInt("channelId") ?: 0
         val dvrId = bundle?.getInt("dvrId") ?: 0
 
@@ -123,7 +122,7 @@ class ExternalPlayerViewModel(application: Application) : BaseViewModel(applicat
         })
     }
 
-    fun getServerUrl(convertHostnameToAddress: Boolean = false): String {
+    suspend fun getServerUrl(convertHostnameToAddress: Boolean = false): String {
         // Convert the hostname to the IP address only when required.
         // This is usually required when a channel or recording shall
         // be played on a chromecast
@@ -131,21 +130,15 @@ class ExternalPlayerViewModel(application: Application) : BaseViewModel(applicat
         var hostname = uri.host
         if (convertHostnameToAddress) {
             Timber.d("Convert hostname $hostname to IP address")
-            try {
-                runBlocking(Dispatchers.IO) {
-                    try {
-                        if (!hostname.isNullOrEmpty()) {
-                            Timber.d("Tying to convert hostname to address")
-                            hostname = InetAddress.getByName(hostname).hostAddress
-                        }
-                    } catch (e: UnknownHostException) {
-                        Timber.d(e, "Could not get ip address from $hostname, using hostname as fallback")
+            withContext(Dispatchers.IO) {
+                try {
+                    if (!hostname.isNullOrEmpty()) {
+                        Timber.d("Tying to convert hostname to address")
+                        hostname = InetAddress.getByName(hostname).hostAddress
                     }
+                } catch (e: UnknownHostException) {
+                    Timber.d(e, "Could not get ip address from $hostname, using hostname as fallback")
                 }
-            } catch (e: InterruptedException) {
-                Timber.d(e, "Could not execute task to get ip address from $hostname")
-            } catch (e: ExecutionException) {
-                Timber.d(e, "Could not execute task to get ip address from $hostname")
             }
         } else {
             Timber.d("Hostname $hostname to IP address conversion not required")
@@ -163,16 +156,16 @@ class ExternalPlayerViewModel(application: Application) : BaseViewModel(applicat
         return baseUrl
     }
 
-    private fun getHttpProfile(): ServerProfile? {
-        val serverStatus = appRepository.serverStatusData.activeItem
+    private suspend fun getHttpProfile(): ServerProfile? {
+        val serverStatus = appRepository.serverStatusData.getActiveItem()
         return appRepository.serverProfileData.getItemById(serverStatus.httpPlaybackServerProfileId)
     }
 
-    fun getServerStatus(): ServerStatus {
-        return appRepository.serverStatusData.activeItem
+    suspend fun getServerStatus(): ServerStatus {
+        return appRepository.serverStatusData.getActiveItem()
     }
 
-    fun getPlaybackUrl(convertHostname: Boolean = false, profileId: Int = 0): String {
+    suspend fun getPlaybackUrl(convertHostname: Boolean = false, profileId: Int = 0): String {
         // If the server status is null, then use the default id of zero which will
         // return a null server profile. In this case use the default profile 'pass'
 

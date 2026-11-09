@@ -8,6 +8,7 @@ import android.widget.ArrayAdapter
 import android.widget.Spinner
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import androidx.appcompat.widget.Toolbar
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
@@ -30,6 +31,7 @@ import org.tvheadend.tvhclient.ui.features.information.WebViewFragment
 import org.tvheadend.tvhclient.ui.features.settings.SettingsActivity
 import org.tvheadend.tvhclient.ui.features.unlocker.UnlockerFragment
 import org.tvheadend.tvhclient.util.getThemeId
+import kotlinx.coroutines.launch
 import timber.log.Timber
 
 /**
@@ -86,6 +88,9 @@ class NavigationDrawer(private val activity: AppCompatActivity,
         navigationViewModel.connectionLiveData.observe(activity) {
             updateConnectionSpinner()
         }
+        navigationViewModel.connections.observe(activity) {
+            updateConnectionSpinner()
+        }
 
         connectionSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
@@ -113,7 +118,7 @@ class NavigationDrawer(private val activity: AppCompatActivity,
     }
 
     private fun updateConnectionSpinner() {
-        val connections = navigationViewModel.connections
+        val connections = navigationViewModel.connections.value ?: emptyList()
         connectionIds = connections.map { it.id }
         val names = if (connections.isEmpty()) {
             listOf(activity.getString(R.string.no_connection_available))
@@ -123,31 +128,35 @@ class NavigationDrawer(private val activity: AppCompatActivity,
         val adapter = ArrayAdapter(activity, R.layout.navigation_header_connection_item, names)
         connectionSpinner.adapter = adapter
 
-        val activeIndex = connections.indexOfFirst { it.id == navigationViewModel.connection.id }
+        val activeIndex = connections.indexOfFirst { it.id == activeConnectionId() }
         if (activeIndex >= 0) {
             connectionSpinner.setSelection(activeIndex, false)
         }
     }
 
+    private fun activeConnectionId(): Int = navigationViewModel.connectionLiveData.value?.id ?: -1
+
     private fun onConnectionSelected(position: Int) {
         val selectedId = connectionIds.getOrNull(position) ?: return
         // Ignore the callback that fires when the spinner is programmatically set to the
         // currently active connection.
-        if (selectedId == navigationViewModel.connection.id) {
+        if (selectedId == activeConnectionId()) {
             return
         }
 
         MaterialAlertDialogBuilder(activity)
                 .setTitle(R.string.connect_to_new_server)
                 .setNegativeButton(R.string.cancel) { _, _ ->
-                    val activeIndex = connectionIds.indexOf(navigationViewModel.connection.id)
+                    val activeIndex = connectionIds.indexOf(activeConnectionId())
                     if (activeIndex >= 0) {
                         connectionSpinner.setSelection(activeIndex, false)
                     }
                 }
                 .setPositiveButton(R.string.connect) { _, _ ->
-                    if (navigationViewModel.setSelectedConnectionAsActive(selectedId)) {
-                        navigationViewModel.updateConnectionAndRestartApplication(activity)
+                    activity.lifecycleScope.launch {
+                        if (navigationViewModel.setSelectedConnectionAsActive(selectedId)) {
+                            navigationViewModel.updateConnectionAndRestartApplication(activity)
+                        }
                     }
                 }
                 .setCancelable(false)

@@ -15,7 +15,7 @@ import java.util.*
 
 class MigrateUtils(val context: Context, val appRepository: AppRepository, val sharedPreferences: SharedPreferences) {
 
-    fun doMigrate() {
+    suspend fun doMigrate() {
         // Lookup the current version and the last migrated version
         val currentApplicationVersion = BuildConfig.BUILD_VERSION
         val lastInstalledApplicationVersion = sharedPreferences.getInt("build_version_for_migration", 0)
@@ -108,7 +108,7 @@ class MigrateUtils(val context: Context, val appRepository: AppRepository, val s
      * The channel order from the server was introduced. This information needs to be saved during
      * the initial connection to the server.
      */
-    private fun setSyncRequiredForAllConnections() {
+    private suspend fun setSyncRequiredForAllConnections() {
         //
         for (connection in appRepository.connectionData.getItems()) {
             Timber.d("Setting sync required for connection ${connection.name} to save server defined channel order")
@@ -141,7 +141,7 @@ class MigrateUtils(val context: Context, val appRepository: AppRepository, val s
         editor.apply()
     }
 
-    private fun convertConnectionHostAndPortValuesToUrl() {
+    private suspend fun convertConnectionHostAndPortValuesToUrl() {
         Timber.d("Migrating connection by populating the new urls from hostname and port")
 
         val connectionList = appRepository.connectionData.getItems()
@@ -178,7 +178,7 @@ class MigrateUtils(val context: Context, val appRepository: AppRepository, val s
         editor.apply()
     }
 
-    private fun clearAllPlaybackProfiles() {
+    private suspend fun clearAllPlaybackProfiles() {
         for (connection in appRepository.connectionData.getItems()) {
             val serverStatus = appRepository.serverStatusData.getItemById(connection.id)
             if (serverStatus != null) {
@@ -195,7 +195,7 @@ class MigrateUtils(val context: Context, val appRepository: AppRepository, val s
         appRepository.serverProfileData.removeAll()
     }
 
-    private fun addPossibleMissingServerStatusDatabaseEntry() {
+    private suspend fun addPossibleMissingServerStatusDatabaseEntry() {
         Timber.d("Checking if a server status entry exists for each connection")
         for ((id, name) in appRepository.connectionData.getItems()) {
             Timber.d("Checking connection $name with id $id")
@@ -349,7 +349,7 @@ class MigrateUtils(val context: Context, val appRepository: AppRepository, val s
         editor.apply()
     }
 
-    private fun updateRecordingProfiles() {
+    private suspend fun updateRecordingProfiles() {
         for (connection in appRepository.connectionData.getItems()) {
             val serverStatus = appRepository.serverStatusData.getItemById(connection.id)
             if (serverStatus != null) {

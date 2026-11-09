@@ -4,6 +4,7 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
@@ -55,21 +56,21 @@ class ServerProfileDataSourceTest {
     }
 
     @Test
-    fun recordingProfilesAndNamesOnlyReturnRecordingProfiles() {
+    fun recordingProfilesAndNamesOnlyReturnRecordingProfiles() : Unit = runBlocking {
         dataSource.addItem(serverProfile(id = 1, type = ServerProfile.RECORDING_PROFILE, name = "Rec"))
         dataSource.addItem(serverProfile(id = 2, type = ServerProfile.HTSP_PROFILE, name = "Htsp"))
 
-        assertThat(dataSource.recordingProfiles.map { it.id }).containsExactly(1)
-        assertThat(dataSource.recordingProfileNames).asList().containsExactly("Rec")
+        assertThat(dataSource.getRecordingProfiles().map { it.id }).containsExactly(1)
+        assertThat(dataSource.getRecordingProfileNames()).asList().containsExactly("Rec")
     }
 
     @Test
-    fun htspAndHttpPlaybackProfilesFilterByType() {
+    fun htspAndHttpPlaybackProfilesFilterByType() : Unit = runBlocking {
         dataSource.addItem(serverProfile(id = 1, type = ServerProfile.HTSP_PROFILE))
         dataSource.addItem(serverProfile(id = 2, type = ServerProfile.HTTP_PROFILE))
 
-        assertThat(dataSource.htspPlaybackProfiles.map { it.id }).containsExactly(1)
-        assertThat(dataSource.httpPlaybackProfiles.map { it.id }).containsExactly(2)
+        assertThat(dataSource.getHtspPlaybackProfiles().map { it.id }).containsExactly(1)
+        assertThat(dataSource.getHttpPlaybackProfiles().map { it.id }).containsExactly(2)
     }
 
     @Test
@@ -94,7 +95,7 @@ class ServerProfileDataSourceTest {
     }
 
     @Test
-    fun getItemByIdResolvesByIntIdAndByUuid() {
+    fun getItemByIdResolvesByIntIdAndByUuid() : Unit = runBlocking {
         dataSource.addItem(serverProfile(id = 7, name = "ById", uuid = "uuid-7"))
 
         assertThat(dataSource.getItemById(7)!!.name).isEqualTo("ById")
@@ -106,7 +107,7 @@ class ServerProfileDataSourceTest {
     }
 
     @Test
-    fun notImplementedLiveDataGettersReturnEmpty() {
+    fun notImplementedLiveDataGettersReturnEmpty() : Unit = runBlocking {
         dataSource.addItem(serverProfile(id = 1))
 
         assertThat(dataSource.getLiveDataItemCount().observedValue()).isNull()

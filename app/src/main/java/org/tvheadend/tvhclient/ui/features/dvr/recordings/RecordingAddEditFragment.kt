@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.*
 import androidx.core.view.forEach
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import org.tvheadend.data.entity.Channel
 import org.tvheadend.data.entity.ServerProfile
@@ -18,6 +19,7 @@ import org.tvheadend.tvhclient.util.extensions.afterTextChanged
 import org.tvheadend.tvhclient.util.extensions.gone
 import org.tvheadend.tvhclient.util.extensions.sendSnackbarMessage
 import org.tvheadend.tvhclient.util.extensions.visibleOrGone
+import kotlinx.coroutines.launch
 
 class RecordingAddEditFragment : BaseFragment(), BackPressedInterface, RecordingConfigSelectedListener, DatePickerFragment.Listener, TimePickerFragment.Listener, HideNavigationDrawerInterface {
 
@@ -39,21 +41,23 @@ class RecordingAddEditFragment : BaseFragment(), BackPressedInterface, Recording
             (activity as LayoutControlInterface).forceSingleScreenLayout()
         }
 
-        recordingProfilesList = recordingViewModel.getRecordingProfileNames()
-        profile = recordingViewModel.getRecordingProfile()
-        recordingViewModel.recordingProfileNameId = getSelectedProfileId(profile, recordingProfilesList)
+        viewLifecycleOwner.lifecycleScope.launch {
+            recordingProfilesList = recordingViewModel.getRecordingProfileNames()
+            profile = recordingViewModel.getRecordingProfile()
+            recordingViewModel.recordingProfileNameId = getSelectedProfileId(profile, recordingProfilesList)
 
-        if (savedInstanceState == null) {
-            recordingViewModel.loadRecordingByIdSync(arguments?.getInt("id", 0) ?: 0)
+            if (savedInstanceState == null) {
+                recordingViewModel.loadRecordingByIdSync(arguments?.getInt("id", 0) ?: 0)
+            }
+
+            updateUI()
+
+            toolbarInterface.setSubtitle("")
+            toolbarInterface.setTitle(if (id > 0)
+                getString(R.string.edit_recording)
+            else
+                getString(R.string.add_recording))
         }
-
-        updateUI()
-
-        toolbarInterface.setSubtitle("")
-        toolbarInterface.setTitle(if (id > 0)
-            getString(R.string.edit_recording)
-        else
-            getString(R.string.add_recording))
     }
 
     private fun updateUI() {
@@ -89,9 +93,11 @@ class RecordingAddEditFragment : BaseFragment(), BackPressedInterface, Recording
         if (!recordingViewModel.recording.isRecording) {
             binding.channelName.text = recordingViewModel.recording.channelName ?: getString(R.string.all_channels)
             binding.channelName.setOnClickListener {
-                // Determine if the server supports recording on all channels
-                val allowRecordingOnAllChannels = htspVersion >= 21
-                handleChannelListSelection(ctx, recordingViewModel.getChannelList(), allowRecordingOnAllChannels, this@RecordingAddEditFragment)
+                viewLifecycleOwner.lifecycleScope.launch {
+                    // Determine if the server supports recording on all channels
+                    val allowRecordingOnAllChannels = htspVersion >= 21
+                    handleChannelListSelection(ctx, recordingViewModel.getChannelList(), allowRecordingOnAllChannels, this@RecordingAddEditFragment)
+                }
             }
         }
 

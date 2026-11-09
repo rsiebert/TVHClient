@@ -17,15 +17,15 @@ class SubscriptionDataSource(@Suppress("unused") private val db: AppRoomDatabase
 
     override fun getLiveDataItems(): LiveData<List<Subscription>> {
         val inputLiveData = MutableLiveData<List<Subscription>>()
-        inputLiveData.value = getItems()
+        inputLiveData.value = subscriptions
         return inputLiveData
     }
 
-    override fun getItems(): List<Subscription> {
+    override suspend fun getItems(): List<Subscription> {
         return subscriptions
     }
 
-    override fun getItemById(id: Any): Subscription {
+    override suspend fun getItemById(id: Any): Subscription {
         return subscriptions[id as Int]
     }
 

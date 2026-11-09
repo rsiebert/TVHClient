@@ -17,15 +17,15 @@ class InputDataSource(@Suppress("unused") private val db: AppRoomDatabase) : Dat
 
     override fun getLiveDataItems(): LiveData<List<Input>> {
         val inputLiveData = MutableLiveData<List<Input>>()
-        inputLiveData.value = getItems()
+        inputLiveData.value = inputs
         return inputLiveData
     }
 
-    override fun getItems(): List<Input> {
+    override suspend fun getItems(): List<Input> {
         return inputs
     }
 
-    override fun getItemById(id: Any): Input {
+    override suspend fun getItemById(id: Any): Input {
         return inputs[id as Int]
     }
 

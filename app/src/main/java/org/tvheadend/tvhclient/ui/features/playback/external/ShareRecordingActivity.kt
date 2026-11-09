@@ -5,7 +5,7 @@ import timber.log.Timber
 
 class ShareRecordingActivity : BasePlaybackActivity() {
 
-    override fun onTicketReceived() {
+    override suspend fun onTicketReceived() {
         val url = viewModel.getPlaybackUrl()
         Timber.d("Sharing recording from server with url $url")
 

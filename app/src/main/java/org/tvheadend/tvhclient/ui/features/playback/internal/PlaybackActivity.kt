@@ -25,6 +25,8 @@ import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.launch
 import androidx.preference.PreferenceManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import androidx.media3.common.Player
@@ -194,13 +196,15 @@ class PlaybackActivity : AppCompatActivity() {
         Timber.d("Observing authentication status")
         viewModel.isConnected.observe(this) { isConnected ->
             if (isConnected) {
-                if (!viewModel.isPlaybackProfileSelected(intent.extras)) {
-                    Timber.d("No playback profile was selected")
-                    playerStatus.setText(R.string.no_playback_profile_selected)
-                } else {
-                    Timber.d("Connected to server")
-                    playerStatus.setText(R.string.connected_to_server)
-                    viewModel.loadMediaSource(applicationContext, intent.extras)
+                lifecycleScope.launch {
+                    if (!viewModel.isPlaybackProfileSelected(intent.extras)) {
+                        Timber.d("No playback profile was selected")
+                        playerStatus.setText(R.string.no_playback_profile_selected)
+                    } else {
+                        Timber.d("Connected to server")
+                        playerStatus.setText(R.string.connected_to_server)
+                        viewModel.loadMediaSource(applicationContext, intent.extras)
+                    }
                 }
             } else {
                 Timber.d("Not connected to server")
@@ -321,7 +325,9 @@ class PlaybackActivity : AppCompatActivity() {
         setIntent(intent)
 
         Timber.d("Getting channel id or recording id from bundle")
-        viewModel.loadMediaSource(applicationContext, intent.extras)
+        lifecycleScope.launch {
+            viewModel.loadMediaSource(applicationContext, intent.extras)
+        }
     }
 
     override fun onPause() {
@@ -565,12 +571,16 @@ class PlaybackActivity : AppCompatActivity() {
 
     private fun onPlayPreviousChannelButtonSelected() {
         Timber.d("Play previous channel button selected")
-        viewModel.playPreviousChannel(applicationContext)
+        lifecycleScope.launch {
+            viewModel.playPreviousChannel(applicationContext)
+        }
     }
 
     private fun onPlayNextChannelButtonSelected() {
         Timber.d("Play next channel button selected")
-        viewModel.playNextChannel(applicationContext)
+        lifecycleScope.launch {
+            viewModel.playNextChannel(applicationContext)
+        }
     }
 
     override fun onWindowFocusChanged(hasFocus: Boolean) {
