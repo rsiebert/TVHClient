@@ -1,9 +1,28 @@
 $ 3.0.0
   % VERSION 3.0.0
   _ 07.11.2026
-    * Updated to the latest Android toolchain (Gradle 9, AGP 9, Kotlin 2.4)
+    * Added support for Android 16 (API 36), including the edge-to-edge layout and the predictive back gesture
+    * Added support for HTSP protocol version 44
+    * Added a playback status dialog that shows the signal, descrambler and buffer details of a stream
+    * Show stream errors like a scrambled channel or a missing free adapter in the player
+    * Added an option to automatically skip the commercial break points of a recording
+    * Resume a recording at the last playback position when it is opened again
+    * Respect the rights that the server grants, e.g. recordings are refused when the account has no dvr right
+    * Show the program artwork and the copyright year in the program details again
+    * Updated the internal player to AndroidX Media3
+    * The fullscreen toggle in the player now also works on large screens by hiding the system bars
     * Replaced the navigation drawer with a standard Material navigation view
     * Replaced the deprecated dialog library with Material Components
+    * Scoped the storage permissions to the folders that are actually used and added explicit backup rules
+    * Enabled code and resource shrinking to reduce the size of the app
+    * The minimum required Android version is now Android 7.0 (API 24)
+    * Fixed that the channel list and the program guide showed outdated program information
+    * Fixed that renamed channels were still shown with their old name
+    * Fixed that channel icons could not be loaded from the server
+    * Fixed that failed recordings were shown for connections they do not belong to
+    * Fixed that the series recording option was shown in the program guide without the unlocker
+    * Fixed a crash on the first start of the app
+    * Updated to the latest Android toolchain (Gradle 9, AGP 9, Kotlin 2.4)
     * Removed the Dagger dependency injection framework
     * Added automated tests for the HTSP connection and connection setup
     * Internal improvements and dependency cleanups
