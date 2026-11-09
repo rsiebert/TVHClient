@@ -277,11 +277,28 @@ public class HtspMessage extends HashMap<String, Object> {
         return buf;
     }
 
+    /**
+     * Grows the serialization buffer when a list or map does not fit into its current capacity.
+     * The previous fixed size of {@code Short.MAX_VALUE} bytes overflowed for replies with many
+     * entries (for example a program guide reply with thousands of events).
+     */
+    private static ByteBuffer growBuffer(ByteBuffer buf, int required) {
+        if (buf.remaining() >= required) {
+            return buf;
+        }
+        ByteBuffer bigger = ByteBuffer.allocate(
+                Math.max(buf.capacity() * 2, buf.position() + required));
+        buf.flip();
+        bigger.put(buf);
+        return bigger;
+    }
+
     private static byte[] serializeBinary(Collection<?> list) throws IOException {
         ByteBuffer buf = ByteBuffer.allocate(Short.MAX_VALUE);
 
         for (Object value : list) {
             byte[] sub = serializeBinary("", value);
+            buf = growBuffer(buf, sub.length);
             buf.put(sub);
         }
 
@@ -299,6 +316,7 @@ public class HtspMessage extends HashMap<String, Object> {
             //noinspection SuspiciousMethodCalls
             Object value = map.get(key);
             byte[] sub = serializeBinary(key.toString(), value);
+            buf = growBuffer(buf, sub.length);
             buf.put(sub);
         }
 

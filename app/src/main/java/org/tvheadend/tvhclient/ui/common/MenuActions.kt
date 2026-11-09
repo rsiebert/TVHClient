@@ -160,7 +160,7 @@ fun showConfirmationToReconnectToServer(context: Context, viewModel: BaseViewMod
             .setMessage(R.string.restart_and_sync)
             .setNegativeButton(R.string.cancel, null)
             .setPositiveButton(R.string.reconnect) { _, _ ->
-                viewModel.updateConnectionAndRestartApplication(context)
+                viewModel.updateConnectionAndRebind(context)
             }
             .show()
     return true

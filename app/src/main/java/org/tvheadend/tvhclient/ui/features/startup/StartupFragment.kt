@@ -121,8 +121,8 @@ class StartupFragment : Fragment(), HideNavigationDrawerInterface {
                             .setTitle(R.string.reconnect_to_server)
                             .setMessage(R.string.restart_and_sync)
                             .setPositiveButton(R.string.reconnect) { _, _ ->
-                                Timber.d("Reconnect requested, stopping service and updating active connection to require a full sync")
-                                baseViewModel.updateConnectionAndRestartApplication(context)
+                                Timber.d("Reconnect requested, updating the active connection to require a full sync")
+                                baseViewModel.updateConnectionAndRebind(context)
                             }
                             .setNegativeButton(R.string.cancel, null)
                             .show()

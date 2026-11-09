@@ -155,7 +155,7 @@ class NavigationDrawer(private val activity: AppCompatActivity,
                 .setPositiveButton(R.string.connect) { _, _ ->
                     activity.lifecycleScope.launch {
                         if (navigationViewModel.setSelectedConnectionAsActive(selectedId)) {
-                            navigationViewModel.updateConnectionAndRestartApplication(activity)
+                            navigationViewModel.updateConnectionAndRebind(activity)
                         }
                     }
                 }

@@ -13,6 +13,18 @@ import timber.log.Timber
 
 class ConnectionService : Service() {
 
+    companion object {
+        /** Opens the connection to the active server. */
+        const val ACTION_CONNECT = "connect"
+
+        /**
+         * Rebinds the running service to the currently active connection. The current handler is
+         * torn down and a new one is created for the active connection, so the application can
+         * switch servers without being restarted.
+         */
+        const val ACTION_REBIND = "rebind"
+    }
+
     private lateinit var appRepository: AppRepository
     private lateinit var sharedPreferences: SharedPreferences
 
@@ -34,7 +46,23 @@ class ConnectionService : Service() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        if (intent?.action == ACTION_REBIND) {
+            rebindServiceHandler()
+            return serviceHandler.onStartCommand(Intent(ACTION_CONNECT))
+        }
         return serviceHandler.onStartCommand(intent)
+    }
+
+    /**
+     * Replaces the current handler with a new one bound to the active connection. Called when the
+     * user switches servers so the already running application reconnects in place instead of
+     * being restarted.
+     */
+    private fun rebindServiceHandler() {
+        Timber.d("Rebinding the service handler to the active connection")
+        serviceHandler.onDestroy()
+        connection = runBlocking { appRepository.connectionData.getActiveItem() }
+        serviceHandler = HtspServiceHandler(this, appRepository, connection)
     }
 
     override fun onDestroy() {

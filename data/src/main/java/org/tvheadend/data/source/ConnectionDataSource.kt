@@ -110,7 +110,12 @@ class ConnectionDataSource(
         if (connection.id >= 0) {
             connection.isSyncRequired = true
             connection.lastUpdate = 0
-            updateItem(connection)
+            // Update the row directly instead of going through updateItem(), which first clears
+            // the active flag of every connection. That transient "no active connection" state
+            // raced with the readers that reload the active connection right after this call.
+            withContext(ioDispatcher) {
+                db.connectionDao.update(ConnectionEntity.from(connection))
+            }
         }
     }
 

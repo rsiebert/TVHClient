@@ -9,6 +9,7 @@ import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.asLiveData
+import androidx.lifecycle.asFlow
 import androidx.lifecycle.viewModelScope
 import androidx.preference.PreferenceManager
 import org.tvheadend.data.AppRepository
@@ -20,7 +21,6 @@ import org.tvheadend.tvhclient.service.ConnectionService
 import org.tvheadend.tvhclient.ui.common.NetworkStatus
 import org.tvheadend.tvhclient.ui.common.interfaces.NetworkStatusInterface
 import org.tvheadend.tvhclient.ui.common.interfaces.SnackbarMessageInterface
-import org.tvheadend.tvhclient.ui.features.MainActivity
 import org.tvheadend.tvhclient.util.livedata.Event
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -113,28 +113,41 @@ open class BaseViewModel(application: Application) : AndroidViewModel(applicatio
 
         networkStatusLiveData.value = Event(NetworkStatus.NETWORK_UNKNOWN)
 
+        // Follow the active connection and the server status in the database. Doing this through
+        // the database LiveData keeps every observer up to date, also when the user switches
+        // servers without the activity being restarted.
         viewModelScope.launch {
-            val loadedConnection = appRepository.connectionData.getActiveItem()
-            connection = loadedConnection
-            activeConnectionLiveData.value = loadedConnection
-
-            val loadedHtspVersion = appRepository.serverStatusData.getActiveItem().htspVersion
-            htspVersion = loadedHtspVersion
-            htspVersionLiveData.value = loadedHtspVersion
+            appRepository.connectionData.liveDataActiveItem.asFlow().collect { loadedConnection ->
+                connection = loadedConnection
+                activeConnectionLiveData.value = loadedConnection
+            }
+        }
+        viewModelScope.launch {
+            appRepository.serverStatusData.liveDataActiveItem.asFlow().collect { loadedServerStatus ->
+                htspVersion = loadedServerStatus.htspVersion
+                htspVersionLiveData.value = loadedServerStatus.htspVersion
+            }
         }
     }
 
-    fun updateConnectionAndRestartApplication(context: Context?, isSyncRequired: Boolean = true) {
-        context?.let { ctx ->
-            viewModelScope.launch {
-                if (isSyncRequired) {
-                    appRepository.connectionData.setSyncRequiredForActiveConnection()
-                }
-                ctx.stopService(Intent(ctx, ConnectionService::class.java))
-                val intent = Intent(ctx, MainActivity::class.java)
-                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                ctx.startActivity(intent)
+    /**
+     * Reconnects to the currently active server without recreating the activity.
+     *
+     * The connection service is rebound to the active connection, so switching servers or forcing
+     * a reconnect keeps the running application (and its navigation state) alive instead of
+     * restarting it with a [Intent.FLAG_ACTIVITY_CLEAR_TASK] relaunch.
+     */
+    fun updateConnectionAndRebind(context: Context?, isSyncRequired: Boolean = true) {
+        val ctx = context ?: return
+        viewModelScope.launch {
+            if (isSyncRequired) {
+                appRepository.connectionData.setSyncRequiredForActiveConnection()
             }
+            // Rebinding the service in place tears down the old HTSP connection and opens one
+            // against the active connection, so no activity restart is needed.
+            val intent = Intent(ctx, ConnectionService::class.java)
+            intent.action = ConnectionService.ACTION_REBIND
+            ctx.startService(intent)
         }
     }
 

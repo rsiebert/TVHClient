@@ -369,7 +369,7 @@
     <string name="removed_recordings">Removed recordings</string>
     <string name="requesting_playback_information">Requesting playback information from server</string>
     <string name="restart">Restart</string>
-    <string name="restart_and_sync">The application will be restarted and a new initial sync will be done.</string>
+    <string name="restart_and_sync">The connection will be re-established and a new initial sync will be done.</string>
     <string name="saturday">Saturday</string>
     <string name="save">Save</string>
     <string name="saving_data">Saving received data…</string>
