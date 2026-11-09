@@ -176,14 +176,14 @@ class PlayerViewModel(application: Application) : BaseViewModel(application), Se
 
     suspend fun isPlaybackProfileSelected(bundle: Bundle?): Boolean {
         val channelId = bundle?.getInt("channelId", 0) ?: 0
-        if (channelId > 0) {
-            val serverStatus = appRepository.serverStatusData.getActiveItem()
-            val serverProfile = appRepository.serverProfileData.getItemById(serverStatus.htspPlaybackServerProfileId)
-            if (serverProfile != null && !serverProfile.name.isNullOrEmpty() && serverProfile.name != "None") {
-                return true
-            }
+        if (channelId <= 0) {
+            // Only live channels are streamed through a server playback profile. Recordings and
+            // local files are read directly, so there is no profile to check for them.
+            return true
         }
-        return false
+        val serverStatus = appRepository.serverStatusData.getActiveItem()
+        val serverProfile = appRepository.serverProfileData.getItemById(serverStatus.htspPlaybackServerProfileId)
+        return serverProfile != null && !serverProfile.name.isNullOrEmpty() && serverProfile.name != "None"
     }
 
     suspend fun loadMediaSource(context: Context, bundle: Bundle?) {
