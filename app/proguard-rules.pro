@@ -17,22 +17,9 @@
 #}
 
 -dontwarn androidx.**
--keep interface androidx.** { *; }
 
 # Material dialogs
 -dontwarn com.google.android.material.**
-
-# Kotlin coroutines
-# ServiceLoader support
--keepnames class kotlinx.coroutines.internal.MainDispatcherFactory {}
--keepnames class kotlinx.coroutines.CoroutineExceptionHandler {}
--keepnames class kotlinx.coroutines.android.AndroidExceptionPreHandler {}
--keepnames class kotlinx.coroutines.android.AndroidDispatcherFactory {}
-
-# Most of volatile fields are updated with AFU and should not be mangled
--keepclassmembernames class kotlinx.** {
-    volatile <fields>;
-}
 
 # preserve the information Crashlytics requires for producing readable crash reports
 -keepattributes SourceFile,LineNumberTable        # Keep file names and line numbers.
