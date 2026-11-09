@@ -10,7 +10,9 @@ import com.google.android.gms.cast.framework.SessionProvider
 import com.google.android.gms.cast.framework.media.CastMediaOptions
 import com.google.android.gms.cast.framework.media.NotificationOptions
 import com.google.firebase.analytics.FirebaseAnalytics
-import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import org.tvheadend.data.AppRepository
 import org.tvheadend.data.di.DataContainer
 import org.tvheadend.tvhclient.debug.FakeServerBootstrap
@@ -43,8 +45,16 @@ class MainApplication : Application(), OptionsProvider, AppGraph {
     val appSharedPreferences: SharedPreferences
         get() = PreferenceManager.getDefaultSharedPreferences(this)
 
+    /**
+     * Application-lifetime scope for work that must outlive any screen.
+     *
+     * Backed by a [SupervisorJob] so a failure in one child does not cancel the whole scope, and by
+     * [Dispatchers.Default] so launches start off the main thread. Replaces the previous
+     * `GlobalScope`, which was unstructured and could never be cancelled.
+     */
+    private val applicationScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
+
     inner class AppContainer {
-        private val applicationScope = GlobalScope
         private val billingDataSource = BillingDataSource.getInstance(
             this@MainApplication,
             applicationScope,
