@@ -82,6 +82,25 @@ private const val SKU_DETAILS_REQUERY_TIME = 1000L * 60L * 60L * 4L // 4 hours
 private const val ACK_RETRY_TIMER_START_MILLISECONDS = 10L * 1000L
 private const val ACK_RETRY_TIMER_MAX_TIME_MILLISECONDS = 1000L * 60L * 15L // 15 minutes
 
+/**
+ * The outcome of a purchase flow. Google Play reports failures only through
+ * [PurchasesUpdatedListener], so without this the UI never learns that a purchase did not go
+ * through and the user is left with a sheet that closed for an unknown reason.
+ */
+sealed interface BillingFlowResult {
+    /** Google Play reported the purchase as completed. */
+    data class Purchased(val products: List<String>) : BillingFlowResult
+
+    /** The user dismissed the Play purchase sheet without buying. */
+    data object Canceled : BillingFlowResult
+
+    /** The account already owns the product, so there is nothing left to buy. */
+    data class AlreadyOwned(val products: List<String>) : BillingFlowResult
+
+    /** The flow could not be started, or Google Play refused it; [message] is Play's debug text. */
+    data class Failed(val message: String) : BillingFlowResult
+}
+
 class BillingDataSource private constructor(
     application: Application,
     private val defaultScope: CoroutineScope,
@@ -123,6 +142,9 @@ class BillingDataSource private constructor(
     private val newPurchaseFlow = MutableSharedFlow<List<String>>(extraBufferCapacity = 1)
     private val purchaseConsumedFlow = MutableSharedFlow<List<String>>()
     private val billingFlowInProcess = MutableStateFlow(false)
+
+    // Reports how each purchase flow ended, so the UI can tell the user what happened.
+    private val billingFlowResultFlow = MutableSharedFlow<BillingFlowResult>(extraBufferCapacity = 1)
 
     override fun onBillingSetupFinished(billingResult: BillingResult) {
         val responseCode = billingResult.responseCode
@@ -632,6 +654,7 @@ class BillingDataSource private constructor(
             )
             val purchaseActivity = activity ?: run {
                 Timber.e("No activity available to launch the billing flow for: $sku")
+                billingFlowResultFlow.tryEmit(BillingFlowResult.Failed("No activity to launch the purchase flow"))
                 return
             }
             val upgradeSkus = arrayOf(*upgradeSkusVarargs)
@@ -666,10 +689,14 @@ class BillingDataSource private constructor(
                     billingFlowInProcess.emit(true)
                 } else {
                     Timber.e("Billing failed: + " + br.debugMessage)
+                    billingFlowResultFlow.tryEmit(BillingFlowResult.Failed(br.debugMessage))
                 }
             }
         } else {
+            // This is what a sideloaded build, an inactive product or a non-license-test account
+            // looks like: the product details query returns nothing, so no sheet can be shown.
             Timber.e("SkuDetails not found for: $sku")
+            billingFlowResultFlow.tryEmit(BillingFlowResult.Failed("Product details for $sku are not available"))
         }
     }
 
@@ -684,6 +711,15 @@ class BillingDataSource private constructor(
     }
 
     /**
+     * Returns a Flow that reports the outcome of every purchase flow, including the ones that
+     * Google Play never started.
+     * @return Flow that emits the result of each purchase attempt.
+     */
+    fun getBillingFlowResults(): Flow<BillingFlowResult> {
+        return billingFlowResultFlow.asSharedFlow()
+    }
+
+    /**
      * Called by the BillingLibrary when new purchases are detected; typically in response to a
      * launchBillingFlow.
      * @param billingResult result of the purchase flow.
@@ -693,12 +729,31 @@ class BillingDataSource private constructor(
         when (billingResult.responseCode) {
             BillingClient.BillingResponseCode.OK -> if (null != list) {
                 processPurchaseList(list, null)
-            } else Timber.d("Null Purchase List Returned from OK response!")
+                billingFlowResultFlow.tryEmit(BillingFlowResult.Purchased(list.flatMap { it.products }))
+            } else {
+                Timber.d("Null Purchase List Returned from OK response!")
+                billingFlowResultFlow.tryEmit(BillingFlowResult.Failed(billingResult.debugMessage))
+            }
 
-            BillingClient.BillingResponseCode.USER_CANCELED -> Timber.i("onPurchasesUpdated: User canceled the purchase")
-            BillingClient.BillingResponseCode.ITEM_ALREADY_OWNED -> Timber.i("onPurchasesUpdated: The user already owns this item")
-            BillingClient.BillingResponseCode.DEVELOPER_ERROR -> Timber.e("onPurchasesUpdated: Developer error means that Google Play " + "does not recognize the configuration. If you are just getting started, " + "make sure you have configured the application correctly in the " + "Google Play Console. The SKU product ID must match and the APK you " + "are using must be signed with release keys.")
-            else -> Timber.d("BillingResult [" + billingResult.responseCode + "]: " + billingResult.debugMessage)
+            BillingClient.BillingResponseCode.USER_CANCELED -> {
+                Timber.i("onPurchasesUpdated: User canceled the purchase")
+                billingFlowResultFlow.tryEmit(BillingFlowResult.Canceled)
+            }
+
+            BillingClient.BillingResponseCode.ITEM_ALREADY_OWNED -> {
+                Timber.i("onPurchasesUpdated: The user already owns this item")
+                billingFlowResultFlow.tryEmit(BillingFlowResult.AlreadyOwned(list?.flatMap { it.products }.orEmpty()))
+            }
+
+            BillingClient.BillingResponseCode.DEVELOPER_ERROR -> {
+                Timber.e("onPurchasesUpdated: Developer error means that Google Play " + "does not recognize the configuration. If you are just getting started, " + "make sure you have configured the application correctly in the " + "Google Play Console. The SKU product ID must match and the APK you " + "are using must be signed with release keys.")
+                billingFlowResultFlow.tryEmit(BillingFlowResult.Failed(billingResult.debugMessage))
+            }
+
+            else -> {
+                Timber.d("BillingResult [" + billingResult.responseCode + "]: " + billingResult.debugMessage)
+                billingFlowResultFlow.tryEmit(BillingFlowResult.Failed(billingResult.debugMessage))
+            }
         }
         // Clear the flag for every outcome, including a successful purchase. Returning early on
         // OK used to leave it set, which silently disabled the onResume purchase refresh for the

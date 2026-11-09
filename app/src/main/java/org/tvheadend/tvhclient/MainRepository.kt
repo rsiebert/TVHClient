@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
 import org.tvheadend.tvhclient.util.billing.BillingDataSource
+import org.tvheadend.tvhclient.util.billing.BillingFlowResult
 import timber.log.Timber
 
 /**
@@ -20,7 +21,8 @@ class MainRepository(
     private val billingDataSource: BillingDataSource,
     private val defaultScope: CoroutineScope
 ) {
-    private val gameMessages: MutableSharedFlow<Int> = MutableSharedFlow()
+    // Buffered so emitting a message can never suspend on a screen that does not collect it.
+    private val gameMessages: MutableSharedFlow<Int> = MutableSharedFlow(extraBufferCapacity = 1)
 
     /**
      * Sets up the event that we can use to send messages up to the UI to be used in Snackbars.
@@ -35,7 +37,7 @@ class MainRepository(
                         when (sku) {
                             UNLOCKER -> {
                                 Timber.d("Unlocker found in postMessagesFromBillingFlow")
-                                gameMessages.emit(R.string.pref_unlocker)
+                                gameMessages.tryEmit(R.string.pref_unlocker)
                             }
                         }
                     }
@@ -101,6 +103,12 @@ class MainRepository(
 
     val billingFlowInProcess: Flow<Boolean>
         get() = billingDataSource.getBillingFlowInProcess()
+
+    /**
+     * Reports the outcome of every purchase flow so the UI can tell the user what happened.
+     */
+    val billingFlowResults: Flow<BillingFlowResult>
+        get() = billingDataSource.getBillingFlowResults()
 
     fun debugConsumePremium() {
         CoroutineScope(Dispatchers.Main).launch {

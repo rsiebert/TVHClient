@@ -1,5 +1,6 @@
 package org.tvheadend.tvhclient.ui.base
 
+import android.app.Activity
 import android.app.Application
 import android.content.Context
 import android.content.Intent
@@ -21,7 +22,9 @@ import org.tvheadend.tvhclient.service.ConnectionService
 import org.tvheadend.tvhclient.ui.common.NetworkStatus
 import org.tvheadend.tvhclient.ui.common.interfaces.NetworkStatusInterface
 import org.tvheadend.tvhclient.ui.common.interfaces.SnackbarMessageInterface
+import org.tvheadend.tvhclient.util.billing.BillingFlowResult
 import org.tvheadend.tvhclient.util.livedata.Event
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
@@ -93,6 +96,21 @@ open class BaseViewModel(application: Application) : AndroidViewModel(applicatio
 
     val billingLifecycleObserver: LifecycleObserver
         get() = mainRepository.billingLifecycleObserver
+
+    /**
+     * Reports the outcome of every purchase flow, so a screen can tell the user what happened
+     * instead of leaving them in front of a sheet that closed for an unknown reason.
+     */
+    val billingFlowResults: Flow<BillingFlowResult>
+        get() = mainRepository.billingFlowResults
+
+    /**
+     * Starts the purchase flow for the given SKU. The activity is only passed on to the billing
+     * library, which needs it to show the Play purchase sheet.
+     */
+    fun buySku(activity: Activity, sku: String) {
+        mainRepository.buySku(activity, sku)
+    }
 
     init {
         val graph = AppGraphProvider.require()
