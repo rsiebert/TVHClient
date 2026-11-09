@@ -24,6 +24,9 @@
 *.keystore binary
 *.mp3      binary
 *.mp4      binary
+*.mkv      binary
+*.webm     binary
+*.ogg      binary
 *.wav      binary
 *.so       binary
 *.xcf      binary

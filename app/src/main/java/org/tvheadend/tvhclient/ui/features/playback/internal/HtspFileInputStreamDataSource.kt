@@ -180,8 +180,12 @@ class HtspFileInputStreamDataSource private constructor(val connection: HtspConn
         }
 
         Timber.d("Opened file $fileName, id $fileId with size $fileSize at position $filePosition")
-        // The player can only read the data that is left after the requested position
-        return if (fileSize != -1L) fileSize - filePosition else fileSize
+        // The player can only read the data that is left after the requested position. This is
+        // measured from the position that was asked for, not from [filePosition]: the speculative
+        // read above already moved that cursor to the end of a file that fits in one chunk, which
+        // made the open report zero remaining bytes and left the player unable to parse the
+        // container at all.
+        return if (fileSize != -1L) fileSize - startPosition else fileSize
     }
 
     override fun read(bytes: ByteArray, offset: Int, readLength: Int): Int {

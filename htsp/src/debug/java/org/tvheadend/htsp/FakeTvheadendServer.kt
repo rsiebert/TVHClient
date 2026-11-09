@@ -24,7 +24,8 @@ import timber.log.Timber
  *  - a week of EPG events per channel, starting at the top of the current hour and tiling the
  *    timeline with programs of differing lengths (15 minutes to 2 hours) so the guide looks
  *    realistic instead of a uniform row of one-hour blocks
- *  - 5 recordings (one `scheduled`, one `recording`, one `completed`, two failed)
+ *  - 5 recordings (one `scheduled`, one `recording`, one `completed`, two failed). Their content is
+ *    the clip handed to the constructor, or a generated silent WAV when there is none
  *  - 1 series recording (an enabled `autorecEntryAdd`)
  *
  * Because it lives in the `htsp` module's debug source set it can reuse the package-private
@@ -34,6 +35,12 @@ class FakeTvheadendServer(
     private val host: String = DEFAULT_HOST,
     private val port: Int = DEFAULT_PORT,
     private val hoursOfEpg: Int = 168,
+    /**
+     * Content served for every `dvrfile/...` path. A developer supplied clip makes the internal
+     * player stream real video and audio; when nothing is supplied the generated WAV below is used
+     * instead, so the demo still reaches a ready state on a machine without any media to hand.
+     */
+    private val recordingContent: ByteArray? = null,
 ) : AutoCloseable {
 
     private val running = AtomicBoolean(false)
@@ -213,8 +220,9 @@ class FakeTvheadendServer(
             "fileOpen" -> {
                 // Channel icons and recordings are fetched over the HTSP file API: a non-http url is
                 // read through HtspFileInputStream while the negotiated htspversion is above 9.
-                // A demo recording ("dvrfile/<id>") yields a real, decodable WAV so the internal
-                // player can reach a ready state; everything else is an icon.
+                // A demo recording ("dvrfile/<id>") yields the supplied clip, or a generated WAV
+                // when there is none, so the internal player can reach a ready state. Everything
+                // else is an icon.
                 val path = message.getString("file", "")
                 val data = if (path.startsWith("dvrfile")) recordingBytes() else iconBytes(path)
                 val fileId = nextFileId.getAndIncrement()
@@ -399,11 +407,17 @@ class FakeTvheadendServer(
     }
 
     /**
-     * A minimal, valid mono 8 kHz 8-bit PCM WAV of silence, returned as the content of every demo
-     * recording. Media3's WavExtractor parses it, which lets the internal player reach a ready
-     * state on the emulator without shipping any real media.
+     * The content of every demo recording: the developer supplied clip when there is one, otherwise
+     * the generated WAV below.
      */
-    private fun recordingBytes(): ByteArray {
+    private fun recordingBytes(): ByteArray = recordingContent ?: silentWavBytes()
+
+    /**
+     * A minimal, valid mono 8 kHz 8-bit PCM WAV of silence. It is the fallback for when no demo clip
+     * is bundled: Media3's WavExtractor parses it, which lets the internal player reach a ready
+     * state (with a single audio track) without shipping any real media.
+     */
+    private fun silentWavBytes(): ByteArray {
         val sampleCount = SAMPLE_RATE
         val buffer = ByteBuffer.allocate(WAV_HEADER_SIZE + sampleCount).order(ByteOrder.LITTLE_ENDIAN)
         buffer.put("RIFF".toByteArray(Charsets.US_ASCII))

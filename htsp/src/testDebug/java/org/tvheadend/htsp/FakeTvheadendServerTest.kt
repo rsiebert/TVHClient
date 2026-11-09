@@ -331,6 +331,51 @@ class FakeTvheadendServerTest {
         assertThat(close!!.getMethod()).isEqualTo("fileClose")
     }
 
+    @Test
+    fun servesTheSuppliedClipAsTheDemoRecording() {
+        // A developer supplied clip is what makes the internal player stream real video and audio.
+        val clip = ByteArray(64) { it.toByte() }
+        server = FakeTvheadendServer(port = 0, recordingContent = clip).start()
+        connectAndAuthenticate()
+
+        val open = request("fileOpen") { it.put("file", "dvrfile/3") }
+        assertThat(open).isNotNull()
+        val fileId = open!!.getInteger("id")
+        val size = open.getLong("size")
+        assertThat(size).isEqualTo(clip.size.toLong())
+
+        val read = request("fileRead") {
+            it.put("id", fileId)
+            it.put("offset", 0L)
+            it.put("size", size)
+        }
+        assertThat(read).isNotNull()
+        assertThat(read!!.getByteArray("data")).isEqualTo(clip)
+    }
+
+    @Test
+    fun fallsBackToAGeneratedWavWhenNoClipIsSupplied() {
+        server = FakeTvheadendServer(port = 0).start()
+        connectAndAuthenticate()
+
+        val open = request("fileOpen") { it.put("file", "dvrfile/3") }
+        assertThat(open).isNotNull()
+        val fileId = open!!.getInteger("id")
+        val size = open.getLong("size")
+
+        val read = request("fileRead") {
+            it.put("id", fileId)
+            it.put("offset", 0L)
+            it.put("size", size)
+        }
+        assertThat(read).isNotNull()
+
+        // A canonical WAV starts with "RIFF" and carries "WAVE" at offset 8.
+        val data = read!!.getByteArray("data")
+        assertThat(String(data, 0, 4, Charsets.US_ASCII)).isEqualTo("RIFF")
+        assertThat(String(data, 8, 4, Charsets.US_ASCII)).isEqualTo("WAVE")
+    }
+
     // ---- edge cases ------------------------------------------------------------------
 
     @Test

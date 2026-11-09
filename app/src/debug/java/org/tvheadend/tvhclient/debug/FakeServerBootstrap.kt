@@ -51,7 +51,9 @@ object FakeServerBootstrap {
         val app = context.applicationContext as? MainApplication ?: return
 
         val fakeServer = try {
-            FakeTvheadendServer().start()
+            // A clip in app/src/debug/assets makes the recordings stream real video and audio; the
+            // server falls back to a generated WAV when there is none.
+            FakeTvheadendServer(recordingContent = DemoRecordingAsset.load(context)).start()
         } catch (e: Exception) {
             Timber.e(e, "Could not start the fake TVHeadend server")
             return
