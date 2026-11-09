@@ -1,13 +1,22 @@
-# Single source of truth for SDK levels and library versions.
+# Single source of truth for SDK levels, library versions and Gradle plugin versions.
 #
-# Plugin versions (AGP, Kotlin, KSP, Firebase) live in the root build.gradle buildscript
-# block, because a version catalog cannot be read from inside a `buildscript {}` block.
+# Plugin versions are consumed through the [plugins] aliases below, which the modules apply with
+# `alias(libs.plugins.…)`. The root build file no longer keeps a buildscript classpath.
 
 [versions]
 compileSdk = "37"
 minSdk = "24"
 targetSdk = "36"
 javaVersion = "17"
+
+# Gradle plugins, applied through the [plugins] aliases at the bottom of this file.
+agp = "9.5.1"
+kotlin = "2.4.21"
+ksp = "2.3.13"
+kover = "0.9.11"
+google-services = "4.5.0"
+crashlytics-gradle = "3.0.8"
+perf-gradle = "2.0.2"
 
 # AndroidX
 appcompat = "1.8.0"
@@ -116,3 +125,18 @@ androidx-room-testing = { module = "androidx.room:room-testing", version.ref = "
 mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
 truth = { module = "com.google.truth:truth", version.ref = "truth" }
 turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }
+
+[plugins]
+android-application = { id = "com.android.application", version.ref = "agp" }
+android-library = { id = "com.android.library", version.ref = "agp" }
+# AGP 9 no longer permits the kotlin-kapt plugin; the Data Binding module uses this
+# AGP-versioned shim instead.
+android-legacy-kapt = { id = "com.android.legacy-kapt", version.ref = "agp" }
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+kotlin-parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize", version.ref = "kotlin" }
+# Bumped for AGP 9: the previous plugin generation cannot be instantiated under AGP 9.
+google-services = { id = "com.google.gms.google-services", version.ref = "google-services" }
+firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "crashlytics-gradle" }
+firebase-perf = { id = "com.google.firebase.firebase-perf", version.ref = "perf-gradle" }
+# Coverage instrumentation, report-only for now (thresholds land in Phase 6).
+kover = { id = "org.jetbrains.kotlinx.kover", version.ref = "kover" }
