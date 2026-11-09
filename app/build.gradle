@@ -90,7 +90,12 @@ android {
             // Reduce the apk file size by enabling proguard
             // AGP 9 removed 'proguard-android.txt' (it embedded -dontoptimize). Note this
             // means release builds now run R8 optimisations.
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            // AGP 9.3+ turns on code shrinking, resource shrinking and
+            // proguard-android-optimize.txt in one setting.
+            optimization {
+                enable = true
+            }
+            proguardFiles 'proguard-rules.pro'
             buildConfigField "Boolean", "OVERRIDE_UNLOCKED", "false"
         }
         debug {
