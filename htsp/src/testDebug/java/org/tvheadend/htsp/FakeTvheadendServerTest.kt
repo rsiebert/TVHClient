@@ -153,7 +153,8 @@ class FakeTvheadendServerTest {
         assertThat(methods("tagAdd")).hasSize(1)
         assertThat(methods("channelAdd")).hasSize(6)
         assertThat(methods("eventAdd")).hasSize(12) // 6 channels * 2 hours
-        assertThat(methods("dvrEntryAdd")).hasSize(3)
+        assertThat(methods("dvrEntryAdd")).hasSize(5)
+        assertThat(methods("autorecEntryAdd")).hasSize(1)
         assertThat(methods("initialSyncCompleted")).hasSize(1)
 
         val tag = methods("tagAdd").single()
@@ -182,12 +183,25 @@ class FakeTvheadendServerTest {
         assertThat(events.first { it.getInteger("eventId") == 1001 }.getString("subtitle")).isEqualTo("Upcoming")
 
         val recordings = methods("dvrEntryAdd").associateBy { it.getInteger("id") }
-        assertThat(recordings.keys).containsExactly(1, 2, 3)
+        assertThat(recordings.keys).containsExactly(1, 2, 3, 4, 5)
         assertThat(recordings.getValue(1).getString("state")).isEqualTo("scheduled")
         assertThat(recordings.getValue(2).getString("state")).isEqualTo("recording")
         assertThat(recordings.getValue(3).getString("state")).isEqualTo("completed")
         assertThat(recordings.getValue(1).getInteger("channel")).isEqualTo(1)
         assertThat(recordings.getValue(1).getString("title")).isEqualTo("Scheduled Demo Recording")
+
+        // Two entries land in the DVR "failed" tab: a missed one that carries an error and one
+        // that completed but was aborted by the user.
+        assertThat(recordings.getValue(4).getString("state")).isEqualTo("missed")
+        assertThat(recordings.getValue(4).getString("error")).isEqualTo("Subscription failed")
+        assertThat(recordings.getValue(5).getString("state")).isEqualTo("completed")
+        assertThat(recordings.getValue(5).getString("error")).isEqualTo("Aborted by user")
+
+        val seriesRecording = methods("autorecEntryAdd").single()
+        assertThat(seriesRecording.getString("id")).isEqualTo("demo-series-1")
+        assertThat(seriesRecording.getInteger("enabled")).isEqualTo(1)
+        assertThat(seriesRecording.getString("name")).isEqualTo("Demo Series Recording")
+        assertThat(seriesRecording.getInteger("channel")).isEqualTo(1)
     }
 
     // ---- follow-up requests ----------------------------------------------------------

@@ -78,6 +78,8 @@ class HtspConnectionDataFlowTest {
         assertEquals("tags", 2, methods("tagAdd").size)
         assertEquals("channels", 3, methods("channelAdd").size)
         assertEquals("events", 6, methods("eventAdd").size)
+        assertEquals("recordings", 5, methods("dvrEntryAdd").size)
+        assertEquals("series recordings", 1, methods("autorecEntryAdd").size)
         assertEquals("initialSyncCompleted", 1, methods("initialSyncCompleted").size)
 
         // The first channel matches the sample data.
@@ -96,6 +98,8 @@ class HtspConnectionDataFlowTest {
         assertEquals(2, server.tagAddCount.get())
         assertEquals(3, server.channelAddCount.get())
         assertEquals(6, server.eventAddCount.get())
+        assertEquals(5, server.dvrEntryAddCount.get())
+        assertEquals(1, server.autorecEntryAddCount.get())
         assertEquals(1, server.initialSyncCompletedCount.get())
     }
 

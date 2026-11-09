@@ -85,6 +85,12 @@ class FakeHtspServer @JvmOverloads constructor(
     /** Number of `eventAdd` messages pushed during the initial sync. */
     val eventAddCount = AtomicInteger()
 
+    /** Number of `dvrEntryAdd` messages pushed during the initial sync. */
+    val dvrEntryAddCount = AtomicInteger()
+
+    /** Number of `autorecEntryAdd` messages pushed during the initial sync. */
+    val autorecEntryAddCount = AtomicInteger()
+
     /** Number of `initialSyncCompleted` messages pushed during the initial sync. */
     val initialSyncCompletedCount = AtomicInteger()
 
@@ -225,6 +231,14 @@ class FakeHtspServer @JvmOverloads constructor(
                 for (event in sampleData.eventAddMessages()) {
                     eventAddCount.incrementAndGet()
                     send(channel, event)
+                }
+                for (recording in sampleData.dvrEntryAddMessages()) {
+                    dvrEntryAddCount.incrementAndGet()
+                    send(channel, recording)
+                }
+                for (seriesRecording in sampleData.autorecEntryAddMessages()) {
+                    autorecEntryAddCount.incrementAndGet()
+                    send(channel, seriesRecording)
                 }
                 initialSyncCompletedCount.incrementAndGet()
                 val syncCompleted = HtspMessage()
