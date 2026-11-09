@@ -48,6 +48,27 @@
     <style name="ProgramGuideContentFont.Dark" parent="ProgramGuideContentFont.Light" />
     <!--</editor-fold>-->
 
+    <!--<editor-fold desc="Fonts for the changelog screen. The version is a section heading, the date a caption on the same row">-->
+    <style name="ChangeLogVersionFont.Light" parent="TextAppearance.MaterialComponents.Headline6">
+        <item name="android:textSize">20sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/title_text_light</item>
+    </style>
+
+    <style name="ChangeLogVersionFont.Dark" parent="ChangeLogVersionFont.Light">
+        <item name="android:textColor">@color/title_text_dark</item>
+    </style>
+
+    <style name="ChangeLogDateFont.Light" parent="TextAppearance.MaterialComponents.Subtitle1">
+        <item name="android:textSize">12sp</item>
+        <item name="android:textColor">@color/content_text_light</item>
+    </style>
+
+    <style name="ChangeLogDateFont.Dark" parent="ChangeLogDateFont.Light">
+        <item name="android:textColor">@color/content_text_dark</item>
+    </style>
+    <!--</editor-fold>-->
+
     <!--<editor-fold desc="Fonts for the internal player screen. The background is always dark">-->
     <style name="PlayerTitleFont" parent="TextAppearance.MaterialComponents.Headline6">
         <item name="android:textColor">@color/title_text_dark</item>
@@ -120,6 +141,8 @@
         <item name="ContentFont">@style/ContentFont.Dark</item>
         <item name="ProgramGuideTitleFont">@style/ProgramGuideTitleFont.Dark</item>
         <item name="ProgramGuideContentFont">@style/ProgramGuideContentFont.Dark</item>
+        <item name="ChangeLogVersionFont">@style/ChangeLogVersionFont.Dark</item>
+        <item name="ChangeLogDateFont">@style/ChangeLogDateFont.Dark</item>
         <!--</editor-fold>-->
 
         <!--<editor-fold desc="Toolbar color">-->
@@ -206,6 +229,8 @@
         <item name="ContentFont">@style/ContentFont.Light</item>
         <item name="ProgramGuideTitleFont">@style/ProgramGuideTitleFont.Light</item>
         <item name="ProgramGuideContentFont">@style/ProgramGuideContentFont.Light</item>
+        <item name="ChangeLogVersionFont">@style/ChangeLogVersionFont.Light</item>
+        <item name="ChangeLogDateFont">@style/ChangeLogDateFont.Light</item>
         <!--</editor-fold>-->
 
         <!--<editor-fold desc="Toolbar color">-->

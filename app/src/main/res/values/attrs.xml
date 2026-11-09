@@ -47,6 +47,8 @@
     <attr name="ContentFont" format="reference" />
     <attr name="ProgramGuideTitleFont" format="reference" />
     <attr name="ProgramGuideContentFont" format="reference" />
+    <attr name="ChangeLogVersionFont" format="reference" />
+    <attr name="ChangeLogDateFont" format="reference" />
 
     <attr name="rounded_corners" format="reference" />
 
