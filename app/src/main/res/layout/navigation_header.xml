@@ -1,10 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+    Drawer header.
+
+    Note: the header background is a bitmap (@drawable/header_dark / header_light, applied here and
+    re-applied at runtime in NavigationDrawer). A bitmap drawable reports its intrinsic height as the
+    view's minimum height, so with layout_height="wrap_content" the header always grows to the image's
+    height (a large block of empty space above the connection list). An explicit height is therefore
+    required to keep the header compact.
+-->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="104dp"
     android:background="@drawable/header_dark"
-    android:gravity="bottom"
-    android:minHeight="150dp"
+    android:gravity="center_vertical"
     android:orientation="vertical"
     android:padding="16dp">
 
