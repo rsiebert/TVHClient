@@ -461,9 +461,8 @@ fun convertMessageToSeriesRecordingModel(seriesRecording: SeriesRecording, msg: 
         }
     }
     if (msg.containsKey("fulltext")) {
-        if (!msg.getString("fulltext").isNullOrEmpty()) {
-            seriesRecording.fulltext = msg.getInteger("fulltext")
-        }
+        // The server sends the fulltext flag as a u32 (HTSP v20+).
+        seriesRecording.fulltext = msg.getInteger("fulltext")
     }
     if (msg.containsKey("directory")) {
         if (!msg.getString("directory").isNullOrEmpty()) {
@@ -619,7 +618,7 @@ fun convertMessageToCutpointList(msg: HtspMessage): List<DvrCutpoint> {
 fun convertIntentToAutorecMessage(intent: Intent, htspVersion: Int): HtspMessage {
     val enabled = intent.getIntExtra("enabled", 1).toLong()
     val title = intent.getStringExtra("title")
-    val fulltext = intent.getStringExtra("fulltext")
+    val fulltext = intent.getIntExtra("fulltext", 0).toLong()
     val directory = intent.getStringExtra("directory")
     val name = intent.getStringExtra("name")
     val configName = intent.getStringExtra("configName")
@@ -640,7 +639,8 @@ fun convertIntentToAutorecMessage(intent: Intent, htspVersion: Int): HtspMessage
         request["enabled"] = enabled
     }
     request["title"] = title
-    if (fulltext != null && htspVersion >= 20) {
+    // The fulltext flag is a u32 (0 = off), so it is sent as a number, not a string.
+    if (htspVersion >= 20) {
         request["fulltext"] = fulltext
     }
     if (directory != null) {
