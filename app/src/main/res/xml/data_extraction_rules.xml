@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Auto Backup and device-to-device transfer rules for Android 12 (API 31) and higher.
+
+  See backup_rules.xml for the rationale. An <include> element switches these rules to an allowlist,
+  so only the Room database and shared preferences are backed up or transferred; everything else
+  (external-storage downloads, caches, log files) is excluded implicitly.
+-->
+<data-extraction-rules>
+    <cloud-backup>
+        <include
+            domain="database"
+            path="." />
+        <include
+            domain="sharedpref"
+            path="." />
+    </cloud-backup>
+    <device-transfer>
+        <include
+            domain="database"
+            path="." />
+        <include
+            domain="sharedpref"
+            path="." />
+    </device-transfer>
+</data-extraction-rules>

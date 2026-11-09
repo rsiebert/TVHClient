@@ -1,5 +1,6 @@
 package org.tvheadend.tvhclient.ui.features
 
+import android.Manifest
 import android.app.ActivityManager
 import android.app.SearchManager
 import android.content.Context
@@ -391,10 +392,13 @@ class MainActivity : AppCompatActivity(), ToolbarInterface, LayoutControlInterfa
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (grantResults.isNotEmpty()
-                && grantResults[0] == PackageManager.PERMISSION_GRANTED
-                && permissions.isNotEmpty()
-                && permissions[0] == "android.permission.WRITE_EXTERNAL_STORAGE") {
+        // WRITE_EXTERNAL_STORAGE is only requested on API 28 and below (it is capped at API 28 in the
+        // manifest). From Android 10 the download goes straight to the public folder through scoped
+        // storage, so there is no permission result to handle there.
+        if (permissions.isEmpty() || permissions[0] != Manifest.permission.WRITE_EXTERNAL_STORAGE) {
+            return
+        }
+        if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             Timber.d("Storage permission granted")
             val fragment = supportFragmentManager.findFragmentById(if (isDualPane) R.id.details else R.id.main)
             if (fragment is DownloadPermissionGrantedInterface) {

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Auto Backup rules for Android 11 (API 30) and lower.
+
+  The app keeps everything it needs to restore a user's setup in the Room database (connections,
+  server profiles) and in shared preferences. Those are backed up. The cached EPG, channel and
+  recording metadata live in the same database and are re-synced from the server after a restore.
+
+  An <include> element switches these rules to an allowlist, so only the entries below are backed
+  up; everything else (external-storage downloads, caches, log files) is excluded implicitly.
+-->
+<full-backup-content>
+    <include
+        domain="database"
+        path="." />
+    <include
+        domain="sharedpref"
+        path="." />
+</full-backup-content>

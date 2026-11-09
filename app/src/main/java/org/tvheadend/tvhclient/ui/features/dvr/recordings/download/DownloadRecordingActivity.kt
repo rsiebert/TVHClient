@@ -117,27 +117,26 @@ class DownloadRecordingActivity : BasePlaybackActivity() {
     }
 
     /**
-     * Android API version 23 and higher requires that the permission to access
-     * the external storage must be requested programmatically (if it has not
-     * been granted already). The positive or negative request is checked in the
-     * onRequestPermissionsResult(...) method.
+     * Since Android 10 (API 29) the [DownloadManager] writes to the public Downloads folder through
+     * scoped storage, so no runtime permission is required. WRITE_EXTERNAL_STORAGE is only requested
+     * on the earlier releases that still need it (it is capped at API 28 in the manifest). The
+     * positive or negative result is checked in the host activity's onRequestPermissionsResult(...)
+     * method.
      *
-     * @return True if permission is granted, otherwise false
+     * @return True if the download can proceed, otherwise false
      */
     private fun getIsStoragePermissionGranted(activity: Activity): Boolean {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            return true
+        }
         Timber.d("Checking if storage permission was granted")
-        return if (Build.VERSION.SDK_INT >= 23) {
-            if (activity.checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-                Timber.d("Storage permissions were granted (API >= 23)")
-                true
-            } else {
-                Timber.d("Storage permissions are not yet granted (API >= 23)")
-                ActivityCompat.requestPermissions(activity, arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), 1)
-                false
-            }
-        } else {
-            Timber.d("Storage permissions were granted (API < 23)")
+        return if (activity.checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+            Timber.d("Storage permission was already granted")
             true
+        } else {
+            Timber.d("Storage permission is not yet granted, requesting it")
+            ActivityCompat.requestPermissions(activity, arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), 1)
+            false
         }
     }
 

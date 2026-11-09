@@ -210,15 +210,16 @@ class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceClic
     }
 
     private fun isReadPermissionGranted(activity: FragmentActivity): Boolean {
-        return if (Build.VERSION.SDK_INT >= 23) {
-            if (activity.checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-                true
-            } else {
-                requestPermissions(arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), 1)
-                false
-            }
-        } else {
-            true
+        // The folder chooser is only shown on Android 9 (API 28) and lower; from Android 10 there
+        // is no directory to pick. Reading external storage therefore only needs a runtime grant on
+        // those legacy releases (READ_EXTERNAL_STORAGE is capped at API 32 in the manifest).
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            return true
         }
+        if (activity.checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+            return true
+        }
+        requestPermissions(arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), 1)
+        return false
     }
 }
