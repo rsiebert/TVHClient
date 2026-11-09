@@ -4,9 +4,10 @@
 # no matter which platform the checkout happens on.
 * text=auto eol=lf
 
-# Windows scripts keep CRLF so they run correctly on Windows.
-*.bat text eol=crlf
-*.cmd text eol=crlf
+# Windows batch scripts are LF as well; cmd.exe and PowerShell run them fine
+# when they come straight from a git checkout.
+*.bat text eol=lf
+*.cmd text eol=lf
 
 # Binary files must never be line-ending converted.
 *.png      binary
@@ -25,3 +26,4 @@
 *.mp4      binary
 *.wav      binary
 *.so       binary
+*.xcf      binary
