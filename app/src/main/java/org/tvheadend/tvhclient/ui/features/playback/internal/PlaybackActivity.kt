@@ -82,6 +82,7 @@ class PlaybackActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         setTheme(getThemeId(this))
         super.onCreate(savedInstanceState)
+        setUpEdgeToEdge()
         setContentView(R.layout.player_overlay_view)
         Timber.d("Creating")
 

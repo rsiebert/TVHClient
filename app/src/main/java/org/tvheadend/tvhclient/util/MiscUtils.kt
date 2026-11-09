@@ -80,3 +80,16 @@ fun getThemeId(context: Context): Int {
         else -> R.style.CustomTheme_Light
     }
 }
+
+/**
+ * Returns whether the theme that is currently set in the settings is a light theme.
+ *
+ * The app picks light or dark explicitly through a preference instead of using a DayNight theme, so
+ * the night mode configuration alone is not a reliable signal.
+ *
+ * @param context Context
+ * @return True if the light theme is active, otherwise false
+ */
+fun isLightTheme(context: Context): Boolean {
+    return getThemeId(context) == R.style.CustomTheme_Light
+}

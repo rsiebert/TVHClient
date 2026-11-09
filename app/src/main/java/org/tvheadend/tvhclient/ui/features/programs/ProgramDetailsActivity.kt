@@ -3,6 +3,7 @@ package org.tvheadend.tvhclient.ui.features.programs
 import android.content.Context
 import android.os.Bundle
 import android.view.MenuItem
+import android.view.View
 import android.widget.FrameLayout
 import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
@@ -11,7 +12,9 @@ import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.ui.common.interfaces.LayoutControlInterface
 import org.tvheadend.tvhclient.ui.common.interfaces.ToolbarInterface
 import org.tvheadend.tvhclient.ui.common.onAttach
+import org.tvheadend.tvhclient.util.extensions.applySystemBarInsets
 import org.tvheadend.tvhclient.util.extensions.gone
+import org.tvheadend.tvhclient.util.extensions.setUpEdgeToEdge
 import org.tvheadend.tvhclient.util.extensions.visible
 import org.tvheadend.tvhclient.util.getThemeId
 import timber.log.Timber
@@ -23,7 +26,11 @@ class ProgramDetailsActivity : AppCompatActivity(), ToolbarInterface, LayoutCont
     override fun onCreate(savedInstanceState: Bundle?) {
         setTheme(getThemeId(this))
         super.onCreate(savedInstanceState)
+        setUpEdgeToEdge()
         setContentView(R.layout.misc_content_activity)
+
+        findViewById<View>(R.id.app_bar).applySystemBarInsets(top = true)
+        findViewById<View>(R.id.content_container).applySystemBarInsets(bottom = true, horizontal = true)
 
         toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)

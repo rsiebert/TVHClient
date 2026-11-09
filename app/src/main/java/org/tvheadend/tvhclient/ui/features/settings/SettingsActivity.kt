@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.IntentFilter
 import android.os.Bundle
 import android.view.MenuItem
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -19,6 +20,8 @@ import org.tvheadend.tvhclient.ui.features.information.ChangeLogFragment
 import org.tvheadend.tvhclient.ui.features.information.InformationFragment
 import org.tvheadend.tvhclient.ui.features.information.PrivacyPolicyFragment
 import org.tvheadend.tvhclient.ui.features.unlocker.UnlockerFragment
+import org.tvheadend.tvhclient.util.extensions.applySystemBarInsets
+import org.tvheadend.tvhclient.util.extensions.setUpEdgeToEdge
 import org.tvheadend.tvhclient.util.extensions.showSnackbarMessage
 import org.tvheadend.tvhclient.util.getThemeId
 import timber.log.Timber
@@ -31,7 +34,11 @@ class SettingsActivity : AppCompatActivity(), RemoveFragmentFromBackstackInterfa
     override fun onCreate(savedInstanceState: Bundle?) {
         setTheme(getThemeId(this))
         super.onCreate(savedInstanceState)
+        setUpEdgeToEdge()
         setContentView(R.layout.misc_content_activity)
+
+        findViewById<View>(R.id.app_bar).applySystemBarInsets(top = true)
+        findViewById<View>(R.id.content_container).applySystemBarInsets(bottom = true, horizontal = true)
 
         setSupportActionBar(findViewById(R.id.toolbar))
         supportActionBar?.setDisplayHomeAsUpEnabled(true)

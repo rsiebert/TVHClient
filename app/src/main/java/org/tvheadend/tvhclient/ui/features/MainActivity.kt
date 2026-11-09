@@ -77,10 +77,12 @@ import org.tvheadend.tvhclient.ui.features.navigation.NavigationViewModel
 import org.tvheadend.tvhclient.ui.features.playback.external.CastSessionManagerListener
 import org.tvheadend.tvhclient.ui.features.programs.ProgramListFragment
 import org.tvheadend.tvhclient.ui.features.startup.StartupFragment
+import org.tvheadend.tvhclient.util.extensions.applySystemBarInsets
 import org.tvheadend.tvhclient.util.extensions.getCastContext
 import org.tvheadend.tvhclient.util.extensions.getCastSession
 import org.tvheadend.tvhclient.util.extensions.gone
 import org.tvheadend.tvhclient.util.extensions.sendSnackbarMessage
+import org.tvheadend.tvhclient.util.extensions.setUpEdgeToEdge
 import org.tvheadend.tvhclient.util.extensions.showSnackbarMessage
 import org.tvheadend.tvhclient.util.extensions.visible
 import org.tvheadend.tvhclient.util.extensions.visibleOrGone
@@ -135,7 +137,11 @@ class MainActivity : AppCompatActivity(), ToolbarInterface, LayoutControlInterfa
                     .build())
         }
         super.onCreate(savedInstanceState)
+        setUpEdgeToEdge()
         setContentView(R.layout.main_activity)
+
+        findViewById<View>(R.id.app_bar).applySystemBarInsets(top = true)
+        findViewById<View>(R.id.content_container).applySystemBarInsets(bottom = true, horizontal = true)
 
         toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)

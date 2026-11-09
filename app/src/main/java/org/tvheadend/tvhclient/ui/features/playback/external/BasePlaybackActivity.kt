@@ -12,6 +12,7 @@ import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.databinding.PlayActivityBinding
 import org.tvheadend.tvhclient.ui.common.onAttach
 import org.tvheadend.tvhclient.util.extensions.gone
+import org.tvheadend.tvhclient.util.extensions.setUpEdgeToEdge
 import org.tvheadend.tvhclient.util.getThemeId
 import timber.log.Timber
 
@@ -23,6 +24,7 @@ abstract class BasePlaybackActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         setTheme(getThemeId(this))
         super.onCreate(savedInstanceState)
+        setUpEdgeToEdge()
         binding = PlayActivityBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)

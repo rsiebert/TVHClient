@@ -130,10 +130,6 @@
         <item name="colorPrimary">@color/primaryColor</item>
         <!--</editor-fold>-->
 
-        <!--<editor-fold desc="Status bar color">-->
-        <item name="colorPrimaryDark">@color/primaryDarkColor</item>
-        <!--</editor-fold>-->
-
         <!--<editor-fold desc="Progressbar color">-->
         <item name="colorSecondary">@color/secondaryColor</item>
         <!--</editor-fold>-->
@@ -218,10 +214,6 @@
 
         <!--<editor-fold desc="Main color">-->
         <item name="colorPrimary">@color/primaryColor</item>
-        <!--</editor-fold>-->
-
-        <!--<editor-fold desc="Status bar color">-->
-        <item name="colorPrimaryDark">@color/primaryDarkColor</item>
         <!--</editor-fold>-->
 
         <!--<editor-fold desc="Progressbar color">-->
