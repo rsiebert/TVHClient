@@ -186,16 +186,24 @@ public class HtspConnection extends Thread implements ServerConnectionInterface<
         }
 
         if (isRunning) {
-            synchronized (signal) {
-                try {
-                    signal.wait(htspConnectionData.getConnectionTimeout());
-                    if (socketChannel.isConnectionPending()) {
-                        Timber.d("Timeout while waiting to connect to server");
-                        connectionListener.onConnectionStateChange(new ConnectionStateResult.Failed(new ConnectionFailureReason.Other()));
-                        closeConnection();
+            // A server that answers immediately completes the connect inside connect()/
+            // finishConnect(), and the selector then never reports OP_CONNECT, so the monitor below
+            // would never be notified and every connect would block for the whole connection timeout.
+            // There is nothing to wait for when the socket is already connected.
+            if (socketChannel.isConnected()) {
+                Timber.d("Connection to server completed immediately");
+            } else {
+                synchronized (signal) {
+                    try {
+                        signal.wait(htspConnectionData.getConnectionTimeout());
+                        if (socketChannel.isConnectionPending()) {
+                            Timber.d("Timeout while waiting to connect to server");
+                            connectionListener.onConnectionStateChange(new ConnectionStateResult.Failed(new ConnectionFailureReason.Other()));
+                            closeConnection();
+                        }
+                    } catch (InterruptedException e) {
+                        Timber.d(e, "Waiting for pending connection was interrupted.");
                     }
-                } catch (InterruptedException e) {
-                    Timber.d(e, "Waiting for pending connection was interrupted.");
                 }
             }
         }

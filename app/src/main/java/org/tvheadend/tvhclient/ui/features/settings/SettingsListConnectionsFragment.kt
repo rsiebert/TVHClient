@@ -171,7 +171,9 @@ class SettingsListConnectionsFragment : Fragment(), BackPressedInterface, Action
                         .setTitle(R.string.disconnect_from_server)
                         .setMessage(R.string.no_active_connection)
                         .setPositiveButton(R.string.disconnect) { _, _ ->
-                            updateConnectionAndRestartApplication()
+                            // Nothing is left to connect to, so the application has to fall back to
+                            // its startup flow.
+                            restartApplication()
                         }
                         .show()
             }
@@ -180,7 +182,11 @@ class SettingsListConnectionsFragment : Fragment(), BackPressedInterface, Action
                         .setTitle(R.string.connect_to_new_server)
                         .setMessage(R.string.connection_changed)
                         .setPositiveButton(R.string.connect) { _, _ ->
-                            updateConnectionAndRestartApplication()
+                            // Reconnect in place instead of relaunching, so the settings screen the
+                            // user is on stays open.
+                            rebindConnection()
+                            connectionHasChanged = false
+                            (activity as RemoveFragmentFromBackstackInterface).removeFragmentFromBackstack()
                         }
                         .show()
             }
@@ -190,11 +196,27 @@ class SettingsListConnectionsFragment : Fragment(), BackPressedInterface, Action
         }
     }
 
-    private fun updateConnectionAndRestartApplication() {
-        context?.stopService(Intent(context, ConnectionService::class.java))
-        val intent = Intent(context, MainActivity::class.java)
+    /**
+     * Reconnects to the connection the user just activated without recreating the activity. The
+     * connection service rebinds to the new active connection and runs a fresh sync.
+     */
+    private fun rebindConnection() {
+        val ctx = context ?: return
+        val intent = Intent(ctx, ConnectionService::class.java)
+        intent.action = ConnectionService.ACTION_REBIND
+        ctx.startService(intent)
+    }
+
+    /**
+     * Relaunches the application. Used when the active connection was removed, where every screen
+     * has to fall back to the startup flow because there is no server left to talk to.
+     */
+    private fun restartApplication() {
+        val ctx = context ?: return
+        ctx.stopService(Intent(ctx, ConnectionService::class.java))
+        val intent = Intent(ctx, MainActivity::class.java)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-        context?.startActivity(intent)
+        ctx.startActivity(intent)
     }
 
     override fun onClick(view: View, position: Int) {

@@ -57,6 +57,26 @@ class HtspIntentServiceHandler(val context: Context, val appRepository: AppRepos
     private val authenticationLock = Object()
     private val responseLock = Object()
 
+    /** The connection timeout in milliseconds, used for the HTSP connection and the wait below. */
+    private val connectionTimeoutMillis: Int = Integer.valueOf(
+            sharedPreferences.getString("connection_timeout",
+                    context.resources.getString(R.string.pref_default_connection_timeout))!!) * 1000
+
+    /**
+     * The outcome of the authentication attempt, or null while it is still running. Guarded by
+     * [authenticationLock]. The one-shot work waits on this instead of sleeping for a fixed time,
+     * so a fast server is not delayed and a slow one is not cut off after five seconds.
+     */
+    @Volatile
+    private var authenticationResult: AuthenticationStateResult? = null
+
+    /**
+     * How long the one-shot work waits for an authentication result. It matches the connection
+     * timeout plus a margin, so a slow server is given the same grace period the connection itself
+     * uses before the work gives up.
+     */
+    private val authenticationWaitTimeout: Long = connectionTimeoutMillis + 5_000L
+
     /**
      * Set while the handler is being torn down. A failure that surfaces then was caused by closing
      * our own socket while the handshake was still in flight, not by the server, so it must not be
@@ -74,7 +94,7 @@ class HtspIntentServiceHandler(val context: Context, val appRepository: AppRepos
                 connection.serverUrl,
                 BuildConfig.VERSION_NAME,
                 BuildConfig.VERSION_CODE,
-                Integer.valueOf(sharedPreferences.getString("connection_timeout", context.resources.getString(R.string.pref_default_connection_timeout))!!) * 1000
+                connectionTimeoutMillis
         )
         htspConnection = HtspConnection(htspConnectionData, this, null)
 
@@ -91,13 +111,7 @@ class HtspIntentServiceHandler(val context: Context, val appRepository: AppRepos
             return
         }
 
-        synchronized(authenticationLock) {
-            try {
-                authenticationLock.wait(5000)
-            } catch (e: InterruptedException) {
-                Timber.e(e, "Timeout waiting while connecting to server")
-            }
-        }
+        waitForAuthentication()
 
         if (htspConnection.isNotConnected || !htspConnection.isAuthenticated) {
             Timber.d("Connection to server failed or authentication failed")
@@ -116,6 +130,31 @@ class HtspIntentServiceHandler(val context: Context, val appRepository: AppRepos
         }
     }
 
+    /**
+     * Waits until the connection reported that it authenticated or failed. Waiting on the actual
+     * result instead of a fixed delay means the work never starts against a half-open connection,
+     * and a server that needs longer than five seconds is not mistaken for an unreachable one.
+     */
+    private fun waitForAuthentication() {
+        val deadline = System.currentTimeMillis() + authenticationWaitTimeout
+        synchronized(authenticationLock) {
+            while (authenticationResult == null) {
+                val remaining = deadline - System.currentTimeMillis()
+                if (remaining <= 0) {
+                    Timber.d("Timed out while waiting for the connection to authenticate")
+                    return
+                }
+                try {
+                    authenticationLock.wait(remaining)
+                } catch (e: InterruptedException) {
+                    Timber.e(e, "Waiting for the connection was interrupted")
+                    Thread.currentThread().interrupt()
+                    return
+                }
+            }
+        }
+    }
+
     override fun onDestroy() {
         Timber.d("Stopping service handler")
         isDestroying = true
@@ -125,7 +164,8 @@ class HtspIntentServiceHandler(val context: Context, val appRepository: AppRepos
 
     override fun onAuthenticationStateChange(result: AuthenticationStateResult) {
         synchronized(authenticationLock) {
-            authenticationLock.notify()
+            authenticationResult = result
+            authenticationLock.notifyAll()
         }
         // Closing the socket while the handshake is still running makes the connection report a
         // failure. That is not a server error, so it is not forwarded to the user interface.
