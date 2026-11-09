@@ -18,11 +18,9 @@
 
 -dontwarn androidx.**
 -keep interface androidx.** { *; }
--keep class androidx.** { *; }
 
 # Material dialogs
 -dontwarn com.google.android.material.**
--keep class com.google.android.material.** { *; }
 
 # Kotlin coroutines
 # ServiceLoader support
