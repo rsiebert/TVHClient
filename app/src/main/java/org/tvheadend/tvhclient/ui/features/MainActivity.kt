@@ -738,7 +738,7 @@ class MainActivity : AppCompatActivity(), ToolbarInterface, LayoutControlInterfa
         val detailsFrameLayout: FrameLayout? = findViewById(R.id.details)
         detailsFrameLayout?.gone()
         mainFrameLayout.layoutParams = LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
+                0,
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 1.0f)
     }
@@ -749,7 +749,7 @@ class MainActivity : AppCompatActivity(), ToolbarInterface, LayoutControlInterfa
         val detailsFrameLayout: FrameLayout? = findViewById(R.id.details)
         detailsFrameLayout?.visible()
         mainFrameLayout.layoutParams = LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
+                0,
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 0.65f)
     }

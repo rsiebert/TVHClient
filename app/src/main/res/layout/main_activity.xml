@@ -7,67 +7,62 @@
     android:layout_height="match_parent"
     tools:openDrawer="start">
 
-    <androidx.coordinatorlayout.widget.CoordinatorLayout
+    <LinearLayout
+        android:id="@+id/content_container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/app_bar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="?attr/toolbarColorPrimary">
+
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:background="?attr/toolbarColorPrimary"
+                android:layout_height="?android:attr/actionBarSize" />
+        </com.google.android.material.appbar.AppBarLayout>
+
+        <ProgressBar
+            android:id="@+id/sync_progress"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:indeterminateOnly="true"
+            android:visibility="gone" />
 
         <LinearLayout
-            android:id="@+id/content_container"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:baselineAligned="false"
+            android:orientation="horizontal">
 
-            <com.google.android.material.appbar.AppBarLayout
-                android:id="@+id/app_bar"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="?attr/toolbarColorPrimary">
-
-                <androidx.appcompat.widget.Toolbar
-                    android:id="@+id/toolbar"
-                    android:layout_width="match_parent"
-                    android:background="?attr/toolbarColorPrimary"
-                    android:layout_height="?android:attr/actionBarSize" />
-            </com.google.android.material.appbar.AppBarLayout>
-
-            <ProgressBar
-                android:id="@+id/sync_progress"
-                style="?android:attr/progressBarStyleHorizontal"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:indeterminateOnly="true"
-                android:visibility="gone" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
+            <FrameLayout
+                android:id="@+id/main"
+                android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:baselineAligned="false"
-                android:orientation="horizontal">
+                android:layout_weight="0.65" />
 
-                <FrameLayout
-                    android:id="@+id/main"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="0.65" />
+            <include layout="@layout/view_vertical_divider" />
 
-                <include layout="@layout/view_vertical_divider" />
+            <FrameLayout
+                android:id="@+id/details"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0.35" />
 
-                <FrameLayout
-                    android:id="@+id/details"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="0.35" />
-
-            </LinearLayout>
-
-            <fragment
-                android:id="@+id/cast_mini_controller"
-                class="com.google.android.gms.cast.framework.media.widget.MiniControllerFragment"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:visibility="gone" />
         </LinearLayout>
-    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/cast_mini_controller"
+            android:name="com.google.android.gms.cast.framework.media.widget.MiniControllerFragment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone" />
+    </LinearLayout>
 
     <com.google.android.material.navigation.NavigationView
         android:id="@+id/nav_view"
