@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Owned by the app rather than reused from media3-ui.
+
+    media3-ui ships an equivalent layout (and its id) as a private resource, so inflating the
+    library copy ties the app to something it is not allowed to reference. The TrackSelectionView
+    itself is public API.
+-->
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="match_parent">
+
+    <androidx.media3.ui.TrackSelectionView
+        android:id="@+id/track_selection_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+</ScrollView>

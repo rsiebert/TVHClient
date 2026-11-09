@@ -5,28 +5,30 @@ import java.util.concurrent.ScheduledThreadPoolExecutor
 import java.util.concurrent.TimeUnit
 
 /**
- * The single background pool for the blocking HTSP work: opening a connection, running the
- * handshake, downloading channel icons and driving the player connections.
+ * Creates the pool that runs the blocking HTSP work: opening a connection, running the handshake,
+ * downloading channel icons and driving the player connections.
  *
  * Every connection handler and both player view models used to create their own pool of ten
  * threads, so a live connection plus a player could hold dozens of threads that were mostly idle.
+ * The pool is now created once and handed out by [org.tvheadend.tvhclient.AppGraph], which also lets
+ * a test install a pool it controls.
  *
- * The pool is application scoped and is deliberately never shut down. The connection handler
- * previously shut its pool down in `onDestroy`, which is not possible once the pool is shared; the
- * threads are daemons and the pool releases idle ones again.
+ * The threads are daemons and idle ones are released, so an idle application is not kept alive by
+ * the pool.
  */
 object HtspExecutor {
 
-    private const val CORE_POOL_SIZE = 4
-    private const val IDLE_TIMEOUT_SECONDS = 30L
+    const val DEFAULT_CORE_POOL_SIZE = 4
+    private const val DEFAULT_IDLE_TIMEOUT_SECONDS = 30L
 
-    val service: ScheduledExecutorService =
-            ScheduledThreadPoolExecutor(CORE_POOL_SIZE) { runnable ->
+    fun create(
+        corePoolSize: Int = DEFAULT_CORE_POOL_SIZE,
+        idleTimeoutSeconds: Long = DEFAULT_IDLE_TIMEOUT_SECONDS
+    ): ScheduledExecutorService =
+            ScheduledThreadPoolExecutor(corePoolSize) { runnable ->
                 Thread(runnable, "htsp-worker").apply { isDaemon = true }
             }.apply {
-                // Let idle threads go away so a connection that is not doing anything does not keep
-                // the whole pool alive.
-                setKeepAliveTime(IDLE_TIMEOUT_SECONDS, TimeUnit.SECONDS)
+                setKeepAliveTime(idleTimeoutSeconds, TimeUnit.SECONDS)
                 allowCoreThreadTimeOut(true)
             }
 }

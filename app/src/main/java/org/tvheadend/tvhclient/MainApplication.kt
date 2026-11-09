@@ -20,11 +20,13 @@ import org.tvheadend.data.di.DataContainer
 import org.tvheadend.tvhclient.debug.FakeServerBootstrap
 import org.tvheadend.tvhclient.ui.common.onAttach
 import org.tvheadend.tvhclient.ui.features.playback.external.ExpandedControlsActivity
+import org.tvheadend.tvhclient.util.HtspExecutor
 import org.tvheadend.tvhclient.util.MigrateUtils
 import org.tvheadend.tvhclient.util.billing.BillingDataSource
 import org.tvheadend.tvhclient.util.logging.DebugTree
 import org.tvheadend.tvhclient.util.logging.FileLoggingTree
 import timber.log.Timber
+import java.util.concurrent.ScheduledExecutorService
 
 // TODO snackbar locale changes
 // TODO when a notification is dismissed, it reappears when the recording gets updated,
@@ -43,6 +45,8 @@ class MainApplication : Application(), OptionsProvider, AppGraph {
 
     override val mainRepository: MainRepository
         get() = appContainer.mainRepository
+
+    override val htspExecutor: ScheduledExecutorService = HtspExecutor.create()
 
     val appSharedPreferences: SharedPreferences
         get() = PreferenceManager.getDefaultSharedPreferences(this)

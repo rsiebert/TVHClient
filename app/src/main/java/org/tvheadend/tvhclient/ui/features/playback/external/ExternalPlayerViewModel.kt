@@ -16,11 +16,11 @@ import org.tvheadend.data.entity.Recording
 import org.tvheadend.data.entity.ServerProfile
 import org.tvheadend.data.entity.ServerStatus
 import org.tvheadend.htsp.*
+import org.tvheadend.tvhclient.AppGraphProvider
 import org.tvheadend.tvhclient.BuildConfig
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.ui.base.BaseViewModel
 import org.tvheadend.tvhclient.ui.features.playback.PlaybackLogic
-import org.tvheadend.tvhclient.util.HtspExecutor
 import timber.log.Timber
 import java.net.InetAddress
 import java.net.UnknownHostException
@@ -29,7 +29,7 @@ import java.util.concurrent.ScheduledExecutorService
 class ExternalPlayerViewModel(application: Application) : BaseViewModel(application), ServerConnectionStateListener {
 
     // Connection related
-    private val execService: ScheduledExecutorService = HtspExecutor.service
+    private val execService: ScheduledExecutorService = AppGraphProvider.require().htspExecutor
     private val htspConnection: HtspConnection
 
     var channel: Channel? = null

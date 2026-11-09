@@ -27,6 +27,7 @@ import org.tvheadend.api.ServerResponseListener
 import org.tvheadend.data.entity.Channel
 import org.tvheadend.data.entity.DvrCutpoint
 import org.tvheadend.htsp.*
+import org.tvheadend.tvhclient.AppGraphProvider
 import org.tvheadend.tvhclient.BuildConfig
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.service.htsp.convertMessageToCutpointList
@@ -34,7 +35,6 @@ import org.tvheadend.tvhclient.ui.base.BaseViewModel
 import org.tvheadend.tvhclient.ui.features.playback.PlaybackLogic
 import org.tvheadend.tvhclient.ui.features.playback.internal.utils.CustomEventLogger
 import org.tvheadend.tvhclient.ui.features.playback.internal.utils.VideoAspect
-import org.tvheadend.tvhclient.util.HtspExecutor
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.util.*
@@ -48,7 +48,7 @@ class PlayerViewModel(application: Application) : BaseViewModel(application), Se
     private lateinit var channelList: List<Channel>
 
     // Connection related
-    private val execService: ScheduledExecutorService = HtspExecutor.service
+    private val execService: ScheduledExecutorService = AppGraphProvider.require().htspExecutor
     private lateinit var htspConnection: HtspConnection
     private var htspSubscriptionDataSourceFactory: HtspSubscriptionDataSource.Factory? = null
     private var htspFileInputStreamDataSourceFactory: HtspFileInputStreamDataSource.Factory? = null

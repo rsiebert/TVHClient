@@ -10,6 +10,7 @@ import org.tvheadend.data.entity.Connection
 import org.tvheadend.tvhclient.MainApplication
 import org.tvheadend.tvhclient.service.htsp.HtspServiceHandler
 import timber.log.Timber
+import java.util.concurrent.ScheduledExecutorService
 
 class ConnectionService : Service() {
 
@@ -27,6 +28,7 @@ class ConnectionService : Service() {
 
     private lateinit var appRepository: AppRepository
     private lateinit var sharedPreferences: SharedPreferences
+    private lateinit var execService: ScheduledExecutorService
 
     private lateinit var connection: Connection
     private lateinit var serviceHandler: ServiceInterface
@@ -36,13 +38,14 @@ class ConnectionService : Service() {
         val application = application as MainApplication
         appRepository = application.appRepository
         sharedPreferences = application.appSharedPreferences
+        execService = application.htspExecutor
 
         // onStartCommand() needs the handler (and thus the connection) to be ready right after
         // onCreate(), so this one read is bridged back to blocking. It is the documented boundary
         // for runBlocking outside the htsp handlers; the database read itself still happens off the
         // main thread via the data source's withContext(Dispatchers.IO).
         connection = runBlocking { appRepository.connectionData.getActiveItem() }
-        serviceHandler = HtspServiceHandler(this, appRepository, connection)
+        serviceHandler = HtspServiceHandler(this, appRepository, connection, execService)
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -62,7 +65,7 @@ class ConnectionService : Service() {
         Timber.d("Rebinding the service handler to the active connection")
         serviceHandler.onDestroy()
         connection = runBlocking { appRepository.connectionData.getActiveItem() }
-        serviceHandler = HtspServiceHandler(this, appRepository, connection)
+        serviceHandler = HtspServiceHandler(this, appRepository, connection, execService)
     }
 
     override fun onDestroy() {

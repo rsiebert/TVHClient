@@ -23,7 +23,6 @@ import org.tvheadend.tvhclient.BuildConfig
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.service.ConnectionIntentService
 import org.tvheadend.tvhclient.service.ServerTicketReceiver
-import org.tvheadend.tvhclient.util.HtspExecutor
 import org.tvheadend.tvhclient.service.SyncStateResult
 import org.tvheadend.tvhclient.util.convertUrlToHashString
 import org.tvheadend.tvhclient.util.extensions.sendSyncStateMessage
@@ -36,7 +35,10 @@ import java.util.concurrent.ScheduledExecutorService
 import kotlin.math.floor
 import kotlin.math.max
 
-class HtspIntentServiceHandler(val context: Context, val appRepository: AppRepository, val connection: Connection) : ConnectionIntentService.ServiceInterface, ServerConnectionStateListener {
+class HtspIntentServiceHandler(val context: Context,
+                                val appRepository: AppRepository,
+                                val connection: Connection,
+                                private val execService: ScheduledExecutorService) : ConnectionIntentService.ServiceInterface, ServerConnectionStateListener {
 
     /**
      * Bridges the now-suspending data-source reads back into this handler's blocking code.
@@ -48,7 +50,6 @@ class HtspIntentServiceHandler(val context: Context, val appRepository: AppRepos
     private fun <T> blocking(block: suspend () -> T): T = runBlocking { block() }
 
     private val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
-    private val execService: ScheduledExecutorService = HtspExecutor.service
     private val htspConnection: HtspConnection
     private val serverStatus: ServerStatus = blocking { appRepository.serverStatusData.getActiveItem() }
     private var htspVersion: Int = 13

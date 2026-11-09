@@ -1,6 +1,7 @@
 package org.tvheadend.tvhclient
 
 import org.tvheadend.data.AppRepository
+import java.util.concurrent.ScheduledExecutorService
 
 /**
  * The parts of the application's dependency graph that the ViewModels need.
@@ -14,6 +15,13 @@ interface AppGraph {
     val appRepository: AppRepository
 
     val mainRepository: MainRepository
+
+    /**
+     * The pool that runs the blocking HTSP work (opening a connection, the handshake, icon
+     * downloads and the player connections). It is shared so a connection and a player do not each
+     * hold their own set of idle threads, and so a test can supply its own pool.
+     */
+    val htspExecutor: ScheduledExecutorService
 }
 
 /**

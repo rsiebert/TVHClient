@@ -13,6 +13,7 @@ import androidx.media3.exoplayer.trackselection.DefaultTrackSelector.SelectionOv
 import androidx.media3.exoplayer.trackselection.MappingTrackSelector.MappedTrackInfo
 import androidx.media3.ui.TrackSelectionView
 import androidx.media3.ui.TrackSelectionView.TrackSelectionListener
+import org.tvheadend.tvhclient.R
 
 class TrackSelectionViewFragment : Fragment(), TrackSelectionListener {
 
@@ -28,6 +29,10 @@ class TrackSelectionViewFragment : Fragment(), TrackSelectionListener {
         retainInstance = true
     }
 
+    // The support values come straight from MappedTrackInfo#getTrackSupport, which is declared
+    // @C.FormatSupport, so they are valid; the array is built at runtime, which the inspection on
+    // the annotated Tracks.Group parameter cannot see.
+    @Suppress("WrongConstant")
     fun init(mappedTrackInfo: MappedTrackInfo,
              rendererIndex: Int,
              initialIsDisabled: Boolean,
@@ -62,11 +67,9 @@ class TrackSelectionViewFragment : Fragment(), TrackSelectionListener {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        // These two belong to the media3-ui library, not to the app, so they are referenced
-        // through its R class.
-        val rootView = inflater.inflate(androidx.media3.ui.R.layout.exo_track_selection_dialog, container, false)
-        val trackSelectionView: TrackSelectionView =
-                rootView.findViewById(androidx.media3.ui.R.id.exo_track_selection_view)
+        // The app owns this layout; media3-ui's own copy and its id are private resources.
+        val rootView = inflater.inflate(R.layout.track_selection_view, container, false)
+        val trackSelectionView: TrackSelectionView = rootView.findViewById(R.id.track_selection_view)
 
         trackSelectionView.setShowDisableOption(true)
         trackSelectionView.setAllowMultipleOverrides(allowMultipleOverrides)

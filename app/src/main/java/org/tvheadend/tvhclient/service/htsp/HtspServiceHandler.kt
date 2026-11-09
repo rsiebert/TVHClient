@@ -23,7 +23,6 @@ import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.service.*
 import org.tvheadend.tvhclient.ui.common.addNotificationScheduledRecordingStarts
 import org.tvheadend.tvhclient.ui.common.removeNotificationById
-import org.tvheadend.tvhclient.util.HtspExecutor
 import org.tvheadend.tvhclient.util.convertUrlToHashString
 import org.tvheadend.tvhclient.util.extensions.isEqualTo
 import org.tvheadend.tvhclient.util.extensions.sendSnackbarMessage
@@ -46,7 +45,10 @@ import kotlin.math.max
 /** How long to wait for a channel icon that is read over http. */
 private const val ICON_READ_TIMEOUT_MS = 10_000
 
-class HtspServiceHandler(val context: Context, val appRepository: AppRepository, val connection: Connection) : ConnectionService.ServiceInterface, ServerConnectionStateListener, ServerMessageListener<HtspMessage> {
+class HtspServiceHandler(val context: Context,
+                         val appRepository: AppRepository,
+                         val connection: Connection,
+                         private val execService: ScheduledExecutorService) : ConnectionService.ServiceInterface, ServerConnectionStateListener, ServerMessageListener<HtspMessage> {
 
     /**
      * Bridges the now-suspending data-source reads back into this handler's blocking code.
@@ -68,7 +70,6 @@ class HtspServiceHandler(val context: Context, val appRepository: AppRepository,
     )
     private var htspVersion: Int = 13
     private var htspConnection: HtspConnection? = null
-    private val execService: ScheduledExecutorService = HtspExecutor.service
 
     private val pendingEventOps = ArrayList<Program>()
     private val pendingChannelOps = ArrayList<Channel>()
