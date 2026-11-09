@@ -83,7 +83,7 @@ abstract class BaseFragment : Fragment() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             android.R.id.home -> {
-                activity?.finish()
+                activity?.onBackPressedDispatcher?.onBackPressed()
                 true
             }
             else -> super.onOptionsItemSelected(item)

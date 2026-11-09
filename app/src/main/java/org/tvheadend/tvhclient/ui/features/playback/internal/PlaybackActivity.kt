@@ -507,7 +507,7 @@ class PlaybackActivity : AppCompatActivity() {
         }
 
         MaterialAlertDialogBuilder(this)
-                .setTitle("Select the video aspect ratio")
+                .setTitle(R.string.aspect_ratio_select_title)
                 .setSingleChoiceItems(videoAspectRatioNameList.toTypedArray(), selectedVideoAspectIndex) { _, which ->
                     Timber.d("Selected aspect ratio index is $which")
                     selectedVideoAspectIndex = which

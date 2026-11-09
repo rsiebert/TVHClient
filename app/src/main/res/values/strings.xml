@@ -449,4 +449,5 @@
     <string name="error_loading_information">Error loading required information</string>
     <string name="exo_track_selection_title_video">Video</string>
     <string name="exo_track_selection_title_text">Text</string>
+    <string name="aspect_ratio_select_title">Select the video aspect ratio</string>
 </resources>

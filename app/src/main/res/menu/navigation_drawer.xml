@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <!-- A single checkable group so only one destination is ever checked at a time. -->
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/nav_channels"
@@ -10,9 +11,6 @@
             android:id="@+id/nav_program_guide"
             android:icon="?attr/ic_menu_program_guide"
             android:title="@string/pref_program_guide" />
-    </group>
-
-    <group android:checkableBehavior="single">
         <item
             android:id="@+id/nav_completed_recordings"
             android:icon="?attr/ic_menu_completed_recordings"
@@ -37,9 +35,6 @@
             android:id="@+id/nav_removed_recordings"
             android:icon="?attr/ic_menu_removed_recordings"
             android:title="@string/removed_recordings" />
-    </group>
-
-    <group android:checkableBehavior="single">
         <item
             android:id="@+id/nav_extras"
             android:icon="?attr/ic_menu_extras"

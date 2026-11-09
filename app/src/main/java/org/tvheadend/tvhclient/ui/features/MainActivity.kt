@@ -121,9 +121,6 @@ class MainActivity : AppCompatActivity(), ToolbarInterface, LayoutControlInterfa
     private var isUnlocked: Boolean = false
     private var isDualPane: Boolean = false
 
-    private lateinit var queryTextSubmitTask: Runnable
-    private val delayedQueryTextSubmitHandler = Handler(Looper.getMainLooper())
-
     private lateinit var miniController: View
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -242,13 +239,6 @@ class MainActivity : AppCompatActivity(), ToolbarInterface, LayoutControlInterfa
             Timber.d("Casting is not available, casting will no be enabled")
         }
 
-        // Calls the method in the fragments that will initiate the actual search
-        // Disable search as you type in the epg because the results
-        // will be shown in a separate fragment program list.
-        queryTextSubmitTask = Runnable {
-            Timber.d("Delayed search timer elapsed, starting search")
-        }
-
         baseViewModel.isUnlockedLiveData.observe(this) { isUnlocked ->
             Timber.d("Received live data, isUnlocked value changed to $isUnlocked")
             baseViewModel.isUnlocked = isUnlocked || BuildConfig.OVERRIDE_UNLOCKED
@@ -353,7 +343,6 @@ class MainActivity : AppCompatActivity(), ToolbarInterface, LayoutControlInterfa
                 Timber.e(e, "Could not remove cast state listener or get cast session manager")
             }
         }
-        delayedQueryTextSubmitHandler.removeCallbacks(queryTextSubmitTask)
         super.onPause()
     }
 
@@ -499,7 +488,6 @@ class MainActivity : AppCompatActivity(), ToolbarInterface, LayoutControlInterfa
 
     override fun onQueryTextSubmit(query: String): Boolean {
         Timber.d("Search string $query was entered")
-        delayedQueryTextSubmitHandler.removeCallbacks(queryTextSubmitTask)
         searchMenuItem?.collapseActionView()
 
         // Save the entered query so it will be shown later in the suggestion drpo down list
@@ -525,16 +513,9 @@ class MainActivity : AppCompatActivity(), ToolbarInterface, LayoutControlInterfa
     }
 
     override fun onQueryTextChange(newText: String): Boolean {
+        // Search-as-you-type was intentionally removed; the query is submitted explicitly and the
+        // results are shown in the dedicated program list fragment.
         Timber.d("Search query changed to $newText")
-        delayedQueryTextSubmitHandler.removeCallbacks(queryTextSubmitTask)
-
-        val fragment = supportFragmentManager.findFragmentById(R.id.main)
-        if (fragment !is ShowProgramListFragmentInterface) {
-            if (newText.length >= 3) {
-                Timber.d("Search query is ${newText.length} characters long, starting timer to start searching")
-                delayedQueryTextSubmitHandler.postDelayed(queryTextSubmitTask, 2000)
-            }
-        }
         return true
     }
 
@@ -543,7 +524,6 @@ class MainActivity : AppCompatActivity(), ToolbarInterface, LayoutControlInterfa
     }
 
     override fun onSuggestionClick(position: Int): Boolean {
-        delayedQueryTextSubmitHandler.removeCallbacks(queryTextSubmitTask)
         searchMenuItem?.collapseActionView()
 
         val cursor = searchView?.suggestionsAdapter?.getItem(position) as Cursor?
