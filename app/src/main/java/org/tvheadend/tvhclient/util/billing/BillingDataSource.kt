@@ -664,7 +664,6 @@ class BillingDataSource private constructor(
         when (billingResult.responseCode) {
             BillingClient.BillingResponseCode.OK -> if (null != list) {
                 processPurchaseList(list, null)
-                return
             } else Timber.d("Null Purchase List Returned from OK response!")
 
             BillingClient.BillingResponseCode.USER_CANCELED -> Timber.i("onPurchasesUpdated: User canceled the purchase")
@@ -672,6 +671,10 @@ class BillingDataSource private constructor(
             BillingClient.BillingResponseCode.DEVELOPER_ERROR -> Timber.e("onPurchasesUpdated: Developer error means that Google Play " + "does not recognize the configuration. If you are just getting started, " + "make sure you have configured the application correctly in the " + "Google Play Console. The SKU product ID must match and the APK you " + "are using must be signed with release keys.")
             else -> Timber.d("BillingResult [" + billingResult.responseCode + "]: " + billingResult.debugMessage)
         }
+        // Clear the flag for every outcome, including a successful purchase. Returning early on
+        // OK used to leave it set, which silently disabled the onResume purchase refresh for the
+        // rest of the process: a pending purchase completing later, or a failed acknowledgement
+        // that still has to be retried, would then not be picked up until the app was restarted.
         defaultScope.launch {
             billingFlowInProcess.emit(false)
         }
