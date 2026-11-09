@@ -1,4 +1,26 @@
+import org.gradle.api.initialization.resolve.RepositoriesMode
+
+// Plugin resolution, including the toolchain resolver plugin declared below.
+pluginManagement {
+    repositories {
+        google()
+        mavenCentral()
+        gradlePluginPortal()
+    }
+}
+
 plugins {
     id 'org.gradle.toolchains.foojay-resolver-convention' version '0.10.0'
 }
+
+// The single authoritative repository list. FAIL_ON_PROJECT_REPOS turns a module that declares
+// its own repositories into a build failure, so this cannot drift back out into the subprojects.
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
+
 include ':app', ':data', ':htsp'
