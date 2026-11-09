@@ -25,6 +25,9 @@ captures/
 .cxx/
 /out/
 
+# Local scratch output (analysis reports, one-off tool dumps)
+/tmp/
+
 # Gradle GUI / task cache
 gradle-app.setting
 .gradletasknamecache
