@@ -56,9 +56,12 @@
 
         </LinearLayout>
 
-        <androidx.fragment.app.FragmentContainerView
+        <!-- The Cast MiniControllerFragment attaches its view to the container directly, so it must
+             use a regular <fragment> tag; a FragmentContainerView rejects it. -->
+        <fragment
             android:id="@+id/cast_mini_controller"
-            android:name="com.google.android.gms.cast.framework.media.widget.MiniControllerFragment"
+            class="com.google.android.gms.cast.framework.media.widget.MiniControllerFragment"
+            tools:ignore="FragmentTagUsage"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:visibility="gone" />
