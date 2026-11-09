@@ -115,6 +115,16 @@ android {
             optimization {
                 enable = false
             }
+            // Firebase Performance rewrites bytecode to add trace methods on every build. That
+            // cost is only worth paying for release artefacts, and the plugin takes the switch
+            // per variant.
+            FirebasePerformance {
+                instrumentationEnabled false
+            }
+            // Debug is never minified, so there is no mapping file worth uploading.
+            firebaseCrashlytics {
+                mappingFileUploadEnabled false
+            }
             // A stable literal rather than a timestamp. A value that changes on every
             // configuration would make generateDebugBuildConfig permanently out of date, which
             // in turn recompiles :app and stops the build cache from ever hitting.
