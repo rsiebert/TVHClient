@@ -84,7 +84,7 @@ class ProgramDetailsActivity : AppCompatActivity(), ToolbarInterface, LayoutCont
         mainFrameLayout.layoutParams = LinearLayout.LayoutParams(
                 0,
                 LinearLayout.LayoutParams.MATCH_PARENT,
-                0.65f)
+                0.35f)
     }
 
     override fun forceSingleScreenLayout() {
