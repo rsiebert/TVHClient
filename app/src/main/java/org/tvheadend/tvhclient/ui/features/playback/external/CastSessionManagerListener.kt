@@ -7,25 +7,24 @@ import com.google.android.gms.cast.framework.SessionManagerListener
 
 import timber.log.Timber
 
-class CastSessionManagerListener(private val activity: Activity, private var castSession: CastSession?) : SessionManagerListener<CastSession> {
+/**
+ * Invalidates the activity's options menu when a Cast session starts, resumes or ends, so that the
+ * per-item `cast` actions appear and disappear with the session.
+ */
+class CastSessionManagerListener(private val activity: Activity) : SessionManagerListener<CastSession> {
 
     override fun onSessionEnded(session: CastSession, error: Int) {
         Timber.d("Cast session ended with error $error")
-        if (session === castSession) {
-            castSession = null
-        }
         activity.invalidateOptionsMenu()
     }
 
     override fun onSessionResumed(session: CastSession, wasSuspended: Boolean) {
         Timber.d("Cast session resumed, was suspended $wasSuspended")
-        castSession = session
         activity.invalidateOptionsMenu()
     }
 
     override fun onSessionStarted(session: CastSession, sessionId: String) {
         Timber.d("Cast session started with id $sessionId")
-        castSession = session
         activity.invalidateOptionsMenu()
     }
 

@@ -52,7 +52,7 @@ class SettingsUserInterfaceFragment : PreferenceFragmentCompat(), Preference.OnP
         when (preference.key) {
             "multiple_channel_tags_enabled" -> handlePreferenceMultipleChannelTagsSelected()
             "program_artwork_enabled" -> handlePreferenceShowArtworkSelected()
-            "casting" -> handlePreferenceCastingSelected()
+            "casting_minicontroller_enabled" -> handlePreferenceCastingSelected()
         }
         return true
     }

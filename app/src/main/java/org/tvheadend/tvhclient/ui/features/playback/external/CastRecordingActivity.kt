@@ -8,6 +8,7 @@ import com.google.android.gms.cast.MediaMetadata
 import com.google.android.gms.cast.framework.media.RemoteMediaClient
 import com.google.android.gms.common.images.WebImage
 import org.tvheadend.tvhclient.R
+import org.tvheadend.tvhclient.ui.features.playback.PlaybackLogic
 import org.tvheadend.tvhclient.util.extensions.getCastSession
 import org.tvheadend.tvhclient.util.extensions.gone
 import timber.log.Timber
@@ -53,7 +54,7 @@ class CastRecordingActivity : BasePlaybackActivity() {
         Timber.d("Casting recording from server with url $url")
         val mediaInfo = MediaInfo.Builder(url)
                 .setStreamType(MediaInfo.STREAM_TYPE_BUFFERED)
-                .setContentType("video/webm")
+                .setContentType(PlaybackLogic.castingContentType(viewModel.getCastingProfile()?.name))
                 .setMetadata(movieMetadata)
                 .setStreamDuration(recording.stop - recording.start)
                 .build()
@@ -64,8 +65,6 @@ class CastRecordingActivity : BasePlaybackActivity() {
             binding.status.setText(R.string.cast_error_no_media_client_available)
             return
         }
-
-        remoteMediaClient.registerCallback(CastRemoteMediaClientCallback(remoteMediaClient))
 
         val mediaLoadOptions = MediaLoadOptions.Builder()
                 .setAutoplay(true)

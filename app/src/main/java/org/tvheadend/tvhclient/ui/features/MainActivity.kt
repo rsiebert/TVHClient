@@ -16,7 +16,6 @@ import android.os.Handler
 import android.os.Looper
 import android.os.StrictMode
 import android.provider.SearchRecentSuggestions
-import android.view.KeyEvent
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -81,7 +80,6 @@ import org.tvheadend.tvhclient.ui.features.programs.ProgramListFragment
 import org.tvheadend.tvhclient.ui.features.startup.StartupFragment
 import org.tvheadend.tvhclient.util.extensions.applySystemBarInsets
 import org.tvheadend.tvhclient.util.extensions.getCastContext
-import org.tvheadend.tvhclient.util.extensions.getCastSession
 import org.tvheadend.tvhclient.util.extensions.gone
 import org.tvheadend.tvhclient.util.extensions.sendSnackbarMessage
 import org.tvheadend.tvhclient.util.extensions.setUpEdgeToEdge
@@ -109,7 +107,6 @@ class MainActivity : AppCompatActivity(), ToolbarInterface, LayoutControlInterfa
     private var searchView: SearchView? = null
     private var mediaRouteMenuItem: MenuItem? = null
     private var introductoryOverlay: IntroductoryOverlay? = null
-    private var castSession: CastSession? = null
     private var castContext: CastContext? = null
     private var castStateListener: CastStateListener? = null
     private var castSessionManagerListener: SessionManagerListener<CastSession>? = null
@@ -119,7 +116,6 @@ class MainActivity : AppCompatActivity(), ToolbarInterface, LayoutControlInterfa
     private lateinit var navigationView: NavigationView
     private lateinit var syncStateReceiver: SyncStateReceiver
 
-    private var isUnlocked: Boolean = false
     private var isDualPane: Boolean = false
 
     private lateinit var miniController: View
@@ -232,7 +228,7 @@ class MainActivity : AppCompatActivity(), ToolbarInterface, LayoutControlInterfa
         castContext = this.getCastContext()
         if (castContext != null) {
             Timber.d("Casting is available")
-            castSessionManagerListener = CastSessionManagerListener(this, castSession)
+            castSessionManagerListener = CastSessionManagerListener(this)
             castStateListener = CastStateListener { newState ->
                 Timber.d("Cast state changed to $newState")
                 if (newState != CastState.NO_DEVICES_AVAILABLE) {
@@ -305,12 +301,7 @@ class MainActivity : AppCompatActivity(), ToolbarInterface, LayoutControlInterfa
         baseViewModel.isUnlockedLiveData.observe(this) { unlocked ->
             Timber.d("Received live data, unlocked changed to $unlocked")
             invalidateOptionsMenu()
-            miniController.visibleOrGone(
-                isUnlocked && sharedPreferences.getBoolean(
-                    "casting_minicontroller_enabled",
-                    resources.getBoolean(R.bool.pref_default_casting_minicontroller_enabled)
-                )
-            )
+            updateMiniControllerVisibility(unlocked || BuildConfig.OVERRIDE_UNLOCKED)
         }
 
         Timber.d("Done initializing")
@@ -336,18 +327,14 @@ class MainActivity : AppCompatActivity(), ToolbarInterface, LayoutControlInterfa
 
     public override fun onResume() {
         super.onResume()
-        castSession = this.getCastSession()
+        registerCastListeners()
+        // The mini controller can also be switched off in the settings, so re-evaluate it here and
+        // not only when the unlocked state changes.
+        updateMiniControllerVisibility(baseViewModel.isUnlocked)
     }
 
     public override fun onPause() {
-        castContext?.let {
-            try {
-                it.removeCastStateListener(castStateListener!!)
-                it.sessionManager.removeSessionManagerListener(castSessionManagerListener!!, CastSession::class.java)
-            } catch (e: IllegalStateException) {
-                Timber.e(e, "Could not remove cast state listener or get cast session manager")
-            }
-        }
+        unregisterCastListeners()
         super.onPause()
     }
 
@@ -358,20 +345,73 @@ class MainActivity : AppCompatActivity(), ToolbarInterface, LayoutControlInterfa
         unregisterReceiver(networkStatusReceiver)
     }
 
+    /**
+     * Starts listening for Cast state and session changes.
+     *
+     * The listeners themselves are built in [onCreate] but must be added to the [CastContext] here:
+     * attaching them to the activity lifecycle keeps a resumed activity in sync with a session that
+     * was started or ended while it was paused, and undoes the matching removal in [onPause].
+     */
+    private fun registerCastListeners() {
+        val context = castContext ?: return
+        castStateListener?.let {
+            try {
+                context.addCastStateListener(it)
+            } catch (e: IllegalStateException) {
+                Timber.e(e, "Could not add the cast state listener")
+            }
+        }
+        castSessionManagerListener?.let {
+            try {
+                context.sessionManager.addSessionManagerListener(it, CastSession::class.java)
+            } catch (e: IllegalStateException) {
+                Timber.e(e, "Could not add the cast session manager listener")
+            }
+        }
+    }
+
+    /**
+     * Detaches the listeners added by [registerCastListeners]. Each removal gets its own guard so a
+     * listener that was never added cannot stop the other one from being removed.
+     */
+    private fun unregisterCastListeners() {
+        val context = castContext ?: return
+        castStateListener?.let {
+            try {
+                context.removeCastStateListener(it)
+            } catch (e: IllegalStateException) {
+                Timber.e(e, "Could not remove the cast state listener")
+            }
+        }
+        castSessionManagerListener?.let {
+            try {
+                context.sessionManager.removeSessionManagerListener(it, CastSession::class.java)
+            } catch (e: IllegalStateException) {
+                Timber.e(e, "Could not remove the cast session manager listener")
+            }
+        }
+    }
+
+    /**
+     * Shows the Cast mini controller only when the feature is unlocked and the user left the
+     * setting on. The unlocked state is passed in rather than read from the view model, because
+     * the two `isUnlockedLiveData` observers must not depend on each other's ordering.
+     */
+    private fun updateMiniControllerVisibility(isUnlocked: Boolean) {
+        miniController.visibleOrGone(
+            isUnlocked && sharedPreferences.getBoolean(
+                "casting_minicontroller_enabled",
+                resources.getBoolean(R.bool.pref_default_casting_minicontroller_enabled)
+            )
+        )
+    }
+
     override fun setTitle(title: String) {
         supportActionBar?.title = title
     }
 
     override fun setSubtitle(subtitle: String) {
         supportActionBar?.subtitle = subtitle
-    }
-
-    override fun dispatchKeyEvent(event: KeyEvent): Boolean {
-        castContext?.let {
-            return it.onDispatchVolumeKeyEventBeforeJellyBean(event) || super.dispatchKeyEvent(event)
-        } ?: run {
-            return super.dispatchKeyEvent(event)
-        }
     }
 
     private fun showIntroductoryOverlay() {

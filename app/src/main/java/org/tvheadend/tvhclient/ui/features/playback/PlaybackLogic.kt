@@ -82,4 +82,21 @@ object PlaybackLogic {
     fun playbackUrl(baseUrl: String, path: String, ticket: String, profileName: String): String {
         return "$baseUrl$path?ticket=$ticket&profile=$profileName"
     }
+
+    /**
+     * The MIME type handed to the Cast receiver for a stream produced by [profileName].
+     *
+     * The HTSP profile entity carries only the profile's name, never its container, so the type is
+     * derived from that name with MPEG-TS as the fallback - what the plain `pass` style profiles
+     * stream. A value the receiver does not recognise makes it refuse to play, which is why this is
+     * a pure function that can be unit tested rather than another literal buried in an activity.
+     */
+    fun castingContentType(profileName: String?): String = when {
+        profileName == null -> "video/mp2t"
+        profileName.contains("matroska", ignoreCase = true) -> "video/x-matroska"
+        profileName.contains("webm", ignoreCase = true) -> "video/webm"
+        profileName.contains("hls", ignoreCase = true) ||
+            profileName.contains("m3u8", ignoreCase = true) -> "application/x-mpegURL"
+        else -> "video/mp2t"
+    }
 }

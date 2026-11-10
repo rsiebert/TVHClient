@@ -194,4 +194,39 @@ class PlaybackLogicTest {
 
         assertThat(url).isEqualTo("http://example.org:9981/tvh/stream/channel/1?ticket=t&profile=matroska")
     }
+
+    // ---- castingContentType -----------------------------------------------------------
+
+    @Test
+    fun castingContentTypeFallsBackToMpegTsWhenThereIsNoProfile() {
+        // Would happen with a casting profile id of 0; the activities reject that before getting
+        // here, but the helper must still be total.
+        assertThat(PlaybackLogic.castingContentType(null)).isEqualTo("video/mp2t")
+    }
+
+    @Test
+    fun castingContentTypeFallsBackToMpegTsForAnUnknownProfileName() {
+        assertThat(PlaybackLogic.castingContentType("pass")).isEqualTo("video/mp2t")
+    }
+
+    @Test
+    fun castingContentTypeRecognisesAMatroskaProfile() {
+        assertThat(PlaybackLogic.castingContentType("webtv-matroska")).isEqualTo("video/x-matroska")
+    }
+
+    @Test
+    fun castingContentTypeRecognisesAWebmProfile() {
+        assertThat(PlaybackLogic.castingContentType("webtv-vp8-vorbis-webm")).isEqualTo("video/webm")
+    }
+
+    @Test
+    fun castingContentTypeRecognisesAnHlsProfile() {
+        assertThat(PlaybackLogic.castingContentType("hls")).isEqualTo("application/x-mpegURL")
+        assertThat(PlaybackLogic.castingContentType("hls-m3u8")).isEqualTo("application/x-mpegURL")
+    }
+
+    @Test
+    fun castingContentTypeIgnoresTheCaseOfTheProfileName() {
+        assertThat(PlaybackLogic.castingContentType("MATROSKA")).isEqualTo("video/x-matroska")
+    }
 }

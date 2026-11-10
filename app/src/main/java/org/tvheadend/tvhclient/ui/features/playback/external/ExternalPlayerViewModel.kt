@@ -167,6 +167,11 @@ class ExternalPlayerViewModel(application: Application) : BaseViewModel(applicat
         return appRepository.serverStatusData.getActiveItem()
     }
 
+    /** The profile the server streams with when casting, or null when none is configured. */
+    suspend fun getCastingProfile(): ServerProfile? {
+        return appRepository.serverProfileData.getItemById(getServerStatus().castingServerProfileId)
+    }
+
     suspend fun getPlaybackUrl(convertHostname: Boolean = false, profileId: Int = 0): String {
         // If the server status is null, then use the default id of zero which will
         // return a null server profile. In this case use the default profile 'pass'

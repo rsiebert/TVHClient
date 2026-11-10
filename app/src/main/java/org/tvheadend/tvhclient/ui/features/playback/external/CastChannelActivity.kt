@@ -8,6 +8,7 @@ import com.google.android.gms.cast.MediaMetadata
 import com.google.android.gms.cast.framework.media.RemoteMediaClient
 import com.google.android.gms.common.images.WebImage
 import org.tvheadend.tvhclient.R
+import org.tvheadend.tvhclient.ui.features.playback.PlaybackLogic
 import org.tvheadend.tvhclient.util.extensions.getCastSession
 import org.tvheadend.tvhclient.util.extensions.gone
 import timber.log.Timber
@@ -53,7 +54,7 @@ class CastChannelActivity : BasePlaybackActivity() {
         Timber.d("Cast channel from server with url $url")
         val mediaInfo = MediaInfo.Builder(url)
                 .setStreamType(MediaInfo.STREAM_TYPE_LIVE)
-                .setContentType("video/webm")
+                .setContentType(PlaybackLogic.castingContentType(viewModel.getCastingProfile()?.name))
                 .setMetadata(movieMetadata)
                 .setStreamDuration(0)
                 .build()
@@ -65,7 +66,6 @@ class CastChannelActivity : BasePlaybackActivity() {
             return
         }
 
-        remoteMediaClient.registerCallback(CastRemoteMediaClientCallback(remoteMediaClient))
         remoteMediaClient.registerCallback(object : RemoteMediaClient.Callback() {
             override fun onStatusUpdated() {
                 Timber.d("Status updated")
