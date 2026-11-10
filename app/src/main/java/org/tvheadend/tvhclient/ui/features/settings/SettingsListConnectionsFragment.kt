@@ -109,13 +109,13 @@ class SettingsListConnectionsFragment : Fragment(), BackPressedInterface, Action
     }
 
     private fun addConnection(): Boolean {
-        settingsViewModel.setNavigationMenuId("add_connection")
+        settingsViewModel.setNavigationMenuId(SettingsDestination.ADD_CONNECTION)
         return true
     }
 
     private fun editConnection(connection: Connection, mode: ActionMode): Boolean {
         settingsViewModel.connectionIdToBeEdited = connection.id
-        settingsViewModel.setNavigationMenuId("edit_connection")
+        settingsViewModel.setNavigationMenuId(SettingsDestination.EDIT_CONNECTION)
         mode.finish()
         return true
     }

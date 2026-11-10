@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Trailing action view that shows a drawer item's count. Set through app:actionLayout on the
+    navigation_drawer menu items; NavigationView has no native badge API.
+-->
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center_vertical"
+    android:gravity="center"
+    android:minWidth="20dp"
+    android:paddingStart="4dp"
+    android:paddingEnd="4dp"
+    android:textColor="?attr/colorAccent"
+    android:textSize="13sp"
+    android:textStyle="bold"
+    tools:text="12" />

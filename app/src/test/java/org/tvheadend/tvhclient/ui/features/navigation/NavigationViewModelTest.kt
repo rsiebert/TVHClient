@@ -22,7 +22,7 @@ import org.tvheadend.tvhclient.testutil.TestAppGraphFactory
 import org.tvheadend.tvhclient.testutil.observedValue
 
 /**
- * Tests for [NavigationViewModel].
+ * Tests for [NavigationViewModel] and the [NavDestination] model it is built on.
  *
  * Every ViewModel resolves its dependencies through [AppGraphProvider], so a [TestAppGraph] over an
  * in-memory database is installed before the ViewModel is built. A plain [Application] is
@@ -30,7 +30,7 @@ import org.tvheadend.tvhclient.testutil.observedValue
  * work (and a migration) that must not run in a unit test.
  *
  * `NavigationViewModel` reads the start screen from the `start_screen` preference at construction
- * and exposes the navigation menu id as an [org.tvheadend.tvhclient.util.livedata.Event].
+ * and exposes the navigation destination as an [org.tvheadend.tvhclient.util.livedata.Event].
  */
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [34], application = Application::class)
@@ -59,69 +59,92 @@ class NavigationViewModelTest {
 
     private fun prefs() = PreferenceManager.getDefaultSharedPreferences(context)
 
+    // ---- destinations ---------------------------------------------------------------
+
+    /**
+     * Guards the single source of truth: every destination must resolve back from both its drawer
+     * menu item and the fragment it shows. This is what replaces the four hand-kept `when`
+     * expressions, so it must stay consistent.
+     */
+    @Test
+    fun everyDestinationResolvesBackFromItsMenuItemIdAndFragment() {
+        NavDestination.entries.forEach { destination ->
+            assertThat(NavDestination.fromMenuItemId(destination.menuItemId)).isEqualTo(destination)
+            destination.fragmentFactory?.let { factory ->
+                assertThat(NavDestination.fromFragment(factory())).isEqualTo(destination)
+            }
+        }
+    }
+
+    @Test
+    fun anUnknownOrMissingIdFallsBackToTheChannelList() {
+        assertThat(NavDestination.fromId("does_not_exist")).isEqualTo(NavDestination.CHANNELS)
+        assertThat(NavDestination.fromId(null)).isEqualTo(NavDestination.CHANNELS)
+    }
+
     // ---- start screen ---------------------------------------------------------------
 
     @Test
     fun usesTheDefaultStartScreenWhenNoPreferenceIsSet() {
-        val expected = context.getString(R.string.pref_default_start_screen).toInt()
+        val default = NavDestination.fromId(context.getString(R.string.pref_default_start_screen))
 
         val vm = NavigationViewModel(context)
 
-        assertThat(vm.currentNavigationMenuId).isEqualTo(expected)
-        assertThat(vm.getNavigationMenuId().value!!.peekContent()).isEqualTo(expected)
+        assertThat(vm.currentDestination).isEqualTo(default)
+        assertThat(vm.getNavigationMenuId().value!!.peekContent()).isEqualTo(default)
     }
 
     @Test
     fun usesTheStartScreenFromThePreference() {
-        prefs().edit().putString("start_screen", "5").commit()
+        prefs().edit().putString("start_screen", "timer_recordings").commit()
 
         val vm = NavigationViewModel(context)
 
-        assertThat(vm.currentNavigationMenuId).isEqualTo(5)
-        assertThat(vm.getNavigationMenuId().value!!.peekContent()).isEqualTo(5)
+        assertThat(vm.currentDestination).isEqualTo(NavDestination.TIMER_RECORDINGS)
+        assertThat(vm.getNavigationMenuId().value!!.peekContent()).isEqualTo(NavDestination.TIMER_RECORDINGS)
     }
 
     // ---- setNavigationMenuId --------------------------------------------------------
 
     @Test
-    fun setNavigationMenuIdEmitsForANewIdButNotForTheSameId() {
+    fun setNavigationMenuIdEmitsForANewDestinationButNotForTheSameOne() {
         val vm = NavigationViewModel(context)
-        val emissions = mutableListOf<Int>()
+        val emissions = mutableListOf<NavDestination>()
         vm.getNavigationMenuId().observeForever { emissions.add(it.peekContent()) }
 
-        vm.setNavigationMenuId(3)
-        vm.setNavigationMenuId(3)
+        vm.setNavigationMenuId(NavDestination.SCHEDULED_RECORDINGS)
+        vm.setNavigationMenuId(NavDestination.SCHEDULED_RECORDINGS)
 
-        assertThat(emissions).containsExactly(0, 3).inOrder()
-        assertThat(vm.currentNavigationMenuId).isEqualTo(3)
+        assertThat(emissions).containsExactly(NavDestination.CHANNELS, NavDestination.SCHEDULED_RECORDINGS).inOrder()
+        assertThat(vm.currentDestination).isEqualTo(NavDestination.SCHEDULED_RECORDINGS)
     }
 
     @Test
-    fun setNavigationMenuIdAlwaysEmitsForTheSettingsMenu() {
+    fun setNavigationMenuIdAlwaysEmitsForTheSettingsDestination() {
         val vm = NavigationViewModel(context)
-        val emissions = mutableListOf<Int>()
+        val emissions = mutableListOf<NavDestination>()
         vm.getNavigationMenuId().observeForever { emissions.add(it.peekContent()) }
 
-        vm.setNavigationMenuId(NavigationDrawer.MENU_SETTINGS)
-        vm.setNavigationMenuId(NavigationDrawer.MENU_SETTINGS)
+        vm.setNavigationMenuId(NavDestination.SETTINGS)
+        vm.setNavigationMenuId(NavDestination.SETTINGS)
 
-        assertThat(emissions).containsExactly(0, NavigationDrawer.MENU_SETTINGS, NavigationDrawer.MENU_SETTINGS).inOrder()
+        assertThat(emissions).containsExactly(NavDestination.CHANNELS, NavDestination.SETTINGS, NavDestination.SETTINGS).inOrder()
     }
 
     // ---- setSelectedMenuItemId ------------------------------------------------------
 
     @Test
-    fun setSelectedMenuItemIdChangesTheCurrentIdWithoutEmitting() {
+    fun setSelectedMenuItemIdChangesTheCurrentDestinationWithoutEmitting() {
         val vm = NavigationViewModel(context)
-        val emissions = mutableListOf<Int>()
+        val emissions = mutableListOf<NavDestination>()
         vm.getNavigationMenuId().observeForever { emissions.add(it.peekContent()) }
 
-        vm.setSelectedMenuItemId(7)
-        // The id is already current now, so re-setting it must not emit again.
-        vm.setNavigationMenuId(7)
+        vm.setSelectedMenuItemId(NavDestination.REMOVED_RECORDINGS)
+        // The destination is already current now, so re-setting it must not emit again.
+        vm.setNavigationMenuId(NavDestination.REMOVED_RECORDINGS)
 
-        assertThat(vm.currentNavigationMenuId).isEqualTo(7)
-        assertThat(emissions).containsExactly(0).inOrder()
+        assertThat(vm.currentDestination).isEqualTo(NavDestination.REMOVED_RECORDINGS)
+        assertThat(emissions).containsExactly(NavDestination.CHANNELS).inOrder()
     }
 
     // ---- setSelectedConnectionAsActive ----------------------------------------------

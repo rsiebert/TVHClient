@@ -1,12 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <!-- A single checkable group so only one destination is ever checked at a time. -->
+    <!-- A single checkable group so only one destination is ever checked at a time.
+         The items that show a count carry a trailing action view (navigation_drawer_count.xml). -->
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/nav_channels"
             android:icon="?attr/ic_menu_channels"
-            android:title="@string/channels" />
+            android:title="@string/channels"
+            app:actionLayout="@layout/navigation_drawer_count" />
         <item
             android:id="@+id/nav_program_guide"
             android:icon="?attr/ic_menu_program_guide"
@@ -14,27 +17,33 @@
         <item
             android:id="@+id/nav_completed_recordings"
             android:icon="?attr/ic_menu_completed_recordings"
-            android:title="@string/completed_recordings" />
+            android:title="@string/completed_recordings"
+            app:actionLayout="@layout/navigation_drawer_count" />
         <item
             android:id="@+id/nav_scheduled_recordings"
             android:icon="?attr/ic_menu_scheduled_recordings"
-            android:title="@string/scheduled_recordings" />
+            android:title="@string/scheduled_recordings"
+            app:actionLayout="@layout/navigation_drawer_count" />
         <item
             android:id="@+id/nav_series_recordings"
             android:icon="?attr/ic_menu_series_recordings"
-            android:title="@string/series_recordings" />
+            android:title="@string/series_recordings"
+            app:actionLayout="@layout/navigation_drawer_count" />
         <item
             android:id="@+id/nav_timer_recordings"
             android:icon="?attr/ic_menu_timer_recordings"
-            android:title="@string/timer_recordings" />
+            android:title="@string/timer_recordings"
+            app:actionLayout="@layout/navigation_drawer_count" />
         <item
             android:id="@+id/nav_failed_recordings"
             android:icon="?attr/ic_menu_failed_recordings"
-            android:title="@string/failed_recordings" />
+            android:title="@string/failed_recordings"
+            app:actionLayout="@layout/navigation_drawer_count" />
         <item
             android:id="@+id/nav_removed_recordings"
             android:icon="?attr/ic_menu_removed_recordings"
-            android:title="@string/removed_recordings" />
+            android:title="@string/removed_recordings"
+            app:actionLayout="@layout/navigation_drawer_count" />
         <item
             android:id="@+id/nav_extras"
             android:icon="?attr/ic_menu_extras"

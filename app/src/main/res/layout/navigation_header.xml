@@ -9,6 +9,7 @@
     required to keep the header compact.
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="104dp"
     android:background="@drawable/header_dark"
@@ -24,9 +25,18 @@
         android:textSize="18sp"
         android:textStyle="bold" />
 
-    <Spinner
-        android:id="@+id/navigation_header_connection_spinner"
+    <!-- Shows the active server and opens a picker when tapped. Replaces the former Spinner. -->
+    <TextView
+        android:id="@+id/navigation_header_connection"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp" />
+        android:layout_marginTop="8dp"
+        android:background="?attr/selectableItemBackground"
+        android:clickable="true"
+        android:focusable="true"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
+        android:textColor="@android:color/white"
+        android:textSize="14sp"
+        tools:text="My server" />
 </LinearLayout>

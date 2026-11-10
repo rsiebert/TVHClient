@@ -60,6 +60,9 @@ class MigrateUtils(val context: Context, val appRepository: AppRepository, val s
             if (lastInstalledApplicationVersion < VERSION_210) {
                 updateRecordingProfiles()
             }
+            if (lastInstalledApplicationVersion < VERSION_243) {
+                convertStartScreenPreferenceToStableId()
+            }
         }
 
         // Store the current version as the last installed version
@@ -361,6 +364,22 @@ class MigrateUtils(val context: Context, val appRepository: AppRepository, val s
         }
     }
 
+    /**
+     * Migrates the start screen preference from a bare menu index ("0".."8") to the stable string
+     * id used by NavDestination. A value that is already a stable id is kept, anything else falls back
+     * to the channel list so an invalid preference can never break startup.
+     */
+    private fun convertStartScreenPreferenceToStableId() {
+        val legacyValue = sharedPreferences.getString("start_screen", null) ?: return
+        val id = LEGACY_START_SCREEN_IDS[legacyValue]
+                ?: legacyValue.takeIf { it in STABLE_START_SCREEN_IDS }
+                ?: "channels"
+        if (id != legacyValue) {
+            Timber.d("Migrating start screen preference from '$legacyValue' to '$id'")
+            sharedPreferences.edit().putString("start_screen", id).apply()
+        }
+    }
+
     companion object {
         private const val VERSION_101 = 101
         private const val VERSION_109 = 109
@@ -373,5 +392,18 @@ class MigrateUtils(val context: Context, val appRepository: AppRepository, val s
         private const val VERSION_196 = 196
         private const val VERSION_205 = 205
         private const val VERSION_210 = 210
+        private const val VERSION_243 = 243
+
+        private val LEGACY_START_SCREEN_IDS = mapOf(
+                "0" to "channels",
+                "1" to "program_guide",
+                "2" to "completed_recordings",
+                "3" to "scheduled_recordings",
+                "4" to "series_recordings",
+                "5" to "timer_recordings",
+                "6" to "failed_recordings",
+                "7" to "removed_recordings",
+                "8" to "status")
+        private val STABLE_START_SCREEN_IDS = LEGACY_START_SCREEN_IDS.values.toSet()
     }
 }

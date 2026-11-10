@@ -17,10 +17,6 @@ import org.tvheadend.tvhclient.ui.common.SnackbarMessageReceiver
 import org.tvheadend.tvhclient.ui.common.interfaces.BackPressedInterface
 import org.tvheadend.tvhclient.ui.common.interfaces.ToolbarInterface
 import org.tvheadend.tvhclient.ui.common.onAttach
-import org.tvheadend.tvhclient.ui.features.information.ChangeLogFragment
-import org.tvheadend.tvhclient.ui.features.information.InformationFragment
-import org.tvheadend.tvhclient.ui.features.information.PrivacyPolicyFragment
-import org.tvheadend.tvhclient.ui.features.unlocker.UnlockerFragment
 import org.tvheadend.tvhclient.util.extensions.applySystemBarInsets
 import org.tvheadend.tvhclient.util.extensions.setUpEdgeToEdge
 import org.tvheadend.tvhclient.util.extensions.showSnackbarMessage
@@ -52,8 +48,7 @@ class SettingsActivity : AppCompatActivity(), RemoveFragmentFromBackstackInterfa
         // If the user wants to go directly to a sub setting screen like the connections
         // and not the main settings screen the setting type can be passed here
         if (savedInstanceState == null && intent.hasExtra("setting_type")) {
-            val id = intent.getStringExtra("setting_type") ?: "default"
-            settingsViewModel.setNavigationMenuId(id)
+            settingsViewModel.setNavigationMenuId(SettingsDestination.fromId(intent.getStringExtra("setting_type")))
         }
 
         settingsViewModel.getNavigationMenuId().observe(this) { event ->
@@ -117,22 +112,9 @@ class SettingsActivity : AppCompatActivity(), RemoveFragmentFromBackstackInterfa
         }
     }
 
-    private fun getSettingsFragment(type: String): Fragment {
-        Timber.d("Getting settings fragment for type '$type'")
-        return when (type) {
-            "list_connections" -> SettingsListConnectionsFragment()
-            "add_connection" -> SettingsAddConnectionFragment()
-            "edit_connection" -> SettingsEditConnectionFragment()
-            "user_interface" -> SettingsUserInterfaceFragment()
-            "profiles" -> SettingsProfilesFragment()
-            "playback" -> SettingsPlaybackFragment()
-            "advanced" -> SettingsAdvancedFragment()
-            "unlocker" -> UnlockerFragment()
-            "information" -> InformationFragment()
-            "privacy_policy" -> PrivacyPolicyFragment()
-            "changelog" -> ChangeLogFragment.newInstance(showFullChangelog = true)
-            else -> SettingsFragment()
-        }
+    private fun getSettingsFragment(destination: SettingsDestination): Fragment {
+        Timber.d("Getting settings fragment for destination $destination")
+        return destination.fragmentFactory()
     }
 
     /*

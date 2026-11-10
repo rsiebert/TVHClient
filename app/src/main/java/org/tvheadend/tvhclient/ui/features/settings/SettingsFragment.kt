@@ -113,7 +113,7 @@ class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceClic
             "profiles" -> handlePreferenceProfilesSelected()
             "playback" -> handlePreferencePlaybackSelected()
             "download_directory" -> handlePreferenceDownloadDirectorySelected()
-            else -> settingsViewModel.setNavigationMenuId(preference.key)
+            else -> settingsViewModel.setNavigationMenuId(SettingsDestination.fromId(preference.key))
         }
         return true
     }
@@ -132,7 +132,7 @@ class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceClic
             if (settingsViewModel.currentServerStatus.htspVersion < 16) {
                 context?.sendSnackbarMessage(R.string.feature_not_supported_by_server)
             } else {
-                settingsViewModel.setNavigationMenuId("profiles")
+                settingsViewModel.setNavigationMenuId(SettingsDestination.PROFILES)
             }
         }
     }
@@ -141,7 +141,7 @@ class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceClic
         if (!settingsViewModel.isUnlocked) {
             context?.sendSnackbarMessage(R.string.feature_not_available_in_free_version)
         } else {
-            settingsViewModel.setNavigationMenuId("playback")
+            settingsViewModel.setNavigationMenuId(SettingsDestination.PLAYBACK)
         }
     }
 

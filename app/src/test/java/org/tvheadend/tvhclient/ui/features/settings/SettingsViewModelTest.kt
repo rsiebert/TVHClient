@@ -66,17 +66,17 @@ class SettingsViewModelTest {
     // ---- navigation -----------------------------------------------------------------
 
     @Test
-    fun navigationMenuIdDefaultsToDefaultAndCanBeChanged() {
+    fun navigationMenuIdDefaultsToMainAndCanBeChanged() {
         seedActiveConnection()
         val vm = SettingsViewModel(context)
-        val values = mutableListOf<String>()
+        val values = mutableListOf<SettingsDestination>()
         vm.getNavigationMenuId().observeForever { values.add(it.peekContent()) }
 
-        assertThat(values).containsExactly("default")
+        assertThat(values).containsExactly(SettingsDestination.MAIN)
 
-        vm.setNavigationMenuId("connections")
+        vm.setNavigationMenuId(SettingsDestination.LIST_CONNECTIONS)
 
-        assertThat(values).containsExactly("default", "connections").inOrder()
+        assertThat(values).containsExactly(SettingsDestination.MAIN, SettingsDestination.LIST_CONNECTIONS).inOrder()
     }
 
     // ---- connections ----------------------------------------------------------------

@@ -33,7 +33,7 @@ android {
     defaultConfig {
         minSdk = libs.versions.minSdk.get().toInteger()
         targetSdk = libs.versions.targetSdk.get().toInteger()
-        versionCode 242
+        versionCode 243
         versionName "3.0.0"
 
         // Define the apk naming convention

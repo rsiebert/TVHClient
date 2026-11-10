@@ -45,15 +45,15 @@
     </string-array>
 
     <string-array name="pref_menu_ids" translatable="false">
-        <item>0</item>
-        <item>1</item>
-        <item>2</item>
-        <item>3</item>
-        <item>4</item>
-        <item>5</item>
-        <item>6</item>
-        <item>7</item>
-        <item>8</item>
+        <item>channels</item>
+        <item>program_guide</item>
+        <item>completed_recordings</item>
+        <item>scheduled_recordings</item>
+        <item>series_recordings</item>
+        <item>timer_recordings</item>
+        <item>failed_recordings</item>
+        <item>removed_recordings</item>
+        <item>status</item>
     </string-array>
 
     <string-array name="pref_menu_names">

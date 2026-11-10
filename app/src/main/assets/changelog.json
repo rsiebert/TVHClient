@@ -14,6 +14,7 @@
       "Updated the internal player to AndroidX Media3",
       "The fullscreen toggle in the player now also works on large screens by hiding the system bars",
       "Replaced the navigation drawer with a standard Material navigation view",
+      "Back now always returns to the previous screen; the option to switch off the navigation history was removed",
       "Replaced the deprecated dialog library with Material Components",
       "Scoped the storage permissions to the folders that are actually used and added explicit backup rules",
       "Enabled code and resource shrinking to reduce the size of the app",

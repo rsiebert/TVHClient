@@ -208,4 +208,33 @@ class MigrateUtilsTest {
 
         assertThat(prefs.getString("selected_theme", null)).isEqualTo("dark")
     }
+
+    // ---- 243: start screen preference -----------------------------------------------
+
+    @Test
+    fun convertsTheLegacyStartScreenIndexToAStableId() {
+        prefs.edit().putString("start_screen", "5").apply()
+
+        migrateFrom(210)
+
+        assertThat(prefs.getString("start_screen", null)).isEqualTo("timer_recordings")
+    }
+
+    @Test
+    fun keepsAnAlreadyStableStartScreenId() {
+        prefs.edit().putString("start_screen", "series_recordings").apply()
+
+        migrateFrom(210)
+
+        assertThat(prefs.getString("start_screen", null)).isEqualTo("series_recordings")
+    }
+
+    @Test
+    fun fallsBackToChannelsForAnUnknownStartScreenValue() {
+        prefs.edit().putString("start_screen", "99").apply()
+
+        migrateFrom(210)
+
+        assertThat(prefs.getString("start_screen", null)).isEqualTo("channels")
+    }
 }

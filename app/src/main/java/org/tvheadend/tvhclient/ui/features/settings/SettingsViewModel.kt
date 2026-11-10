@@ -84,7 +84,7 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
     /**
      * Contains a string with the name of the fragment that shall be shown
      */
-    private val navigationMenuIdLiveData = MutableLiveData(Event("default"))
+    private val navigationMenuIdLiveData = MutableLiveData(Event(SettingsDestination.MAIN))
 
     /**
      * Contains an intent with the snackbar message and other information.
@@ -115,11 +115,11 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
         }
     }
 
-    fun getNavigationMenuId(): LiveData<Event<String>> = navigationMenuIdLiveData
+    fun getNavigationMenuId(): LiveData<Event<SettingsDestination>> = navigationMenuIdLiveData
 
-    fun setNavigationMenuId(id: String) {
-        Timber.d("Received new navigation id $id")
-        navigationMenuIdLiveData.value = Event(id)
+    fun setNavigationMenuId(destination: SettingsDestination) {
+        Timber.d("Received new settings destination $destination")
+        navigationMenuIdLiveData.value = Event(destination)
     }
 
     suspend fun getChannelList(): List<Channel> {

@@ -74,14 +74,6 @@
             android:title="@string/pref_notify_low_server_storage_space_threshold" />
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="@string/pref_navigation">
-        <SwitchPreference
-            android:defaultValue="@bool/pref_default_navigation_history_enabled"
-            android:key="navigation_history_enabled"
-            android:summary="@string/pref_navigation_history_enabled_sum"
-            android:title="@string/pref_navigation_history_enabled" />
-    </PreferenceCategory>
-
     <PreferenceCategory android:title="@string/pref_misc">
         <Preference
             android:key="clear_search_history"

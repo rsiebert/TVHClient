@@ -250,9 +250,6 @@
     <string name="pref_name">Connection name</string>
     <string name="pref_name_error_invalid">The name must not be empty and may only contain letters, numbers, minus and underscore.</string>
     <string name="pref_name_sum">Enter a unique name of the connection</string>
-    <string name="pref_navigation">Navigation</string>
-    <string name="pref_navigation_history_enabled">Navigation history</string>
-    <string name="pref_navigation_history_enabled_sum">Saves the history of the selected navigation menus. The Back button displays the previous navigation menu and its screen. When this setting is disabled, the app closes.</string>
     <string name="pref_notifications">Notifications</string>
     <string name="pref_notify_about_running_recordings">Notify about running recordings</string>
     <string name="pref_notify_low_server_storage_space">Notify when server storage space runs low</string>

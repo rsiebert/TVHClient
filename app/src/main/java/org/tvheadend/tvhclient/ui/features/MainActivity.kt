@@ -59,7 +59,6 @@ import org.tvheadend.tvhclient.ui.common.SnackbarMessageReceiver
 import org.tvheadend.tvhclient.ui.common.SuggestionProvider
 import org.tvheadend.tvhclient.ui.common.WakeOnLanTask
 import org.tvheadend.tvhclient.ui.common.interfaces.BackPressedInterface
-import org.tvheadend.tvhclient.ui.common.interfaces.ClearSearchResultsOrPopBackStackInterface
 import org.tvheadend.tvhclient.ui.common.interfaces.HideNavigationDrawerInterface
 import org.tvheadend.tvhclient.ui.common.interfaces.LayoutControlInterface
 import org.tvheadend.tvhclient.ui.common.interfaces.SearchRequestInterface
@@ -74,6 +73,7 @@ import org.tvheadend.tvhclient.ui.features.information.ChangeLogFragment
 import org.tvheadend.tvhclient.ui.features.information.PrivacyPolicyFragment
 import org.tvheadend.tvhclient.ui.features.information.StartupPrivacyPolicyFragment
 import org.tvheadend.tvhclient.ui.features.information.StatusViewModel
+import org.tvheadend.tvhclient.ui.features.navigation.NavDestination
 import org.tvheadend.tvhclient.ui.features.navigation.NavigationDrawer
 import org.tvheadend.tvhclient.ui.features.navigation.NavigationViewModel
 import org.tvheadend.tvhclient.ui.features.playback.external.CastSessionManagerListener
@@ -445,16 +445,16 @@ class MainActivity : AppCompatActivity(), ToolbarInterface, LayoutControlInterfa
     override fun onPrepareOptionsMenu(menu: Menu): Boolean {
         super.onPrepareOptionsMenu(menu)
 
-        when (navigationViewModel.currentNavigationMenuId) {
-            NavigationDrawer.MENU_UNLOCKER,
-            NavigationDrawer.MENU_HELP -> {
+        when (navigationViewModel.currentDestination) {
+            NavDestination.UNLOCKER,
+            NavDestination.HELP -> {
                 menu.findItem(R.id.media_route_menu_item)?.isVisible = false
                 menu.findItem(R.id.menu_search).isVisible = false
                 menu.findItem(R.id.menu_reconnect_to_server).isVisible = false
                 menu.findItem(R.id.menu_privacy_policy).isVisible = false
                 menu.findItem(R.id.menu_send_wake_on_lan_packet)?.isVisible = false
             }
-            NavigationDrawer.MENU_STATUS -> {
+            NavDestination.STATUS -> {
                 menu.findItem(R.id.media_route_menu_item)?.isVisible = false
                 menu.findItem(R.id.menu_search).isVisible = false
                 menu.findItem(R.id.menu_send_wake_on_lan_packet)?.isVisible = baseViewModel.isUnlocked && baseViewModel.connection.isWolEnabled
@@ -652,23 +652,12 @@ class MainActivity : AppCompatActivity(), ToolbarInterface, LayoutControlInterfa
             return
         }
 
-        val navigationHistoryEnabled = PreferenceManager.getDefaultSharedPreferences(this).getBoolean("navigation_history_enabled", resources.getBoolean(R.bool.pref_default_navigation_history_enabled))
-        if (!navigationHistoryEnabled) {
-            // The following fragments can be called from the channel list fragment.
-            // So do not finish the activity in case any of these fragments are visible
-            // but pop the back stack so that the channel list is shown again.
-            when (supportFragmentManager.findFragmentById(R.id.main)) {
-                is ClearSearchResultsOrPopBackStackInterface -> clearSearchResultsOrPopBackStack()
-                else -> finish()
-            }
+        // Navigation history is always recorded, so Back pops one entry and only finishes at the
+        // root destination (a single back stack entry once the onboarding screens have been removed).
+        if (supportFragmentManager.backStackEntryCount <= 1) {
+            finish()
         } else {
-            // With navigation history enabled, finish only at the root destination (a single back
-            // stack entry once the onboarding screens have been removed); otherwise pop one entry.
-            if (supportFragmentManager.backStackEntryCount <= 1) {
-                finish()
-            } else {
-                clearSearchResultsOrPopBackStack()
-            }
+            clearSearchResultsOrPopBackStack()
         }
     }
 
