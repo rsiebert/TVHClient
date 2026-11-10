@@ -15,8 +15,8 @@ import androidx.preference.*
 import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequest
 import androidx.work.WorkManager
+import coil3.imageLoader
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.squareup.picasso.Picasso
 import org.tvheadend.data.source.MiscDataSource
 import org.tvheadend.tvhclient.BuildConfig
 import org.tvheadend.tvhclient.R
@@ -26,7 +26,6 @@ import org.tvheadend.tvhclient.ui.common.SuggestionProvider
 import org.tvheadend.tvhclient.ui.common.interfaces.ToolbarInterface
 import org.tvheadend.tvhclient.ui.features.MainActivity
 import org.tvheadend.tvhclient.util.extensions.sendSnackbarMessage
-import org.tvheadend.tvhclient.util.getIconUrl
 import org.tvheadend.tvhclient.util.logging.FileLoggingTree
 import org.tvheadend.tvhclient.util.worker.LoadChannelIconWorker
 import kotlinx.coroutines.launch
@@ -340,27 +339,11 @@ class SettingsAdvancedFragment : PreferenceFragmentCompat(), Preference.OnPrefer
     }
 
     /**
-     * Clear the cached channel icons by checking all cached files if their name
-     * matches with the url from a channel icon. If this is the case remove the file
+     * Clear the cached channel icons by emptying Coil's memory and disk image caches.
      */
-    private suspend fun clearIconsFromCache(context: Context) {
-        val channels = settingsViewModel.getChannelList()
-        if (context.cacheDir.exists()) {
-            val fileNames = context.cacheDir.list()
-            for (fileName in fileNames!!) {
-                for (channel in channels) {
-                    if (!channel.icon.isNullOrEmpty()) {
-                        val url = getIconUrl(context, channel.icon)
-                        if (url.contains(fileName)) {
-                            val file = File(context.cacheDir, fileName)
-                            if (file.delete()) {
-                                Picasso.get().invalidate(file)
-                            }
-                            break
-                        }
-                    }
-                }
-            }
-        }
+    private fun clearIconsFromCache(context: Context) {
+        val imageLoader = context.imageLoader
+        imageLoader.memoryCache?.clear()
+        imageLoader.diskCache?.clear()
     }
 }

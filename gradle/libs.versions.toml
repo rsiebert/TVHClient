@@ -37,7 +37,7 @@ androidxTest = "1.6.1"
 
 # Tools and languages
 timber = "5.0.1"
-picasso = "2.71828"
+coil = "3.6.3"
 coroutines = "1.11.0"
 
 # Google Play / Cast
@@ -91,7 +91,8 @@ androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref =
 androidx-test-core = { module = "androidx.test:core", version.ref = "androidxTest" }
 
 timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
-picasso = { module = "com.squareup.picasso:picasso", version.ref = "picasso" }
+coil = { module = "io.coil-kt.coil3:coil", version.ref = "coil" }
+coil-network-okhttp = { module = "io.coil-kt.coil3:coil-network-okhttp", version.ref = "coil" }
 kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "coroutines" }
 
 material-components = { module = "com.google.android.material:material", version.ref = "material" }

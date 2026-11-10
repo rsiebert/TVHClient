@@ -170,7 +170,8 @@ dependencies {
     // Misc stuff like logging, image loading, billing, casting
     implementation libs.material.components
     implementation libs.timber
-    implementation libs.picasso
+    implementation libs.coil
+    implementation libs.coil.network.okhttp
     implementation libs.billing.ktx
     implementation libs.play.services.cast.framework
     implementation libs.androidx.mediarouter

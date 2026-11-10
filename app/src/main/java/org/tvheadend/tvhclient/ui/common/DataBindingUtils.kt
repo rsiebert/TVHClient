@@ -1,7 +1,6 @@
 package org.tvheadend.tvhclient.ui.common
 
 import android.annotation.SuppressLint
-import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.os.Build
@@ -17,9 +16,9 @@ import androidx.core.content.ContextCompat
 import androidx.databinding.BindingAdapter
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.RecyclerView
-import com.squareup.picasso.Callback
-import com.squareup.picasso.Picasso
-import com.squareup.picasso.Transformation
+import coil3.imageLoader
+import coil3.load
+import coil3.request.ImageRequest
 import org.tvheadend.data.entity.ProgramInterface
 import org.tvheadend.data.entity.Recording
 import org.tvheadend.tvhclient.MainApplication
@@ -375,45 +374,23 @@ fun setProgramImage(view: ImageView, url: String?, viewWidth: Int = 0, visible: 
     if (url.isNullOrEmpty() || !visible) {
         view.gone()
     } else {
-
-        val transformation = object : Transformation {
-            override fun transform(source: Bitmap): Bitmap {
-                Timber.v("Transforming source image with dimensions w:${source.width}, h:${source.height} to fit the view width $viewWidth")
-                if (viewWidth == 0 || source.height == 0 || source.width == 0) {
-                    Timber.v("Returning source image with dimensions w:${source.width}, h:${source.height}, target width is $viewWidth")
-                    return source
-                }
-                val aspectRatio = source.height.toDouble() / source.width.toDouble()
-                val targetHeight = (viewWidth * aspectRatio).toInt()
-                val result = Bitmap.createScaledBitmap(source, viewWidth, targetHeight, false)
-                if (result != source) {
-                    // Same bitmap is returned if sizes are the same
-                    source.recycle()
-                }
-                Timber.v("Returning transformed image with new dimensions w:${source.width}, h:${source.height}")
-                return result
+        // Coil sizes the request to the view width and preserves the aspect ratio: a request with
+        // an undefined height always uses Scale.FIT. This replaces the previous manual bitmap
+        // scaling.
+        view.load(url) {
+            if (viewWidth > 0) {
+                size(viewWidth)
             }
-
-            override fun key(): String {
-                return "transformation" + " desiredWidth"
-            }
-        }
-
-        Picasso.get()
-                .load(url)
-                .transform(transformation)
-                .into(view, object : Callback {
-                    override fun onSuccess() {
-                        view.visible()
-                    }
-
-                    override fun onError(e: Exception) {
-                        // A missing image is cosmetic and this callback runs for every row of a
-                        // list, so it is only logged in verbose builds.
-                        Timber.v(e, "Could not load image $url")
+            listener(
+                    onSuccess = { _, _ -> view.visible() },
+                    // A missing image is cosmetic and this callback runs for every row of a
+                    // list, so it is only logged in verbose builds.
+                    onError = { _, result ->
+                        Timber.v(result.throwable, "Could not load image $url")
                         view.gone()
                     }
-                })
+            )
+        }
     }
 }
 
@@ -430,19 +407,17 @@ fun setChannelIcon(view: ImageView, iconUrl: String?) {
     } else {
         val url = getIconUrl(view.context, iconUrl)
 
-        Picasso.get().cancelRequest(view)
-        Picasso.get()
-                .load(url)
-                .into(view, object : Callback {
-                    override fun onSuccess() {
-                        view.visible()
-                    }
-
-                    override fun onError(e: Exception) {
-                        Timber.v(e, "Could not load channel icon $url")
+        // Coil cancels any in-flight request for this view automatically, so the previous explicit
+        // cancelRequest call is no longer needed.
+        view.load(url) {
+            listener(
+                    onSuccess = { _, _ -> view.visible() },
+                    onError = { _, result ->
+                        Timber.v(result.throwable, "Could not load channel icon $url")
                         view.gone()
                     }
-                })
+            )
+        }
     }
 }
 
@@ -481,16 +456,16 @@ fun setChannelName(view: TextView, name: String?, iconUrl: String?) {
         view.visible()
     } else {
         val url = getIconUrl(view.context, iconUrl)
-        Picasso.get()
-                .load(url).fetch(object : Callback {
-                    override fun onSuccess() {
-                        view.gone()
-                    }
-
-                    override fun onError(e: Exception) {
-                        view.visible()
-                    }
-                })
+        // Probe whether the icon exists without a target view: hide the name when it loads, show it
+        // when the icon is missing.
+        val request = ImageRequest.Builder(view.context)
+                .data(url)
+                .listener(
+                        onSuccess = { _, _ -> view.gone() },
+                        onError = { _, _ -> view.visible() }
+                )
+                .build()
+        view.context.imageLoader.enqueue(request)
     }
 }
 

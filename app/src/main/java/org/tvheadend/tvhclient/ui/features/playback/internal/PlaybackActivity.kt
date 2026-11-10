@@ -31,8 +31,7 @@ import androidx.preference.PreferenceManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import androidx.media3.common.Player
 import androidx.media3.ui.PlayerView
-import com.squareup.picasso.Callback
-import com.squareup.picasso.Picasso
+import coil3.load
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.ui.common.onAttach
 import org.tvheadend.tvhclient.ui.common.setOptionalDescriptionText
@@ -265,19 +264,18 @@ class PlaybackActivity : AppCompatActivity() {
         Timber.d("Observing playback information")
         viewModel.channelIcon.observe(this) { icon ->
             Timber.d("Received channel icon $icon")
-            Picasso.get()
-                .load(getIconUrl(this, icon))
-                .into(channelIcon, object : Callback {
-                    override fun onSuccess() {
-                        channelName.gone()
-                        channelIcon.visible()
-                    }
-
-                    override fun onError(e: Exception) {
-                        channelName.visible()
-                        channelIcon.gone()
-                    }
-                })
+            channelIcon.load(getIconUrl(this, icon)) {
+                listener(
+                        onSuccess = { _, _ ->
+                            channelName.gone()
+                            channelIcon.visible()
+                        },
+                        onError = { _, _ ->
+                            channelName.visible()
+                            channelIcon.gone()
+                        }
+                )
+            }
         }
 
         viewModel.channelName.observe(this) { name ->
