@@ -170,9 +170,7 @@ dependencies {
     implementation libs.timber
     implementation libs.picasso
     implementation libs.billing.ktx
-    implementation libs.billing.client
     implementation libs.play.services.cast.framework
-    implementation libs.transport.backend.cct
     implementation libs.androidx.mediarouter
 
     // Kotlin

@@ -42,7 +42,6 @@ coroutines = "1.11.0"
 # Google Play / Cast
 billing = "9.1.0"
 playServicesCast = "21.0.0"
-transportBackendCct = "5.0.0"
 
 # Firebase
 firebaseAnalytics = "22.5.0"
@@ -96,10 +95,8 @@ kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutine
 
 material-components = { module = "com.google.android.material:material", version.ref = "material" }
 
-billing-client = { module = "com.android.billingclient:billing", version.ref = "billing" }
 billing-ktx = { module = "com.android.billingclient:billing-ktx", version.ref = "billing" }
 play-services-cast-framework = { module = "com.google.android.gms:play-services-cast-framework", version.ref = "playServicesCast" }
-transport-backend-cct = { module = "com.google.android.datatransport:transport-backend-cct", version.ref = "transportBackendCct" }
 
 firebase-analytics-ktx = { module = "com.google.firebase:firebase-analytics-ktx", version.ref = "firebaseAnalytics" }
 firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics", version.ref = "firebaseCrashlytics" }
