@@ -149,6 +149,8 @@ dependencies {
     implementation libs.androidx.appcompat
     implementation libs.androidx.recyclerview
     implementation libs.androidx.annotation
+    // Used for app-internal broadcasts; previously supplied transitively by firebase-analytics.
+    implementation libs.androidx.localbroadcastmanager
     implementation libs.androidx.preference.ktx
     implementation libs.androidx.constraintlayout
     implementation libs.androidx.viewpager2
@@ -177,7 +179,6 @@ dependencies {
     implementation libs.kotlinx.coroutines.android
 
     // Firebase Crash Reporting and Performance Monitoring
-    implementation libs.firebase.analytics.ktx
     implementation libs.firebase.crashlytics
     implementation libs.firebase.perf
 

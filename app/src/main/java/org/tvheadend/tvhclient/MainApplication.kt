@@ -9,7 +9,6 @@ import com.google.android.gms.cast.framework.OptionsProvider
 import com.google.android.gms.cast.framework.SessionProvider
 import com.google.android.gms.cast.framework.media.CastMediaOptions
 import com.google.android.gms.cast.framework.media.NotificationOptions
-import com.google.firebase.analytics.FirebaseAnalytics
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -34,7 +33,6 @@ import java.util.concurrent.ScheduledExecutorService
 
 class MainApplication : Application(), OptionsProvider, AppGraph {
 
-    private lateinit var fireBaseAnalytics: FirebaseAnalytics
     lateinit var appContainer: AppContainer
 
     /** Root of the hand rolled dependency graph, replacing the former Dagger components. */
@@ -86,8 +84,6 @@ class MainApplication : Application(), OptionsProvider, AppGraph {
         super.onCreate()
 
         instance = this
-
-        fireBaseAnalytics = FirebaseAnalytics.getInstance(this)
 
         // Log to the console only in debug builds. Planting the debug tree unconditionally keeps
         // every Timber call site (and the string it builds) alive and printing in release builds.

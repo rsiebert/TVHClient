@@ -28,6 +28,7 @@ constraintlayout = "2.2.2"
 viewpager2 = "1.1.0"
 work = "2.12.0"
 mediarouter = "1.8.1"
+localbroadcastmanager = "1.1.0"
 lifecycle = "2.11.0"
 fragment = "1.9.1"
 material = "1.14.0"
@@ -44,7 +45,6 @@ billing = "9.1.0"
 playServicesCast = "21.0.0"
 
 # Firebase
-firebaseAnalytics = "22.5.0"
 firebaseCrashlytics = "21.0.1"
 firebasePerf = "23.0.1"
 
@@ -80,6 +80,7 @@ androidx-constraintlayout = { module = "androidx.constraintlayout:constraintlayo
 androidx-viewpager2 = { module = "androidx.viewpager2:viewpager2", version.ref = "viewpager2" }
 androidx-work-runtime = { module = "androidx.work:work-runtime", version.ref = "work" }
 androidx-mediarouter = { module = "androidx.mediarouter:mediarouter", version.ref = "mediarouter" }
+androidx-localbroadcastmanager = { module = "androidx.localbroadcastmanager:localbroadcastmanager", version.ref = "localbroadcastmanager" }
 androidx-lifecycle-viewmodel-ktx = { module = "androidx.lifecycle:lifecycle-viewmodel-ktx", version.ref = "lifecycle" }
 androidx-lifecycle-livedata-ktx = { module = "androidx.lifecycle:lifecycle-livedata-ktx", version.ref = "lifecycle" }
 androidx-fragment-ktx = { module = "androidx.fragment:fragment-ktx", version.ref = "fragment" }
@@ -98,7 +99,6 @@ material-components = { module = "com.google.android.material:material", version
 billing-ktx = { module = "com.android.billingclient:billing-ktx", version.ref = "billing" }
 play-services-cast-framework = { module = "com.google.android.gms:play-services-cast-framework", version.ref = "playServicesCast" }
 
-firebase-analytics-ktx = { module = "com.google.firebase:firebase-analytics-ktx", version.ref = "firebaseAnalytics" }
 firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics", version.ref = "firebaseCrashlytics" }
 firebase-perf = { module = "com.google.firebase:firebase-perf", version.ref = "firebasePerf" }
 
