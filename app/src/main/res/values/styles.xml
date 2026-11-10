@@ -69,6 +69,18 @@
     </style>
     <!--</editor-fold>-->
 
+    <!--<editor-fold desc="Font for section headings in the information screens">-->
+    <style name="SectionHeaderFont.Light" parent="TextAppearance.MaterialComponents.Headline6">
+        <item name="android:textSize">20sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/title_text_light</item>
+    </style>
+
+    <style name="SectionHeaderFont.Dark" parent="SectionHeaderFont.Light">
+        <item name="android:textColor">@color/title_text_dark</item>
+    </style>
+    <!--</editor-fold>-->
+
     <!--<editor-fold desc="Fonts for the internal player screen. The background is always dark">-->
     <style name="PlayerTitleFont" parent="TextAppearance.MaterialComponents.Headline6">
         <item name="android:textColor">@color/title_text_dark</item>
@@ -143,6 +155,7 @@
         <item name="ProgramGuideContentFont">@style/ProgramGuideContentFont.Dark</item>
         <item name="ChangeLogVersionFont">@style/ChangeLogVersionFont.Dark</item>
         <item name="ChangeLogDateFont">@style/ChangeLogDateFont.Dark</item>
+        <item name="SectionHeaderFont">@style/SectionHeaderFont.Dark</item>
         <!--</editor-fold>-->
 
         <!--<editor-fold desc="Toolbar color">-->
@@ -231,6 +244,7 @@
         <item name="ProgramGuideContentFont">@style/ProgramGuideContentFont.Light</item>
         <item name="ChangeLogVersionFont">@style/ChangeLogVersionFont.Light</item>
         <item name="ChangeLogDateFont">@style/ChangeLogDateFont.Light</item>
+        <item name="SectionHeaderFont">@style/SectionHeaderFont.Light</item>
         <!--</editor-fold>-->
 
         <!--<editor-fold desc="Toolbar color">-->

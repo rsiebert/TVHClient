@@ -1,274 +1,224 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:paddingBottom="16dp">
 
+        <!-- Connection -->
         <TextView
             android:id="@+id/connection_label_view"
-            style="?attr/TitleFont"
-            android:layout_width="fill_parent"
+            style="?attr/SectionHeaderFont"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginBottom="8dp"
-            android:text="@string/connection"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:paddingBottom="6dp"
+            android:text="@string/connection" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="?attr/divider_color" />
 
         <TextView
             android:id="@+id/connection_view"
             style="?attr/ContentFont"
-            android:layout_width="fill_parent"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="4dp"
-            android:layout_marginEnd="16dp"
-            android:text="@string/connection"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/connection_label_view" />
+            android:layout_marginTop="6dp"
+            android:text="@string/connection" />
 
+        <!-- Channels -->
         <TextView
             android:id="@+id/channels_label_view"
-            style="?attr/TitleFont"
-            android:layout_width="fill_parent"
+            style="?attr/SectionHeaderFont"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
-            android:layout_marginEnd="16dp"
+            android:paddingBottom="6dp"
+            android:text="@string/channels" />
 
-            android:text="@string/channels"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/connection_view" />
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="?attr/divider_color" />
 
         <TextView
             android:id="@+id/channels_view"
             style="?attr/ContentFont"
-            android:layout_width="fill_parent"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="4dp"
-            android:layout_marginEnd="16dp"
-            android:text="@string/channels"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/channels_label_view" />
+            android:layout_marginTop="6dp"
+            android:text="@string/channels" />
 
+        <!-- Programs -->
         <TextView
             android:id="@+id/programs_label_view"
-            style="?attr/TitleFont"
-            android:layout_width="fill_parent"
+            style="?attr/SectionHeaderFont"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
-            android:layout_marginEnd="16dp"
+            android:paddingBottom="6dp"
+            android:text="@string/programs" />
 
-            android:text="@string/programs"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/channels_view" />
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="?attr/divider_color" />
 
         <TextView
             android:id="@+id/programs_view"
             style="?attr/ContentFont"
-            android:layout_width="fill_parent"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="4dp"
-            android:layout_marginEnd="16dp"
-            android:text="@string/programs"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/programs_label_view" />
+            android:layout_marginTop="6dp"
+            android:text="@string/programs" />
 
+        <!-- Recordings -->
         <TextView
             android:id="@+id/recording_label_view"
-            style="?attr/TitleFont"
-            android:layout_width="fill_parent"
+            style="?attr/SectionHeaderFont"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
-            android:layout_marginEnd="16dp"
-            android:text="@string/recordings"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/programs_view" />
+            android:paddingBottom="6dp"
+            android:text="@string/recordings" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="?attr/divider_color" />
 
         <TextView
             android:id="@+id/completed_recordings_view"
             style="?attr/ContentFont"
-            android:layout_width="fill_parent"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="4dp"
-            android:layout_marginEnd="16dp"
-            android:text="@string/completed_recordings"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/recording_label_view" />
+            android:layout_marginTop="6dp"
+            android:text="@string/completed_recordings" />
 
         <TextView
             android:id="@+id/upcoming_recordings_view"
             style="?attr/ContentFont"
-            android:layout_width="fill_parent"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="4dp"
-            android:layout_marginEnd="16dp"
-            android:text="@string/scheduled_recordings"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/completed_recordings_view" />
+            android:layout_marginTop="6dp"
+            android:text="@string/scheduled_recordings" />
 
         <TextView
             android:id="@+id/series_recordings_view"
             style="?attr/ContentFont"
-            android:layout_width="fill_parent"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="4dp"
-            android:layout_marginEnd="16dp"
-            android:text="@string/series_recordings"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/upcoming_recordings_view" />
+            android:layout_marginTop="6dp"
+            android:text="@string/series_recordings" />
 
         <TextView
             android:id="@+id/timer_recordings_view"
             style="?attr/ContentFont"
-            android:layout_width="fill_parent"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="4dp"
-            android:layout_marginEnd="16dp"
-            android:text="@string/timer_recordings"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/series_recordings_view" />
+            android:layout_marginTop="6dp"
+            android:text="@string/timer_recordings" />
 
         <TextView
             android:id="@+id/failed_recordings_view"
             style="?attr/ContentFont"
-            android:layout_width="fill_parent"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="4dp"
-            android:layout_marginEnd="16dp"
-            android:text="@string/failed_recordings"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/timer_recordings_view" />
+            android:layout_marginTop="6dp"
+            android:text="@string/failed_recordings" />
 
         <TextView
             android:id="@+id/removed_recordings_view"
             style="?attr/ContentFont"
-            android:layout_width="fill_parent"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="4dp"
-            android:layout_marginEnd="16dp"
-            android:text="@string/removed_recordings"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/failed_recordings_view" />
+            android:layout_marginTop="6dp"
+            android:text="@string/removed_recordings" />
 
+        <!-- Currently recording -->
         <TextView
             android:id="@+id/currently_recording_label_view"
-            style="?attr/TitleFont"
-            android:layout_width="fill_parent"
+            style="?attr/SectionHeaderFont"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
-            android:layout_marginEnd="16dp"
-            android:text="@string/currently_recording"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/removed_recordings_view" />
+            android:paddingBottom="6dp"
+            android:text="@string/currently_recording" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="?attr/divider_color" />
 
         <TextView
             android:id="@+id/currently_recording_view"
             style="?attr/ContentFont"
-            android:layout_width="fill_parent"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="4dp"
-            android:layout_marginEnd="16dp"
-            android:text="@string/nothing"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/currently_recording_label_view" />
+            android:layout_marginTop="6dp"
+            android:text="@string/nothing" />
 
+        <!-- Disc space -->
         <TextView
             android:id="@+id/discspace_label_view"
-            style="?attr/TitleFont"
-            android:layout_width="fill_parent"
+            style="?attr/SectionHeaderFont"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
-            android:layout_marginEnd="16dp"
-            android:text="@string/disc_space"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/currently_recording_view" />
+            android:paddingBottom="6dp"
+            android:text="@string/disc_space" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="?attr/divider_color" />
 
         <TextView
             android:id="@+id/total_discspace_view"
             style="?attr/ContentFont"
-            android:layout_width="fill_parent"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="4dp"
-            android:layout_marginEnd="16dp"
-            android:text="@string/unknown"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/discspace_label_view" />
+            android:layout_marginTop="6dp"
+            android:text="@string/unknown" />
 
         <TextView
             android:id="@+id/free_discspace_view"
             style="?attr/ContentFont"
-            android:layout_width="fill_parent"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="4dp"
-            android:layout_marginEnd="16dp"
-            android:text="@string/unknown"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/total_discspace_view" />
+            android:layout_marginTop="6dp"
+            android:text="@string/unknown" />
 
+        <!-- Server API version -->
         <TextView
             android:id="@+id/server_api_version_label_view"
-            style="?attr/TitleFont"
-            android:layout_width="fill_parent"
+            style="?attr/SectionHeaderFont"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
-            android:layout_marginEnd="16dp"
-            android:text="@string/server_api_version"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/free_discspace_view" />
+            android:paddingBottom="6dp"
+            android:text="@string/server_api_version" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="?attr/divider_color" />
 
         <TextView
             android:id="@+id/server_api_version_view"
             style="?attr/ContentFont"
-            android:layout_width="fill_parent"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="4dp"
-            android:layout_marginEnd="16dp"
-            android:text="@string/unknown"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/server_api_version_label_view" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            android:layout_marginTop="6dp"
+            android:text="@string/unknown" />
+
+    </LinearLayout>
 </ScrollView>
