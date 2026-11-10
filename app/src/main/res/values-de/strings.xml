@@ -402,4 +402,20 @@
     <string name="program_has_already_started">Programm läuft bereits</string>
     <string name="pref_load_more_epg_data">Weitere Programme laden</string>
     <string name="error_loading_information">Fehler beim Laden der erforderlichen Informationen</string>
+    <!-- Player track information dialog. -->
+    <string name="track_information_play_when_ready">Abspielen, wenn bereit</string>
+    <string name="track_information_playback_state">Wiedergabestatus</string>
+    <string name="track_information_mime_type">MIME-Typ</string>
+    <string name="track_information_id">ID</string>
+    <string name="track_information_width">Breite</string>
+    <string name="track_information_height">Höhe</string>
+    <string name="track_information_aspect_ratio">Seitenverhältnis</string>
+    <string name="track_information_sample_rate">Abtastrate</string>
+    <string name="track_information_channel_count">Anzahl der Kanäle</string>
+    <string name="track_information_no_value">kein Wert</string>
+    <string name="track_information_state_buffering">Puffern</string>
+    <string name="track_information_state_ended">Beendet</string>
+    <string name="track_information_state_idle">Inaktiv</string>
+    <string name="track_information_state_ready">Bereit</string>
+    <string name="track_information_state_unknown">Unbekannt</string>
 </resources>

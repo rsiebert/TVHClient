@@ -382,4 +382,20 @@
     <string name="wol_send">"Envió exitosamente del paquete de activación de LAN a '%s'"</string>
     <string name="wol_send_broadcast">"Envió exitosamente el paquete de activación de LAN como una transmisión a '%s'"</string>
     <string name="yesterday">Ayer</string>
+    <!-- Player track information dialog. -->
+    <string name="track_information_play_when_ready">Reproducir cuando esté listo</string>
+    <string name="track_information_playback_state">Estado de reproducción</string>
+    <string name="track_information_mime_type">Tipo MIME</string>
+    <string name="track_information_id">ID</string>
+    <string name="track_information_width">Ancho</string>
+    <string name="track_information_height">Alto</string>
+    <string name="track_information_aspect_ratio">Relación de aspecto</string>
+    <string name="track_information_sample_rate">Frecuencia de muestreo</string>
+    <string name="track_information_channel_count">Número de canales</string>
+    <string name="track_information_no_value">sin valor</string>
+    <string name="track_information_state_buffering">almacenando en búfer</string>
+    <string name="track_information_state_ended">finalizado</string>
+    <string name="track_information_state_idle">inactivo</string>
+    <string name="track_information_state_ready">listo</string>
+    <string name="track_information_state_unknown">desconocido</string>
 </resources>

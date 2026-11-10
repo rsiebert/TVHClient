@@ -385,4 +385,20 @@
     <string name="wol_send">Pomyślnie wysłano pakiet Wake On LAN do \'%s\'</string>
     <string name="wol_send_broadcast">Pomyślnie wysłano Wake On LAN jako pakiet transmisji do \'%s\'</string>
     <string name="yesterday">Wczoraj</string>
+    <!-- Player track information dialog. -->
+    <string name="track_information_play_when_ready">Odtwórz, gdy gotowe</string>
+    <string name="track_information_playback_state">Stan odtwarzania</string>
+    <string name="track_information_mime_type">Typ MIME</string>
+    <string name="track_information_id">ID</string>
+    <string name="track_information_width">Szerokość</string>
+    <string name="track_information_height">Wysokość</string>
+    <string name="track_information_aspect_ratio">Proporcje obrazu</string>
+    <string name="track_information_sample_rate">Częstotliwość próbkowania</string>
+    <string name="track_information_channel_count">Liczba kanałów</string>
+    <string name="track_information_no_value">brak wartości</string>
+    <string name="track_information_state_buffering">buforowanie</string>
+    <string name="track_information_state_ended">zakończone</string>
+    <string name="track_information_state_idle">bezczynny</string>
+    <string name="track_information_state_ready">gotowe</string>
+    <string name="track_information_state_unknown">nieznany</string>
 </resources>

@@ -382,4 +382,20 @@
     <string name="wol_send">Lyckades skicka wake on LAN paket till \'%s\'</string>
     <string name="wol_send_broadcast">Lyckades skicka wake on LAN paket som broadcast till \'%s\'</string>
     <string name="yesterday">Igår</string>
+    <!-- Player track information dialog. -->
+    <string name="track_information_play_when_ready">Spela upp när redo</string>
+    <string name="track_information_playback_state">Uppspelningsstatus</string>
+    <string name="track_information_mime_type">MIME-typ</string>
+    <string name="track_information_id">ID</string>
+    <string name="track_information_width">Bredd</string>
+    <string name="track_information_height">Höjd</string>
+    <string name="track_information_aspect_ratio">Bildförhållande</string>
+    <string name="track_information_sample_rate">Samplingsfrekvens</string>
+    <string name="track_information_channel_count">Antal kanaler</string>
+    <string name="track_information_no_value">inget värde</string>
+    <string name="track_information_state_buffering">buffrar</string>
+    <string name="track_information_state_ended">avslutad</string>
+    <string name="track_information_state_idle">inaktiv</string>
+    <string name="track_information_state_ready">redo</string>
+    <string name="track_information_state_unknown">okänd</string>
 </resources>

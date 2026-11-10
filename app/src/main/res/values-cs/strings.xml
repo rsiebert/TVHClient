@@ -382,4 +382,20 @@
     <string name="wol_send">Úspěšně odeslán Wake on LAN paket na \'%s\'</string>
     <string name="wol_send_broadcast">Úspěšně odeslán Wake on LAN paket jako broadcast na \'%s\'</string>
     <string name="yesterday">Včera</string>
+    <!-- Player track information dialog. -->
+    <string name="track_information_play_when_ready">Přehrát, jakmile je připraveno</string>
+    <string name="track_information_playback_state">Stav přehrávání</string>
+    <string name="track_information_mime_type">Typ MIME</string>
+    <string name="track_information_id">ID</string>
+    <string name="track_information_width">Šířka</string>
+    <string name="track_information_height">Výška</string>
+    <string name="track_information_aspect_ratio">Poměr stran</string>
+    <string name="track_information_sample_rate">Vzorkovací frekvence</string>
+    <string name="track_information_channel_count">Počet kanálů</string>
+    <string name="track_information_no_value">žádná hodnota</string>
+    <string name="track_information_state_buffering">načítání</string>
+    <string name="track_information_state_ended">dokončeno</string>
+    <string name="track_information_state_idle">nečinné</string>
+    <string name="track_information_state_ready">připraveno</string>
+    <string name="track_information_state_unknown">neznámé</string>
 </resources>

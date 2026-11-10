@@ -385,4 +385,20 @@
     <string name="wol_send">Sikeresen elküldte a WOL csomagot a következő címre: \'%s\'</string>
     <string name="wol_send_broadcast">Sikeresen elküldte a WOL csomagot a következő címre: \'%s\'</string>
     <string name="yesterday">Tegnap</string>
+    <!-- Player track information dialog. -->
+    <string name="track_information_play_when_ready">Lejátszás, ha kész</string>
+    <string name="track_information_playback_state">Lejátszás állapota</string>
+    <string name="track_information_mime_type">MIME-típus</string>
+    <string name="track_information_id">ID</string>
+    <string name="track_information_width">Szélesség</string>
+    <string name="track_information_height">Magasság</string>
+    <string name="track_information_aspect_ratio">Képarány</string>
+    <string name="track_information_sample_rate">Mintavételi frekvencia</string>
+    <string name="track_information_channel_count">Csatornák száma</string>
+    <string name="track_information_no_value">nincs érték</string>
+    <string name="track_information_state_buffering">pufferelés</string>
+    <string name="track_information_state_ended">befejeződött</string>
+    <string name="track_information_state_idle">tétlen</string>
+    <string name="track_information_state_ready">kész</string>
+    <string name="track_information_state_unknown">ismeretlen</string>
 </resources>

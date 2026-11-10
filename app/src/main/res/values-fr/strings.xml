@@ -385,4 +385,20 @@
     <string name="wol_send">Paquet de WoL envoyé avec succès à \'%s\'</string>
     <string name="wol_send_broadcast">Paquet de WoL en broadcast envoyé avec succès à \'%s\'</string>
     <string name="yesterday">Hier</string>
+    <!-- Player track information dialog. -->
+    <string name="track_information_play_when_ready">Lire lorsque prêt</string>
+    <string name="track_information_playback_state">État de lecture</string>
+    <string name="track_information_mime_type">Type MIME</string>
+    <string name="track_information_id">ID</string>
+    <string name="track_information_width">Largeur</string>
+    <string name="track_information_height">Hauteur</string>
+    <string name="track_information_aspect_ratio">Rapport d\'aspect</string>
+    <string name="track_information_sample_rate">Fréquence d\'échantillonnage</string>
+    <string name="track_information_channel_count">Nombre de canaux</string>
+    <string name="track_information_no_value">aucune valeur</string>
+    <string name="track_information_state_buffering">mise en mémoire tampon</string>
+    <string name="track_information_state_ended">terminé</string>
+    <string name="track_information_state_idle">inactif</string>
+    <string name="track_information_state_ready">prêt</string>
+    <string name="track_information_state_unknown">inconnu</string>
 </resources>

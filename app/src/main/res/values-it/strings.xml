@@ -386,4 +386,20 @@ L'indirizzo deve essere nella forma '01:24:67:9a:cd:ef' e può contenere solo ci
     <string name="wol_send">"Invio completato pacchetto Wake On LAN a \'%s\'"</string>
     <string name="wol_send_broadcast">"Invio completato pacchetto Wake On LAN in broadcast a \'%s\'"</string>
     <string name="yesterday">Ieri</string>
+    <!-- Player track information dialog. -->
+    <string name="track_information_play_when_ready">Riproduci quando pronto</string>
+    <string name="track_information_playback_state">Stato di riproduzione</string>
+    <string name="track_information_mime_type">Tipo MIME</string>
+    <string name="track_information_id">ID</string>
+    <string name="track_information_width">Larghezza</string>
+    <string name="track_information_height">Altezza</string>
+    <string name="track_information_aspect_ratio">Proporzioni</string>
+    <string name="track_information_sample_rate">Frequenza di campionamento</string>
+    <string name="track_information_channel_count">Numero di canali</string>
+    <string name="track_information_no_value">nessun valore</string>
+    <string name="track_information_state_buffering">caricamento in buffer</string>
+    <string name="track_information_state_ended">terminato</string>
+    <string name="track_information_state_idle">inattivo</string>
+    <string name="track_information_state_ready">pronto</string>
+    <string name="track_information_state_unknown">sconosciuto</string>
 </resources>

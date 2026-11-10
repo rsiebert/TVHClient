@@ -382,4 +382,20 @@
     <string name="wol_send">Wake On LAN pakket is met success verstuurd naar \'%s\'</string>
     <string name="wol_send_broadcast">Wake On LAN pakket is met success verstuurd als broadcast naar \'%s\'</string>
     <string name="yesterday">Gisteren</string>
+    <!-- Player track information dialog. -->
+    <string name="track_information_play_when_ready">Afspelen wanneer gereed</string>
+    <string name="track_information_playback_state">Afspeelstatus</string>
+    <string name="track_information_mime_type">MIME-type</string>
+    <string name="track_information_id">ID</string>
+    <string name="track_information_width">Breedte</string>
+    <string name="track_information_height">Hoogte</string>
+    <string name="track_information_aspect_ratio">Beeldverhouding</string>
+    <string name="track_information_sample_rate">Samplefrequentie</string>
+    <string name="track_information_channel_count">Aantal kanalen</string>
+    <string name="track_information_no_value">geen waarde</string>
+    <string name="track_information_state_buffering">bufferen</string>
+    <string name="track_information_state_ended">beëindigd</string>
+    <string name="track_information_state_idle">inactief</string>
+    <string name="track_information_state_ready">gereed</string>
+    <string name="track_information_state_unknown">onbekend</string>
 </resources>
