@@ -41,9 +41,7 @@ ksp {
 }
 
 dependencies {
-    // Support library basics
-    implementation libs.androidx.appcompat
-    implementation libs.androidx.preference.ktx
+    // LiveData is the data layer's observable type: the DAOs and data sources return it.
     implementation libs.androidx.lifecycle.livedata.ktx
 
     // Android Room

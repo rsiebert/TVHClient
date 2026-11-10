@@ -39,9 +39,9 @@ android {
 }
 
 dependencies {
-    implementation libs.androidx.appcompat
+    // The Java sources (HtspConnection, HtspFileInputStream) use @NonNull/@Nullable.
+    implementation libs.androidx.annotation
     implementation libs.timber
-    implementation libs.androidx.core.ktx
 
     // HtspConnection is a plain thread/selector implementation, but it relies on
     // android.net.Uri and android.util.SparseArray. Robolectric provides real
