@@ -2,13 +2,18 @@
 <!--
     Trailing action view that shows a drawer item's count. Set through app:actionLayout on the
     navigation_drawer menu items; NavigationView has no native badge API.
+
+    The Material item adds this view into its own action area, and the root layout params (in
+    particular layout_gravity) are not preserved for an inflated action view. The view therefore
+    fills the row height itself and centres its text, so the count lines up with the item title
+    instead of sticking to the top of the row.
 -->
 <TextView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:layout_gravity="center_vertical"
-    android:gravity="center"
+    android:gravity="center_vertical"
     android:minWidth="20dp"
     android:paddingStart="4dp"
     android:paddingEnd="4dp"
