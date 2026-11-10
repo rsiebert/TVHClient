@@ -4,58 +4,63 @@
 </head>
 <body>
 
+<div class='content'>
+Hier findest du Antworten auf häufige Fragen zur Wiedergabe und zum Casting von TVHClient.
+</div>
+
 <div class='title'>Kontakt</div>
 <div class='content'>
-    <b>TVHClient wird entwickelt von Robert Siebert.</b>
-    <p>Kontaktiere mich für Ideen, Fehlermeldungen und Weiteres unter:</p>
+    <b>TVHClient wird von Robert Siebert entwickelt.</b>
+    <p>Kontaktiere mich bei Ideen, Fehlermeldungen und Fragen:</p>
     <ul>
-        <li><a href="mailto:rsiebert80@gmail.com">rsiebert80@gmail.com</a></li>
+        <li><a href="mailto:[EMAIL]">[EMAIL]</a></li>
         <li><a href="https://discord.gg/RbBXfG3">Discord</a></li>
-        <li><a href="https://github.com/rsiebert/TVHClient/issues">Github</a></li>
+        <li><a href="https://github.com/rsiebert/TVHClient/issues">GitHub</a></li>
     </ul>
 </div>
 
 <div class='title'>Wiedergabe</div>
 <div class='content'>
-    <b>Externe Player</b>
+    <div class='subtitle'>Externe Player</div>
     <p>Falls der externe Player gestartet wurde, aber kein Video erscheint, prüfe folgende Punkte:</p>
     <ul>
-        <li>Das gewählte Wiedergabe-Profil ist nicht geeignet. Empfohlen wird 'matroska'.</li>
-        <li>Der Streaming-Port (Default ist 9981) ist nicht korrekt.</li>
-        <li>Der Player kann den Server über den Streaming-Port ist erreichen.</li>
+        <li>Das gewählte Wiedergabeprofil ist nicht geeignet. Empfohlen wird 'matroska'.</li>
+        <li>Der Streaming-Port (Standard ist 9981) ist nicht korrekt.</li>
+        <li>Der Player kann den Server nicht über den Streaming-Port erreichen. Prüfe, ob der Port im Router oder Proxy korrekt weitergeleitet wird.</li>
         <li>Der Upload der Daten vom Server ist zu langsam.</li>
     </ul>
 
-    <b>Interner Player</b>
+    <div class='subtitle'>Interner Player</div>
     <p>Falls der interne Player gestartet wurde, aber kein Video erscheint, prüfe folgende Punkte:</p>
     <ul>
-        <li>Das gewählte Wiedergabe-Profil ist nicht geeignet. Empfohlen wird 'htsp'.</li>
+        <li>Das gewählte Wiedergabeprofil ist nicht geeignet. Empfohlen wird 'htsp'.</li>
         <li>Der Upload der Daten vom Server ist zu langsam.</li>
     </ul>
 </div>
 
 <div class='title'>Casting</div>
 <div class='content'>
-    <b>Anforderungen</b>
+    <div class='subtitle'>Anforderungen</div>
     <ul>
         <li>Du benutzt die freigeschaltete Version von TVHClient.</li>
-        <li>Dein Server unterstützt Transcodierung.</li>
-        <li>Transcodierung, insbesondere VAAPI hardwaregestützte Transcodierung, funktioniert am besten mit den neuesten instabilen TVH 4.3 Versionen.</li>
+        <li>Dein Server unterstützt Transcoding.</li>
+        <li>Transcoding, insbesondere VAAPI-hardwaregestütztes Transcoding, funktioniert am besten mit den neuesten instabilen TVH 4.3 Versionen.</li>
     </ul>
 
-    <b>Einrichtung der Transkodierung</b>
-    <p>Für maximale Kompatibilität verwende ein Stream-Profil mit den folgenden Einstellungen:</p>
+    <div class='subtitle'>Transcoding einrichten</div>
+    <p>Für maximale Kompatibilität verwende ein Streamprofil mit den folgenden Einstellungen:</p>
     <ul>
         <li>Container: av-lib/MP4 (<a href="https://i.imgur.com/SqEFdtl.png" rel="nofollow">Beispiel</a>)</li>
-        <li>Video codec: H.264, High profile (<a href="https://i.imgur.com/q2rZMpu.png" rel="nofollow">Beispiel</a>)</li>
-        <li>Audio codec: AAC LC profile (<a href="https://i.imgur.com/T60IN3w.png" rel="nofollow">Beispiel</a>)</li>
+        <li>Video-Codec: H.264, High profile (<a href="https://i.imgur.com/q2rZMpu.png" rel="nofollow">Beispiel</a>)</li>
+        <li>Audio-Codec: AAC LC profile (<a href="https://i.imgur.com/T60IN3w.png" rel="nofollow">Beispiel</a>)</li>
     </ul>
 
-    <b>TVHClient einrichten</b>
+    <div class='subtitle'>TVHClient für Casting einrichten</div>
     <ul>
         <li>Verwende entweder eine IP-Adresse oder einen DNS-Namen für die Verbindung. Vor dem Start des Castings wird der DNS-Name in eine IP-Adresse umgewandelt.</li>
         <li>Wähle das entsprechende Casting-Wiedergabeprofil aus.</li>
     </ul>
 </div>
+
 </body>
 </html>
