@@ -449,4 +449,21 @@
     <string name="exo_track_selection_title_audio" tools:override="true">Audio</string>
     <string name="exo_track_selection_title_text">Text</string>
     <string name="aspect_ratio_select_title">Select the video aspect ratio</string>
+
+    <!-- Player track information dialog. -->
+    <string name="track_information_play_when_ready">Play when ready</string>
+    <string name="track_information_playback_state">Playback state</string>
+    <string name="track_information_mime_type">Mime type</string>
+    <string name="track_information_id">Id</string>
+    <string name="track_information_width">Width</string>
+    <string name="track_information_height">Height</string>
+    <string name="track_information_aspect_ratio">Aspect ratio</string>
+    <string name="track_information_sample_rate">Sample rate</string>
+    <string name="track_information_channel_count">Channel count</string>
+    <string name="track_information_no_value">no value</string>
+    <string name="track_information_state_buffering">buffering</string>
+    <string name="track_information_state_ended">ended</string>
+    <string name="track_information_state_idle">idle</string>
+    <string name="track_information_state_ready">ready</string>
+    <string name="track_information_state_unknown">unknown</string>
 </resources>

@@ -5,16 +5,21 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="48dp">
+        android:layout_height="wrap_content"
+        android:minHeight="56dp">
 
-        <TextView
+        <!--
+            The genre colour is drawn as the same narrow vertical bar that the channel, program and
+            recording lists use, so the legend shows exactly what the user sees in those lists.
+            It is decorative: the genre name to its right carries the accessible label.
+        -->
+        <View
             android:id="@+id/color"
-            android:layout_width="24dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginLeft="16dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="16dp"
+            android:layout_width="8dp"
+            android:layout_height="0dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:importantForAccessibility="no"
             app:genreColor="@{contentType}"
             app:genreColorItemName="@{contentName}"
             app:genreColorAlphaOffset="@{0}"

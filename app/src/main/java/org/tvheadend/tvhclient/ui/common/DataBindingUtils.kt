@@ -584,7 +584,7 @@ fun setLocalizedDate(view: TextView, date: Long) {
  */
 @SuppressLint("ResourceAsColor")
 @BindingAdapter("genreColor", "showGenreColor", "genreColorAlphaOffset", "genreColorItemName")
-fun setGenreColor(view: TextView, contentType: Int, showGenreColors: Boolean, offset: Int, itemName: String?) {
+fun setGenreColor(view: View, contentType: Int, showGenreColors: Boolean, offset: Int, itemName: String?) {
     val context = view.context
     val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
 

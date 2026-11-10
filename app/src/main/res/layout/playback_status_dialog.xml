@@ -37,11 +37,9 @@
         android:layout_marginRight="16dp"
         android:layout_marginBottom="16dp"
         android:text="@android:string/ok"
-        android:textColor="@color/primaryLightColor"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:strokeColor="@color/primaryLightColor" />
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

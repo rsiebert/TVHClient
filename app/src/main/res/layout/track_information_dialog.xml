@@ -29,13 +29,11 @@
         android:layout_marginRight="16dp"
         android:layout_marginBottom="16dp"
         android:text="@android:string/ok"
-        android:textColor="@color/primaryLightColor"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/track_information"
-        app:layout_constraintVertical_bias="0.0"
-        app:strokeColor="@color/primaryLightColor" />
+        app:layout_constraintVertical_bias="0.0" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

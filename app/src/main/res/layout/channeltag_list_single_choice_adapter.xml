@@ -5,7 +5,8 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="48dp"
+        android:layout_height="wrap_content"
+        android:minHeight="56dp"
         android:background="?android:attr/selectableItemBackground"
         android:onClick="@{() -> callback.onSelected(position)}">
 

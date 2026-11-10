@@ -34,7 +34,9 @@ fun buildRecyclerView(context: Context, adapter: RecyclerView.Adapter<*>): Recyc
     val recyclerView = RecyclerView(context)
     recyclerView.layoutManager = LinearLayoutManager(context)
     recyclerView.adapter = adapter
-    recyclerView.setHasFixedSize(true)
+    // Deliberately no setHasFixedSize(true): the RecyclerView is sized wrap_content, so its size
+    // does change with the adapter contents and claiming otherwise is both wrong and flagged by
+    // lint (InvalidSetHasFixedSize).
     // Explicit layout params are required so the RecyclerView is shown when it is added to
     // the alert dialog's custom panel (which is a FrameLayout inside a scroll view).
     recyclerView.layoutParams = FrameLayout.LayoutParams(
@@ -166,15 +168,30 @@ class ChannelTagSelectionAdapter(private val channelTagList: List<ChannelTag>, p
 
 
 /**
- * Prepares a dialog that shows the available genre colors and the names. In
- * here the data for the adapter is created and the dialog prepared which
- * can be shown later.
+ * Shows the genre colors next to the genre names, so it is clear which color stands for which
+ * kind of program.
+ *
+ * The explanation is part of the custom view rather than a dialog message, because
+ * [MaterialAlertDialogBuilder] offers no supporting text API and setting a message alongside a
+ * custom view is not guaranteed to render both.
  */
 fun showGenreColorDialog(context: Context): Boolean {
-    val adapter = GenreColorListAdapter(context.resources.getStringArray(R.array.pr_content_type0))
+    val listAdapter = GenreColorListAdapter(context.resources.getStringArray(R.array.pr_content_type0))
+    val legend = LayoutInflater.from(context).inflate(R.layout.genre_color_legend, null, false)
+    legend.findViewById<RecyclerView>(R.id.genre_color_list).apply {
+        layoutManager = LinearLayoutManager(context)
+        // See buildRecyclerView: the list is wrap_content, so setHasFixedSize would be a lie.
+        // Qualified because an unqualified "adapter" resolves to RecyclerView.adapter here.
+        this.adapter = listAdapter
+    }
+    // An inflated root has no layout params of its own; without these the dialog's custom panel
+    // can end up measuring the legend against the wrong bounds.
+    legend.layoutParams = FrameLayout.LayoutParams(
+            FrameLayout.LayoutParams.MATCH_PARENT,
+            FrameLayout.LayoutParams.WRAP_CONTENT)
     MaterialAlertDialogBuilder(context)
-            .setTitle(R.string.genre_color_list)
-            .setView(buildRecyclerView(context, adapter))
+            .setTitle(R.string.genre_color_info)
+            .setView(legend)
             .show()
     return true
 }
@@ -247,14 +264,17 @@ fun showChannelSortOrderSelectionDialog(context: Context): Boolean {
     val sortOrderNames = context.resources.getStringArray(R.array.pref_sort_channels_names)
     MaterialAlertDialogBuilder(context)
             .setTitle(R.string.pref_sort_channels)
-            .setSingleChoiceItems(sortOrderNames, channelSortOrder) { _, index ->
+            .setSingleChoiceItems(sortOrderNames, channelSortOrder) { dialog, index ->
                 Timber.d("New selected channel sort order changed from $channelSortOrder to $index")
                 val editor = PreferenceManager.getDefaultSharedPreferences(context).edit()
                 editor.putString("channel_sort_order", index.toString())
                 editor.apply()
+                // The order is applied as soon as an entry is picked, so there is nothing left to
+                // confirm. Closing here also matches the ListPreference for this same setting.
+                dialog.dismiss()
             }
             .show()
-    return false
+    return true
 }
 
 fun showCompletedRecordingSortOrderSelectionDialog(context: Context): Boolean {
@@ -263,12 +283,14 @@ fun showCompletedRecordingSortOrderSelectionDialog(context: Context): Boolean {
     val sortOrderNames = context.resources.getStringArray(R.array.pref_sort_completed_recordings_names)
     MaterialAlertDialogBuilder(context)
             .setTitle(R.string.pref_sort_completed_recordings)
-            .setSingleChoiceItems(sortOrderNames, sortOrder) { _, index ->
+            .setSingleChoiceItems(sortOrderNames, sortOrder) { dialog, index ->
                 Timber.d("New selected completed recording sort order changed from $sortOrder to $index")
                 val editor = PreferenceManager.getDefaultSharedPreferences(context).edit()
                 editor.putString("completed_recording_sort_order", index.toString())
                 editor.apply()
+                // See showChannelSortOrderSelectionDialog: the choice applies immediately.
+                dialog.dismiss()
             }
             .show()
-    return false
+    return true
 }

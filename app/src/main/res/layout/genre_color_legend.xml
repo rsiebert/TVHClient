@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Content of the "Explain genre colors" dialog.
+
+    The explanation is part of the custom view rather than a dialog message, because
+    MaterialAlertDialogBuilder offers no supporting text API and setting a message next to a custom
+    view is not guaranteed to render both.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/genre_color_explanation"
+        style="?attr/ContentFont"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginLeft="24dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginRight="24dp"
+        android:layout_marginBottom="8dp"
+        android:text="@string/genre_color_list" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/genre_color_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:overScrollMode="never" />
+
+</LinearLayout>
