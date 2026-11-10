@@ -11,6 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import org.tvheadend.data.entity.Connection
 import org.tvheadend.data.entity.ServerStatus
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.databinding.StatusFragmentBinding
@@ -47,6 +48,16 @@ class StatusFragment : BaseFragment() {
         showStatus()
         showSubscriptionAndInputStatus()
 
+        // The connection, the htsp version and the unlocked state are loaded off the main thread
+        // and published through LiveData. Re-apply the affected parts whenever one of them
+        // changes, otherwise the header and the rows would keep the values they got while the
+        // fragment was still being created.
+        baseViewModel.activeConnectionLiveData.observe(viewLifecycleOwner) { loadedConnection ->
+            showConnectionInformation(loadedConnection)
+        }
+        baseViewModel.htspVersionLiveData.observe(viewLifecycleOwner) { showRecordingRowsVisibility() }
+        baseViewModel.isUnlockedLiveData.observe(viewLifecycleOwner) { showRecordingRowsVisibility() }
+
         loadDataTask = Runnable {
             val service = activity?.getSystemService(Context.ACTIVITY_SERVICE)
             service?.let {
@@ -80,11 +91,8 @@ class StatusFragment : BaseFragment() {
 
     private fun showStatus() {
 
-        val text = "${connection.name} (${connection.serverUrl})"
-        binding.connectionView.text = text
-
-        binding.seriesRecordingsView.visibility = if (htspVersion >= 13) View.VISIBLE else View.GONE
-        binding.timerRecordingsView.visibility = if (htspVersion >= 18 && isUnlocked) View.VISIBLE else View.GONE
+        showConnectionInformation(connection)
+        showRecordingRowsVisibility()
 
         statusViewModel.channelCount.observe(viewLifecycleOwner) { count ->
             val channelCountText = "$count ${getString(R.string.available)}"
@@ -195,6 +203,21 @@ class StatusFragment : BaseFragment() {
             binding.freeDiscspaceView.setText(R.string.unknown)
             binding.totalDiscspaceView.setText(R.string.unknown)
         }
+    }
+
+    private fun showConnectionInformation(loadedConnection: Connection) {
+        val text = "${loadedConnection.name} (${loadedConnection.serverUrl})"
+        binding.connectionView.text = text
+    }
+
+    /**
+     * The series and timer rows are only relevant for servers and builds that support them and
+     * are hidden otherwise. The htsp version and the unlocked state are read from the base
+     * fragment, which keeps both up to date from the corresponding live data.
+     */
+    private fun showRecordingRowsVisibility() {
+        binding.seriesRecordingsView.visibility = if (htspVersion >= 13) View.VISIBLE else View.GONE
+        binding.timerRecordingsView.visibility = if (htspVersion >= 18 && isUnlocked) View.VISIBLE else View.GONE
     }
 
     private fun showSubscriptionAndInputStatus() {
