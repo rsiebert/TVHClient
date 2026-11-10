@@ -52,6 +52,7 @@ class FileContentLoader(val context: Context, private val defaultLocale: String,
 
             replaceCorrectStyleSheet()
             replaceApplicationVersion()
+            replaceDeveloperEmail()
         }
 
         // Switch the context to the main thread to call the following method
@@ -65,6 +66,15 @@ class FileContentLoader(val context: Context, private val defaultLocale: String,
             // Replace the placeholder in the html file with the real version
             val version = BuildConfig.VERSION_NAME + " (" + BuildConfig.BUILD_VERSION + ")"
             contents = Pattern.compile("APP_VERSION").matcher(contents).replaceAll(version)
+        }
+    }
+
+    private fun replaceDeveloperEmail() {
+        // The html files use [EMAIL] as a placeholder. Fill it with the address from the build
+        // configuration so the privacy policy and help pages show a real address instead of
+        // the literal placeholder.
+        if (contents.contains("[EMAIL]") && BuildConfig.DEVELOPER_EMAIL.isNotBlank()) {
+            contents = contents.replace("[EMAIL]", BuildConfig.DEVELOPER_EMAIL)
         }
     }
 
