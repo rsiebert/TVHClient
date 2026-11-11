@@ -4,6 +4,7 @@ import android.content.Context
 import android.os.Build
 import android.util.Log
 import org.tvheadend.tvhclient.BuildConfig
+import org.tvheadend.tvhclient.R
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
@@ -58,7 +59,7 @@ class FileLoggingTree(context: Context) : BaseDebugTree() {
                 val stream = FileOutputStream(logfile, true)
                 stream.write("Logging started\n".toByteArray())
                 stream.write(("Application version: " + BuildConfig.VERSION_NAME + "(" + BuildConfig.BUILD_VERSION + ")\n").toByteArray())
-                stream.write(("Application build time is " + BuildConfig.BUILD_TIME + ", git commit hash is " + BuildConfig.GIT_SHA + ")\n").toByteArray())
+                stream.write(("Application build time is " + context.getString(R.string.build_time) + ", git commit hash is " + context.getString(R.string.build_git_sha) + ")\n").toByteArray())
                 stream.write(("Android version: " + Build.VERSION.RELEASE + "(" + Build.VERSION.SDK_INT + ")\n").toByteArray())
                 stream.close()
             }

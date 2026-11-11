@@ -27,14 +27,6 @@ if (tvhclientPropertiesFile.asFile.exists()) {
     logger.lifecycle("tvhclient.properties is missing; using empty defaults")
 }
 
-// `providers.exec` is tracked by Gradle, unlike Groovy's `String.execute()`, which spawns a
-// process outside Gradle's instrumentation and cannot be modelled by the configuration cache.
-def gitSha = providers.exec {
-    commandLine 'git', 'rev-parse', '--short', 'HEAD'
-    workingDir rootDir
-    ignoreExitValue true
-}.standardOutput.asText.get().trim()
-
 android {
     compileSdk = libs.versions.compileSdk.get().toInteger()
 
@@ -50,12 +42,6 @@ android {
         // Set the default values for these build config fields
         buildConfigField "String", "DEVELOPER_EMAIL", "\"${appProperties.getProperty('developerEmail', '')}\""
         buildConfigField "Integer", "BUILD_VERSION", "$versionCode"
-
-        // Include the git commit hash in the crash reports. Only the hash belongs here: it is
-        // stable between builds. The wall clock time is declared per build type instead (see
-        // below), because a value that changes on every configuration makes
-        // generate*BuildConfig permanently out of date and recompiles :app on every build.
-        buildConfigField "String", "GIT_SHA", "\"${gitSha}\""
 
         // The cast ID that the app shall use
         buildConfigField "String", "CAST_ID", "\"${appProperties.getProperty('castId', '')}\""
@@ -95,12 +81,6 @@ android {
     testOptions.unitTests.includeAndroidResources = true
     namespace 'org.tvheadend.tvhclient'
 
-    // Wall-clock build time, for the release crash reports. Evaluation here is cheap; what
-    // matters is that it is not in defaultConfig, where it would be an input to *every*
-    // variant's BuildConfig task. Note this value is frozen for the lifetime of a configuration
-    // cache entry, so it needs revisiting before the configuration cache is enabled.
-    def releaseBuildTime = new GregorianCalendar().format("yyyy.MM.dd HH:mm:ss")
-
     buildTypes {
         release {
             // Reduce the apk file size by enabling proguard
@@ -113,14 +93,13 @@ android {
             }
             proguardFiles 'proguard-rules.pro'
             buildConfigField "Boolean", "OVERRIDE_UNLOCKED", "false"
-            buildConfigField "String", "BUILD_TIME", "\"${releaseBuildTime}\""
         }
         debug {
             // Deliberately no initWith here. initWith copies the whole release build type, and
             // that silently drags in debuggable = false - which left the debug variant
-            // undebuggable (no debugger attach, BuildConfig.DEBUG == false) - as well as the
-            // release BUILD_TIME. Everything that genuinely needs to differ is set explicitly
-            // below, so the debug build type keeps AGP's defaults (debuggable = true).
+            // undebuggable (no debugger attach, BuildConfig.DEBUG == false). Everything that
+            // genuinely needs to differ is set explicitly below, so the debug build type keeps
+            // AGP's defaults (debuggable = true).
             optimization {
                 enable = false
             }
@@ -134,10 +113,6 @@ android {
             firebaseCrashlytics {
                 mappingFileUploadEnabled false
             }
-            // A stable literal rather than a timestamp. A value that changes on every
-            // configuration would make generateDebugBuildConfig permanently out of date, which
-            // in turn recompiles :app and stops the build cache from ever hitting.
-            buildConfigField "String", "BUILD_TIME", "\"dev\""
             // Debug builds are unlocked so the paid-only features (the internal player, the
             // recording profiles) can be exercised without a Play purchase.
             buildConfigField "Boolean", "OVERRIDE_UNLOCKED", "true"
@@ -238,3 +213,91 @@ dependencies {
     androidTestImplementation testFixtures(project(':htsp'))
     androidTestImplementation project(':htsp')
 }
+
+// ---------------------------------------------------------------------------------------------
+// Build metadata (git commit, build time)
+// ---------------------------------------------------------------------------------------------
+// Generated at *execution* time instead of read at configuration time: the configuration cache
+// stores configuration-time values, so a `providers.exec` read here would be frozen until an
+// unrelated input changed. -PgitSha / -PbuildTime override the generated values (e.g. from CI,
+// where .git may not be present).
+abstract class GenerateBuildInfoTask extends DefaultTask {
+
+    @Input
+    @Optional
+    abstract Property<String> getGitShaOverride()
+
+    @Input
+    @Optional
+    abstract Property<String> getBuildTimeOverride()
+
+    @Input
+    abstract Property<Boolean> getReleaseBuild()
+
+    @Internal
+    abstract Property<String> getWorkingDirectory()
+
+    @InputFile
+    @Optional
+    @PathSensitive(PathSensitivity.NONE)
+    abstract RegularFileProperty getGitHead()
+
+    @InputDirectory
+    @Optional
+    @PathSensitive(PathSensitivity.RELATIVE)
+    abstract DirectoryProperty getGitRefs()
+
+    @InputFile
+    @Optional
+    @PathSensitive(PathSensitivity.NONE)
+    abstract RegularFileProperty getGitPackedRefs()
+
+    @OutputDirectory
+    abstract DirectoryProperty getOutputDirectory()
+
+    @javax.inject.Inject
+    abstract org.gradle.process.ExecOperations getExecOperations()
+
+    @TaskAction
+    void generate() {
+        String sha = gitShaOverride.getOrNull()
+        if (sha == null) {
+            def output = new ByteArrayOutputStream()
+            execOperations.exec {
+                commandLine 'git', 'rev-parse', '--short', 'HEAD'
+                workingDir workingDirectory.get()
+                ignoreExitValue true
+                standardOutput = output
+            }
+            def text = output.toString().trim()
+            sha = text.isEmpty() ? 'unknown' : text
+        }
+        String time = buildTimeOverride.getOrNull() ?: (releaseBuild.getOrElse(false)
+                ? new Date().format('yyyy.MM.dd HH:mm:ss') : 'dev')
+
+        def valuesDir = new File(outputDirectory.get().asFile, 'values')
+        valuesDir.mkdirs()
+        new File(valuesDir, 'build_info.xml').text = """<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="build_git_sha" translatable="false">${sha}</string>
+    <string name="build_time" translatable="false">${time}</string>
+</resources>
+"""
+    }
+}
+
+androidComponents {
+    onVariants(selector().all()) { variant ->
+        def generateBuildInfo = tasks.register("generate${variant.name}BuildInfo", GenerateBuildInfoTask) { task ->
+            task.gitShaOverride.set(providers.gradleProperty('gitSha'))
+            task.buildTimeOverride.set(providers.gradleProperty('buildTime'))
+            task.releaseBuild.set(variant.buildType == 'release')
+            task.workingDirectory.set(rootDir.absolutePath)
+            task.gitHead.set(rootProject.layout.projectDirectory.file('.git/HEAD'))
+            task.gitRefs.set(rootProject.layout.projectDirectory.dir('.git/refs'))
+            task.gitPackedRefs.set(rootProject.layout.projectDirectory.file('.git/packed-refs'))
+        }
+        variant.sources.res?.addGeneratedSourceDirectory(generateBuildInfo, { it.outputDirectory })
+    }
+}
+

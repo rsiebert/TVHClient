@@ -93,7 +93,7 @@ class MainApplication : Application(), AppGraph {
         appContainer = AppContainer()
         // Publish the graph so ViewModels can resolve it without casting the Application.
         AppGraphProvider.graph = this
-        Timber.d("Application build time is ${BuildConfig.BUILD_TIME}, git commit hash is ${BuildConfig.GIT_SHA}")
+        Timber.d("Application build time is ${getString(R.string.build_time)}, git commit hash is ${getString(R.string.build_git_sha)}")
 
         // Build the data graph eagerly on the main thread. AppRepository writes to a LiveData in its
         // constructor, and LiveData may only be written from the main thread, so it must not be
