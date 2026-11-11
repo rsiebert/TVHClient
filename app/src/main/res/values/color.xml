@@ -1,24 +1,82 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <!--<editor-fold desc="Toolbar main color">-->
-    <color name="toolbarPrimaryDarkColor">#363636</color>
-    <color name="toolbarPrimaryLightColor">#eeeeee</color>
-    <!--</editor-fold>-->
-
     <!--<editor-fold desc="Material components main colors">-->
+    <!-- Still referenced by MainActivity as the Cast introductory overlay scrim colour. The
+         M2 primary/secondary variant colours are gone; their M3 counterparts live below. -->
     <color name="primaryColor">#808080</color>
-    <color name="primaryLightColor">#707070</color>
-    <color name="primaryDarkColor">#404040</color>
-
-    <color name="secondaryColor">#4db6ac</color>
-    <color name="secondaryDarkColor">#80cbc4</color>
-    <color name="secondaryLightColor">#80cbc4</color>
     <!--</editor-fold>-->
 
-    <!--<editor-fold desc="Material components background color">-->
+    <!--<editor-fold desc="Splash background color">-->
     <color name="surfaceLightColor">#f3f3f3</color>
-    <color name="surfaceDarkColor">#202020</color>
+    <!--</editor-fold>-->
+
+    <!--<editor-fold desc="Material 3 color roles">-->
+    <!-- Full Material 3 tonal palette for TVHClient. M2 had no clean 1:1 mapping: the accent
+         (M2 colorSecondary / colorAccent) becomes the M3 primary, because M3 drives selection
+         controls and accents from colorPrimary. Neutrals are tinted with the brand teal, as
+         they would be if generated from the brand colour with Material Theme Builder. -->
+    <color name="m3_dark_primary">#4CDADA</color>
+    <color name="m3_dark_on_primary">#003737</color>
+    <color name="m3_dark_primary_container">#004F4F</color>
+    <color name="m3_dark_on_primary_container">#6FF7F6</color>
+    <color name="m3_dark_secondary">#B0CCCB</color>
+    <color name="m3_dark_on_secondary">#1B3534</color>
+    <color name="m3_dark_secondary_container">#324B4B</color>
+    <color name="m3_dark_on_secondary_container">#CCE8E7</color>
+    <color name="m3_dark_tertiary">#B3C8E8</color>
+    <color name="m3_dark_on_tertiary">#1C314B</color>
+    <color name="m3_dark_tertiary_container">#334863</color>
+    <color name="m3_dark_on_tertiary_container">#D3E4FF</color>
+    <color name="m3_dark_error">#FFB4AB</color>
+    <color name="m3_dark_on_error">#690005</color>
+    <color name="m3_dark_error_container">#93000A</color>
+    <color name="m3_dark_on_error_container">#FFDAD6</color>
+    <color name="m3_dark_surface">#191C1C</color>
+    <color name="m3_dark_on_surface">#E0E3E2</color>
+    <color name="m3_dark_surface_variant">#3F4948</color>
+    <color name="m3_dark_on_surface_variant">#BEC9C8</color>
+    <color name="m3_dark_outline">#889392</color>
+    <color name="m3_dark_outline_variant">#3F4948</color>
+    <color name="m3_dark_surface_container_lowest">#0E1111</color>
+    <color name="m3_dark_surface_container_low">#191C1C</color>
+    <color name="m3_dark_surface_container">#1D2020</color>
+    <color name="m3_dark_surface_container_high">#272B2B</color>
+    <color name="m3_dark_surface_container_highest">#323636</color>
+    <color name="m3_dark_inverse_surface">#E0E3E2</color>
+    <color name="m3_dark_inverse_on_surface">#2D3131</color>
+    <color name="m3_dark_inverse_primary">#006A6A</color>
+
+    <color name="m3_light_primary">#006A6A</color>
+    <color name="m3_light_on_primary">#FFFFFF</color>
+    <color name="m3_light_primary_container">#6FF7F6</color>
+    <color name="m3_light_on_primary_container">#002020</color>
+    <color name="m3_light_secondary">#4A6363</color>
+    <color name="m3_light_on_secondary">#FFFFFF</color>
+    <color name="m3_light_secondary_container">#CCE8E7</color>
+    <color name="m3_light_on_secondary_container">#051F1F</color>
+    <color name="m3_light_tertiary">#4B607C</color>
+    <color name="m3_light_on_tertiary">#FFFFFF</color>
+    <color name="m3_light_tertiary_container">#D3E4FF</color>
+    <color name="m3_light_on_tertiary_container">#041C35</color>
+    <color name="m3_light_error">#BA1A1A</color>
+    <color name="m3_light_on_error">#FFFFFF</color>
+    <color name="m3_light_error_container">#FFDAD6</color>
+    <color name="m3_light_on_error_container">#410002</color>
+    <color name="m3_light_surface">#FAFDFC</color>
+    <color name="m3_light_on_surface">#191C1C</color>
+    <color name="m3_light_surface_variant">#DAE5E4</color>
+    <color name="m3_light_on_surface_variant">#3F4948</color>
+    <color name="m3_light_outline">#6F7979</color>
+    <color name="m3_light_outline_variant">#BEC9C8</color>
+    <color name="m3_light_surface_container_lowest">#FFFFFF</color>
+    <color name="m3_light_surface_container_low">#F2F4F3</color>
+    <color name="m3_light_surface_container">#ECEEEE</color>
+    <color name="m3_light_surface_container_high">#E6E9E8</color>
+    <color name="m3_light_surface_container_highest">#E0E3E2</color>
+    <color name="m3_light_inverse_surface">#2D3131</color>
+    <color name="m3_light_inverse_on_surface">#EFF1F0</color>
+    <color name="m3_light_inverse_primary">#4CDADA</color>
     <!--</editor-fold>-->
 
     <!--<editor-fold desc="Navigation drawer colors">-->
@@ -49,10 +107,6 @@
     <color name="scrollbar_thumb_selected_dark">#BBBBBB</color>
     <!--</editor-fold>-->
 
-    <!--<editor-fold desc="Misc">-->
-    <color name="divider_color_light">#e0e0e0</color>
-    <color name="divider_color_dark">#404040</color>
-    <!--</editor-fold>-->
 
     <!--<editor-fold desc="Colors for the program guide genres, taken from KODI">-->
     <!-- movie drama, orange -->

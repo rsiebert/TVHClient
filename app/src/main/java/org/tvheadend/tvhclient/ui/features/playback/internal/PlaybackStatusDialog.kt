@@ -27,7 +27,7 @@ class PlaybackStatusDialog : DialogFragment() {
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val dialog = AppCompatDialog(requireContext(),
-                com.google.android.material.R.style.ThemeOverlay_MaterialComponents_Dialog_Alert)
+                com.google.android.material.R.style.ThemeOverlay_Material3_Dialog_Alert)
         dialog.setTitle(R.string.playback_status)
         return dialog
     }

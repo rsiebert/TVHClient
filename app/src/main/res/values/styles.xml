@@ -2,7 +2,7 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
     <!--<editor-fold desc="Font for title texts in various screens">-->
-    <style name="TitleFont.Light" parent="TextAppearance.MaterialComponents.Headline5">
+    <style name="TitleFont.Light" parent="TextAppearance.Material3.HeadlineSmall">
         <item name="android:textSize">16sp</item>
         <item name="android:textColor">@color/title_text_light</item>
     </style>
@@ -13,7 +13,7 @@
     <!--</editor-fold>-->
 
     <!--<editor-fold desc="Font for subtitles in various screens">-->
-    <style name="SubtitleFont.Light" parent="TextAppearance.MaterialComponents.Subtitle1">
+    <style name="SubtitleFont.Light" parent="TextAppearance.Material3.TitleMedium">
         <item name="android:textSize">15sp</item>
         <item name="android:textColor">@color/subtitle_text_light</item>
     </style>
@@ -24,7 +24,7 @@
     <!--</editor-fold>-->
 
     <!--<editor-fold desc="Font for content in various screens">-->
-    <style name="ContentFont.Light" parent="TextAppearance.MaterialComponents.Subtitle1">
+    <style name="ContentFont.Light" parent="TextAppearance.Material3.BodyLarge">
         <item name="android:textSize">14sp</item>
         <item name="android:textColor">@color/content_text_light</item>
     </style>
@@ -35,13 +35,13 @@
     <!--</editor-fold>-->
 
     <!--<editor-fold desc="Font for the program guide screen">-->
-    <style name="ProgramGuideTitleFont.Light" parent="TextAppearance.MaterialComponents.Subtitle1">
+    <style name="ProgramGuideTitleFont.Light" parent="TextAppearance.Material3.LabelLarge">
         <item name="android:textSize">12sp</item>
     </style>
 
     <style name="ProgramGuideTitleFont.Dark" parent="ProgramGuideTitleFont.Light" />
 
-    <style name="ProgramGuideContentFont.Light" parent="TextAppearance.MaterialComponents.Subtitle1">
+    <style name="ProgramGuideContentFont.Light" parent="TextAppearance.Material3.LabelMedium">
         <item name="android:textSize">11sp</item>
     </style>
 
@@ -49,7 +49,7 @@
     <!--</editor-fold>-->
 
     <!--<editor-fold desc="Fonts for the changelog screen. The version is a section heading, the date a caption on the same row">-->
-    <style name="ChangeLogVersionFont.Light" parent="TextAppearance.MaterialComponents.Headline6">
+    <style name="ChangeLogVersionFont.Light" parent="TextAppearance.Material3.TitleLarge">
         <item name="android:textSize">20sp</item>
         <item name="android:textStyle">bold</item>
         <item name="android:textColor">@color/title_text_light</item>
@@ -59,7 +59,7 @@
         <item name="android:textColor">@color/title_text_dark</item>
     </style>
 
-    <style name="ChangeLogDateFont.Light" parent="TextAppearance.MaterialComponents.Subtitle1">
+    <style name="ChangeLogDateFont.Light" parent="TextAppearance.Material3.BodyMedium">
         <item name="android:textSize">12sp</item>
         <item name="android:textColor">@color/content_text_light</item>
     </style>
@@ -70,7 +70,7 @@
     <!--</editor-fold>-->
 
     <!--<editor-fold desc="Font for section headings in the information screens">-->
-    <style name="SectionHeaderFont.Light" parent="TextAppearance.MaterialComponents.Headline6">
+    <style name="SectionHeaderFont.Light" parent="TextAppearance.Material3.TitleLarge">
         <item name="android:textSize">20sp</item>
         <item name="android:textStyle">bold</item>
         <item name="android:textColor">@color/title_text_light</item>
@@ -82,28 +82,29 @@
     <!--</editor-fold>-->
 
     <!--<editor-fold desc="Fonts for the internal player screen. The background is always dark">-->
-    <style name="PlayerTitleFont" parent="TextAppearance.MaterialComponents.Headline6">
+    <style name="PlayerTitleFont" parent="TextAppearance.Material3.TitleLarge">
         <item name="android:textColor">@color/title_text_dark</item>
     </style>
-    <style name="PlayerSubtitleFont" parent="TextAppearance.MaterialComponents.Subtitle1">
+    <style name="PlayerSubtitleFont" parent="TextAppearance.Material3.BodyLarge">
         <item name="android:textColor">@color/subtitle_text_dark</item>
     </style>
     <!--</editor-fold>-->
 
     <!--<editor-fold desc="Theme for the internal players audio/video selection dialog">-->
-    <style name="TrackSelectionDialogThemeOverlay" parent="ThemeOverlay.MaterialComponents.Dialog.Alert">
+    <style name="TrackSelectionDialogThemeOverlay" parent="ThemeOverlay.Material3.Dialog.Alert">
         <item name="windowNoTitle">false</item>
     </style>
 
     <!-- Styles that will be used for the dark holo theme -->
-    <style name="CustomTheme" parent="Theme.MaterialComponents">
+    <style name="CustomTheme" parent="Theme.Material3.Dark">
 
         <item name="windowActionModeOverlay">true</item>
-        <item name="android:actionModeBackground">@android:color/background_dark</item>
-        <item name="actionModeBackground">@android:color/background_dark</item>
+        <!-- Drive the contextual action bar from the M3 tonal surface instead of a fixed
+             black/white fill, so it matches the new surface-coloured app bar. -->
+        <item name="android:actionModeBackground">@color/m3_dark_surface_container_high</item>
+        <item name="actionModeBackground">@color/m3_dark_surface_container_high</item>
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
-        <item name="android:colorBackground">@color/surfaceDarkColor</item>
 
         <!--<editor-fold desc="Icons">-->
         <item name="ic_menu_search">@drawable/ic_menu_search_dark</item>
@@ -158,16 +159,45 @@
         <item name="SectionHeaderFont">@style/SectionHeaderFont.Dark</item>
         <!--</editor-fold>-->
 
-        <!--<editor-fold desc="Toolbar color">-->
-        <item name="toolbarColorPrimary">@color/toolbarPrimaryDarkColor</item>
-        <!--</editor-fold>-->
+        <!-- The app bar takes its colour from the M3 surface role, so the custom
+             toolbarColorPrimary attribute is gone. -->
 
-        <!--<editor-fold desc="Main color">-->
-        <item name="colorPrimary">@color/primaryColor</item>
-        <!--</editor-fold>-->
-
-        <!--<editor-fold desc="Progressbar color">-->
-        <item name="colorSecondary">@color/secondaryColor</item>
+        <!--<editor-fold desc="Material 3 color roles">-->
+        <!-- Full Material 3 role set; see color.xml for the tonal palette. -->
+        <item name="colorPrimary">@color/m3_dark_primary</item>
+        <item name="colorOnPrimary">@color/m3_dark_on_primary</item>
+        <item name="colorPrimaryContainer">@color/m3_dark_primary_container</item>
+        <item name="colorOnPrimaryContainer">@color/m3_dark_on_primary_container</item>
+        <item name="colorPrimaryInverse">@color/m3_dark_inverse_primary</item>
+        <item name="colorSecondary">@color/m3_dark_secondary</item>
+        <item name="colorOnSecondary">@color/m3_dark_on_secondary</item>
+        <item name="colorSecondaryContainer">@color/m3_dark_secondary_container</item>
+        <item name="colorOnSecondaryContainer">@color/m3_dark_on_secondary_container</item>
+        <item name="colorTertiary">@color/m3_dark_tertiary</item>
+        <item name="colorOnTertiary">@color/m3_dark_on_tertiary</item>
+        <item name="colorTertiaryContainer">@color/m3_dark_tertiary_container</item>
+        <item name="colorOnTertiaryContainer">@color/m3_dark_on_tertiary_container</item>
+        <item name="colorError">@color/m3_dark_error</item>
+        <item name="colorOnError">@color/m3_dark_on_error</item>
+        <item name="colorErrorContainer">@color/m3_dark_error_container</item>
+        <item name="colorOnErrorContainer">@color/m3_dark_on_error_container</item>
+        <item name="android:colorBackground">@color/m3_dark_surface</item>
+        <item name="colorOnBackground">@color/m3_dark_on_surface</item>
+        <item name="colorSurface">@color/m3_dark_surface</item>
+        <item name="colorOnSurface">@color/m3_dark_on_surface</item>
+        <item name="colorSurfaceVariant">@color/m3_dark_surface_variant</item>
+        <item name="colorOnSurfaceVariant">@color/m3_dark_on_surface_variant</item>
+        <item name="colorSurfaceInverse">@color/m3_dark_inverse_surface</item>
+        <item name="colorOnSurfaceInverse">@color/m3_dark_inverse_on_surface</item>
+        <item name="colorOutline">@color/m3_dark_outline</item>
+        <item name="colorOutlineVariant">@color/m3_dark_outline_variant</item>
+        <item name="colorSurfaceContainerLowest">@color/m3_dark_surface_container_lowest</item>
+        <item name="colorSurfaceContainerLow">@color/m3_dark_surface_container_low</item>
+        <item name="colorSurfaceContainer">@color/m3_dark_surface_container</item>
+        <item name="colorSurfaceContainerHigh">@color/m3_dark_surface_container_high</item>
+        <item name="colorSurfaceContainerHighest">@color/m3_dark_surface_container_highest</item>
+        <!-- M2 fed accents from colorAccent/colorSecondary; keep AppCompat widgets teal. -->
+        <item name="colorAccent">@color/m3_dark_primary</item>
         <!--</editor-fold>-->
 
         <!--<editor-fold desc="Navigation drawer colors">-->
@@ -180,17 +210,19 @@
         <!--</editor-fold>-->
 
         <!--<editor-fold desc="Misc">-->
-        <item name="divider_color">@color/divider_color_dark</item>
+        <item name="divider_color">@color/m3_dark_outline_variant</item>
         <item name="rounded_corners">@drawable/rounded_corners_dark</item>
         <!--</editor-fold>-->
     </style>
 
     <!-- Styles that will be used for the light holo theme -->
-    <style name="CustomTheme.Light" parent="Theme.MaterialComponents.Light">
+    <style name="CustomTheme.Light" parent="Theme.Material3.Light">
 
         <item name="windowActionModeOverlay">true</item>
-        <item name="android:actionModeBackground">@android:color/background_light</item>
-        <item name="actionModeBackground">@android:color/background_light</item>
+        <!-- Drive the contextual action bar from the M3 tonal surface instead of a fixed
+             black/white fill, so it matches the new surface-coloured app bar. -->
+        <item name="android:actionModeBackground">@color/m3_light_surface_container_high</item>
+        <item name="actionModeBackground">@color/m3_light_surface_container_high</item>
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
 
@@ -247,16 +279,45 @@
         <item name="SectionHeaderFont">@style/SectionHeaderFont.Light</item>
         <!--</editor-fold>-->
 
-        <!--<editor-fold desc="Toolbar color">-->
-        <item name="toolbarColorPrimary">@color/toolbarPrimaryLightColor</item>
-        <!--</editor-fold>-->
+        <!-- The app bar takes its colour from the M3 surface role, so the custom
+             toolbarColorPrimary attribute is gone. -->
 
-        <!--<editor-fold desc="Main color">-->
-        <item name="colorPrimary">@color/primaryColor</item>
-        <!--</editor-fold>-->
-
-        <!--<editor-fold desc="Progressbar color">-->
-        <item name="colorSecondary">@color/secondaryColor</item>
+        <!--<editor-fold desc="Material 3 color roles">-->
+        <!-- Full Material 3 role set; see color.xml for the tonal palette. -->
+        <item name="colorPrimary">@color/m3_light_primary</item>
+        <item name="colorOnPrimary">@color/m3_light_on_primary</item>
+        <item name="colorPrimaryContainer">@color/m3_light_primary_container</item>
+        <item name="colorOnPrimaryContainer">@color/m3_light_on_primary_container</item>
+        <item name="colorPrimaryInverse">@color/m3_light_inverse_primary</item>
+        <item name="colorSecondary">@color/m3_light_secondary</item>
+        <item name="colorOnSecondary">@color/m3_light_on_secondary</item>
+        <item name="colorSecondaryContainer">@color/m3_light_secondary_container</item>
+        <item name="colorOnSecondaryContainer">@color/m3_light_on_secondary_container</item>
+        <item name="colorTertiary">@color/m3_light_tertiary</item>
+        <item name="colorOnTertiary">@color/m3_light_on_tertiary</item>
+        <item name="colorTertiaryContainer">@color/m3_light_tertiary_container</item>
+        <item name="colorOnTertiaryContainer">@color/m3_light_on_tertiary_container</item>
+        <item name="colorError">@color/m3_light_error</item>
+        <item name="colorOnError">@color/m3_light_on_error</item>
+        <item name="colorErrorContainer">@color/m3_light_error_container</item>
+        <item name="colorOnErrorContainer">@color/m3_light_on_error_container</item>
+        <item name="android:colorBackground">@color/m3_light_surface</item>
+        <item name="colorOnBackground">@color/m3_light_on_surface</item>
+        <item name="colorSurface">@color/m3_light_surface</item>
+        <item name="colorOnSurface">@color/m3_light_on_surface</item>
+        <item name="colorSurfaceVariant">@color/m3_light_surface_variant</item>
+        <item name="colorOnSurfaceVariant">@color/m3_light_on_surface_variant</item>
+        <item name="colorSurfaceInverse">@color/m3_light_inverse_surface</item>
+        <item name="colorOnSurfaceInverse">@color/m3_light_inverse_on_surface</item>
+        <item name="colorOutline">@color/m3_light_outline</item>
+        <item name="colorOutlineVariant">@color/m3_light_outline_variant</item>
+        <item name="colorSurfaceContainerLowest">@color/m3_light_surface_container_lowest</item>
+        <item name="colorSurfaceContainerLow">@color/m3_light_surface_container_low</item>
+        <item name="colorSurfaceContainer">@color/m3_light_surface_container</item>
+        <item name="colorSurfaceContainerHigh">@color/m3_light_surface_container_high</item>
+        <item name="colorSurfaceContainerHighest">@color/m3_light_surface_container_highest</item>
+        <!-- M2 fed accents from colorAccent/colorSecondary; keep AppCompat widgets teal. -->
+        <item name="colorAccent">@color/m3_light_primary</item>
         <!--</editor-fold>-->
 
         <!--<editor-fold desc="Navigation drawer colors">-->
@@ -270,11 +331,11 @@
 
         <!--<editor-fold desc="Misc">-->
         <item name="rounded_corners">@drawable/rounded_corners_light</item>
-        <item name="divider_color">@color/divider_color_light</item>
+        <item name="divider_color">@color/m3_light_outline_variant</item>
         <!--</editor-fold>-->
     </style>
 
-    <style name="SplashTheme" parent="Theme.MaterialComponents.NoActionBar">
+    <style name="SplashTheme" parent="Theme.Material3.DayNight.NoActionBar">
         <item name="android:windowBackground">@drawable/background_splash</item>
     </style>
 
