@@ -29,13 +29,12 @@ subprojects {
                 '*_ViewBindingImpl',
                 '*BR']
 
-        // Enforce a minimum only where the suite is mature. `:app` stays report-only: it is
-        // ~14.7k lines at ~1.8% and needs the ViewModel seams from the deferred Phase 5, so a
-        // bound there would say nothing.
+        // Enforce a minimum line coverage per module. Each bound sits a little below the current
+        // debug coverage, so a regression fails the build while ordinary refactoring does not.
         //
-        // Measured on the debug variant (see below). :htsp is at ~86% including the debug-only
-        // src/debug/.../FakeTvheadendServer.kt, so it is gated at 70 like :data.
-        def minimumLineCoverage = [':data': 60, ':htsp': 70, ':app': 5][project.path]
+        // Measured on the debug variant (see below): :data ~87%, :htsp ~88% (including the
+        // debug-only src/debug/.../FakeTvheadendServer.kt) and :app ~8%.
+        def minimumLineCoverage = [':data': 80, ':htsp': 80, ':app': 7][project.path]
 
         kover {
             reports {
