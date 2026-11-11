@@ -23,6 +23,7 @@ import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.service.*
 import org.tvheadend.tvhclient.ui.common.addNotificationScheduledRecordingStarts
 import org.tvheadend.tvhclient.ui.common.removeNotificationById
+import org.tvheadend.tvhclient.util.calculateInSampleSize
 import org.tvheadend.tvhclient.util.convertUrlToHashString
 import org.tvheadend.tvhclient.util.extensions.isEqualTo
 import org.tvheadend.tvhclient.util.extensions.sendSnackbarMessage
@@ -40,8 +41,6 @@ import java.util.*
 import java.util.concurrent.CopyOnWriteArrayList
 import java.util.concurrent.ScheduledExecutorService
 import java.util.concurrent.TimeUnit
-import kotlin.math.floor
-import kotlin.math.max
 
 /** How long to wait for a channel icon that is read over http. */
 private const val ICON_READ_TIMEOUT_MS = 10_000
@@ -1241,8 +1240,7 @@ class HtspServiceHandler(val context: Context,
         // either dimension that correspond to a single pixel in the decoded
         // bitmap. For example, inSampleSize == 4 returns an image that is 1/4
         // the width/height of the original, and 1/16 the number of pixels.
-        val ratio = if (o.outWidth > 0 && o.outHeight > 0) max(o.outWidth / width, o.outHeight / height) else 1
-        val sampleSize = Integer.highestOneBit(floor(ratio.toDouble()).toInt()).coerceAtLeast(1)
+        val sampleSize = calculateInSampleSize(o.outWidth, o.outHeight, width, height)
         o = BitmapFactory.Options()
         o.inSampleSize = sampleSize
 

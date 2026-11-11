@@ -24,6 +24,7 @@ import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.service.ConnectionIntentService
 import org.tvheadend.tvhclient.service.ServerTicketReceiver
 import org.tvheadend.tvhclient.service.SyncStateResult
+import org.tvheadend.tvhclient.util.calculateInSampleSize
 import org.tvheadend.tvhclient.util.convertUrlToHashString
 import org.tvheadend.tvhclient.util.extensions.sendSyncStateMessage
 import kotlinx.coroutines.runBlocking
@@ -32,8 +33,6 @@ import java.io.*
 import java.net.URL
 import java.util.*
 import java.util.concurrent.ScheduledExecutorService
-import kotlin.math.floor
-import kotlin.math.max
 
 class HtspIntentServiceHandler(val context: Context,
                                 val appRepository: AppRepository,
@@ -375,8 +374,7 @@ class HtspIntentServiceHandler(val context: Context,
         // either dimension that correspond to a single pixel in the decoded
         // bitmap. For example, inSampleSize == 4 returns an image that is 1/4
         // the width/height of the original, and 1/16 the number of pixels.
-        val ratio = max(options.outWidth / width, options.outHeight / height)
-        val sampleSize = Integer.highestOneBit(floor(ratio.toDouble()).toInt())
+        val sampleSize = calculateInSampleSize(options.outWidth, options.outHeight, width, height)
         options = BitmapFactory.Options()
         options.inSampleSize = sampleSize
 
