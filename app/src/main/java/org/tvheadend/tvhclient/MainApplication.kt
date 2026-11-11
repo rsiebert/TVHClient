@@ -4,11 +4,6 @@ import android.app.Application
 import android.content.Context
 import android.content.SharedPreferences
 import androidx.preference.PreferenceManager
-import com.google.android.gms.cast.framework.CastOptions
-import com.google.android.gms.cast.framework.OptionsProvider
-import com.google.android.gms.cast.framework.SessionProvider
-import com.google.android.gms.cast.framework.media.CastMediaOptions
-import com.google.android.gms.cast.framework.media.NotificationOptions
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -18,7 +13,6 @@ import org.tvheadend.data.AppRepository
 import org.tvheadend.data.di.DataContainer
 import org.tvheadend.tvhclient.debug.FakeServerBootstrap
 import org.tvheadend.tvhclient.ui.common.onAttach
-import org.tvheadend.tvhclient.ui.features.playback.external.ExpandedControlsActivity
 import org.tvheadend.tvhclient.util.HtspExecutor
 import org.tvheadend.tvhclient.util.MigrateUtils
 import org.tvheadend.tvhclient.util.billing.BillingDataSource
@@ -31,7 +25,7 @@ import java.util.concurrent.ScheduledExecutorService
 // TODO when a notification is dismissed, it reappears when the recording gets updated,
 //  save the dismissed id in the viewmodel and don't add another notification if the id was already dismissed
 
-class MainApplication : Application(), OptionsProvider, AppGraph {
+class MainApplication : Application(), AppGraph {
 
     lateinit var appContainer: AppContainer
 
@@ -125,37 +119,6 @@ class MainApplication : Application(), OptionsProvider, AppGraph {
 
     override fun attachBaseContext(context: Context) {
         super.attachBaseContext(onAttach(context))
-    }
-
-    /**
-     * Provides CastOptions, which affects discovery and session management of a Cast device
-     *
-     * @param context Required context object
-     * @return CastOptions
-     */
-    override fun getCastOptions(context: Context): CastOptions {
-        val notificationOptions = NotificationOptions.Builder()
-                .setTargetActivityClassName(ExpandedControlsActivity::class.java.name)
-                .build()
-        val mediaOptions = CastMediaOptions.Builder()
-                .setNotificationOptions(notificationOptions)
-                .setExpandedControllerActivityClassName(ExpandedControlsActivity::class.java.name)
-                .build()
-
-        return CastOptions.Builder()
-                .setReceiverApplicationId(BuildConfig.CAST_ID)
-                .setCastMediaOptions(mediaOptions)
-                .build()
-    }
-
-    /**
-     * Provides a list of custom SessionProvider instances for non-Cast devices.
-     *
-     * @param context Required context object
-     * @return List of session providers
-     */
-    override fun getAdditionalSessionProviders(context: Context): List<SessionProvider>? {
-        return null
     }
 
     companion object {

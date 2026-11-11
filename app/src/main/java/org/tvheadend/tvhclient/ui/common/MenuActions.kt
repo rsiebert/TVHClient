@@ -28,7 +28,7 @@ import org.tvheadend.tvhclient.ui.features.dvr.timer_recordings.TimerRecordingAd
 import org.tvheadend.tvhclient.ui.features.playback.external.*
 import org.tvheadend.tvhclient.ui.features.playback.internal.PlaybackActivity
 import org.tvheadend.tvhclient.ui.features.programs.ProgramListFragment
-import org.tvheadend.tvhclient.util.extensions.getCastSession
+import org.tvheadend.tvhclient.cast.CastSessionState
 import timber.log.Timber
 import java.io.UnsupportedEncodingException
 import java.net.URLEncoder
@@ -60,7 +60,7 @@ fun preparePopupOrToolbarRecordingMenu(context: Context,
         } else if (recording.isCompleted) {
             Timber.v("Recording is completed")
             menu.findItem(R.id.menu_play)?.isVisible = true
-            menu.findItem(R.id.menu_cast)?.isVisible = context.getCastSession() != null
+            menu.findItem(R.id.menu_cast)?.isVisible = CastSessionState.isCastAvailable
             menu.findItem(R.id.menu_remove_recording)?.isVisible = true
             menu.findItem(R.id.menu_download_recording)?.isVisible = isUnlocked
             menu.findItem(R.id.menu_share_recording)?.isVisible = isUnlocked
@@ -75,7 +75,7 @@ fun preparePopupOrToolbarRecordingMenu(context: Context,
         } else if (recording.isRecording) {
             Timber.v("Recording is being recorded")
             menu.findItem(R.id.menu_play)?.isVisible = true
-            menu.findItem(R.id.menu_cast)?.isVisible = context.getCastSession() != null
+            menu.findItem(R.id.menu_cast)?.isVisible = CastSessionState.isCastAvailable
             menu.findItem(R.id.menu_stop_recording)?.isVisible = true
             menu.findItem(R.id.menu_edit_recording)?.isVisible = isUnlocked
             menu.findItem(R.id.menu_share_recording)?.isVisible = isUnlocked
@@ -86,7 +86,7 @@ fun preparePopupOrToolbarRecordingMenu(context: Context,
             // Allow playing a failed recording which size is not zero
             if (recording.dataSize > 0) {
                 menu.findItem(R.id.menu_play)?.isVisible = true
-                menu.findItem(R.id.menu_cast)?.isVisible = context.getCastSession() != null
+                menu.findItem(R.id.menu_cast)?.isVisible = CastSessionState.isCastAvailable
             }
         }
     }
@@ -112,7 +112,7 @@ fun preparePopupOrToolbarMiscMenu(context: Context,
                 && currentTime > program.start
                 && currentTime < program.stop) {
             menu.findItem(R.id.menu_play)?.isVisible = true
-            menu.findItem(R.id.menu_cast)?.isVisible = context.getCastSession() != null
+            menu.findItem(R.id.menu_cast)?.isVisible = CastSessionState.isCastAvailable
         }
     }
     // Show the add reminder menu only for programs and
@@ -538,7 +538,7 @@ fun playOrCastChannel(context: Context, channelId: Int, isUnlocked: Boolean): Bo
     if (channelIconAction == 1) {
         playSelectedChannel(context, channelId, isUnlocked)
     } else if (channelIconAction == 2) {
-        if (context.getCastSession() != null) {
+        if (CastSessionState.isCastAvailable) {
             castSelectedChannel(context, channelId)
         } else {
             playSelectedChannel(context, channelId, isUnlocked)
@@ -554,7 +554,7 @@ fun playOrCastRecording(context: Context, recordingId: Int, isUnlocked: Boolean)
     if (channelIconAction == 1) {
         playSelectedRecording(context, recordingId, isUnlocked)
     } else if (channelIconAction == 2) {
-        if (context.getCastSession() != null) {
+        if (CastSessionState.isCastAvailable) {
             castSelectedRecording(context, recordingId)
         } else {
             playSelectedRecording(context, recordingId, isUnlocked)

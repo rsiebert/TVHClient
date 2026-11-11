@@ -191,6 +191,8 @@ dependencies {
     implementation libs.media3.datasource
     implementation libs.media3.extractor
     implementation libs.media3.common
+    implementation libs.media3.session
+    implementation libs.media3.cast
 
     implementation project(':htsp')
     implementation project(':data')

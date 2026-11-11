@@ -18,6 +18,10 @@
         android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         android:maxSdkVersion="28" />
 
+    <!-- Media3's MediaSessionService runs as a mediaPlayback foreground service while casting. -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
+
     <application
         android:name="org.tvheadend.tvhclient.MainApplication"
         android:allowBackup="true"
@@ -37,7 +41,7 @@
             android:value="2.1" />
         <meta-data
             android:name="com.google.android.gms.cast.framework.OPTIONS_PROVIDER_CLASS_NAME"
-            android:value="org.tvheadend.tvhclient.MainApplication" />
+            android:value="org.tvheadend.tvhclient.cast.CastOptionsProvider" />
         <meta-data
             android:name="google_analytics_adid_collection_enabled"
             android:value="false" />
@@ -101,6 +105,19 @@
             android:name="org.tvheadend.tvhclient.service.ConnectionIntentService"
             android:exported="false"
             android:permission="android.permission.BIND_JOB_SERVICE" />
+
+        <!-- Media3 Cast: hosts the CastPlayer behind a MediaSession. Only the cast path uses it. -->
+        <service
+            android:name="org.tvheadend.tvhclient.cast.CastPlaybackService"
+            android:exported="true"
+            android:foregroundServiceType="mediaPlayback">
+            <intent-filter>
+                <action android:name="androidx.media3.session.MediaSessionService" />
+            </intent-filter>
+        </service>
+
+        <!-- Lets the system Output Switcher discover and reroute cast media. -->
+        <receiver android:name="androidx.mediarouter.media.MediaTransferReceiver" />
 
         <provider
             android:name=".ui.common.SuggestionProvider"

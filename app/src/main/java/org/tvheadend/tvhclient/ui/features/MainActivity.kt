@@ -3,6 +3,7 @@ package org.tvheadend.tvhclient.ui.features
 import android.Manifest
 import android.app.ActivityManager
 import android.app.SearchManager
+import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
@@ -26,27 +27,29 @@ import androidx.activity.addCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
+import androidx.core.content.ContextCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import androidx.media3.cast.MediaRouteButtonFactory
+import androidx.media3.common.DeviceInfo
+import androidx.media3.common.Player
+import androidx.media3.session.MediaController
+import androidx.media3.session.SessionToken
 import androidx.preference.PreferenceManager
-import com.google.android.gms.cast.framework.CastButtonFactory
-import com.google.android.gms.cast.framework.CastContext
-import com.google.android.gms.cast.framework.CastSession
-import com.google.android.gms.cast.framework.CastState
-import com.google.android.gms.cast.framework.CastStateListener
-import com.google.android.gms.cast.framework.IntroductoryOverlay
-import com.google.android.gms.cast.framework.SessionManagerListener
 import com.google.android.material.navigation.NavigationView
+import com.google.common.util.concurrent.ListenableFuture
 import org.tvheadend.api.AuthenticationFailureReason
 import org.tvheadend.api.AuthenticationStateResult
 import org.tvheadend.api.ConnectionFailureReason
 import org.tvheadend.api.ConnectionStateResult
 import org.tvheadend.tvhclient.BuildConfig
 import org.tvheadend.tvhclient.R
+import org.tvheadend.tvhclient.cast.CastPlaybackService
+import org.tvheadend.tvhclient.cast.CastSessionState
 import org.tvheadend.tvhclient.service.ConnectionService
 import org.tvheadend.tvhclient.service.SyncState
 import org.tvheadend.tvhclient.service.SyncStateReceiver
@@ -75,11 +78,10 @@ import org.tvheadend.tvhclient.ui.features.information.StatusViewModel
 import org.tvheadend.tvhclient.ui.features.navigation.NavDestination
 import org.tvheadend.tvhclient.ui.features.navigation.NavigationDrawer
 import org.tvheadend.tvhclient.ui.features.navigation.NavigationViewModel
-import org.tvheadend.tvhclient.ui.features.playback.external.CastSessionManagerListener
+import org.tvheadend.tvhclient.ui.features.playback.external.ExpandedControlsActivity
 import org.tvheadend.tvhclient.ui.features.programs.ProgramListFragment
 import org.tvheadend.tvhclient.ui.features.startup.StartupFragment
 import org.tvheadend.tvhclient.util.extensions.applySystemBarInsets
-import org.tvheadend.tvhclient.util.extensions.getCastContext
 import org.tvheadend.tvhclient.util.extensions.gone
 import org.tvheadend.tvhclient.util.extensions.sendSnackbarMessage
 import org.tvheadend.tvhclient.util.extensions.setUpEdgeToEdge
@@ -106,10 +108,9 @@ class MainActivity : AppCompatActivity(), ToolbarInterface, LayoutControlInterfa
     private var searchMenuItem: MenuItem? = null
     private var searchView: SearchView? = null
     private var mediaRouteMenuItem: MenuItem? = null
-    private var introductoryOverlay: IntroductoryOverlay? = null
-    private var castContext: CastContext? = null
-    private var castStateListener: CastStateListener? = null
-    private var castSessionManagerListener: SessionManagerListener<CastSession>? = null
+    private var castControllerFuture: ListenableFuture<MediaController>? = null
+    private var castController: MediaController? = null
+    private var castSessionStateListener: (() -> Unit)? = null
 
     private lateinit var navigationDrawer: NavigationDrawer
     private lateinit var drawerLayout: DrawerLayout
@@ -205,6 +206,14 @@ class MainActivity : AppCompatActivity(), ToolbarInterface, LayoutControlInterfa
 
         miniController = findViewById(R.id.cast_mini_controller)
         miniController.gone()
+        miniController.setOnClickListener {
+            startActivity(Intent(this, ExpandedControlsActivity::class.java))
+        }
+        findViewById<View>(R.id.cast_mini_controller_stop)?.setOnClickListener {
+            // Stop remote playback and clear the queue so the notification and the bar go away.
+            castController?.stop()
+            castController?.clearMediaItems()
+        }
 
         navigationDrawer = NavigationDrawer(this, toolbar, drawerLayout, navigationView, navigationViewModel, statusViewModel, isDualPane)
 
@@ -223,20 +232,6 @@ class MainActivity : AppCompatActivity(), ToolbarInterface, LayoutControlInterfa
             }
 
             navigationDrawer.setSelectedNavigationDrawerMenuFromFragmentType(supportFragmentManager.findFragmentById(R.id.main))
-        }
-
-        castContext = this.getCastContext()
-        if (castContext != null) {
-            Timber.d("Casting is available")
-            castSessionManagerListener = CastSessionManagerListener(this)
-            castStateListener = CastStateListener { newState ->
-                Timber.d("Cast state changed to $newState")
-                if (newState != CastState.NO_DEVICES_AVAILABLE) {
-                    showIntroductoryOverlay()
-                }
-            }
-        } else {
-            Timber.d("Casting is not available, casting will not be enabled")
         }
 
         baseViewModel.isUnlockedLiveData.observe(this) { isUnlocked ->
@@ -323,18 +318,18 @@ class MainActivity : AppCompatActivity(), ToolbarInterface, LayoutControlInterfa
         LocalBroadcastManager.getInstance(this).registerReceiver(syncStateReceiver, IntentFilter(SyncStateReceiver.ACTION))
         LocalBroadcastManager.getInstance(this).registerReceiver(snackbarMessageReceiver, IntentFilter(SnackbarMessageReceiver.SNACKBAR_ACTION))
         registerReceiver(networkStatusReceiver, IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"))
+        registerCastSessionStateListener()
+        connectCastController()
     }
 
     public override fun onResume() {
         super.onResume()
-        registerCastListeners()
         // The mini controller can also be switched off in the settings, so re-evaluate it here and
         // not only when the unlocked state changes.
         updateMiniControllerVisibility(baseViewModel.isUnlocked)
     }
 
     public override fun onPause() {
-        unregisterCastListeners()
         super.onPause()
     }
 
@@ -343,66 +338,89 @@ class MainActivity : AppCompatActivity(), ToolbarInterface, LayoutControlInterfa
         LocalBroadcastManager.getInstance(this).unregisterReceiver(syncStateReceiver)
         LocalBroadcastManager.getInstance(this).unregisterReceiver(snackbarMessageReceiver)
         unregisterReceiver(networkStatusReceiver)
+        unregisterCastSessionStateListener()
+        disconnectCastController()
     }
 
     /**
-     * Starts listening for Cast state and session changes.
-     *
-     * The listeners themselves are built in [onCreate] but must be added to the [CastContext] here:
-     * attaching them to the activity lifecycle keeps a resumed activity in sync with a session that
-     * was started or ended while it was paused, and undoes the matching removal in [onPause].
+     * Connects a [MediaController] to [CastPlaybackService]. This starts the service (whose
+     * CastPlayer owns the Cast session) and provides the controller that drives the mini controller.
+     * Cast availability itself is published through [CastSessionState] by the service.
      */
-    private fun registerCastListeners() {
-        val context = castContext ?: return
-        castStateListener?.let {
-            try {
-                context.addCastStateListener(it)
-            } catch (e: IllegalStateException) {
-                Timber.e(e, "Could not add the cast state listener")
+    private fun connectCastController() {
+        val sessionToken = SessionToken(this, ComponentName(this, CastPlaybackService::class.java))
+        val future = MediaController.Builder(this, sessionToken).buildAsync()
+        castControllerFuture = future
+        future.addListener({
+            if (isFinishing || isDestroyed) {
+                MediaController.releaseFuture(future)
+                return@addListener
             }
-        }
-        castSessionManagerListener?.let {
             try {
-                context.sessionManager.addSessionManagerListener(it, CastSession::class.java)
-            } catch (e: IllegalStateException) {
-                Timber.e(e, "Could not add the cast session manager listener")
+                val controller = future.get()
+                controller.addListener(castPlayerListener)
+                castController = controller
+                updateMiniControllerVisibility(baseViewModel.isUnlocked)
+            } catch (e: Exception) {
+                Timber.e(e, "Could not connect to the cast playback service")
             }
-        }
+        }, ContextCompat.getMainExecutor(this))
+    }
+
+    private fun disconnectCastController() {
+        castController?.removeListener(castPlayerListener)
+        castController = null
+        castControllerFuture?.let { MediaController.releaseFuture(it) }
+        castControllerFuture = null
     }
 
     /**
-     * Detaches the listeners added by [registerCastListeners]. Each removal gets its own guard so a
-     * listener that was never added cannot stop the other one from being removed.
+     * Keeps [CastSessionState] and the mini controller in sync with the controller's device type and
+     * playlist. `onDeviceInfoChanged` replaces the deprecated CastPlayer session-availability API.
      */
-    private fun unregisterCastListeners() {
-        val context = castContext ?: return
-        castStateListener?.let {
-            try {
-                context.removeCastStateListener(it)
-            } catch (e: IllegalStateException) {
-                Timber.e(e, "Could not remove the cast state listener")
-            }
+    private val castPlayerListener = object : Player.Listener {
+        override fun onDeviceInfoChanged(deviceInfo: DeviceInfo) {
+            CastSessionState.setCastAvailable(deviceInfo.playbackType == DeviceInfo.PLAYBACK_TYPE_REMOTE)
         }
-        castSessionManagerListener?.let {
-            try {
-                context.sessionManager.removeSessionManagerListener(it, CastSession::class.java)
-            } catch (e: IllegalStateException) {
-                Timber.e(e, "Could not remove the cast session manager listener")
-            }
+
+        override fun onEvents(player: Player, events: Player.Events) {
+            updateMiniControllerVisibility(baseViewModel.isUnlocked)
         }
     }
 
+    private fun registerCastSessionStateListener() {
+        if (castSessionStateListener != null) return
+        val listener: () -> Unit = {
+            runOnUiThread {
+                invalidateOptionsMenu()
+                updateMiniControllerVisibility(baseViewModel.isUnlocked)
+            }
+        }
+        castSessionStateListener = listener
+        CastSessionState.addListener(listener)
+    }
+
+    private fun unregisterCastSessionStateListener() {
+        castSessionStateListener?.let { CastSessionState.removeListener(it) }
+        castSessionStateListener = null
+    }
+
     /**
-     * Shows the Cast mini controller only when the feature is unlocked and the user left the
-     * setting on. The unlocked state is passed in rather than read from the view model, because
-     * the two `isUnlockedLiveData` observers must not depend on each other's ordering.
+     * Shows the Cast mini controller only while a cast is active and has media, the feature is
+     * unlocked and the user left the setting on. The unlocked state is passed in rather than read
+     * from the view model, because the two `isUnlockedLiveData` observers must not depend on each
+     * other's ordering.
      */
     private fun updateMiniControllerVisibility(isUnlocked: Boolean) {
+        val hasMedia = (castController?.mediaItemCount ?: 0) > 0
         miniController.visibleOrGone(
-            isUnlocked && sharedPreferences.getBoolean(
-                "casting_minicontroller_enabled",
-                resources.getBoolean(R.bool.pref_default_casting_minicontroller_enabled)
-            )
+            CastSessionState.isCastAvailable &&
+                hasMedia &&
+                isUnlocked &&
+                sharedPreferences.getBoolean(
+                    "casting_minicontroller_enabled",
+                    resources.getBoolean(R.bool.pref_default_casting_minicontroller_enabled)
+                )
         )
     }
 
@@ -414,24 +432,7 @@ class MainActivity : AppCompatActivity(), ToolbarInterface, LayoutControlInterfa
         supportActionBar?.subtitle = subtitle
     }
 
-    private fun showIntroductoryOverlay() {
-        introductoryOverlay?.remove()
 
-        mediaRouteMenuItem?.let {
-            if (it.isVisible) {
-                Handler(Looper.getMainLooper()).post {
-                    introductoryOverlay = IntroductoryOverlay.Builder(
-                            this@MainActivity, it)
-                            .setTitleText(getString(R.string.intro_overlay_text))
-                            .setOverlayColor(R.color.primaryColor)
-                            .setSingleTime()
-                            .setOnOverlayDismissedListener { introductoryOverlay = null }
-                            .build()
-                    introductoryOverlay?.show()
-                }
-            }
-        }
-    }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
@@ -458,7 +459,7 @@ class MainActivity : AppCompatActivity(), ToolbarInterface, LayoutControlInterfa
 
         mediaRouteMenuItem = menu.findItem(R.id.media_route_menu_item)
         try {
-            CastButtonFactory.setUpMediaRouteButton(applicationContext, menu, R.id.media_route_menu_item)
+            MediaRouteButtonFactory.setUpMediaRouteButton(applicationContext, menu, R.id.media_route_menu_item)
         } catch (e: Exception) {
             Timber.e(e, "Could not setup media route button")
         }

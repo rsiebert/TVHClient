@@ -1,15 +1,21 @@
 package org.tvheadend.tvhclient.ui.features.playback.external
 
 import android.content.ActivityNotFoundException
+import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.media3.common.MediaItem
+import androidx.media3.session.MediaController
+import androidx.media3.session.SessionToken
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import org.tvheadend.tvhclient.R
+import org.tvheadend.tvhclient.cast.CastPlaybackService
 import org.tvheadend.tvhclient.databinding.PlayActivityBinding
 import org.tvheadend.tvhclient.ui.common.onAttach
 import org.tvheadend.tvhclient.util.extensions.gone
@@ -66,6 +72,32 @@ abstract class BasePlaybackActivity : AppCompatActivity() {
     }
 
     protected abstract suspend fun onTicketReceived()
+
+    /**
+     * Connects a [MediaController] to [CastPlaybackService] and hands it [mediaItem] to play on the
+     * selected Cast device, then opens the expanded controls and finishes this activity. The
+     * controller is released right afterwards - the service keeps the media playing.
+     */
+    protected fun startCasting(mediaItem: MediaItem) {
+        val sessionToken = SessionToken(this, ComponentName(this, CastPlaybackService::class.java))
+        val controllerFuture = MediaController.Builder(this, sessionToken).buildAsync()
+        controllerFuture.addListener({
+            try {
+                val controller = controllerFuture.get()
+                controller.setMediaItem(mediaItem)
+                controller.prepare()
+                controller.play()
+                startActivity(Intent(this, ExpandedControlsActivity::class.java))
+                finish()
+            } catch (e: Exception) {
+                Timber.e(e, "Could not start casting")
+                binding.progressBar.gone()
+                binding.status.setText(R.string.cast_error_no_media_client_available)
+            } finally {
+                MediaController.releaseFuture(controllerFuture)
+            }
+        }, ContextCompat.getMainExecutor(this))
+    }
 
     internal fun startExternalPlayer(intent: Intent) {
         Timber.d("Starting external player for given intent")

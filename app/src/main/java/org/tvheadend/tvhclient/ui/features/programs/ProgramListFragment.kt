@@ -20,7 +20,7 @@ import org.tvheadend.tvhclient.ui.common.*
 import org.tvheadend.tvhclient.ui.common.interfaces.ClearSearchResultsOrPopBackStackInterface
 import org.tvheadend.tvhclient.ui.common.interfaces.RecyclerViewClickInterface
 import org.tvheadend.tvhclient.ui.common.interfaces.SearchRequestInterface
-import org.tvheadend.tvhclient.util.extensions.getCastSession
+import org.tvheadend.tvhclient.cast.CastSessionState
 import org.tvheadend.tvhclient.util.extensions.gone
 import org.tvheadend.tvhclient.util.extensions.visible
 import org.tvheadend.tvhclient.util.extensions.visibleOrGone
@@ -134,14 +134,13 @@ class ProgramListFragment : BaseFragment(), RecyclerViewClickInterface, LastProg
     }
 
     override fun onPrepareOptionsMenu(menu: Menu) {
-        val ctx = context ?: return
         val showGenreColors = sharedPreferences.getBoolean("genre_colors_for_programs_enabled", resources.getBoolean(R.bool.pref_default_genre_colors_for_programs_enabled))
         // Hide the genre color menu in dual pane mode or if no genre colors shall be shown
         menu.findItem(R.id.menu_genre_color_information)?.isVisible = !isDualPane && showGenreColors
 
         if (!baseViewModel.isSearchActive && isConnectionToServerAvailable) {
             menu.findItem(R.id.menu_play)?.isVisible = true
-            menu.findItem(R.id.menu_cast)?.isVisible = ctx.getCastSession() != null
+            menu.findItem(R.id.menu_cast)?.isVisible = CastSessionState.isCastAvailable
         } else {
             menu.findItem(R.id.menu_play)?.isVisible = false
             menu.findItem(R.id.menu_cast)?.isVisible = false
