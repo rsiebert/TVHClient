@@ -81,4 +81,12 @@ jobs:
       # Step: Assemble debug apk to send to firebase test lab
       - name: Assemble Debug APK
         run: ./gradlew assembleDebug
-      
+
+      # Run the JVM unit tests of all three modules. The :htsp and :app suites rely on
+      # Robolectric for the Android framework implementations, so no emulator is required.
+      - name: Run unit tests
+        run: ./gradlew testDebugUnitTest
+
+      # Lint every module. :app ships a committed baseline, so only *new* findings fail the build.
+      - name: Run lint
+        run: ./gradlew lintDebug
