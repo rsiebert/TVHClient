@@ -18,12 +18,10 @@
     <!--
       Surface incomplete or leftover translations instead of silently falling back to English.
 
-      Both checks are FATAL by default (they can even fail `assembleRelease`), but the app still
-      carries a backlog of untranslated, newly added keys, so they are pinned to `warning` here:
-      the backlog stays visible in the IDE and in `./gradlew lint` reports without breaking the
-      build. See translation_coverage.artifact.md for the current backlog; raise these to `error`
-      once it is cleared.
+      The translation backlog has been cleared, so both checks are enforced again: a new English
+      string that is not translated into every locale, or a locale key that no longer exists in
+      the default file, fails the build.
     -->
-    <issue id="MissingTranslation" severity="warning" />
-    <issue id="ExtraTranslation" severity="warning" />
+    <issue id="MissingTranslation" severity="error" />
+    <issue id="ExtraTranslation" severity="error" />
 </lint>
