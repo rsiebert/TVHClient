@@ -96,15 +96,12 @@
     <string name="feature_not_available_in_free_version">Ez a funkció nem elérhető az ingyenes verzióban!</string>
     <string name="feature_not_supported_by_server">A TVHeadend szerver nem támogatja ezt a funkciót. Kérjük, frissítse az újabb verzióra.</string>
     <string name="filter_channel_list">Csatornalista szűrése</string>
-    <string name="friday">Péntek</string>
     <string name="full_changelog">Teljes változáslista</string>
     <string name="genre_color_info">Műfaj színek szerkesztése</string>
     <string name="genre_color_list">A műfaj színek listája és azok jelentései.</string>
     <string name="help_and_support">Segítség és támogatás</string>
     <string name="hint_not_set">Nincs beállítva</string>
-    <string name="in_2_days">2 nap múlva</string>
     <string name="initializing">Inicializálás</string>
-    <string name="intro_overlay_text">Touch to cast Live TV or recordings to your TV.  Please check that you meet the requirements described in the casting settings.</string>
     <string name="is_series_recording">Ez a felvétel egy sorozatfelvétel részét képezi</string>
     <string name="is_timer_recording">Ezt a felvételt egy időzítő hozta létre</string>
     <string name="loading_data">Adatok betöltése a szerverről</string>
@@ -114,7 +111,6 @@
     <string name="media_route_menu_title">Lejátszás…</string>
     <string name="min_duration">A program minimális időtartama</string>
     <string name="minutes">%d perc</string>
-    <string name="monday">Hétfő</string>
     <string name="multiple_channel_tags">Többszörös Csatorna cimkék</string>
     <string name="name">Név</string>
     <string name="no_active_connection">Nincs aktív kapcsolat. A meglévő kapcsolat a kiszolgálóval bezárult.</string>
@@ -199,9 +195,6 @@
     <string name="pref_name">Connection name</string>
     <string name="pref_name_error_invalid">A név nem lehet üres, és csak betűket, számokat, mínuszt és aláhúzást tartalmazhat.</string>
     <string name="pref_name_sum">Adja meg a kapcsolat egyedi nevét</string>
-    <string name="pref_navigation">Navigáció</string>
-    <string name="pref_navigation_history_enabled">Navigációs előzmények</string>
-    <string name="pref_navigation_history_enabled_sum">Elmenti a kiválasztott navigációs menük előzményeit. A Vissza gomb megjeleníti az előző navigációs menüt és annak képernyőjét. Ha ez a beállítás le van tiltva, az alkalmazás bezárul.</string>
     <string name="pref_notifications">Értesítések</string>
     <string name="pref_notify_about_running_recordings">Értesítsen a futó felvételekről</string>
     <string name="pref_notify_low_server_storage_space">Értesítse, ha a kiszolgáló tárhelyének fogyása elfogy</string>
@@ -283,7 +276,6 @@
     <string name="purchase_not_successful">A fizetés nem sierült!</string>
     <string name="purchase_successful">A fizetés sikeres!</string>
     <string name="rating">Értékelés</string>
-    <string name="receiving_data">Adatok fogadása</string>
     <string name="reconnect">Újracsatlakozás</string>
     <string name="reconnect_to_server">Újracsatlakozás a szerverhez?</string>
     <string name="record_cancel">A felvétel törlése</string>
@@ -311,11 +303,8 @@
     <string name="remove_timer_recording">Valóban el szeretné távolítani a(z) \'%s\' ütemezett felvételt?</string>
     <string name="removed_recordings">Törölt felvételek</string>
     <string name="requesting_playback_information">Lejátszási információk kérése a szerverrőlr</string>
-    <string name="restart">Újraindítás</string>
     <string name="restart_and_sync">Az alkalmazás újraindul, és új kezdeti szinkronizálásra kerül sor.</string>
-    <string name="saturday">Szombat</string>
     <string name="save">Mentés</string>
-    <string name="saving_data">A fogadott adatok mentése…</string>
     <string name="scheduled_recordings">Ütemezett felvételek</string>
     <string name="search">Keresés</string>
     <string name="search_completed_recordings">Keresés a befejezett felvételekben</string>
@@ -364,10 +353,8 @@
     <string name="success_removing_recording">A felvétel el lett távolítva.</string>
     <string name="success_updating_recording">A felvétel frissítve lett.</string>
     <string name="summary">Összefoglalás</string>
-    <string name="sunday">Vasárnap</string>
     <string name="tags">Cimkék</string>
     <string name="thank_you">Köszönjük!</string>
-    <string name="thursday">Csütörtök</string>
     <string name="time">Idő</string>
     <string name="time_window">Az időablak a felvétel elindításához</string>
     <string name="timeframe">Időkeret</string>
@@ -376,10 +363,7 @@
     <string name="today">Ma</string>
     <string name="tomorrow">Holnap</string>
     <string name="total">Összes</string>
-    <string name="tuesday">Kedd</string>
-    <string name="two_days_ago">Két napja</string>
     <string name="unknown">Ismeretlen</string>
-    <string name="wednesday">Szerda</string>
     <string name="wol_address_invalid">A MAC-cím nem érvényes. Kérjük, ellenőrizze a beállításokat.</string>
     <string name="wol_error">Nem sikerült a WOL csomag küldése a\'%1$s\'.\n Hibakód: %2$s</string>
     <string name="wol_send">Sikeresen elküldte a WOL csomagot a következő címre: \'%s\'</string>

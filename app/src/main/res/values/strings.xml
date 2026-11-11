@@ -13,8 +13,6 @@
     <string name="any">Any</string>
     <string name="app_name">TVHClient</string>
     <string name="authentication_failed">Authentication failed</string>
-    <string name="authentication_successful">Authentication successful</string>
-    <string name="authentication_in_progress">Authentication in progress</string>
     <string name="available">Available</string>
     <string name="bad_username_or_password">Wrong username or password</string>
     <string name="cancel">Cancel</string>
@@ -100,7 +98,6 @@
     <string name="feature_not_available_in_free_version">This feature is not available in the free version!</string>
     <string name="feature_not_supported_by_server">Your TVHeadend server does not support this feature. Please upgrade to newer version.</string>
     <string name="filter_channel_list">Filter channel list</string>
-    <string name="friday">Friday</string>
     <string name="full_changelog">Full Changelog</string>
     <string name="genre_color_info">Explain genre colors</string>
     <string name="genre_color_list">List of genre colors and their meaning.</string>
@@ -118,9 +115,7 @@
     <string name="htsp_status_user_access">You do not have access to this channel</string>
     <string name="htsp_status_user_limit">Your connection limit on the server has been reached</string>
     <string name="htsp_status_weak_stream">The stream is too weak to be played</string>
-    <string name="in_2_days">In 2 days</string>
     <string name="initializing">Initializing</string>
-    <string name="intro_overlay_text">Touch to cast Live TV or recordings to your TV.  Please check that you meet the requirements described in the casting settings.</string>
     <string name="is_series_recording">This recording is part of a series recording</string>
     <string name="is_timer_recording">This recording was created by a timer</string>
     <string name="loading_data">Loading data from server</string>
@@ -131,7 +126,6 @@
     <string name="min_duration">Minimum duration of the program</string>
     <string name="minus" translatable="false">-</string>
     <string name="minutes">%d min</string>
-    <string name="monday">Monday</string>
     <string name="multiple_channel_tags">Multiple channel tags</string>
     <string name="name">Name</string>
     <string name="no_active_connection">No active connection is defined. The existing connection to the server will be closed.</string>
@@ -337,7 +331,6 @@
     <string name="purchase_not_successful">Purchase not successful!</string>
     <string name="purchase_successful">Purchase successful!</string>
     <string name="rating">Rating</string>
-    <string name="receiving_data">Receiving data</string>
     <string name="reconnect">Reconnect</string>
     <string name="reconnect_to_server">Reconnect to server?</string>
     <string name="record_cancel">Cancel recording</string>
@@ -365,11 +358,8 @@
     <string name="remove_timer_recording">Do you really want to remove the timer recording \'%s\'?</string>
     <string name="removed_recordings">Removed recordings</string>
     <string name="requesting_playback_information">Requesting playback information from server</string>
-    <string name="restart">Restart</string>
     <string name="restart_and_sync">The connection will be re-established and a new initial sync will be done.</string>
-    <string name="saturday">Saturday</string>
     <string name="save">Save</string>
-    <string name="saving_data">Saving received data…</string>
     <string name="scheduled_recordings">Scheduled recordings</string>
     <string name="search">Search</string>
     <string name="search_completed_recordings">Search completed recordings</string>
@@ -418,10 +408,8 @@
     <string name="success_removing_recording">Recording has been removed.</string>
     <string name="success_updating_recording">Recording has been updated.</string>
     <string name="summary">Summary</string>
-    <string name="sunday">Sunday</string>
     <string name="tags">Tags</string>
     <string name="thank_you">Thank you!</string>
-    <string name="thursday">Thursday</string>
     <string name="time">Time</string>
     <string name="time_window">Time window to start recording</string>
     <string name="timeframe">Timeframe</string>
@@ -430,10 +418,7 @@
     <string name="today">Today</string>
     <string name="tomorrow">Tomorrow</string>
     <string name="total">Total</string>
-    <string name="tuesday">Tuesday</string>
-    <string name="two_days_ago">Two days ago</string>
     <string name="unknown">Unknown</string>
-    <string name="wednesday">Wednesday</string>
     <string name="wol_address_invalid">The MAC-address is not valid. Please check your settings.</string>
     <string name="wol_error">Error sending wake on LAN packet to \'%1$s\'.\n Error message: %2$s</string>
     <string name="wol_send">Successfully sent wake on LAN packet to \'%s\'</string>

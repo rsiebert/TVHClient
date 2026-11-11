@@ -96,15 +96,12 @@
     <string name="feature_not_available_in_free_version">Esta característica no está disponible en la versión gratuita!</string>
     <string name="feature_not_supported_by_server">Su servidor TVHeadend no admite esta función. Por favor, actualice a una versión más reciente.</string>
     <string name="filter_channel_list">Filtrar lista de canales</string>
-    <string name="friday">Viernes</string>
     <string name="full_changelog">Registro de cambios completo</string>
     <string name="genre_color_info">Explicar los colores del género</string>
     <string name="genre_color_list">Lista de colores de género y su significado.</string>
     <string name="help_and_support">Ayuda y soporte</string>
     <string name="hint_not_set">No establecido</string>
-    <string name="in_2_days">En 2 días</string>
     <string name="initializing">Inicializando</string>
-    <string name="intro_overlay_text">"Toca para emitir TV en vivo o grabaciones en tu TV. Verifique que cumpla con los requisitos descritos en la configuración de transmisión."</string>
     <string name="is_series_recording">Esta grabación es parte de una grabación en serie</string>
     <string name="is_timer_recording">Esta grabación fue creada por un temporizador</string>
     <string name="loading_data">Cargando datos del servidor</string>
@@ -114,7 +111,6 @@
     <string name="media_route_menu_title">Reproducir en…</string>
     <string name="min_duration">Duración mínima del programa</string>
     <string name="minutes">%d min</string>
-    <string name="monday">Lunes</string>
     <string name="multiple_channel_tags">múltiples etiquetas de canal</string>
     <string name="name">Nombre</string>
     <string name="no_active_connection">No se define ninguna conexión activa. La conexión existente al servidor será cerrada..</string>
@@ -198,9 +194,6 @@
     <string name="pref_name">Nombre de la conexión</string>
     <string name="pref_name_error_invalid">El nombre solo debe contener letras, números, menos y guion bajo.</string>
     <string name="pref_name_sum">Ingrese un nombre único de la conexión</string>
-    <string name="pref_navigation">Navegación</string>
-    <string name="pref_navigation_history_enabled">Historial de navegación</string>
-    <string name="pref_navigation_history_enabled_sum">Guarda el historial de los menús de navegación seleccionados. El botón Atrás muestra el menú de navegación anterior y su pantalla. Cuando esta configuración está deshabilitada, la aplicación se cierra..</string>
     <string name="pref_notifications">Notificaciones</string>
     <string name="pref_notify_about_running_recordings">Notificar sobre la ejecución de grabaciones</string>
     <string name="pref_notify_low_server_storage_space">Notificar cuando el espacio de almacenamiento del servidor se agote</string>
@@ -280,7 +273,6 @@
     <string name="purchase_not_successful">Compra no exitosa!</string>
     <string name="purchase_successful">Compra exitosa!</string>
     <string name="rating">Clasificación</string>
-    <string name="receiving_data">Recibiendo información</string>
     <string name="reconnect">Reconectar</string>
     <string name="reconnect_to_server">Reconectar al servidor?</string>
     <string name="record_cancel">Cancelar la grabación</string>
@@ -308,11 +300,8 @@
     <string name="remove_timer_recording">"¿De verdad quieres eliminar la grabación con temporizador '%s'?"</string>
     <string name="removed_recordings">Grabaciones eliminadas</string>
     <string name="requesting_playback_information">Solicitando información de reproducción desde el servidor</string>
-    <string name="restart">Reiniciar</string>
     <string name="restart_and_sync">La aplicación se reiniciará y se realizará una nueva sincronización.</string>
-    <string name="saturday">Sabado</string>
     <string name="save">Guardar</string>
-    <string name="saving_data">Guardando los datos recibidos…</string>
     <string name="scheduled_recordings">Grabaciones programadas</string>
     <string name="search">Buscar</string>
     <string name="search_completed_recordings">Buscar grabaciones finalizadas</string>
@@ -361,10 +350,8 @@
     <string name="success_removing_recording">La grabación ha sido eliminada.</string>
     <string name="success_updating_recording">La grabación ha sido actualizada.</string>
     <string name="summary">Resumen</string>
-    <string name="sunday">Domingo</string>
     <string name="tags">Etiquetas</string>
     <string name="thank_you">Muchísimas gracias.</string>
-    <string name="thursday">Jueves</string>
     <string name="time">Tiempo</string>
     <string name="time_window">Ventana de tiempo para comenzar a grabar</string>
     <string name="timeframe">Duración</string>
@@ -373,10 +360,7 @@
     <string name="today">Hoy</string>
     <string name="tomorrow">Mañana</string>
     <string name="total">Total</string>
-    <string name="tuesday">Martes</string>
-    <string name="two_days_ago">Hace dos días</string>
     <string name="unknown">Desconocido</string>
-    <string name="wednesday">Miercoles</string>
     <string name="wol_address_invalid">La dirección MAC no es válida. Por favor verifica tu configuración.</string>
     <string name="wol_error">"Error al enviar el paquete de activación en puerto LAN a '%1$s'. Mensaje de error: %2$s"</string>
     <string name="wol_send">"Envió exitosamente del paquete de activación de LAN a '%s'"</string>

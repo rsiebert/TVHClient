@@ -1,12 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <!--<editor-fold desc="Material components main colors">-->
-    <!-- Still referenced by MainActivity as the Cast introductory overlay scrim colour. The
-         M2 primary/secondary variant colours are gone; their M3 counterparts live below. -->
-    <color name="primaryColor">#808080</color>
-    <!--</editor-fold>-->
-
     <!--<editor-fold desc="Splash background color">-->
     <color name="surfaceLightColor">#f3f3f3</color>
     <!--</editor-fold>-->

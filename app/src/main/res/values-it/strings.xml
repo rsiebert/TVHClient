@@ -96,17 +96,12 @@
     <string name="feature_not_available_in_free_version">"Questa opzione non è disponibile nella versione gratuita! Puoi sbloccare questa opzione acquistando l'applicazione dal Play Store di Google."</string>
     <string name="feature_not_supported_by_server">Il server TVHeadend non supporta questa funzione. Effettuare l\'aggiornamento alla versione più recente.</string>
     <string name="filter_channel_list">Filtra l\'elenco dei canali</string>
-    <string name="friday">Venerdì</string>
     <string name="full_changelog">Changelog completo</string>
     <string name="genre_color_info">Illustra colori generi</string>
     <string name="genre_color_list">Elenco dei colori generi e loro significato.</string>
     <string name="help_and_support">Aiuto e supporto</string>
     <string name="hint_not_set">Non impostato</string>
-    <string name="in_2_days">In 2 giorni</string>
     <string name="initializing">Inizializzazione</string>
-    <string name="intro_overlay_text">"Tocca per trasmettere TV live o registrare nel TV
-
-Verifica che siano soddsifatti i requisiti descritti nelle impostazioni trasmissione."</string>
     <string name="is_series_recording">Questa registrazione fa parte di una registrazione di una serie</string>
     <string name="is_timer_recording">Questa registrazione è stata creata manualmente</string>
     <string name="loading_data">Caricamento dei dati dal server</string>
@@ -116,7 +111,6 @@ Verifica che siano soddsifatti i requisiti descritti nelle impostazioni trasmiss
     <string name="media_route_menu_title">Riproduci su…</string>
     <string name="min_duration">Durata minima</string>
     <string name="minutes">%d minuti</string>
-    <string name="monday">Lunedì</string>
     <string name="multiple_channel_tags">Tag di più canali</string>
     <string name="name">Nome</string>
     <string name="no_active_connection">Non è definita alcuna connessione attiva. La connessione esistente con il server verrà chiusa.</string>
@@ -200,9 +194,6 @@ Verifica che siano soddsifatti i requisiti descritti nelle impostazioni trasmiss
     <string name="pref_name">Nome connessione</string>
     <string name="pref_name_error_invalid">Il nome può contenere solo lettere, numeri e simboli di meno e sottolineato.</string>
     <string name="pref_name_sum">Inserisci un nome univoco per la connessione</string>
-    <string name="pref_navigation">Navigazione</string>
-    <string name="pref_navigation_history_enabled">Storia della navigazione</string>
-    <string name="pref_navigation_history_enabled_sum">Salva la cronologia dei menu di navigazione selezionati. Il pulsante Indietro visualizza il menu di navigazione precedente e la sua schermata. Quando questa impostazione è disattivata, l\'applicazione si chiude.</string>
     <string name="pref_notifications">Notifiche</string>
     <string name="pref_notify_about_running_recordings">Notifica di registrazioni in corso</string>
     <string name="pref_notify_low_server_storage_space">Notifica quando lo spazio di archiviazione del server si sta esaurendo</string>
@@ -283,7 +274,6 @@ L'indirizzo deve essere nella forma '01:24:67:9a:cd:ef' e può contenere solo ci
     <string name="purchase_not_successful">L\'acquisto non ha avuto successo!</string>
     <string name="purchase_successful">Acquisto riuscito!</string>
     <string name="rating">Valutazione</string>
-    <string name="receiving_data">Ricevendo dati</string>
     <string name="reconnect">Ricollegare</string>
     <string name="reconnect_to_server">Ricollegarsi al server?</string>
     <string name="record_cancel">Annullare registrazione</string>
@@ -311,11 +301,8 @@ L'indirizzo deve essere nella forma '01:24:67:9a:cd:ef' e può contenere solo ci
     <string name="remove_timer_recording">"Vuoi veramente eliminare la registrazione manuale \'%s\'?"</string>
     <string name="removed_recordings">Registrazioni rimosse</string>
     <string name="requesting_playback_information">Richiesta di informazioni sulla riproduzione dal server</string>
-    <string name="restart">Riavvio</string>
     <string name="restart_and_sync">L\'applicazione verrà riavviata e verrà effettuata una nuova sincronizzazione iniziale.</string>
-    <string name="saturday">Sabato</string>
     <string name="save">Salva</string>
-    <string name="saving_data">Salvataggio dei dati ricevuti…</string>
     <string name="scheduled_recordings">Registrazioni programmate</string>
     <string name="search">Cerca</string>
     <string name="search_completed_recordings">Cerca le registrazioni completate</string>
@@ -364,10 +351,8 @@ L'indirizzo deve essere nella forma '01:24:67:9a:cd:ef' e può contenere solo ci
     <string name="success_removing_recording">Registrazione rimossa.</string>
     <string name="success_updating_recording">Registrazione aggiornata.</string>
     <string name="summary">Riassunto</string>
-    <string name="sunday">Domenica</string>
     <string name="tags">Etichette</string>
     <string name="thank_you">Grazie!</string>
-    <string name="thursday">Giovedì</string>
     <string name="time">Orario</string>
     <string name="time_window">Finestra orario avvio registrazione</string>
     <string name="timeframe">Linea temporale</string>
@@ -376,10 +361,7 @@ L'indirizzo deve essere nella forma '01:24:67:9a:cd:ef' e può contenere solo ci
     <string name="today">Oggi</string>
     <string name="tomorrow">Domani</string>
     <string name="total">Totale</string>
-    <string name="tuesday">Martedì</string>
-    <string name="two_days_ago">Due giorni fa</string>
     <string name="unknown">Sconosciuto</string>
-    <string name="wednesday">Mercoledì</string>
     <string name="wol_address_invalid">"L'indirizzo MAC non è valido. Controlla le impostazioni."</string>
     <string name="wol_error">"Errore durante l'invio del pacchetto Wake On LAN a \'%1$s\'.
  Messaggio d'errore: %2$s"</string>

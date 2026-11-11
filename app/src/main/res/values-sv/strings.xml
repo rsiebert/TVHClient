@@ -96,15 +96,12 @@
     <string name="feature_not_available_in_free_version">Den här funktionen är inte tillgänglig i den fria versionen! Du kan låsa upp denna funktion och stödja ytterligare utveckling genom att köpa programmet från Play Store.</string>
     <string name="feature_not_supported_by_server">Din TVHeadend-server stöder inte den här funktionen. Uppgradera till nyare version.</string>
     <string name="filter_channel_list">filter kanallista</string>
-    <string name="friday">Fredag</string>
     <string name="full_changelog">Full Changelog</string>
     <string name="genre_color_info">Förklara genrefärger</string>
     <string name="genre_color_list">Lista på genrefärger och deras betydelser.</string>
     <string name="help_and_support">Hjälp och support</string>
     <string name="hint_not_set">Inte satt</string>
-    <string name="in_2_days">Om 2 dagar</string>
     <string name="initializing">Initierar</string>
-    <string name="intro_overlay_text">Tryck för att skicka Live TV eller inspelningar till din TV. Kontrollera att du uppfyller kraven som beskrivs i gjutningsinställningarna.</string>
     <string name="is_series_recording">Denna inspelning är del av en serieinspelning</string>
     <string name="is_timer_recording">Den här inspelningen skapades av en timer</string>
     <string name="loading_data">Laddar data från servern</string>
@@ -114,7 +111,6 @@
     <string name="media_route_menu_title">Spela på…</string>
     <string name="min_duration">Minsta varaktighet</string>
     <string name="minutes">%d min</string>
-    <string name="monday">Måndag</string>
     <string name="multiple_channel_tags">Flerkanaliga taggar</string>
     <string name="name">Namn</string>
     <string name="no_active_connection">Ingen aktiv anslutning definieras. Den befintliga anslutningen till servern kommer att stängas.</string>
@@ -198,9 +194,6 @@
     <string name="pref_name">Anslutningsnamn</string>
     <string name="pref_name_error_invalid">Namnet får endast innehålla bokstäver, siffror minus och understreck.</string>
     <string name="pref_name_sum">Fyll i ett unikt namn på anslutningen</string>
-    <string name="pref_navigation">Navigering</string>
-    <string name="pref_navigation_history_enabled">Navigationshistorik</string>
-    <string name="pref_navigation_history_enabled_sum">Sparar historiken för de valda navigeringsmenyerna. Tillbaka-knappen visar föregående navigationsmeny och dess skärm. När den här inställningen är inaktiverad stängs appen.</string>
     <string name="pref_notifications">Anmälningar</string>
     <string name="pref_notify_about_running_recordings">Meddela om inspelningar som körs</string>
     <string name="pref_notify_low_server_storage_space">Meddela när serverlagringsutrymmet blir lågt</string>
@@ -280,7 +273,6 @@
     <string name="purchase_not_successful">Köpet misslyckades!</string>
     <string name="purchase_successful">Köp framgångsrikt!</string>
     <string name="rating">Betyg</string>
-    <string name="receiving_data">Tar emot data</string>
     <string name="reconnect">Anslut</string>
     <string name="reconnect_to_server">Återansluta till servern?</string>
     <string name="record_cancel">Avbryta inspelning</string>
@@ -308,11 +300,8 @@
     <string name="remove_timer_recording">Vill du verkligen ta bort timerinspelningen \'%s\'?</string>
     <string name="removed_recordings">Borttagna</string>
     <string name="requesting_playback_information">Begär avspelningsinformation från servern</string>
-    <string name="restart">Omstart</string>
     <string name="restart_and_sync">Applikationen startas om och en ny inledande synkronisering kommer att göras.</string>
-    <string name="saturday">Lördag</string>
     <string name="save">Spara</string>
-    <string name="saving_data">Sparar mottagna data…</string>
     <string name="scheduled_recordings">Kommande</string>
     <string name="search">Sök</string>
     <string name="search_completed_recordings">Sök färdiga inspelningar</string>
@@ -361,10 +350,8 @@
     <string name="success_removing_recording">Inspelningen har tagits bort.</string>
     <string name="success_updating_recording">Inspelningen har uppdaterats.</string>
     <string name="summary">Sammandrag</string>
-    <string name="sunday">Söndag</string>
     <string name="tags">Taggar</string>
     <string name="thank_you">Tack!</string>
-    <string name="thursday">Torsdag</string>
     <string name="time">Tid</string>
     <string name="time_window">Tidsfönster för att börja spela in</string>
     <string name="timeframe">Tidsram</string>
@@ -373,10 +360,7 @@
     <string name="today">Idag</string>
     <string name="tomorrow">Imorgon</string>
     <string name="total">Totalt</string>
-    <string name="tuesday">Tisdag</string>
-    <string name="two_days_ago">Två dagar sedan</string>
     <string name="unknown">Okänd</string>
-    <string name="wednesday">Onsdag</string>
     <string name="wol_address_invalid">MAC-adressen är ogiltig. Vänligen kolla dina inställningar.</string>
     <string name="wol_error">Misslyckades skicka wake on LAN paket till \'%1$s\'.\n Felmeddelande: %2$s</string>
     <string name="wol_send">Lyckades skicka wake on LAN paket till \'%s\'</string>

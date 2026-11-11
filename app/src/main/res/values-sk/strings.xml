@@ -96,15 +96,12 @@
     <string name="feature_not_available_in_free_version">Táto funkcia nie je k dispozícii v bezplatnej verzii!</string>
     <string name="feature_not_supported_by_server">TVHeadend server nepodporuje túto funkciu. Aktualizujte server na novšiu verziu.</string>
     <string name="filter_channel_list">Filtrovať zoznam kanálov</string>
-    <string name="friday">Piatok</string>
     <string name="full_changelog">Úplný zoznam zmien</string>
     <string name="genre_color_info">Vysvetliť farby žánrov</string>
     <string name="genre_color_list">Zoznam farieb žánrov a ich význam.</string>
     <string name="help_and_support">Pomoc a podpora</string>
     <string name="hint_not_set">Nie je nastavené</string>
-    <string name="in_2_days">Za dva dni</string>
     <string name="initializing">Inicializácia</string>
-    <string name="intro_overlay_text">Ťuknite pre prenášanie kanálov alebo nahrávok do vášho televízora\n\nSkontrolujte, či spĺňate všetky podmienky pre casting v nastaveniach.</string>
     <string name="is_series_recording">Táto nahrávka je súčasťou sériového nahrávania</string>
     <string name="is_timer_recording">Táto nahrávka bola vytvorená časovačom</string>
     <string name="loading_data">Načítavanie údajov zo servera</string>
@@ -114,7 +111,6 @@
     <string name="media_route_menu_title">Prehrať na…</string>
     <string name="min_duration">Minimálne trvanie</string>
     <string name="minutes">%d min</string>
-    <string name="monday">Pondelok</string>
     <string name="multiple_channel_tags">Viacnásobné značky kanálov</string>
     <string name="name">Meno</string>
     <string name="no_active_connection">Nie je definované žiadne aktívne spojenie. Existujúce pripojenie k serveru sa zatvorí.</string>
@@ -199,9 +195,6 @@
     <string name="pref_name">Názov pripojenia</string>
     <string name="pref_name_error_invalid">Názov môže obsahovať len písmena, čísla, pomlčku a podtržítko.</string>
     <string name="pref_name_sum">Zadajte unikatný názov pre toto pripojenie</string>
-    <string name="pref_navigation">Navigácia</string>
-    <string name="pref_navigation_history_enabled">História navigácie</string>
-    <string name="pref_navigation_history_enabled_sum">Uloží históriu vybraných navigačných ponúk. Tlačidlo Späť zobrazuje predchádzajúcu navigačnú ponuku a jej obrazovku. Keď je toto nastavenie vypnuté, aplikácia sa zatvorí.</string>
     <string name="pref_notifications">Notifikácie</string>
     <string name="pref_notify_about_running_recordings">Upozorniť na spustenie nahrávania</string>
     <string name="pref_notify_low_server_storage_space">Upozorniť na nedostatok voľného miesta na serveri</string>
@@ -283,7 +276,6 @@
     <string name="purchase_not_successful">Nákup neúspešný!</string>
     <string name="purchase_successful">Nákup úspešný!</string>
     <string name="rating">Hodnotenie</string>
-    <string name="receiving_data">Prijímanie údajov</string>
     <string name="reconnect">Znovu pripojiť</string>
     <string name="reconnect_to_server">Znova sa pripojte k serveru?</string>
     <string name="record_cancel">Zrušiť nahrávanie</string>
@@ -311,11 +303,8 @@
     <string name="remove_timer_recording">Naozaj chcete vymazať načasované nahrávanie \'%s\'?</string>
     <string name="removed_recordings">Odstránené nahrávky</string>
     <string name="requesting_playback_information">Vyžiadanie informácií o prehrávaní zo servera</string>
-    <string name="restart">Reštart</string>
     <string name="restart_and_sync">Aplikácia sa reštartuje a vykoná sa nová počiatočná synchronizácia.</string>
-    <string name="saturday">Sobota</string>
     <string name="save">Uložiť</string>
-    <string name="saving_data">Ukladanie prijatých údajov…</string>
     <string name="scheduled_recordings">Naplánované nahrávky</string>
     <string name="search">Hľadať</string>
     <string name="search_completed_recordings">Vyhľadávanie dokončených nahrávok</string>
@@ -364,10 +353,8 @@
     <string name="success_removing_recording">Nahrávanie bolo vymazané.</string>
     <string name="success_updating_recording">Nahrávanie bolo upravené.</string>
     <string name="summary">Stručný popis</string>
-    <string name="sunday">Nedeľa</string>
     <string name="tags">Skupiny</string>
     <string name="thank_you">Ďakujeme!</string>
-    <string name="thursday">Štvrtok</string>
     <string name="time">Čas</string>
     <string name="time_window">Časové rozpätie pre nahrávanie</string>
     <string name="timeframe">Časový rámec</string>
@@ -376,10 +363,7 @@
     <string name="today">Dnes</string>
     <string name="tomorrow">Zajtra</string>
     <string name="total">celkom</string>
-    <string name="tuesday">Utorok</string>
-    <string name="two_days_ago">Pred dvoma dňami</string>
     <string name="unknown">Neznámy</string>
-    <string name="wednesday">Streda</string>
     <string name="wol_address_invalid">MAC adresa nieje platná. Skontrolujte nastavenia.</string>
     <string name="wol_error">Chyba pri odosielaní Wake on LAN paketu na \'%1$s\'.\n Chybová správa: %2$s</string>
     <string name="wol_send">Wake on LAN paket na \'%s\' bol úspešne poslaný</string>

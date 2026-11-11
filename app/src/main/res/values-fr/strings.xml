@@ -96,15 +96,12 @@
     <string name="feature_not_available_in_free_version">Cette fonctionnalité n\'est pas disponible dans la version gratuite!</string>
     <string name="feature_not_supported_by_server">Votre serveur TVHeadend ne supporte pas cette fonctionnalité. Veuillez mettre à jour vers une version plus récente.</string>
     <string name="filter_channel_list">Filtrer la liste des chaînes</string>
-    <string name="friday">Vendredi</string>
     <string name="full_changelog">Changelog complet</string>
     <string name="genre_color_info">Explication des couleurs</string>
     <string name="genre_color_list">Liste des couleurs de genre et leurs significations.</string>
     <string name="help_and_support">Aide et soutien</string>
     <string name="hint_not_set">Non défini</string>
-    <string name="in_2_days">dans 2 jours</string>
     <string name="initializing">Initialisation</string>
-    <string name="intro_overlay_text">Appuyer pour lancer la TV en direct ou les enregistrements sur votre TV\n\nVeuillez vérifier les paramétrages requis dans la partie paramètres.</string>
     <string name="is_series_recording">Cet enregistrement fait partie d\'enregistrements auto</string>
     <string name="is_timer_recording">Cet enregistrement a été programmé</string>
     <string name="loading_data">Chargement des données depuis le serveur</string>
@@ -114,7 +111,6 @@
     <string name="media_route_menu_title">Jouer sur…</string>
     <string name="min_duration">Durée minimum</string>
     <string name="minutes">%d min</string>
-    <string name="monday">Lundi</string>
     <string name="multiple_channel_tags">Étiquettes de canaux multiples</string>
     <string name="name">Nom</string>
     <string name="no_active_connection">Aucune connection active définie. La connection existante au serveur doit être fermée.</string>
@@ -199,9 +195,6 @@
     <string name="pref_name">Nom de la connexion</string>
     <string name="pref_name_error_invalid">Le nom ne peut contenir que des lettres, nombres, tiret et underscore.</string>
     <string name="pref_name_sum">Entrer un nom unique pour la connexion</string>
-    <string name="pref_navigation">Navigation</string>
-    <string name="pref_navigation_history_enabled">Histoire de navigation</string>
-    <string name="pref_navigation_history_enabled_sum">Enregistre l\'historique des menus de navigation sélectionnés. Le bouton Précédent affiche le menu de navigation précédent et son écran. Lorsque ce paramètre est désactivé, l\'application se ferme.</string>
     <string name="pref_notifications">Notifications</string>
     <string name="pref_notify_about_running_recordings">Notifier les enregistrements en cours</string>
     <string name="pref_notify_low_server_storage_space">Notifier lorsque l\'espace de stockage du serveur est insuffisant</string>
@@ -283,7 +276,6 @@
     <string name="purchase_not_successful">L\'achat n\'a pas réussi !</string>
     <string name="purchase_successful">Achat réussi !</string>
     <string name="rating">Notation</string>
-    <string name="receiving_data">Réception de données</string>
     <string name="reconnect">Reconnecter</string>
     <string name="reconnect_to_server">Reconnection au serveur?</string>
     <string name="record_cancel">Annuler l\'enregistrement</string>
@@ -311,11 +303,8 @@
     <string name="remove_timer_recording">Voulez-vous vraiment effacer l\'enregistrement horaire \'%s\'?</string>
     <string name="removed_recordings">Supprimés</string>
     <string name="requesting_playback_information">Demande d\'informations au serveur pour le lancement du programme</string>
-    <string name="restart">Redémarrage</string>
     <string name="restart_and_sync">L\'application doit être redémarrée et une nouvelle synchro doit être faite.</string>
-    <string name="saturday">Samedi</string>
     <string name="save">Sauvegarder</string>
-    <string name="saving_data">Sauvegarde des données reçues…</string>
     <string name="scheduled_recordings">A venir</string>
     <string name="search">Recherche</string>
     <string name="search_completed_recordings">Rechercher des enregistrements terminés</string>
@@ -364,10 +353,8 @@
     <string name="success_removing_recording">L\'enregistrement a été supprimé.</string>
     <string name="success_updating_recording">L\'enregistrement a été mis à jour.</string>
     <string name="summary">Résumé</string>
-    <string name="sunday">Dimanche</string>
     <string name="tags">Etiquettes</string>
     <string name="thank_you">Je vous remercie beaucoup.!</string>
-    <string name="thursday">Jeudi</string>
     <string name="time">Heure</string>
     <string name="time_window">Fenêtre de temps pour démarrer l\'enregistrement</string>
     <string name="timeframe">Temps</string>
@@ -376,10 +363,7 @@
     <string name="today">Aujourd\'hui</string>
     <string name="tomorrow">Demain</string>
     <string name="total">Total</string>
-    <string name="tuesday">Mardi</string>
-    <string name="two_days_ago">Il y a deux jours</string>
     <string name="unknown">Inconnu</string>
-    <string name="wednesday">Mercredi</string>
     <string name="wol_address_invalid">L\'adresse MAC n\'est pas valide. Veuillez vérifier vos paramètres.</string>
     <string name="wol_error">Erreur pour envoyer un packet WoL à \'%1$s\'.\n Message d\'erreur: %2$s</string>
     <string name="wol_send">Paquet de WoL envoyé avec succès à \'%s\'</string>

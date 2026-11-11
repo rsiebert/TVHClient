@@ -96,15 +96,12 @@
     <string name="feature_not_available_in_free_version">Ta opcja nie jest dostępna w darmowej wersji!</string>
     <string name="feature_not_supported_by_server">Twój serwer TVHeadend nie obsługuje tej funkcji. Uaktualnij do nowszej wersji.</string>
     <string name="filter_channel_list">Filtruj listę kanałów</string>
-    <string name="friday">Piątek</string>
     <string name="full_changelog">Pełny dziennik zmian</string>
     <string name="genre_color_info">Objaśnienie rodzaju kolorów</string>
     <string name="genre_color_list">Lista rodzaju kolorów i ich znaczenie.</string>
     <string name="help_and_support">Pomoc i wsparcie</string>
     <string name="hint_not_set">Nie ustawiono</string>
-    <string name="in_2_days">Za 2 dni</string>
     <string name="initializing">Inicjowanie</string>
-    <string name="intro_overlay_text">Dotknij, aby rzucić telewizję na żywo lub nagrania na TV\n\nProszę włączyć rzucanie w ustawieniach i sprawdzić, czy serwer jest wystarczająco silny i wspiera transkodowanie.</string>
     <string name="is_series_recording">To nagranie jest częścią serii nagrań</string>
     <string name="is_timer_recording">To nagrywanie zostało stworzone przez Timer</string>
     <string name="loading_data">Ładowanie danych z serwera</string>
@@ -114,7 +111,6 @@
     <string name="media_route_menu_title">Odtwarzaj na…</string>
     <string name="min_duration">Minimalny czas programu</string>
     <string name="minutes">%d min</string>
-    <string name="monday">Poniedziałek</string>
     <string name="multiple_channel_tags">Wiele tagów kanałów</string>
     <string name="name">Nazwa</string>
     <string name="no_active_connection">Nie zdefiniowano aktywnego połączenia. Istniejące połączenie z serwerem zostanie zamknięte.</string>
@@ -199,9 +195,6 @@
     <string name="pref_name">Nazwa połączenia</string>
     <string name="pref_name_error_invalid">Nazwa może zawierać tylko litery, cyfry, minus i podkreślenie.</string>
     <string name="pref_name_sum">Wpisz unikalną nazwę połączenia</string>
-    <string name="pref_navigation">Nawigacja</string>
-    <string name="pref_navigation_history_enabled">Historia nawigacji</string>
-    <string name="pref_navigation_history_enabled_sum">Zapisuje historię wybranych menu nawigacyjnych. Przycisk Wstecz wyświetla poprzednie menu nawigacyjne i jego ekran. Gdy to ustawienie jest wyłączone, aplikacja zamyka się.</string>
     <string name="pref_notifications">Powiadomienia</string>
     <string name="pref_notify_about_running_recordings">Powiadom o uruchomieniu nagrań</string>
     <string name="pref_notify_low_server_storage_space">Powiadom, gdy kończy się miejsce na serwerze</string>
@@ -283,7 +276,6 @@
     <string name="purchase_not_successful">Zakup nie udany!</string>
     <string name="purchase_successful">Zakup udany!</string>
     <string name="rating">Ocena</string>
-    <string name="receiving_data">Odbieranie danych</string>
     <string name="reconnect">POnowne łaczenie</string>
     <string name="reconnect_to_server">Połącz ponownie z serwerem?</string>
     <string name="record_cancel">Anuluj nagranie</string>
@@ -311,11 +303,8 @@
     <string name="remove_timer_recording">Czy na pewno chcesz usunąć czasowe nagrywanie \'%s\'?</string>
     <string name="removed_recordings">Usunięte</string>
     <string name="requesting_playback_information">Żądanie informacji o odtwarzaniu z serwera</string>
-    <string name="restart">Restart</string>
     <string name="restart_and_sync">Aplikacja zostanie zrestartowana i zostanie wykonana nowa początkowa synchronizacja.</string>
-    <string name="saturday">Sobota</string>
     <string name="save">Zapisz</string>
-    <string name="saving_data">Zapisywanie odebranych danych…</string>
     <string name="scheduled_recordings">Zaplanowane</string>
     <string name="search">Szukaj</string>
     <string name="search_completed_recordings">Wyszukaj zakończone nagrania</string>
@@ -364,10 +353,8 @@
     <string name="success_removing_recording">Nagranie zostało usunięte.</string>
     <string name="success_updating_recording">Nagranie zostało zaktualizowane.</string>
     <string name="summary">Podsumowanie</string>
-    <string name="sunday">Niedziela</string>
     <string name="tags">Tagi</string>
     <string name="thank_you">Dziękujemy!</string>
-    <string name="thursday">Czwartek</string>
     <string name="time">Czas</string>
     <string name="time_window">Ramy czasu do rozpoczcia nagrywania</string>
     <string name="timeframe">Ramy czasowe</string>
@@ -376,10 +363,7 @@
     <string name="today">Dzisiaj</string>
     <string name="tomorrow">Jutro</string>
     <string name="total">Całość</string>
-    <string name="tuesday">Wtorek</string>
-    <string name="two_days_ago">Dwa dni temu</string>
     <string name="unknown">Nieznane</string>
-    <string name="wednesday">Środa</string>
     <string name="wol_address_invalid">MAC adres jest nieprawidłowy. Proszę sprawdzić ustawienia.</string>
     <string name="wol_error">Błąd wysyłania pakietu Wake On LAN do \'%1$s\'.\n Komunikat o błędzie: %2$s</string>
     <string name="wol_send">Pomyślnie wysłano pakiet Wake On LAN do \'%s\'</string>
