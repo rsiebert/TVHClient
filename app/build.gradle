@@ -15,9 +15,17 @@ apply from: '../signing.gradle'
 
 // Read through `providers` rather than a raw stream: the file is then a tracked input to the
 // configuration phase instead of an undeclared read, and no file handle is leaked.
+//
+// The file is gitignored (it holds the developer e-mail and the Cast receiver id), so a fresh
+// clone does not have it. Fall back to empty defaults instead of failing configuration, so the
+// project still syncs and builds. Copy tvhclient-github.properties to create it.
+def tvhclientPropertiesFile = rootProject.layout.projectDirectory.file("tvhclient.properties")
 def appProperties = new Properties()
-appProperties.load(new StringReader(
-        providers.fileContents(rootProject.layout.projectDirectory.file("tvhclient.properties")).asText.get()))
+if (tvhclientPropertiesFile.asFile.exists()) {
+    appProperties.load(new StringReader(providers.fileContents(tvhclientPropertiesFile).asText.get()))
+} else {
+    logger.lifecycle("tvhclient.properties is missing; using empty defaults")
+}
 
 // `providers.exec` is tracked by Gradle, unlike Groovy's `String.execute()`, which spawns a
 // process outside Gradle's instrumentation and cannot be modelled by the configuration cache.
@@ -40,7 +48,7 @@ android {
         applicationId "org.tvheadend.tvhclient"
 
         // Set the default values for these build config fields
-        buildConfigField "String", "DEVELOPER_EMAIL", "\"${appProperties['developerEmail']}\""
+        buildConfigField "String", "DEVELOPER_EMAIL", "\"${appProperties.getProperty('developerEmail', '')}\""
         buildConfigField "Integer", "BUILD_VERSION", "$versionCode"
 
         // Include the git commit hash in the crash reports. Only the hash belongs here: it is
@@ -50,7 +58,7 @@ android {
         buildConfigField "String", "GIT_SHA", "\"${gitSha}\""
 
         // The cast ID that the app shall use
-        buildConfigField "String", "CAST_ID", "\"${appProperties['castId']}\""
+        buildConfigField "String", "CAST_ID", "\"${appProperties.getProperty('castId', '')}\""
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }

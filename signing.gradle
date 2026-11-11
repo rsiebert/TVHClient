@@ -1,32 +1,40 @@
-// Read through `providers` so the file is a tracked input to the configuration phase rather
-// than an undeclared stream read, and so no file handle is left open.
-def keystoreProperties = new Properties()
-keystoreProperties.load(new StringReader(
-        providers.fileContents(rootProject.layout.projectDirectory.file("keystore.properties")).asText.get()))
+// Read through `providers` so the file is a tracked input to the configuration phase rather than
+// an undeclared stream read, and so no file handle is left open.
+//
+// The file is gitignored (it holds the signing credentials), so a fresh clone does not have it.
+// Skip the signing configuration in that case instead of failing configuration: debug builds then
+// fall back to AGP's default debug keystore and release builds stay unsigned. CI provides the file
+// by renaming the committed keystore-github.properties into place.
+def keystorePropertiesFile = rootProject.layout.projectDirectory.file("keystore.properties")
+if (keystorePropertiesFile.asFile.exists()) {
+    def keystoreProperties = new Properties()
+    keystoreProperties.load(new StringReader(
+            providers.fileContents(keystorePropertiesFile).asText.get()))
 
-android {
-    signingConfigs {
-        release {
-            storeFile file(keystoreProperties['releaseKeystoreFile'])
-            storePassword keystoreProperties['releaseKeystorePassword']
-            keyAlias keystoreProperties['releaseKeyAlias']
-            keyPassword keystoreProperties['releaseKeyPassword']
-        }
-        debug {
-            storeFile file(keystoreProperties['debugKeystoreFile'])
-            storePassword keystoreProperties['debugKeystorePassword']
-            keyAlias keystoreProperties['debugKeyAlias']
-            keyPassword keystoreProperties['debugKeyPassword']
-        }
-    }
-
-    buildTypes {
-        release {
-            signingConfig signingConfigs.release
+    android {
+        signingConfigs {
+            release {
+                storeFile file(keystoreProperties['releaseKeystoreFile'])
+                storePassword keystoreProperties['releaseKeystorePassword']
+                keyAlias keystoreProperties['releaseKeyAlias']
+                keyPassword keystoreProperties['releaseKeyPassword']
+            }
+            debug {
+                storeFile file(keystoreProperties['debugKeystoreFile'])
+                storePassword keystoreProperties['debugKeystorePassword']
+                keyAlias keystoreProperties['debugKeyAlias']
+                keyPassword keystoreProperties['debugKeyPassword']
+            }
         }
 
-        debug {
-            signingConfig signingConfigs.debug
+        buildTypes {
+            release {
+                signingConfig signingConfigs.release
+            }
+
+            debug {
+                signingConfig signingConfigs.debug
+            }
         }
     }
 }
