@@ -453,4 +453,6 @@
     <string name="cast_mini_controller_stop">Megállítás</string>
     <string name="exo_track_selection_title_audio" tools:override="true">Hang</string>
     <string name="notification_channel_casting">Casting</string>
+    <string name="local_network_permission_denied">A TVHClientnek hozzáférésre van szüksége a helyi hálózathoz a szerver eléréséhez. Adja meg az engedélyt az alkalmazás beállításaiban.</string>
+    <string name="local_network_permission_settings_button">Beállítások</string>
 </resources>

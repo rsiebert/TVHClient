@@ -452,4 +452,6 @@ L'indirizzo deve essere nella forma '01:24:67:9a:cd:ef' e può contenere solo ci
     <string name="cast_mini_controller_stop">Stop</string>
     <string name="exo_track_selection_title_audio" tools:override="true">Audio</string>
     <string name="notification_channel_casting">Casting</string>
+    <string name="local_network_permission_denied">TVHClient necessita dell\'accesso alla rete locale per raggiungere il server. Concedi l\'autorizzazione nelle impostazioni dell\'app.</string>
+    <string name="local_network_permission_settings_button">Impostazioni</string>
 </resources>

@@ -450,4 +450,6 @@
     <string name="cast_mini_controller_stop">Sluta</string>
     <string name="exo_track_selection_title_audio" tools:override="true">Ljud</string>
     <string name="notification_channel_casting">Casting</string>
+    <string name="local_network_permission_denied">TVHClient behöver åtkomst till det lokala nätverket för att nå servern. Bevilja behörigheten i appens inställningar.</string>
+    <string name="local_network_permission_settings_button">Inställningar</string>
 </resources>

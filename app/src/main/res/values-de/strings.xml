@@ -452,4 +452,6 @@
     <string name="cast_mini_controller_stop">Stoppen</string>
     <string name="exo_track_selection_title_audio" tools:override="true">Audio</string>
     <string name="notification_channel_casting">Casting</string>
+    <string name="local_network_permission_denied">TVHClient benötigt Zugriff auf das lokale Netzwerk, um den Server zu erreichen. Erteile die Berechtigung in den App-Einstellungen.</string>
+    <string name="local_network_permission_settings_button">Einstellungen</string>
 </resources>

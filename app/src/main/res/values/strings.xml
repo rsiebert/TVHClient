@@ -454,4 +454,6 @@
     <string name="notification_channel_casting">Casting</string>
     <string name="cast_mini_controller_active">Casting</string>
     <string name="cast_mini_controller_stop">Stop</string>
+    <string name="local_network_permission_denied">TVHClient needs access to the local network to reach the server. Grant the permission in the app settings.</string>
+    <string name="local_network_permission_settings_button">Settings</string>
 </resources>
