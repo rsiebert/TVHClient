@@ -6,7 +6,7 @@
 [versions]
 compileSdk = "37"
 minSdk = "24"
-targetSdk = "36"
+targetSdk = "37"
 javaVersion = "17"
 
 # Gradle plugins, applied through the [plugins] aliases at the bottom of this file.
