@@ -11,12 +11,14 @@ import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.database.Cursor
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.os.StrictMode
 import android.provider.SearchRecentSuggestions
+import android.provider.Settings
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -41,11 +43,13 @@ import androidx.media3.session.MediaController
 import androidx.media3.session.SessionToken
 import androidx.preference.PreferenceManager
 import com.google.android.material.navigation.NavigationView
+import com.google.android.material.snackbar.Snackbar
 import com.google.common.util.concurrent.ListenableFuture
 import org.tvheadend.api.AuthenticationFailureReason
 import org.tvheadend.api.AuthenticationStateResult
 import org.tvheadend.api.ConnectionFailureReason
 import org.tvheadend.api.ConnectionStateResult
+import org.tvheadend.data.entity.Connection
 import org.tvheadend.tvhclient.BuildConfig
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.cast.CastPlaybackService
@@ -89,6 +93,7 @@ import org.tvheadend.tvhclient.util.extensions.showSnackbarMessage
 import org.tvheadend.tvhclient.util.extensions.visible
 import org.tvheadend.tvhclient.util.extensions.visibleOrGone
 import org.tvheadend.tvhclient.util.getThemeId
+import org.tvheadend.tvhclient.util.permissions.LocalNetworkPermission
 import timber.log.Timber
 
 
@@ -120,6 +125,21 @@ class MainActivity : AppCompatActivity(), ToolbarInterface, LayoutControlInterfa
     private var isDualPane: Boolean = false
 
     private lateinit var miniController: View
+
+    /**
+     * Set when a Wake-on-LAN packet has to be sent once the local network permission is granted.
+     * The packet would be silently dropped without the permission, so the action is deferred.
+     */
+    private var wakeOnLanPendingAfterPermission = false
+
+    /**
+     * Set when a connection attempt was blocked by the missing local network permission, so the
+     * connection is started from the permission result instead of being lost.
+     */
+    private var pendingConnectAfterPermission = false
+
+    /** True while the local network permission has been requested and no result arrived yet. */
+    private var localNetworkPermissionRequestInFlight = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         setTheme(getThemeId(this))
@@ -252,6 +272,13 @@ class MainActivity : AppCompatActivity(), ToolbarInterface, LayoutControlInterfa
         if (savedInstanceState != null) {
             Timber.d("Orientation change occurred")
             baseViewModel.setStartupComplete(true)
+        }
+
+        // From Android 17 the platform blocks all local network traffic without the
+        // ACCESS_LOCAL_NETWORK permission, which would silently break the connection to the server.
+        // Ask for it up front; the automatic connection is triggered from the permission result.
+        if (savedInstanceState == null) {
+            requestLocalNetworkPermissionIfNeeded()
         }
     }
 
@@ -432,10 +459,79 @@ class MainActivity : AppCompatActivity(), ToolbarInterface, LayoutControlInterfa
         supportActionBar?.subtitle = subtitle
     }
 
+    /**
+     * Asks for the local network permission when the platform requires it and it is not granted
+     * yet. Returns true when a request was started, so the caller can defer its work to the
+     * permission result. Below Android 17 this always returns false.
+     */
+    private fun requestLocalNetworkPermissionIfNeeded(): Boolean {
+        if (localNetworkPermissionRequestInFlight || !LocalNetworkPermission.needsRequest(this)) {
+            return false
+        }
+        Timber.d("Requesting the local network permission")
+        localNetworkPermissionRequestInFlight = true
+        LocalNetworkPermission.request(this)
+        return true
+    }
 
+    private fun sendWakeOnLanPacket(connection: Connection) {
+        // Without the permission the packet is silently dropped, so defer it to the result.
+        if (LocalNetworkPermission.needsRequest(this)) {
+            wakeOnLanPendingAfterPermission = true
+            requestLocalNetworkPermissionIfNeeded()
+            return
+        }
+        WakeOnLanTask(lifecycleScope, this, connection)
+    }
+
+    private fun handleLocalNetworkPermissionResult(grantResults: IntArray) {
+        localNetworkPermissionRequestInFlight = false
+        val granted = grantResults.isNotEmpty() &&
+                (grantResults[0] == PackageManager.PERMISSION_GRANTED)
+        if (!granted) {
+            Timber.d("Local network permission was not granted")
+            wakeOnLanPendingAfterPermission = false
+            pendingConnectAfterPermission = false
+            showLocalNetworkPermissionDeniedMessage()
+            return
+        }
+
+        Timber.d("Local network permission granted")
+        if (wakeOnLanPendingAfterPermission) {
+            wakeOnLanPendingAfterPermission = false
+            WakeOnLanTask(lifecycleScope, this, baseViewModel.connection)
+        }
+        if (pendingConnectAfterPermission) {
+            pendingConnectAfterPermission = false
+            connectToServer(NetworkStatus.NETWORK_IS_UP)
+        }
+        // If no connection attempt was blocked in the meantime the startup flow has not reached the
+        // network status observer yet; it will trigger the connection on its own.
+    }
+
+    /**
+     * Shown when the user denies the local network permission. Without it no connection to the
+     * server can be established, so the message points at the app settings where it can be granted.
+     */
+    private fun showLocalNetworkPermissionDeniedMessage() {
+        val view: View = findViewById(android.R.id.content) ?: return
+        Snackbar.make(view, R.string.local_network_permission_denied, Snackbar.LENGTH_LONG)
+                .setAction(R.string.local_network_permission_settings_button) {
+                    val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                            Uri.fromParts("package", packageName, null))
+                    startActivity(intent)
+                }
+                .show()
+    }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+
+        if (requestCode == LocalNetworkPermission.REQUEST_CODE) {
+            handleLocalNetworkPermissionResult(grantResults)
+            return
+        }
+
         // WRITE_EXTERNAL_STORAGE is only requested on API 28 and below (it is capped at API 28 in the
         // manifest). From Android 10 the download goes straight to the public folder through scoped
         // storage, so there is no permission result to handle there.
@@ -525,7 +621,7 @@ class MainActivity : AppCompatActivity(), ToolbarInterface, LayoutControlInterfa
             }
             R.id.menu_reconnect_to_server -> showConfirmationToReconnectToServer(this, baseViewModel)
             R.id.menu_send_wake_on_lan_packet -> {
-                WakeOnLanTask(lifecycleScope, this, baseViewModel.connection)
+                sendWakeOnLanPacket(baseViewModel.connection)
                 true
             }
             else -> super.onOptionsItemSelected(item)
@@ -604,12 +700,18 @@ class MainActivity : AppCompatActivity(), ToolbarInterface, LayoutControlInterfa
                         baseViewModel.setConnectionToServerAvailable(true)
                     }
                     is ConnectionStateResult.Failed -> {
-                        when (result.reason.reason) {
-                            is ConnectionFailureReason.Interrupted -> sendSnackbarMessage(getString(R.string.failed_during_connection_attempt))
-                            is ConnectionFailureReason.UnresolvedAddress -> sendSnackbarMessage(getString(R.string.failed_to_resolve_address))
-                            is ConnectionFailureReason.ConnectingToServer -> sendSnackbarMessage(getString(R.string.failed_connecting_to_server))
-                            is ConnectionFailureReason.SocketException -> sendSnackbarMessage(getString(R.string.failed_opening_socket))
-                            is ConnectionFailureReason.Other -> sendSnackbarMessage(getString(R.string.connection_failed))
+                        if (LocalNetworkPermission.needsRequest(this)) {
+                            // Without the permission the platform blocks the socket, which would
+                            // otherwise be reported as a generic failure to open the socket.
+                            sendSnackbarMessage(getString(R.string.local_network_permission_denied))
+                        } else {
+                            when (result.reason.reason) {
+                                is ConnectionFailureReason.Interrupted -> sendSnackbarMessage(getString(R.string.failed_during_connection_attempt))
+                                is ConnectionFailureReason.UnresolvedAddress -> sendSnackbarMessage(getString(R.string.failed_to_resolve_address))
+                                is ConnectionFailureReason.ConnectingToServer -> sendSnackbarMessage(getString(R.string.failed_connecting_to_server))
+                                is ConnectionFailureReason.SocketException -> sendSnackbarMessage(getString(R.string.failed_opening_socket))
+                                is ConnectionFailureReason.Other -> sendSnackbarMessage(getString(R.string.connection_failed))
+                            }
                         }
                         Timber.d("Setting connection to server not available")
                         baseViewModel.setConnectionToServerAvailable(false)
@@ -653,6 +755,15 @@ class MainActivity : AppCompatActivity(), ToolbarInterface, LayoutControlInterfa
 
         if (runningAppProcessInfo != null
                 && runningAppProcessInfo.importance <= ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND) {
+
+            // Without the local network permission every connection attempt would just fail with a
+            // socket timeout, so ask for the permission first and connect from its result instead.
+            if ((status == NetworkStatus.NETWORK_IS_UP || status == NetworkStatus.NETWORK_IS_STILL_UP)
+                    && LocalNetworkPermission.needsRequest(this)) {
+                pendingConnectAfterPermission = true
+                requestLocalNetworkPermissionIfNeeded()
+                return
+            }
 
             when (status) {
                 NetworkStatus.NETWORK_IS_UP -> {

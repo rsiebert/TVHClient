@@ -6,6 +6,13 @@
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <!--
+        From Android 17 (API 37) all local network traffic is blocked unless the app holds this
+        runtime permission. TVHClient only ever talks to a server on the local network (HTSP
+        connection, Wake-on-LAN, Cast discovery), so without it nothing works. It is part of the
+        NEARBY_DEVICES permission group and is requested at runtime before the first connection.
+    -->
+    <uses-permission android:name="android.permission.ACCESS_LOCAL_NETWORK" />
+    <!--
         External storage access is legacy. From Android 10 (API 29) the app writes downloads to the
         public Downloads folder through scoped storage, and from Android 13 (API 33) reads are
         scoped through the media permissions, so each grant is capped at the last release that

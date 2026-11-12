@@ -1,8 +1,10 @@
 package org.tvheadend.tvhclient.ui.features.settings
 
 
+import android.Manifest
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.*
 import androidx.fragment.app.Fragment
@@ -19,6 +21,8 @@ import org.tvheadend.tvhclient.ui.common.interfaces.BackPressedInterface
 import org.tvheadend.tvhclient.ui.common.interfaces.RecyclerViewClickInterface
 import org.tvheadend.tvhclient.ui.common.interfaces.ToolbarInterface
 import org.tvheadend.tvhclient.ui.features.MainActivity
+import org.tvheadend.tvhclient.util.extensions.sendSnackbarMessage
+import org.tvheadend.tvhclient.util.permissions.LocalNetworkPermission
 
 class SettingsListConnectionsFragment : Fragment(), BackPressedInterface, ActionMode.Callback, RecyclerViewClickInterface {
 
@@ -30,6 +34,9 @@ class SettingsListConnectionsFragment : Fragment(), BackPressedInterface, Action
     private lateinit var settingsViewModel: SettingsViewModel
 
     private var actionMode: ActionMode? = null
+
+    /** Set when a Wake-on-LAN packet has to be sent once the local network permission is granted. */
+    private var pendingWakeOnLanConnection: Connection? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = RecyclerviewFragmentBinding.inflate(inflater, container, false)
@@ -99,12 +106,52 @@ class SettingsListConnectionsFragment : Fragment(), BackPressedInterface, Action
             R.id.menu_set_connection_not_active -> setConnectionActiveOrInactive(connection, mode, false)
             R.id.menu_edit_connection -> editConnection(connection, mode)
             R.id.menu_send_wol -> {
-                WakeOnLanTask(lifecycleScope, ctx, connection)
-                mode.finish()
+                sendWakeOnLanPacket(connection, mode)
                 true
             }
             R.id.menu_delete_connection -> deleteConnection(ctx, connection, mode)
             else -> false
+        }
+    }
+
+    /**
+     * Sends the Wake-on-LAN packet for [connection]. Without the local network permission the
+     * packet would be dropped by the platform, so the permission is requested first and the packet
+     * is sent from [onRequestPermissionsResult] once it is granted.
+     */
+    private fun sendWakeOnLanPacket(connection: Connection, mode: ActionMode) {
+        val ctx = context
+        if (ctx == null) {
+            mode.finish()
+            return
+        }
+        if (LocalNetworkPermission.needsRequest(ctx)) {
+            pendingWakeOnLanConnection = connection
+            requestPermissions(
+                    arrayOf(Manifest.permission.ACCESS_LOCAL_NETWORK),
+                    LocalNetworkPermission.REQUEST_CODE)
+            mode.finish()
+            return
+        }
+        WakeOnLanTask(lifecycleScope, ctx, connection)
+        mode.finish()
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode != LocalNetworkPermission.REQUEST_CODE) {
+            return
+        }
+        val connection = pendingWakeOnLanConnection
+        pendingWakeOnLanConnection = null
+        val ctx = context
+        if (connection == null || ctx == null) {
+            return
+        }
+        if (grantResults.isNotEmpty() && (grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+            WakeOnLanTask(lifecycleScope, ctx, connection)
+        } else {
+            ctx.sendSnackbarMessage(R.string.local_network_permission_denied)
         }
     }
 
